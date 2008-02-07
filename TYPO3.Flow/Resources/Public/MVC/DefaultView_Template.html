@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<style type="text/css">
+			body {
+				font-family: Helvetica, Arial, sans-serif;
+				margin: 0;
+			}
+
+			h1 {
+				font-size: 15px;
+			}
+			
+			.T3_WidgetLibrary_Widgets_ApplicationWindow {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				background-color: #515151;
+				margin: 0;
+				z-index:1000;
+			}
+			
+			.T3_WidgetLibrary_Widgets_FloatingWindow {
+				width: 500px;
+				height: 360px;
+				background-color: none;
+				background-image: url(###BASE_URI###Packages/FLOW3/Resources/Public/MVC/DefaultView_FloatingWindow.png);
+				
+			}
+			
+			.T3_WidgetLibrary_Widgets_FloatingWindow .T3_WidgetLibrary_Widgets_Window_TitleBar {
+				font-size: 13px;
+				position: relative;
+				padding: 25px 0 0 26px;
+				width: 440px;
+				text-align: center;
+				color: #404040;
+			}
+
+			.T3_WidgetLibrary_Widgets_FloatingWindow .T3_WidgetLibrary_Widgets_Window_Body {
+				font-size: 14px;
+				position: relative;
+				padding: 30px 0 0 50px;
+				width: 400px;
+				text-align: left;
+				color: #202020;
+				line-height: 18px;
+			}
+
+			.DefaultView_Package {
+				width: 70px;
+				float: right;
+				margin: 0 0 80px 10px;
+			}
+
+		</style>
+	</head>	
+	<body>
+		<div class="T3_WidgetLibrary_Widgets_ApplicationWindow">
+			<div class="T3_WidgetLibrary_Widgets_FloatingWindow">
+				<div class="T3_WidgetLibrary_Widgets_Window_TitleBar">FLOW3 - Default View</div>
+				<div class="T3_WidgetLibrary_Widgets_Window_Body">
+					<img src="###BASE_URI###Packages/FLOW3/Resources/Public/MVC/DefaultView_Package.png" class="DefaultView_Package" />
+					<h1>Welcome to FLOW3!</h1>
+					<p>This is the default view of the FLOW3 MVC component. You see this message because no
+					other view is available. Please refer to the Developer's Guide for more information
+					how to create and configure one.</p>
+					<p>
+						<em>Have fun! The FLOW3 Development Team</em>
+					</p>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,977 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>AOP Framework</title>
+
+  <section>
+    <title>Introduction</title>
+
+    <para>Aspect-Oriented Programming (AOP) is a programming paradigm which
+    complements Object-Oriented Programming (OOP) by separating
+    <firstterm>concerns</firstterm> of a software application to improve
+    modularization. The separation of concerns (SoC) aims for making a
+    software easier to maintain by grouping features and behaviour into
+    manageable parts which all have a specific purpose and business to take
+    care of.</para>
+
+    <para>OOP already allows for modularizing concerns into distinct methods,
+    classes and packages. However, some concerns are difficult to place as
+    they cross the boundaries of classes and even packages. One example for
+    such a <firstterm>cross-cutting concern</firstterm> is security: Although
+    the main purpose of a <package>Forum</package> package is to display and
+    manage posts of a forum, it has to implement some kind of security to
+    assert that only moderators can approve or delete posts. And many more
+    packages need a similar functionality for protect the creation, deletion
+    and update of records. AOP enables you to move the security (or any other)
+    aspect into its own package and leave the other components with clear
+    responsibilities, probably not implementing any security
+    themselves.</para>
+
+    <para>Aspect-Oriented Programming has been around in other programming
+    languages for quite some time now and sophisticated solutions taking
+    advantage of AOP exist. FLOW3's AOP framework allows you to use of the
+    most popular AOP techniques in your own PHP application. In contrast to
+    other approaches it doesn't require any special PHP extensions, additional
+    compile steps or modification of the target code – and it's a breeze to
+    configure.</para>
+
+    <tip>
+      <para>In case you are unsure about some terms used in this introduction
+      or later in this chapter, it's a good idea looking them up (for example
+      at <link xl:href="http://en.wikipedia.org">wikipedia</link>). Don't
+      think that you're the only one who has never heard of a
+      <firstterm>Pointcut</firstterm> or <firstterm>SoC</firstterm><footnote>
+          <para>SoC could, by the way, also mean <quote>Self-organized
+          criticality</quote> or <quote>Service-oriented Computing</quote> or
+          refer to Google's <quote>Summer of Code</quote> ...</para>
+        </footnote> – we had a hard time learning these too. However, it's
+      worth the hassle, as a common vocabulary improves the communication
+      between developers a lot.</para>
+    </tip>
+
+    <section>
+      <title>AOP concepts and terminology</title>
+
+      <para>Let's stay with the example of a <package>Forum</package> for a
+      while. The classes of the forum don't implement security themselves, but
+      somehow we have to make sure that whenever a method
+      <methodname>deletePost()</methodname> is called, a security check takes
+      place. The class containing the delete method is called the
+      <firstterm>target class</firstterm>. We have a new
+      <firstterm>aspect</firstterm> called "security" which we'd like to
+      <firstterm>weave</firstterm> into that class. Whenever the method
+      <methodname>deletePost()</methodname> is called, a <firstterm>method
+      interceptor</firstterm> defined by an <firstterm>around
+      advice</firstterm> will intercept the <firstterm>target
+      method</firstterm> and only proceed if the operation is allowed in the
+      current security context.</para>
+
+      <para>At the first (and the second, third, ...) glance, the terms used
+      in the AOP context are not really intuitive. But, similar to most of the
+      other AOP frameworks, we better stick to them, to keep a common language
+      between developers. Here they are:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Aspect</term>
+
+          <listitem>
+            <para>An aspect is the part of the application which cross-cuts
+            the core concerns of multiple objects. In FLOW3, aspects are
+            implemented as regular classes which are tagged by the
+            <markup>@aspect</markup> annotation. The methods of an aspect
+            class represent advices, the properties act as an anchor for
+            introductions.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Join point</term>
+
+          <listitem>
+            <para>A join point is a point in the flow of a program. Examples
+            are the execution of a method or the throw of an exception. In
+            FLOW3, join points are represented by the
+            <classname>T3_FLOW3_AOPJoinPoint</classname> object which
+            contains more information about the circumstances like name of the
+            called method, the passed arguments or type of the exception
+            thrown. A join point is an event which occurs during the program
+            flow, not a definition which defines that point.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Advice</term>
+
+          <listitem>
+            <para>An advice is the action taken by an aspect at a particular
+            join point. Advices are implemented as methods of the aspect
+            class. These methods are executed before and / or after the join
+            point is reached.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Pointcut</term>
+
+          <listitem>
+            <para>The pointcut defines a set of joinpoints which need to be
+            matched before running an advice. The pointcut is configured by a
+            <firstterm>pointcut expression</firstterm> which defines when and
+            where an advice should be executed. FLOW3 uses methods in an
+            aspect class as anchors for pointcut declarations.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Pointcut expression</term>
+
+          <listitem>
+            <para>A poincut expression is the condition under which a
+            joinpoint should match. It may, for example, define that
+            joinpoints only match on the execution of a (target-) method with
+            a certain name. Pointcut expressions are used in pointcut- and
+            advice declarations.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Target</term>
+
+          <listitem>
+            <para>A class or method being adviced by one or more aspects is
+            referred to as a target class /-method.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Introduction</term>
+
+          <listitem>
+            <para>An introduction redeclares the target class to implement an
+            additional interface. By declaring an introduction it is possible
+            to introduce new interfaces and an implementation of the required
+            methods without touching the code of the original class.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The following terms are related to advices:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>Before advice</term>
+
+          <listitem>
+            <para>A before advice is executed before the target method is
+            being called, but cannot prevent the target method from being
+            executed.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>After returning advice</term>
+
+          <listitem>
+            <para>An after returning advice is executed after returning from
+            the target method. The result of the target method invocation is
+            available to the after returning advice, but it can't change it.
+            If the target method throws an exception, the after returning
+            advice is not executed.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>After throwing advice</term>
+
+          <listitem>
+            <para>An after throwing advice is only executed if the target
+            method throwed an exception. The after throwing advice may fetch
+            the exception type from the join point object.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>After advice</term>
+
+          <listitem>
+            <para>An after advice is executed after the target method has been
+            called, no matter if an exception was thrown or not.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Around advice</term>
+
+          <listitem>
+            <para>An around advice is wrapped around the execution of the
+            target method. It may execute code before and after the invocation
+            of the target method and may ultimately prevent the original
+            method from being executed at all. An around advice is also
+            responsible for calling other around advices at the same join
+            point and returning either the original or a modified result for
+            the target method.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>Advice chain</term>
+
+          <listitem>
+            <para>If more than one around advice exists for a join point, they
+            are called in an onion-like advice chain: The first around advice
+            probably executes some before-code, then calls the second around
+            advice which calls the target method. The target method returns a
+            result which can be modified by the second around advice, is
+            returned to the first around advice which finally returns the
+            result to the initiator of the method call. Any around advice may
+            decide to proceed or break the chain and modify results if
+            necessary.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </section>
+
+    <section>
+      <title>FLOW3 AOP concepts</title>
+
+      <para>Aspect-Oriented Programming was, of course, not invented by
+      us<footnote>
+          <para>AOP was rather invented by <personname>
+          <firstname>Gregor</firstname> <surname>Kiczales</surname>
+          </personname>and his team at the <link
+          xl:href="http://www.parc.com/">Xerox Palo Alto Research
+          Center</link>. The original implementation was called <link
+          xl:href="http://eclipse.org/aspectj">AspectJ</link> and is an
+          extension to Java. It still serves as a de-facto standard and is now
+          maintained by the Eclipse Foundation.</para>
+        </footnote>. Since the initial release of the concept, dozens of
+      implementations for various programming languages evolved. Although a
+      few PHP-based AOP frameworks do exist, they followed concepts which did
+      not match the goals of FLOW3 (to provide a powerful, yet
+      developer-friendly solution) when the development of TYPO3 5.0 began. We
+      therefore decided to create a sophisticated but pragmatic implementation
+      which adopts the concepts of AOP but takes PHP's specialities and the
+      requirements of typical FLOW3 applications into account. In a few
+      cases this even lead to new features or simplifications because they
+      were easier to implement in PHP compared to Java.</para>
+
+      <para>FLOW3 pragmatically implements a reduced subset of AOP, which
+      satisfies most needs of web applications. The join point model allows
+      for intercepting method executions but provides no special support for
+      advising field access<footnote>
+          <para>Intercepting setting and retrieval of properties can easily be
+          achieved by declaring a before-, after- or around advice.</para>
+        </footnote>. For the sake of simplicity and performance, pointcuts
+      don't allow criteria which have to be evaluated at runtime (such as
+      matching argument values of a method) and pointcut expressions are based
+      on well-known regular expressions instead of requiring the knowledge of
+      a dedicated expression language. Pointcut filters and join point types
+      are modularized and can be extended if more advanced requirements should
+      arise in the future.</para>
+    </section>
+
+    <section>
+      <title>Implementation overview</title>
+
+      <para>FLOW3's AOP framework does not require a pre-processor or an
+      aspect-aware PHP interpreter to weave in advices. It is implemented and
+      based on pure PHP and doesn't need any specific PHP extension. However,
+      it does require the Component Manager to fulfill its task.</para>
+
+      <para>FLOW3 uses PHP's reflection capabilities to analyze
+      declarations of aspects, pointcuts and advices and implements method
+      interceptors as a dynamic proxy. In accordance to the GoF
+      patterns<footnote>
+          <para>GoF means Group of Four and refers to the authors of the
+          classic book <citetitle>Design Patterns – Elements of Reusable
+          Object-Oriented Software</citetitle></para>
+        </footnote>, the proxy classes act as a placeholders for the target
+      object. They are true subclasses of the original and override adviced
+      methods by implementing a interceptor method. The proxy classes are
+      generated automatically by the AOP framework and cached in their own
+      files. If a class has been adviced by some aspect, the Component Manager
+      will only deliver instances of the proxy class instead of the
+      original.</para>
+
+      <para>The approach of storing generated proxy classes in files provides
+      the whole advantage of dynamic weaving with a minimum performance hit.
+      Debugging of proxied classes is still easy as they truly exist in real
+      files.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Aspects</title>
+
+    <para>Aspects are abstract containers which accommodate pointcut-,
+    introduction- and advice declarations. In most frameworks, including
+    FLOW3, aspects are defined as plain PHP classes which are tagged as an
+    aspect. The following example shows the definition of a hypothetical
+    <emphasis>FooSecurity</emphasis> aspect:</para>
+
+    <example>
+      <title>Declaration of an aspect</title>
+
+      <programlisting language="php">/**
+ * An aspect implementing security for Foo
+ *
+ * @package MySecurityPackage
+ * @author  John Doe &lt;john@typo3.org&gt;
+ * @aspect
+ */
+class T3_MySecurityPackage_FooSecurityAspect implements T3_FLOW3_AOPAspectInterface {
+
+}</programlisting>
+    </example>
+
+    <para>As you can see,
+    <classname>T3_MySecurityPackage_FooSecurityAspect</classname> is just a
+    regular PHP class which may (actually must) contain methods and
+    properties. What it makes it an aspect is solely the
+    <markup>@aspect</markup> annotation mentioned the class comment. The AOP
+    framework recognizes this tag and registers the class as an aspect. To
+    identify the aspect as an aspect without relying on the annotation,
+    implementing the marker interface
+    <interfacename>T3_FLOW3_AOPAspectInterface</interfacename> is
+    mandatory.</para>
+
+    <note>
+      <para>A void aspect class doesn't make any sense and if you try to run
+      the above example, the AOP framework will throw an exception complaining
+      that no advice, introduction or pointcut has been defined.</para>
+    </note>
+  </section>
+
+  <section>
+    <title>Pointcuts</title>
+
+    <para>If we want to add security to foo, we need a method which carries
+    out the security checks and a definition where and when this method should
+    be executed. The method is an advice which we're going to declare in a
+    later section, the <quote>where and when</quote> is defined by a pointcut
+    expression in a pointcut declaration.</para>
+
+    <para>A pointcut is represented by a method of an aspect class. It
+    contains two pieces of information: The pointcut name, defined by the
+    methodname, and the poincut expression, declared by an annotation. The
+    following pointcut will match the execution of methods whose name starts
+    with <quote>delete</quote>, mo matter in which class they are
+    defined:</para>
+
+    <example>
+      <title>Declaration of a pointcut</title>
+
+      <programlisting language="php">   /**
+    * A pointcut which matches all methods whose name starts with "delete".
+    *
+    * <co xml:id="co.pointcutdeclaration.1" />@pointcut method(.*-&gt;delete.*())
+    * @author John Doe &lt;john@typo3.org&gt;
+    */
+   public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</programlisting>
+
+      <calloutlist>
+        <callout arearefs="co.pointcutdeclaration.1">
+          <para>Declaration of the pointcut expression</para>
+        </callout>
+
+        <callout arearefs="co.pointcutdeclaration.2">
+          <para>Name of the pointcut</para>
+        </callout>
+      </calloutlist>
+    </example>
+
+    <section>
+      <title>Pointcut expressions</title>
+
+      <para>As already mentioned, the pointcut expression configures the
+      filters which are used to match against join points. It is comparable to
+      an <function>if</function> condition in PHP: Only if the whole condition
+      evaluates to <constant>TRUE</constant>, the statement is executed -
+      otherwise it will be just ignored. If a pointcut expression evaluates to
+      <constant>TRUE</constant>, the pointcut matches and advices which refer
+      to this poincut become active.</para>
+
+      <note>
+        <para>The AOP framework <productname>AspectJ</productname> provides a
+        complete pointcut language with dozens of pointcut types and
+        expression constructs. FLOW3 makes do with only a small subset of
+        that language, which we think already suffice for even complex
+        enterprise applications. If you're interested in the original feature
+        set, it doesn't hurt throwing a glance at the <link
+        xl:href="http://www.eclipse.org/aspectj/doc/released/progguide/index.html">AspectJ
+        Programming Guide</link>.</para>
+      </note>
+    </section>
+
+    <section>
+      <title>Pointcut designators</title>
+
+      <para>A pointcut expression always consists of two parts: The poincut
+      designator and its parameter(s). The following designators are supported
+      by FLOW3:</para>
+
+      <section>
+        <title>method()</title>
+
+        <para>The <function>method()</function> designator matches on the
+        execution of methods with a certain name. The parameter specifies the
+        class and method name, regular expressions can be used for more
+        flexibility<footnote>
+            <para>Internally, PHP's <function>preg_match()</function> function
+            is used to match the method name. The regular expression will be
+            enclosed by <literal>/^<replaceable>...</replaceable>$/</literal>
+            (without the dots of course).</para>
+          </footnote>. It follows the following scheme:</para>
+
+        <synopsis>method(public|protected|private ClassName-&gt;methodName())</synopsis>
+
+        <para>Specifying the visibility modifier (public, protected or
+        private) is optional - if none is specified, any visibility will
+        match. The class- and method name can be specified as a regular
+        expression. Here are some examples for matching method
+        executions:</para>
+
+        <para><example>
+            <title>method() pointcut designator</title>
+
+            <para>Matches all public methods in class
+            <classname>T3_MyPackage_MyComponent</classname>:</para>
+
+            <para><code>method(public
+            T3_MyPackage_MyComponent-&gt;.*())</code></para>
+
+            <para>Matches all delete methods (even protected and private ones)
+            in any class of the package <package>MyPackage</package>:</para>
+
+            <para><code>method(T3_MyPackage_.*-&gt;delete.*())</code></para>
+          </example><note>
+            <para>In other AOP frameworks, incuding
+            <trademark>AspectJ</trademark> and <trademark>Spring</trademark>,
+            the <function>method</function> designator does not exist. They
+            rather use a more fine grained approach with designators such as
+            <function>execution</function>, <function>call</function> and
+            <function>cflow</function>. As FLOW3 only supports matching to
+            method execution join points anyway, we decided to simplify things
+            by allowing only a more general <function>method</function>
+            designator.</para>
+          </note></para>
+      </section>
+
+      <section>
+        <title>class()</title>
+
+        <para>The <function>class()</function> designator matches on the
+        execution of methods defined in a class with a certain name. The
+        parameter specifies the class name, again regular expressions are
+        allowed here. The <function>class()</function> designator follows this
+        simple scheme:</para>
+
+        <synopsis><function>class(<replaceable>classname</replaceable>)</function></synopsis>
+
+        <para>An example for the usage of this designator:</para>
+
+        <example>
+          <title>class() pointcut designator</title>
+
+          <para>Matches all methods in class
+          <classname>T3_MyPackage_MyComponent</classname>:</para>
+
+          <para><code>class(T3_MyPackage_MyComponent)</code></para>
+        </example>
+      </section>
+
+      <section>
+        <title>within()</title>
+
+        <para>The <function>within()</function> designator matches on the
+        execution of methods defined in a class of a certain type. A type
+        matches if the class is a subclass of or implements an interface of
+        the given name. The <function>within()</function> designator has this
+        simple syntax:</para>
+
+        <synopsis><function>within(<replaceable>type</replaceable>)</function></synopsis>
+
+        <para>An example for the usage of
+        <function>within()</function>:</para>
+
+        <example>
+          <title>within() pointcut designator</title>
+
+          <para>Matches all methods in classes which implement the logger
+          interface:</para>
+
+          <para><code>within(T3_Log_LoggerInterface)</code></para>
+
+          <para>Matches all methods in classes which are part of the Foo
+          layer:</para>
+
+          <para><code>within(T3_FLOW3_FooLayerInterface)</code></para>
+        </example>
+      </section>
+    </section>
+
+    <section>
+      <title>Combining pointcut expressions</title>
+
+      <para>All pointcut expressions mentioned in previous sections can be
+      combined into a whole expression, just like you may combine parts to an
+      overall condition in an <function>if</function> construct. The supported
+      operators are <quote>&amp;&amp;</quote>, <quote>||</quote> and
+      <quote>!</quote> and they have the same meaning as in PHP. Nesting
+      expressions with parentheses is not supported but you may refer to other
+      pointcuts by specifying their full name (ie. class- and method name).
+      This final example shows how to combine and reuse pointcuts and
+      ultimately build a hierarchy of pointcuts which can be used conveniently
+      in advice declarations:</para>
+
+      <example>
+        <title>Combining pointcut expressions</title>
+
+        <para><programlisting language="php">/**
+ * Fixture class for testing poincut definitions
+ * 
+ * @package TestPackage
+ * @aspect
+ */
+class T3_TestPackage_PointcutTestingAspect implements T3_FLOW3_AOPAspectInterface {
+
+   /**
+    * Pointcut which includes all method executions in pointcutTestingTargetClasses except those from Target Class number 3.
+    *
+    * @pointcut method(T3_TestPackage_PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; !method(T3_TestPackage_PointcutTestingTargetClass3-&gt;.*())
+    */
+   public function pointcutTestingTargetClasses() {}
+   
+   /**
+    * Pointcut which consists of only the T3_TestPackage_OtherPointcutTestingTargetClass.
+    *
+    * @pointcut method(T3_TestPackage_OtherPointcutTestingTargetClass-&gt;.*())
+    */
+   public function otherPointcutTestingTargetClass() {}
+   
+   /**
+    * A combination of both above pointcuts
+    * 
+    * @pointcut T3_TestPackage_PointcutTestingAspect-&gt;pointcutTestingTargetClasses || T3_TestPackage_PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
+    * @author Robert Lemke &lt;robert@typo3.org&gt;
+    */
+   public function bothPointcuts() {}
+   
+   /**
+    * A pointcut which matches all classes from the service layer
+    *
+    * @pointcut within(T3_FLOW3_ServiceLayerInterface)
+    */
+   public function serviceLayerClasses() {}
+   
+   /**
+    * A pointcut which matches any method from the BasicClass and all classes from the service layer
+    *
+    * @pointcut method(T3_TestPackage_Basic.*-&gt;.*()) || within(T3_FLOW3_Service.*)
+    */
+   public function basicClassOrServiceLayerClasses() {}
+}
+</programlisting></para>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Declaring advice</title>
+
+    <para>With the aspect and pointcuts in place we are now ready to declare
+    the advice. Remember that an advice is the actual action, the
+    implementation of the concern you want to weave in to some target. Advices
+    are implemented as <emphasis>interceptors</emphasis> which may run before
+    and / or after the target method is called. Four advice types allow for
+    these different kinds of interception: Before, After returning, After
+    throwing and Around.</para>
+
+    <para>Other than being of a certain type, advices always come with a
+    pointcut expression which defines the set of join points the advice
+    applies for. The pointcut expression may, as we have seen earlier, refer
+    to other named pointcuts.</para>
+
+    <section>
+      <title>Before advice</title>
+
+      <para>A <emphasis>before advice</emphasis> allows for executing code
+      before the target method is invoked. However, the advice cannot prevent
+      the target method from being executed, nor can it take influence on
+      other before advices at the same join point.</para>
+
+      <para><example>
+          <title>Declaration of a before advice</title>
+
+          <para><programlisting language="php">   /**
+    * Before advice which is invoked before any method call within the News package
+    *
+    * @before class(T3_News_.*-&gt;.*())
+    */
+   public function myBeforeAdvice(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   }</programlisting></para>
+        </example></para>
+    </section>
+
+    <section>
+      <title>After returning advice</title>
+
+      <para>The <emphasis>after returning advice</emphasis> becomes active
+      after the target method normally returns from execution (ie. it doesn't
+      throw an exception). After returning advices may read the result of the
+      target method, but can't modify it.</para>
+
+      <example>
+        <title>Declaration of an after returning advice</title>
+
+        <para><programlisting language="php">   /**
+    * After returning advice
+    *
+    * @afterreturning method(public T3_News_FeedAgregator-&gt;[import|update].*()) || T3_MyPackage_MyAspect-&gt;someOtherPointcut
+    */
+   public function myAfterReturningAdvice(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   }</programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>After throwing advice</title>
+
+      <para>Similar to the <quote>after returning</quote> advice, the
+      <emphasis>after throwing advice</emphasis> is invoked after method
+      execution, but only if an exception was thrown.</para>
+
+      <example>
+        <title>Declaration of an after throwing advice</title>
+
+        <para><programlisting language="php">   /**
+    * After throwing advice
+    *
+    * @afterthrowing within(T3_News_ImportantLayer)
+    */
+   public function myAfterThrowingAdvice(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   }</programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>After advice</title>
+
+      <para>The <emphasis>after advice</emphasis> is a combination of
+      <quote>after returning</quote> and <quote>after throwing</quote>: These
+      advices become active after method execution, no matter if an exception
+      was thrown or not.</para>
+
+      <example>
+        <title>Declaration of an after advice</title>
+
+        <para><programlisting language="php">   /**
+    * After advice
+    *
+    * @after T3_MyPackage_MyAspect-&gt;justAPointcut
+    */
+   public function myAfterAdvice(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   }</programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>Around advice</title>
+
+      <para>Finally, the <emphasis>around advice</emphasis> takes total
+      control over the target method and intercepts it completely. It may
+      decide to call the original method or not and even modify the result of
+      the target method or return a completely different one. Obviously the
+      around advice is the most powerful and should only be used if the
+      concern can't be implemented with the alternative advice types. You
+      might already guess how an around advice is declared:</para>
+
+      <example>
+        <title>Declaration of an around advice</title>
+
+        <para><programlisting language="php">   /**
+    * Around advice
+    *
+    * @around T3_MyPackage_MyAspect-&gt;justAPointcut
+    */
+   public function myAroundAdvice(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   }</programlisting></para>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Implementing advice</title>
+
+    <para>The final step after declaring aspects, pointcuts and advices is to
+    fill the advices with life. The implementation of an advice is located in
+    the same method it has been declared. In that regard, an aspect class
+    behaves like any other component in FLOW3 – you therefore can take
+    advantage of dependency injection in case you need other components to
+    fullfil the task of your advice.</para>
+
+    <section>
+      <title>Accessing join points</title>
+
+      <para>As you have seen in the previous section, advice methods always
+      expect an argument of the type
+      <interfacename>T3_FLOW3_AOPJoinPointInterface</interfacename>. This
+      join point object contains all important information about the current
+      join point. Methods like <methodname>getClassName()</methodname> or
+      <methodname>getMethodArguments()</methodname> let the advice method
+      classify the current context and enable you to implement advices in a
+      way that they can be reused in different situations. For a full
+      description of the join point object refer to the API
+      documentation.</para>
+    </section>
+
+    <section>
+      <title>Advice chains</title>
+
+      <para>Around advices are a special advice type in that they have the
+      power to completely intercept the target method. For any other advice
+      type, the advice methods are called by the proxy class one after
+      another. In case of the around advice, the methods form a chain where
+      each link is responsible to pass over control to the next.</para>
+
+      <para><figure>
+          <title>Control flow of an advice chain</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="AOPFramework_AdviceChain.png"></imagedata>
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+    </section>
+
+    <section>
+      <title>Examples</title>
+
+      <para>Let's put our knowledge into practice and start with a simple
+      example. First we would like to log each access to methods within
+      certain package. The following code will just do that:</para>
+
+      <example>
+        <title>Simple logging with aspects</title>
+
+        <programlisting language="php">/**
+ * A logging aspect
+ *
+ * @package MyPackage
+ * @aspect
+ */
+class T3_MyPackage_LoggingAspect {
+
+   /**
+    * @var T3_Log_LoggerInterface A logger implementation
+   protected $logger;
+
+   /**
+    * Constructor of this aspect. For logging we need a logger, which we will get
+    * injected automatically by the Component Manager
+    *
+    * @param  T3_Log_LoggerInterface $logger: An instance of a logger
+    * @return void
+    */
+   public function __construct(T3_Log_LoggerInterface $logger) {
+      $this-&gt;logger = $logger;
+   }
+
+   /**
+    * Before advice, logs all access to methods of our package
+    *
+    * @param  T3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @return void
+    * @before method(T3_MyPackage_.*-&gt;.*())
+    */
+   public function logMethodExecution(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+      $logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . $joinPoint-&gt;getClassName() . ' has been called.';
+      $this-&gt;logger-&gt;log($logMessage, 'T3_MyPackage_LoggingAspect');
+   }
+
+}</programlisting>
+      </example>
+
+      <para>Note that we are using dependency injection for getting a logger
+      instance to stay independent from any specific logging implementation.
+      We don't have to care about the kind of logger (file based, syslog, ...)
+      and where it comes from.</para>
+
+      <para>Finally an example for the implementation of an around advice: For
+      a guestbook, we want to reject the last name <quote>Sarkosh</quote>
+      (because it should be <quote>Skårhøj</quote>), every time it is
+      submitted. Admittedly you probably wouldn't implement this great feature
+      as an aspect, but it's easy enough to demonstrate the idea. For
+      illustration purposes, we don't define the pointcut expression in place
+      but refer to a named pointcut.</para>
+
+      <example>
+        <title>Implementation of an around advice</title>
+
+        <para><programlisting>/**
+ * A lastname rejection aspect
+ *
+ * @package MyPackage
+ * @aspect
+ */
+class T3_MyPackage_LastNameRejectionAspect {
+
+   /**
+    * A pointcut which matches all guestbook submission method invocations
+    *
+    * @pointcut method(T3_Guestbook_SubmissionHandlingThingy-&gt;submit())
+    */
+   public function guestbookSubmissionPointcut() {}
+
+   /**
+    * Around advice, rejects the lastname "Sarkosh"
+    *
+    * @param  T3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @return mixed Result of the target method
+    * @around T3_MyPackage_LastNameRejectionAspect-&gt;guestbookSubmissionPointcut
+    */
+   public function rejectLastName(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+      if ($joinPoint-&gt;getMethodArgument('lastName') == 'Sarkosh') {
+         throw new Exception('Sarkosh is not a valid lastname - should be Skårhøj!');
+      }
+      $result = $joinPoint-&gt;getAdviceChain()-&gt;proceed($joinPoint);
+      return $result;
+   }
+}</programlisting></para>
+      </example>
+
+      <para>Please note that if the last name is correct, we proceed with the
+      remaining links in the advice chain. This is very important to assure
+      that the original (target-) method is finally called. And don't forget
+      to return the result of the advice chain ...</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Introductions</title>
+
+    <para>Introductions (also known as <firstterm>Inter-type
+    Declarations</firstterm>) allow for redeclaring the target class that it
+    implements a given interface. The probably newly introduced methods
+    (required by the new interface) can by implemented by declaring an advice.
+    If no implementation is defined, an empty placeholder method will be
+    generated automatically to satisfy the contract of the introduced
+    interface.</para>
+
+    <section>
+      <title>Declaring introductions</title>
+
+      <para>Like advices, introductions are declared by annotations. But in
+      contrast to advices, the anchor for an introduction declaration is a
+      property of the aspect class. The annotation tag follows this
+      syntax:</para>
+
+      <para><markup>@introduce <replaceable>NewInterfaceName</replaceable>,
+      <replaceable>PointcutExpression</replaceable></markup></para>
+
+      <para>Although the <replaceable>PoincutExpression</replaceable> is just
+      a normal pointcut expression, which may also refer to named pointcuts,
+      be aware that only expressions filtering for
+      <emphasis>classes</emphasis> make sense. You cannot use the
+      <function>method()</function> pointcut designator in this context and
+      will typically take the <function>class()</function> designator
+      instead.</para>
+
+      <para>The following example introduces a new interface
+      <interfacename>NewInterface</interfacename> to the class
+      <classname>OldClass </classname>and also provides an implementation of
+      the method <methodname>newMethod</methodname>.</para>
+
+      <example>
+        <title>Declaring introductions</title>
+
+        <programlisting language="php">/**
+ * An aspect for demonstrating introductions
+ *
+ * @package MyPackage
+ * @aspect
+ */
+class T3_MyPackage_IntroductionAspect {
+
+   /**
+    * Introduces T3_MyPackage_NewInterface to the class T3_MyPackage_OldClass:
+    *
+    * @introduce T3_MyPackage_NewInterface, class(T3_MyPackage_OldClass)
+    */
+   public $newInterface;
+
+   /**
+    * Around advice, implements the new method "newMethod" of the "NewInterface" interface
+    *
+    * @param  T3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @return void
+    * @around method(T3_MyPackage_OldClass-&gt;newMethod())
+    */
+   public function newMethod(T3_FLOW3_AOPJoinPointInterface $joinPoint) {
+         // We call the advice chain, in case any other advice is declared for this method,
+         // but we don't care about the result. 
+      $someResult = $joinPoint-&gt;getAdviceChain-&gt;proceed($joinPoint);
+
+      $a = $joinPoint-&gt;getMethodArgument('a');
+      $b = $joinPoint-&gt;getMethodArgument('b');
+      return $a + $b;
+   }
+}</programlisting>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Implementation details</title>
+
+    <para></para>
+
+    <section>
+      <title>AOP proxy mechanism</title>
+
+      <para>The following diagram illustrates the building process of a proxy
+      class:</para>
+
+      <figure>
+        <title>Proxy building process</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="AOPFramework_ProxyBuildingProcess.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+      </figure>
+    </section>
+
+    <section>
+      <title>Programmatic declarations</title>
+
+      <para></para>
+    </section>
+  </section>
+
+  <section>
+    <title>Further resources</title>
+
+    <para></para>
+
+    <section>
+      <title>Other AOP frameworks</title>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Books and articles</title>
+
+      <para></para>
+    </section>
+  </section>
+</section>

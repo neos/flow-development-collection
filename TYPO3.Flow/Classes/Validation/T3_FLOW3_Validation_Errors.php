@@ -1,0 +1,31 @@
+<?php
+declare(encoding = 'utf-8');
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * Objects of this kind contain a list of validation errors which occurred during
+ * validation.
+ * 
+ * @package		FLOW3
+ * @subpackage	Validation
+ * @version 	$Id:T3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright	Copyright belongs to the respective authors
+ * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class T3_FLOW3_Validation_Errors extends ArrayObject {
+
+}
+
+?>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:ns6="http://www.w3.org/1999/xlink"
+         xmlns:ns5="http://www.w3.org/2000/svg"
+         xmlns:ns4="http://www.w3.org/1999/xhtml"
+         xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Packages</title>
+
+  <para>FLOW3 is a package-based system. In fact, FLOW3 itself is just a
+  package as well - but obviously an important one. Packages act as a
+  container for many different purposes: Most of them contain PHP code which
+  adds certain functionality, others only contain documentation and yet other
+  packages consist of templates, images or other resources. The TYPO3 project
+  hosts a package repository (the T3PR) which acts as a convenient hub for
+  interchanging FLOW3 based packages with other community members.</para>
+
+  <note>
+    <para>At the time of this writing the T3PR is still in the planning
+    phase.</para>
+  </note>
+
+  <section>
+    <title>Files and Locations</title>
+
+    <para>The FLOW3 package directory structure follows a certain
+    convention which has the advantage that you don't need to care about any
+    package-related configuration. If you put your files into the right
+    directories, everything will just work.</para>
+
+    <para>The suggested directory layout of a FLOW3 package is shown
+    below:</para>
+
+    <para><variablelist>
+        <varlistentry>
+          <term><filename><replaceable>[PackageName]</replaceable></filename></term>
+
+          <listitem>
+            <variablelist>
+              <varlistentry>
+                <term><filename>Classes</filename></term>
+
+                <listitem>
+                  <para>This directory contains the actual source code for the
+                  package. Package authors are free to add (only!) class or
+                  interface files directly to this directory or add
+                  subdirectories to organize the content if necessary. All
+                  classes or interfaces below this directory are handled by
+                  the autolading mechanism and will be registered at the
+                  component manager automatically (and will thus be considered
+                  "components").</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><filename>Documentation</filename></term>
+
+                <listitem>
+                  <para>Holds the package documentation. Please refer to the
+                  Documentor's Guide for more details about the directories
+                  and files within this directory.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><filename>Meta</filename></term>
+
+                <listitem>
+                  <para>A folder which provides some meta information about
+                  the package.</para>
+
+                  <variablelist>
+                    <varlistentry>
+                      <term><filename>PackageInfo.xml</filename></term>
+
+                      <listitem>
+                        <para>This mandatory file contains some basic
+                        information about the package, such as title,
+                        description, author, constraints, version number and
+                        more. You should take great care to keep this
+                        information updated.</para>
+                      </listitem>
+                    </varlistentry>
+                  </variablelist>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><filename>Resources</filename></term>
+
+                <listitem>
+                  <para>Contains static resources the package needs, such as
+                  library code, template files, graphics, ...</para>
+
+                  <variablelist>
+                    <varlistentry>
+                      <term><filename>Media</filename></term>
+
+                      <listitem>
+                        <para>This directory holds images, PDF, Flash, CSS and
+                        other files that will be delivered to the client
+                        directly without further processing. The content of
+                        this directory will be copied into the content
+                        repository and propagated to the
+                        <filename>FileCache</filename> automatically by the
+                        resource manager. You're free to create subdirectories
+                        as they become necessary.</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>Templates</filename></term>
+
+                      <listitem>
+                        <para>Template files used by the package should go
+                        here. If a user wants to modify the template it will
+                        end up elsewhere and should be pointed to by some
+                        configuration setting.</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>PHP</filename></term>
+
+                      <listitem>
+                        <para>Should hold any PHP code that is an external
+                        library which should not be handled by the component
+                        manager (at least not by default), is of procedural
+                        nature or doesn't belong into the classes directory
+                        for any other reason.</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>Java</filename></term>
+
+                      <listitem>
+                        <para>Should hold any Java code needed by the package.
+                        Repeat and rinse for Smalltalk, Modula, Pascal, ...
+                        <literal>;)</literal></para>
+                      </listitem>
+                    </varlistentry>
+                  </variablelist>
+
+                  <para>More directories can be added as needed.</para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><filename>Tests</filename></term>
+
+                <listitem>
+                  <para>Holds the unit tests for the package. Testcases will
+                  be recognized by the <package>Testing</package> package if
+                  they follow the require naming convention. </para>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
+    <para>As already mentioned, all classes which are found in the
+    <filename>Classes</filename> directory will be detected and registered.
+    However, this only works if you follow the naming rules equally for the
+    classname as well as the file name. An example for a valid class name is
+    be <classname>T3_MyPackage_Controller_Default</classname> while the file
+    containing this class would be named
+    "<filename>T3_MyPackage_Controller_Default.php"</filename>.</para>
+
+    <para>All details about naming files, classes, methods and variables
+    correctly can be found in the FLOW3 Coding Guidelines. You're highly
+    encouraged to read (and follow) them.</para>
+  </section>
+
+  <section>
+    <title>Package Keys</title>
+
+    <para>Package keys are used to uniquely identify packages and provide them
+    with a namespace for different purposes. The save you from conflicts
+    between packages which were provided by different parties.</para>
+
+    <para>Any public package needs to have a unique packge key which you need
+    to register at <link ns6:href="http://typo3.org">typo3.org</link> prior to
+    use. But even if you develop a package for private use only, it's clever
+    to register a package key for it.</para>
+
+    <note>
+      <para>At the time of this writing the package key registration has not
+      yet been implemented and you therefore can't register package keys. Just
+      get in touch with the FLOW3 core team in case you need one.</para>
+    </note>
+  </section>
+
+  <section>
+    <title>Importing and Installing Packages</title>
+
+    <para>At this time the features for import and installation of packages
+    have not been implemented. The current behaviour is that all directories
+    which are found below the <filename>Packages</filename> folder are assumed
+    to be packages and are active by default. Just make sure that you created
+    a <filename>PackageInfo.xml</filename> file in the
+    <filename>Meta</filename> directory of your package.</para>
+  </section>
+
+  <section>
+    <title>Package Manager</title>
+
+    <para>The Package Manager is in charge of downloading, installing,
+    configuring and activating packages and registers their components and
+    resources.</para>
+
+    <note>
+      <para>In its current form, the package manager only provides the basic
+      functionality which is necessary to use packages and their components.
+      More advanced features like installing or configuring packages are of
+      course planned.</para>
+    </note>
+  </section>
+
+  <section>
+    <title>Creating a New Package</title>
+
+    <para>For the time being just create the package folder and subdirectories
+    manually and copy &amp; adapt a <filename>PackageInfo.xml</filename> file
+    from one of the other packages. Apart from that no further steps are
+    necessary.</para>
+  </section>
+
+  <section>
+    <title>Package Meta Information</title>
+
+    <para>All packages need to provide some meta information to the package
+    manager. This data is stored in a file called
+    <filename>PackageInfo.xml</filename> which resides in the
+    <filename>Meta</filename> directory of a package. We haven't agreed on a
+    file schema for this file, so, for the time being, just make sure that the
+    file is there and at least contains the correct package key, title and
+    probably a description. Dependencies are not checked yet.</para>
+
+    <para>Here is an example of a <filename>PackageInfo.xml</filename>
+    file:</para>
+
+    <example>
+      <title>PackageInfo.xml (preliminary schema)</title>
+
+      <programlisting>
+&lt;packageInfo&gt;
+   &lt;packageKey&gt;FLOW3&lt;/packageKey&gt;
+   &lt;version&gt;0.0.1&lt;/version&gt;
+   &lt;title&gt;FLOW3 Framework&lt;/title&gt;
+   &lt;description&gt;The FLOW3 Framework is really powerful.&lt;/description&gt;
+   &lt;category&gt;system&lt;/category&gt;
+   &lt;authorName&gt;Robert Lemke&lt;/authorName&gt;
+     &lt;authorEmail&gt;robert@typo3.org&lt;/authorEmail&gt;
+   &lt;authorCompany/&gt;
+&lt;/packageInfo&gt;
+      </programlisting>
+    </example>
+  </section>
+</section>

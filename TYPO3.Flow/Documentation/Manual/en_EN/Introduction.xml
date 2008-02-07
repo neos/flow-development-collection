@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:ns6="http://www.w3.org/1999/xlink"
+         xmlns:ns5="http://www.w3.org/2000/svg"
+         xmlns:ns4="http://www.w3.org/1999/xhtml"
+         xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Introduction</title>
+
+  <para>FLOW3 is a PHP-based application framework. It is especially
+  well-suited for enterprise-grade applications and explicitly supports
+  Domain-Driven Design, a powerful software design philosophy. Convention over
+  configuration, Test-Driven Development, Continuous Integration and an
+  easy-to-read source code are other important principles we follow for the
+  development of FLOW3.</para>
+
+  <para>Although we created FLOW3 as the foundation for the TYPO3 Content
+  Management System its approach is general enough to be useful as a basis for
+  any other PHP application. We're happy to share the FLOW3 framework with
+  the whole PHP community and are looking forward to the hundreds of new
+  features and enhancements contributed as packages by other enthusiastic
+  developers. In fact most of the packages which will be developed for the
+  TYPO3 CMS can be used in any other FLOW3-based application. In essence
+  this reflects the vision of the TYPO3 project: "Inspiring People to
+  Share".</para>
+
+  <para>This reference describes all features of FLOW3 and provides you
+  with in-depth information. If you'd like to get a feeling for FLOW3 and
+  get started quickly, we suggest that you try out our Getting Started
+  tutorial first.</para>
+
+  <note>
+    <para>Please note that FLOW3 is still under heavy development. Although
+    we hope that the documentation is at least accurate and up to date, it is
+    by no means complete and most likely not proof-read. If you find errors or
+    would like to help us improving the documentation, we're happy to hear
+    from you on our mailing list!</para>
+  </note>
+
+  <section>
+    <title>Overview</title>
+
+    <para>The FLOW3 framework is composed of a the following
+    submodules:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The <emphasis>Package</emphasis> Manager allows you to download,
+        install, configure and uninstall packages. It takes care of the
+        packages and registers their components and resources.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Component</emphasis> Manager is in charge of
+        building, caching and combining objects, which in this context are
+        called <firstterm>components</firstterm>.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Resource</emphasis> Manager contains functions for
+        providing, caching, securing and retrieving resources.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>MVC</emphasis> Framework takes care of requests
+        and responses and provides you with a powerful, easy-to use
+        Model-View-Controller implementation.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Error</emphasis> module handles errors and
+        exceptions and provides utility classes for this purpose.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Validation</emphasis> module provides a validation
+        and filtering framework with built-in rules as well as support for
+        custom validation of any object.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Property</emphasis> module implements the concept
+        of property editors and is used for setting and retrieving object
+        properties.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Reflection</emphasis> API complements PHP's
+        built-in reflection support by advanced annotation handling.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>AOP</emphasis> Framework enables you to use the
+        powerful techniques of <firstterm>Aspect Oriented
+        Programming</firstterm>.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Security</emphasis> Framework enforces security
+        policies and provides an API for managing those.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Utility</emphasis> module is a library of useful
+        general-purpose functions for file handling, algorithms, environment
+        abstraction and more.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>If you are overwhelmed by the amount of information in this
+    reference, just keep in mind that you don't need to know all of it to
+    write your own FLOW3 packages. You can always come back and look up a
+    specific topic once you need to know about it - that's what references are
+    for, aren't they? But even if you don't need to know everything, we
+    recommend that you get familiar with the concepts of each module and read
+    the whole manual. This way you make sure that you don't miss any of the
+    great features FLOW3 provides and hopefully feel inspired to produce
+    clean and easy-maintainable code.</para>
+
+    <tip>
+      <para>A strong coffee helps most people over even the longest
+      documentation.</para>
+    </tip>
+  </section>
+
+  <section>
+    <title>Is FLOW3 for me?</title>
+
+    <para>- to be written -</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>clean and intuitive architecture</para>
+      </listitem>
+
+      <listitem>
+        <para>human readable code</para>
+      </listitem>
+
+      <listitem>
+        <para>specifically supports modern programming paradigms</para>
+      </listitem>
+
+      <listitem>
+        <para>designed for large and complex applications</para>
+      </listitem>
+
+      <listitem>
+        <para>fast results, comparable to rails</para>
+      </listitem>
+
+      <listitem>
+        <para>hides database - only objects / content repository</para>
+      </listitem>
+
+      <listitem>
+        <para>package based - package repository with large community</para>
+      </listitem>
+
+      <listitem>
+        <para>backed by the T3A</para>
+      </listitem>
+
+      <listitem>
+        <para>enterprise the PHP way</para>
+      </listitem>
+
+      <listitem>
+        <para>kickstarter</para>
+      </listitem>
+
+      <listitem>
+        <para>...</para>
+      </listitem>
+    </itemizedlist>
+  </section>
+
+  <section>
+    <title>Domain-Driven Design</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Inverse of Control</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Aspect-Oriented Programming</title>
+
+    <para></para>
+  </section>
+</section>

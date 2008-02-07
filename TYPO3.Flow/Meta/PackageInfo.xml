@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<packageInfo>
+	<packageKey>FLOW3</packageKey>
+	<version>0.0.1</version>
+	<title>FLOW3</title>
+	<description>The FLOW3 Framework</description>
+	<category>system</category>
+	<authorName>Robert Lemke</authorName>
+	<authorEmail>robert@typo3.org</authorEmail>
+	<authorCompany/>
+	<constraints>
+		<depends>
+			<package atLeastVersion="5.2.0">php</package>
+		</depends>
+		<conflicts/>
+		<suggests/>
+	</constraints>
+</packageInfo>	

@@ -1,0 +1,1297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:xl="http://www.w3.org/1999/xlink"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+         xmlns:svg="http://www.w3.org/2000/svg"
+         xmlns:ns="http://docbook.org/ns/docbook"
+         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+  <title>Component Manager</title>
+
+  <para>All objects are controlled centrally by the Component Manager. It
+  implements the <firstterm>Inversion of Control</firstterm>
+  (<acronym>IoC</acronym>) principle and provides some additional features
+  such as a caching mechanism for objects. Because all packages are built on
+  this foundation it is important to understand the general idea of components
+  and the container. This chapter introduces the basic principles behind the
+  Component Manager.</para>
+
+  <tip>
+    <para>A very good start to understand the idea of Inversion of Control and
+    <firstterm>Dependency Injection</firstterm> is reading <link
+    xl:href="http://martinfowler.com/articles/injection.html">Martin Fowler's
+    article</link> on the topic.</para>
+  </tip>
+
+  <section>
+    <title>If you remember only one thing</title>
+
+    <para>If the IoC principle, Dependency Injection and components are all
+    new to you, you'll surely need some time getting used to these new
+    approaches. But don't worry - you can even ignore the idea behind it and
+    still produce acceptable code. If you remember only one thing about
+    components, please let it be this section. There are a few rules you have
+    to follow, even if you don't use the more advanced features.</para>
+
+    <para><orderedlist>
+        <listitem>
+          <para><emphasis>Use <function>getComponent()</function> instead of
+          the <function>new</function> operator!</emphasis></para>
+
+          <para>The instantiation of classes must be handled by the Component
+          Manager. Therefore if you have to instantiate a class or need an
+          existing instance of a class, use the Component Manager's API for
+          retrieving one:</para>
+
+          <example>
+            <title>Don't use the new operator</title>
+
+            <programlisting language="php">   // Avoid this:
+$myObject = new T3_MyPackage_MyClassName;</programlisting>
+          </example>
+
+          <example>
+            <title>Ask the Component Manager instead</title>
+
+            <programlisting language="php">class T3_MyPackage_SomeClass {
+
+   protected $componentManager;
+
+   public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
+      $this-&gt;componentManager = $componentManager;
+   }
+
+   public function someFunction() {
+      $myObject = $this-&gt;componentManager-&gt;getComponent('T3_MyPackage_MyClassName');
+   }
+}</programlisting>
+          </example>
+
+          <para>In the above example you ask the Component Manager for the
+          instance of <classname>T3_MyPackage_MyClassName</classname>. In
+          order to get an instance of the Component Manager, just add a
+          parameter to your class constructor as seen in the example - you
+          will automatically get a reference
+          <emphasis>injected</emphasis>.</para>
+        </listitem>
+
+        <listitem>
+          <para><emphasis>Singletons and Prototypes</emphasis></para>
+
+          <para>A <link
+          xl:href="http://en.wikipedia.org/wiki/Singleton_pattern">Singleton</link>
+          is the name of a Design Pattern which ensures that only one instance
+          of a class exists at a time. In PHP you can implement the Singleton
+          pattern by creating a function (usually called
+          <function>getInstance()</function>), which returns a unique instance
+          of your class. Although this way of implementing the Singleton will
+          possibly not conflict with the Component Manager, it is counter
+          productive to the integrity of the system and might raise problems
+          with unit testing (sometimes the Singleton is referred to as a
+          <emphasis>Anti Pattern</emphasis>).</para>
+
+          <para>The Component Manager will, if not configured differently,
+          <emphasis>always return a unique instance</emphasis> of a component.
+          Therefore Singleton is the default behaviour! If you need a fresh
+          instance of your class, you will have to configure the scope of it
+          by adding some annotation to your class:</para>
+
+          <example>
+            <title>Sample scope annotation</title>
+
+            <programlisting language="ini">/**
+ * This is my great class.
+ *
+ * @scope prototype
+ */
+class T3_MyPackage_SomeClass {
+
+}</programlisting>
+          </example>
+        </listitem>
+      </orderedlist></para>
+  </section>
+
+  <section>
+    <title>Components and containers</title>
+
+    <para>The idea to segment software into reusable components which can be
+    easily composed into a whole, is as old as software development itself. It
+    is a tempting idea to just combine ready-made components instead of
+    sorting out code from earlier projects which can hopefully be reused.
+    Although the initial vision of mass-produced software with prefabricated
+    components did not become reality, software componentry is undoubtedly a
+    good thing, something you want your application framework to have support
+    for.</para>
+
+    <para>Since version 3.5, TYPO3 allows anyone to extend the built-in
+    functionality by developing their own extensions. This plugin concept has
+    proven to be very powerful and led to thousands of publicly available
+    extensions contributed by our community. While a plugin based system is
+    usually based on a monolithic core the plugins can hook onto, a component
+    based system is only composed of components itself. FLOW3, the
+    foundation of TYPO3 version 5, is a component based framework giving you
+    lots of opportunities to cleanly extend and modify virtually any part of
+    the system.</para>
+
+    <section>
+      <title>Components</title>
+
+      <para>All PHP classes which are managed by the Component Manager are
+      called Components. Because nearly all classes are managed by the
+      Component Manager, almost all classes in FLOW3 - including
+      third-party extensions - are used as components.<tip>
+          <para>All classes which are found in the
+          <filename>Classes</filename> directory of a package are
+          automatically registered as components (See chapter <olink
+          targetdoc="package-manager">Package Manager</olink>)</para>
+        </tip></para>
+
+      <para>In contrast to plain, standalone classes which are probably only
+      used in a project or two, the development of reusable components
+      requires the author to pay more attention on proper documentation,
+      testing and encapsulation. If a component is well designed, it doesn't
+      expose the internal functions and properties of the class but only
+      allows access through a well-thought API. By following this
+      blackbox-principle, it is much easier to modify the internal behaviour
+      of a component at a later time, because it is always known which
+      functions can be used from outside.</para>
+    </section>
+
+    <section>
+      <title>Container</title>
+
+      <para>In simple, self-contained applications, creating objects is as
+      simple as using the <function>new</function> operator. However, as the
+      program gets more complex, a developer is confronted with solving
+      dependencies to other objects, make classes configurable (maybe through
+      a factory method) and finally assure a certain scope for the object
+      (such as <firstterm>Singleton</firstterm> or
+      <firstterm>Prototype</firstterm>). <personname>
+      <firstname>Howard</firstname> <othername>Lewis</othername>
+      <surname>Ship</surname> </personname>explained this circumstances nicely
+      in <link
+      xl:href="http://tapestryjava.blogspot.com/2004/08/dependency-injection-mirror-of-garbage.html">his
+      blog</link> (quite some time ago):</para>
+
+      <blockquote>
+        <para>Garbage collection is the last stage of an object's life cycle,
+        but there's just as much going on at the start of the object's life
+        cycle. That's why component frameworks and dependency injection
+        containers (such as HiveMind, Spring, Picocontainer and Avalon) are so
+        important.</para>
+
+        <para>[...] Once you start thinking in terms of large numbers of
+        objects, and a whole lot of just-in-time object creation and
+        configuration, the question of <emphasis>how</emphasis> to create a
+        new object doesn't change (that's what <function>new</function> is
+        for) ... but the questions <emphasis>when</emphasis> and
+        <emphasis>who</emphasis> become difficult to tackle. Especially when
+        the <emphasis>when</emphasis> is very dynamic, due to just-in-time
+        instantiation, and the <emphasis>who</emphasis> is unknown, because
+        there are so many places a particular object may be used.</para>
+      </blockquote>
+
+      <para>We as PHP developers don't have to care about garbage collection
+      and we surely wouldn't like to be responsible for it either. However,
+      <emphasis>building</emphasis> objects can be even more complex than
+      <emphasis>destructing</emphasis> them. Therefore the FLOW3 framework
+      manages the whole lifecycle of components for you. The Component Manager
+      is a so called <firstterm>Lightweight Container</firstterm> taking care
+      of object building and dependency resolution. We'll discover shortly why
+      dependency injection makes such a difference to your application
+      design.</para>
+    </section>
+
+    <section>
+      <title>Component Manager API</title>
+
+      <para>The Component Manager provides a lean API for registering,
+      configuring and retrieving instances of components. Some of the methods
+      provided are exclusively used within the <package>FLOW3</package>
+      package or in unit tests and should possibly not be used elsewhere. By
+      offering Dependency Injection, the Component Manager helps you to avoid
+      creating rigid interdependencies between components. It allows for
+      writing code which is hardly or even not at all aware of the framework
+      it is working in.</para>
+
+      <para>Although Dependency Injection is what you should strive for, it
+      might happen that you need to retrieve component instances directly.
+      Instead of using PHP's <function>new</function> operator, you must ask
+      the Component Manager for the instance of a component.</para>
+
+      <para>First, you need an instance of the Component Manager itself and as
+      you have seen in the shortcut example before, one way of getting it is
+      adding a new parameter to your class constructor method:</para>
+
+      <programlisting language="php">public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
+}</programlisting>
+
+      <para>To explicitly retrieve the instance of a component use the
+      <function>getComponent()</function> method:</para>
+
+      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('T3_MyPackage_MyClassName');</programlisting>
+
+      <para>It is possible to pass arguments to the constructor of the
+      component class just by adding them to the
+      <function>getComponent()</function> call:</para>
+
+      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('T3_MyPackage_MyClassName', 'first argument', 'second argument');</programlisting>
+    </section>
+
+    <section>
+      <title>Component names and types</title>
+
+      <para>By default, the name of a component is identical to the PHP class
+      which implements the component's functions. A class called
+      <classname>T3_MyPackage_MyImplementation</classname> will be
+      automatically available as a component with the exact same name. Every
+      part of the system which asks for a component instance with a certain
+      name will therefore - by default - get an instance of the class of that
+      name. It is possible to replace the original implementation of a
+      component by another one. In that case the class name of the new
+      implementation will naturally differ from the component name which stays
+      the same at all times.</para>
+
+      <para>If the component name is the same as the name of a PHP interface,
+      it is often referred to as a <emphasis>component type</emphasis>. An
+      interface called <interfacename>T3_MyPackage_MyInterface</interfacename>
+      will be available as a component name as long as there exists at least
+      one class implemententing that interface.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Component dependencies</title>
+
+    <para>The intention to base an application like the TYPO3 CMS on a
+    combination of packages and components is to force a clean separation of
+    domains which are realized by dedicated components. The less each
+    component knows about the internals of another component, the easier it is
+    to modify or replace one of them, which in turn makes the whole system
+    flexible. In a perfect world, each of the components could be reused in a
+    variety of contexts, for example independently from the
+    <package>TYPO3</package> package and maybe even outside the FLOW3
+    framework.</para>
+
+    <section>
+      <title>Dependency Injection</title>
+
+      <para>An important prerequisite for resuable code is already met by
+      encouraging encapsulation through the components approach. However, the
+      components are still aware of their environment as they need to actively
+      collaborate with other components and the framework itself: An
+      authentication component will need a logger for logging intrusion
+      attempts and the code of a shop system hopefully consists of more than
+      just one class. Whenever a component refers to another directly, it adds
+      more complexity and removes flexibility by opening new
+      interdependencies.</para>
+
+      <para>By introducing <firstterm>Dependency Injection</firstterm>, these
+      interdependencies are minimized by inverting the control: Instead of
+      asking for the instance of a component actively, the depending component
+      just gets one <emphasis>injected</emphasis> by the Component Manager.
+      This methodology is also referred to as the "<link
+      xl:href="http://en.wikipedia.org/wiki/Hollywood_Principle">Hollywood
+      Principle</link>": <quote>Don't call us, we'll call you.</quote>. It
+      helps in the development of code with loose coupling and high cohesion –
+      or in short: It makes you a better programmer.</para>
+
+      <para>In the context of the previous example it means that the
+      authentication component announces that it needs a logger which
+      implements a certain PHP interface (eg. the
+      <interfacename>T3_Log_LoggerInterface</interfacename>). The component
+      itself has no control over what kind of logger (simple file logger,
+      sms-logger, ...) it finally gets and it doesn't have to care about it
+      anyway as long as it matches the expected API. As soon as the
+      authentication component is instantiated, the component manager will
+      resolve these dependencies, prepare an instance of a logger and inject
+      it to the authentication component.</para>
+
+      <tip>
+        <para><link xl:href="http://www.ddj.com/dept/java/184405016">An
+        article</link> by <personname> <firstname>Jonathan</firstname>
+        <surname>Amsterdam</surname> </personname> discusses the difference
+        between creating an object and requesting one (ie. using
+        <function>new</function> versus using dependency injection). It
+        demonstrates why <function>new</function> should be considered as a
+        low-level tool and outlines issues with polymorphism. He doesn't
+        mention dependency injection though ...</para>
+      </tip>
+
+      <para>Dependencies on other components can be declared in the components
+      configuration (see section about configuring components). Generally
+      there are two modes of dependency injection supported by FLOW3:
+      <firstterm>Constructor Injection</firstterm> and <firstterm>Setter
+      Injection</firstterm>.</para>
+
+      <section>
+        <title>Constructor Injection</title>
+
+        <para>With constructor injection, the dependencies are passed as
+        constructor arguments to the depending component while it is
+        instantiated. Here is an example of the authentication component which
+        depends on a logger component:</para>
+
+        <example>
+          <title>A simple example for Constructor Injection</title>
+
+          <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+
+   protected $logger;
+
+   public function __construct(T3_Log_LoggerInterface $logger) {
+      $this-&gt;logger = $logger;
+   }
+
+   public function authenticate($credentials) {
+      $this-&gt;logger-&gt;log('tried to authenticate');
+   }
+}</programlisting>
+        </example>
+
+        <para>So far there's nothing special about this class, it just makes
+        sure that an instance of a class implementing the
+        <interfacename>T3_Log_LoggerInterface</interfacename> is passed to the
+        constructor. However, this is already a quite flexible approach
+        because the type of logger can be determined from outside by just
+        passing one or the another implementation to the constructor. The next
+        step is instructing the Component Manager to automatically pass a
+        component instance to the constructor whenever the authentication
+        class is instantiated. We do that by defining a little
+        configuration:</para>
+
+        <example>
+          <title>Components.conf file for Constructor Injection</title>
+
+          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+constructorArguments.1.reference = T3_Log_LoggerInterface</programlisting>
+        </example>
+
+        <para>The two lines above define that a component instance of the type
+        <interfacename>T3_Log_LoggerInterface</interfacename> must be passed
+        to the first argument of the constructor when an instance of the
+        component <classname>T3_Authentication_LDAPAuthentication</classname>
+        is created.</para>
+
+        <para>If you are lazy enough, you can even skip the last step and
+        don't configure the component at all! By a mechanism called
+        <firstterm>Autowiring</firstterm> all dependencies declared in a
+        constructor will be injected automagically if the constructor argument
+        provides a type definition (ie.
+        <interfacename>T3_Log_LoggerInterface</interfacename> in the above
+        example). Autowiring is activated by default (but can be switched
+        off), therefore you won't create any constructor reference
+        configuration most of the time.</para>
+      </section>
+
+      <section>
+        <title>Setter Injection</title>
+
+        <para>With setter injection, the dependencies are passed by calling
+        <firstterm>setter methods</firstterm> of the depending component right
+        after it has been instantiated. Here is an example of the
+        authentication component which depends on a logger component - this
+        time with setter injection:</para>
+
+        <example>
+          <title>A simple example for Setter Injection</title>
+
+          <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+
+   protected $someLogger;
+
+   public function authenticate($credentials) {
+      $this-&gt;logger-&gt;log('tried to authenticate');
+   }
+
+   public function setSomeLogger(T3_Log_LoggerInterface $someLogger) {
+      $this-&gt;someLogger = $someLogger;
+   }
+}</programlisting>
+        </example>
+
+        <para>Analog to the constructor injection example, a logger component
+        is injected into the authentication component. In this case, however,
+        the injection only takes place after the class has been instantiated
+        and a possible constructor method has been called. The neccessary
+        configuration for the above example looks like this:</para>
+
+        <example>
+          <title>Components.conf file for Setter Injection</title>
+
+          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
+        </example>
+
+        <para>Unlike constructor injection, setter injection does not offer
+        the autowiring feature. All depedencies have to be declared explicitly
+        in the component configuration.</para>
+
+        <sidebar>
+          <title>Constructor- or Setter Injection?</title>
+
+          <para>The natural question which arises at this point is
+          <quote>Should I use Constructor- or Setter Injection?</quote>. There
+          is no answer across-the-board – it mainly depends on the situation
+          and your preferences. The authors of the Java-based <link
+          xl:href="http://www.springframework.org">Spring Framework</link> for
+          example prefer Setter Injection for its flexibility. The more
+          puristic developers of <link
+          xl:href="www.picocontainer.org">PicoContainer</link> strongly plead
+          for using Constructor Injection for its cleaner approach. If you
+          have the choice, we suggest taking the latter, for the very same
+          reasons the PicoContainer team gives:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Constructor Injection makes a stronger dependency
+              contract</para>
+            </listitem>
+
+            <listitem>
+              <para>It enforces a determinate state of the depending
+              component: In the Setter Injection example above, the logger is
+              only available after the constructor has been called
+              already</para>
+            </listitem>
+
+            <listitem>
+              <para>It allows for autowiring (see section about autowiring)
+              and saves you from writing a lot of configuration</para>
+            </listitem>
+          </itemizedlist>
+
+          <para>However, there might be situations in which constructor
+          injection is not possible or even cumbersome:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>If a component has many dependencies and maybe even many
+              optional depedencies, setter injection might be a better
+              solution.</para>
+            </listitem>
+
+            <listitem>
+              <para>Subclasses are not always in control over the arguments
+              passed to the constructor or might even be incapable of
+              overriding the original constructor (FLOW3's action
+              controller is such a case). Then setter injection is your only
+              chance to get dependencies injected.</para>
+            </listitem>
+
+            <listitem>
+              <para>Setter injection can be helpful to avoid circular
+              dependencies between components.</para>
+            </listitem>
+          </itemizedlist>
+        </sidebar>
+      </section>
+    </section>
+
+    <section>
+      <title>Dependency resolution</title>
+
+      <para>The dependencies between components are only resolved during the
+      instantiation process. Whenever a new instance of a component class
+      needs to be created, the component configuration is checked for possible
+      dependencies. If there is any, the required components are built and
+      only if all dependencies could be resolved, the component class is
+      finally instantiated and the dependency injection takes place.</para>
+
+      <section>
+        <title>Circular dependencies</title>
+
+        <para>During the resolution of dependencies it might happen that
+        circular dependencies occur. If a component A requires a component B
+        to be injected to its constructor and then again component B requires
+        a component A likewise passed as a constructor argument, none of the
+        two classes can be instantiated due to the mutual dependency. Although
+        it is technically possible (albeit quite complex) to solve this type
+        of reference, FLOW3's policy is not to allow circular dependencies
+        at all. As a workaround you can use Setter Injection instead of
+        Constructor Injection for either one or both of the components causing
+        the trouble.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Configuring components</title>
+
+    <para>The behaviour of components significantly depends on their
+    configuration. During the initialization process all classes found in the
+    various <filename>Classes/</filename> directories are registered as
+    components and an initial configuration is prepared. In a second step,
+    other configuration sources are queried for additional configuration
+    options. Definitions found at these sources are added to the base
+    configuration in the following order:</para>
+
+    <orderedlist>
+      <listitem>
+        <para>If it exists, the file
+        <filename><replaceable>PackageName</replaceable>/Classes/Components.conf</filename>
+        will be parsed and the configuration applied.</para>
+      </listitem>
+
+      <listitem>
+        <para>If it exists, the file
+        <filename><replaceable>PackageName</replaceable>/Classes/ComponentsConfiguration.php</filename>
+        will be included. PHP code found in that file will be executed and
+        allows for programatically modfying the components
+        configuration</para>
+      </listitem>
+
+      <listitem>
+        <para>Additional configuration defined through the component manager
+        user interface will be applied. <remark>This feature has not been
+        implemented yet!</remark></para>
+      </listitem>
+    </orderedlist>
+
+    <para>Currently there are three important situations in which you want to
+    configure components:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Override one component implementation with another</para>
+      </listitem>
+
+      <listitem>
+        <para>Set the active implementation for a component type</para>
+      </listitem>
+
+      <listitem>
+        <para>Define dependencies to other components</para>
+      </listitem>
+    </itemizedlist>
+
+    <section>
+      <title>Configuration sources</title>
+
+      <para>As already mentioned, the configuration for each component is
+      compiled from different sources. The
+      <filename>Components.conf</filename> file is probably the most
+      frequently used of them and is therefore used in most of the examples.
+      However, the names of the configuration options and their possible
+      values are identical to all configuration sources.</para>
+
+      <section>
+        <title>Components.conf format</title>
+
+        <para>The <filename>Components.conf</filename> file basically follows
+        the .ini file format. Although this format is not standardized, it is
+        usually well known and widely used. The following example demonstrates
+        the syntax:</para>
+
+        <example>
+          <title>A sample Components.conf file</title>
+
+          <para><programlisting>; An example for a Components.conf file
+;
+# Comments may either start with a semicolon or
+# a hash sign.
+
+[<replaceable>Component Name</replaceable>]
+<replaceable>optionName</replaceable> = <replaceable>optionValue</replaceable>
+<replaceable>optionName</replaceable> = "<replaceable>option Value with non-alphanumeric chars</replaceable>"
+</programlisting></para>
+        </example>
+
+        <para><note>
+            <para>Internally the <filename>Components.conf</filename> files
+            are parsed with PHP's built-in <function>parse_ini_file</function>
+            function. Please refer to the <link
+            xl:href="http://www.php.net/manual/en/function.parse-ini-file.php">PHP
+            manual</link> for more details.</para>
+          </note></para>
+      </section>
+
+      <section>
+        <title>ComponentsConfiguration.php</title>
+
+        <para>As an alternative to the <filename>Components.conf</filename>
+        file, it is possible to configure components programatically. If a
+        file named <filename>ComponentsConfiguration.php</filename> exists in
+        the <filename>Classes</filename> directory of a package, it will be
+        included during the configuration process (ie. before the first
+        component class is instantiated!). In general, the PHP file may
+        contain any code which prepares the environment or configuration for
+        the components of its package.</para>
+
+        <para>The following code adds the same configuration as in the
+        Constructor Injection example which will be used in the next
+        sections:</para>
+
+        <example>
+          <title>Sample ComponentsConfiguration.php file</title>
+
+          <programlisting language="php">&lt;?php
+declare(encoding = 'utf-8');
+
+   // Alter the component configuration:
+$configuration = $parsedComponentConfigurations['T3_Authentication_LDAPAuthentication'];
+
+$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(1, 'T3_Log_LoggerInterface', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(2, 'T3_Log_LDAPServerInterface', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(3, 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH');
+
+$parsedComponentConfigurations['T3_Authentication_LDAPAuthentication'] = $configuration;
+unset($configuration);
+
+?&gt;</programlisting>
+        </example>
+
+        <note>
+          <para>During the configuration process the
+          <filename>ComponentsConfiguration.php</filename> is included by a
+          class called
+          <classname>T3_FLOW3_Package_PHPFileComponentsConfigurationSource</classname>.
+          You should read the source code of that class (which is located in
+          the <filename>Packages/FLOW3/Package/</filename> directory)
+          before you create your own PHP-based configuration. It is a good
+          habit to unset any variables you might have created in the course of
+          your code.</para>
+        </note>
+
+        <caution>
+          <para>Don't register autoloader methods in the
+          <filename>ComponentsConfiguration.php</filename> as this code must
+          be invoked in an earlier stage. The
+          <filename>PackageConfiguration.php</filename> is the right place for
+          registering autoloaders.</para>
+        </caution>
+      </section>
+
+      <section>
+        <title>Annotations</title>
+
+        <para>A very convenient way to configure certain attributes of
+        components are annotations. You write down the configuration directly
+        where it takes effect: in the class file. However, this way of
+        configuring components is not really flexible, as it is hard coded.
+        That's why currently only the <property>scope</property> option can be
+        set through annotations. It's up to you defining the scope in the
+        class directly or doing it in a Components.conf file – both have the
+        same effect. We recommend using annotations in this case, as the scope
+        usually is a design decision which is very unlikely to be
+        changed.</para>
+
+        <example>
+          <title>Sample scope annotation</title>
+
+          <programlisting language="ini">/**
+ * This is my great class.
+ *
+ * @scope prototype
+ */
+class T3_MyPackage_SomeClass {
+
+}</programlisting>
+        </example>
+      </section>
+    </section>
+
+    <section>
+      <title>Overriding components</title>
+
+      <para>One advantage of componentry is the ability to replace components
+      by others without any bad impact on those parts depending on them. A
+      prerequisite for replaceable components is that their classes implement
+      a common <link
+      xl:href="http://www.php.net/manual/en/language.oop5.interfaces.php">interface</link>
+      which defines the public API of the original component. Other components
+      which implement the same interface can then act as a true replacement
+      for the original component without the need to change code anywhere in
+      the system. If this requirement is met, the only neccessary step to
+      replace the original implementation with a substitute is to alter the
+      component configuration and set the classname to the new
+      implementation.</para>
+
+      <para>To illustrate this circumstance, consider the following
+      classes:</para>
+
+      <example>
+        <title>A simple Greeter class</title>
+
+        <programlisting language="php">class T3_MyPackage_Greeter {
+   public function sayHelloTo($name) {
+      echo('Hello ' . $name);
+   }
+}</programlisting>
+      </example>
+
+      <para>During initialization above class will automatically be registered
+      as the component <classname>T3_MyPackage_Greeter</classname> and is
+      available to other components. In the code of another component you
+      might find these lines:</para>
+
+      <example>
+        <title>Code using the component T3_MyPackage_Greeter</title>
+
+        <programlisting language="php">   // Explicitly fetch an instance of the T3_MyPackage_Greeter component:
+$greeter = $componentManager-&gt;getComponent('T3_MyPackage_Greeter');
+
+   // Say hello to Heike:
+$greeter-&gt;sayHelloTo('Heike');
+</programlisting>
+      </example>
+
+      <para>Great, that looks all fine and dandy but what if we want to use
+      the much better component
+      <classname>T3_OtherPackage_GreeterWithCompliments</classname>? Well, you
+      just configure the component <classname>T3_MyPackage_Greeter</classname>
+      to use a different class:</para>
+
+      <example>
+        <title>Components.conf file for component replacement</title>
+
+        <programlisting language="ini">[T3_MyPackage_Greeter]
+
+   # Change the name of the class which represents the component "T3_MyPackage_Greeter":
+className = T3_OtherPackage_GreeterWithCompliments</programlisting>
+      </example>
+
+      <para>Now all components who ask for a traditional greeter will get the
+      more polite version. However, there comes a sour note with the above
+      example: We can't be sure that the
+      <classname>GreeterWithCompliments</classname> class really provides the
+      neccessary <function>sayHello()</function> method. The solution is to
+      let both implementations implement the same interface:</para>
+
+      <example>
+        <title>The Greeter component type</title>
+
+        <programlisting>interface T3_MyPackage_GreeterInterface {
+   public function sayHelloTo($name);
+}
+
+class T3_MyPackage_Greeter implements T3_MyPackage_GreeterInterface {
+   public function sayHelloTo($name) {
+      echo('Hello ' . $name);
+   }
+}
+
+class T3_OtherPackage_GreeterWithCompliments implements T3_MyPackage_GreeterInterface{
+   public function sayHelloTo($name) {
+      echo('Hello ' . $name . '! You look so great!');
+   }
+}</programlisting>
+      </example>
+
+      <para>Instead of referring to the original implementation directly we
+      can now refer to the interface. In this case we call the component name
+      a <emphasis>component type</emphasis> because it contains the name of a
+      PHP interface.</para>
+
+      <example>
+        <title>Code using the component type
+        T3_MyPackage_GreeterInterface</title>
+
+        <programlisting>   // Explicitly fetch an instance of any implementation of the T3_MyPackage_GreeterInterface component type:
+$greeter = $componentManager-&gt;getComponent('T3_MyPackage_GreeterInterface');
+
+   // Say hello to Heike:
+$greeter-&gt;sayHelloTo('Heike');
+</programlisting>
+      </example>
+
+      <para>Finally we have to set which implementation of the
+      <interfacename>T3_MyPackage_GreeterInterface</interfacename> should be
+      active:</para>
+
+      <example>
+        <title>Components.conf file for component type definition</title>
+
+        <para><programlisting>[T3_MyPackage_GreeterInterface]
+className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>Component types</title>
+
+      <para>Any interface found in the <filename>Classes/</filename> directory
+      will equally be registered as a component if at least one class within
+      the same package was found that implements this interface. The first
+      class found in the package which implements the interface is considered
+      to be the default implementation and the component's
+      <option>className</option> option is set accordingly. Of course it is
+      still possible that the class name is defined explicitly in the
+      <filename>Components.conf</filename> file or any other configuration
+      source. This is especially important if more than one implementing class
+      exists.</para>
+    </section>
+
+    <section>
+      <title>Configuration inheritance</title>
+
+      <remark>This section still has to be written ... See <link
+      xl:href="http://5-0.dev.typo3.org/trac/TYPO3/ticket/11">ticket
+      #11</link></remark>
+    </section>
+
+    <section>
+      <title>Injecting properties and constructor arguments</title>
+
+      <para>As mentioned earlier, the Component Manager allows for injection
+      of straight values or references (ie. dependencies) either by passing
+      them as constructor arguments during instantiation of the component
+      class or by calling a setter method which sets the wished property
+      accordingly. The following sections demonstrate how to pass values and
+      define dependencies to other components.</para>
+
+      <section>
+        <title>Straight values and references</title>
+
+        <para>Regardless of what injection type is used, there are two kinds
+        of value which can be injected:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para><emphasis>Straight values</emphasis> are static values of a
+            simple type. They can be strings, integers, booleans, array or
+            even custom objects (ie. objects which are not handled by the
+            Component Manager) and are passed on as they are.</para>
+          </listitem>
+
+          <listitem>
+            <para><emphasis>References</emphasis> are names of components (or
+            component types) which represent dependencies to other components.
+            Dependencies are resolved and an instance of the component is
+            passed along.</para>
+          </listitem>
+        </itemizedlist>
+      </section>
+
+      <section>
+        <title>Constructor Injection</title>
+
+        <para>The following class and the related
+        <filename>Components.conf</filename> file demonstrate the syntax for
+        the definition of Constructor Injection:</para>
+
+        <example>
+          <title>Sample class for Constructor Injection</title>
+
+          <para><programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+
+   protected $logger;
+   protected $LDAPServer;
+   protected $distinguishedName = '';
+
+   public function __construct(T3_Log_LoggerInterface $logger, T3_LDAP_LDAPServerInterface $LDAPServer, $distinguishedName) {
+      $this-&gt;logger = $logger;
+      $this-&gt;LDAPServer = $LDAPServer;
+      $this-&gt;distinguishedName = $distinguishedName;
+   }
+
+   public function authenticate(T3_Authentication_CredentialsInterface $credentials) {
+      $this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
+      $this-&gt;logger-&gt;log('tried to authenticate');
+   }
+}</programlisting></para>
+        </example>
+
+        <example>
+          <title>Sample configuration for Constructor Injection</title>
+
+          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+
+  ; Inject two component references as the first two arguments:
+constructorArguments.1.reference = T3_Log_LoggerInterface
+constructorArguments.2.reference = T3_LDAP_LDAPServerInterface
+
+  ; Inject a straight value as the third argument:
+constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
+        </example>
+
+        <note>
+          <para>It is usually not necessary to configure injection of
+          references explicitly. It is much more convient to just declare the
+          type of the constructor arguments (like
+          <interfacename>T3_Log_LoggerInterface</interfacename> and
+          <interfacename>T3_LDAP_LDAPServerInterface in the above example) and
+          let the Autowiring feature configure and resolve the dependencies
+          for you.</interfacename></para>
+        </note>
+      </section>
+
+      <section>
+        <title>Setter Injection</title>
+
+        <para>The following class and the related
+        <filename>Components.conf</filename> file demonstrate the syntax for
+        the definition of Setter Injection:</para>
+
+        <example>
+          <title>Sample class for Setter Injection</title>
+
+          <para><programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+
+   protected $logger;
+   protected $LDAPServer;
+   protected $distinguishedName = '';
+
+   public function authenticate(T3_Authentication_CredentialsInterface $credentials) {
+      $this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
+      $this-&gt;logger-&gt;log('tried to authenticate');
+   }
+
+   public function setLogger(T3_Log_LoggerInterface $logger) {
+      $this-&gt;logger = $logger;
+   }
+
+   public function setLDAPServer(T3_LDAP_LDAPServerInterface $LDAPServer) {
+      $this-&gt;LDAPServer = $LDAPServer;
+   }
+
+   public function setProperty($propertyName, $value) {
+      if (array_search($propertyName, array('distinguishedName')) !== FALSE) {
+         $this-&gt;$propertyName = $value;
+      }
+   }
+
+}</programlisting></para>
+        </example>
+
+        <example>
+          <title>Sample configuration for Setter Injection</title>
+
+          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+
+  ; Inject two component references:
+properties.logger.reference = T3_Log_LoggerInterface
+properties.LDAPServer.reference = T3_LDAP_LDAPServerInterface
+
+  ; Inject a straight value as the third argument:
+properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
+        </example>
+
+        <para>As you can see, it is important that a setter method with the
+        same name as the property, preceeded by "set" exists or the setting is
+        handled by a generic method called
+        <methodname>setProperty()</methodname>.</para>
+      </section>
+    </section>
+  </section>
+
+  <section>
+    <title>Instantiating components</title>
+
+    <para>In order to accomplish all the tasks connected with Dependency
+    Injection and other advanced features, FLOW3 must take full control
+    over the instantiation of the component classes. Usually it's sufficient
+    to know that you have to either retrieve an instance manually with the
+    <function>getComponent</function> method or get them injected by the
+    Component Manager. From the component's point of view, a few options may
+    be set to take influence on the instantiation of its class. This section
+    explains these configuration options and finally outlines the
+    instantiation process as a whole.</para>
+
+    <section>
+      <title>Scopes</title>
+
+      <para>The objects created by the Component Manager all exist in a
+      certain <firstterm>scope</firstterm>. By default, an instance of a
+      component class is unique which makes sure that the exact same object is
+      returned whenever the Component Manager is asked for a specific
+      component. This default scope is called
+      <firstterm>Singleton</firstterm>. Of course other scopes are supported
+      as well:</para>
+
+      <table>
+        <title>Supported scopes</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Scope</entry>
+
+              <entry align="center">Description</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>singleton (default)</entry>
+
+              <entry>The component instance is unique during one request -
+              each <function>getComponent call</function> returns the same
+              instance. A request can be an HTTP request or a run initiated
+              from the command line.</entry>
+            </row>
+
+            <row>
+              <entry>prototype</entry>
+
+              <entry>The component instance is not unique - each
+              <function>getComponent call</function> returns a fresh
+              instance.</entry>
+            </row>
+
+            <row>
+              <entry>session <remark>Not yet implemented</remark></entry>
+
+              <entry>The component instance is unique during the whole user
+              session - each <function>getComponent</function> call returns
+              the same instance.</entry>
+            </row>
+
+            <row>
+              <entry>content <remark>Not yet implemented</remark></entry>
+
+              <entry>The component instance is persisted in a Content
+              Repository.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>A great feature of the Component Manager is that components don't
+      have to implement their own mechanism for administrating their scope -
+      it only has to be configured. The following example contains
+      configurations for three components, all living in a different
+      scope:</para>
+
+      <example>
+        <title>Sample Components.conf with different scopes</title>
+
+        <para><programlisting language="ini">[T3_MyPackage_ASingletonClass]
+scope = singleton
+
+[T3_MyPackage_APrototypeClass]
+scope = prototype
+
+[T3_MyPackage_ASessionClass]
+scope = session</programlisting></para>
+      </example>
+
+      <note>
+        <para>Unlike in the above example, the recommended way to define the
+        scope of a component is the <property>@scope</property>
+        annotation.</para>
+      </note>
+    </section>
+
+    <section>
+      <title>Passing constructor arguments</title>
+
+      <para>In most cases a component class will live in the Singleton scope
+      and at most requires a few dependencies passed to its constructor.
+      However, there are times when it becomes neccessary to pass dynamic
+      values as constructor arguments, especially when the component
+      represents an entity and its instances are not unique (Prototype scope).
+      Consider the following classes:</para>
+
+      <example>
+        <title>A simple addressbook</title>
+
+        <programlisting language="php">class T3_Address_Adressbook {
+
+   protected $addresses = array();
+   
+   public __construct(T3_iCal_iCalConnectorInterface $iCalConnector) {
+      ...
+   }
+
+   public addAddress(T3_Address_Address $address) {
+      $this-&gt;addresses[] = $address;
+   }
+
+}
+
+class T3_Address_Address {
+   
+   public __construct($street, $zip, $town, $country) {
+      ...
+   }
+}</programlisting>
+      </example>
+
+      <para>This is admittedly not the fanciest implementation of an
+      addressbook, but it should demonstrate two things:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>The class <classname>T3_Address_Addressbook</classname> is
+          supposed to be a Singleton and obviously depends on a third
+          component type <classname>T3_iCal_iCalConnectorInterface</classname>
+          which is possibly solved by Dependency Injection.</para>
+        </listitem>
+
+        <listitem>
+          <para>The class <classname>T3_Address_Adress</classname> represents
+          the address entity and its instances must not be unique - we surely
+          want more than one address. The Address component also expects a few
+          parameters passed to its constructor.</para>
+        </listitem>
+      </itemizedlist>
+
+      <para>The following code demonstrates how this addressbook can be used
+      and constructor arguments are passed to the Address entity:</para>
+
+      <example>
+        <title>Passing constructor arguments</title>
+
+        <programlisting>   # Fetch a unique instance of the addressbook:
+$myAddressbook = $componentManager-&gt;getComponent('T3_Address_Addressbook');
+
+   # Create two new addresses and add them to the addressbook:
+$newAddress = $componentManager-&gt;getComponent('T3_Address_Address', 'Tryggevældevej', '2720', 'København', 'DK');
+$myAddresbook-&gt;addAddress($newAddress);
+
+$newAddress = $componentManager-&gt;getComponent('T3_Address_Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
+$myAddresbook-&gt;addAddress($newAddress);</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Autowiring</title>
+
+      <para>Injecting dependencies to a constructor function is a common task.
+      Because FLOW3 can detect the type of dependencies a constructor
+      needs, it automatically configures the component to assert that the
+      necessary components are injected. This automation is called
+      <firstterm>Autowiring</firstterm> and is enabled by default for every
+      component. To repeat our favourite example, imagine that your component
+      class needs some kind of logger. All you need to do in order to get one
+      is writing the following constructor:</para>
+
+      <example>
+        <title>An autowired logger</title>
+
+        <programlisting language="PHP">public function __construct(T3_Log_LoggerInterface $logger) {
+   $logger-&gt;log("Hooray");
+}</programlisting>
+      </example>
+
+      <para>The constructor of the above example will get an instance of the
+      component of type <interfacename>T3_Log_LoggerInterface</interfacename>
+      injected and can use it for further operations.</para>
+
+      <para>If, for some reason, you need to disable autowiring support, you
+      can do so by setting an option in your component configuration:</para>
+
+      <example>
+        <title>Turning off autowiring support in Components.conf</title>
+
+        <programlisting>[T3_MyPackage_MyComponent]
+autoWiringMode = off</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Lifecycle methods</title>
+
+      <para>The lifecycle of a component object goes through different stages.
+      It boils down to the following order:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Solve dependencies for constructor injection</para>
+        </listitem>
+
+        <listitem>
+          <para>Create an instance of the component class</para>
+        </listitem>
+
+        <listitem>
+          <para>Solve and inject dependencies for setter injection</para>
+        </listitem>
+
+        <listitem>
+          <para>Live a happy component-life and solve exciting tasks</para>
+        </listitem>
+
+        <listitem>
+          <para>Dispose the component instance</para>
+        </listitem>
+      </orderedlist>
+
+      <para>Your component might want to take some action after certain of the
+      above steps. Whenever one of the following methods exists in the
+      component class, it will be invoked after the related lifecycle
+      step:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>No action after this step</para>
+        </listitem>
+
+        <listitem>
+          <para>During instantiation the function
+          <function>__construct()</function> is called (by PHP itself),
+          dependencies are passed to the constructor arguments</para>
+        </listitem>
+
+        <listitem>
+          <para>After all dependencies have been injected (through
+          constructor- or setter injection) the component's initialization
+          method is called. The name of this method is configurable (see
+          below) and it is called regardless of whether any dependencies have
+          been injected or not</para>
+        </listitem>
+
+        <listitem>
+          <para>During the life of a component no special lifecycle methods
+          are called</para>
+        </listitem>
+
+        <listitem>
+          <para>On disposal, the function <function>__destruct()</function> is
+          called (by PHP itself)</para>
+        </listitem>
+      </orderedlist>
+
+      <para>As you can see from the above list, there is only one special
+      method which is provided by PHP's own means and that is the
+      initialization method. Here's a simple example:</para>
+
+      <example>
+        <title>A component class with an initialization method</title>
+
+        <programlisting>class T3_MyPackage_MyClass {
+
+   protected $logger;
+
+   public function __construct(T3_Log_LoggerInterface $logger) {
+      $this-&gt;logger = $logger;
+   }
+
+   public function intializeComponent() {
+      $this-&gt;logger-&gt;log('MyClass has been initialized.');
+   }
+}</programlisting>
+      </example>
+
+      <para>The above example will just work out of the box without any
+      further configuration. However, if you don't have control over the name
+      of your initialization method (maybe, because you are integrating legacy
+      code), you can configure the name of the method in the component
+      configuration:</para>
+
+      <example>
+        <title>Components.conf configuration of the initialization
+        method</title>
+
+        <programlisting>[T3_MyPackage_MyClass]
+lifecycleInitializationMethod = myInitialize</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Instantiation process</title>
+
+      <para><figure>
+          <title>Component instantiation sequence</title>
+
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="ComponentManager_ComponentInstantiation.png"></imagedata>
+            </imageobject>
+          </mediaobject>
+        </figure></para>
+    </section>
+  </section>
+</section>
