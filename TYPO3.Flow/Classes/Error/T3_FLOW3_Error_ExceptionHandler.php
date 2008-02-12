@@ -64,6 +64,7 @@ class T3_FLOW3_Error_ExceptionHandler {
 		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(TYPO3_PATH_ROOT)) : $exception->getFile();
 		
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
+		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
 		$codeSnippet = $this->getCodeSnippet($exception->getFile(), $exception->getLine());
 		$backtraceCode = $this->getBacktraceCode($exception->getTrace());
 		
@@ -99,7 +100,7 @@ class T3_FLOW3_Error_ExceptionHandler {
 				">
 				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught TYPO3 Exception</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
-					<strong style="color: #BE0027;">' . $exceptionCodeNumber . $exception->getMessage() . '</strong> (<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)<br />
+					<strong style="color: #BE0027;">' . $exceptionCodeNumber . $exception->getMessage() . '</strong> ' . $moreInformationLink . '<br />
 					<br />
 					<span class="ExceptionProperty">' . get_class($exception) . '</span> thrown in file<br /> 
 					<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
