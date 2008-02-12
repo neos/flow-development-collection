@@ -19,13 +19,13 @@ declare(encoding = 'utf-8');
  * 
  * @package		FLOW3
  * @subpackage	MVC
- * @version 	$Id:T3_FLOW3_MVC_URI.php 467 2008-02-06 19:34:56Z robert $
+ * @version 	$Id:T3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
-class T3_FLOW3_MVC_URI {
+class T3_FLOW3_Property_DataType_URI {
 
 	const PATTERN_MATCH_SCHEME = '/^[a-zA-Z][a-zA-Z0-9\+\-\.]*$/';
 	const PATTERN_MATCH_USERNAME = '/^(?:[a-zA-Z0-9_~!&\',;=\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';

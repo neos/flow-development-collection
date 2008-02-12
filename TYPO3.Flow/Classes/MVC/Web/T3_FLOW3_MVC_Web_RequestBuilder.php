@@ -91,10 +91,10 @@ class T3_FLOW3_MVC_Web_RequestBuilder {
 		
 		if (isset($requestPathSegments[1]) && T3_PHP6_Functions::strlen($requestPathSegments[1])) {
 		 	$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $requestPathSegments[1]);
-		 	if ($controllerName !== FALSE) {
-		 		$this->setActionName($requestPathSegments, $request);
-				$request->setControllerName($controllerName);
-		 	}
+		 	if ($controllerName === FALSE) return;
+
+		 	$this->setActionName($requestPathSegments, $request);
+			$request->setControllerName($controllerName);
 		} else {
 		 	$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerName);
 		 	if ($controllerName === FALSE) return;

@@ -157,7 +157,7 @@ class T3_FLOW3_MVC_Request {
 	 */
 	public function setControllerName($controllerName) {
 		if ($this->locked) throw new T3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1183444614);
-		if (!is_string($controllerName)) throw new T3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must be a valid string.', 1187176358);
+		if (!is_string($controllerName)) throw new T3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
 		$this->controllerName = $controllerName;
 	}
 	

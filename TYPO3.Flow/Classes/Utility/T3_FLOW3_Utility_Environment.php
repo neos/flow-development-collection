@@ -148,7 +148,7 @@ class T3_FLOW3_Utility_Environment {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return T3_FLOW3_MVC_URI		The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
+	 * @return T3_FLOW3_Property_DataType_URI		The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -159,7 +159,7 @@ class T3_FLOW3_Utility_Environment {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ereg_replace('^/', '', $this->getScriptName()) . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
 		}
 		
-		$requestURI = $this->componentManager->getComponent('T3_FLOW3_MVC_URI', $requestURIString);
+		$requestURI = $this->componentManager->getComponent('T3_FLOW3_Property_DataType_URI', $requestURIString);
 		return $requestURI;
 	}
 	

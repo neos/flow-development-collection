@@ -69,11 +69,11 @@ class T3_FLOW3_MVC_Web_RequestHandlerTest extends T3_Testing_BaseTestCase {
 	/**
 	 * Tries to detect the base URI of this request and returns it.
 	 * 
-	 * @param  T3_FLOW3_MVC_URI		$requestURI: URI of this web request
-	 * @return T3_FLOW3_MVC_URI		The detected base URI
+	 * @param  T3_FLOW3_Property_DataType_URI		$requestURI: URI of this web request
+	 * @return T3_FLOW3_Property_DataType_URI		The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function detectBaseURI(T3_FLOW3_MVC_URI $requestURI) {
+	protected function detectBaseURI(T3_FLOW3_Property_DataType_URI $requestURI) {
 		$baseURI = clone $requestURI;
 		$baseURI->setQuery(NULL);
 		$baseURI->setFragment(NULL);

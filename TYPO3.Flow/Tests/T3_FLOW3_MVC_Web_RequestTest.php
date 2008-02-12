@@ -30,7 +30,7 @@ class T3_FLOW3_MVC_Web_RequestTest extends T3_Testing_BaseTestCase {
 	protected $request;
 	
 	/**
-	 * @var T3_FLOW3_MVC_URI
+	 * @var T3_FLOW3_Property_DataType_URI
 	 */
 	protected $requestURI;
 	
@@ -46,7 +46,7 @@ class T3_FLOW3_MVC_Web_RequestTest extends T3_Testing_BaseTestCase {
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 		
 		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
-		$this->requestURI = $this->componentManager->getComponent('T3_FLOW3_MVC_URI', $URIString);
+		$this->requestURI = $this->componentManager->getComponent('T3_FLOW3_Property_DataType_URI', $URIString);
 	}
 	
 	/**
@@ -92,8 +92,8 @@ class T3_FLOW3_MVC_Web_RequestTest extends T3_Testing_BaseTestCase {
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
 		$this->environment->SERVER['SCRIPT_NAME'] = '/';
 
-		$requestURI = new T3_FLOW3_MVC_URI('http://www.server.com/index.php');
-		$expectedBaseURI = new T3_FLOW3_MVC_URI('http://www.server.com/');
+		$requestURI = new T3_FLOW3_Property_DataType_URI('http://www.server.com/index.php');
+		$expectedBaseURI = new T3_FLOW3_Property_DataType_URI('http://www.server.com/');
 		
 		$request = new T3_FLOW3_MVC_Web_Request($this->environment);
 		$request->setRequestURI($requestURI);
@@ -111,8 +111,8 @@ class T3_FLOW3_MVC_Web_RequestTest extends T3_Testing_BaseTestCase {
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = NULL;
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
-		$requestURI = new T3_FLOW3_MVC_URI('http://www.server.com/path1/path2/index.php');
-		$expectedBaseURI = new T3_FLOW3_MVC_URI('http://www.server.com/path1/path2/');
+		$requestURI = new T3_FLOW3_Property_DataType_URI('http://www.server.com/path1/path2/index.php');
+		$expectedBaseURI = new T3_FLOW3_Property_DataType_URI('http://www.server.com/path1/path2/');
 		
 		$request = new T3_FLOW3_MVC_Web_Request($this->environment);
 		$request->setRequestURI($requestURI);

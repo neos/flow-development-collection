@@ -33,12 +33,12 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	protected $environment;
 	
 	/**
-	 * @var T3_FLOW3_MVC_URI The request URI
+	 * @var T3_FLOW3_Property_DataType_URI The request URI
 	 */
 	protected $requestURI;
 	
 	/**
-	 * @var T3_FLOW3_MVC_URI The base URI for this request - ie. the host and path leading to the index.php
+	 * @var T3_FLOW3_Property_DataType_URI The base URI for this request - ie. the host and path leading to the index.php
 	 */
 	protected $baseURI;	
 	
@@ -56,11 +56,11 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	/**
 	 * Sets the request URI
 	 * 
-	 * @param  T3_FLOW3_MVC_URI		URI of this web request
+	 * @param  T3_FLOW3_Property_DataType_URI		URI of this web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRequestURI(T3_FLOW3_MVC_URI $requestURI) {
+	public function setRequestURI(T3_FLOW3_Property_DataType_URI $requestURI) {
 		$this->requestURI = clone $requestURI;
 		$this->baseURI = $this->detectBaseURI($requestURI);
 	}
@@ -68,7 +68,7 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return T3_FLOW3_MVC_URI		URI of this web request
+	 * @return T3_FLOW3_Property_DataType_URI		URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestURI() {
@@ -78,18 +78,18 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	/**
 	 * Sets the base URI for this request.
 	 * 
-	 * @param  T3_FLOW3_MVC_URI		New base URI
+	 * @param  T3_FLOW3_Property_DataType_URI		New base URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setBaseURI(T3_FLOW3_MVC_URI $baseURI) {
+	public function setBaseURI(T3_FLOW3_Property_DataType_URI $baseURI) {
 		$this->baseURI = clone $baseURI;
 	}
 	
 	/**
 	 * Returns the base URI
 	 * 
-	 * @return T3_FLOW3_MVC_URI		Base URI of this web request
+	 * @return T3_FLOW3_Property_DataType_URI		Base URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseURI() {
@@ -99,12 +99,12 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	/**
 	 * Tries to detect the base URI of this request and returns it.
 	 * 
-	 * @param  T3_FLOW3_MVC_URI		$requestURI: URI of this web request
-	 * @return T3_FLOW3_MVC_URI		The detected base URI
+	 * @param  T3_FLOW3_Property_DataType_URI		$requestURI: URI of this web request
+	 * @return T3_FLOW3_Property_DataType_URI		The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo   externalize this method into a strategy
 	 */
-	protected function detectBaseURI(T3_FLOW3_MVC_URI $requestURI) {
+	protected function detectBaseURI(T3_FLOW3_Property_DataType_URI $requestURI) {
 		$baseURI = clone $requestURI;
 		$baseURI->setQuery(NULL);
 		$baseURI->setFragment(NULL);

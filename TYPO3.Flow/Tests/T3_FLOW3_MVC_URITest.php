@@ -22,7 +22,7 @@ declare(encoding = 'utf-8');
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_MVC_URITest extends T3_Testing_BaseTestCase {
+class T3_FLOW3_Property_DataType_URITest extends T3_Testing_BaseTestCase {
 	
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -32,7 +32,7 @@ class T3_FLOW3_MVC_URITest extends T3_Testing_BaseTestCase {
 	 */
 	public function constructorParsesAFullBlownURIStringCorrectly() {
 		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-		$URI = new T3_FLOW3_MVC_URI($URIString);
+		$URI = new T3_FLOW3_Property_DataType_URI($URIString);
 
 		$check = (
 			$URI->getScheme() == 'http' &&
@@ -54,7 +54,7 @@ class T3_FLOW3_MVC_URITest extends T3_Testing_BaseTestCase {
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$URIString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-		$URI = new T3_FLOW3_MVC_URI($URIString);
+		$URI = new T3_FLOW3_Property_DataType_URI($URIString);
 
 		$check = (
 			$URI->getScheme() == 'http' &&
@@ -74,7 +74,7 @@ class T3_FLOW3_MVC_URITest extends T3_Testing_BaseTestCase {
 	 */
 	public function stringRepresentationIsCorrect() {
 		$URIString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
-		$URI = new T3_FLOW3_MVC_URI($URIString);
+		$URI = new T3_FLOW3_Property_DataType_URI($URIString);
 		$this->assertEquals($URIString, (string)$URI, 'The string representation of the URI is not equal to the original URI string.');
 	}
 }
