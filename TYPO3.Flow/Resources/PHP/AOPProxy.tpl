@@ -17,9 +17,7 @@ declare(encoding = 'utf-8');
 /**
  * AOP Proxy for the class "###TARGET_CLASS###".
  *
- * @package    TYPO3
- * @package AOPProxy
- */
+###CLASS_ANNOTATIONS### */
 class ###TARGET_CLASS######PROXY_CLASS_SUFFIX### extends ###TARGET_CLASS### implements ###INTRODUCED_INTERFACES###T3_FLOW3_AOP_ProxyInterface {
 
 	/**
@@ -36,17 +34,17 @@ class ###TARGET_CLASS######PROXY_CLASS_SUFFIX### extends ###TARGET_CLASS### impl
 	 * @var array An array of method names and their state: If set to TRUE, an advice for that method is currently being executed
 	 */
 	protected $methodIsInAdviceMode = array();
-	
+
 	/**
 	 * @var T3_FLOW3_Component_ManagerInterface A reference to the component manager
 	 */
 	protected $componentManager;
 
 ###METHODS_INTERCEPTOR_CODE###
-	
+
 	/**
 	 * Invokes the joinpoint - calls the target methods.
-	 * 
+	 *
 	 * @param  T3_FLOW3_AOP_JoinPointInterface: The join point
 	 * @return mixed                           Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>

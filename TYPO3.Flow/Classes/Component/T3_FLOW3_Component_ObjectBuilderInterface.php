@@ -17,12 +17,12 @@ declare(encoding = 'utf-8');
 /**
  * Component Object Builder interface
  * 
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id:T3_FLOW3_Component_ObjectBuilderInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package    FLOW3
+ * @subpackage Component
+ * @version    $Id:T3_FLOW3_Component_ObjectBuilderInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @author     Robert Lemke <robert@typo3.org>
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_Component_ObjectBuilderInterface {
 
@@ -33,16 +33,18 @@ interface T3_FLOW3_Component_ObjectBuilderInterface {
 	 * @return void
 	 */
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager);	
-	
+
 	/**
 	 * Creates and returns a ready to use component object of the specified type.
 	 * During the building process all depencencies are resolved and injected.
 	 *
 	 * @param  string $componentName: Name of the component to create a component object for
+	 * @param  T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
+	 * @param  array $overridingConstructorArguments: An array of T3_FLOW3_Component_Argument which override possible autowired arguments
 	 * @return object
+	 * @throws T3_FLOW3_Component_Exception_CannotBuildObject
 	 */
-	public function createComponentObject($componentName, T3_FLOW3_Component_Configuration $componentConfiguration);
-			
-}
+	public function createComponentObject($componentName, T3_FLOW3_Component_Configuration $componentConfiguration, array $overridingConstructorArguments);
 
+}
 ?>

@@ -12,57 +12,58 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
- * TYPO3 Component Definition 
- * 
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * TYPO3 Component Definition
+ *
+ * @package    FLOW3
+ * @subpackage Component
+ * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope      prototype
  */
 class T3_FLOW3_Component_Configuration {
 
 	const AUTOWIRING_MODE_OFF = 0;
 	const AUTOWIRING_MODE_ON = 1;
-	
+
 	/**
 	 * @var string $componentName: Unique identifier of the component
 	 */
 	protected $componentName;
-	
+
 	/**
 	 * @var string $className: Name of the class the component is based on
 	 */
 	protected $className;
-	
+
 	/**
 	 * @var string $scope: Instantiation scope for this component - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
 	 */
 	protected $scope = '';
-	
+
 	/**
 	 * @var array $constructorArguments: Arguments of the constructor detected by reflection
 	 */
 	protected $constructorArguments = array();
-	
+
 	/**
 	 * @var string $constructorMethod: Name of the component's constructor method
 	 */
 	protected $constructorMethod = '__construct';
-	
+
 	/**
 	 * @var array $properties: Array of properties which are injected into the component
 	 */
 	protected $properties = array();
-	
+
 	/**
 	 * @var integer $autoWiringMode: Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
 	 */
 	protected $autoWiringMode = self::AUTOWIRING_MODE_ON;
-	
+
 	/**
 	 * @var string $lifecycleInitializationMethod: Name of the method to call during the initialization of the component (after dependencies are injected)
 	 */
@@ -72,7 +73,7 @@ class T3_FLOW3_Component_Configuration {
 	 * @var string Information about where this configuration has been created. Used in error messages to make debugging easier.
 	 */
 	protected $configurationSourceHint = '< unknown >';
-	
+
 	/**
 	 * The constructor
 	 *
@@ -88,7 +89,7 @@ class T3_FLOW3_Component_Configuration {
 		} else {
 			$this->configurationSourceHint = get_class($backtrace[1]['class']);
 		}
-		
+
 		$this->componentName = $componentName;
 		$this->className = ($className == NULL ? $componentName : $className);
 	}
@@ -142,7 +143,7 @@ class T3_FLOW3_Component_Configuration {
 
 	/**
 	 * Setter function for injection properties
-	 * 
+	 *
 	 * @param  array	$properties: Array of T3_FLOW3_Component_ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -153,10 +154,10 @@ class T3_FLOW3_Component_Configuration {
 		}
 		$this->properties = $properties;
 	}
-	
+
 	/**
 	 * Setter function for a single injection property
-	 * 
+	 *
 	 * @param  array	$property: A T3_FLOW3_Component_ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -164,24 +165,29 @@ class T3_FLOW3_Component_Configuration {
 	public function setProperty(T3_FLOW3_Component_ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
 	}
-	
+
 	/**
-	 * Setter function for injection constructor arguments
-	 * 
+	 * Setter function for injection constructor arguments. If an empty array is passed to this
+	 * method, all (possibly) defined constructor arguments are removed from the configuration.
+	 *
 	 * @param  array	$constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setConstructorArguments(array $constructorArguments) {
-		foreach ($constructorArguments as $constructorArgument) {
-			if (!$constructorArgument instanceof T3_FLOW3_Component_ConfigurationArgument) throw new RuntimeException('Properties must be of type T3_FLOW3ComponentConfigurationProperty', 1168004160);
-			$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
+		if ($constructorArguments === array()) {
+			$this->constructorArguments = array();
+		} else {
+			foreach ($constructorArguments as $constructorArgument) {
+				if (!$constructorArgument instanceof T3_FLOW3_Component_ConfigurationArgument) throw new RuntimeException('Properties must be of type T3_FLOW3ComponentConfigurationProperty', 1168004160);
+				$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
+			}
 		}
 	}
-	
+
 	/**
 	 * Setter function for a single constructor argument
-	 * 
+	 *
 	 * @param  array	$constructorArgument: A T3_FLOW3_Component_ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -198,7 +204,7 @@ class T3_FLOW3_Component_Configuration {
 	 */
 	public function getConstructorArguments() {
 		if (count($this->constructorArguments) < 1 ) return array();
-		
+
 		asort($this->constructorArguments);
 		$lastConstructorArgument = end($this->constructorArguments);
 		$argumentsCount = $lastConstructorArgument->getIndex();
@@ -211,7 +217,7 @@ class T3_FLOW3_Component_Configuration {
 
 	/**
 	 * Sets some information (hint) about where this configuration has been created.
-	 * 
+	 *
 	 * @param  string	$hint: The hint - e.g. the file name of the configuration file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -219,9 +225,9 @@ class T3_FLOW3_Component_Configuration {
 	public function setConfigurationSourceHint($hint) {
 		$this->configurationSourceHint = $hint;
 	}
-	
+
 	/**
-	 * Magic __call function which provides getter functions for the 
+	 * Magic __call function which provides getter functions for the
 	 * accessible properties.
 	 *
 	 * @param  string	$methodName: Name of the method (getter methods must start with "get")

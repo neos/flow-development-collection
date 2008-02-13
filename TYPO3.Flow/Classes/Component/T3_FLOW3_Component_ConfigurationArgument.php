@@ -12,37 +12,38 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Injection (constructor-) argument as used in a Component Configuration
- * 
- * @package		Framework
- * @subpackage	Component
- * @version 	$Id:T3_FLOW3_Component_ConfigurationArgument.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package    FLOW3
+ * @subpackage Component
+ * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope      prototype
  */
-class T3_FLOW3_Component_ConfigurationArgument {
-	
+ class T3_FLOW3_Component_ConfigurationArgument {
+
 	const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
 	const ARGUMENT_TYPES_REFERENCE = 1;
-	
+
 	/**
 	 * @var integer	The position of the constructor argument. Counting starts at "1".
 	 */
 	protected $index;
-	
+
 	/**
 	 * @var mixed The argument's value
 	 */
 	protected $value;
-	
+
 	/**
 	 * @var integer Argument type, one of the ARGUMENT_TYPES_* constants
 	 */
 	protected $type;
-	
+
 	/**
 	 * Constructor - sets the index, type and value of the argument
 	 *
@@ -55,7 +56,7 @@ class T3_FLOW3_Component_ConfigurationArgument {
 	public function __construct($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		$this->set($index, $value, $type);
 	}
-	
+
 	/**
 	 * Sets the index, type and value of the argument
 	 *
@@ -72,7 +73,7 @@ class T3_FLOW3_Component_ConfigurationArgument {
 		$this->value = $value;
 		$this->type = $type;
 	}
-	
+
 	/**
 	 * Returns the index (position) of the argument
 	 *
@@ -103,5 +104,4 @@ class T3_FLOW3_Component_ConfigurationArgument {
 		return $this->type;
 	}
 }
-
 ?>

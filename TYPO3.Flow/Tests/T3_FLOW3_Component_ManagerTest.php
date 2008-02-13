@@ -16,14 +16,14 @@ declare(encoding = 'utf-8');
 
 /**
  * Testcase for the default component manager
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
-	
+
 	/**
 	 * Checks if getContext() returns the "default" context if nothing else has been defined.
 	 *
@@ -34,20 +34,20 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$componentManager = new T3_FLOW3_Component_Manager();
 		$this->assertEquals('default', $componentManager->getContext(), 'getContext() did not return "default".');
 	}
-	
+
 	/**
 	 * Checks if setting and retrieving the context delivers the expected results
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org> 
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContextBasicallyWorks() {
 		$componentManager = new T3_FLOW3_Component_Manager();
 		$componentManager->setContext('halululu');
 		$this->assertEquals('halululu', $componentManager->getContext(), 'getContext() did not return the context we set.');
-			
+
 	}
-	
+
 	/**
 	 * Checks if getComponent() returns the expected class type
 	 *
@@ -61,7 +61,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getComponent() fails on non-existing components
-	 * 
+	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
@@ -97,7 +97,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$secondInstance = $this->componentManager->getComponent('T3_TestPackage_PrototypeClass');
 		$this->assertNotSame($secondInstance, $firstInstance, 'getComponent() did not return a fresh prototype instance when asked for a component configured as prototype.');
 	}
-	
+
 	/**
 	 * Checks if getComponent() delivers the correct class if the class name is different from the component name
 	 *
@@ -108,7 +108,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$component = $this->componentManager->getComponent('T3_TestPackage_ClassToBeReplaced');
 		$this->assertTrue($component instanceof T3_TestPackage_ReplacingClass, 'getComponent() did not return a the replacing class.');
 	}
-	
+
 	/**
 	 * Checks if getComponent() passes arguments to the constructor of a component class
 	 *
@@ -124,7 +124,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		);
 		$this->assertTrue($checkSucceeded, 'getComponent() did not instantiate the component with the specified constructor parameters.');
 	}
-	
+
 	/**
 	 * Checks if registerComponent() can register valid and unspectactular classes
 	 *
@@ -152,7 +152,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$componentManager->registerComponent('T3_TestPackage_SubDirectory_ClassInSubDirectory');
 		$this->assertTrue($this->componentManager->isComponentRegistered('T3_TestPackage_SubDirectory_ClassInSubDirectory'), 'isComponentRegistered() did not return TRUE although component has been registered.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -168,7 +168,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		}
 		$this->fail('The component manager did not throw the right kind of exception.');
 	}
-	
+
 	/**
 	 * Checks if unregisterComponent() unregisters components
 	 *
@@ -183,7 +183,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		}
 		$this->fail('unregisterComponent() did not throw an exception while unregistering a non existent or not registered component.');
 	}
-	
+
 	/**
 	 * Checks if unregisterComponent() unregisters components
 	 *
@@ -195,7 +195,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$this->componentManager->unregisterComponent('T3_TestPackage_BasicClass');
 		$this->assertEquals($this->componentManager->isComponentRegistered('T3_TestPackage_BasicClass'), FALSE, 'isComponentRegistered() did not return FALSE although component should not be registered anymore.');
 	}
-	
+
 	/**
 	 * Checks if setComponentConfigurations() throws an exception if the configuration is no valid configuration object
 	 *
@@ -211,7 +211,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		}
 		$this->fail('setComponentConfigurations() accepted an invalid configuration object without throwing an exception.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -224,7 +224,7 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the component manager registers component types (interfaces) correctly
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -236,14 +236,36 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 	/**
 	 * Checks if the class name of a component can be really set
 	 *
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_setComponentClassNameWorksAsExpected() {
+	public function setComponentClassNameWorksAsExpected() {
 		$componentName = 'T3_TestPackage_BasicClass';
 		$this->componentManager->setComponentClassName($componentName, 'T3_TestPackage_ReplacingClass');
 		$component = $this->componentManager->getComponent($componentName);
 
 		$this->assertEquals('T3_TestPackage_ReplacingClass', get_class($component), 'The component was not of the expected class.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function constructorArgumentsPassedToGetComponentAreNotAddedToRealComponentConfiguration() {
+		$componentName = 'T3_TestPackage_ClassWithOptionalConstructorArguments';
+		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);
+		$componentConfiguration->setConstructorArguments(array());
+
+		$this->componentManager->setComponentConfiguration($componentConfiguration);
+
+		$component1 = $this->componentManager->getComponent($componentName, 'theFirstArgument');
+		$this->assertEquals('theFirstArgument', $component1->argument1, 'The constructor argument has not been set.');
+
+		$component2 = $this->componentManager->getComponent($componentName);
+
+		$this->assertEquals('', $component2->argument1, 'The constructor argument1 is still not empty although no argument was passed to getComponent().');
+		$this->assertEquals('', $component2->argument2, 'The constructor argument2 is still not empty although no argument was passed to getComponent().');
+		$this->assertEquals('', $component2->argument3, 'The constructor argument3 is still not empty although no argument was passed to getComponent().');
 	}
 }
 ?>

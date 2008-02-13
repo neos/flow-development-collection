@@ -12,39 +12,40 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Implementation of the Introduction declaration.
- *   
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_Introduction.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package    FLOW3
+ * @subpackage AOP
+ * @version    $Id:T3_FLOW3_AOP_Introduction.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope      prototype
  */
 class T3_FLOW3_AOP_Introduction implements T3_FLOW3_AOP_IntroductionInterface{
 
 	/**
 	 * @var string Name of the aspect declaring this introduction
-	 */	
+	 */
 	protected $declaringAspectClassName;
-	
+
 	/**
 	 * @var string Name of the introduced interface
 	 */
 	protected $interfaceName;
-	
+
 	/**
-	 * @var T3_FLOW3_AOP_PointcutInterface The poincut this introduction applies to 
+	 * @var T3_FLOW3_AOP_PointcutInterface The poincut this introduction applies to
 	 */
 	protected $pointcut;
-	
+
 	/**
 	 * Constructor
 	 *
-	 * @param  string			$declaringAspectClassName: Name of the aspect containing the declaration for this introduction
-	 * @param  string			$interfaceName: Name of the interface to introduce
+	 * @param  string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
+	 * @param  string $interfaceName: Name of the interface to introduce
 	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -58,13 +59,13 @@ class T3_FLOW3_AOP_Introduction implements T3_FLOW3_AOP_IntroductionInterface{
 	/**
 	 * Returns the name of the introduced interface
 	 *
-	 * @return string				Name of the introduced interface
+	 * @return string Name of the introduced interface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaceName() {
 		return $this->interfaceName;
 	}
-	
+
 	/**
 	 * Returns the poincut this introduction applies to
 	 *
@@ -74,11 +75,11 @@ class T3_FLOW3_AOP_Introduction implements T3_FLOW3_AOP_IntroductionInterface{
 	public function getPointcut() {
 		return $this->pointcut;
 	}
-	
+
 	/**
 	 * Returns the component name of the aspect which declared this introduction
 	 *
-	 * @return string			The aspect component name
+	 * @return string The aspect component name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringAspectClassName() {

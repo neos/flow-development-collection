@@ -12,11 +12,11 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * The main class of the AOP (Aspect Oriented Programming) framework.
- * 
+ *
  * @package		FLOW3
  * @subpackage	AOP
  * @version 	$Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
@@ -26,17 +26,17 @@ declare(encoding = 'utf-8');
 class T3_FLOW3_AOP_Framework {
 
 	const COMPONENT_CONFIGURATIONS_CACHE_FILENAME = 'ComponentConfigurationsCache.dat';
-	
+
 	/**
 	 * @var T3_FLOW3_Component_ManagerInterface An instance of the component manager
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * @var T3_FLOW3_AOP_PointcutExpressionParserInterface An instance of the pointcut expression parser
 	 */
 	protected $pointcutExpressionParser;
-	
+
 	/**
 	 * @var array A registry of all known aspects
 	 */
@@ -46,7 +46,7 @@ class T3_FLOW3_AOP_Framework {
 	 * @var string Full path to the proxy cache main directory
 	 */
 	protected $proxyCachePath;
-	
+
 	/**
 	 * @var array List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
 	 */
@@ -56,10 +56,10 @@ class T3_FLOW3_AOP_Framework {
 	 * @var boolean Flag which signals if this class has already been initialized.
 	 */
 	protected $isInitialized = FALSE;
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param   T3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
 	 * @return	void
 	 * @author  Robert Lemke <robert@typo3.org>
@@ -67,16 +67,16 @@ class T3_FLOW3_AOP_Framework {
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 		$this->registerFrameworkComponents();
-		
+
 		$this->proxyCachePath = TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/';
 		$this->pointcutExpressionParser = $componentManager->getComponent('T3_FLOW3_AOP_PointcutExpressionParser');
 		$this->proxyClassBuilder = new T3_FLOW3_AOP_ProxyClassBuilder($componentManager);
 		spl_autoload_register(array(new T3_FLOW3_AOP_ProxyClassLoader($this), 'loadClass'));
 	}
-	
+
 	/**
 	 * Clears the proxy cache
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -88,7 +88,7 @@ class T3_FLOW3_AOP_Framework {
 
 	/**
 	 * Initializes the AOP framework.
-	 * 
+	 *
 	 * During initialization the configuration of all registered components is searched for
 	 * possible aspect annotations. If an aspect class is found, the poincut expressions are
 	 * parsed and a new aspect with one or more advisors is added to the aspect registry of the
@@ -98,7 +98,7 @@ class T3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		if ($this->isInitialized) throw new RuntimeException('The AOP framework has already been initialized!', 1169550994);
+		if ($this->isInitialized) throw new T3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
 		if (!is_dir($this->proxyCachePath)) {
 			T3_FLOW3_Utility_Files::createDirectoryRecursively($this->proxyCachePath);
 		}
@@ -108,20 +108,20 @@ class T3_FLOW3_AOP_Framework {
 		} else {
 			T3_FLOW3_Utility_Files::emptyDirectoryRecursively($this->proxyCachePath);
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
-			
+
 			$this->buildAspectContainersFromComponents($componentConfigurations);
 			$this->buildProxyClasses($componentConfigurations);
-	
+
 #			file_put_contents($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME, serialize($componentConfigurations));
 		}
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 		$this->isInitialized = TRUE;
 	}
-	
+
 	/**
 	 * Adds a registered component to the proxy blacklist to prevent the component class
 	 * from being proxied by the AOP framework.
-	 * 
+	 *
 	 * @param  string		$componentName: Name of the component to add to the blacklist
 	 * @return void
 	 * @auhor  Robert Lemke <robert@typo3.org>
@@ -130,7 +130,7 @@ class T3_FLOW3_AOP_Framework {
 		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
 		$this->componentProxyBlacklist[$componentName] = $componentName;
 	}
-	
+
 	/**
 	 * Traverses the aspect containers to find a pointcut from the aspect class name
 	 * and pointcut method name
@@ -141,7 +141,7 @@ class T3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
-		if (!isset($this->aspectContainers[$aspectClassName])) throw new RuntimeException('No aspect class "' . $aspectClassName . '" found while searching for pointcut "' . $pointcutMethodName . '".', 1172223654);		
+		if (!isset($this->aspectContainers[$aspectClassName])) throw new RuntimeException('No aspect class "' . $aspectClassName . '" found while searching for pointcut "' . $pointcutMethodName . '".', 1172223654);
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
 			if ($pointcut->getPointcutMethodName() == $pointcutMethodName) {
 				return $pointcut;
@@ -149,22 +149,22 @@ class T3_FLOW3_AOP_Framework {
 		}
 		return FALSE;
 	}
-	
 
-	
-	
-	
-	
+
+
+
+
+
 	/* ************************************************************************
-	 * 
+	 *
 	 * PROTECTED METHODS
-	 * 
+	 *
 	 * ************************************************************************/
 
 	/**
 	 * Checks the annotations of all registered component classes for aspect tags
 	 * and creates an aspect with advisors accordingly.
-	 * 
+	 *
 	 * @param  array		$componentConfigurations: An array of T3_FLOW3_Component_Configuration objects.
 	 */
 	protected function buildAspectContainersFromComponents($componentConfigurations) {
@@ -186,7 +186,7 @@ class T3_FLOW3_AOP_Framework {
 	 * Creates and returns an aspect from the annotations found in a class which
 	 * is tagged as an aspect. The component acting as an advice will already be
 	 * fetched (and therefore instantiated if neccessary).
-	 * 
+	 *
 	 * @param  T3_FLOW3_Reflection_Class			$aspectClass: Class which forms the aspect, contains advices etc.
 	 * @return T3_FLOW3_AOP_AspectContainer	The aspect container containing one or more advisors
 	 * @author Robert Lemke <robert@typo3.org>
@@ -243,10 +243,10 @@ class T3_FLOW3_AOP_Framework {
 			foreach ($property->getTagsValues() as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
 					switch($tagName) {
-						case 'introduce' : 
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains an introduction declaration but does not implement the neccessary aspect interface.', 1172694758);							
+						case 'introduce' :
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains an introduction declaration but does not implement the neccessary aspect interface.', 1172694758);
 							$splittedTagValue = explode(',', $tagValue);
-							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName. '" does not contain the two required parameters.', 1172694761);							
+							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName. '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
 							$introduction = $this->componentManager->getComponent('T3_FLOW3_AOP_Introduction', $aspectClassName, trim($splittedTagValue[0]), $pointcut);
 							$aspectContainer->addIntroduction($introduction);
@@ -255,15 +255,15 @@ class T3_FLOW3_AOP_Framework {
 				}
 			}
 		}
-		
+
 		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getIntroductions()) < 1) throw new RuntimeException('The class "' . $aspectClass->getName() . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		return $aspectContainer;
 	}
-	
+
 	/**
 	 * Builds AOP proxy classes for each registered component and inserts interceptor
 	 * code from the advices where they apply.
-	 * 
+	 *
 	 * @param  array		&$componentConfigurations: Configurations of all registered components. The class file location will be deflected to the new proxy class file.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -282,11 +282,11 @@ class T3_FLOW3_AOP_Framework {
 			}
 		}
 	}
-		
+
 	/**
 	 * Registers certain classes of the AOP Framework as components, so they can
 	 * be used for dependency injection elsewhere.
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -298,6 +298,7 @@ class T3_FLOW3_AOP_Framework {
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_BeforeAdvice');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_Introduction');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_Pointcut');
+		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutInterface', 'T3_FLOW3_AOP_Pointcut');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutFilter');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutExpressionParser');
 
@@ -308,10 +309,11 @@ class T3_FLOW3_AOP_Framework {
 		$componentConfigurations['T3_FLOW3_AOP_AroundAdvice']->setScope('prototype');
 		$componentConfigurations['T3_FLOW3_AOP_BeforeAdvice']->setScope('prototype');
 		$componentConfigurations['T3_FLOW3_AOP_Introduction']->setScope('prototype');
+		$componentConfigurations['T3_FLOW3_AOP_Introduction']->setAutowiringMode(T3_FLOW3_Component_Configuration::AUTOWIRING_MODE_OFF);
 		$componentConfigurations['T3_FLOW3_AOP_Pointcut']->setScope('prototype');
+		$componentConfigurations['T3_FLOW3_AOP_PointcutInterface']->setScope('prototype');
 		$componentConfigurations['T3_FLOW3_AOP_PointcutFilter']->setScope('prototype');
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 	}
 }
-
 ?>

@@ -17,7 +17,7 @@ declare(encoding = 'utf-8');
 
 /**
  * Testcase for the component configuration class
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:T3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright	Copyright belongs to the respective authors
@@ -29,16 +29,16 @@ class T3_FLOW3_Component_ConfigurationTest extends T3_Testing_BaseTestCase {
 	 * @var T3_FLOW3_Component_Configuration
 	 */
 	protected $componentConfiguration;
-	
+
 	/**
 	 * Prepares everything for a test
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentConfiguration = new T3_FLOW3_Component_Configuration('T3_TestPackage_BasicClass', TYPO3_PATH_PACKAGES . 'TestPackage/Classes/T3_TestPackage_BasicClass.php');		
+		$this->componentConfiguration = new T3_FLOW3_Component_Configuration('T3_TestPackage_BasicClass', TYPO3_PATH_PACKAGES . 'TestPackage/Classes/T3_TestPackage_BasicClass.php');
 	}
-	
+
 	/**
 	 * Checks if setScope accepts only valid values
 	 *
@@ -61,7 +61,7 @@ class T3_FLOW3_Component_ConfigurationTest extends T3_Testing_BaseTestCase {
 		}
 		$this->fail('setScope throwed no exception although the value was invalid.');
 	}
-	
+
 	/**
 	 * Checks if setProperties accepts only valid values
 	 *
@@ -81,7 +81,7 @@ class T3_FLOW3_Component_ConfigurationTest extends T3_Testing_BaseTestCase {
 		}
 		$this->fail('setProperties throwed no exception although the values were invalid.');
 	}
-	
+
 	/**
 	 * Checks if setConstructorArguments accepts only valid values
 	 *
@@ -100,6 +100,22 @@ class T3_FLOW3_Component_ConfigurationTest extends T3_Testing_BaseTestCase {
 			return;
 		}
 		$this->fail('setConstructorArguments() throwed no exception although the values were invalid.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function passingAnEmptyArrayToSetConstructorArgumentsRemovesAllExistingArguments() {
+		$someArguments = array (
+			1 => new T3_FLOW3_Component_ConfigurationArgument(1, 'simple string'),
+			2 => new T3_FLOW3_Component_ConfigurationArgument(2, 'another string')
+		);
+		$this->componentConfiguration->setConstructorArguments($someArguments);
+		$this->assertEquals($someArguments, $this->componentConfiguration->getConstructorArguments(), 'The set arguments could not be retrieved again.');
+
+		$this->componentConfiguration->setConstructorArguments(array());
+		$this->assertEquals(array(), $this->componentConfiguration->getConstructorArguments(), 'The constructor arguments have not been cleared.');
 	}
 }
 ?>

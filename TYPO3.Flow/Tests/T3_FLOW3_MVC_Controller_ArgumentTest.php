@@ -23,7 +23,17 @@ declare(encoding = 'utf-8');
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_Controller_ArgumentTest extends T3_Testing_BaseTestCase {
-	
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function argumentScopeIsPrototype() {
+		$argument1 = $this->componentManager->getComponent('T3_FLOW3_MVC_Controller_Argument', 'test');
+		$argument2 = $this->componentManager->getComponent('T3_FLOW3_MVC_Controller_Argument', 'test');
+		$this->assertNotSame($argument1, $argument2, 'Arguments seem to be identical.');
+	}
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
