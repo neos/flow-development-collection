@@ -15,16 +15,14 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * A "No such action" Exception 
- * 
- * @package		Framewor
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * A "No such action" Exception
+ *
+ * @package    FLOW3
+ * @subpackage MVC
+ * @version    $Id$
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_Exception_NoSuchAction extends T3_FLOW3_MVC_Exception {
-
 }
-
 ?>

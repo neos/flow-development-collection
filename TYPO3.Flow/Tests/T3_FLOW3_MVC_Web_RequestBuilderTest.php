@@ -16,14 +16,14 @@ declare(encoding = 'utf-8');
 
 /**
  * Testcase for the MVC Web Request Builder
- * 
- * @package		Framework
- * @version 	$Id:T3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package   FLOW3
+ * @version   $Id:T3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license   http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
-	
+
 	/**
 	 * @var T3_FLOW3_Utility_MockEnvironment
 	 */
@@ -33,7 +33,7 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 	 * @var T3_FLOW3_MVC_Web_RequestBuilder
 	 */
 	protected $requestBuilder;
-	
+
 	/**
 	 * Sets up this test case
 	 *
@@ -43,15 +43,17 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_FLOW3_Utility_Environment');
 		$componentConfiguration->setClassName('T3_FLOW3_Utility_MockEnvironment');
 		$this->componentManager->setComponentConfiguration($componentConfiguration);
-		
+
 		$this->environment = $this->componentManager->getComponent('T3_FLOW3_Utility_Environment');
-		$this->requestBuilder = new T3_FLOW3_MVC_Web_RequestBuilder($this->componentManager, $this->environment);
+		$router = $this->componentManager->getComponent('T3_FLOW3_MVC_Web_Router');
+		$this->requestBuilder = new T3_FLOW3_MVC_Web_RequestBuilder($this->componentManager, $this->environment, $router);
 	}
 
 	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_theBuiltControllerNameFollowsTheRequiredScheme() {
+	public function theBuiltControllerNameFollowsTheRequiredScheme() {
 		$realRequestURI = $this->environment->getRequestURI();
 		$realBaseURI = $this->detectBaseURI($realRequestURI);
 
@@ -61,9 +63,10 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_multipleGETArgumentsAreRecognizedCorrectly() {
+	public function multipleGETArgumentsAreRecognizedCorrectly() {
 		$realRequestURI = $this->environment->getRequestURI();
 		$realBaseURI = $this->detectBaseURI($realRequestURI);
 
@@ -79,9 +82,10 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_singleGETArgumentIsRecognizedCorrectly() {
+	public function singleGETArgumentIsRecognizedCorrectly() {
 		$realRequestURI = $this->environment->getRequestURI();
 		$realBaseURI = $this->detectBaseURI($realRequestURI);
 
@@ -96,9 +100,10 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_singlePOSTArgumentIsRecognizedCorrectly() {
+	public function singlePOSTArgumentIsRecognizedCorrectly() {
 		$realRequestURI = $this->environment->getRequestURI();
 		$realBaseURI = $this->detectBaseURI($realRequestURI);
 
@@ -113,9 +118,10 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_GETArgumentsOverridePOSTArguments() {
+	public function GETArgumentsOverridePOSTArguments() {
 		$realRequestURI = $this->environment->getRequestURI();
 		$realBaseURI = $this->detectBaseURI($realRequestURI);
 
@@ -134,19 +140,19 @@ class T3_FLOW3_MVC_Web_RequestBuilderTest extends T3_Testing_BaseTestCase {
 		));
 		$this->assertEquals($expectedArguments, $request->getArguments(), 'request->getArguments() did not return the expected arguments.');
 	}
-	
+
 	/**
 	 * Tries to detect the base URI of this request and returns it.
-	 * 
-	 * @param  T3_FLOW3_Property_DataType_URI		$requestURI: URI of this web request
-	 * @return T3_FLOW3_Property_DataType_URI		The detected base URI
+	 *
+	 * @param  T3_FLOW3_Property_DataType_URI $requestURI: URI of this web request
+	 * @return T3_FLOW3_Property_DataType_URI The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function detectBaseURI(T3_FLOW3_Property_DataType_URI $requestURI) {
 		$baseURI = clone $requestURI;
 		$baseURI->setQuery(NULL);
 		$baseURI->setFragment(NULL);
-		
+
 		$requestPathSegments = explode('/', $this->environment->getScriptRequestPathAndName());
 		array_pop($requestPathSegments);
 		$baseURI->setPath(implode('/', $requestPathSegments) . '/');

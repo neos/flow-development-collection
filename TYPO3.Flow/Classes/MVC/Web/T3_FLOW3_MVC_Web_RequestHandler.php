@@ -12,16 +12,16 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * A request handler which can handle web requests.
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package    FLOW3
+ * @subpackage MVC
+ * @version    $Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInterface {
 
@@ -29,33 +29,36 @@ class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInte
 	 * @var T3_FLOW3_Component_ManagerInterface Reference to the component manager
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * @var T3_FLOW3_Utility_Environment Reference to the environment utility component
 	 */
 	protected $utilityEnvironment;
-	
+
 	/**
 	 * @var T3_FLOW3_MVC_Dispatcher
 	 */
 	protected $dispatcher;
-	
+
 	/**
 	 * @var T3_FLOW3_MVC_RequestProcessorChainManager
 	 */
 	protected $requestProcessorChainManager;
-	
+
 	/**
 	 * Constructs the Web Request Handler
 	 *
-	 * @param  T3_FLOW3_Component_ManagerInterface		$componentManager: A reference to the component manager
+	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param  T3_FLOW3_Utility_Environment $utilityEnvironment: A reference to the environment
+	 * @param  T3_FLOW3_MVC_Dispatcher $dispatcher: The request dispatcher
+	 * @param  T3_FLOW3_MVC_RequestProcessorChainManager: A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			T3_FLOW3_Component_ManagerInterface $componentManager, 
-			T3_FLOW3_Utility_Environment $utilityEnvironment, 
-			T3_FLOW3_MVC_Dispatcher $dispatcher, 
+			T3_FLOW3_Component_ManagerInterface $componentManager,
+			T3_FLOW3_Utility_Environment $utilityEnvironment,
+			T3_FLOW3_MVC_Dispatcher $dispatcher,
 			T3_FLOW3_MVC_RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->componentManager = $componentManager;
 		$this->utilityEnvironment = $utilityEnvironment;
@@ -64,7 +67,7 @@ class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInte
 	}
 
 	/**
-	 * Handles the request
+	 * Handles the web request. The response will automatically be sent to the client.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -78,11 +81,11 @@ class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInte
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}
-	
+
 	/**
 	 * This request handler can handle any GET or POST request.
 	 *
-	 * @return boolean			If the request is a web request, TRUE otherwise FALSE
+	 * @return boolean If the request is a web request, TRUE otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
@@ -93,17 +96,16 @@ class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInte
 		}
 		return FALSE;
 	}
-	
+
 	/**
 	 * Returns the priority - how eager the handler is to actually handle the
-	 * request. 
-	 * 
-	 * @return integer		The priority of the request handler.
+	 * request.
+	 *
+	 * @return integer The priority of the request handler.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPriority() {
 		return 100;
 	}
-
 }
 ?>

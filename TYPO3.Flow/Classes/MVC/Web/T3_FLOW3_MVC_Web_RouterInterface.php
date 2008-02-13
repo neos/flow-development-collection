@@ -15,15 +15,15 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * A web specific response implementation
+ * Contract for a Web Router
  *
  * @package    FLOW3
  * @subpackage MVC
- * @version    $Id:T3_FLOW3_MVC_Web_Response.php 467 2008-02-06 19:34:56Z robert $
+ * @version    $Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  * @copyright  Copyright belongs to the respective authors
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_MVC_Web_Response extends T3_FLOW3_MVC_Response {
+interface T3_FLOW3_MVC_Web_RouterInterface {
 
 }
 ?>

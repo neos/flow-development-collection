@@ -15,15 +15,16 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * A web specific response implementation
+ * A "No such controller" Exception
  *
  * @package    FLOW3
  * @subpackage MVC
- * @version    $Id:T3_FLOW3_MVC_Web_Response.php 467 2008-02-06 19:34:56Z robert $
+ * @version    $Id$
  * @copyright  Copyright belongs to the respective authors
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_MVC_Web_Response extends T3_FLOW3_MVC_Response {
+class T3_FLOW3_MVC_Exception_NoSuchController extends T3_FLOW3_MVC_Exception {
 
 }
+
 ?>
