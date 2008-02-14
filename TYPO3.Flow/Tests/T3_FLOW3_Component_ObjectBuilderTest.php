@@ -313,7 +313,7 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 	 */
 	public function autoWiringRespectsAlreadyDefinedArguments() {
 		$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithSomeImplementationInjected');
-		$this->assertTrue($component->argument2 instanceof T3_TestPackage_InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.conf!');
+		$this->assertTrue($component->argument2 instanceof T3_TestPackage_InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
 	}
 }
 ?>

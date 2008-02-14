@@ -362,7 +362,7 @@ class T3_MyPackage_SomeClass {
         configuration:</para>
 
         <example>
-          <title>Components.conf file for Constructor Injection</title>
+          <title>Components.ini file for Constructor Injection</title>
 
           <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
 constructorArguments.1.reference = T3_Log_LoggerInterface</programlisting>
@@ -418,7 +418,7 @@ constructorArguments.1.reference = T3_Log_LoggerInterface</programlisting>
         configuration for the above example looks like this:</para>
 
         <example>
-          <title>Components.conf file for Setter Injection</title>
+          <title>Components.ini file for Setter Injection</title>
 
           <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
 properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
@@ -530,7 +530,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
     <orderedlist>
       <listitem>
         <para>If it exists, the file
-        <filename><replaceable>PackageName</replaceable>/Classes/Components.conf</filename>
+        <filename><replaceable>PackageName</replaceable>/Configuration/Components.ini</filename>
         will be parsed and the configuration applied.</para>
       </listitem>
 
@@ -571,23 +571,23 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
 
       <para>As already mentioned, the configuration for each component is
       compiled from different sources. The
-      <filename>Components.conf</filename> file is probably the most
+      <filename>Components.ini</filename> file is probably the most
       frequently used of them and is therefore used in most of the examples.
       However, the names of the configuration options and their possible
       values are identical to all configuration sources.</para>
 
       <section>
-        <title>Components.conf format</title>
+        <title>Components.ini format</title>
 
-        <para>The <filename>Components.conf</filename> file basically follows
+        <para>The <filename>Components.ini</filename> file basically follows
         the .ini file format. Although this format is not standardized, it is
         usually well known and widely used. The following example demonstrates
         the syntax:</para>
 
         <example>
-          <title>A sample Components.conf file</title>
+          <title>A sample Components.ini file</title>
 
-          <para><programlisting>; An example for a Components.conf file
+          <para><programlisting>; An example for a Components.ini file
 ;
 # Comments may either start with a semicolon or
 # a hash sign.
@@ -599,7 +599,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
         </example>
 
         <para><note>
-            <para>Internally the <filename>Components.conf</filename> files
+            <para>Internally the <filename>Components.ini</filename> files
             are parsed with PHP's built-in <function>parse_ini_file</function>
             function. Please refer to the <link
             xl:href="http://www.php.net/manual/en/function.parse-ini-file.php">PHP
@@ -610,7 +610,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
       <section>
         <title>ComponentsConfiguration.php</title>
 
-        <para>As an alternative to the <filename>Components.conf</filename>
+        <para>As an alternative to the <filename>Components.ini</filename>
         file, it is possible to configure components programatically. If a
         file named <filename>ComponentsConfiguration.php</filename> exists in
         the <filename>Classes</filename> directory of a package, it will be
@@ -672,7 +672,7 @@ unset($configuration);
         configuring components is not really flexible, as it is hard coded.
         That's why currently only the <property>scope</property> option can be
         set through annotations. It's up to you defining the scope in the
-        class directly or doing it in a Components.conf file – both have the
+        class directly or doing it in a Components.ini file – both have the
         same effect. We recommend using annotations in this case, as the scope
         usually is a design decision which is very unlikely to be
         changed.</para>
@@ -744,7 +744,7 @@ $greeter-&gt;sayHelloTo('Heike');
       to use a different class:</para>
 
       <example>
-        <title>Components.conf file for component replacement</title>
+        <title>Components.ini file for component replacement</title>
 
         <programlisting language="ini">[T3_MyPackage_Greeter]
 
@@ -801,7 +801,7 @@ $greeter-&gt;sayHelloTo('Heike');
       active:</para>
 
       <example>
-        <title>Components.conf file for component type definition</title>
+        <title>Components.ini file for component type definition</title>
 
         <para><programlisting>[T3_MyPackage_GreeterInterface]
 className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
@@ -818,7 +818,7 @@ className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
       to be the default implementation and the component's
       <option>className</option> option is set accordingly. Of course it is
       still possible that the class name is defined explicitly in the
-      <filename>Components.conf</filename> file or any other configuration
+      <filename>Components.ini</filename> file or any other configuration
       source. This is especially important if more than one implementing class
       exists.</para>
     </section>
@@ -868,7 +868,7 @@ className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
         <title>Constructor Injection</title>
 
         <para>The following class and the related
-        <filename>Components.conf</filename> file demonstrate the syntax for
+        <filename>Components.ini</filename> file demonstrate the syntax for
         the definition of Constructor Injection:</para>
 
         <example>
@@ -921,7 +921,7 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
         <title>Setter Injection</title>
 
         <para>The following class and the related
-        <filename>Components.conf</filename> file demonstrate the syntax for
+        <filename>Components.ini</filename> file demonstrate the syntax for
         the definition of Setter Injection:</para>
 
         <example>
@@ -1055,7 +1055,7 @@ properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Assoc
       scope:</para>
 
       <example>
-        <title>Sample Components.conf with different scopes</title>
+        <title>Sample Components.ini with different scopes</title>
 
         <para><programlisting language="ini">[T3_MyPackage_ASingletonClass]
 scope = singleton
@@ -1090,7 +1090,7 @@ scope = session</programlisting></para>
         <programlisting language="php">class T3_Address_Adressbook {
 
    protected $addresses = array();
-   
+
    public __construct(T3_iCal_iCalConnectorInterface $iCalConnector) {
       ...
    }
@@ -1102,7 +1102,7 @@ scope = session</programlisting></para>
 }
 
 class T3_Address_Address {
-   
+
    public __construct($street, $zip, $town, $country) {
       ...
    }
@@ -1174,7 +1174,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       can do so by setting an option in your component configuration:</para>
 
       <example>
-        <title>Turning off autowiring support in Components.conf</title>
+        <title>Turning off autowiring support in Components.ini</title>
 
         <programlisting>[T3_MyPackage_MyComponent]
 autoWiringMode = off</programlisting>
@@ -1272,7 +1272,7 @@ autoWiringMode = off</programlisting>
       configuration:</para>
 
       <example>
-        <title>Components.conf configuration of the initialization
+        <title>Components.ini configuration of the initialization
         method</title>
 
         <programlisting>[T3_MyPackage_MyClass]

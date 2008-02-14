@@ -103,7 +103,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 *       pass additional parameters which are then used as parameters passed
 	 *       to the constructor of the component class. However, you whould only
 	 *       use this feature if your parameters are truly dynamic. Otherwise just
-	 *       configure them in your Components.conf file.
+	 *       configure them in your Components.ini file.
 	 *
 	 * @param  string $componentName: The unique identifier (name) of the component to return an instance of
 	 * @return object The component instance

@@ -12,36 +12,36 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
- * Implementation of a components configuration source which parses Components.conf files
- * 
- * @package		FLOW3
- * @subpackage	Package
- * @version 	$Id:T3_FLOW3_Package_ConfFileComponentsConfigurationSource.php 203 2007-03-30 13:17:37Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * Implementation of a components configuration source which parses Components.ini files
+ *
+ * @package    FLOW3
+ * @subpackage Package
+ * @version    $Id:T3_FLOW3_Package_IniFileComponentsConfigurationSource.php 203 2007-03-30 13:17:37Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3_Package_ComponentsConfigurationSourceInterface {
+class T3_FLOW3_Package_IniFileComponentsConfigurationSource implements T3_FLOW3_Package_ComponentsConfigurationSourceInterface {
 
-	const FILENAME_COMPONENTSCONF = 'Components.conf';
-	
+	const FILENAME_COMPONENTSINI = 'Components.ini';
+
 	/**
 	 * @var T3_FLOW3_Package_PackageInterface Holds an interface of the package object requesting the components configuration
 	 */
 	protected $package;
-	
+
 	/**
-	 * @var string The path and filename of the Components.conf file which is currently parsed.
+	 * @var string The path and filename of the Components.ini file which is currently parsed.
 	 */
 	protected $componentsConfigurationPath = '';
-	
+
 	/**
 	 * @var T3_FLOW3_AOP_Framework A reference to the AOP Framework
 	 */
 	protected $aopFramework;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -52,15 +52,15 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 	public function __construct(T3_FLOW3_AOP_Framework $aopFramework) {
 		$this->aopFramework = $aopFramework;
 	}
-	
+
 	/**
 	 * Returns an array (indexed by component names) of component configuration
-	 * objects for the classes of the given package from the Components.conf file
+	 * objects for the classes of the given package from the Components.ini file
 	 * if it exists. If it doesn't exist, an empty array will be returned.
 	 *
-	 * @param  T3_FLOW3_Package_PackageInterface	$package: The package to return the components configuration for
-	 * @param  array	$parsedComponentConfigurations: An array of already existing component configurations (if any)
-	 * @return array   Array of component names and T3_FLOW3_Component_Configuration
+	 * @param  T3_FLOW3_Package_PackageInterface $package: The package to return the components configuration for
+	 * @param  array $parsedComponentConfigurations: An array of already existing component configurations (if any)
+	 * @return array Array of component names and T3_FLOW3_Component_Configuration
 	 * @throws T3_FLOW3_Package_Exception_InvalidComponentConfiguration if an error occured while reading the configuration file.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo   Currently does not respect previously parsed configurations. That's no problem yet but might be one in the future.
@@ -68,18 +68,18 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 	public function getComponentConfigurations(T3_FLOW3_Package_PackageInterface $package, $parsedComponentConfigurations) {
 		$this->package = $package;
 		$parsedComponentConfigurations = array();
-		$componentsConfigurationPath = $package->getClassesPath() . self::FILENAME_COMPONENTSCONF;
+		$componentsConfigurationPath = $package->getConfigurationPath() . self::FILENAME_COMPONENTSINI;
 		$this->componentsConfigurationPath = $componentsConfigurationPath;
 
 		if (is_file($componentsConfigurationPath)) {
 			$unparsedConfigurationArray = parse_ini_file($componentsConfigurationPath, TRUE);
-			if (!is_array($unparsedConfigurationArray)) throw new T3_FLOW3_Package_Exception_InvalidComponentConfiguration('Error while reading "' . self::FILENAME_COMPONENTSCONF . '" file.', 1167574716);
+			if (!is_array($unparsedConfigurationArray)) throw new T3_FLOW3_Package_Exception_InvalidComponentConfiguration('Error while reading "' . self::FILENAME_COMPONENTSINI . '" file.', 1167574716);
 			foreach ($unparsedConfigurationArray as $componentName => $componentConfigurationArray)  {
 				if (is_array($componentConfigurationArray)) {
 					$parsedComponentConfigurations[$componentName] = $this->transformConfigurationArrayToObject($componentName, $componentConfigurationArray);
 				}
 			}
-		}		
+		}
 		return $parsedComponentConfigurations;
 	}
 
@@ -87,8 +87,8 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 	 * Transforms the configuration array read from the .conf file into a component
 	 * configuration object
 	 *
-	 * @param  string		$componentName: Name of the component the configuration is for
-	 * @param  array		$componentConfigurationArray: The unmodified configuration array as read from the .conf file
+	 * @param  string $componentName: Name of the component the configuration is for
+	 * @param  array $componentConfigurationArray: The unmodified configuration array as read from the .conf file
 	 * @return T3_FLOW3_Component_Configuration The parsed component configuration as an object
 	 * @throws T3_FLOW3_Package_Exception_InvalidComponentConfiguration if the configuration contained errors
 	 * @author Robert Lemke <robert@typo3.org>
@@ -98,13 +98,13 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 		$className = (isset($componentConfigurationArray['className']) ? $componentConfigurationArray['className'] : $componentName);
 		$parsedComponentConfiguration = new T3_FLOW3_Component_Configuration($componentName, $className);
 		$parsedComponentConfiguration->setConfigurationSourceHint($this->componentsConfigurationPath);
-		
+
 		foreach ($componentConfigurationArray as $optionName => $optionValue) {
 			$optionValue = $this->parseOptionValue($optionValue);
 			$optionNameParts = explode('.', $optionName);
 
 			switch ($optionNameParts[0]) {
-				case 'scope': 
+				case 'scope':
 					$parsedComponentConfiguration->setScope($this->parseScope($optionValue));
 				break;
 				case 'properties':
@@ -132,18 +132,18 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 					$methodName = 'set' . ucfirst($optionName);
 					$parsedComponentConfiguration->$methodName($this->parseBoolean($optionValue));
 				break;
-				default: 						
+				default:
 					throw new T3_FLOW3_Package_Exception_InvalidComponentConfiguration('Invalid configuration option "' . $optionNameParts[0] . '" in file ' . $this->componentsConfigurationPath . '.', 1167574981);
 			}
 		}
 		return $parsedComponentConfiguration;
 	}
-	
+
 	/**
 	 * Parses the value of the option "scope"
 	 *
-	 * @param  string		$value: Value of the option
-	 * @return integer		The scope translated into a scope constant
+	 * @param  string $value: Value of the option
+	 * @return integer The scope translated into a scope constant
 	 * @throws T3_FLOW3_Package_Exception_InvalidComponentConfiguration if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -154,35 +154,34 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSource implements T3_FLOW3
 
 	/**
 	 * Parses a value which is expected to be boolean
-	 * 
-	 * @param  string		$value: Value of the option
-	 * @return boolean		The value as boolean
+	 *
+	 * @param  string $value: Value of the option
+	 * @return boolean The value as boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseBoolean($value) {
 		switch (strtolower(trim($value))) {
-			case 'on' : 
+			case 'on' :
 			case 'true' :
 			case '1' :
 				$returnValue = TRUE;
-			default : 
+			default :
 				$returnValue = FALSE;
 		}
 		return $returnValue;
 	}
-	
+
 	/**
 	 * Guesses and converts the type of the option value. Currently it can only
 	 * determine between string and numeric values.
 	 *
-	 * @param   string		$optionValue: Value of the option
-	 * @return  mixed		The (possibly) type converted value
+	 * @param   string $optionValue: Value of the option
+	 * @return  mixed The (possibly) type converted value
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseOptionValue($optionValue) {		
-		if (is_numeric($optionValue)) settype($optionValue, 'integer');		
+	protected function parseOptionValue($optionValue) {
+		if (is_numeric($optionValue)) settype($optionValue, 'integer');
 		return $optionValue;
 	}
 }
-	
 ?>

@@ -16,13 +16,13 @@ declare(encoding = 'utf-8');
 
 /**
  * Testcase for the .conf file package components configuration source
- * 
+ *
  * @package		TYPO3
- * @version 	$Id:T3_FLOW3_Package_ConfFileComponentsConfigurationSourceTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Package_ConfFileComponentsConfigurationSourceTest extends T3_Testing_BaseTestCase {
+class T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest extends T3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if getComponentConfigurations() returns an object equal to the stored fixture
@@ -31,7 +31,7 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSourceTest extends T3_Test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentConfigurationsMatchesFixtureOfTestPackage() {
-		$configurationSource = $this->componentManager->getComponent('T3_FLOW3_Package_ConfFileComponentsConfigurationSource');
+		$configurationSource = $this->componentManager->getComponent('T3_FLOW3_Package_IniFileComponentsConfigurationSource');
 		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', TYPO3_PATH_PACKAGES . 'TestPackage/', array($configurationSource));
 
 		$componentConfigurations = $configurationSource->getComponentConfigurations($package, array());
@@ -39,8 +39,8 @@ class T3_FLOW3_Package_ConfFileComponentsConfigurationSourceTest extends T3_Test
 			$componentConfigurations[$componentName]->setConfigurationSourceHint('emptied_for_fixture');
 		}
 			// Uncomment to update the fixture:
-#		file_put_contents(dirname(__FILE__) . '/Fixtures/T3_FLOW3_Fixture_Package_ConfFileComponentsConfigurationSourceTest_componentConfigurations.dat', serialize($componentConfigurations));
-		$componentConfigurationsFixture = unserialize(file_get_contents(dirname(__FILE__) . '/Fixtures/T3_FLOW3_Fixture_Package_ConfFileComponentsConfigurationSourceTest_componentConfigurations.dat'));
+#		file_put_contents(dirname(__FILE__) . '/Fixtures/T3_FLOW3_Fixture_Package_IniFileComponentsConfigurationSourceTest_componentConfigurations.dat', serialize($componentConfigurations));
+		$componentConfigurationsFixture = unserialize(file_get_contents(dirname(__FILE__) . '/Fixtures/T3_FLOW3_Fixture_Package_IniFileComponentsConfigurationSourceTest_componentConfigurations.dat'));
 		$this->assertEquals($componentConfigurationsFixture, $componentConfigurations, 'Component configuration object of package "TestPackage" is not as expected. (Maybe the fixture needs an update?)');
 	}
 }

@@ -12,11 +12,11 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * The default TYPO3 Package implementation
- * 
+ *
  * @package		FLOW3
  * @subpackage	Package
  * @version 	$Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
@@ -26,10 +26,11 @@ declare(encoding = 'utf-8');
 class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 
 	const DIRECTORY_CLASSES = 'Classes/';
+	const DIRECTORY_CONFIGURATION = 'Configuration/';
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
 	const DIRECTORY_META = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
-	
+
 	const FILENAME_PACKAGEINFO = 'PackageInfo.xml';
 	const FILENAME_PACKAGECONFIGURATION = 'PackageConfiguration.php';
 
@@ -37,27 +38,27 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	 * @var string Unique key of this package
 	 */
 	protected $packageKey;
-	
+
 	/**
 	 * @var string Full path to this package's main directory
 	 */
 	protected $packagePath;
-	
+
 	/**
 	 * @var T3_FLOW3_Package_Meta Meta information about this package
 	 */
 	protected $packageMeta;
-	
+
 	/**
 	 * @var T3_FLOW3_Package_ComponentsConfigurationSourceInterface	$packageComponentsConfigurationSources: An array of component configuration source objects which deliver the components configuration for this package
 	 */
 	protected $packageComponentsConfigurationSources;
-	
+
 	/**
 	 * @var array Names and relative paths (to this package directory) of files containing classes
 	 */
 	protected $classFiles;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -70,16 +71,16 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	public function __construct($packageKey, $packagePath, $packageComponentsConfigurationSources) {
 		if (!@is_dir($packagePath)) throw new T3_FLOW3_Package_Exception_InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
 		if (T3_PHP6_Functions::substr($packagePath, -1, 1) != '/') throw new T3_FLOW3_Package_Exception_InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
-		
+
 		$this->packageKey = $packageKey;
-		$this->packagePath = $packagePath;		
+		$this->packagePath = $packagePath;
 		$this->packageMeta = new T3_FLOW3_Package_Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
-		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;		
+		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;
 		if (file_exists($packagePath . self::DIRECTORY_CLASSES . self::FILENAME_PACKAGECONFIGURATION)) {
 			include($packagePath . self::DIRECTORY_CLASSES . self::FILENAME_PACKAGECONFIGURATION);
 		}
 	}
-	
+
 	/**
 	 * Returns the package meta object of this package.
 	 *
@@ -89,7 +90,7 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	public function getPackageMeta() {
 		return $this->packageMeta;
 	}
-	
+
 	/**
 	 * Returns the array of filenames of the class files
 	 *
@@ -122,7 +123,7 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	public function getPackagePath() {
 		return $this->packagePath;
 	}
-	
+
 	/**
 	 * Returns the full path to this package's Classes directory
 	 *
@@ -132,13 +133,23 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	public function getClassesPath() {
 		return $this->packagePath . self::DIRECTORY_CLASSES;
 	}
-	
+
+	/**
+	 * Returns the full path to this package's Configuration directory
+	 *
+	 * @return string Path to this package's Configuration directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getConfigurationPath() {
+		return $this->packagePath . self::DIRECTORY_CONFIGURATION;
+	}
+
 	/**
 	 * Returns the component configurations which were defined by this package.
 	 * The configuration may be delivered by different sources. The order of
 	 * the configuration sources determines which configuration survives as they
 	 * are merged with the configuration of the previous source.
-	 * 
+	 *
 	 * @return  array		Array of component names and T3_FLOW3_Component_Configuration
 	 * @author  Robert Lemke <robert@typo3.org>
 	 * @todo	Merge configuration of different sources
@@ -158,15 +169,15 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws T3_FLOW3_Package_Exception if recursion into directories was too deep or another error occurred 
+	 * @throws T3_FLOW3_Package_Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
 		$classFiles = array();
 		$currentPath = $this->packagePath . self::DIRECTORY_CLASSES . $subDirectory;
-		
+
 		if (!is_dir($currentPath)) return array();
 		if ($recursionLevel > 100) throw new T3_FLOW3_Package_Exception('Recursion too deep.', 1166635495);
-		
+
 		try {
 			$classesDirectoryIterator = new DirectoryIterator($currentPath);
 			while ($classesDirectoryIterator->valid()) {
@@ -182,12 +193,12 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 				}
 				$classesDirectoryIterator->next();
 			}
-			
+
 		} catch(Exception $exception) {
 			throw new T3_FLOW3_Package_Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
 	}
 }
-	
+
 ?>
