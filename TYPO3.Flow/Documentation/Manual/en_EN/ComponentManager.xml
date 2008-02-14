@@ -536,7 +536,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
 
       <listitem>
         <para>If it exists, the file
-        <filename><replaceable>PackageName</replaceable>/Classes/ComponentsConfiguration.php</filename>
+        <filename><replaceable>PackageName</replaceable>/Configuration/Components.php</filename>
         will be included. PHP code found in that file will be executed and
         allows for programatically modfying the components
         configuration</para>
@@ -608,12 +608,12 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
       </section>
 
       <section>
-        <title>ComponentsConfiguration.php</title>
+        <title>Components.php</title>
 
         <para>As an alternative to the <filename>Components.ini</filename>
         file, it is possible to configure components programatically. If a
-        file named <filename>ComponentsConfiguration.php</filename> exists in
-        the <filename>Classes</filename> directory of a package, it will be
+        file named <filename>Components.php</filename> exists in
+        the <filename>Configuration</filename> directory of a package, it will be
         included during the configuration process (ie. before the first
         component class is instantiated!). In general, the PHP file may
         contain any code which prepares the environment or configuration for
@@ -624,7 +624,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
         sections:</para>
 
         <example>
-          <title>Sample ComponentsConfiguration.php file</title>
+          <title>Sample Components.php file</title>
 
           <programlisting language="php">&lt;?php
 declare(encoding = 'utf-8');
@@ -644,7 +644,7 @@ unset($configuration);
 
         <note>
           <para>During the configuration process the
-          <filename>ComponentsConfiguration.php</filename> is included by a
+          <filename>Components.php</filename> is included by a
           class called
           <classname>T3_FLOW3_Package_PHPFileComponentsConfigurationSource</classname>.
           You should read the source code of that class (which is located in
@@ -656,9 +656,9 @@ unset($configuration);
 
         <caution>
           <para>Don't register autoloader methods in the
-          <filename>ComponentsConfiguration.php</filename> as this code must
+          <filename>Components.php</filename> as this code must
           be invoked in an earlier stage. The
-          <filename>PackageConfiguration.php</filename> is the right place for
+          <filename>Package.php</filename> is the right place for
           registering autoloaders.</para>
         </caution>
       </section>
@@ -680,7 +680,7 @@ unset($configuration);
         <example>
           <title>Sample scope annotation</title>
 
-          <programlisting language="ini">/**
+          <programlisting language="php">/**
  * This is my great class.
  *
  * @scope prototype

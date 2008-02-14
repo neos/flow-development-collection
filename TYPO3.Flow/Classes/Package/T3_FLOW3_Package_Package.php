@@ -17,11 +17,11 @@ declare(encoding = 'utf-8');
 /**
  * The default TYPO3 Package implementation
  *
- * @package		FLOW3
- * @subpackage	Package
- * @version 	$Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package    FLOW3
+ * @subpackage Package
+ * @version    $Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 
@@ -32,7 +32,7 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	const DIRECTORY_RESOURCES = 'Resources/';
 
 	const FILENAME_PACKAGEINFO = 'PackageInfo.xml';
-	const FILENAME_PACKAGECONFIGURATION = 'PackageConfiguration.php';
+	const FILENAME_PACKAGECONFIGURATION = 'Package.php';
 
 	/**
 	 * @var string Unique key of this package
@@ -62,9 +62,9 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param  string				$packageKey: Key of this package
-	 * @param  string				$packagePath: Absolute path to the package's main directory
-	 * @param  array				$packageComponentsConfigurationSources: An array of component configuration source objects which deliver the components configuration for this package
+	 * @param  string $packageKey: Key of this package
+	 * @param  string $packagePath: Absolute path to the package's main directory
+	 * @param  array $packageComponentsConfigurationSources: An array of component configuration source objects which deliver the components configuration for this package
 	 * @throws T3_FLOW3_Package_Exception_InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -76,16 +76,16 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 		$this->packagePath = $packagePath;
 		$this->packageMeta = new T3_FLOW3_Package_Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
 		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;
-		if (file_exists($packagePath . self::DIRECTORY_CLASSES . self::FILENAME_PACKAGECONFIGURATION)) {
-			include($packagePath . self::DIRECTORY_CLASSES . self::FILENAME_PACKAGECONFIGURATION);
+		if (file_exists($packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION)) {
+			include($packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION);
 		}
 	}
 
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return	T3_FLOW3_Package_Meta
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @return T3_FLOW3_Package_Meta
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMeta() {
 		return $this->packageMeta;
@@ -94,8 +94,8 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	/**
 	 * Returns the array of filenames of the class files
 	 *
-	 * @return	array		An array of class names (key) and their filename, including the relative path to the package's directory
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
@@ -107,8 +107,8 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	/**
 	 * Returns the package key of this package.
 	 *
-	 * @return	string
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
@@ -117,8 +117,8 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	/**
 	 * Returns the full path to this package's main directory
 	 *
-	 * @return	string		Path to this package's main directory
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @return string Path to this package's main directory
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackagePath() {
 		return $this->packagePath;
@@ -127,11 +127,21 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	/**
 	 * Returns the full path to this package's Classes directory
 	 *
-	 * @return	string		Path to this package's Classes directory
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @return string Path to this package's Classes directory
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassesPath() {
 		return $this->packagePath . self::DIRECTORY_CLASSES;
+	}
+
+	/**
+	 * Returns the full path to this package's Resources directory
+	 *
+	 * @return string Path to this package's Resources directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getResourcesPath() {
+		return $this->packagePath . self::DIRECTORY_RESOURCES;
 	}
 
 	/**
@@ -150,9 +160,9 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	 * the configuration sources determines which configuration survives as they
 	 * are merged with the configuration of the previous source.
 	 *
-	 * @return  array		Array of component names and T3_FLOW3_Component_Configuration
-	 * @author  Robert Lemke <robert@typo3.org>
-	 * @todo	Merge configuration of different sources
+	 * @return array Array of component names and T3_FLOW3_Component_Configuration
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo   Merge configuration of different sources
 	 */
 	public function getComponentConfigurations() {
 		$componentConfigurations = array();
