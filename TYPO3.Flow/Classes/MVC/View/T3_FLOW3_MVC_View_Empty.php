@@ -16,19 +16,19 @@ declare(encoding = 'utf-8');
 
 /**
  * An empty view - a special case.
- * 
- * @package		Framework
- * @subpackage	MVC
- * @version 	$Id:T3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authorst
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package    Framework
+ * @subpackage MVC
+ * @version    $Id:T3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright  Copyright belongs to the respective authorst
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_View_Empty extends T3_FLOW3_MVC_View_Abstract {
-	
+
 	/**
 	 * Renders the empty view
 	 *
-	 * @return string				An empty string
+	 * @return string An empty string
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
