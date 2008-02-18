@@ -72,7 +72,10 @@ class T3_FLOW3_MVC_Controller_ActionController extends T3_FLOW3_MVC_Controller_R
 		if (!method_exists($this, $actionMethodName)) throw new T3_FLOW3_MVC_Exception_NoSuchAction('An action "' . $this->request->getActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
 		if ($this->initalizeView) $this->initializeView();
-		call_user_func_array(array($this, $actionMethodName), array());
+		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
+		if (is_string($actionResult) && T3_PHP6_Functions::strlen($actionResult) > 0) {
+			$this->response->appendContent($actionResult);
+		}
 	}
 
 	/**
@@ -117,8 +120,7 @@ class T3_FLOW3_MVC_Controller_ActionController extends T3_FLOW3_MVC_Controller_R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function defaultAction() {
-		 $output = 'No default action has been implemented yet for this controller.';
-		 $this->response->appendContent($output);
+		 return 'No default action has been implemented yet for this controller.';
 	}
 }
 ?>

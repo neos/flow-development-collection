@@ -14,6 +14,8 @@ declare(encoding = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+require_once('Fixtures/T3_FLOW3_Fixture_MVC_MockActionController.php');
+
 /**
  * Testcase for the MVC Action Controller
  *
@@ -36,6 +38,20 @@ class T3_FLOW3_MVC_Controller_ActionControllerTest extends T3_Testing_BaseTestCa
 
 		$request->setActionName('some');
 		$mockController->processRequest($request, $response);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function stringsReturnedByActionMethodAreAppendedToResponseObject() {
+		$mockController = new T3_FLOW3_Fixture_MVC_MockActionController($this->componentManager, $this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface'));
+		$request = $this->componentManager->getComponent('T3_FLOW3_MVC_Web_Request');
+		$response = $this->componentManager->getComponent('T3_FLOW3_MVC_Web_Response');
+
+		$request->setActionName('returnSomeString');
+		$mockController->processRequest($request, $response);
+		$this->assertEquals('Mock Action Controller Return String', $response->getContent(), 'The response object did not contain the string returned by the action controller');
 	}
 
 	/**
