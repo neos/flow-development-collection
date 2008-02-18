@@ -19,10 +19,11 @@ require_once(TYPO3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/T3_FLOW3_Fixture_DummyC
 /**
  * Testcase for the Component Object Builder
  *
- * @package		FLOW3
- * @version 	$Id:T3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package    FLOW3
+ * @subpackage Tests
+ * @version    $Id:T3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 
@@ -46,10 +47,10 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createComponentObjectCanDoSimpleSetterInjection() {
+	public function createComponentObjectCanDoSimpleExplicitSetterInjection() {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_BasicClass');
 		$componentObject = $this->componentObjectBuilder->createComponentObject('T3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertTrue($componentObject->getInjectedDependency() instanceof T3_TestPackage_InjectedClass, 'The class T3_TestPackage_Injected class has not been setter-injected although it should have been.');
+		$this->assertTrue($componentObject->getFirstDependency() instanceof T3_TestPackage_InjectedClass, 'The class T3_TestPackage_Injected class (first dependency) has not been setter-injected although it should have been.');
 	}
 
 	/**
@@ -89,15 +90,23 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if setting the value of a property which is only reachable through a setProperty() method works
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createComponentObjectCanDoSetterInjectionViaGenericSetter() {
+	public function createObjectCanDoSetterInjectionViaInjectMethod() {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_BasicClass');
 		$componentObject = $this->componentObjectBuilder->createComponentObject('T3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertEquals('', $componentObject->getPropertyWithoutSetterMethod(), 'The propertyWithoutSetterMethod has not been setter-injected although it should have been.');
+		$this->assertTrue($componentObject->getSecondDependency() instanceof T3_TestPackage_InjectedClass, 'The class T3_TestPackage_Injected class (second dependency) has not been setter-injected although it should have been.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectMethodIsPreferredOverSetMethod() {
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_BasicClass');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('T3_TestPackage_BasicClass', $componentConfiguration, array());
+		$this->assertEquals('inject', $componentObject->injectOrSetMethod, 'Setter inject was done via the set* method but inject* should have been preferred!');
 	}
 
 	/**
@@ -300,7 +309,7 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function autoWiringBasicallyWorks() {
+	public function autoWiringWorksForConstructorInjection() {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_InjectedClassWithDependencies');
 		$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertType('T3_TestPackage_SomeImplementation', $component->argument1, 'Autowiring didn\'t work out for T3_TestPackage_ClassWithSomeImplementationInjected');
@@ -311,9 +320,18 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function autoWiringRespectsAlreadyDefinedArguments() {
+	public function autoWiringForConstructorInjectionRespectsAlreadyDefinedArguments() {
 		$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->argument2 instanceof T3_TestPackage_InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function autoWiringWorksForSetterInjectionViaInjectMethod() {
+		$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithSomeImplementationInjected');
+		$this->assertTrue($component->optionalSetterArgument instanceof T3_TestPackage_SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
 }
 ?>

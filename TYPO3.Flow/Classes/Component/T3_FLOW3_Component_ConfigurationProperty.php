@@ -12,45 +12,45 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Injection property as used in a Component Configuration
- * 
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id:T3_FLOW3_Component_ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package     FLOW3
+ * @subpackage  Component
+ * @version     $Id:T3_FLOW3_Component_ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright   Copyright belongs to the respective authors
+ * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ConfigurationProperty {
-	
+
 	const PROPERTY_TYPES_STRAIGHTVALUE = 0;
 	const PROPERTY_TYPES_REFERENCE = 1;
-	
+
 	private $name;
 	private $value;
 	private $type;
-	
+
 	/**
 	 * Constructor - sets the name, type and value of the property
 	 *
-	 * @param  string		$name: Name of the property
-	 * @param  mixed		$value: Value of the property
-	 * @param  integer		$type: Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param  string $name: Name of the property
+	 * @param  mixed $value: Value of the property
+	 * @param  integer $type: Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE) {
 		$this->set($name, $value, $type);
 	}
-	
+
 	/**
 	 * Sets the name, type and value of the property
 	 *
-	 * @param  string		$name: Name of the property
-	 * @param  mixed		$value: Value of the property
-	 * @param  integer		$type: Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param  string $name: Name of the property
+	 * @param  mixed $value: Value of the property
+	 * @param  integer $type: Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -61,11 +61,11 @@ class T3_FLOW3_Component_ConfigurationProperty {
 		$this->value = $value;
 		$this->type = $type;
 	}
-	
+
 	/**
 	 * Returns the name of the property
 	 *
-	 * @return string		Name of the property
+	 * @return string Name of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getName() {
@@ -75,7 +75,7 @@ class T3_FLOW3_Component_ConfigurationProperty {
 	/**
 	 * Returns the value of the property
 	 *
-	 * @return mixed		Value of the property
+	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValue() {
@@ -85,7 +85,7 @@ class T3_FLOW3_Component_ConfigurationProperty {
 	/**
 	 * Returns the type of the property
 	 *
-	 * @return integer		Type of the property
+	 * @return integer Type of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getType() {

@@ -75,8 +75,13 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 			foreach ($overridingConstructorArguments as $index => $value) {
 				$constructorArguments[$index] = $value;
 			}
+
+			$setterProperties = $componentConfiguration->getProperties();
+
 			if ($componentConfiguration->getAutoWiringMode() == T3_FLOW3_Component_Configuration::AUTOWIRING_MODE_ON) {
-				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $className);
+				$class = new ReflectionClass($className);
+				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
+				$setterProperties = $this->autoWireSetterProperties($setterProperties, $class);
 			}
 
 			$valuesForInjection = array();
@@ -90,7 +95,6 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 				throw new T3_FLOW3_Component_Exception_CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . '). The evaluated PHP code was: ' . $instruction, 1187164523);
 			}
 
-			$setterProperties = $componentConfiguration->getProperties();
 			$this->injectSetterProperties($setterProperties, $componentObject);
 
 			$this->callLifecycleInitializationMethod($componentObject, $componentConfiguration);
@@ -108,12 +112,12 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * them if possible.
 	 *
 	 * @param  array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
-	 * @param  string $className: The name of the component class which contains the constructor supposed to be analyzed
+	 * @param  ReflectionClass $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of T3_FLOW3_Component_ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireConstructorArguments(array $constructorArguments, $className) {
-		$class = new ReflectionClass($className);
+	protected function autoWireConstructorArguments(array $constructorArguments, ReflectionClass $class) {
+		$className = $class->getName();
 		$constructor = $class->getConstructor();
 		if ($constructor !== NULL) {
 			foreach($constructor->getParameters() as $parameterIndex => $parameter) {
@@ -141,6 +145,42 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 			$this->debugMessages[] = 'Autowiring for class ' . $className . ' disabled because no constructor was found.';
 		}
 		return $constructorArguments;
+	}
+
+
+	/**
+	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
+	 *
+	 * @param  array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
+	 * @param  ReflectionClass $class: The component class which contains the methods supposed to be analyzed
+	 * @return array The modified array of T3_FLOW3_Component_ConfigurationProperty
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function autoWireSetterProperties(array $setterProperties, ReflectionClass $class) {
+		$className = $class->getName();
+		foreach($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+			$methodName = $method->getName();
+			if (T3_PHP6_Functions::substr($methodName, 0, 6) == 'inject') {
+				$propertyName = T3_PHP6_Functions::strtolower(T3_PHP6_Functions::substr($methodName, 6, 1)) . T3_PHP6_Functions::substr($methodName, 7);
+				if (array_key_exists($propertyName, $setterProperties)) {
+					$this->debugMessages[] = 'Did not try to autowire property $' . $propertyName . ' in ' . $className .  ' because it was already set.';
+					continue;
+				}
+				if ($method->getNumberOfParameters() != 1) {
+					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because it had not exactly one parameter.';
+					continue;
+				}
+				$methodParameters = $method->getParameters();
+				$methodParameter = array_pop($methodParameters);
+				$dependencyClass = $methodParameter->getClass();
+				if ($dependencyClass === NULL) {
+					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
+					continue;
+				}
+				$setterProperties[$propertyName] = new T3_FLOW3_Component_ConfigurationProperty($propertyName, $dependencyClass->getName(), T3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+			}
+		}
+		return $setterProperties;
 	}
 
 	/**
@@ -192,7 +232,6 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 */
 	protected function injectSetterProperties($setterProperties, $componentObject) {
 		foreach ($setterProperties as $propertyName => $property) {
-			$setterMethodName = 'set' . T3_PHP6_Functions::ucfirst($propertyName);
 			switch ($property->getType()) {
 				case T3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_REFERENCE:
 					$propertyValue = $this->componentManager->getComponent($property->getValue());
@@ -201,11 +240,14 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 					$propertyValue = $property->getValue();
 				break;
 			}
-
+			$setterMethodName = 'inject' . T3_PHP6_Functions::ucfirst($propertyName);
 			if (method_exists($componentObject, $setterMethodName)) {
 				$componentObject->$setterMethodName($propertyValue);
-			} elseif (method_exists($componentObject, 'setProperty')) {
-				$componentObject->setProperty($propertyName, $propertyValue);
+			} else {
+				$setterMethodName = 'set' . T3_PHP6_Functions::ucfirst($propertyName);
+				if (method_exists($componentObject, $setterMethodName)) {
+					$componentObject->$setterMethodName($propertyValue);
+				}
 			}
 		}
 	}
