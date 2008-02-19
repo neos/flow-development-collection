@@ -12,16 +12,16 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Extended version of the ReflectionMethod
- * 
- * @package		FLOW3
- * @subpackage	Property
- * @version 	$Id:T3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package     FLOW3
+ * @subpackage  Reflection
+ * @version     $Id:T3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright   Copyright belongs to the respective authors
+ * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Reflection_Method extends ReflectionMethod {
 
@@ -29,12 +29,12 @@ class T3_FLOW3_Reflection_Method extends ReflectionMethod {
 	 * @var T3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
-	
+
 	/**
 	 * The constructor, initializes the reflection class
 	 *
-	 * @param  string		$className: Name of the method's class
-	 * @param  string		$methodName: Name of the method to reflect
+	 * @param  string $className: Name of the method's class
+	 * @param  string $methodName: Name of the method to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -43,13 +43,13 @@ class T3_FLOW3_Reflection_Method extends ReflectionMethod {
 		$this->docCommentParser = new T3_FLOW3_Reflection_DocCommentParser;
 		$this->docCommentParser->parseDocComment($this->getDocComment());
 	}
-	
+
 	/**
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
-	 * @param  string			$tag: Tag name to check for
-	 * @return boolean			TRUE if such a tag has been defined, otherwise FALSE
+	 * @param  string $tag: Tag name to check for
+	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 */
 	public function isTaggedWith($tag) {
 		$result = $this->docCommentParser->isTaggedWith($tag);
@@ -59,16 +59,16 @@ class T3_FLOW3_Reflection_Method extends ReflectionMethod {
 	/**
 	 * Returns an array of tags and their values
 	 *
-	 * @return array			Tags and values
+	 * @return array Tags and values
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->docCommentParser->getTagsValues();
 	}
-	
+
 	/**
 	 * Returns the values of the specified tag
-	 * @return array			Values of the given tag
+	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {

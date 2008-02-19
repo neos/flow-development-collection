@@ -333,5 +333,17 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 		$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->optionalSetterArgument instanceof T3_TestPackage_SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function autoWiringThrowsExceptionForUnmatchedDependenciesOfRequiredSetterInjectedDependencies() {
+		try {
+			$component = $this->componentManager->getComponent('T3_TestPackage_ClassWithUnmatchedRequiredSetterDependency');
+			$this->fail('The object builder did not throw an exception.');
+		} catch (T3_FLOW3_Component_Exception_CannotBuildObject $exception) {
+		}
+	}
 }
 ?>

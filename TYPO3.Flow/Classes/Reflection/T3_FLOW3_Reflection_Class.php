@@ -12,16 +12,16 @@ declare(encoding = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Extended version of the ReflectionClass
- * 
- * @package		FLOW3
- * @subpackage	Reflection
- * @version 	$Id:T3_FLOW3_Reflection_Class.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package     FLOW3
+ * @subpackage  Reflection
+ * @version     $Id:T3_FLOW3_Reflection_Class.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright   Copyright belongs to the respective authors
+ * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Reflection_Class extends ReflectionClass {
 
@@ -33,7 +33,7 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 	/**
 	 * The constructor - initializes the class reflector
 	 *
-	 * @param  string		$className: Name of the class to reflect
+	 * @param  string $className: Name of the class to reflect
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($className) {
@@ -43,12 +43,12 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 	}
 
 	/**
-	 * Replacement for the original getMethods() method which makes sure 
+	 * Replacement for the original getMethods() method which makes sure
 	 * that T3_FLOW3_Reflection_Method objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @param  long								$filter: A filter mask 
-	 * @return T3_FLOW3_Reflection_Method	Method reflection objects of the methods in this class
+	 * @param  long $filter: A filter mask
+	 * @return T3_FLOW3_Reflection_Method Method reflection objects of the methods in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethods($filter = NULL) {
@@ -62,12 +62,12 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 	}
 
 	/**
-	 * Replacement for the original getProperties() method which makes sure 
+	 * Replacement for the original getProperties() method which makes sure
 	 * that T3_FLOW3_Reflection_Property objects are returned instead of the
 	 * orginal ReflectionProperty instances.
 	 *
-	 * @param  long									$filter: A filter mask 
-	 * @return T3_FLOW3_Reflection_Property	Property reflection objects of the properties in this class
+	 * @param  long $filter: A filter mask
+	 * @return T3_FLOW3_Reflection_Property Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties($filter = NULL) {
@@ -78,13 +78,13 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 		}
 		return $extendedProperties;
 	}
-	
+
 	/**
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
-	 * @param  string			$tag: Tag name to check for
-	 * @return boolean			TRUE if such a tag has been defined, otherwise FALSE
+	 * @param  string $tag: Tag name to check for
+	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isTaggedWith($tag) {
@@ -95,16 +95,16 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 	/**
 	 * Returns an array of tags and their values
 	 *
-	 * @return array			Tags and values
+	 * @return array Tags and values
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
 		return $this->docCommentParser->getTagsValues();
 	}
-	
+
 	/**
 	 * Returns the values of the specified tag
-	 * @return array			Values of the given tag
+	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {

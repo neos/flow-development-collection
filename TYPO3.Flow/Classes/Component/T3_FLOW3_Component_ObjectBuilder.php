@@ -79,7 +79,7 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 			$setterProperties = $componentConfiguration->getProperties();
 
 			if ($componentConfiguration->getAutoWiringMode() == T3_FLOW3_Component_Configuration::AUTOWIRING_MODE_ON) {
-				$class = new ReflectionClass($className);
+				$class = new T3_FLOW3_Reflection_Class($className);
 				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
 				$setterProperties = $this->autoWireSetterProperties($setterProperties, $class);
 			}
@@ -112,11 +112,11 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * them if possible.
 	 *
 	 * @param  array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
-	 * @param  ReflectionClass $class: The component class which contains the methods supposed to be analyzed
+	 * @param  T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of T3_FLOW3_Component_ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireConstructorArguments(array $constructorArguments, ReflectionClass $class) {
+	protected function autoWireConstructorArguments(array $constructorArguments, T3_FLOW3_Reflection_Class $class) {
 		$className = $class->getName();
 		$constructor = $class->getConstructor();
 		if ($constructor !== NULL) {
@@ -152,13 +152,14 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
 	 *
 	 * @param  array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
-	 * @param  ReflectionClass $class: The component class which contains the methods supposed to be analyzed
+	 * @param  T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of T3_FLOW3_Component_ConfigurationProperty
+	 * @throws T3_FLOW3_Component_Exception_CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireSetterProperties(array $setterProperties, ReflectionClass $class) {
+	protected function autoWireSetterProperties(array $setterProperties, T3_FLOW3_Reflection_Class $class) {
 		$className = $class->getName();
-		foreach($class->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+		foreach($class->getMethods(T3_FLOW3_Reflection_Method::IS_PUBLIC) as $method) {
 			$methodName = $method->getName();
 			if (T3_PHP6_Functions::substr($methodName, 0, 6) == 'inject') {
 				$propertyName = T3_PHP6_Functions::strtolower(T3_PHP6_Functions::substr($methodName, 6, 1)) . T3_PHP6_Functions::substr($methodName, 7);
@@ -172,9 +173,16 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 				}
 				$methodParameters = $method->getParameters();
 				$methodParameter = array_pop($methodParameters);
-				$dependencyClass = $methodParameter->getClass();
+				try {
+					$dependencyClass = $methodParameter->getClass();
+				} catch (ReflectionException $exception) {
+					$dependencyClass = NULL;
+				}
 				if ($dependencyClass === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
+					if ($method->isTaggedWith('required')) {
+						throw new T3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() .'. Original message: ' . $exception->getMessage(), 1203413346);
+					}
 					continue;
 				}
 				$setterProperties[$propertyName] = new T3_FLOW3_Component_ConfigurationProperty($propertyName, $dependencyClass->getName(), T3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
@@ -267,5 +275,4 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 		}
 	}
 }
-
 ?>

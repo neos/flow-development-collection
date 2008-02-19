@@ -15,13 +15,13 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * A generic Reflection Exception 
- * 
- * @package		FLOW3
- * @subpackage	Reflection
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * A generic Reflection Exception
+ *
+ * @package     FLOW3
+ * @subpackage  Reflection
+ * @version     $Id$
+ * @copyright   Copyright belongs to the respective authors
+ * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Reflection_Exception extends T3_FLOW3_Exception {
 
