@@ -23,8 +23,8 @@
   <section>
     <title>Files and Locations</title>
 
-    <para>The FLOW3 package directory structure follows a certain
-    convention which has the advantage that you don't need to care about any
+    <para>The FLOW3 package directory structure follows a certain convention
+    which has the advantage that you don't need to care about any
     package-related configuration. If you put your files into the right
     directories, everything will just work.</para>
 
@@ -53,10 +53,25 @@
               </varlistentry>
 
               <varlistentry>
+                <term><filename>Configuration</filename></term>
+
+                <listitem>
+                  <para>All kinds of configuration which are delivered with
+                  the package reside in this directory. The configuration
+                  files are immutable must not be changed by the user or
+                  administrator. The most prominent configuration file is the
+                  <filename>Components.ini</filename> file which may be used
+                  to configure the package's components. </para>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
                 <term><filename>Documentation</filename></term>
 
                 <listitem>
-                  <para>Holds the package documentation. Please refer to the
+                  <para>Holds the package documentation. The english (DocBook)
+                  manual for example must be located in a subdirectory called
+                  <filename>Manual/en_EN/</filename>. Please refer to the
                   Documentor's Guide for more details about the directories
                   and files within this directory.</para>
                 </listitem>
@@ -152,7 +167,7 @@
                 <listitem>
                   <para>Holds the unit tests for the package. Testcases will
                   be recognized by the <package>Testing</package> package if
-                  they follow the require naming convention. </para>
+                  they follow the require naming convention.</para>
                 </listitem>
               </varlistentry>
             </variablelist>
