@@ -703,7 +703,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
           <title>Sample Components.php file</title>
 
           <programlisting language="php">&lt;?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
    // Alter the component configuration:
 $configuration = $parsedComponentConfigurations['T3_Authentication_LDAPAuthentication'];
