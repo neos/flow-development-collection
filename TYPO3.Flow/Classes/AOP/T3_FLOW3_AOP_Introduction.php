@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
+
+/**
  * Implementation of the Introduction declaration.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage AOP
- * @version    $Id:T3_FLOW3_AOP_Introduction.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope      prototype
+ * @version $Id:T3_FLOW3_AOP_Introduction.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class T3_FLOW3_AOP_Introduction implements T3_FLOW3_AOP_IntroductionInterface{
 

@@ -12,22 +12,28 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * Contract for a join point
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_JoinPointInterface.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @author		Robert Lemke <robert@typo3.org>
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_JoinPointInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @author Robert Lemke <robert@typo3.org>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_AOP_JoinPointInterface {
 
 	/**
-	 * Constructor, creates the join point 
+	 * Constructor, creates the join point
 	 *
 	 * @param  T3_FLOW3_AOP_ProxyInterface $proxy: Reference to the proxy class instance of the target class
 	 * @param  string			$className: Class name of the target class this join point refers to
@@ -46,7 +52,7 @@ interface T3_FLOW3_AOP_JoinPointInterface {
 	 * @return T3_FLOW3_AOP_ProxyInterface
 	 */
 	public function getProxy();
-	
+
 	/**
 	 * Returns the class name of the target class this join point refers to
 	 *
@@ -60,14 +66,14 @@ interface T3_FLOW3_AOP_JoinPointInterface {
 	 * @return string	The method name
 	 */
 	public function getMethodName();
-	
+
 	/**
 	 * Returns an array of arguments which have been passed to the target method
 	 *
 	 * @return array	Array of arguments
 	 */
 	public function getMethodArguments();
-	
+
 	/**
 	 * Returns the value of the specified method argument
 	 *
@@ -75,7 +81,7 @@ interface T3_FLOW3_AOP_JoinPointInterface {
 	 * @return mixed	Value of the argument
 	 */
 	public function getMethodArgument($argumentName);
-	
+
 	/**
 	 * Returns TRUE if the argument with the specified name exists in the
 	 * method call this joinpoint refers to.
@@ -85,14 +91,14 @@ interface T3_FLOW3_AOP_JoinPointInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isMethodArgument($argumentName);
-	
+
 	/**
 	 * Returns the advice chain related to this join point
 	 *
 	 * @return T3_FLOW3_AOP_AdviceChainInterface The advice chain
 	 */
 	public function getAdvicechain();
-	
+
 	/**
 	 * Returns the exception which has been thrown in the target method.
 	 * If no exception has been thrown, NULL is returned.
@@ -109,7 +115,7 @@ interface T3_FLOW3_AOP_JoinPointInterface {
 	 * @return mixed	Result of the method invocation
 	 */
 	public function getResult();
-	
+
 }
 
 ?>

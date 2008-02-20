@@ -15,16 +15,22 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
+
+/**
  * The pointcut expression parser parses the definition of the place and circumstances
  * where advices can be inserted later on. The input of the parse() function is a string
  * from a pointcut- or advice annotation and returns a pointcut filter composite.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage AOP
- * @version    $Id:T3_FLOW3_AOP_PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @see        T3_FLOW3_AOP_Pointcut, T3_FLOW3_AOP_PointcutFilterComposite
+ * @version $Id:T3_FLOW3_AOP_PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @see T3_FLOW3_AOP_Pointcut, T3_FLOW3_AOP_PointcutFilterComposite
  */
 class T3_FLOW3_AOP_PointcutExpressionParser {
 
@@ -79,7 +85,7 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 				if ($numberOfMatches !== 1) throw new T3_FLOW3_AOP_Exception_InvalidPointcutExpression('Syntax error: Pointcut designator expected near "' . $expression . '"', 1168874739);
 				$pointcutDesignator = $matches[0];
 				$signaturePattern = $this->getSubstringBetweenParentheses($expression);
-				switch($pointcutDesignator) {
+				switch ($pointcutDesignator) {
 					case 'class' :
 						$this->parseDesignatorClass($operator, $signaturePattern, $pointcutFilterComposite);
 					break;

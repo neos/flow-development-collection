@@ -12,41 +12,47 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * An AOP interceptor code builder for methods enriched by advices.
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for an adviced method
-	 * 
-	 * @param  string					$methodName: Name of the method to build an interceptor for
-	 * @param  array					$interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param  ReflectionClass			$targetClass: A reflection of the target class to build the interceptor for
-	 * @return string					PHP code of the interceptor
+	 *
+	 * @param  string $methodName: Name of the method to build an interceptor for
+	 * @param  array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
+	 * @param  ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
+	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build($methodName, array $interceptedMethods, ReflectionClass $targetClass) {
 		if ($methodName === $this->getConstructorName($targetClass)) throw new RuntimeException('The ' . get_class($this) . ' cannot build constructor interceptor code.', 1173107446);
-		
+
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
 		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;
-		
+
 		$methodInterceptorCode = '';
 		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClass);
-		
+
 		$methodParametersDocumentation = '';
 		$methodParametersCode = $this->buildMethodParametersCode($method, TRUE, $methodParametersDocumentation);
-		
+
 		$staticKeyword = ($method !== NULL && $method->isStatic()) ? 'static ' : '';
 
 		$methodInterceptorCode .= '
@@ -58,17 +64,17 @@ class T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends T3_FLOW3_AOP_Abstract
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
 		';
 			if ($method !== NULL) {
-				$methodInterceptorCode .= '			
+				$methodInterceptorCode .= '
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
 				';
-				
+
 				if ($declaringClass->isInterface()) {
 					$methodInterceptorCode .= '
 			$result = NULL;
 					';
 				} else {
 					$methodInterceptorCode .= '
-			$result = parent::' . $methodName . '(' . $this->buildMethodParametersCode($method, FALSE). ');
+			$result = parent::' . $methodName . '(' . $this->buildMethodParametersCode($method, FALSE) . ');
 					';
 				}
 				$methodInterceptorCode .= '
@@ -85,5 +91,5 @@ class T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends T3_FLOW3_AOP_Abstract
 	}
 			';
 		return $methodInterceptorCode;
-	}	
+	}
 }

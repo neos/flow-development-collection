@@ -12,17 +12,23 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * An advisor is the combination of a single advice and the pointcut where the
  * advice will become active.
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_Advisor.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_Advisor.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_Advisor implements T3_FLOW3_AOP_AdvisorInterface {
 
@@ -30,24 +36,24 @@ class T3_FLOW3_AOP_Advisor implements T3_FLOW3_AOP_AdvisorInterface {
 	 * @var T3_FLOW3_AOP_AdviceInterface: The advisor's advice
 	 */
 	protected $advice;
-	
+
 	/**
 	 * @var T3_FLOW3_AOP_PointcutInterface: The pointcut for the advice
 	 */
 	protected $pointcut;
-	
+
 	/**
 	 * Initializes the advisor with an advice and a pointcut
 	 *
-	 * @param  T3_FLOW3_AOP_AdviceInterface		$advice: The advice to weave in
-	 * @param  T3_FLOW3_AOP_PointcutInterface		$pointcut: The pointcut where the advice should be inserted
+	 * @param  T3_FLOW3_AOP_AdviceInterface $advice: The advice to weave in
+	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut where the advice should be inserted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_AOP_AdviceInterface $advice, T3_FLOW3_AOP_PointcutInterface $pointcut) {
 		$this->advice = $advice;
 		$this->pointcut = $pointcut;
 	}
-	
+
 	/**
 	 * Returns the advisor's advice
 	 *
@@ -57,7 +63,7 @@ class T3_FLOW3_AOP_Advisor implements T3_FLOW3_AOP_AdvisorInterface {
 	public function getAdvice() {
 		return $this->advice;
 	}
-	
+
 	/**
 	 * Returns the advisor's pointcut
 	 *
@@ -68,5 +74,4 @@ class T3_FLOW3_AOP_Advisor implements T3_FLOW3_AOP_AdvisorInterface {
 		return $this->pointcut;
 	}
 }
-
 ?>

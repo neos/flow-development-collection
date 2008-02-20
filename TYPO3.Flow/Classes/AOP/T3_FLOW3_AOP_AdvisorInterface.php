@@ -12,43 +12,48 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * An advisor is the combination of a single advice and the pointcut where the
  * advice will become active.
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_AdvisorInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_AdvisorInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @author Robert Lemke <robert@typo3.org>
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_AOP_AdvisorInterface {
 
 	/**
 	 * Initializes the advisor with an advice and a pointcut
 	 *
-	 * @param  T3_FLOW3_AOP_AdviceInterface		$advice: The advice to weave in
-	 * @param  T3_FLOW3_AOP_PointcutInterface	$pointcut: The pointcut where the advice should be inserted
+	 * @param  T3_FLOW3_AOP_AdviceInterface $advice: The advice to weave in
+	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut where the advice should be inserted
 	 */
 	public function __construct(T3_FLOW3_AOP_AdviceInterface $advice, T3_FLOW3_AOP_PointcutInterface $pointcut);
-	
+
 	/**
 	 * Returns the advisor's advice
 	 *
 	 * @return T3_FLOW3_AOP_AdviceInterface The advice
 	 */
 	public function getAdvice();
-	
+
 	/**
 	 * Returns the advisor's pointcut
 	 *
 	 * @return T3_FLOW3_AOP_Pointcut The pointcut
 	 */
 	public function getPointcut();
-	
-}
 
+}
 ?>

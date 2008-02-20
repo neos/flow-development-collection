@@ -15,16 +15,22 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
+
+/**
  * The pointcut defines the set of join points (ie. "situations") in which certain
  * code associated with the pointcut (ie. advices) should be executed. This set of
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage AOP
- * @version    $Id:T3_FLOW3_AOP_Pointcut.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_AOP_Pointcut.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_Pointcut implements T3_FLOW3_AOP_PointcutInterface {
 

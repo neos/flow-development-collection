@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * Implementation of the After Throwing Advice.
- *   
- * @package		Framework
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_AfterThrowingAdvice.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_AfterThrowingAdvice.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_AfterThrowingAdvice implements T3_FLOW3_AOP_AdviceInterface{
 
@@ -29,17 +35,17 @@ class T3_FLOW3_AOP_AfterThrowingAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	 * @var string Holds the name of the aspect component containing the advice
 	 */
 	protected $aspectComponentName;
-	
+
 	/**
 	 * @var string Contains the name of the advice method
 	 */
 	protected $adviceMethodName;
-	
+
 	/**
 	 * @var T3_FLOW3_Component_ManagerInterface A reference to the Component Manager
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * Constructor
 	 *
@@ -54,7 +60,7 @@ class T3_FLOW3_AOP_AfterThrowingAdvice implements T3_FLOW3_AOP_AdviceInterface{
 		$this->adviceMethodName = $adviceMethodName;
 		$this->componentManager = $componentManager;
 	}
-	
+
 	/**
 	 * Invokes the advice method
 	 *
@@ -67,7 +73,7 @@ class T3_FLOW3_AOP_AfterThrowingAdvice implements T3_FLOW3_AOP_AdviceInterface{
 		$methodName = $this->adviceMethodName;
 		$adviceObject->$methodName($joinPoint);
 	}
-	
+
 	/**
 	 * Returns the aspect's component name which has been passed to the constructor
 	 *
@@ -77,7 +83,7 @@ class T3_FLOW3_AOP_AfterThrowingAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	public function getAspectComponentName() {
 		return $this->aspectComponentName;
 	}
-	
+
 	/**
 	 * Returns the advice's method name which has been passed to the constructor
 	 *

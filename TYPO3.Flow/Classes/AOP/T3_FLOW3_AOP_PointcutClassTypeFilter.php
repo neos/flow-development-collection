@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * A class type filter which fires on class types defined by a regular expression
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_PointcutClassTypeFilter.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_PointcutClassTypeFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_PointcutClassTypeFilter implements T3_FLOW3_AOP_PointcutFilterInterface {
 
@@ -29,7 +35,7 @@ class T3_FLOW3_AOP_PointcutClassTypeFilter implements T3_FLOW3_AOP_PointcutFilte
 	 * @var string A regular expression to match class types
 	 */
 	protected $classTypeFilterExpression;
-	
+
 	/**
 	 * The constructor - initializes the class type filter with the class type filter expression
 	 *
@@ -40,7 +46,7 @@ class T3_FLOW3_AOP_PointcutClassTypeFilter implements T3_FLOW3_AOP_PointcutFilte
 	public function __construct($classTypeFilterExpression) {
 		$this->classTypeFilterExpression = $classTypeFilterExpression;
 	}
-	
+
 	/**
 	 * Checks if the specified class matches with the class type filter pattern
 	 *

@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * A filter which refers to another pointcut.
- * 
- * @package		Framework
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package Framework
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_PointcutFilter implements T3_FLOW3_AOP_PointcutFilterInterface {
 
@@ -29,7 +35,7 @@ class T3_FLOW3_AOP_PointcutFilter implements T3_FLOW3_AOP_PointcutFilterInterfac
 	 * @var string Name of the aspect class where the pointcut was declared
 	 */
 	protected $aspectClassName;
-	
+
 	/**
 	 * @var string Name of the pointcut method
 	 */
@@ -39,7 +45,7 @@ class T3_FLOW3_AOP_PointcutFilter implements T3_FLOW3_AOP_PointcutFilterInterfac
 	 * @var T3_FLOW3_AOP_Framework A reference to the AOP Framework
 	 */
 	protected $aopFramework;
-	
+
 	/**
 	 * The constructor - initializes the pointcut filter with the name of the pointcut we're refering to
 	 *
@@ -51,7 +57,7 @@ class T3_FLOW3_AOP_PointcutFilter implements T3_FLOW3_AOP_PointcutFilterInterfac
 		$this->pointcutMethodName = $pointcutMethodName;
 		$this->aopFramework = $aopFramework;
 	}
-	
+
 	/**
 	 * Checks if the specified class and method matches with the pointcut
 	 *
@@ -64,7 +70,7 @@ class T3_FLOW3_AOP_PointcutFilter implements T3_FLOW3_AOP_PointcutFilterInterfac
 	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
 		$pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		if ($pointcut === FALSE) throw new RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
-		
+
 		return $pointcut->matches($class, $method, $pointcutQueryIdentifier);
 	}
 }

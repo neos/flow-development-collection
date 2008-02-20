@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
+
+/**
  * Builds proxy classes for the AOP framework
  *
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_ProxyClassBuilder.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_ProxyClassBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_ProxyClassBuilder {
 
@@ -328,3 +334,4 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 		return $annotationsCode;
 	}
 }
+?>

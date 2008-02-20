@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
+
+/**
  * The main class of the AOP (Aspect Oriented Programming) framework.
  *
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_Framework {
 
@@ -187,8 +193,8 @@ class T3_FLOW3_AOP_Framework {
 	 * is tagged as an aspect. The component acting as an advice will already be
 	 * fetched (and therefore instantiated if neccessary).
 	 *
-	 * @param  T3_FLOW3_Reflection_Class			$aspectClass: Class which forms the aspect, contains advices etc.
-	 * @return T3_FLOW3_AOP_AspectContainer	The aspect container containing one or more advisors
+	 * @param  T3_FLOW3_Reflection_Class $aspectClass: Class which forms the aspect, contains advices etc.
+	 * @return T3_FLOW3_AOP_AspectContainer The aspect container containing one or more advisors
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAspectContainerFromClass(T3_FLOW3_Reflection_Class $aspectClass) {
@@ -199,37 +205,37 @@ class T3_FLOW3_AOP_Framework {
 			$methodName = $method->getName();
 			foreach ($method->getTagsValues() as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
-					switch($tagName) {
+					switch ($tagName) {
 						case 'around' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains an around advice but does not implement the neccessary aspect interface.', 1168868680);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an around advice but does not implement the neccessary aspect interface.', 1168868680);
 							$advice = $this->componentManager->getComponent('T3_FLOW3_AOP_AroundAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('T3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains a before advice but does not implement the neccessary aspect interface.', 1169035119);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains a before advice but does not implement the neccessary aspect interface.', 1169035119);
 							$advice = $this->componentManager->getComponent('T3_FLOW3_AOP_BeforeAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('T3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" icontains an after returning advice but does not implement the neccessary aspect interface.', 1171484136);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" icontains an after returning advice but does not implement the neccessary aspect interface.', 1171484136);
 							$advice = $this->componentManager->getComponent('T3_FLOW3_AOP_AfterReturningAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('T3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains an after throwing advice but does not implement the neccessary aspect interface.', 1171551836);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an after throwing advice but does not implement the neccessary aspect interface.', 1171551836);
 							$advice = $this->componentManager->getComponent('T3_FLOW3_AOP_AfterThrowingAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('T3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'pointcut' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains a pointcut declaration but does not implement the neccessary aspect interface.', 1172158809);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains a pointcut declaration but does not implement the neccessary aspect interface.', 1172158809);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
 						break;
@@ -242,11 +248,11 @@ class T3_FLOW3_AOP_Framework {
 			$propertyName = $property->getName();
 			foreach ($property->getTagsValues() as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
-					switch($tagName) {
+					switch ($tagName) {
 						case 'introduce' :
-							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName. '" contains an introduction declaration but does not implement the neccessary aspect interface.', 1172694758);
+							if (!$aspectClass->implementsInterface('T3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an introduction declaration but does not implement the neccessary aspect interface.', 1172694758);
 							$splittedTagValue = explode(',', $tagValue);
-							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName. '" does not contain the two required parameters.', 1172694761);
+							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentManager->getComponent('T3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
 							$introduction = $this->componentManager->getComponent('T3_FLOW3_AOP_Introduction', $aspectClassName, trim($splittedTagValue[0]), $pointcut);
 							$aspectContainer->addIntroduction($introduction);

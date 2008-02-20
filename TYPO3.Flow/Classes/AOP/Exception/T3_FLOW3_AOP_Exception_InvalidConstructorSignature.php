@@ -21,24 +21,16 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract and marker interface for the AOP Proxy classes
+ * A "Invalid Constructor Signature" Exception
  *
- * @package FLOW3
+ * @package  FLOW3
  * @subpackage AOP
- * @version $Id:T3_FLOW3_AOP_ProxyInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @version $Id: $
  * @copyright Copyright belongs to the respective authors
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface T3_FLOW3_AOP_ProxyInterface {
+class T3_FLOW3_AOP_Exception_InvalidConstructorSignature extends T3_FLOW3_AOP_Exception {
 
-	/**
-	 * Invokes the joinpoint - calls the target methods.
-	 *
-	 * @param  T3_FLOW3_AOP_JoinPointInterface: The join point
-	 * @return mixed                           Result of the target (ie. original) method
-	 */
-	public function invokeJoinPoint(T3_FLOW3_AOP_JoinPointInterface $joinPoint);
 }
 
 ?>

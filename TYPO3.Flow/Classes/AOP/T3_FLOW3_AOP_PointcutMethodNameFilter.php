@@ -12,31 +12,37 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * A little filter which filters for method names
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_PointcutMethodNameFilter implements T3_FLOW3_AOP_PointcutFilterInterface {
 
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected|private)/';
-	
+
 	/**
 	 * @var string The method name filter expression
 	 */
 	protected $methodNameFilterExpression;
-	
+
 	/**
 	 * @var string The method visibility
 	 */
 	protected $methodVisibility = NULL;
-	
+
 	/**
 	 * Constructor - initializes the filter with the name filter pattern
 	 *
@@ -50,7 +56,7 @@ class T3_FLOW3_AOP_PointcutMethodNameFilter implements T3_FLOW3_AOP_PointcutFilt
 		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1)	throw new RuntimeException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
 	}
-	
+
 	/**
 	 * Checks if the specified method matches against the method name
 	 * expression.
@@ -71,7 +77,7 @@ class T3_FLOW3_AOP_PointcutMethodNameFilter implements T3_FLOW3_AOP_PointcutFilt
 			case 'public' :
 				$visibilityMatches = $method->isPublic();
 			break;
-			case 'protected' : 
+			case 'protected' :
 				$visibilityMatches = $method->isProtected();
 			break;
 			case 'private' :
@@ -81,7 +87,7 @@ class T3_FLOW3_AOP_PointcutMethodNameFilter implements T3_FLOW3_AOP_PointcutFilt
 				$visibilityMatches = TRUE;
 		}
 		$isNotFinal = !$method->isFinal();
-		
+
 		return $methodNameMatches && $visibilityMatches && $isNotFinal;
 	}
 }

@@ -12,17 +12,23 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * The advice chain holds a number of subsequent advices that
  * match a given join point and calls the advices in the right order.
- *  
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_AdviceChain.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_AdviceChain.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_AdviceChain {
 
@@ -30,7 +36,7 @@ class T3_FLOW3_AOP_AdviceChain {
 	 * @var array An array of T3_FLOW3_AOP_Advice objects which form the advice chain
 	 */
 	protected $advices;
-	
+
 	/**
 	 * @var integer The number of the next advice which will be invoked on a proceed() call
 	 */
@@ -39,7 +45,7 @@ class T3_FLOW3_AOP_AdviceChain {
 	/**
 	 * Initializes the advice chain
 	 *
-	 * @param  array							$advices: An array of T3_FLOW3_AOP_AdviceInterface compatible objects which form the chain of advices
+	 * @param  array $advices: An array of T3_FLOW3_AOP_AdviceInterface compatible objects which form the chain of advices
 	 * @param  T3_FLOW3_AOP_ProxyInterface	$proxy: A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -48,18 +54,18 @@ class T3_FLOW3_AOP_AdviceChain {
 		$this->advices = $advices;
 		$this->proxy = $proxy;
 	}
-	
+
 	/**
 	 * An advice usually calls (but doesn't have to neccessarily) this method
 	 * in order to proceed with the next advice in the chain. If no advice is
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.
 	 *
-	 * @param  T3_FLOW3_AOP_JoinPointInterface	$joinPoint: The current join point (ie. the context)
-	 * @return mixed							Result of the advice or the original method of the target class
+	 * @param  T3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point (ie. the context)
+	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function &proceed(T3_FLOW3_AOP_JoinPointInterface &$joinPoint) {		     
+	public function &proceed(T3_FLOW3_AOP_JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
@@ -68,7 +74,7 @@ class T3_FLOW3_AOP_AdviceChain {
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * Re-initializes the index to start a new run through the advice chain
 	 *
@@ -79,5 +85,4 @@ class T3_FLOW3_AOP_AdviceChain {
 		$this->adviceIndex = -1;
 	}
 }
-
 ?>

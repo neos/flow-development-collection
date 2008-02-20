@@ -12,17 +12,23 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * A marker interface and contract for pointcuts
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_PointcutInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_PointcutInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @author Robert Lemke <robert@typo3.org>
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_AOP_PointcutInterface {
 
@@ -36,7 +42,7 @@ interface T3_FLOW3_AOP_PointcutInterface {
 	 * @return void
 	 */
 	public function __construct($pointcutExpression, T3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser, $aspectClassName, $pointcutMethodName = NULL);
-	
+
 	/**
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
@@ -47,7 +53,7 @@ interface T3_FLOW3_AOP_PointcutInterface {
 	 * @return boolean				TRUE if class and method match this point cut, otherwise FALSE
 	 */
 	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier);
-	
+
 	/**
 	 * Returns the pointcut expression which has been passed to the constructor.
 	 * This can be used for debugging pointcuts.
@@ -55,14 +61,14 @@ interface T3_FLOW3_AOP_PointcutInterface {
 	 * @return string		The pointcut expression
 	 */
 	public function getPointcutExpression();
-	
+
 	/**
 	 * Returns the aspect class name where the pointcut was declared.
 	 *
 	 * @return string		The aspect class name where the pointcut was declared
 	 */
 	public function getAspectClassName();
-	
+
 	/**
 	 * Returns the pointcut method name (if any was defined)
 	 *

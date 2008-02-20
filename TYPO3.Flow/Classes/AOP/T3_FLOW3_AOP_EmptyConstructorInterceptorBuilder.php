@@ -12,22 +12,28 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id: $
+ */
 
 /**
  * An AOP constructor interceptor code builder for constructors without advice
- * 
- * @package		FLOW3
- * @subpackage	AOP
- * @version 	$Id:T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends T3_FLOW3_AOP_AbstractConstructorInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for an empty constructor (ie. a constructor without advice)
-	 * 
+	 *
 	 * @param  string					$methodName: Name of the method to build an interceptor for
 	 * @param  array					$interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
 	 * @param  ReflectionClass			$targetClass: A reflection of the target class to build the interceptor for
@@ -39,11 +45,11 @@ class T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends T3_FLOW3_AOP_Abstr
 		$methodsAndAdvicesArrayCode = $this->buildMethodsAndAdvicesArrayCode($interceptedMethods);
 		$callParentCode = ($constructor === NULL) ? '' : 'parent::' . $constructor->getName() . '(' . $this->buildMethodParametersCode($constructor, FALSE) . ');';
 		$parametersDocumentation = '';
-		$parametersCode = ($constructor === NULL) ? '' : $this->buildMethodParametersCode($constructor, TRUE, $parametersDocumentation);	
-		
+		$parametersCode = ($constructor === NULL) ? '' : $this->buildMethodParametersCode($constructor, TRUE, $parametersDocumentation);
+
 		$constructorCode = '
 	/**
-	 * Non-advised constructor interceptor. 
+	 * Non-advised constructor interceptor.
 	 * ' . $parametersDocumentation . '
 	 * @return void
 	 */
@@ -54,5 +60,5 @@ class T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends T3_FLOW3_AOP_Abstr
 	}
 		';
 		return $constructorCode;
-	}		
+	}
 }
