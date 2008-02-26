@@ -326,8 +326,10 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * @param  string $interfaceName: Name of the interface
 	 * @return mixed Either the class name of the default implementation for the component type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws T3_FLOW3_Component_Exception_UnknownInterface if the specified interface does not exist.
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
+		if (!interface_exists($interfaceName, TRUE)) throw new T3_FLOW3_Component_Exception_UnknownInterface('The interface "' . $interfaceName . '" does not exist.', 1203578679);
 		$classNamesFound = array();
 		foreach ($this->componentConfigurations as $componentConfiguration) {
 			$className = $componentConfiguration->getClassName();

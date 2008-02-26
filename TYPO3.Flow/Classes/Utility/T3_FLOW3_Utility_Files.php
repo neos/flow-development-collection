@@ -16,12 +16,12 @@ declare(ENCODING = 'utf-8');
 
 /**
  * File and directory functions
- * 
- * @package		FLOW3
- * @subpackage	Utility
- * @version     $Id:T3_FLOW3_Utility_Files.php 467 2008-02-06 19:34:56Z robert $
- * @copyright   Copyright belongs to the respective authors
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:T3_FLOW3_Utility_Files.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Utility_Files {
 
@@ -29,25 +29,23 @@ class T3_FLOW3_Utility_Files {
 	 * Deletes all files, directories and subdirectories from the specified
 	 * directory. The passed directory itself won't be deleted though.
 	 *
-	 * @param  string		$path: Path to the directory which shall be emptied.
+	 * @param string $path: Path to the directory which shall be emptied.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    removeDirectoryRecursively()
+	 * @see removeDirectoryRecursively()
 	 */
 	public static function emptyDirectoryRecursively($path) {
 		if (!is_dir($path)) throw new RuntimeException('"' . $path . '" is no directory.', 1169047616);
-		
+
 		$directoryIterator = new RecursiveDirectoryIterator($path);
 		foreach (new RecursiveIteratorIterator($directoryIterator) as $filename) {
 			if (@unlink ($filename) === FALSE) {
 				throw new RuntimeException('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
-		}		
+		}
 		foreach ($directoryIterator as $subDirectoryName) {
-			if (!@rmdir($subDirectoryName)) {
-				self::removeDirectoryRecursively($subDirectoryName);
-			}
-		}		
+			self::removeDirectoryRecursively($subDirectoryName);
+		}
 	}
 
 	/**
@@ -55,24 +53,24 @@ class T3_FLOW3_Utility_Files {
 	 * directory. Contrary to emptyDirectoryRecursively() this function will
 	 * also finally remove the emptied directory.
 	 *
-	 * @param  string		$path: Path to the directory which shall be removed completely.
+	 * @param  string $path: Path to the directory which shall be removed completely.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    emptyDirectoryRecursively()
+	 * @see emptyDirectoryRecursively()
 	 */
 	public static function removeDirectoryRecursively($path) {
 		self::emptyDirectoryRecursively($path);
 		rmdir ($path);
 	}
-	
+
 	/**
 	 * Creates a directory specified by $path. If the parent directories
 	 * don't exist yet, they will be created as well.
 	 *
-	 * @param  string		$path: Path to the directory which shall be created
+	 * @param string $path: Path to the directory which shall be created
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Make mode configurable
+	 * @todo Make mode configurable
 	 */
 	public static function createDirectoryRecursively($path) {
 		$directoryNames = explode('/', $path);

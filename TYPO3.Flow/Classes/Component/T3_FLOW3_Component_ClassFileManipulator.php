@@ -17,14 +17,14 @@ declare(ENCODING = 'utf-8');
 /**
  * This class is used to manipulate the PHP source code of certain registered
  * components. Specifically the "new" operator is replaced by a call to the
- * getComponent() method of the component manager. 
- * 
+ * getComponent() method of the component manager.
+ *
  * @package		FLOW3
  * @subpackage	Component
  * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * 
+ *
  * @todo NOTE: This class does not work at the moment!
  */
 class T3_FLOW3_Component_ClassFileManipulator {
@@ -33,18 +33,18 @@ class T3_FLOW3_Component_ClassFileManipulator {
 	 * @var T3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * Constructs the class file manipulator
-	 * 
+	 *
 	 * @param  T3_FLOW3_Component_ManagerInterface		$componentManager: The component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {		
+	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
-	
+
 	/**
 	 * Mainpulates the specified class file if neccessary and probably overrides
 	 * the path and let it point to a manipulated version of the file.
@@ -65,9 +65,9 @@ class T3_FLOW3_Component_ClassFileManipulator {
 		$targetCode = '';
 		$manipulated = FALSE;
 		$tokens = token_get_all($sourceCode);
-		
+
 		$i = 0;
-		while($i < count($tokens)) {
+		while ($i < count($tokens)) {
 			if (is_array($tokens[$i])) {
 				switch ($tokens[$i][0]) {
 					case T_IMPLEMENTS :
@@ -79,26 +79,26 @@ class T3_FLOW3_Component_ClassFileManipulator {
 					case T_FILE :
 						$targetCode .= "'$classFilePathAndName'";
 						break;
-					default : 
-						$targetCode .= $tokens[$i][1];						
+					default :
+						$targetCode .= $tokens[$i][1];
 				}
 			} else {
 				$targetCode .= $tokens[$i];
 			}
 			$i++;
 		}
-		
+
 		if ($manipulated) {
 			file_put_contents($targetClassFilePathAndName, $targetCode);
 			$classFilePathAndName = $targetClassFilePathAndName;
 		}
 	}
-	
+
 	/**
 	 * Parses the tokens, starting at the current index and replaces the "new"
 	 * operator with a call to the component manager if the class to be instantiated
 	 * is registered as a component.
-	 * 
+	 *
 	 * @param
 	 * @param
 	 * @param
@@ -108,13 +108,13 @@ class T3_FLOW3_Component_ClassFileManipulator {
 	protected function replaceNewOperator(Array $tokens, &$index, &$targetCode) {
 		$index++;
 		$newOperatorHasBeenReplaced = FALSE;
-		
+
 		$whitespace = '';
 		while ($tokens[$index][0] == T_WHITESPACE) {
-			$whitespace .= $tokens[$index][1];						
+			$whitespace .= $tokens[$index][1];
 			$index++;
 		}
-				
+
 		switch ($tokens[$index][0]) {
 			case T_STRING :
 				$className = $tokens[$index][1];
@@ -125,17 +125,17 @@ class T3_FLOW3_Component_ClassFileManipulator {
 						$targetCode .= '$GLOBALS[\'TYPO3\']->getComponentManager()->getComponent'  . '(\'' . $className . '\', ' . $constructorArguments . ')' . $whitespace;
 						$newOperatorHasBeenReplaced = TRUE;
 					} else {
-						$targetCode .= 'new'  . $whitespace . $className . '(' . $constructorArguments . ')';						
+						$targetCode .= 'new'  . $whitespace . $className . '(' . $constructorArguments . ')';
 					}
 				} else {
 					if ($this->componentManager->isComponentRegistered($className)) {
 						$targetCode .= '$GLOBALS[\'TYPO3\']->getComponentManager()->getComponent'  . '(\'' . $className . '\')' . $whitespace;
 						$newOperatorHasBeenReplaced = TRUE;
 					} else {
-						$targetCode .= 'new'  . $whitespace . $className;						
+						$targetCode .= 'new'  . $whitespace . $className;
 					}
 				}
-				break;				
+				break;
 			case T_VARIABLE :
 			default :
 				$targetCode .= 'new' . $whitespace;
@@ -143,14 +143,14 @@ class T3_FLOW3_Component_ClassFileManipulator {
 		}
 		return $newOperatorHasBeenReplaced;
 	}
-	
+
 	/**
 	 * Parses the tokens of the constructor arguments and finds the closing brackets.
-	 * 
+	 *
 	 * @param  array					$tokens: The tokenized source code
 	 * @param  integer					&$index: The current index in the tokens array - the expected starting position is one token after the opening bracket.
 	 * @return string					returns the content between the parentheses
-	 * @author Robert Lemke <robert@typo3.org> 
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConstructorArguments(Array $tokens, &$index) {
 		$index++;

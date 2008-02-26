@@ -16,34 +16,31 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:T3_FLOW3_AOP_ProxyClassLoader.php 201 2007-03-30 11:18:30Z robert $
+ * @subpackage Resource
+ * @version $Id: $
  */
 
 /**
- * Class Loader implementation which loads classes from a dynamic proxy
- * file if such a file exists.
+ * A file resource
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:T3_FLOW3_AOP_ProxyClassLoader.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Resource
+ * @version $Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
-class T3_FLOW3_AOP_ProxyClassLoader {
+class T3_FLOW3_Resource_FileResource extends SplFileObject {
 
 	/**
-	 * Loads php files containing classes found in the AOP Proxy directory
+	 * Constructs this file resource
 	 *
-	 * @param string $className: Name of the class/interface to find a php file for
-	 * @return void
+	 * @param string $filename: Name of the file
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadClass($className) {
-		if (file_exists(TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/' . $className . '.php')) {
-			require_once(TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/' . $className . '.php');
-		}
+	public function __construct($filename) {
+		parent::__construct($filename);
 	}
+
 }
 ?>

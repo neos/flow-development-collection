@@ -15,35 +15,32 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id:T3_FLOW3_AOP_ProxyClassLoader.php 201 2007-03-30 11:18:30Z robert $
- */
-
-/**
- * Class Loader implementation which loads classes from a dynamic proxy
- * file if such a file exists.
+ * Testcase for the File Resource
  *
- * @package FLOW3
- * @subpackage AOP
- * @version $Id:T3_FLOW3_AOP_ProxyClassLoader.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
- * @copyright Copyright belongs to the respective authors
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package    FLOW3
+ * @version    $Id:T3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_AOP_ProxyClassLoader {
+class T3_FLOW3_Resource_FileResourceTest extends T3_Testing_BaseTestCase {
 
 	/**
-	 * Loads php files containing classes found in the AOP Proxy directory
-	 *
-	 * @param string $className: Name of the class/interface to find a php file for
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadClass($className) {
-		if (file_exists(TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/' . $className . '.php')) {
-			require_once(TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/' . $className . '.php');
-		}
+	public function isPrototype() {
+		$file1 = $this->componentManager->getComponent('T3_FLOW3_Resource_FileResource', __FILE__);
+		$file2 = $this->componentManager->getComponent('T3_FLOW3_Resource_FileResource', __FILE__);
+		$this->assertNotSame($file1, $file2, 'File Resource seems to be singleton!');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function implementsSPLInterface() {
+		$file = new T3_FLOW3_Resource_FileResource(__FILE__);
+		$this->assertType('SplFileObject', $file);
 	}
 }
 ?>

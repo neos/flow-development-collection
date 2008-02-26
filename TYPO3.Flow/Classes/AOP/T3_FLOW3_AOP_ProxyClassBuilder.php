@@ -39,11 +39,6 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 	protected $componentManager;
 
 	/**
-	 * @var string Full path to the proxy cache main directory
-	 */
-	protected $proxyCachePath;
-
-	/**
 	 * Constructor
 	 *
 	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
@@ -52,7 +47,6 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 	 */
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
-		$this->proxyCachePath = TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/';
 	}
 
 	/**
@@ -89,10 +83,17 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 			'METHODS_INTERCEPTOR_CODE' => $this->buildMethodsInterceptorCode($interceptedMethods, $targetClass)
 		);
 
-		$proxyClassPathAndFilename = $this->proxyCachePath . $targetClassName . self::PROXYCLASSSUFFIX . '.php';
-		$this->writeProxyClassFile($proxyClassPathAndFilename, $proxyClassTokens);
+		$targetClassName = $proxyClassTokens['TARGET_CLASS'];
+		$proxyClassName = $targetClassName . self::PROXYCLASSSUFFIX;
+		if (!class_exists($proxyClassName)) {
+			$proxyCode = file_get_contents(TYPO3_PATH_PACKAGES . 'FLOW3/Resources/PHP/AOPProxyClassTemplate.php');
+			foreach ($proxyClassTokens as $token => $value) {
+				$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
+			}
+			eval($proxyCode);
+		}
 
-		$componentConfiguration->setClassName($targetClassName . self::PROXYCLASSSUFFIX);
+		$componentConfiguration->setClassName($proxyClassName);
 		$constructorArguments = $componentConfiguration->getConstructorArguments();
 		if (count($constructorArguments) > 0) {
 			$componentConfiguration->setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(count($constructorArguments) + 1, 'T3_FLOW3_Component_ManagerInterface', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
@@ -297,26 +298,6 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 			}
 		}
 		return $methods;
-	}
-
-	/**
-	 * Loads the proxy class template, replaces the markers with the values of the
-	 * passed tokens and writes the code into a new .php file.
-	 *
-	 * @param  string $proxyClassPathAndFilename: Path and filename of the proxy class file
-	 * @param  array $proxyClassTokens: array of tokens and values
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function writeProxyClassFile($proxyClassPathAndFilename, $proxyClassTokens) {
-		$targetClassName = $proxyClassTokens['TARGET_CLASS'];
-		$proxyCode = file_get_contents(TYPO3_PATH_PACKAGES . 'FLOW3/Resources/PHP/AOPProxy.tpl');
-
-		foreach ($proxyClassTokens as $token => $value) {
-			$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
-		}
-		$result = file_put_contents($proxyClassPathAndFilename, $proxyCode);
-		if ($result === FALSE) throw new RuntimeException('Error while writing AOP proxy file for class "' . $targetClassName . '"', 1169050378);
 	}
 
 	/**
