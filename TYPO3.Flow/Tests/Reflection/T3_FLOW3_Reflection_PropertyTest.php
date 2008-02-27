@@ -15,21 +15,28 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Testcase for Reflection Property 
- * 
- * @package		Framework
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id: $
+ */
+
+/**
+ * Testcase for Reflection Property
+ *
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 
 	public $publicProperty = 'I\'m public';
-	
+
 	protected $protectedProperty = 'abc';
 
 	private $privateProperty = '123';
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -38,12 +45,12 @@ class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 		$reflectionProperty = new T3_FLOW3_Reflection_Property(__CLASS__, 'protectedProperty');
 		try {
 			$reflectionProperty->getValue(__CLASS__);
-			$this->fail('getValue($this) did not throw an exception although only the specified class was not an object.');					
+			$this->fail('getValue($this) did not throw an exception although only the specified class was not an object.');
 		} catch (T3_FLOW3_Reflection_Exception $exception) {
-			
+
 		}
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -52,7 +59,7 @@ class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 		$reflectionProperty = new T3_FLOW3_Reflection_Property(__CLASS__, 'publicProperty');
 		$this->assertEquals('I\'m public', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a public property.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -64,7 +71,7 @@ class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 		$this->protectedProperty = 'def';
 		$this->assertEquals('def', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return "def".');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -76,8 +83,8 @@ class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 
 		$this->protectedProperty = $this;
 		$this->assertSame($this, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the reference to $this.');
-	}	
-	
+	}
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -85,8 +92,8 @@ class T3_FLOW3_Reflection_PropertyTest extends T3_Testing_BaseTestCase {
 	public function setValueEvenSetsValueOfAPublicProperty() {
 		$reflectionProperty = new T3_FLOW3_Reflection_Property(__CLASS__, 'publicProperty');
 		$reflectionProperty->setValue($this, 'modified');
-		$this->assertEquals('modified', $this->publicProperty, 'ReflectionProperty->setValue() did not successfully set the value of a public property.');		
+		$this->assertEquals('modified', $this->publicProperty, 'ReflectionProperty->setValue() did not successfully set the value of a public property.');
 	}
-	
+
 }
 ?>

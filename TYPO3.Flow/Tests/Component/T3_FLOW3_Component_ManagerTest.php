@@ -15,24 +15,33 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+
+/**
  * Testcase for the default component manager
  *
- * @package		FLOW3
- * @version 	$Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_Component_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 
 	/**
-	 * Checks if getContext() returns the "default" context if nothing else has been defined.
+	 * Checks if getContext() returns the "Development" context if nothing else has been defined.
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextReturnsDefaultContext() {
 		$componentManager = new T3_FLOW3_Component_Manager();
-		$this->assertEquals('default', $componentManager->getContext(), 'getContext() did not return "default".');
+		$this->assertEquals('Development', $componentManager->getContext(), 'getContext() did not return "Development".');
 	}
 
 	/**

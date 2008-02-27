@@ -36,8 +36,8 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPrototype() {
-		$backend1 = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File');
-		$backend2 = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File');
+		$backend1 = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend2 = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->assertNotSame($backend1, $backend2, 'File Backend seems to be singleton!');
 	}
 
@@ -45,7 +45,18 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setFilesDirectoryThrowsExceptionOnNonWritableDirectory() {
+	public function defaultCacheDirectoryIsWritable() {
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$propertyReflection = new T3_FLOW3_Reflection_Property($backend, 'cacheDirectory');
+		$cacheDirectory = $propertyReflection->getValue($backend);
+		$this->assertTrue(is_writable($cacheDirectory), 'The default cache directory "' . $cacheDirectory . '" is not writable.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCacheDirectoryThrowsExceptionOnNonWritableDirectory() {
 		switch (PHP_OS) {
 			case 'Darwin' :
 				$directoryName = '/private';
@@ -56,10 +67,10 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 			default :
 				throw new PHPUnit_Framework_IncompleteTestError('Didn\'t know how a non-writable directory for this platform.');
 		}
-		$backend = new T3_FLOW3_Cache_Backend_File;
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		try {
-			$backend->setFilesDirectory($directoryName);
-			$this->fail('setFilesDirectory() to non-writable directory did not result in an exception.');
+			$backend->setCacheDirectory($directoryName);
+			$this->fail('setCacheDirectory() to non-writable directory did not result in an exception.');
 		} catch (T3_FLOW3_Cache_Exception $exception) {
 
 		}
@@ -69,24 +80,66 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function saveReallySavesToTheSpecifiedDirectory() {
+	public function getCacheDirectoryReturnsThePreviouslySetDirectory() {
 		$environment = $this->componentManager->getComponent('T3_FLOW3_Utility_Environment');
-		$directoryName = $environment->getPathToTemporaryDirectory() . '/FLOW3';
-		$identifier = 'test-savereallysavestothespecifieddirectory';
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+
+		$directory = $environment->getPathToTemporaryDirectory();
+		$backend->setCacheDirectory($directory);
+		$this->assertEquals($directory, $backend->getCacheDirectory(), 'getDirectory() did not return the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function saveReallySavesToTheSpecifiedDirectory() {
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
+
 		$data = 'some data' . microtime();
 		$dataHash = sha1($data);
 
-		$backend = new T3_FLOW3_Cache_Backend_File;
-		$backend->setFilesDirectory($directoryName);
-		$backend->save($data, $identifier);
+		$entryIdentifier = 'BackendFileTest';
+		$context = $this->componentManager->getContext();
 
-		$pattern = $directoryName . '/' . $dataHash{0} . '/' . $dataHash{1} . '/????-??-?????;??;???_' . $identifier . '*.cachedata';
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend->setCache($cache);
+		$backend->save($data, $entryIdentifier);
+
+		$cacheDirectory = $backend->getCacheDirectory();
+		$pattern = $cacheDirectory . $context . '/Cache/test/' . $dataHash{0} . '/' . $dataHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '*.cachedata';
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 
 		$retrievedData = file_get_contents(array_pop($filesFound));
 		$this->assertEquals($data, $retrievedData, 'The original and the retrieved data don\'t match.');
-		T3_FLOW3_Utility_Files::removeDirectoryRecursively($directoryName);
+
+		T3_FLOW3_Utility_Files::removeDirectoryRecursively($cacheDirectory);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function loadReturnsContentOfTheCorrectCacheFile() {
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
+
+		$data = 'some data' . microtime();
+		$dataHash = sha1($data);
+
+		$entryIdentifier = 'BackendFileTest';
+		$context = $this->componentManager->getContext();
+
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend->setCache($cache);
+		$backend->save($data, $entryIdentifier);
+
+		$loadedData = $backend->load($entryIdentifier);
+		$this->assertEquals($data, $loadedData, 'The original and the retrieved data don\'t match.');
+
+		T3_FLOW3_Utility_Files::removeDirectoryRecursively($backend->getCacheDirectory());
 	}
 }
 ?>

@@ -33,44 +33,118 @@ declare(ENCODING = 'utf-8');
 class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 
 	/**
-	 * @var string Directory where the cache files are stored
+	 * @var T3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
 	 */
-	protected $filesDirectory;
+	protected $cache;
+
+	/**
+	 * @var string The current application context
+	 */
+	protected $context;
+
+	/**
+	 * @var string Directory where the files are stored
+	 */
+	protected $cacheDirectory = '';
+
+	/**
+	 * @var integer Default lifetime of a cache entry in seconds
+	 */
+	protected $defaultLifetime = 3600;
+
+	/**
+	 * Constructs this backend
+	 *
+	 * @param string $context: FLOW3's application context
+	 * @param T3_FLOW3_Utility_Environment $environment: The environment - used for setting the default cache directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($context) {
+		$this->context = $context;
+	}
+
+	/**
+	 * Injects the environment utility
+	 *
+	 * @param T3_FLOW3_Utility_Environment $environment
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(T3_FLOW3_Utility_Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
+	 * Initializes the default cache directory
+	 *
+	 * @return void
+	 */
+	public function initializeComponent() {
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . '/FLOW3/' . md5($this->environment->getScriptPathAndFilename()) . '/';
+		try {
+			$this->setCacheDirectory($cacheDirectory);
+		} catch(T3_FLOW3_Cache_Exception $exception) {
+		}
+	}
+
+	/**
+	 * Sets a reference to the cache which uses this backend
+	 *
+	 * @param T3_FLOW3_Cache_AbstractCache $cache The frontend for this backend
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCache(T3_FLOW3_Cache_AbstractCache $cache) {
+		$this->cache = $cache;
+	}
 
 	/**
 	 * Sets the directory where the cache files are stored.
 	 *
-	 * @param string $filesDirectory: The directory
+	 * @param string $cacheDirectory: The directory
 	 * @return void
 	 * @throws T3_FLOW3_Cache_Exception if the directory does not exist, is not writable or could not be created.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setFilesDirectory($filesDirectory) {
-		if (!is_writable($filesDirectory)) {
-			T3_FLOW3_Utility_Files::createDirectoryRecursively($filesDirectory);
+	public function setCacheDirectory($cacheDirectory) {
+		if (!is_writable($cacheDirectory)) {
+			T3_FLOW3_Utility_Files::createDirectoryRecursively($cacheDirectory);
 		}
+		if (!is_dir($cacheDirectory)) throw new T3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		if (!is_writable($cacheDirectory)) throw new T3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+		$this->cacheDirectory = $cacheDirectory;
+	}
 
-		if (!is_dir($filesDirectory)) throw new T3_FLOW3_Cache_Exception('The directory "' . $filesDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($filesDirectory)) throw new T3_FLOW3_Cache_Exception('The directory "' . $filesDirectory . '" is not writable.', 1203965200);
-		$this->filesDirectory = $filesDirectory;
+	/**
+	 * Returns the directory where the cache files are stored
+	 *
+	 * @return string Full path of the cache directory
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCacheDirectory() {
+		return $this->cacheDirectory;
 	}
 
 	/**
 	 * Saves data in a cache file.
 	 *
-	 * @param string $data
-	 * @param string $identifier
+	 * @param string $data: The data to be stored
+	 * @param string $entryIdentifier: An identifier for this specific cache entry
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws T3_FLOW3_Cache_Exception if the directory does not exist or is not writable
+	 * @throws T3_FLOW3_Cache_Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function save($data, $identifier, $tags = array(), $lifetime = NULL) {
-		$expiryTime = new DateTime('now +1 week', new DateTimeZone('UTC'));
+	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL) {
+		if (!is_object($this->cache)) throw new T3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111375);
+
+		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
+		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		$dataHash = sha1($data);
-		$path = $this->filesDirectory . '/' . $dataHash{0} . '/' . $dataHash {1} . '/';
-		$filename = $this->renderCacheFilename($identifier, $expiryTime, $dataHash);
+		$path = $this->cacheDirectory . '/' . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $dataHash{0} . '/' . $dataHash {1} . '/';
+		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime, $dataHash);
 
 		if (!is_writable($path)) {
 			T3_FLOW3_Utility_Files::createDirectoryRecursively($path);
@@ -84,6 +158,23 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 			$result = rename($path . $temporaryFilename, $path . $filename);
 			if ($result === TRUE) break;
 		}
+	}
+
+	/**
+	 * Loads data from a cache file.
+	 *
+	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function load($entryIdentifier) {
+		if (!is_object($this->cache)) throw new T3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+
+		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
+		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier . '*.cachedata';
+		$filesFound = glob($pattern);
+		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
+		return file_get_contents(array_pop($filesFound));
 	}
 
 	/**

@@ -31,5 +31,53 @@ declare(ENCODING = 'utf-8');
  */
 abstract class T3_FLOW3_Cache_AbstractBackend {
 
+	/**
+	 * @var T3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
+	 */
+	protected $cache;
+
+	/**
+	 * @var string The current application context
+	 */
+	protected $context;
+
+	/**
+	 * Constructs this backend
+	 *
+	 * @param string $context: FLOW3's application context
+	 */
+	public function __construct($context) {
+		$this->context = $context;
+	}
+
+	/**
+	 * Sets a reference to the cache which uses this backend
+	 *
+	 * @param T3_FLOW3_Cache_AbstractCache $cache The frontend for this backend
+	 * @return void
+	 */
+	public function setCache(T3_FLOW3_Cache_AbstractCache $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
+	 * Saves data in the cache.
+	 *
+	 * @param string $data: The data to be stored
+	 * @param string $entryIdentifier: An identifier for this specific cache entry
+	 * @param array $tags: Tags to associate with this cache entry
+	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @return void
+	 * @throws T3_FLOW3_Cache_Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
+	 */
+	abstract public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL);
+
+	/**
+	 * Loads data from the cache.
+	 *
+	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 */
+	abstract public function load($entryIdentifier);
 }
 ?>

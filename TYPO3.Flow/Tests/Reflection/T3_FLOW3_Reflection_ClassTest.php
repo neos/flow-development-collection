@@ -16,49 +16,45 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Cache
+ * @subpackage Tests
  * @version $Id: $
  */
 
 /**
- * A cache for (possibly generated) PHP classes
+ * Testcase for Reflection Class
  *
  * @package FLOW3
- * @subpackage Cache
+ * @subpackage Tests
  * @version $Id:T3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class T3_FLOW3_Cache_ClassCache extends T3_FLOW3_Cache_AbstractCache {
+class T3_FLOW3_Reflection_ClassTest extends T3_Testing_BaseTestCase {
+
+	protected $someProperty;
 
 	/**
-	 * Saves code of a PHP class in the cache.
-	 *
-	 * @param string $className: Name of the class to cache
-	 * @param array $tags: Tags to associate with this cache entry
-	 * @return void
-	 * @throws T3_FLOW3_Cache_Exception_InvalidClass if the class does not exist
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function save($className, $tags = array()) {
-		if (!class_exists($className)) throw new T3_FLOW3_Cache_Exception_InvalidClass('The class "' . $className . '" does not exist.', 1203959737);
-		$class = new ReflectionClass($className);
-		$this->backend->save((string)$class, $className);
+	public function getPropertiesReturnsFLOW3sPropertyReflection() {
+		$class = new T3_FLOW3_Reflection_Class(__CLASS__);
+		$properties = $class->getProperties();
+
+		$this->assertTrue(is_array($properties), 'The returned value is no array.');
+		$this->assertType('T3_FLOW3_Reflection_Property', array_pop($properties), 'The returned properties are not of type T3_FLOW3_Reflection_Property.');
 	}
 
 	/**
-	 * Loads a PHP class from the cache.
-	 *
-	 * @param string $className: Name of the class to load
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws T3_FLOW3_Cache_Exception_ClassAlreadyLoaded if the class already exists
 	 */
-	public function load($className) {
-		if (class_exists($className)) throw new T3_FLOW3_Cache_Exception_ClassAlreadyLoaded('The class "' . $className . '" already exists.', 1203959740);
-		$classCode = $this->backend->load($className);
-		eval($classCode);
+	public function getPropertyReturnsFLOW3sPropertyReflection() {
+		$class = new T3_FLOW3_Reflection_Class(__CLASS__);
+		$this->assertType('T3_FLOW3_Reflection_Property', $class->getProperty('someProperty'), 'The returned property is not of type T3_FLOW3_Reflection_Property.');
+		$this->assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
 	}
+
 }
 ?>

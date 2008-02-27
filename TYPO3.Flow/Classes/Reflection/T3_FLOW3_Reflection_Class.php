@@ -67,7 +67,7 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 	 * orginal ReflectionProperty instances.
 	 *
 	 * @param  long $filter: A filter mask
-	 * @return T3_FLOW3_Reflection_Property Property reflection objects of the properties in this class
+	 * @return array of T3_FLOW3_Reflection_Property Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties($filter = NULL) {
@@ -77,6 +77,19 @@ class T3_FLOW3_Reflection_Class extends ReflectionClass {
 			$extendedProperties[] = new T3_FLOW3_Reflection_Property($this->getName(), $property->getName());
 		}
 		return $extendedProperties;
+	}
+
+	/**
+	 * Replacement for the original getProperty() method which makes sure
+	 * that a T3_FLOW3_Reflection_Property object is returned instead of the
+	 * orginal ReflectionProperty instance.
+	 *
+	 * @param  string $name: Name of the property
+	 * @return T3_FLOW3_Reflection_Property Property reflection object of the specified property in this class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getProperty($name) {
+		return new T3_FLOW3_Reflection_Property($this->getName(), $name);
 	}
 
 	/**

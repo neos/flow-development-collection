@@ -15,20 +15,26 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id: $
+ */
+
+/**
  * Implementation of the default TYPO3 Component Manager
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:T3_FLOW3_Component_Manager.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Component_Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface {
 
 	/**
 	 * @var string Name of the current context
 	 */
-	protected $context = 'default';
+	protected $context = 'Development';
 
 	/**
 	 * @var T3_FLOW3_Component_ObjectCacheInterface Holds an instance of the Component Object Cache
@@ -72,9 +78,9 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 *
 	 * By default the context is set to "default". Although the context can be freely chosen,
 	 * the following contexts are explicitly supported by FLOW3:
-	 * "default", "production", "development", "testing", "profiling"
+	 * "Production", "Development", "Testing", "Profiling", "Staging"
 	 *
-	 * @param  string		$context: Name of the context
+	 * @param  string $context: Name of the context
 	 * @return void
 	 * @throws InvalidArgumentException if $context is not a valid string.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -87,7 +93,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Returns the name of the currently set context.
 	 *
-	 * @return  string		Name of the current context
+	 * @return  string Name of the current context
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContext() {
@@ -187,7 +193,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Unregisters the specified component
 	 *
-	 * @param  string $componentName: The explicit component name
+	 * @param string $componentName: The explicit component name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_UnknownComponent if the specified component has not been registered before
@@ -248,7 +254,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Returns the configuration object of a certain component
 	 *
-	 * @param  string $componentName: Name of the component to fetch the configuration for
+	 * @param string $componentName: Name of the component to fetch the configuration for
 	 * @return T3_FLOW3_Component_Configuration The component configuration
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_UnknownComponent if the specified component has not been registered
@@ -264,7 +270,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 *
 	 * If a component is not yet registered, it will be registered automatically.
 	 *
-	 * @param  array $newComponentConfigurations: Array of $componentName => T3_FLOW3_Component_configuration
+	 * @param array $newComponentConfigurations: Array of $componentName => T3_FLOW3_Component_configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -283,7 +289,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * If the component is not yet registered, it will be registered automatically.
 	 * If an instance of the component existed in the object cache, it will be flushed.
 	 *
-	 * @param  T3_FLOW3_Component_Configuration	$newComponentConfiguration: The new component configuration
+	 * @param T3_FLOW3_Component_Configuration $newComponentConfiguration: The new component configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -303,8 +309,8 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * This is a convenience method which loads the configuration of the given
 	 * component, sets the class name and saves the configuration again.
 	 *
-	 * @param  string $componentName: Name of the component to set the class name for
-	 * @param  string $className: Name of the class to set
+	 * @param string $componentName: Name of the component to set the class name for
+	 * @param string $className: Name of the class to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_UnknownComponent on trying to set the class name of an unknown component
@@ -323,7 +329,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * interface name. If no class implementing the interface was found or more than one
 	 * implementation was found in the package defining the interface, FALSE is returned.
 	 *
-	 * @param  string $interfaceName: Name of the interface
+	 * @param string $interfaceName: Name of the interface
 	 * @return mixed Either the class name of the default implementation for the component type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_UnknownInterface if the specified interface does not exist.
@@ -347,7 +353,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * Searches for and returns all class names of implementations of the given component type
 	 * (interface name). If no class implementing the interface was found, FALSE is returned.
 	 *
-	 * @param  string $interfaceName: Name of the interface
+	 * @param string $interfaceName: Name of the interface
 	 * @return array An array of class names of the default implementation for the component type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_UnknownInterface if the given interface does not exist
@@ -372,11 +378,11 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * Returns straight-value constructor arguments for a component by creating approriate
 	 * T3_FLOW3_Component_ConfigurationArgument objects.
 	 *
-	 * @param  array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @param  T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration of the component in question
+	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @param T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration of the component in question
 	 * @return array An array of T3_FLOW3_Component_ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    getComponent()
+	 * @see getComponent()
 	 */
 	protected function getOverridingConstructorArguments(array $arguments, T3_FLOW3_Component_Configuration $componentConfiguration) {
 		$constructorArguments = array();
@@ -390,11 +396,11 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * Returns the scope of the specified component. If it is not defined in the component
 	 * configuration, the scope is determined from the annotation.
 	 *
-	 * @param  string $componentName: Name of the component
-	 * @param  T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
+	 * @param string $componentName: Name of the component
+	 * @param T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
 	 * @return string The scope
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   needs cleanup
+	 * @todo needs cleanup
 	 */
 	protected function getComponentScope($componentName, $componentConfiguration) {
 		$scope = $componentConfiguration->getScope();

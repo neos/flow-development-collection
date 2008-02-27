@@ -54,6 +54,7 @@ abstract class T3_FLOW3_Cache_AbstractCache {
 		if (!is_string($identifier) || strlen($identifier) == 0) throw new InvalidArgumentException('No valid identifier specified.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
+		$this->backend->setCache($this);
 	}
 
 	/**
