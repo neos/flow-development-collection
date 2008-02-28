@@ -1,8 +1,8 @@
 /**
- * AOP Proxy for the class "###TARGET_CLASS###".
+ * AOP Proxy for the class "###TARGET_CLASS_NAME###".
  *
 ###CLASS_ANNOTATIONS### */
-class ###TARGET_CLASS######PROXY_CLASS_SUFFIX### extends ###TARGET_CLASS### implements ###INTRODUCED_INTERFACES###T3_FLOW3_AOP_ProxyInterface {
+class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###T3_FLOW3_AOP_ProxyInterface {
 
 	/**
 	 * @var array An array of target method names and their advices grouped by advice type

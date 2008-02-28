@@ -40,21 +40,22 @@ final class T3_FLOW3 {
 	/**
 	 * @var T3_FLOW3_Component_ManagerInterface An instance of the component manager
 	 */
-	protected	$componentManager;
+	protected $componentManager;
 
 	/**
 	 * @var boolean Flag to determine if the initialize() method has been called already
 	 */
-	protected	$isInitialized = FALSE;
+	protected $isInitialized = FALSE;
 
 	/**
 	 * Constructor
 	 *
+	 * @param string $context The application context
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
-	public function __construct() {
+	public function __construct($context = 'Development') {
 		$this->checkEnvironment();
 
 		require_once(TYPO3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
@@ -73,6 +74,7 @@ final class T3_FLOW3 {
 		$resourceManager->registerClassFile('T3_FLOW3_Package_Manager', TYPO3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Manager.php');
 
 		$this->componentManager = new T3_FLOW3_Component_Manager();
+		$this->componentManager->setContext($context);
 		$this->componentManager->registerComponent('T3_FLOW3_Resource_ManagerInterface', 'T3_FLOW3_Resource_Manager', $resourceManager);
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_Framework', 'T3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('T3_FLOW3_Package_ManagerInterface', 'T3_FLOW3_Package_Manager');
@@ -93,9 +95,9 @@ final class T3_FLOW3 {
 	public function initialize() {
 		if ($this->isInitialized) throw new T3_FLOW3_Exception('FLOW3 has already been initialized!', 1169546671);
 
-		$this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface', $this->componentManager)->initialize();
-		$this->componentManager->getComponent('T3_FLOW3_AOP_Framework', $this->componentManager)->initialize();
-		$this->componentManager->getComponent('T3_FLOW3_Utility_Environment', $this->componentManager);
+		$this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface')->initialize();
+		$this->componentManager->getComponent('T3_FLOW3_AOP_Framework')->initialize();
+		$this->componentManager->getComponent('T3_FLOW3_Utility_Environment');
 		$this->isInitialized = TRUE;
 	}
 

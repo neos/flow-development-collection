@@ -34,19 +34,34 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 	const PROXYCLASSSUFFIX = '_AOPProxy';
 
 	/**
-	 * @var T3_FLOW3_Component_ManagerInterface An instance of the component manager
+	 * @var T3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * Constructor
+	 * @var T3_FLOW3_Cache_ClassCache A cache for the proxy classes
+	 */
+	protected $cache;
+
+	/**
+	 * Constructs this proxy class builder
 	 *
-	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
-	 * @return void
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
+	}
+
+	/**
+	 * Assigns a cache for caching the generated proxy classes.
+	 *
+	 * @param T3_FLOW3_Cache_ClassCache $cache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setClassCache(T3_FLOW3_Cache_ClassCache $cache) {
+		$this->cache = $cache;
 	}
 
 	/**
@@ -75,22 +90,23 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 		$this->addConstructorToInterceptedMethods($interceptedMethods, $targetClass);
 
 		$targetClassName = $targetClass->getName();
+		$proxyClassName = $this->renderProxyClassName($targetClassName);
+
 		$proxyClassTokens = array(
 			'CLASS_ANNOTATIONS' => $this->buildClassAnnotationsCode($targetClass),
-			'TARGET_CLASS' => $targetClassName,
-			'PROXY_CLASS_SUFFIX' => self::PROXYCLASSSUFFIX,
+			'PROXY_CLASS_NAME' => $proxyClassName,
+			'TARGET_CLASS_NAME' => $targetClassName,
 			'INTRODUCED_INTERFACES' => $this->buildIntroducedInterfacesCode($introducedInterfaces),
 			'METHODS_INTERCEPTOR_CODE' => $this->buildMethodsInterceptorCode($interceptedMethods, $targetClass)
 		);
 
-		$targetClassName = $proxyClassTokens['TARGET_CLASS'];
-		$proxyClassName = $targetClassName . self::PROXYCLASSSUFFIX;
-		if (!class_exists($proxyClassName)) {
-			$proxyCode = file_get_contents(TYPO3_PATH_PACKAGES . 'FLOW3/Resources/PHP/AOPProxyClassTemplate.php');
-			foreach ($proxyClassTokens as $token => $value) {
-				$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
-			}
-			eval($proxyCode);
+		$proxyCode = file_get_contents(TYPO3_PATH_PACKAGES . 'FLOW3/Resources/PHP/AOPProxyClassTemplate.php');
+		foreach ($proxyClassTokens as $token => $value) {
+			$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
+		}
+		eval($proxyCode);
+		if ($this->cache !== NULL) {
+			$this->cache->save($proxyClassName);
 		}
 
 		$componentConfiguration->setClassName($proxyClassName);
@@ -313,6 +329,26 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 			$annotationsCode .= ' * @' . $tag . ' ' . implode(' ', $values) . chr(10);
 		}
 		return $annotationsCode;
+	}
+
+	/**
+	 * Renders a valid, unique class name for the proxy class
+	 *
+	 * @param string $targetClassName: Name of the proxied class
+	 * @return string Name for the proxy class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function renderProxyClassName($targetClassName) {
+		$context = $this->componentManager->getContext();
+		$proxyClassName = $targetClassName . self::PROXYCLASSSUFFIX . '_' . $context;
+		if (class_exists($proxyClassName, FALSE)) {
+			$proxyClassVersion = 2;
+			while (class_exists($targetClassName . self::PROXYCLASSSUFFIX . '_' . $context . '_v' . $proxyClassVersion , FALSE)) {
+				$proxyClassVersion++;
+			}
+			$proxyClassName = $targetClassName . self::PROXYCLASSSUFFIX . '_' . $context . '_v' . $proxyClassVersion;
+		}
+		return $proxyClassName;
 	}
 }
 ?>

@@ -49,9 +49,9 @@ class T3_FLOW3_AOP_Framework {
 	protected $aspectContainers = array();
 
 	/**
-	 * @var string Full path to the proxy cache main directory
+	 * @var T3_FLOW3_Cache_ClassCache The cache for AOP proxy classes
 	 */
-	protected $proxyCachePath;
+	protected $proxyClassCache;
 
 	/**
 	 * @var array List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
@@ -66,18 +66,25 @@ class T3_FLOW3_AOP_Framework {
 	/**
 	 * Constructor
 	 *
-	 * @param   T3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
-	 * @return	void
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 		$this->registerFrameworkComponents();
+	}
 
-		$this->proxyCachePath = TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/AOP/ProxyCache/';
-		$this->pointcutExpressionParser = $componentManager->getComponent('T3_FLOW3_AOP_PointcutExpressionParser');
-		$this->proxyClassBuilder = new T3_FLOW3_AOP_ProxyClassBuilder($componentManager);
-		spl_autoload_register(array(new T3_FLOW3_AOP_ProxyClassLoader($this), 'loadClass'));
+	/**
+	 * Injects an instance of the pointcut expression parser
+	 *
+	 * @param T3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPointcutExpressionParser(T3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser) {
+		$this->pointcutExpressionParser = $pointcutExpressionParser;
 	}
 
 	/**
@@ -87,9 +94,9 @@ class T3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function clearProxyCache() {
-		if (file_exists($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME)) {
-			unlink($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME);
-		}
+#		if (file_exists($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME)) {
+#			unlink($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME);
+#		}
 	}
 
 	/**
@@ -105,21 +112,15 @@ class T3_FLOW3_AOP_Framework {
 	 */
 	public function initialize() {
 		if ($this->isInitialized) throw new T3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
-		if (!is_dir($this->proxyCachePath)) {
-			T3_FLOW3_Utility_Files::createDirectoryRecursively($this->proxyCachePath);
-		}
-		if (FALSE && file_exists($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME)) {
-			$componentConfigurationsSerialized = file_get_contents($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME);
-			$componentConfigurations = unserialize($componentConfigurationsSerialized);
-		} else {
-			T3_FLOW3_Utility_Files::emptyDirectoryRecursively($this->proxyCachePath);
-			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 
-			$this->buildAspectContainersFromComponents($componentConfigurations);
-			$this->buildProxyClasses($componentConfigurations);
+		$cacheBackend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$this->proxyClassCache = $this->componentManager->getComponent('T3_FLOW3_Cache_ClassCache', 'FLOW3_AOP_Proxy', $cacheBackend);
 
-#			file_put_contents($this->proxyCachePath . self::COMPONENT_CONFIGURATIONS_CACHE_FILENAME, serialize($componentConfigurations));
-		}
+		$componentConfigurations = $this->componentManager->getComponentConfigurations();
+
+		$this->buildAspectContainersFromComponents($componentConfigurations);
+		$this->buildProxyClasses($componentConfigurations);
+
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 		$this->isInitialized = TRUE;
 	}
@@ -128,9 +129,9 @@ class T3_FLOW3_AOP_Framework {
 	 * Adds a registered component to the proxy blacklist to prevent the component class
 	 * from being proxied by the AOP framework.
 	 *
-	 * @param  string		$componentName: Name of the component to add to the blacklist
+	 * @param string $componentName: Name of the component to add to the blacklist
 	 * @return void
-	 * @auhor  Robert Lemke <robert@typo3.org>
+	 * @auhor Robert Lemke <robert@typo3.org>
 	 */
 	public function addComponentNameToProxyBlacklist($componentName) {
 		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
@@ -141,9 +142,9 @@ class T3_FLOW3_AOP_Framework {
 	 * Traverses the aspect containers to find a pointcut from the aspect class name
 	 * and pointcut method name
 	 *
-	 * @param  string				$aspectClassName: Name of the aspect class where the pointcut has been declared
-	 * @param  string				$pointcutMethodName: Method name of the pointcut
-	 * @return mixed				The T3_FLOW3AOPPointcut or FALSE if none was found
+	 * @param string $aspectClassName: Name of the aspect class where the pointcut has been declared
+	 * @param string $pointcutMethodName: Method name of the pointcut
+	 * @return mixed The T3_FLOW3AOPPointcut or FALSE if none was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
@@ -156,22 +157,13 @@ class T3_FLOW3_AOP_Framework {
 		return FALSE;
 	}
 
-
-
-
-
-
-	/* ************************************************************************
-	 *
-	 * PROTECTED METHODS
-	 *
-	 * ************************************************************************/
-
 	/**
 	 * Checks the annotations of all registered component classes for aspect tags
 	 * and creates an aspect with advisors accordingly.
 	 *
-	 * @param  array		$componentConfigurations: An array of T3_FLOW3_Component_Configuration objects.
+	 * @param array $componentConfigurations: An array of T3_FLOW3_Component_Configuration objects.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildAspectContainersFromComponents($componentConfigurations) {
 		foreach ($componentConfigurations as $componentName => $componentConfiguration) {
@@ -270,17 +262,20 @@ class T3_FLOW3_AOP_Framework {
 	 * Builds AOP proxy classes for each registered component and inserts interceptor
 	 * code from the advices where they apply.
 	 *
-	 * @param  array		&$componentConfigurations: Configurations of all registered components. The class file location will be deflected to the new proxy class file.
+	 * @param array &$componentConfigurations: Configurations of all registered components. The class file location will be deflected to the new proxy class file.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildProxyClasses(&$componentConfigurations) {
+	protected function buildProxyClasses(array &$componentConfigurations) {
+		$proxyClassBuilder = $this->componentManager->getComponent('T3_FLOW3_AOP_ProxyClassBuilder');
+		$proxyClassBuilder->setClassCache($this->proxyClassCache);
+
 		foreach ($componentConfigurations as $componentName => $componentConfiguration) {
 			if (array_search($componentName, $this->componentProxyBlacklist) === FALSE && substr($componentName, 0, 13) != 'T3_FLOW3_') {
 				try {
 					$class = new T3_FLOW3_Reflection_Class($componentConfiguration->getClassName());
 					if (!$class->implementsInterface('T3_FLOW3_AOP_AspectInterface') && !$class->isAbstract() && !$class->isFinal()) {
-						$componentConfigurations[$componentName] = $this->proxyClassBuilder->buildProxyClass($class, $componentConfiguration, $this->aspectContainers);
+						$componentConfigurations[$componentName] = $proxyClassBuilder->buildProxyClass($class, $componentConfiguration, $this->aspectContainers);
 					}
 				} catch (ReflectionException $exception) {
 					throw new T3_FLOW3_AOP_Exception_UnknownClass('The component "' . $componentName . '" is configured to use class "' . $componentConfiguration->getClassName() . '" but such a class does not exist.', 1187348208);
@@ -307,6 +302,7 @@ class T3_FLOW3_AOP_Framework {
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutInterface', 'T3_FLOW3_AOP_Pointcut');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutFilter');
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_PointcutExpressionParser');
+		$this->componentManager->registerComponent('T3_FLOW3_AOP_ProxyClassBuilder');
 
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
 		$componentConfigurations['T3_FLOW3_AOP_Advisor']->setScope('prototype');

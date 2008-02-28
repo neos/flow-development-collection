@@ -33,16 +33,6 @@ declare(ENCODING = 'utf-8');
 class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 
 	/**
-	 * @var T3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
-	 */
-	protected $cache;
-
-	/**
-	 * @var string The current application context
-	 */
-	protected $context;
-
-	/**
 	 * @var string Directory where the files are stored
 	 */
 	protected $cacheDirectory = '';
@@ -51,17 +41,6 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	 * @var integer Default lifetime of a cache entry in seconds
 	 */
 	protected $defaultLifetime = 3600;
-
-	/**
-	 * Constructs this backend
-	 *
-	 * @param string $context: FLOW3's application context
-	 * @param T3_FLOW3_Utility_Environment $environment: The environment - used for setting the default cache directory
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($context) {
-		$this->context = $context;
-	}
 
 	/**
 	 * Injects the environment utility
@@ -86,17 +65,6 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 			$this->setCacheDirectory($cacheDirectory);
 		} catch(T3_FLOW3_Cache_Exception $exception) {
 		}
-	}
-
-	/**
-	 * Sets a reference to the cache which uses this backend
-	 *
-	 * @param T3_FLOW3_Cache_AbstractCache $cache The frontend for this backend
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setCache(T3_FLOW3_Cache_AbstractCache $cache) {
-		$this->cache = $cache;
 	}
 
 	/**
@@ -142,14 +110,16 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
-		$dataHash = sha1($data);
-		$path = $this->cacheDirectory . '/' . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $dataHash{0} . '/' . $dataHash {1} . '/';
-		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime, $dataHash);
+		$entryIdentifierHash = sha1($entryIdentifier);
+		$path = $this->cacheDirectory . '/' . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
+		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($path)) {
 			T3_FLOW3_Utility_Files::createDirectoryRecursively($path);
 			if (!is_writable($path)) throw new T3_FLOW3_Cache_Exception('The cache directory "' . $path . '" could not be created.', 1204026250);
 		}
+
+		$this->remove($entryIdentifier);
 
 		$temporaryFilename = $filename . '.' . uniqid() . '.temp';
 		$result = @file_put_contents($path . $temporaryFilename, $data);
@@ -168,13 +138,38 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function load($entryIdentifier) {
-		if (!is_object($this->cache)) throw new T3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		$pathsAndFilenames = $this->findCacheFiles($entryIdentifier);
+		return ($pathsAndFilenames !== FALSE) ? file_get_contents(array_pop($pathsAndFilenames)) : FALSE;
+	}
 
-		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
-		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier . '*.cachedata';
-		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
-		return file_get_contents(array_pop($filesFound));
+	/**
+	 * Checks if a cache entry with the specified identifier exists.
+	 *
+	 * @param unknown_type $entryIdentifier
+	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function has($entryIdentifier) {
+		return $this->findCacheFiles($entryIdentifier) !== FALSE;
+	}
+
+	/**
+	 * Removes all cache entries matching the specified identifier.
+	 * Usually this only affects one entry.
+	 *
+	 * @param string $entryIdentifier: Specifies the cache entry to remove
+	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function remove($entryIdentifier) {
+		$pathsAndFilenames = $this->findCacheFiles($entryIdentifier);
+		if ($pathsAndFilenames === FALSE) return FALSE;
+
+		foreach ($pathsAndFilenames as $pathAndFilename) {
+			$result = unlink ($pathAndFilename);
+			if ($result === FALSE) return FALSE;
+		}
+		return TRUE;
 	}
 
 	/**
@@ -182,13 +177,31 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $identifier: Identifier for the cache entry
 	 * @param DateTime $expiry: Date and time specifying the expiration of the entry. Must be a UTC time.
-	 * @param string $dataHash: 40 bytes hexadecimal SHA1 hash of the data to be stored
 	 * @return string Filename of the cache data file
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function renderCacheFilename($identifier, DateTime $expiryTime, $dataHash) {
-		$filename = $expiryTime->format('Y-m-d\TH\;i\;s\Z') . '_' . $identifier . '_' . $dataHash . '.cachedata';
+	protected function renderCacheFilename($identifier, DateTime $expiryTime) {
+		$filename = $expiryTime->format('Y-m-d\TH\;i\;s\Z') . '_' . $identifier . '.cachedata';
 		return $filename;
+	}
+
+	/**
+	 * Tries to find the cache entry for the specified identifier.
+	 * Usually only one cache entry should be found - if more than one exist, this
+	 * is due to some error or crash.
+	 *
+	 * @param string $identifier: The cache entry identifier
+	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws T3_FLOW3_Cache_Exception if no frontend has been set
+	 */
+	protected function findCacheFiles($entryIdentifier) {
+		if (!is_object($this->cache)) throw new T3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
+		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$filesFound = glob($pattern);
+		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
+		return $filesFound;
 	}
 }
 ?>

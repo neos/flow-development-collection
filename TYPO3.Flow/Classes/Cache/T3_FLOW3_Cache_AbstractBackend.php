@@ -79,5 +79,24 @@ abstract class T3_FLOW3_Cache_AbstractBackend {
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 */
 	abstract public function load($entryIdentifier);
+
+	/**
+	 * Checks if a cache entry with the specified identifier exists.
+	 *
+	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 */
+	abstract public function has($entryIdentifier);
+
+	/**
+	 * Removes all cache entries matching the specified identifier.
+	 * Usually this only affects one entry but if - for what reason ever -
+	 * old entries for the identifier still exist, they are removed as well.
+	 *
+	 * @param string $entryIdentifier: Specifies the cache entry to remove
+	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 */
+	abstract public function remove($entryIdentifier);
+
 }
 ?>

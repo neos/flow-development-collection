@@ -36,7 +36,7 @@ class T3_FLOW3_Cache_ClassCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveThrowsExceptionOnNonExistantClass() {
-		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save'), array(), '', FALSE);
+		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$cache = new T3_FLOW3_Cache_ClassCache('ClassCache', $backend);
 		try {
 			$cache->save('ThisClassDoesntExist');
@@ -52,7 +52,7 @@ class T3_FLOW3_Cache_ClassCacheTest extends T3_Testing_BaseTestCase {
 	public function savePassesClassCodeToBackend() {
 		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
 
-		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save'), array(), '', FALSE);
+		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo((string)$componentManagerReflection));
 
 		$cache = new T3_FLOW3_Cache_ClassCache('ClassCache', $backend);
@@ -71,7 +71,7 @@ class T3_FLOW3_Cache_ClassCacheTest extends T3_Testing_BaseTestCase {
 			class ' . $className . ' {}
 		';
 
-		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save'), array(), '', FALSE);
+		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue($classCode));
 
 		$cache = new T3_FLOW3_Cache_ClassCache('ClassCache', $backend);
@@ -92,7 +92,7 @@ class T3_FLOW3_Cache_ClassCacheTest extends T3_Testing_BaseTestCase {
 			class ' . $className . ' {}
 		';
 
-		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save'), array(), '', FALSE);
+		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->atLeastOnce())->method('load')->will($this->returnValue($classCode));
 
 		$cache = new T3_FLOW3_Cache_ClassCache('ClassCache', $backend);
