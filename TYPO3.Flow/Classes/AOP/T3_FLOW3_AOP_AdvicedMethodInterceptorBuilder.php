@@ -40,18 +40,18 @@ class T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends T3_FLOW3_AOP_Abstract
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function build($methodName, array $interceptedMethods, ReflectionClass $targetClass) {
-		if ($methodName === $this->getConstructorName($targetClass)) throw new RuntimeException('The ' . get_class($this) . ' cannot build constructor interceptor code.', 1173107446);
+	static public function build($methodName, array $interceptedMethods, ReflectionClass $targetClass) {
+		if ($methodName === self::getConstructorName($targetClass)) throw new RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
 		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;
 
 		$methodInterceptorCode = '';
-		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClass);
+		$advicesCode = self::buildAdvicesCode($groupedAdvices, $methodName, $targetClass);
 
 		$methodParametersDocumentation = '';
-		$methodParametersCode = $this->buildMethodParametersCode($method, TRUE, $methodParametersDocumentation);
+		$methodParametersCode = self::buildMethodParametersCode($method, TRUE, $methodParametersDocumentation);
 
 		$staticKeyword = ($method !== NULL && $method->isStatic()) ? 'static ' : '';
 
@@ -74,12 +74,12 @@ class T3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends T3_FLOW3_AOP_Abstract
 					';
 				} else {
 					$methodInterceptorCode .= '
-			$result = parent::' . $methodName . '(' . $this->buildMethodParametersCode($method, FALSE) . ');
+			$result = parent::' . $methodName . '(' . self::buildMethodParametersCode($method, FALSE) . ');
 					';
 				}
 				$methodInterceptorCode .= '
 		} else {
-			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClass->getMethod($methodName)) . ');
+			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringClass->getMethod($methodName)) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . $advicesCode . '
 			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);

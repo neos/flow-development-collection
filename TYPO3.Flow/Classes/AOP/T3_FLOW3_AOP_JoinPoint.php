@@ -71,17 +71,17 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	 * Constructor, creates the join point
 	 *
 	 * @param  T3_FLOW3_AOP_ProxyInterface $proxy: Reference to the proxy class instance of the target class
-	 * @param  string			$className: Class name of the target class this join point refers to
-	 * @param  string			$methodName: Method name of the target method which is about to or has been invoked
-	 * @param  array			$methodArguments: Array of method arguments which have been passed to the target method
+	 * @param  string $className: Class name of the target class this join point refers to
+	 * @param  string $methodName: Method name of the target method which is about to or has been invoked
+	 * @param  array $methodArguments: Array of method arguments which have been passed to the target method
 	 * @param  T3_FLOW3_AOP_AdviceChainInterface $adviceChain: The advice chain for this join point
-	 * @param  mixed			$result: The result of the method invocations (only used for After Returning advices)
-	 * @param  object			$exception: The exception thrown (only used for After Throwing advices)
+	 * @param  mixed $result: The result of the method invocations (only used for After Returning advices)
+	 * @param  object $exception: The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_AOP_ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
-		if ($adviceChain !== NULL && !$adviceChain instanceof T3_FLOW3_AOP_AdviceChain) throw new RuntimeException('The advice chain must be an instance of T3_FLOW3_AOP_AdviceChain.', 1171482537);
+		if ($adviceChain !== NULL && !$adviceChain instanceof T3_FLOW3_AOP_AdviceChain) throw new InvalidArgumentException('The advice chain must be an instance of T3_FLOW3_AOP_AdviceChain.', 1171482537);
 
 		$this->proxy = $proxy;
 		$this->className = $className;
@@ -105,7 +105,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Returns the class name of the target class this join point refers to
 	 *
-	 * @return string	The class name
+	 * @return string The class name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
@@ -115,7 +115,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Returns the method name of the method this join point refers to
 	 *
-	 * @return string	The method name
+	 * @return string The method name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodName() {
@@ -125,7 +125,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Returns an array of arguments which have been passed to the target method
 	 *
-	 * @return array	Array of arguments
+	 * @return array Array of arguments
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArguments() {
@@ -135,8 +135,8 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Returns the value of the specified method argument
 	 *
-	 * @param  string	$argumentName: Name of the argument
-	 * @return mixed	Value of the argument
+	 * @param  string $argumentName: Name of the argument
+	 * @return mixed Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArgument($argumentName) {
@@ -148,8 +148,8 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	 * Returns TRUE if the argument with the specified name exists in the
 	 * method call this joinpoint refers to.
 	 *
-	 * @param  string	$argumentName: Name of the argument to check
-	 * @return boolean	TRUE if the argument exists
+	 * @param  string $argumentName: Name of the argument to check
+	 * @return boolean TRUE if the argument exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isMethodArgument($argumentName) {
@@ -171,7 +171,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	 * If no exception has been thrown, NULL is returned.
 	 * Only makes sense for After Throwing advices.
 	 *
-	 * @return object		The exception thrown or NULL
+	 * @return object The exception thrown or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getException() {
@@ -182,7 +182,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	 * Returns the result of the method invocation. The result is only
 	 * available for afterReturning advices.
 	 *
-	 * @return mixed	Result of the method invocation
+	 * @return mixed Result of the method invocation
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getResult() {

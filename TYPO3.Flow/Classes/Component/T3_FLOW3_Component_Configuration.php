@@ -15,6 +15,14 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package    FLOW3
+ * @subpackage Component
+ * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright  Copyright belongs to the respective authors
+ * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+
+/**
  * TYPO3 Component Definition
  *
  * @package    FLOW3
@@ -77,8 +85,8 @@ class T3_FLOW3_Component_Configuration {
 	/**
 	 * The constructor
 	 *
-	 * @param  string	$componentName: The unique identifier of the component
-	 * @param  [string] $className: Name of the class which provides the functionality of this component
+	 * @param string $componentName: The unique identifier of the component
+	 * @param [string] $className: Name of the class which provides the functionality of this component
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -95,9 +103,19 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
+	 * Returns the component name
+	 *
+	 * @return string component name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getComponentName() {
+		return $this->componentName;
+	}
+
+	/**
 	 * Setter function for property "className"
 	 *
-	 * @param  string   $className: Name of the class which provides the functionality for this component
+	 * @param string $className: Name of the class which provides the functionality for this component
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -106,9 +124,19 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
+	 * Returns the class name
+	 *
+	 * @return string Name of the implementing class of this component
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassName() {
+		return $this->className;
+	}
+
+	/**
 	 * Setter function for property "scope"
 	 *
-	 * @param  string	$scope: Name of the scope
+	 * @param string $scope: Name of the scope
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -118,9 +146,19 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
+	 * Returns the scope for this component
+	 *
+	 * @return string The scope ("prototype", "singleton" ...)
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getScope() {
+		return $this->scope;
+	}
+
+	/**
 	 * Setter function for property "autoWiringMode"
 	 *
-	 * @param  integer	$autoWiringMode: One of the AUTOWIRING_MODE_* constants
+	 * @param integer $autoWiringMode: One of the AUTOWIRING_MODE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -130,9 +168,19 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
+	 * Returns the injection arguments / properties autoWiringMode for this component
+	 *
+	 * @return integer Value of one of the AUTOWIRING_MODE_* constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAutoWiringMode() {
+		return $this->autoWiringMode;
+	}
+
+	/**
 	 * Setter function for property "lifecycleInitializationMethod"
 	 *
-	 * @param  string			$lifecycleInitializationMethod: Name of the method to call after setter injection
+	 * @param string $lifecycleInitializationMethod: Name of the method to call after setter injection
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -142,9 +190,19 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
+	 * Returns the name of the lifecycle initialization method for this component
+	 *
+	 * @return string The name of the intialization method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLifecycleInitializationMethod() {
+		return $this->lifecycleInitializationMethod;
+	}
+
+	/**
 	 * Setter function for injection properties
 	 *
-	 * @param  array	$properties: Array of T3_FLOW3_Component_ConfigurationProperty
+	 * @param  array $properties: Array of T3_FLOW3_Component_ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -153,6 +211,16 @@ class T3_FLOW3_Component_Configuration {
 			if (!$value instanceof T3_FLOW3_Component_ConfigurationProperty) throw new RuntimeException('Properties must be of type T3_FLOW3ComponentConfigurationProperty', 1167935337);
 		}
 		$this->properties = $properties;
+	}
+
+	/**
+	 * Returns the currently set injection properties of the component
+	 *
+	 * @return array Array of T3_FLOW3_Component_ConfigurationProperty
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getProperties() {
+		return $this->properties;
 	}
 
 	/**
@@ -218,7 +286,7 @@ class T3_FLOW3_Component_Configuration {
 	/**
 	 * Sets some information (hint) about where this configuration has been created.
 	 *
-	 * @param  string	$hint: The hint - e.g. the file name of the configuration file
+	 * @param string $hint: The hint - e.g. the file name of the configuration file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -227,31 +295,13 @@ class T3_FLOW3_Component_Configuration {
 	}
 
 	/**
-	 * Magic __call function which provides getter functions for the
-	 * accessible properties.
+	 * Returns some information (if any) about where this configuration has been created.
 	 *
-	 * @param  string	$methodName: Name of the method (getter methods must start with "get")
-	 * @param  array	$arguments: Arguments for the method
-	 * @return mixed	Method call return value
+	 * @return string The hint - e.g. the file name of the configuration file
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __call($methodName, array $arguments) {
-		if (substr($methodName, 0, 3) == 'get') {
-			$propertyName = T3_PHP6_Functions::strtolower(substr($methodName, 3, 1)) . substr($methodName, 4);
-			switch ($propertyName) {
-				case 'componentName' :
-				case 'className' :
-				case 'scope' :
-				case 'properties' :
-				case 'autoWiringMode' :
-				case 'lifecycleInitializationMethod' :
-				case 'configurationSourceHint' :
-					return $this->$propertyName;
-				default :
-					throw new Exception('No public property "' . $propertyName . '"', 1167820247);
-			}
-		}
-		trigger_error('No such method "' . $methodName . '"', E_USER_ERROR);
+	public function getConfigurationSourceHint() {
+		return $this->configurationSourceHint;
 	}
 }
 

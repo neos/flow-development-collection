@@ -29,8 +29,8 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param  T3_FLOW3_AOP_JoinPointInterface: The join point
-	 * @return mixed                           Result of the target (ie. original) method
+	 * @param T3_FLOW3_AOP_JoinPointInterface: The join point
+	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invokeJoinPoint(T3_FLOW3_AOP_JoinPointInterface $joinPoint) {
@@ -43,8 +43,8 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	 * Returns the advice chains (if any) grouped by advice type for a join point.
 	 * Advice chains are only used in combination with Around advices.
 	 *
-	 * @param  string						$methodName: Method to return the advice chains for
-	 * @return mixed						The advice chains  (array of T3_FLOW3_AOP_AdviceChain) or NULL
+	 * @param string $methodName: Method to return the advice chains for
+	 * @return mixed The advice chains  (array of T3_FLOW3_AOP_AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getAdviceChains($methodName) {

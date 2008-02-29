@@ -36,7 +36,7 @@ interface T3_FLOW3_AOP_ProxyInterface {
 	 * Invokes the joinpoint - calls the target methods.
 	 *
 	 * @param  T3_FLOW3_AOP_JoinPointInterface: The join point
-	 * @return mixed                           Result of the target (ie. original) method
+	 * @return mixed Result of the target (ie. original) method
 	 */
 	public function invokeJoinPoint(T3_FLOW3_AOP_JoinPointInterface $joinPoint);
 }

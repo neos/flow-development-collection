@@ -267,15 +267,21 @@ class T3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildProxyClasses(array &$componentConfigurations) {
-		$proxyClassBuilder = $this->componentManager->getComponent('T3_FLOW3_AOP_ProxyClassBuilder');
-		$proxyClassBuilder->setClassCache($this->proxyClassCache);
+		$context = $this->componentManager->getContext();
 
 		foreach ($componentConfigurations as $componentName => $componentConfiguration) {
 			if (array_search($componentName, $this->componentProxyBlacklist) === FALSE && substr($componentName, 0, 13) != 'T3_FLOW3_') {
 				try {
 					$class = new T3_FLOW3_Reflection_Class($componentConfiguration->getClassName());
 					if (!$class->implementsInterface('T3_FLOW3_AOP_AspectInterface') && !$class->isAbstract() && !$class->isFinal()) {
-						$componentConfigurations[$componentName] = $proxyClassBuilder->buildProxyClass($class, $componentConfiguration, $this->aspectContainers);
+						$proxyBuildResult = T3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass($class, $this->aspectContainers, $context);
+						if ($proxyBuildResult !== FALSE) {
+							eval($proxyBuildResult['proxyClassCode']);
+							if ($this->proxyClassCache !== NULL) {
+								$this->proxyClassCache->save($proxyBuildResult['proxyClassName']);
+							}
+							$componentConfigurations[$componentName]->setClassName($proxyBuildResult['proxyClassName']);
+						}
 					}
 				} catch (ReflectionException $exception) {
 					throw new T3_FLOW3_AOP_Exception_UnknownClass('The component "' . $componentName . '" is configured to use class "' . $componentConfiguration->getClassName() . '" but such a class does not exist.', 1187348208);

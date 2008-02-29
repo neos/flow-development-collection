@@ -35,24 +35,24 @@ abstract class T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	/**
 	 * Builds method interception PHP code
 	 *
-	 * @param  string $methodName: Name of the method to build an interceptor for
-	 * @param  array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param  ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName: Name of the method to build an interceptor for
+	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
+	 * @param ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract public function build($methodName, array $methodMetaInformation, ReflectionClass $targetClass);
+	abstract static public function build($methodName, array $methodMetaInformation, ReflectionClass $targetClass);
 
 	/**
 	 * Builds the PHP code for the parameters of the specified method to be
 	 * used in a method interceptor in the proxy class
 	 *
-	 * @param  ReflectionMethod $method: The method to create the parameters code for
-	 * @param  boolean $addTypeAndDefaultValue: Adds the type and default value for each parameters (if any)
+	 * @param ReflectionMethod $method: The method to create the parameters code for
+	 * @param boolean $addTypeAndDefaultValue: Adds the type and default value for each parameters (if any)
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodParametersCode(ReflectionMethod $method, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
+	static public function buildMethodParametersCode(ReflectionMethod $method, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
 		$parametersCode = '';
 		$parameterTypeName = '';
 		$defaultValue = '';
@@ -102,7 +102,7 @@ abstract class T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * the constructor of a new join point. Used in the method interceptor
 	 * functions
 	 *
-	 * @param  ReflectionMethod $method: The method to create arguments array code for
+	 * @param ReflectionMethod $method: The method to create arguments array code for
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -123,13 +123,13 @@ abstract class T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	/**
 	 * Builds the advice interception code, to be used in a method interceptor.
 	 *
-	 * @param  array $groupedAdvices: The advices grouped by advice type
-	 * @param  string $methodName: Name of the method the advice applies to
-	 * @param  ReflectionClass $targetClass: Reflection of the target class
+	 * @param array $groupedAdvices: The advices grouped by advice type
+	 * @param string $methodName: Name of the method the advice applies to
+	 * @param ReflectionClass $targetClass: Reflection of the target class
 	 * @return string PHP code to be used in the method interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildAdvicesCode(array $groupedAdvices, $methodName, ReflectionClass $targetClass) {
+	static protected function buildAdvicesCode(array $groupedAdvices, $methodName, ReflectionClass $targetClass) {
 		$advicesCode = '';
 
 		if (isset ($groupedAdvices['T3_FLOW3_AOP_AfterThrowingAdvice'])) {
@@ -188,11 +188,11 @@ abstract class T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * Returns the constructor name of the given class. If no constructor exists,
 	 * the name "__construct" will be returned.
 	 *
-	 * @param  ReflectionClass $class: The class to return the constructor name for
+	 * @param ReflectionClass $class: The class to return the constructor name for
 	 * @return string Name of the constructor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getConstructorName(ReflectionClass $class) {
+	static protected function getConstructorName(ReflectionClass $class) {
 		$constructor = $class->getConstructor();
 		$constructorName = ($constructor !== NULL) ? $constructor->getName() : '__construct';
 		return $constructorName;

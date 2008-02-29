@@ -70,15 +70,13 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	 */
 	public function __construct($packageKey, $packagePath, $packageComponentsConfigurationSources) {
 		if (!@is_dir($packagePath)) throw new T3_FLOW3_Package_Exception_InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
-		if (T3_PHP6_Functions::substr($packagePath, -1, 1) != '/') throw new T3_FLOW3_Package_Exception_InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
+		if (substr($packagePath, -1, 1) != '/') throw new T3_FLOW3_Package_Exception_InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
 		$this->packageMeta = new T3_FLOW3_Package_Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
 		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;
-		if (file_exists($packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION)) {
-			include($packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION);
-		}
+		$this->includePackageConfiguration();
 	}
 
 	/**
@@ -173,6 +171,19 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 	}
 
 	/**
+	 * Includes the package configuration file (if any) with further steps to initialize
+	 * the package (eg. registering an additional class loader).
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function includePackageConfiguration() {
+		if (file_exists($this->packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION)) {
+			include($this->packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION);
+		}
+	}
+
+	/**
 	 * Builds and returns an array of class names => file names of all
 	 * T3_*.php files in the package's Classes directory and its sub-
 	 * directories.
@@ -208,6 +219,16 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 			throw new T3_FLOW3_Package_Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
+	}
+
+	/**
+	 * Wake up function
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __wakeup() {
+		$this->includePackageConfiguration();
 	}
 }
 

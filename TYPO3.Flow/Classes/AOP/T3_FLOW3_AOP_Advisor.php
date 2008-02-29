@@ -45,8 +45,8 @@ class T3_FLOW3_AOP_Advisor implements T3_FLOW3_AOP_AdvisorInterface {
 	/**
 	 * Initializes the advisor with an advice and a pointcut
 	 *
-	 * @param  T3_FLOW3_AOP_AdviceInterface $advice: The advice to weave in
-	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut where the advice should be inserted
+	 * @param T3_FLOW3_AOP_AdviceInterface $advice: The advice to weave in
+	 * @param T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut where the advice should be inserted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_AOP_AdviceInterface $advice, T3_FLOW3_AOP_PointcutInterface $pointcut) {

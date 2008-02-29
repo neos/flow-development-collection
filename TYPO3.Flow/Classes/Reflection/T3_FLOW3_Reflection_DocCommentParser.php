@@ -15,13 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Reflection
+ * @version $Id:T3_FLOW3_Reflection_DocCommentParser.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+
+/**
  * A little parser which creates tag objects from doc comments
  *
- * @package     FLOW3
- * @subpackage  Reflection
- * @version     $Id:T3_FLOW3_Reflection_DocCommentParser.php 467 2008-02-06 19:34:56Z robert $
- * @copyright   Copyright belongs to the respective authors
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Reflection
+ * @version $Id:T3_FLOW3_Reflection_DocCommentParser.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Reflection_DocCommentParser {
 
@@ -44,72 +52,72 @@ class T3_FLOW3_Reflection_DocCommentParser {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-    public function parseDocComment($docComment) {
-    	$this->description = '';
-    	$this->tags = array();
+	public function parseDocComment($docComment) {
+		$this->description = '';
+		$this->tags = array();
 
-    	$lines = explode(chr(10), $docComment);
-    	foreach ($lines as $line) {
-   			if (strlen($line) > 0 && strpos($line, '@') !== FALSE) {
-   				$this->parseTag(T3_PHP6_Functions::substr($line, strpos($line, '@')));
-    		} else if (count($this->tags) == 0) {
-   				$this->description .= $line . chr(10);
-    		}
-    	}
-    }
+		$lines = explode(chr(10), $docComment);
+		foreach ($lines as $line) {
+			if (strlen($line) > 0 && strpos($line, '@') !== FALSE) {
+				$this->parseTag(substr($line, strpos($line, '@')));
+			} else if (count($this->tags) == 0) {
+				$this->description .= $line . chr(10);
+			}
+		}
+	}
 
-    /**
-     * Returns the tags which have been previously parsed
-     *
-     * @return array Array of tag names and their (multiple) values
-     * @author Robert Lemke <robert@typo3.org>
-     */
-    public function getTagsValues() {
-    	return $this->tags;
-    }
+	/**
+	 * Returns the tags which have been previously parsed
+	 *
+	 * @return array Array of tag names and their (multiple) values
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTagsValues() {
+		return $this->tags;
+	}
 
-    /**
-     * Returns the values of the specified tag. The doc comment
-     * must be parsed with parseDocComment() before tags are
-     * available.
-     *
-     * @param  string $tagName: The tag name to retrieve the values for
-     * @return array The tag's values
-     * @author Robert Lemke <robert@typo3.org>
-     */
-    public function getTagValues($tagName) {
-    	if (!$this->isTaggedWith($tagName)) throw new RuntimeException('Tag "' . $tagName . '" does not exist.', 1169128255);
-    	return $this->tags[$tagName];
-    }
+	/**
+	 * Returns the values of the specified tag. The doc comment
+	 * must be parsed with parseDocComment() before tags are
+	 * available.
+	 *
+	 * @param string $tagName: The tag name to retrieve the values for
+	 * @return array The tag's values
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTagValues($tagName) {
+		if (!$this->isTaggedWith($tagName)) throw new RuntimeException('Tag "' . $tagName . '" does not exist.', 1169128255);
+		return $this->tags[$tagName];
+	}
 
-    /**
-     * Checks if a tag with the given name exists
-     *
-     * @param  string $tagName: The tag name to check for
-     * @return boolean TRUE the tag exists, otherwise FALSE
-     * @author Robert Lemke <robert@typo3.org>
-     */
-    public function isTaggedWith($tagName) {
-    	return (isset($this->tags[$tagName]));
-    }
+	/**
+	 * Checks if a tag with the given name exists
+	 *
+	 * @param  string $tagName: The tag name to check for
+	 * @return boolean TRUE the tag exists, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isTaggedWith($tagName) {
+		return (isset($this->tags[$tagName]));
+	}
 
-    /**
-     * Parses a line of a doc comment for a tag and its value.
-     * The result is stored in the
-     *
-     * @param  string $line: A line of a doc comment which starts with an @-sign
-     * @return void
-     * @author Robert Lemke <robert@typo3.org>
-     */
-    protected function parseTag($line) {
-    	$tagAndValue = preg_split('/\s/', $line, 2);
-    	$tag = T3_PHP6_Functions::substr($tagAndValue[0], 1);
-    	if (count($tagAndValue) > 1) {
-    		$this->tags[$tag][] = trim($tagAndValue[1]);
-    	} else {
-	    	$this->tags[$tag] = array();
-    	}
-    }
+	/**
+	 * Parses a line of a doc comment for a tag and its value.
+	 * The result is stored in the
+	 *
+	 * @param  string $line: A line of a doc comment which starts with an @-sign
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function parseTag($line) {
+		$tagAndValue = preg_split('/\s/', $line, 2);
+		$tag = substr($tagAndValue[0], 1);
+		if (count($tagAndValue) > 1) {
+			$this->tags[$tag][] = trim($tagAndValue[1]);
+		} else {
+			$this->tags[$tag] = array();
+		}
+	}
 }
 
 ?>
