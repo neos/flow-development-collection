@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * An "Invalid Class" exception
+ * An "Invalid Data" exception
  *
  * @package FLOW3
  * @subpackage Cache
@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Cache_Exception_InvalidClass extends T3_FLOW3_Cache_Exception {
+class T3_FLOW3_Cache_Exception_InvalidData extends T3_FLOW3_Cache_Exception {
 
 }
 ?>

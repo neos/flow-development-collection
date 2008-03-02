@@ -97,16 +97,17 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Saves data in a cache file.
 	 *
-	 * @param string $data: The data to be stored
 	 * @param string $entryIdentifier: An identifier for this specific cache entry
+	 * @param string $data: The data to be stored
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws T3_FLOW3_Cache_Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL) {
+	public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL) {
 		if (!is_object($this->cache)) throw new T3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111375);
+		if (!is_string($data)) throw new T3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));

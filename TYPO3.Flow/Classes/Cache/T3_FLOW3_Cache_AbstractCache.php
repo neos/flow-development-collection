@@ -80,20 +80,21 @@ abstract class T3_FLOW3_Cache_AbstractCache {
 	/**
 	 * Saves data in the cache.
 	 *
-	 * @param string $dataOrIdentifier: Some data or something which identifies the data - depends on concrete cache
+	 * @param string $entryIdentifier: Something which identifies the data - depends on concrete cache
+	 * @param mixed $data: The data to cache - also depends on the concrete cache implementation
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract public function save($dataOrIdentifier, $tags = array());
+	abstract public function save($entryIdentifier, $data, $tags = array());
 
 	/**
-	 * Loades data from the cache.
+	 * Loads data from the cache.
 	 *
-	 * @param string $identifier: Something which identifies the cache entry - depends on concrete cache
+	 * @param string $entryIdentifier: Something which identifies the cache entry - depends on concrete cache
 	 * @return mixed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract public function load($identifier);
+	abstract public function load($entryIdentifier);
 }
 ?>

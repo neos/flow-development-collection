@@ -102,7 +102,7 @@ final class T3_FLOW3 {
 	}
 
 	/**
-	 * Runs the the TYPO3 Framework by resolving an appropriate Request Handler and passing control to it.
+	 * Runs the the FLOW3 Framework by resolving an appropriate Request Handler and passing control to it.
 	 * If the Framework is not initialized yet, it will be initialized.
 	 *
 	 * @return void

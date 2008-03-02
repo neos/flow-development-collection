@@ -49,7 +49,7 @@ class T3_FLOW3_AOP_Framework {
 	protected $aspectContainers = array();
 
 	/**
-	 * @var T3_FLOW3_Cache_ClassCache The cache for AOP proxy classes
+	 * @var T3_FLOW3_Cache_VariableCache The cache for AOP proxy classes
 	 */
 	protected $proxyClassCache;
 
@@ -114,7 +114,7 @@ class T3_FLOW3_AOP_Framework {
 		if ($this->isInitialized) throw new T3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
 
 		$cacheBackend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
-		$this->proxyClassCache = $this->componentManager->getComponent('T3_FLOW3_Cache_ClassCache', 'FLOW3_AOP_Proxy', $cacheBackend);
+		$this->proxyClassCache = $this->componentManager->getComponent('T3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Proxy', $cacheBackend);
 
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
 
@@ -278,7 +278,7 @@ class T3_FLOW3_AOP_Framework {
 						if ($proxyBuildResult !== FALSE) {
 							eval($proxyBuildResult['proxyClassCode']);
 							if ($this->proxyClassCache !== NULL) {
-								$this->proxyClassCache->save($proxyBuildResult['proxyClassName']);
+								$this->proxyClassCache->save($proxyBuildResult['proxyClassName'], $proxyBuildResult['proxyClassCode']);
 							}
 							$componentConfigurations[$componentName]->setClassName($proxyBuildResult['proxyClassName']);
 						}

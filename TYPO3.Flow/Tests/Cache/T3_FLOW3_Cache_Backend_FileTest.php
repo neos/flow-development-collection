@@ -107,6 +107,27 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function saveThrowsExceptionIfDataIsNotAString() {
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+
+		$data = array('Some data');
+		$entryIdentifier = 'BackendFileTest';
+
+		$context = $this->componentManager->getContext();
+		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $context);
+		$this->backend = $backend;
+		$backend->setCache($cache);
+		try {
+			$backend->save($entryIdentifier, $data);
+			$this->fail('Backend did not throw an exception.');
+		} catch (T3_FLOW3_Cache_Exception_InvalidData $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function saveReallySavesToTheSpecifiedDirectory() {
 		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
@@ -120,7 +141,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
-		$backend->save($data, $entryIdentifier);
+		$backend->save($entryIdentifier, $data);
 
 		$cacheDirectory = $backend->getCacheDirectory();
 		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
@@ -149,8 +170,8 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
-		$backend->save($data1, $entryIdentifier, array(), 500);
-		$backend->save($data2, $entryIdentifier, array(), 200);
+		$backend->save($entryIdentifier, $data1, array(), 500);
+		$backend->save($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $backend->getCacheDirectory();
 		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
@@ -173,10 +194,10 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 
 		$data = 'some data' . microtime();
-		$backend->save($data, $entryIdentifier, array(), 500);
+		$backend->save($entryIdentifier, $data, array(), 500);
 
 		$data = 'some other data' . microtime();
-		$backend->save($data, $entryIdentifier, array(), 100);
+		$backend->save($entryIdentifier, $data, array(), 100);
 
 		$loadedData = $backend->load($entryIdentifier);
 		$this->assertEquals($data, $loadedData, 'The original and the retrieved data don\'t match.');
@@ -197,7 +218,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 
 		$data = 'some data' . microtime();
-		$backend->save($data, $entryIdentifier);
+		$backend->save($entryIdentifier, $data);
 
 		$this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
 		$this->assertFALSE($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
@@ -224,7 +245,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 
 		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
 
-		$backend->save($data, $entryIdentifier);
+		$backend->save($entryIdentifier, $data);
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound) && count($filesFound) > 0, 'The cache entry does not exist.');
 
@@ -240,7 +261,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	public function tearDown() {
 		if (is_object($this->backend)) {
 			$context = $this->componentManager->getContext();
-#			T3_FLOW3_Utility_Files::removeDirectoryRecursively($this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache/');
+			T3_FLOW3_Utility_Files::removeDirectoryRecursively($this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache/');
 		}
 	}
 }

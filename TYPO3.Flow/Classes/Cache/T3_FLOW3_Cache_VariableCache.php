@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A cache for (possibly generated) PHP classes
+ * A cache for any kinds of PHP variables
  *
  * @package FLOW3
  * @subpackage Cache
@@ -30,35 +30,32 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class T3_FLOW3_Cache_ClassCache extends T3_FLOW3_Cache_AbstractCache {
+class T3_FLOW3_Cache_VariableCache extends T3_FLOW3_Cache_AbstractCache {
 
 	/**
-	 * Saves code of a PHP class in the cache.
+	 * Saves the value of a PHP variable in the cache. Note that the variable
+	 * will be serialized if necessary.
 	 *
-	 * @param string $className: Name of the class to cache
+	 * @param string $entryIdentifier: An identifier used for this cache entry
+	 * @param mixed $variable: The variable to cache
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @return void
-	 * @throws T3_FLOW3_Cache_Exception_InvalidClass if the class does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function save($className, $tags = array()) {
-		if (!class_exists($className)) throw new T3_FLOW3_Cache_Exception_InvalidClass('The class "' . $className . '" does not exist.', 1203959737);
-		$class = new ReflectionClass($className);
-		$this->backend->save((string)$class, $className);
+	public function save($entryIdentifier, $variable, $tags = array()) {
+		$this->backend->save($entryIdentifier, serialize($variable));
 	}
 
 	/**
-	 * Loads a PHP class from the cache.
+	 * Loads a variable value from the cache.
 	 *
-	 * @param string $className: Name of the class to load
-	 * @return void
+	 * @param string $entryIdentifier: Identifier of the cache entry to fetch
+	 * @return mixed The value
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Cache_Exception_ClassAlreadyLoaded if the class already exists
 	 */
-	public function load($className) {
-		if (class_exists($className)) throw new T3_FLOW3_Cache_Exception_ClassAlreadyLoaded('The class "' . $className . '" already exists.', 1203959740);
-		$classCode = $this->backend->load($className);
-		eval($classCode);
+	public function load($entryIdentifier) {
+		return unserialize($this->backend->load($entryIdentifier));
 	}
 }
 ?>
