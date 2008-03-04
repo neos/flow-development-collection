@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * In TYPO3 the join point object contains context information when a point cut
+ * In FLOW3 the join point object contains context information when a point cut
  * matches and the registered advices are executed.
  *
  * @package FLOW3
@@ -70,13 +70,13 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param  T3_FLOW3_AOP_ProxyInterface $proxy: Reference to the proxy class instance of the target class
-	 * @param  string $className: Class name of the target class this join point refers to
-	 * @param  string $methodName: Method name of the target method which is about to or has been invoked
-	 * @param  array $methodArguments: Array of method arguments which have been passed to the target method
-	 * @param  T3_FLOW3_AOP_AdviceChainInterface $adviceChain: The advice chain for this join point
-	 * @param  mixed $result: The result of the method invocations (only used for After Returning advices)
-	 * @param  object $exception: The exception thrown (only used for After Throwing advices)
+	 * @param T3_FLOW3_AOP_ProxyInterface $proxy: Reference to the proxy class instance of the target class
+	 * @param string $className: Class name of the target class this join point refers to
+	 * @param string $methodName: Method name of the target method which is about to or has been invoked
+	 * @param array $methodArguments: Array of method arguments which have been passed to the target method
+	 * @param T3_FLOW3_AOP_AdviceChainInterface $adviceChain: The advice chain for this join point
+	 * @param mixed $result: The result of the method invocations (only used for After Returning advices)
+	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -171,7 +171,7 @@ class T3_FLOW3_AOP_JoinPoint implements T3_FLOW3_AOP_JoinPointInterface {
 	 * If no exception has been thrown, NULL is returned.
 	 * Only makes sense for After Throwing advices.
 	 *
-	 * @return object The exception thrown or NULL
+	 * @return mixed The exception thrown or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getException() {

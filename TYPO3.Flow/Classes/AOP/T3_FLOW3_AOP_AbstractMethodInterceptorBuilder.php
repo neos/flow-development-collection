@@ -106,7 +106,7 @@ abstract class T3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildMethodArgumentsArrayCode(ReflectionMethod $method) {
+	static protected function buildMethodArgumentsArrayCode(ReflectionMethod $method) {
 		if ($method === NULL) return '';
 		$argumentsArrayCode = '';
 		if ($method->getNumberOfParameters() > 0) {

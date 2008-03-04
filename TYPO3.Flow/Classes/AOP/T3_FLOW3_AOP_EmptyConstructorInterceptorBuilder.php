@@ -34,9 +34,9 @@ class T3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends T3_FLOW3_AOP_Abstr
 	/**
 	 * Builds interception PHP code for an empty constructor (ie. a constructor without advice)
 	 *
-	 * @param  string $methodName: Name of the method to build an interceptor for
-	 * @param  array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param  ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName: Name of the method to build an interceptor for
+	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
+	 * @param ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

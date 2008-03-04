@@ -39,15 +39,14 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
-	 * @var T3_FLOW3_Component_ManagerInterface A reference to the component manager
+	 * @var T3_FLOW3_Component_ManagerInterface $componentManager
 	 */
 	protected $componentManager;
 
 	/**
-	 * Constructs the pointcut expression parser
+	 * Constructs this expression parser
 	 *
-	 * @param  T3_FLOW3_Component_ManagerInterface	$componentManager: A reference to the component manager
-	 * @return void
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
@@ -107,8 +106,8 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 	 * Takes a class filter pattern and adds a so configured class filter to the
 	 * filter composite object.
 	 *
-	 * @param  string $classPattern: The pattern expression as configuration for the class filter
-	 * @param  T3_FLOW3_AOP_PointcutFilterComposite	&$pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
+	 * @param string $classPattern: The pattern expression as configuration for the class filter
+	 * @param T3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -121,8 +120,8 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 	 * and a method part and adds the appropriately configured filters to the
 	 * filter composite object.
 	 *
-	 * @param  string $signaturePattern: The pattern expression defining the class and method - the "signature"
-	 * @param  T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
+	 * @param string $signaturePattern: The pattern expression defining the class and method - the "signature"
+	 * @param T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
 	 * @return void
 	 * @throws T3_FLOW3_AOP_Exception_InvalidPointcutExpression if there's an error in the pointcut expression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -145,8 +144,8 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 	/**
 	 * Adds a class type filter to the poincut filter composite
 	 *
-	 * @param  string $signaturePattern: The pattern expression defining the class type
-	 * @param  T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
+	 * @param string $signaturePattern: The pattern expression defining the class type
+	 * @param T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -159,8 +158,8 @@ class T3_FLOW3_AOP_PointcutExpressionParser {
 	 * class- and a pointcut method part and adds the appropriately configured
 	 * filter to the composite object.
 	 *
-	 * @param  string $pointcutExpression: The pointcut expression (value of the designator)
-	 * @param  T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+	 * @param string $pointcutExpression: The pointcut expression (value of the designator)
+	 * @param T3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @return void
 	 * @throws T3_FLOW3_AOP_Exception_InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>

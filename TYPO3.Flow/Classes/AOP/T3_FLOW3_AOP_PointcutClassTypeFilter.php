@@ -39,7 +39,7 @@ class T3_FLOW3_AOP_PointcutClassTypeFilter implements T3_FLOW3_AOP_PointcutFilte
 	/**
 	 * The constructor - initializes the class type filter with the class type filter expression
 	 *
-	 * @param  string		$classTypeFilterExpression: A regular expression which defines which class types should match
+	 * @param string $classTypeFilterExpression: A regular expression which defines which class types should match
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -50,10 +50,10 @@ class T3_FLOW3_AOP_PointcutClassTypeFilter implements T3_FLOW3_AOP_PointcutFilte
 	/**
 	 * Checks if the specified class matches with the class type filter pattern
 	 *
-	 * @param  ReflectionClass		$class: The class to check against
-	 * @param  ReflectionMethod		$method: The method - not used here
-	 * @param  mixed				$pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean				TRUE if the class matches, otherwise FALSE
+	 * @param ReflectionClass $class: The class to check against
+	 * @param ReflectionMethod $method: The method - not used here
+	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {

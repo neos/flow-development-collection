@@ -66,7 +66,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * The constructor
 	 *
-	 * @param  string			$className: Name of the aspect class
+	 * @param  string $className: Name of the aspect class
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -77,7 +77,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Returns the name of the aspect class
 	 *
-	 * @return string		Name of the aspect class
+	 * @return string Name of the aspect class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassName() {
@@ -87,7 +87,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Returns the advisors which were defined in the aspect
 	 *
-	 * @return array		Array of T3_FLOW3_AOP_Advisor objects
+	 * @return array Array of T3_FLOW3_AOP_Advisor objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvisors() {
@@ -97,7 +97,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Returns the introductions which were defined in the aspect
 	 *
-	 * @return array		Array of T3_FLOW3_AOP_Introduction objects
+	 * @return array Array of T3_FLOW3_AOP_Introduction objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIntroductions() {
@@ -109,7 +109,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	 * does not contain the pointcuts which were made out of the pointcut
 	 * expressions for the advisors!
 	 *
-	 * @return array		Array of T3_FLOW3_AOP_Pointcut objects
+	 * @return array Array of T3_FLOW3_AOP_Pointcut objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcuts() {
@@ -119,7 +119,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Adds an advisor to this aspect container
 	 *
-	 * @param  T3_FLOW3_AOP_AdvisorInterface		$advisor: The advisor to add
+	 * @param T3_FLOW3_AOP_AdvisorInterface $advisor: The advisor to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -130,7 +130,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param  T3_FLOW3_AOP_IntroductionInterface $introduction
+	 * @param T3_FLOW3_AOP_IntroductionInterface $introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -141,7 +141,7 @@ class T3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param  T3_FLOW3_AOP_PointcutInterface	$pointcut: The poincut to add
+	 * @param T3_FLOW3_AOP_PointcutInterface $pointcut: The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

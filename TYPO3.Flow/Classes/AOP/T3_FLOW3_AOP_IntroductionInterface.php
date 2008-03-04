@@ -35,9 +35,9 @@ interface T3_FLOW3_AOP_IntroductionInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param  string			$declaringAspectClassName: Name of the aspect containing the declaration for this introduction
-	 * @param  string			$interfaceName: Name of the interface to introduce
-	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
+	 * @param string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
+	 * @param string $interfaceName: Name of the interface to introduce
+	 * @param T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
 	 * @return void
 	 */
 	public function __construct($declaringAspectClassName, $interfaceName, T3_FLOW3_AOP_PointcutInterface $pointcut);
@@ -45,7 +45,7 @@ interface T3_FLOW3_AOP_IntroductionInterface {
 	/**
 	 * Returns the name of the introduced interface
 	 *
-	 * @return string				Name of the introduced interface
+	 * @return string Name of the introduced interface
 	 */
 	public function getInterfaceName();
 
@@ -59,7 +59,7 @@ interface T3_FLOW3_AOP_IntroductionInterface {
 	/**
 	 * Returns the class name of the aspect which declared this introduction
 	 *
-	 * @return string			The aspect class name
+	 * @return string The aspect class name
 	 */
 	public function getDeclaringAspectClassName();
 }

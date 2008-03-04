@@ -22,11 +22,11 @@ declare(ENCODING = 'utf-8');
 
 /**
  * An aspect is a modularized form of cross-cutting concerns to prevent the
- * violation of the separation of concerns. More concretely a TYPO3 Aspect
+ * violation of the separation of concerns. More concretely a FLOW3 Aspect
  * class is a container for advisors which represent single advices which
  * can be applied to join points.
  *
- * In TYPO3 aspects are encapsulated in a normal PHP class which is tagged
+ * In FLOW3 aspects are encapsulated in a normal PHP class which is tagged
  * by the "aspect" annotation. This marker interface must be implemented by
  * any aspect.
  *

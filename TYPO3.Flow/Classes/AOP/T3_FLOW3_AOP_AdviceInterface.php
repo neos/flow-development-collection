@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * This is the interface for a generic AOP advice. It is never implemented directly.
- * In TYPO3 all advices are implemented as interceptors.
+ * In FLOW3 all advices are implemented as interceptors.
  *
  * @package FLOW3
  * @subpackage AOP
@@ -39,7 +39,7 @@ interface T3_FLOW3_AOP_AdviceInterface {
 	 *
 	 * @param  string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  T3_FLOW3_Component_ManagerInterface	$componentManager: A reference to the component manager
+	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
 	 * @return void
 	 */
 	public function __construct($aspectComponentName, $adviceMethodName, T3_FLOW3_Component_ManagerInterface $componentManager);

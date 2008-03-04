@@ -49,9 +49,9 @@ class T3_FLOW3_AOP_BeforeAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	/**
 	 * Constructor
 	 *
-	 * @param  string			$aspectComponentName: Name of the aspect component containing the advice
-	 * @param  string			$adviceMethodName: Name of the advice method
-	 * @param  T3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param string $aspectComponentName: Name of the aspect component containing the advice
+	 * @param string $adviceMethodName: Name of the advice method
+	 * @param T3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -64,7 +64,7 @@ class T3_FLOW3_AOP_BeforeAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param  T3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param T3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -77,7 +77,7 @@ class T3_FLOW3_AOP_BeforeAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	/**
 	 * Returns the aspect's component name which has been passed to the constructor
 	 *
-	 * @return string			The component name of the aspect
+	 * @return string The component name of the aspect
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAspectComponentName() {
@@ -87,7 +87,7 @@ class T3_FLOW3_AOP_BeforeAdvice implements T3_FLOW3_AOP_AdviceInterface{
 	/**
 	 * Returns the advice's method name which has been passed to the constructor
 	 *
-	 * @return string			The name of the advice method
+	 * @return string The name of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdviceMethodName() {

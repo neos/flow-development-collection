@@ -69,10 +69,10 @@ class T3_FLOW3_AOP_Pointcut implements T3_FLOW3_AOP_PointcutInterface {
 	/**
 	 * The constructor
 	 *
-	 * @param  string $pointcutExpression: A pointcut expression which configures the pointcut
-	 * @param  T3_FLOW3_AOP_PointcutExpressionParserInterface $pointcutExpressionParser: The parser to use for parsing the pointcut expression
-	 * @param  string $aspectClassName: The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
-	 * @param  string $pointcutMethodName: (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
+	 * @param string $pointcutExpression: A pointcut expression which configures the pointcut
+	 * @param T3_FLOW3_AOP_PointcutExpressionParserInterface $pointcutExpressionParser: The parser to use for parsing the pointcut expression
+	 * @param string $aspectClassName: The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
+	 * @param string $pointcutMethodName: (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -89,9 +89,9 @@ class T3_FLOW3_AOP_Pointcut implements T3_FLOW3_AOP_PointcutInterface {
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
 	 *
-	 * @param  ReflectionClass $class: Class to check against
-	 * @param  ReflectionMethod $method: Method to check against
-	 * @param  mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @param ReflectionClass $class: Class to check against
+	 * @param ReflectionMethod $method: Method to check against
+	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

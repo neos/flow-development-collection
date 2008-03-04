@@ -50,9 +50,9 @@ class T3_FLOW3_AOP_Introduction implements T3_FLOW3_AOP_IntroductionInterface{
 	/**
 	 * Constructor
 	 *
-	 * @param  string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
-	 * @param  string $interfaceName: Name of the interface to introduce
-	 * @param  T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
+	 * @param string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
+	 * @param string $interfaceName: Name of the interface to introduce
+	 * @param T3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

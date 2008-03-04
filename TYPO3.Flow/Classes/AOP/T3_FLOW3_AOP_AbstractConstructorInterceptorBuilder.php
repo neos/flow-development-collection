@@ -45,12 +45,12 @@ abstract class T3_FLOW3_AOP_AbstractConstructorInterceptorBuilder extends T3_FLO
 	 *	);
 	 *
 	 *
-	 * @param  array $methodsAndGroupedAdvices: An array of method names and grouped advice objects
+	 * @param array $methodsAndGroupedAdvices: An array of method names and grouped advice objects
 	 * @return string PHP code for the content of an array of target method names and advice objects
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    buildProxyClass()
+	 * @see buildProxyClass()
 	 */
-	protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
+	static protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
 		if (count($methodsAndGroupedAdvices) < 1) return '';
 
 		$methodsAndAdvicesArrayCode = "\n\t\t\$this->targetMethodsAndGroupedAdvices = array(\n";

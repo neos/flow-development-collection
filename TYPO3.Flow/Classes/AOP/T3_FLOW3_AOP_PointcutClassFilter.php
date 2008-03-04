@@ -39,7 +39,7 @@ class T3_FLOW3_AOP_PointcutClassFilter implements T3_FLOW3_AOP_PointcutFilterInt
 	/**
 	 * The constructor - initializes the class filter with the class filter expression
 	 *
-	 * @param  string		$classFilterExpression: A regular expression which defines which class names should match
+	 * @param string $classFilterExpression: A regular expression which defines which class names should match
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -50,12 +50,12 @@ class T3_FLOW3_AOP_PointcutClassFilter implements T3_FLOW3_AOP_PointcutFilterInt
 	/**
 	 * Checks if the specified class matches with the class filter pattern
 	 *
-	 * @param  ReflectionClass		$class: The class to check against
-	 * @param  ReflectionMethod		$method: The method - not used here
-	 * @param  mixed				$pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean				TRUE if the class matches, otherwise FALSE
+	 * @param ReflectionClass $class: The class to check against
+	 * @param ReflectionMethod $method: The method - not used here
+	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Collect information why class was ignored for debugging in a future AOP browser
+	 * @todo Collect information why class was ignored for debugging in a future AOP browser
 	 */
 	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
 		$constructorIsFinal = (is_object($class->getConstructor())) ? $class->getConstructor()->isFinal() : FALSE;
