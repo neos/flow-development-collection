@@ -264,7 +264,7 @@ class T3_FLOW3_Utility_Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectory() {
-		if (php_uname('s') == 'Windows') {
+		if (DIRECTORY_SEPARATOR == '\\') {
 			if (isset($this->SERVER['TEMP'])) return $this->SERVER['TEMP'];
 			if (isset($this->SERVER['TMP'])) return $this->SERVER['TMP'];
 			if (isset($this->SERVER['SystemRoot'])) return $this->SERVER['SystemRoot'] . '\\temp';
