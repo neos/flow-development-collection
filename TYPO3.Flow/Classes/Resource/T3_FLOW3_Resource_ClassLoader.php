@@ -14,8 +14,8 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(TYPO3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_PackageInterface.php');
-require_once(TYPO3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Package.php');
+require_once(FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_PackageInterface.php');
+require_once(FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Package.php');
 
 /**
  * Class Loader implementation which loads .php files found in the classes

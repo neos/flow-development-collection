@@ -14,7 +14,7 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(TYPO3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/T3_FLOW3_Fixture_DummyClass.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/T3_FLOW3_Fixture_DummyClass.php');
 
 
 /**

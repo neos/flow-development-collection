@@ -91,7 +91,7 @@ class T3_FLOW3_Package_Manager implements T3_FLOW3_Package_ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$this->buildPackageRegistry();
+		$this->packages = $this->scanAvailablePackages();
 		$this->registerAndConfigureAllPackageComponents();
 	}
 
@@ -180,24 +180,23 @@ class T3_FLOW3_Package_Manager implements T3_FLOW3_Package_ManagerInterface {
 
 	/**
 	 * Scans all directories in the Packages/ directory for available packages.
-	 * For each package a T3_FLOW3_Package_ object is created which is then
-	 * stored in the $this->packages array.
+	 * For each package a T3_FLOW3_Package_ object is created and returned as
+	 * an array.
 	 *
-	 * @return void
+	 * @return array An array of T3_FLOW3_Package_Package objects for all available packages
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildPackageRegistry() {
+	protected function scanAvailablePackages() {
 		$availablePackagesArr = array();
-
-		$packagesDirectoryIterator = new DirectoryIterator(TYPO3_PATH_PACKAGES);
+		$packagesDirectoryIterator = new DirectoryIterator(FLOW3_PATH_PACKAGES);
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
 			if ($filename{0} != '.') {
-				$availablePackagesArr[$filename] = $this->componentManager->getComponent('T3_FLOW3_Package_Package', $filename, ($packagesDirectoryIterator->getPathName() . '/'), $this->packageComponentsConfigurationSourceObjects);
+				$availablePackagesArr[$filename] = new T3_FLOW3_Package_Package($filename, ($packagesDirectoryIterator->getPathName() . '/'), $this->packageComponentsConfigurationSourceObjects);
 			}
 			$packagesDirectoryIterator->next();
 		}
-		$this->packages = $availablePackagesArr;
+		return $availablePackagesArr;
 	}
 
 

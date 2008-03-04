@@ -44,7 +44,7 @@ class T3_FLOW3_Package_PackageTest extends T3_Testing_BaseTestCase {
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
 		try {
-			$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', TYPO3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $this->packageManager);
+			$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $this->packageManager);
 		} catch (Exception $exception) {
 			$this->assertEquals(1166631889, $exception->getCode(), 'The constructor throwed an exception but with an unexpected error code (' . $exception->getCode() . ')');
 			return;
@@ -60,7 +60,7 @@ class T3_FLOW3_Package_PackageTest extends T3_Testing_BaseTestCase {
 	 */
 	public function constructThrowsInvalidPathException() {
 		try {
-			$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', TYPO3_PATH_PACKAGES . 'TestPackage', $this->packageManager);
+			$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $this->packageManager);
 		} catch (Exception $exception) {
 			$this->assertEquals(1166633720, $exception->getCode(), 'The constructor throwed an exception but with an unexpected error code (' . $exception->getCode() . ')');
 			return;
@@ -75,7 +75,7 @@ class T3_FLOW3_Package_PackageTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassFilesWorks() {
-		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', TYPO3_PATH_PACKAGES . 'TestPackage/', $this->packageManager);
+		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', $this->packageManager);
 		$classFiles = $package->getClassFiles();
 
 		$this->assertTrue(key_exists('T3_TestPackage_BasicClass', $classFiles), 'The BasicClass is not in the class files array!');

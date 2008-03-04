@@ -39,7 +39,7 @@ class T3_FLOW3_Utility_Files {
 
 		$directoryIterator = new RecursiveDirectoryIterator($path);
 		foreach (new RecursiveIteratorIterator($directoryIterator) as $filename) {
-			if (@unlink ($filename) === FALSE) {
+			if (@unlink($filename) === FALSE) {
 				throw new RuntimeException('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
 		}

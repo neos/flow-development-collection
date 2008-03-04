@@ -14,10 +14,10 @@ declare(ENCODING="utf-8");
  * Public License for more details.                                       *
  *                                                                        */
 
-define('TYPO3_PATH_PUBLICFILECACHE', TYPO3_PATH_ROOT . 'FileCache/Public/');
-define('TYPO3_PATH_PRIVATEFILECACHE', TYPO3_PATH_ROOT . 'FileCache/Private/');
-define('TYPO3_PATH_PACKAGES', TYPO3_PATH_ROOT . 'Packages/');
-define('TYPO3_PATH_FLOW3', TYPO3_PATH_PACKAGES . 'FLOW3/Classes/' );
+define('FLOW3_PATH_PUBLICFILECACHE', FLOW3_PATH_ROOT . 'FileCache/Public/');
+define('FLOW3_PATH_PRIVATEFILECACHE', FLOW3_PATH_ROOT . 'FileCache/Private/');
+define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+define('FLOW3_PATH_FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/Classes/' );
 
 /**
  * @package FLOW3
@@ -58,24 +58,29 @@ final class T3_FLOW3 {
 	public function __construct($context = 'Development') {
 		$this->checkEnvironment();
 
-		require_once(TYPO3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
-		require_once(TYPO3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ExceptionHandler.php');
-		require_once(TYPO3_PATH_FLOW3 . 'Resource/T3_FLOW3_Resource_Manager.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ExceptionHandler.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Resource/T3_FLOW3_Resource_Manager.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Cache/T3_FLOW3_Cache_Manager.php');
 
 		$errorHandler = new T3_FLOW3_Error_ErrorHandler();
 		$exceptionHandler = new T3_FLOW3_Error_ExceptionHandler();
 		$resourceManager = new T3_FLOW3_Resource_Manager();
+		$cacheManager = new T3_FLOW3_Cache_Manager();
 
 		set_error_handler(array($errorHandler, 'handleError'));
 
-		$resourceManager->registerClassFile('T3_FLOW3_Exception', TYPO3_PATH_FLOW3 . 'T3_FLOW3_Exception.php');
-		$resourceManager->registerClassFile('T3_FLOW3_Component_Manager', TYPO3_PATH_FLOW3 . 'Component/T3_FLOW3_Component_Manager.php');
-		$resourceManager->registerClassFile('T3_FLOW3_AOP_Framework', TYPO3_PATH_FLOW3 . 'AOP/T3_FLOW3_AOP_Framework.php');
-		$resourceManager->registerClassFile('T3_FLOW3_Package_Manager', TYPO3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Manager.php');
+		$resourceManager->registerClassFile('T3_FLOW3_Exception', FLOW3_PATH_FLOW3 . 'T3_FLOW3_Exception.php');
+		$resourceManager->registerClassFile('T3_FLOW3_Component_Manager', FLOW3_PATH_FLOW3 . 'Component/T3_FLOW3_Component_Manager.php');
+		$resourceManager->registerClassFile('T3_FLOW3_AOP_Framework', FLOW3_PATH_FLOW3 . 'AOP/T3_FLOW3_AOP_Framework.php');
+		$resourceManager->registerClassFile('T3_FLOW3_Package_Manager', FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Manager.php');
 
 		$this->componentManager = new T3_FLOW3_Component_Manager();
 		$this->componentManager->setContext($context);
-		$this->componentManager->registerComponent('T3_FLOW3_Resource_ManagerInterface', 'T3_FLOW3_Resource_Manager', $resourceManager);
+		$this->componentManager->registerComponent('T3_FLOW3_Utility_Environment');
+		$this->componentManager->registerComponent('T3_FLOW3_Cache_Manager', 'T3_FLOW3_Cache_Manager', $cacheManager);
+		$this->componentManager->registerComponent('T3_FLOW3_Cache_Backend_File');
+		$this->componentManager->registerComponent('T3_FLOW3_Resource_Manager', 'T3_FLOW3_Resource_Manager', $resourceManager);
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_Framework', 'T3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('T3_FLOW3_Package_ManagerInterface', 'T3_FLOW3_Package_Manager');
 	}
@@ -151,8 +156,6 @@ final class T3_FLOW3 {
 		if (ini_get('date.timezone') == '') {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
-		preg_match('/(?P<character>\w),/', 'a,b,c,d', $matches);
-		if (!isset($matches[(string)'character'])) die('Your PHP6 version is buggy and produces binary array indexes - please use a more recent snapshot of PHP6.');
 	}
 }
 

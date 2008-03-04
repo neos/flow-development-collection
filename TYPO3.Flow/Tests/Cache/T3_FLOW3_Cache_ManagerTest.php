@@ -39,10 +39,10 @@ class T3_FLOW3_Cache_CacheManagerTest extends T3_Testing_BaseTestCase {
 		$manager = new T3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$cache2 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache2 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
 		$manager->registerCache($cache1);
@@ -61,10 +61,10 @@ class T3_FLOW3_Cache_CacheManagerTest extends T3_Testing_BaseTestCase {
 		$manager = new T3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 
-		$cache2 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache2 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 
 		$manager->registerCache($cache1);
@@ -80,7 +80,7 @@ class T3_FLOW3_Cache_CacheManagerTest extends T3_Testing_BaseTestCase {
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
 		$manager = new T3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
 		$manager->registerCache($cache);
@@ -99,7 +99,7 @@ class T3_FLOW3_Cache_CacheManagerTest extends T3_Testing_BaseTestCase {
 	public function hasCacheReturnsCorrectResult() {
 		$manager = new T3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
-		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load'), array(), '', FALSE);
+		$cache1 = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$manager->registerCache($cache1);
 

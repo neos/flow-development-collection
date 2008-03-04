@@ -55,7 +55,7 @@ class T3_FLOW3_Component_ClassFileManipulator {
 	 */
 	public function manipulate(&$classFilePathAndName) {
 		$checksum = md5_file($classFilePathAndName);
-		$targetClassFilePathAndName = TYPO3_PATH_PRIVATEFILECACHE . 'FLOW3/Component/' . basename($classFilePathAndName) . $checksum . '.php';
+		$targetClassFilePathAndName = FLOW3_PATH_PRIVATEFILECACHE . 'FLOW3/Component/' . basename($classFilePathAndName) . $checksum . '.php';
 		if (file_exists($targetClassFilePathAndName)) {
 #			$classFilePathAndName = $targetClassFilePathAndName;
 #			return;

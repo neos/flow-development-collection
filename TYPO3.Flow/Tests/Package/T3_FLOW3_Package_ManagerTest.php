@@ -94,7 +94,7 @@ class T3_FLOW3_Package_ManagerTest extends T3_Testing_BaseTestCase {
 	public function getPackagePathReturnsTheCorrectPathOfTheTestPackage() {
 		$this->packageManager->initialize();
 		$actualPackagePath = $this->packageManager->getPackagePath('TestPackage');
-		$expectedPackagePath = TYPO3_PATH_ROOT . 'Packages/TestPackage/';
+		$expectedPackagePath = FLOW3_PATH_ROOT . 'Packages/TestPackage/';
 		$this->assertEquals($expectedPackagePath, $actualPackagePath, 'getPackagePath() did not return the correct path for package "TestPackage".');
 		
 		try {
@@ -115,7 +115,7 @@ class T3_FLOW3_Package_ManagerTest extends T3_Testing_BaseTestCase {
 	public function getPackageClassesPathReturnsClassesPathOfTestPackage() {
 		$this->packageManager->initialize();
 		$actualPackageClassesPath = $this->packageManager->getPackageClassesPath('TestPackage');
-		$expectedPackageClassesPath = TYPO3_PATH_ROOT . 'Packages/TestPackage/Classes/';
+		$expectedPackageClassesPath = FLOW3_PATH_ROOT . 'Packages/TestPackage/Classes/';
 		$this->assertEquals($expectedPackageClassesPath, $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
 		
 		try {

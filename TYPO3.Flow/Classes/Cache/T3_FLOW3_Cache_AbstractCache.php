@@ -96,5 +96,14 @@ abstract class T3_FLOW3_Cache_AbstractCache {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	abstract public function load($entryIdentifier);
+
+	/**
+	 * Checks if a cache entry with the specified identifier exists.
+	 *
+	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	abstract public function has($entryIdentifier);
 }
 ?>

@@ -57,5 +57,16 @@ class T3_FLOW3_Cache_VariableCache extends T3_FLOW3_Cache_AbstractCache {
 	public function load($entryIdentifier) {
 		return unserialize($this->backend->load($entryIdentifier));
 	}
+
+	/**
+	 * Checks if a cache entry with the specified identifier exists.
+	 *
+	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function has($entryIdentifier) {
+		return $this->backend->has($entryIdentifier);
+	}
 }
 ?>

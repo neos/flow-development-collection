@@ -38,7 +38,7 @@ class T3_FLOW3_Resource_Manager {
 	 * @return void
 	 */
 	public function __construct() {
-		$this->classLoader = new T3_FLOW3_Resource_ClassLoader(TYPO3_PATH_PACKAGES);
+		$this->classLoader = new T3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 	}
 

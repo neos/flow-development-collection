@@ -36,7 +36,7 @@ class T3_FLOW3_Component_ConfigurationTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentConfiguration = new T3_FLOW3_Component_Configuration('T3_TestPackage_BasicClass', TYPO3_PATH_PACKAGES . 'TestPackage/Classes/T3_TestPackage_BasicClass.php');
+		$this->componentConfiguration = new T3_FLOW3_Component_Configuration('T3_TestPackage_BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/T3_TestPackage_BasicClass.php');
 	}
 
 	/**

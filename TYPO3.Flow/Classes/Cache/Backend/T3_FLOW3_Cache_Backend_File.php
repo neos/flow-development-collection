@@ -116,7 +116,10 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($path)) {
-			T3_FLOW3_Utility_Files::createDirectoryRecursively($path);
+			try {
+				T3_FLOW3_Utility_Files::createDirectoryRecursively($path);
+			} catch(Exception $exception) {
+			}
 			if (!is_writable($path)) throw new T3_FLOW3_Cache_Exception('The cache directory "' . $path . '" could not be created.', 1204026250);
 		}
 

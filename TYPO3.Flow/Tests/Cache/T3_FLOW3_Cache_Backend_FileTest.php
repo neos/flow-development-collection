@@ -108,7 +108,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveThrowsExceptionIfDataIsNotAString() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 
 		$data = array('Some data');
 		$entryIdentifier = 'BackendFileTest';
@@ -129,7 +129,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveReallySavesToTheSpecifiedDirectory() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -157,7 +157,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveRemovesAnAlreadyExistingCacheEntryForTheSameIdentifier() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data1 = 'some data' . microtime();
@@ -184,7 +184,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadReturnsContentOfTheCorrectCacheFile() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
@@ -208,7 +208,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsTheCorrectResult() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
@@ -230,7 +230,7 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	 *
 	 */
 	public function removeReallyRemovesACacheEntry() {
-		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'load', 'save'), array(), '', FALSE);
+		$cache = $this->getMock('T3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -261,7 +261,8 @@ class T3_FLOW3_Cache_Backend_FileTest extends T3_Testing_BaseTestCase {
 	public function tearDown() {
 		if (is_object($this->backend)) {
 			$context = $this->componentManager->getContext();
-			T3_FLOW3_Utility_Files::removeDirectoryRecursively($this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache/');
+			$directory = $this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache';
+			if (is_dir($directory)) T3_FLOW3_Utility_Files::removeDirectoryRecursively($directory);
 		}
 	}
 }

@@ -32,7 +32,7 @@ class T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest extends T3_Testi
 	 */
 	public function getComponentConfigurationsMatchesFixtureOfTestPackage() {
 		$configurationSource = $this->componentManager->getComponent('T3_FLOW3_Package_IniFileComponentsConfigurationSource');
-		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', TYPO3_PATH_PACKAGES . 'TestPackage/', array($configurationSource));
+		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', array($configurationSource));
 
 		$componentConfigurations = $configurationSource->getComponentConfigurations($package, array());
 		foreach ($componentConfigurations as $componentName => $componentConfiguration) {

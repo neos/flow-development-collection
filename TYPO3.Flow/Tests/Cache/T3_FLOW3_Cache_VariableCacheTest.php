@@ -36,13 +36,11 @@ class T3_FLOW3_Cache_VariableCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function savePassesSerializedStringToBackend() {
-		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
-
 		$theString = 'Just some value';
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)));
 
-		$cache = new T3_FLOW3_Cache_VariableCache('ClassCache', $backend);
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$cache->save('VariableCacheTest', $theString);
 	}
 
@@ -51,13 +49,11 @@ class T3_FLOW3_Cache_VariableCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function savePassesSerializedArrayToBackend() {
-		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
-
 		$theArray = array('Just some value', 'and another one.');
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theArray)));
 
-		$cache = new T3_FLOW3_Cache_VariableCache('ClassCache', $backend);
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$cache->save('VariableCacheTest', $theArray);
 	}
 
@@ -66,12 +62,10 @@ class T3_FLOW3_Cache_VariableCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadLoadsStringValueFromBackend() {
-		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
-
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize('Just some value')));
 
-		$cache = new T3_FLOW3_Cache_VariableCache('ClassCache', $backend);
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$this->assertEquals('Just some value', $cache->load('VariableCacheTest'), 'The returned value was not the expected string.');
 	}
 
@@ -80,13 +74,11 @@ class T3_FLOW3_Cache_VariableCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadLoadsArrayValueFromBackend() {
-		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
-
 		$theArray = array('Just some value', 'and another one.');
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize($theArray)));
 
-		$cache = new T3_FLOW3_Cache_VariableCache('ClassCache', $backend);
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$this->assertEquals($theArray, $cache->load('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
 	}
 
@@ -95,13 +87,25 @@ class T3_FLOW3_Cache_VariableCacheTest extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadLoadsFalseBooleanValueFromBackend() {
-		$componentManagerReflection = new ReflectionClass('T3_FLOW3_Component_Manager');
-
 		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize(FALSE)));
 
-		$cache = new T3_FLOW3_Cache_VariableCache('ClassCache', $backend);
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$this->assertFalse($cache->load('VariableCacheTest'), 'The returned value was not the FALSE.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasReturnsResultFromBackend() {
+		$theString = 'Just some value';
+		$backend = $this->getMock('T3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(TRUE));
+
+		$cache = new T3_FLOW3_Cache_VariableCache('VariableCache', $backend);
+		$this->assertTRUE($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
+	}
+
 }
 ?>
