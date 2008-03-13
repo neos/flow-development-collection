@@ -15,12 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the .conf file package components configuration source
  *
- * @package		TYPO3
- * @version 	$Id:T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest extends T3_Testing_BaseTestCase {
 
@@ -31,8 +38,9 @@ class T3_FLOW3_Package_IniFileComponentsConfigurationSourceTest extends T3_Testi
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentConfigurationsMatchesFixtureOfTestPackage() {
-		$configurationSource = $this->componentManager->getComponent('T3_FLOW3_Package_IniFileComponentsConfigurationSource');
-		$package = $this->componentManager->getComponent('T3_FLOW3_Package_Package', 'TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', array($configurationSource));
+		$mockAOPFramework = $this->getMock('T3_FLOW3_AOP_Framework', array(), array(), '', FALSE);
+		$configurationSource = new T3_FLOW3_Package_IniFileComponentsConfigurationSource($mockAOPFramework);
+		$package = new T3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', array($configurationSource));
 
 		$componentConfigurations = $configurationSource->getComponentConfigurations($package, array());
 		foreach ($componentConfigurations as $componentName => $componentConfiguration) {
