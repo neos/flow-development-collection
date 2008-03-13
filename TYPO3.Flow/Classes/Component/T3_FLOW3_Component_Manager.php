@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Component
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -123,7 +123,6 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 
 		$componentConfiguration = $this->componentConfigurations[$componentName];
 		$overridingConstructorArguments = $this->getOverridingConstructorArguments(array_slice(func_get_args(), 1), $componentConfiguration);
-
 		$scope = $this->getComponentScope($componentName, $componentConfiguration);
 		switch ($scope) {
 			case 'prototype' :
@@ -147,9 +146,9 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Registers the given class as a component
 	 *
-	 * @param  string $componentName: The unique identifier of the component
-	 * @param  string $className: The class name which provides the functionality for this component. Same as component name by default.
-	 * @param  object $componentObject: If the component has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
+	 * @param string $componentName: The unique identifier of the component
+	 * @param string $className: The class name which provides the functionality for this component. Same as component name by default.
+	 * @param object $componentObject: If the component has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws T3_FLOW3_Component_Exception_ComponentAlreadyRegistered if the component has already been registered
@@ -160,7 +159,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 		if ($className === NULL) {
 			$className = $componentName;
 		}
-		if (!class_exists($className)) throw new T3_FLOW3_Component_Exception_UnknownClass('The specified class "' . $className . '" does not exist and therefore cannot be registered as a component.', 1200239063);
+		if (!class_exists($className, TRUE)) throw new T3_FLOW3_Component_Exception_UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
 
 		$class = new T3_FLOW3_Reflection_Class($className);
 		if ($class->isAbstract()) throw new T3_FLOW3_Component_Exception_InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
@@ -276,7 +275,7 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 */
 	public function setComponentConfigurations(array $newComponentConfigurations) {
 		foreach ($newComponentConfigurations as $newComponentConfiguration) {
-			if (!$newComponentConfiguration instanceof T3_FLOW3_Component_Configuration) throw new T3_FLOW3_Component_Exception('The new component configuration must be an instance of T3_FLOW3_Component_Configuration', 1167826954);
+			if (!$newComponentConfiguration instanceof T3_FLOW3_Component_Configuration) throw new InvalidArgumentException('The new component configuration must be an instance of T3_FLOW3_Component_Configuration', 1167826954);
 			$componentName = $newComponentConfiguration->getComponentName();
 			if (!key_exists($componentName, $this->componentConfigurations) || $this->componentConfigurations[$componentName] !== $newComponentConfiguration) {
 				$this->setComponentConfiguration($newComponentConfiguration);
@@ -286,8 +285,6 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 
 	/**
 	 * Sets the component configuration for a specific component.
-	 * If the component is not yet registered, it will be registered automatically.
-	 * If an instance of the component existed in the object cache, it will be flushed.
 	 *
 	 * @param T3_FLOW3_Component_Configuration $newComponentConfiguration: The new component configuration
 	 * @return void
@@ -295,13 +292,8 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 */
 	public function setComponentConfiguration(T3_FLOW3_Component_Configuration $newComponentConfiguration) {
 		$componentName = $newComponentConfiguration->getComponentName();
-		if (!$this->isComponentRegistered($componentName)) {
-			$this->registerComponent($componentName, $newComponentConfiguration->getClassName());
-		}
-		if ($this->componentObjectCache->componentObjectExists($componentName)) {
-			$this->componentObjectCache->removeComponentObject($componentName);
-		}
 		$this->componentConfigurations[$newComponentConfiguration->getComponentName()] = clone $newComponentConfiguration;
+		$this->registeredComponents[$componentName] = T3_PHP6_Functions::strtolower($componentName);
 	}
 
 	/**

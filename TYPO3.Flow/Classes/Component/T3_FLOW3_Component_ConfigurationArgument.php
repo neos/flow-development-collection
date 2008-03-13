@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Injection (constructor-) argument as used in a Component Configuration
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope      prototype
+ * @version $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
  class T3_FLOW3_Component_ConfigurationArgument {
 
@@ -47,9 +53,9 @@ declare(ENCODING = 'utf-8');
 	/**
 	 * Constructor - sets the index, type and value of the argument
 	 *
-	 * @param  string		$index: Index of the argument
-	 * @param  mixed		$value: Value of the argument
-	 * @param  integer		$type: Type of the argument - one of the argument_TYPE_* constants
+	 * @param string $index: Index of the argument
+	 * @param mixed $value: Value of the argument
+	 * @param integer $type: Type of the argument - one of the argument_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -60,9 +66,9 @@ declare(ENCODING = 'utf-8');
 	/**
 	 * Sets the index, type and value of the argument
 	 *
-	 * @param  integer		$index: Index of the argument (counting starts at "1")
-	 * @param  mixed		$value: Value of the argument
-	 * @param  integer		$type: Type of the argument - one of the ARGUMENT_TYPE_* constants
+	 * @param integer $index: Index of the argument (counting starts at "1")
+	 * @param mixed $value: Value of the argument
+	 * @param integer $type: Type of the argument - one of the ARGUMENT_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -77,7 +83,7 @@ declare(ENCODING = 'utf-8');
 	/**
 	 * Returns the index (position) of the argument
 	 *
-	 * @return string		Index of the argument
+	 * @return string Index of the argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIndex() {
@@ -87,7 +93,7 @@ declare(ENCODING = 'utf-8');
 	/**
 	 * Returns the value of the argument
 	 *
-	 * @return mixed		Value of the argument
+	 * @return mixed Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValue() {
@@ -97,7 +103,7 @@ declare(ENCODING = 'utf-8');
 	/**
 	 * Returns the type of the argument
 	 *
-	 * @return integer		Type of the argument - one of the ARGUMENT_TYPES_* constants
+	 * @return integer Type of the argument - one of the ARGUMENT_TYPES_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getType() {

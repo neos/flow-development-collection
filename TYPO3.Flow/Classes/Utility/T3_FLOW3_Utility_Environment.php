@@ -37,11 +37,6 @@ declare(ENCODING = 'utf-8');
 class T3_FLOW3_Utility_Environment {
 
 	/**
-	 * @var T3_FLOW3_Component_ManagerInterface
-	 */
-	protected $componentManager;
-
-	/**
 	 * @var array A local copy of the _SERVER super global.
 	 */
 	protected $SERVER;
@@ -63,8 +58,7 @@ class T3_FLOW3_Utility_Environment {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct() {
 		$this->SERVER = $_SERVER;
 		$this->POST = $_POST;
 		$this->SAPIName = php_sapi_name();
@@ -165,7 +159,7 @@ class T3_FLOW3_Utility_Environment {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ereg_replace('^/', '', $this->getScriptName()) . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
 		}
 
-		$requestURI = $this->componentManager->getComponent('T3_FLOW3_Property_DataType_URI', $requestURIString);
+		$requestURI = new T3_FLOW3_Property_DataType_URI($requestURIString);
 		return $requestURI;
 	}
 

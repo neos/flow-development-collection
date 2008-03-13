@@ -15,22 +15,22 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
 /**
  * TYPO3 Component Definition
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope      prototype
+ * @version $Id:T3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class T3_FLOW3_Component_Configuration {
 

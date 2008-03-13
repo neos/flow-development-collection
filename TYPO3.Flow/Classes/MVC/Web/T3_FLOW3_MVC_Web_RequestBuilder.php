@@ -64,7 +64,8 @@ class T3_FLOW3_MVC_Web_RequestBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		$request = $this->componentManager->getComponent('T3_FLOW3_MVC_Web_Request', $this->utilityEnvironment);
+		$request = $this->componentManager->getComponent('T3_FLOW3_MVC_Web_Request');
+		$request->injectEnvironment($this->utilityEnvironment);
 		$request->setRequestURI($this->utilityEnvironment->getRequestURI());
 		$this->router->route($request);
 		return $request;

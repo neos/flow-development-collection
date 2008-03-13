@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:T3_FLOW3_MVC_RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
+ */
 
 /**
  * Analyzes the raw request and delivers a request handler which can handle it.
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:T3_FLOW3_MVC_RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:T3_FLOW3_MVC_RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_RequestHandlerResolver {
 
@@ -29,7 +35,7 @@ class T3_FLOW3_MVC_RequestHandlerResolver {
 	 * @var T3_FLOW3_ComponentManagerInterface Reference to the component manager
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * Constructs the Request Handler Resolver
 	 *
@@ -40,12 +46,13 @@ class T3_FLOW3_MVC_RequestHandlerResolver {
 	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
-	
+
 	/**
 	 * Analyzes the raw request and tries to find a request handler which can handle
 	 * it. If none is found, an exception is thrown.
 	 *
 	 * @return T3_FLOW3_MVC_RequestHandler A request handler
+	 * @throws T3_FLOW3_MVC_Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
@@ -59,6 +66,7 @@ class T3_FLOW3_MVC_RequestHandlerResolver {
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}
+		if (count($suitableRequestHandlers) == 0) throw new T3_FLOW3_MVC_Exception('No suitable request handler found.', 1205414233);
 		ksort($suitableRequestHandlers);
 		return array_pop($suitableRequestHandlers);
 	}

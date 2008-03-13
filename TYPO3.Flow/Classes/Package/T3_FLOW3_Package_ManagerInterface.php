@@ -12,36 +12,26 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * Interface for the TYPO3 Package Manager
- * 
- * @package		FLOW3
- * @subpackage	Package
- * @version 	$Id:T3_FLOW3_Package_ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:T3_FLOW3_Package_ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @author Robert Lemke <robert@typo3.org>
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_Package_ManagerInterface {
 
 	/**
-	 * Constructor
-	 * 
-	 * @param   T3_FLOW3_Component_ManagerInterface	$componentManager: An instance of the component manager
-	 * @return	void
-	 */
-	public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager);
-		
-	/**
 	 * Initializes the package manager. Initialization includes:
-	 * 
-	 *   - building the package registry
-	 *   - register package classes as components (at the component manager)
-	 *   - configure the components
 	 *
-	 * @return	void
+	 *   - building the package registry
+	 *
+	 * @return void
 	 */
 	public function initialize();
 
@@ -49,50 +39,49 @@ interface T3_FLOW3_Package_ManagerInterface {
 	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
 	 * or FALSE if it's not. If a package is available it doesn't mean neccessarily that it's active!
 	 *
-	 * @param	string		$packageKey: The key of the package to check
-	 * @return	boolean		TRUE if the package is available, otherwise FALSE
+	 * @param string $packageKey: The key of the package to check
+	 * @return boolean TRUE if the package is available, otherwise FALSE
 	 */
 	public function isPackageAvailable($packageKey);
-	
+
 	/**
 	 * Returns a T3_FLOW3_Package_PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @param	string		$packageKey
-	 * @return	array		Array of T3_FLOW3_Package_PackageInterface
+	 * @param string $packageKey
+	 * @return array Array of T3_FLOW3_Package_PackageInterface
 	 */
 	public function getPackage($packageKey);
-	
+
 	/**
 	 * Returns an array of T3_FLOW3_Package_PackageInterface objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return	array		Array of T3_FLOW3_Package_PackageInterface
+	 * @return array Array of T3_FLOW3_Package_PackageInterface
 	 */
 	public function getPackages();
-	
+
 	/**
-	 * Returns the absolute path to the root directory of a package. 
-	 * 
-	 * @param	string		$packageKey: Name of the package to return the path of
-	 * @return	string		Absolute path to the package's root directory, with trailing directory separator
+	 * Returns the absolute path to the root directory of a package.
+	 *
+	 * @param string $packageKey: Name of the package to return the path of
+	 * @return string Absolute path to the package's root directory, with trailing directory separator
 	 */
 	public function getPackagePath($packageKey);
 
 	/**
 	 * Returns the absolute path to the "Classes" directory of a package.
-	 * 
-	 * @param	string		$packageKey: Name of the package to return the "Classes" path of
-	 * @return	string		Absolute path to the package's "Classes" directory, with trailing directory separator
+	 *
+	 * @param string $packageKey: Name of the package to return the "Classes" path of
+	 * @return string Absolute path to the package's "Classes" directory, with trailing directory separator
 	 */
 	public function getPackageClassesPath($packageKey);
-		
+
 #	public function activatePackage($packageKey);
 #	public function deactivatePackage($packageKey);
 #	public function removePackage($packageKey);
 #	public function downloadPackageFromRepository($packageKey, $version);
 #	public function uploadPackageToRepository($packageKey, $credentials);
-	
 
 }
 ?>

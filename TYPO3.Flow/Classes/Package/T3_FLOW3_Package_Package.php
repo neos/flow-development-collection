@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
+ */
+
+/**
  * The default TYPO3 Package implementation
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Package
- * @version    $Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Package_.php 203 2007-03-30 13:17:37Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 
@@ -219,16 +225,6 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 			throw new T3_FLOW3_Package_Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
-	}
-
-	/**
-	 * Wake up function
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __wakeup() {
-		$this->includePackageConfiguration();
 	}
 }
 

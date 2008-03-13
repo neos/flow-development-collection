@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * A request handler which can handle web requests.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_MVC_Web_RequestHandler implements T3_FLOW3_MVC_RequestHandlerInterface {
 

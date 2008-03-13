@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:T3_FLOW3_MVC_Web_Request.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * Represents a web request.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:T3_FLOW3_MVC_Web_Request.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_MVC_Web_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
@@ -43,13 +49,14 @@ class T3_FLOW3_MVC_Web_Request extends T3_FLOW3_MVC_Request {
 	protected $baseURI;
 
 	/**
-	 * Constructs the web request
+	 * Injects the environment
 	 *
 	 * @param  T3_FLOW3_Utility_Environment $environment
+	 * @return void
+	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(T3_FLOW3_Utility_Environment $environment) {
-		parent::__construct();
+	public function injectEnvironment(T3_FLOW3_Utility_Environment $environment) {
 		$this->environment = $environment;
 	}
 

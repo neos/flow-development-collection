@@ -12,84 +12,89 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
+ */
 
 /**
  * Interface for the TYPO3 Component Manager
- * 
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id:T3_FLOW3_Component_ManagerInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:T3_FLOW3_Component_Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface T3_FLOW3_Component_ManagerInterface {
-		
+
 	/**
-	 * Constructor. Instantiates the object cache and object builder. 
-	 * 
-	 * @return	 void
+	 * Constructor. Instantiates the object cache and object builder.
+	 *
+	 * @return  void
 	 */
 	public function __construct();
 
 	/**
 	 * Sets the Component Manager to a specific context. All operations related to components
-	 * will be carried out based on the configuration for the current context. 
-	 * 
+	 * will be carried out based on the configuration for the current context.
+	 *
 	 * The context should be set as early as possible, preferably before any component has been
-	 * instantiated.  
-	 * 
+	 * instantiated.
+	 *
 	 * By default the context is set to "default". Although the context can be freely chosen,
 	 * the following contexts are explicitly supported by FLOW3:
 	 * "default", "production", "development", "testing", "profiling"
-	 * 
-	 * @param   string		$context: Name of the context
-	 * @return  void
+	 *
+	 * @param string $context: Name of the context
+	 * @return void
 	 */
 	public function setContext($context);
 
-	
+
 	/**
 	 * Returns the name of the currently set context.
-	 * 
-	 * @return  string		Name of the current context
+	 *
+	 * @return string Name of the current context
 	 */
 	public function getContext();
-	
+
 	/**
 	 * Returns an instance of the component specified by $componentName.
 	 * Always ask this method for class instances instead of using the "new"
 	 * operator!
 	 *
-	 * @param	string		$componentNameOrType
-	 * @return	object
+	 * @param string $componentNameOrType
+	 * @return object
 	 */
 	public function getComponent($componentName);
-	
+
 	/**
 	 * Registers the given class as a component
 	 *
-	 * @param	string      $componentName: The unique identifier of the component
-	 * @param	string      $className: The class name which provides the functionality for this component. Same as component name by default.
-	 * @return	void
+	 * @param string $componentName: The unique identifier of the component
+	 * @param string $className: The class name which provides the functionality for this component. Same as component name by default.
+	 * @return void
 	 */
 	public function registerComponent($componentName, $className = NULL);
-		
+
 	/**
 	 * Unregisters the specified component
 	 *
-	 * @param	string		$componentName: The explicit component name
-	 * @return  void
+	 * @param string $componentName: The explicit component name
+	 * @return void
 	 */
 	public function unregisterComponent($componentName);
-	
+
 	/**
 	 * Returns TRUE if a component with the given name has already
 	 * been registered.
 	 *
-	 * @param	string		$componentName: Name of the component
-	 * @return	boolean		TRUE if the component has been registered, otherwise FALSE
+	 * @param string $componentName: Name of the component
+	 * @return boolean TRUE if the component has been registered, otherwise FALSE
 	 */
 	public function isComponentRegistered($componentName);
 
@@ -97,83 +102,83 @@ interface T3_FLOW3_Component_ManagerInterface {
 	 * Returns the case sensitive component name of a component specified by a
 	 * case insensitive component name. If no component of that name exists,
 	 * FALSE is returned.
-	 * 
+	 *
 	 * In general, the case sensitive variant is used everywhere in the TYPO3
-	 * framework, however there might be special situations in which the 
+	 * framework, however there might be special situations in which the
 	 * case senstivie name is not available.
 	 *
-	 * @param  string		$caseInsensitiveComponentName: The component name in lower-, upper- or mixed case
-	 * @return mixed		Either the mixed case component name or FALSE if no component of that name was found.
+	 * @param string $caseInsensitiveComponentName: The component name in lower-, upper- or mixed case
+	 * @return mixed Either the mixed case component name or FALSE if no component of that name was found.
 	 */
 	public function getCaseSensitiveComponentName($caseInsensitiveComponentName);
-	
+
 	/**
 	 * Returns an array of configuration objects for all registered components.
 	 *
-	 * @return  arrray		Array of T3_FLOW3_Component_Configuration objects, indexed by component name
+	 * @return arrray Array of T3_FLOW3_Component_Configuration objects, indexed by component name
 	 */
 	public function getComponentConfigurations();
 
 	/**
 	 * Returns the configuration object of a certain component
 	 *
-	 * @param  string		$componentName: Name of the component to fetch the configuration for 
+	 * @param string $componentName: Name of the component to fetch the configuration for
 	 * @return T3_FLOW3_Component_Configuration The component configuration
 	 */
 	public function getComponentConfiguration($componentName);
-	
+
 	/**
-	 * Sets the component configurations for all components found in the 
+	 * Sets the component configurations for all components found in the
 	 * $newComponentConfigurations array.
-	 * 
+	 *
 	 * NOTE: Only components which have been registered previously can be
 	 *       configured. Trying to configure an unregistered component will
 	 *       result in an exception thrown.
-	 * 
-	 * @param   array	$newComponentConfigurations: Array of $componentName => T3_FLOW3_Component_configuration
-	 * @return  void
-	 */	
+	 *
+	 * @param array $newComponentConfigurations: Array of $componentName => T3_FLOW3_Component_configuration
+	 * @return void
+	 */
 	public function setComponentConfigurations(array $newComponentConfigurations);
 
 	/**
 	 * Sets the component configuration for a specific component
-	 * 
+	 *
 	 * NOTE: Only components which have been registered previously can be
 	 *       configured. Trying to configure an unregistered component will
 	 *       result in an exception thrown.
-	 * 
-	 * @param   T3_FLOW3_Component_Configuration	$newComponentConfiguration: The new component configuration
-	 * @return  void
+	 *
+	 * @param T3_FLOW3_Component_Configuration $newComponentConfiguration: The new component configuration
+	 * @return void
 	 */
 	public function setComponentConfiguration(T3_FLOW3_Component_Configuration $newComponentConfiguration);
 
 	/**
 	 * Sets the name of the class implementing the specified component.
-	 * This is a convenience method which loads the configuration of the given 
+	 * This is a convenience method which loads the configuration of the given
 	 * component, sets the class name and saves the configuration again.
 	 *
-	 * @param  string									$componentName: Name of the component to set the class name for
-	 * @param  string									$className: Name of the class to set
+	 * @param string $componentName: Name of the component to set the class name for
+	 * @param string $className: Name of the class to set
 	 * @return void
 	 */
 	public function setComponentClassName($componentName, $className);
-	
+
 	/**
 	 * Searches for and returns the class name of the default implementation of the given
-	 * interface name. If no class implementing the interface was found or more than one 
+	 * interface name. If no class implementing the interface was found or more than one
 	 * implementation was found in the package defining the interface, FALSE is returned.
-	 * 
-	 * @param  string			$interfaceName: Name of the interface
-	 * @return mixed			Either the class name of the default implementation for the component type or FALSE
+	 *
+	 * @param string $interfaceName: Name of the interface
+	 * @return mixed Either the class name of the default implementation for the component type or FALSE
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName);
 
 	/**
 	 * Searches for and returns all class names of implementations of the given component type
 	 * (interface name). If no class implementing the interface was found, FALSE is returned.
-	 * 
-	 * @param  string			$interfaceName: Name of the interface
-	 * @return array			An array of class names of the default implementation for the component type
+	 *
+	 * @param string $interfaceName: Name of the interface
+	 * @return array An array of class names of the default implementation for the component type
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName);
 }
