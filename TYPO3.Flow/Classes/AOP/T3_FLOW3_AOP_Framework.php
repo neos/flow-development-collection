@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -45,6 +45,16 @@ class T3_FLOW3_AOP_Framework {
 	 * @var array A registry of all known aspects
 	 */
 	protected $aspectContainers = array();
+
+	/**
+	 * @var array An array of all proxied class names and adviced methods with information about the advice which has been applied.
+	 */
+	protected $advicedMethodsInformationByTargetClass = array();
+
+	/**
+	 * @var array An array target class names and their proxy class name.
+	 */
+	protected $targetAndProxyClassNames = array();
 
 	/**
 	 * @var T3_FLOW3_Cache_VariableCache The cache for AOP proxy classes
@@ -91,6 +101,19 @@ class T3_FLOW3_AOP_Framework {
 	}
 
 	/**
+	 * Adds a registered component to the proxy blacklist to prevent the component class
+	 * from being proxied by the AOP framework.
+	 *
+	 * @param string $componentName: Name of the component to add to the blacklist
+	 * @return void
+	 * @auhor Robert Lemke <robert@typo3.org>
+	 */
+	public function addComponentNameToProxyBlacklist($componentName) {
+		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
+		$this->componentProxyBlacklist[$componentName] = $componentName;
+	}
+
+	/**
 	 * Initializes the AOP framework.
 	 *
 	 * During initialization the configuration of all registered components is searched for
@@ -110,9 +133,10 @@ class T3_FLOW3_AOP_Framework {
 		$this->configurationCache = $this->componentManager->getComponent('T3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		if ($context != 'Testing' && $this->configurationCache->has('aspectContainers') && $this->configurationCache->has('targetAndProxyClassNames')) {
+		if ($context != 'Testing' && $this->configurationCache->has('aspectContainers') && $this->configurationCache->has('targetAndProxyClassNames') && $this->configurationCache->has('advicedMethodsInformationByTargetClass')) {
 			$aspectContainers = $this->configurationCache->load('aspectContainers');
-			$targetAndProxyClassNames = $this->configurationCache->load('targetAndProxyClassNames');
+			$this->targetAndProxyClassNames = $this->configurationCache->load('targetAndProxyClassNames');
+			$this->advicedMethodsInformationByTargetClass = $this->configurationCache->load('advicedMethodsInformationByTargetClass');
 		} else {
 			$namesOfAvailableClasses = array();
 			foreach ($componentConfigurations as $componentConfiguration) {
@@ -120,31 +144,19 @@ class T3_FLOW3_AOP_Framework {
 			}
 
 			$aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
-			$targetAndProxyClassNames = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
+			$this->targetAndProxyClassNames = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
 
 			$this->configurationCache->save('aspectContainers', $aspectContainers);
-			$this->configurationCache->save('targetAndProxyClassNames', $targetAndProxyClassNames);
+			$this->configurationCache->save('targetAndProxyClassNames', $this->targetAndProxyClassNames);
+			$this->configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
 		}
 
-		foreach ($targetAndProxyClassNames as $targetClassName => $proxyClassName) {
+		foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
 			$componentConfigurations[$targetClassName]->setClassName($proxyClassName);
 		}
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 		$this->aspectContainers = $aspectContainers;
 		$this->isInitialized = TRUE;
-	}
-
-	/**
-	 * Adds a registered component to the proxy blacklist to prevent the component class
-	 * from being proxied by the AOP framework.
-	 *
-	 * @param string $componentName: Name of the component to add to the blacklist
-	 * @return void
-	 * @auhor Robert Lemke <robert@typo3.org>
-	 */
-	public function addComponentNameToProxyBlacklist($componentName) {
-		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
-		$this->componentProxyBlacklist[$componentName] = $componentName;
 	}
 
 	/**
@@ -154,16 +166,51 @@ class T3_FLOW3_AOP_Framework {
 	 * @param string $aspectClassName: Name of the aspect class where the pointcut has been declared
 	 * @param string $pointcutMethodName: Method name of the pointcut
 	 * @return mixed The T3_FLOW3AOPPointcut or FALSE if none was found
+	 * @throws T3_FLOW3_AOP_Exception if no aspect container was defined for the given aspect class name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
-		if (!isset($this->aspectContainers[$aspectClassName])) throw new RuntimeException('No aspect class "' . $aspectClassName . '" found while searching for pointcut "' . $pointcutMethodName . '".', 1172223654);
+		if (!isset($this->aspectContainers[$aspectClassName])) throw new T3_FLOW3_AOP_Exception('No aspect class "' . $aspectClassName . '" found while searching for pointcut "' . $pointcutMethodName . '".', 1172223654);
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
 			if ($pointcut->getPointcutMethodName() == $pointcutMethodName) {
 				return $pointcut;
 			}
 		}
 		return FALSE;
+	}
+
+	/**
+	 * Returns an array of method names and advices which were applied to the specified class. If the
+	 * target class has no adviced methods, an empty array is returned.
+	 *
+	 * @param string $targetClassName: Name of the target class
+	 * @return mixed An array of method names and their advices as array of T3_FLOW3_AOP_AdviceInterface
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
+		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
+		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
+	}
+
+	/**
+	 * Returns an array of all aspects which were found during the initialization.
+	 *
+	 * @return array An array of T3_FLOW3_AOP_AspectContainer
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAspectContainers() {
+		return $this->aspectContainers;
+	}
+
+	/**
+	 * Returns an array of all target class names which have been proxied and the name
+	 * of the respective proxy class.
+	 *
+	 * @return array target class names and their proxy class name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTargetAndProxyClassNames() {
+		return $this->targetAndProxyClassNames;
 	}
 
 	/**
@@ -295,6 +342,7 @@ class T3_FLOW3_AOP_Framework {
 								$this->proxyCache->save($proxyBuildResult['proxyClassName'], $proxyBuildResult['proxyClassCode']);
 							}
 							$targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
+							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
 						}
 					}
 				} catch (ReflectionException $exception) {

@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -140,6 +140,52 @@ class T3_FLOW3_AOP_FrameworkTest extends T3_Testing_BaseTestCase {
 	public function mandatoryArgumentInNonAdvisedConstructorStaysIntact() {
 		$target = $this->componentManager->getComponent('T3_TestPackage_ClassWithOneConstructorArgument');
 		$this->assertType('T3_TestPackage_InjectedClass', $target->getInjectedComponent(), 'The injected class is not of the expected type or has not been injected at all.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAspectContainersReturnsAnArrayOfAspectContainers() {
+		$aopFramework = $this->componentManager->getComponent('T3_FLOW3_AOP_Framework');
+		$aspectContainers = $aopFramework->getAspectContainers();
+		$this->assertTrue(is_array($aspectContainers), 'getAspectContainers() did not return an array.');
+		$this->assertTrue(count($aspectContainers) > 0, 'The returned array was empty.');
+		foreach ($aspectContainers as $aspectContainer) {
+			$this->assertType('T3_FLOW3_AOP_AspectContainer', $aspectContainer, 'The returned array values are not (all) of type AspectContainer.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAdvicedMethodsInformationByTargetClassReturnsCorrectArrayOfAdviceInformation() {
+		$aopFramework = $this->componentManager->getComponent('T3_FLOW3_AOP_Framework');
+		$advicedMethodsInformation = $aopFramework->getAdvicedMethodsInformationByTargetClass('T3_TestPackage_BasicClass');
+		$this->assertTrue(is_array($advicedMethodsInformation), 'No array was returned.');
+		$this->assertTrue(count($advicedMethodsInformation) > 0, 'The returned array was empty.');
+		foreach ($advicedMethodsInformation as $methodName => $groupedAdvices) {
+			$this->assertTrue(is_array($groupedAdvices), 'The returned groupedAdvices values are not (all) of type array.');
+			foreach ($groupedAdvices as $adviceType => $advicesInformation) {
+				$this->assertTrue(is_string($adviceType) && class_exists($adviceType, TRUE), 'The advice type was invalid.');
+				$this->assertTrue(is_array($advicesInformation), 'advicesInformation is not an array.');
+				foreach ($advicesInformation as $adviceInformation) {
+					$this->assertTrue(is_array($adviceInformation), 'adviceInformation is not an array.');
+				}
+			}
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTargetAndProxyClassNamesReturnsANonEmptyArray() {
+		$aopFramework = $this->componentManager->getComponent('T3_FLOW3_AOP_Framework');
+		$targetAndProxyClassNames = $aopFramework->getTargetAndProxyClassNames();
+		$this->assertTrue(is_array($targetAndProxyClassNames), 'The returned value is not an array.');
+		$this->assertTrue(count($targetAndProxyClassNames) > 0, 'The returned array was empty.');
 	}
 }
 ?>

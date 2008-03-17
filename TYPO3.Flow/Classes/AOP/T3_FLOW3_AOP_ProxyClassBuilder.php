@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -59,6 +59,7 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 
 		$targetClassName = $targetClass->getName();
 		$proxyClassName = self::renderProxyClassName($targetClassName, $context);
+		$advicedMethodsInformation = self::getAdvicedMethodsInformation($interceptedMethods);
 
 		$proxyClassTokens = array(
 			'CLASS_ANNOTATIONS' => self::buildClassAnnotationsCode($targetClass),
@@ -72,7 +73,7 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 		foreach ($proxyClassTokens as $token => $value) {
 			$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
 		}
-		return array('proxyClassName' => $proxyClassName, 'proxyClassCode' => $proxyCode);
+		return array('proxyClassName' => $proxyClassName, 'proxyClassCode' => $proxyCode, 'advicedMethodsInformation' => $advicedMethodsInformation);
 	}
 
 	/**
@@ -271,6 +272,31 @@ class T3_FLOW3_AOP_ProxyClassBuilder {
 			}
 		}
 		return $methods;
+	}
+
+	/**
+	 * Creates an array of method names and names of advices which have been applied
+	 * to them. This information is only used for debugging and AOP browsers,
+	 * not for the building process itself.
+	 *
+	 * @param array $interceptedMethods: An array of intercepted methods and their grouped Advices etc.
+	 * @return array Method names and an array of advice names in the form of "AspectClassName::adviceName"
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static protected function getAdvicedMethodsInformation(array $interceptedMethods) {
+		$advicedMethodsInformation = array();
+		foreach ($interceptedMethods as $methodName => $interceptionInformation) {
+			foreach($interceptionInformation['groupedAdvices'] as $adviceType => $advices) {
+				foreach ($advices as $advice) {
+					$adviceName = $advice->getAspectComponentName() . '::' . $advice->getAdviceMethodName();
+					$advicedMethodsInformation[$methodName][$adviceType][] = array (
+						'aspectComponentName' => $advice->getAspectComponentName(),
+						'adviceMethodName' => $advice->getAdviceMethodName()
+					);
+				}
+			}
+		}
+		return $advicedMethodsInformation;
 	}
 
 	/**
