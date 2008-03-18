@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Cache
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -43,6 +43,11 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	protected $defaultLifetime = 3600;
 
 	/**
+	 * @var T3_FLOW3_Utility_Environment
+	 */
+	protected $environment;
+
+	/**
 	 * Injects the environment utility
 	 *
 	 * @param T3_FLOW3_Utility_Environment $environment
@@ -60,7 +65,8 @@ class T3_FLOW3_Cache_Backend_File extends T3_FLOW3_Cache_AbstractBackend {
 	 * @return void
 	 */
 	public function initializeComponent() {
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . '/FLOW3/' . md5($this->environment->getScriptPathAndFilename()) . '/';
+		$pathHash = md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName());
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . '/FLOW3/' . $pathHash . '/';
 		try {
 			$this->setCacheDirectory($cacheDirectory);
 		} catch(T3_FLOW3_Cache_Exception $exception) {
