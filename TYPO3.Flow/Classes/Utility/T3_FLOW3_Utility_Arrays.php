@@ -78,8 +78,8 @@ class T3_FLOW3_Utility_Arrays {
 	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	public function arrayMergeRecursiveOverrule($firstArray, $secondArray, $dontAddNewKeys=FALSE, $emptyValuesOverride=TRUE) {
-		if (!is_array($firstArray)) throw new RuntimeException('$firstArray is not of type Array.', 1166719211, array($firstArray));
-		if (!is_array($secondArray)) throw new RuntimeException('$secondArray is not of type Array.', 1166719212, array($secondArray));
+		if (!is_array($firstArray)) throw new InvalidArgumentException('$firstArray is not of type Array.', 1166719211, array($firstArray));
+		if (!is_array($secondArray)) throw new InvalidArgumentException('$secondArray is not of type Array.', 1166719212, array($secondArray));
 
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {

@@ -35,12 +35,12 @@ class T3_FLOW3_Utility_Files {
 	 * @see removeDirectoryRecursively()
 	 */
 	public static function emptyDirectoryRecursively($path) {
-		if (!is_dir($path)) throw new RuntimeException('"' . $path . '" is no directory.', 1169047616);
+		if (!is_dir($path)) throw new T3_FLOW3_Utility_Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new RecursiveDirectoryIterator($path);
 		foreach (new RecursiveIteratorIterator($directoryIterator) as $filename) {
 			if (@unlink($filename) === FALSE) {
-				throw new RuntimeException('Cannot unlink file "' . $filename . '".', 1169047619);
+				throw new T3_FLOW3_Utility_Exception('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $subDirectoryName) {
@@ -74,13 +74,13 @@ class T3_FLOW3_Utility_Files {
 	 */
 	public static function createDirectoryRecursively($path) {
 		$directoryNames = explode('/', $path);
-		if (!is_array($directoryNames) || count($directoryNames) == 0) throw new RuntimeException('Invalid path "' . $path . '" specified for creating directory recursively.', 1170251395);
+		if (!is_array($directoryNames) || count($directoryNames) == 0) throw new InvalidArgumentException('Invalid path "' . $path . '" specified for creating directory recursively.', 1170251395);
 		$currentPath = '';
 		foreach ($directoryNames as $directoryName) {
 			$currentPath .= $directoryName . '/';
 			if (!is_dir($currentPath) && T3_PHP6_Functions::strlen($directoryName) > 0) {
 				mkdir($currentPath, 0777);
-				if (!is_dir($currentPath)) throw new RuntimeException('Could not create directory "' . $path . '"!', 1170251400);
+				if (!is_dir($currentPath)) throw new T3_FLOW3_Utility_Exception('Could not create directory "' . $path . '"!', 1170251400);
 			}
 		}
 	}

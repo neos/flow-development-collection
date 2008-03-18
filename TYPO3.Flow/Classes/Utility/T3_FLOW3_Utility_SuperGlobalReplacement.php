@@ -154,7 +154,7 @@ class T3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 			$callingMethod = 'in file ' . $debugBacktrace[1]['file'];
 		}
 		$message = sprintf('You tried to access the the $%s super global in %s but access to this variable has been restricted. %s', $this->replacedSuperGlobalName, $callingMethod, $this->accessHintMessage);
-		throw new RuntimeException($message, 1176548856);		
+		throw new T3_FLOW3_Utility_Exception($message, 1176548856);		
 	}
 }
 ?>
