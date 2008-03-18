@@ -39,8 +39,9 @@ class T3_FLOW3Test extends T3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentManagerReturnsComponentManager() {
-		$TYPO3 = new T3_FLOW3;
-		$this->assertTrue($TYPO3->getComponentManager() instanceof T3_FLOW3_Component_ManagerInterface, 'getComponentManager did not deliver an object implementing T3_FLOW3_Component_ManagerInterface!');
+		$FLOW3 = new T3_FLOW3;
+		$FLOW3->initializeFLOW3();
+		$this->assertTrue($FLOW3->getComponentManager() instanceof T3_FLOW3_Component_ManagerInterface, 'getComponentManager did not deliver an object implementing T3_FLOW3_Component_ManagerInterface!');
 	}
 }
 ?>

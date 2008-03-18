@@ -12,12 +12,12 @@
   container for many different purposes: Most of them contain PHP code which
   adds certain functionality, others only contain documentation and yet other
   packages consist of templates, images or other resources. The TYPO3 project
-  hosts a package repository (the T3PR) which acts as a convenient hub for
-  interchanging FLOW3 based packages with other community members.</para>
+  hosts a package repository which acts as a convenient hub for interchanging
+  FLOW3 based packages with other community members.</para>
 
   <note>
-    <para>At the time of this writing the T3PR is still in the planning
-    phase.</para>
+    <para>At the time of this writing the package repository is still in the
+    planning phase.</para>
   </note>
 
   <section>
@@ -61,7 +61,7 @@
                   files are immutable must not be changed by the user or
                   administrator. The most prominent configuration file is the
                   <filename>Components.ini</filename> file which may be used
-                  to configure the package's components. </para>
+                  to configure the package's components.</para>
                 </listitem>
               </varlistentry>
 

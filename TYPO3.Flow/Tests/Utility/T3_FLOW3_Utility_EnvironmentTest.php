@@ -16,20 +16,39 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Error
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
- * An exception which represents a PHP error.
+ * Testcase for the Utility Environment class
  *
  * @package FLOW3
- * @subpackage Error
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Error_Exception extends T3_FLOW3_Exception {
+class T3_FLOW3_Utility_EnvironmentTest extends T3_Testing_BaseTestCase {
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
+		$environment = new T3_FLOW3_Utility_Environment();
+		$path = $environment->getPathToTemporaryDirectory();
+		$this->assertEquals(DIRECTORY_SEPARATOR, substr($path, -1, 1), 'The temporary path did not end with slash (as in DIRECTORY_SEPARATOR).');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
+		$environment = new T3_FLOW3_Utility_Environment();
+		$path = $environment->getPathToTemporaryDirectory();
+		$this->assertTrue(file_exists($path), 'The temporary path does not exist.');
+	}
 }
 ?>

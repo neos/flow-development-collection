@@ -146,20 +146,6 @@ class T3_FLOW3_AOP_FrameworkTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAspectContainersReturnsAnArrayOfAspectContainers() {
-		$aopFramework = $this->componentManager->getComponent('T3_FLOW3_AOP_Framework');
-		$aspectContainers = $aopFramework->getAspectContainers();
-		$this->assertTrue(is_array($aspectContainers), 'getAspectContainers() did not return an array.');
-		$this->assertTrue(count($aspectContainers) > 0, 'The returned array was empty.');
-		foreach ($aspectContainers as $aspectContainer) {
-			$this->assertType('T3_FLOW3_AOP_AspectContainer', $aspectContainer, 'The returned array values are not (all) of type AspectContainer.');
-		}
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function getAdvicedMethodsInformationByTargetClassReturnsCorrectArrayOfAdviceInformation() {
 		$aopFramework = $this->componentManager->getComponent('T3_FLOW3_AOP_Framework');
 		$advicedMethodsInformation = $aopFramework->getAdvicedMethodsInformationByTargetClass('T3_TestPackage_BasicClass');

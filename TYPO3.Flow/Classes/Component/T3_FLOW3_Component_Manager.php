@@ -267,8 +267,6 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	 * Sets the component configurations for all components found in the
 	 * $newComponentConfigurations array.
 	 *
-	 * If a component is not yet registered, it will be registered automatically.
-	 *
 	 * @param array $newComponentConfigurations: Array of $componentName => T3_FLOW3_Component_configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -293,7 +291,6 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	public function setComponentConfiguration(T3_FLOW3_Component_Configuration $newComponentConfiguration) {
 		$componentName = $newComponentConfiguration->getComponentName();
 		$this->componentConfigurations[$newComponentConfiguration->getComponentName()] = clone $newComponentConfiguration;
-		$this->registeredComponents[$componentName] = T3_PHP6_Functions::strtolower($componentName);
 	}
 
 	/**
@@ -401,6 +398,18 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 			$scope = $class->isTaggedWith('scope') ? trim(implode('', $class->getTagValues('scope'))) : 'singleton';
 		}
 		return $scope;
+	}
+
+	/**
+	 * Controls cloning of the component manager. Cloning should only be used within unit tests.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __clone() {
+		$this->componentObjectCache = clone $this->componentObjectCache;
+		$this->componentObjectBuilder = clone $this->componentObjectBuilder;
+		$this->componentObjectCache->putComponentObject('T3_FLOW3_Component_ManagerInterface', $this);
 	}
 }
 

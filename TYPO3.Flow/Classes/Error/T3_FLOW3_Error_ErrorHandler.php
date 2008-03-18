@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Error
+ * @version $Id$
+ */
+
+/**
  * Global error handler for FLOW3
- * 
- * @package		FLOW3
- * @subpackage	Error
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Error
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Error_ErrorHandler {
 
@@ -31,12 +37,21 @@ class T3_FLOW3_Error_ErrorHandler {
 	protected $exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR, E_WARNING, E_NOTICE, E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
 
 	/**
+	 * Constructs this error handler - registers itself as the default error handler.
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+		set_error_handler(array($this, 'handleError'));
+	}
+
+	/**
 	 * Handles an error by converting it into an exception
 	 *
-	 * @param  integer			$errorLevel: The error level - one of the E_* constants 
-	 * @param  string			$errorMessage: The error message
-	 * @param  string			$errorFile: Name of the file the error occurred in
-	 * @param  integer			$errorLine: Line number where the error occurred
+	 * @param integer $errorLevel: The error level - one of the E_* constants
+	 * @param string $errorMessage: The error message
+	 * @param string $errorFile: Name of the file the error occurred in
+	 * @param integer $errorLine: Line number where the error occurred
 	 * @return void
 	 * @throws T3_FLOW3_Error_Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>
@@ -61,7 +76,6 @@ class T3_FLOW3_Error_ErrorHandler {
 			throw new T3_FLOW3_Error_Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine);
 		}
 	}
-	
 }
 
 ?>

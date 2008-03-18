@@ -34,9 +34,13 @@
 
   <xi:include href="Introduction.xml" />
 
+  <xi:include href="FLOW3Bootstrap.xml" />
+
   <xi:include href="PackageManager.xml" />
 
   <xi:include href="MVCFramework.xml" />
+
+  <xi:include href="CacheFramework.xml" />
 
   <xi:include href="ErrorException.xml" />
 

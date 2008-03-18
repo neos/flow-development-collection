@@ -133,7 +133,7 @@ class T3_FLOW3_AOP_Framework {
 		$this->configurationCache = $this->componentManager->getComponent('T3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		if ($context != 'Testing' && $this->configurationCache->has('aspectContainers') && $this->configurationCache->has('targetAndProxyClassNames') && $this->configurationCache->has('advicedMethodsInformationByTargetClass')) {
+		if ($context != 'Testing' && $this->configurationCache->has('targetAndProxyClassNames') && $this->configurationCache->has('advicedMethodsInformationByTargetClass')) {
 			$aspectContainers = $this->configurationCache->load('aspectContainers');
 			$this->targetAndProxyClassNames = $this->configurationCache->load('targetAndProxyClassNames');
 			$this->advicedMethodsInformationByTargetClass = $this->configurationCache->load('advicedMethodsInformationByTargetClass');
@@ -145,8 +145,6 @@ class T3_FLOW3_AOP_Framework {
 
 			$aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
 			$this->targetAndProxyClassNames = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
-
-			$this->configurationCache->save('aspectContainers', $aspectContainers);
 			$this->configurationCache->save('targetAndProxyClassNames', $this->targetAndProxyClassNames);
 			$this->configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
 		}
@@ -190,16 +188,6 @@ class T3_FLOW3_AOP_Framework {
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
 		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
 		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
-	}
-
-	/**
-	 * Returns an array of all aspects which were found during the initialization.
-	 *
-	 * @return array An array of T3_FLOW3_AOP_AspectContainer
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getAspectContainers() {
-		return $this->aspectContainers;
 	}
 
 	/**

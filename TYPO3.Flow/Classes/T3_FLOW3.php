@@ -43,19 +43,30 @@ final class T3_FLOW3 {
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
+	 * Constants reflected the initialization levels
+	 */
+	const INITIALIZATION_LEVEL_CONSTRUCT = 1;
+	const INITIALIZATION_LEVEL_FLOW3 = 2;
+	const INITIALIZATION_LEVEL_PACKAGES = 3;
+	const INITIALIZATION_LEVEL_COMPONENTS = 4;
+	const INITIALIZATION_LEVEL_SETTINGS = 5;
+	const INITIALIZATION_LEVEL_READY = 10;
+
+
+	/**
+	 * @var string The application context
+	 */
+	protected $context;
+
+	/**
 	 * @var T3_FLOW3_Component_ManagerInterface An instance of the component manager
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var boolean Flag to determine if the initialize() method has been called already
+	 * @var integer Flag which states up to which level FLOW3 has been initialized
 	 */
-	protected $isInitialized = FALSE;
-
-	/**
-	 * @var array Array of packages whose classes must not be registered as components automatically
-	 */
-	protected $componentRegistrationPackageBlacklist = array();
+	protected $initializationLevel;
 
 	/**
 	 * @var array Array of class names which must not be registered as components automatically. Class names may also be regular expressions.
@@ -76,37 +87,12 @@ final class T3_FLOW3 {
 	 */
 	public function __construct($context = 'Development') {
 		$this->checkEnvironment();
-
-		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ExceptionHandler.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Resource/T3_FLOW3_Resource_Manager.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Cache/T3_FLOW3_Cache_Manager.php');
-
-		$errorHandler = new T3_FLOW3_Error_ErrorHandler();
-		$exceptionHandler = new T3_FLOW3_Error_ExceptionHandler();
-		$resourceManager = new T3_FLOW3_Resource_Manager();
-		$cacheManager = new T3_FLOW3_Cache_Manager();
-
-		set_error_handler(array($errorHandler, 'handleError'));
-
-		$resourceManager->registerClassFile('T3_FLOW3_Exception', FLOW3_PATH_FLOW3 . 'T3_FLOW3_Exception.php');
-		$resourceManager->registerClassFile('T3_FLOW3_Component_Manager', FLOW3_PATH_FLOW3 . 'Component/T3_FLOW3_Component_Manager.php');
-		$resourceManager->registerClassFile('T3_FLOW3_AOP_Framework', FLOW3_PATH_FLOW3 . 'AOP/T3_FLOW3_AOP_Framework.php');
-		$resourceManager->registerClassFile('T3_FLOW3_Package_Manager', FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Manager.php');
-
-		$this->componentManager = new T3_FLOW3_Component_Manager();
-		$this->componentManager->setContext($context);
-		$this->componentManager->registerComponent('T3_FLOW3_Utility_Environment');
-		$this->componentManager->registerComponent('T3_FLOW3_Cache_Manager', 'T3_FLOW3_Cache_Manager', $cacheManager);
-		$this->componentManager->registerComponent('T3_FLOW3_Cache_Backend_File');
-		$this->componentManager->registerComponent('T3_FLOW3_Resource_Manager', 'T3_FLOW3_Resource_Manager', $resourceManager);
-		$this->componentManager->registerComponent('T3_FLOW3_AOP_Framework', 'T3_FLOW3_AOP_Framework');
-		$this->componentManager->registerComponent('T3_FLOW3_Package_ManagerInterface', 'T3_FLOW3_Package_Manager');
+		$this->context = $context;
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_CONSTRUCT;
 	}
 
 	/**
-	 * Explicitly initializes the FLOW3 Framework - that is the underlying parts as the component- and package manager as well
-	 * as the AOP framework.
+	 * Explicitly initializes all necessary FLOW3 components by invoking the various initialize* methods.
 	 *
 	 * Usually this method is only called from unit tests or other applications which need a more fine grained control over
 	 * the initialization and request handling process. Most other applications just call the run() method.
@@ -117,15 +103,74 @@ final class T3_FLOW3 {
 	 * @throws T3_FLOW3_Exception if the framework has already been initialized.
 	 */
 	public function initialize() {
-		if ($this->isInitialized) throw new T3_FLOW3_Exception('FLOW3 has already been initialized!', 1169546671);
+		if ($this->initializationLevel > self::INITIALIZATION_LEVEL_CONSTRUCT) throw new T3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1169546671);
 
+		$this->initializeFLOW3();
+		$this->initializePackages();
+		$this->initializeComponents();
+		$this->initializeSettings();
+	}
+
+	/**
+	 * Initializes the FLOW3 core.
+	 *
+	 * Usually this method is only called from unit tests or other applications which need a more fine grained control over
+	 * the initialization and request handling process. Most other applications just call the run() method.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws T3_FLOW3_Exception if the framework has already been initialized.
+	 * @see initialize()
+	 */
+	public function initializeFLOW3() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new T3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
+
+		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ExceptionHandler.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Resource/T3_FLOW3_Resource_Manager.php');
+		require_once(FLOW3_PATH_FLOW3 . 'Cache/T3_FLOW3_Cache_Manager.php');
+
+		new T3_FLOW3_Error_ErrorHandler();
+		new T3_FLOW3_Error_ExceptionHandler();
+		$resourceManager = new T3_FLOW3_Resource_Manager();
+
+		$this->componentManager = new T3_FLOW3_Component_Manager();
+		$this->componentManager->setContext($this->context);
+		$this->componentManager->registerComponent('T3_FLOW3_Utility_Environment');
+		$this->componentManager->registerComponent('T3_FLOW3_Resource_Manager', 'T3_FLOW3_Resource_Manager', $resourceManager);
+		$this->componentManager->registerComponent('T3_FLOW3_AOP_Framework', 'T3_FLOW3_AOP_Framework');
+		$this->componentManager->registerComponent('T3_FLOW3_Package_ManagerInterface', 'T3_FLOW3_Package_Manager');
+		$this->componentManager->registerComponent('T3_FLOW3_Cache_Backend_File');
+
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
+	}
+
+	/**
+	 * Initializes the package system and loads the package configuration.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializePackages() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
+		$this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface')->initialize();
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
+	}
+
+	/**
+	 * Initializes the component framework and loads the component configuration
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeComponents() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_COMPONENTS) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760769);
+
+		$cacheBackend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $this->context);
 		$packageManager = $this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface');
-		$packageManager->initialize();
 
-		$context = $this->componentManager->getContext();
-		$cacheBackend = $this->componentManager->getComponent('T3_FLOW3_Cache_Backend_File', $context);
 		$componentConfigurationsCache = new T3_FLOW3_Cache_VariableCache('FLOW3_Component_Configurations', $cacheBackend);
-		if ($componentConfigurationsCache->has('componentConfigurations') && $context == 'Production') {
+		if ($componentConfigurationsCache->has('componentConfigurations') && $this->context == 'Production') {
 			$componentConfigurations = $componentConfigurationsCache->load('componentConfigurations');
 			$this->componentManager->setComponentConfigurations($componentConfigurations);
 		} else {
@@ -134,7 +179,19 @@ final class T3_FLOW3 {
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 			$componentConfigurationsCache->save('componentConfigurations', $componentConfigurations);
 		}
-		$this->isInitialized = TRUE;
+
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_COMPONENTS;
+	}
+
+	/**
+	 * Loads and initializes the settings
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeSettings() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_SETTINGS) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760770);
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_SETTINGS;
 	}
 
 	/**
@@ -145,7 +202,9 @@ final class T3_FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function run() {
-		if (!$this->isInitialized) $this->initialize();
+		if ($this->initializationLevel == self::INITIALIZATION_LEVEL_CONSTRUCT) $this->initialize();
+		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_SETTINGS) throw new T3_FLOW3_Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
+
 		$requestHandlerResolver = $this->componentManager->getComponent('T3_FLOW3_MVC_RequestHandlerResolver');
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
@@ -160,6 +219,7 @@ final class T3_FLOW3 {
  	 * @author	Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentManager() {
+		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_FLOW3) throw new T3_FLOW3_Exception('FLOW3 has not yet been fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759260);
 		return $this->componentManager;
 	}
 

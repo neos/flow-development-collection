@@ -15,15 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:T3_FLOW3_Component_ObjectBuilder.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * The Component Object Builder takes care of the whole building (instantiation) process of an
  * object. It resolves dependencies, instantiates other components if necessary, instantiates
  * the specified component, injects constructor and setter arguments and calls lifecycle methods.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:T3_FLOW3_Component_ObjectBuilder.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Component_ObjectBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuilderInterface {
 
@@ -45,7 +51,7 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	/**
 	 * Constructor
 	 *
-	 * @param  T3_FLOW3_Component_Manager $componentManager: A reference to the component manager - used for fetching other component objects while solving dependencies
+	 * @param T3_FLOW3_Component_Manager $componentManager: A reference to the component manager - used for fetching other component objects while solving dependencies
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -57,9 +63,9 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * Creates and returns a ready-to-use component object of the specified type.
 	 * During the building process all depencencies are resolved and injected.
 	 *
-	 * @param  string $componentName: Name of the component to create a component object for
-	 * @param  T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
-	 * @param  array $overridingConstructorArguments: An array of T3_FLOW3_Component_Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
+	 * @param string $componentName: Name of the component to create a component object for
+	 * @param T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
+	 * @param array $overridingConstructorArguments: An array of T3_FLOW3_Component_Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
 	 * @return object
 	 * @throws T3_FLOW3_Component_Exception_CannotBuildObject
 	 * @author Robert Lemke <robert@typo3.org>
@@ -69,7 +75,7 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 		try {
 			$this->componentsBeingBuilt[$componentName] = TRUE;
 			$className = $componentConfiguration->getClassName();
-			if (!class_exists($className)) throw new T3_FLOW3_Component_Exception_CannotBuildObject('No valid implementation class for component "' . $componentName . '" found while building the component object (Class "' . $className . '" does not exist).', 1173184871);
+			if (!class_exists($className, TRUE)) throw new T3_FLOW3_Component_Exception_CannotBuildObject('No valid implementation class for component "' . $componentName . '" found while building the component object (Class "' . $className . '" does not exist).', 1173184871);
 
 			$constructorArguments = $componentConfiguration->getConstructorArguments();
 			foreach ($overridingConstructorArguments as $index => $value) {
@@ -111,8 +117,8 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * If mandatory constructor arguments have not been defined yet, this function tries to autowire
 	 * them if possible.
 	 *
-	 * @param  array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
-	 * @param  T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
+	 * @param array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
+	 * @param T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of T3_FLOW3_Component_ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -151,8 +157,8 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	/**
 	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
 	 *
-	 * @param  array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
-	 * @param  T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
+	 * @param array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
+	 * @param T3_FLOW3_Reflection_Class $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of T3_FLOW3_Component_ConfigurationProperty
 	 * @throws T3_FLOW3_Component_Exception_CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -195,9 +201,9 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	 * Checks and resolves dependencies of the constructor arguments (objects) and prepares an array of constructor
 	 * arguments (strings) which can be used in a "new" statement to instantiate the component.
 	 *
-	 * @param  array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
-	 * @param  array &$valuesForInjection: An empty array passed by reference. Will contain instances of the components which were injected into the constructor
-	 * @param  array &$preparedArguments: An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
+	 * @param array $constructorArguments: Array of T3_FLOW3_Component_ConfigurationArgument for the current component
+	 * @param array &$valuesForInjection: An empty array passed by reference. Will contain instances of the components which were injected into the constructor
+	 * @param array &$preparedArguments: An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -233,8 +239,8 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	/**
 	 * Checks, resolves and injects dependencies through calling the setter method of the registered properties.
 	 *
-	 * @param  array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
-	 * @param  object $componentObject: The recently created instance of the current component. Dependencies will be injected to it.
+	 * @param array $setterProperties: Array of T3_FLOW3_Component_ConfigurationProperty for the current component
+	 * @param object $componentObject: The recently created instance of the current component. Dependencies will be injected to it.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -263,8 +269,8 @@ class T3_FLOW3_Component_ObjectBuilder implements T3_FLOW3_Component_ObjectBuild
 	/**
 	 * Calls the lifecycle initialization method (if any) of the component object
 	 *
-	 * @param  object $componentObject: The instance of the recently created component.
-	 * @param  T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
+	 * @param object $componentObject: The instance of the recently created component.
+	 * @param T3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

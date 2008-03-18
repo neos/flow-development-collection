@@ -17,13 +17,19 @@ declare(ENCODING = 'utf-8');
 require_once(dirname(__FILE__) . '/T3_FLOW3_Resource_ClassLoader.php');
 
 /**
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ */
+
+/**
  * The Resource Manager
  *
- * @package     FLOW3
- * @subpackage  Resource
- * @version     $Id$
- * @copyright   Copyright belongs to the respective authors
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Resource_Manager {
 

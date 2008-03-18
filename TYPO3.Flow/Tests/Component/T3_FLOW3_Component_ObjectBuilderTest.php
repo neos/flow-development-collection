@@ -17,13 +17,19 @@ declare(ENCODING = 'utf-8');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/T3_FLOW3_Fixture_DummyClass.php');
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:T3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the Component Object Builder
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Tests
- * @version    $Id:T3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 
@@ -263,32 +269,6 @@ class T3_FLOW3_Component_ObjectBuilderTest extends T3_Testing_BaseTestCase {
 		$componentConfiguration->setProperty($someConfigurationProperty);
 		$componentObject = $this->componentObjectBuilder->createComponentObject('T3_TestPackage_BasicClass', $componentConfiguration, array());
 		$this->assertType('T3_FLOW3_Component_ManagerInterface', $componentObject->getSomeProperty(), 'The component manager has not been setter-injected although it should have been.');
-	}
-
-	/**
-	 * Checks if createComponentObject handles circular dependencies correctly.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function createComponentObjectHandlesCircularDependenciesCorrectly() {
-			// load and modify the configuration a bit:
-			// ClassWithOptionalConstructorArguments depends on InjectedClassWithDependencies which depends on ClassWithOptionalConstructorArguments
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_InjectedClassWithDependencies');
-		$componentConfiguration->setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(1, 'T3_TestPackage_ClassWithOptionalConstructorArguments', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
-		$this->componentManager->setComponentConfiguration($componentConfiguration);
-
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('T3_TestPackage_ClassWithOptionalConstructorArguments');
-		$componentConfiguration->setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(1, 'T3_TestPackage_InjectedClassWithDependencies', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
-		$this->componentManager->setComponentConfiguration($componentConfiguration);
-
-		try {
-			$componentObject = $this->componentObjectBuilder->createComponentObject('T3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
-		} catch (Exception $exception) {
-			$this->assertEquals(1168505928, $exception->getCode(), 'createComponentObject() throwed an exception for circular dependencies but returned the wrong error code.');
-			return;
-		}
-		$this->fail('createComponentObject() did not throw an exception although circular dependencies existed.');
 	}
 
 	/**

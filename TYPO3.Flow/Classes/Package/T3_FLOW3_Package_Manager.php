@@ -92,7 +92,6 @@ class T3_FLOW3_Package_Manager implements T3_FLOW3_Package_ManagerInterface {
 	 */
 	public function initialize() {
 		$this->packages = $this->scanAvailablePackages();
-		$this->registerAndConfigureAllPackageComponents();
 	}
 
 	/**
@@ -197,89 +196,6 @@ class T3_FLOW3_Package_Manager implements T3_FLOW3_Package_ManagerInterface {
 			$packagesDirectoryIterator->next();
 		}
 		return $availablePackagesArr;
-	}
-
-
-	/**
-	 * Traverses through all active packages and registers their classes as
-	 * components at the component manager. Finally the component configuration
-	 * defined by the package is loaded and applied to the registered components.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function registerAndConfigureAllPackageComponents() {
-		$componentTypes = array();
-
-		foreach ($this->packages as $packageKey => $package) {
-				// For now (during development) removed this condition from the following line: array_search($packageKey, $this->arrayOfActivePackages) !== FALSE
-			$packageIsActiveAndNotBlacklisted = (array_search($packageKey, $this->componentRegistrationPackageBlacklist) === FALSE);
-			if ($packageIsActiveAndNotBlacklisted) {
-				foreach ($package->getClassFiles() as $className => $relativePathAndFilename) {
-					if (!$this->classNameIsBlacklisted($className)) {
-						if (substr($className, -9, 9) == 'Interface') {
-							$componentTypes[] = $className;
-							if (!$this->componentManager->isComponentRegistered($className)) {
-								$this->componentManager->registerComponentType($className);
-							}
-						}
-					}
-				}
-			}
-		}
-
-		$masterComponentConfigurations = $this->componentManager->getComponentConfigurations();
-		foreach ($this->packages as $packageKey => $package) {
-				// For now (during development) removed this condition from the following line: array_search($packageKey, $this->arrayOfActivePackages) !== FALSE
-			$packageIsActiveAndNotBlacklisted = (array_search($packageKey, $this->componentRegistrationPackageBlacklist) === FALSE);
-			if ($packageIsActiveAndNotBlacklisted) {
-				foreach ($package->getClassFiles() as $className => $relativePathAndFilename) {
-					if (!$this->classNameIsBlacklisted($className)) {
-						if (substr($className, -9, 9) != 'Interface') {
-							$componentName = $className;
-							if (!$this->componentManager->isComponentRegistered($componentName)) {
-								$class = new T3_FLOW3_Reflection_Class($className);
-								if (!$class->isAbstract()) {
-									$this->componentManager->registerComponent($componentName, $className);
-								}
-							}
-						}
-					}
-				}
-				foreach ($package->getComponentConfigurations() as $componentName => $componentConfiguration) {
-					if (!$this->componentManager->isComponentRegistered($componentName)) {
-						throw new T3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $componentConfiguration->getConfigurationSourceHint() .'.', 1184926175);
-					}
-					$masterComponentConfigurations[$componentName] = $componentConfiguration;
-				}
-			}
-		}
-
-		foreach ($componentTypes as $componentType) {
-			$defaultImplementationClassName = $this->componentManager->getDefaultImplementationClassNameForInterface($componentType);
-			if ($defaultImplementationClassName !== FALSE) {
-				$masterComponentConfigurations[$componentType]->setClassName($defaultImplementationClassName);
-			}
-		}
-
-		$this->componentManager->setComponentConfigurations($masterComponentConfigurations);
-	}
-
-	/**
-	 * Checks if the given class name appears on in the component blacklist.
-	 *
-	 * @param string $className: The class name to check. May be a regular expression.
-	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function classNameIsBlacklisted($className) {
-		$isBlacklisted = FALSE;
-		foreach ($this->componentRegistrationClassBlacklist as $blacklistedClassName) {
-			if ($className == $blacklistedClassName || preg_match('/^' . $blacklistedClassName . '$/', $className)) {
-				$isBlacklisted = TRUE;
-			}
-		}
-		return $isBlacklisted;
 	}
 }
 

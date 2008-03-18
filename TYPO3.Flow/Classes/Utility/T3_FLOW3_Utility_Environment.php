@@ -261,12 +261,12 @@ class T3_FLOW3_Utility_Environment {
 		if (DIRECTORY_SEPARATOR == '\\') {
 			if (isset($this->SERVER['TEMP'])) return $this->SERVER['TEMP'];
 			if (isset($this->SERVER['TMP'])) return $this->SERVER['TMP'];
-			if (isset($this->SERVER['SystemRoot'])) return $this->SERVER['SystemRoot'] . '\\temp';
-			if (isset($this->SERVER['windir'])) return $this->SERVER['windir'] . '\\temp';
-			return '\temp';
+			if (isset($this->SERVER['SystemRoot'])) return $this->SERVER['SystemRoot'] . '\\temp\\';
+			if (isset($this->SERVER['windir'])) return $this->SERVER['windir'] . '\\temp\\';
+			return '\\\temp\\';
 		} else {
-			if (isset($this->SERVER['TMPDIR'])) return $this->SERVER['TMPDIR'];
-			return '/tmp';
+			if (isset($this->SERVER['TMPDIR'])) return $this->SERVER['TMPDIR'] . '/';
+			return '/tmp/';
 		}
 	}
 }
