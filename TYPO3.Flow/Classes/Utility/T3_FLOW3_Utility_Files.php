@@ -15,6 +15,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:T3_FLOW3_Utility_Files.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * File and directory functions
  *
  * @package FLOW3
@@ -70,7 +76,7 @@ class T3_FLOW3_Utility_Files {
 	 * @param string $path: Path to the directory which shall be created
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Make mode configurable
+	 * @todo Make mode configurable / make umask configurable
 	 */
 	public static function createDirectoryRecursively($path) {
 		$directoryNames = explode('/', $path);
@@ -79,7 +85,9 @@ class T3_FLOW3_Utility_Files {
 		foreach ($directoryNames as $directoryName) {
 			$currentPath .= $directoryName . '/';
 			if (!is_dir($currentPath) && T3_PHP6_Functions::strlen($directoryName) > 0) {
+				$oldMask = umask(000);
 				mkdir($currentPath, 0777);
+				umask($oldMask);
 				if (!is_dir($currentPath)) throw new T3_FLOW3_Utility_Exception('Could not create directory "' . $path . '"!', 1170251400);
 			}
 		}
