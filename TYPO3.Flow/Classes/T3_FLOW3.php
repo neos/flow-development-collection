@@ -79,6 +79,11 @@ final class T3_FLOW3 {
 	);
 
 	/**
+	 * @var T3_FLOW3_Configuration_Container The FLOW3 base configuration  (for this class)
+	 */
+	protected $configuration;
+
+	/**
 	 * Constructor
 	 *
 	 * @param string $context The application context
@@ -150,6 +155,7 @@ final class T3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
 	 */
 	public function initializePackages() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
@@ -162,6 +168,7 @@ final class T3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
 	 */
 	public function initializeComponents() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_COMPONENTS) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760769);
@@ -188,6 +195,7 @@ final class T3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
 	 */
 	public function initializeSettings() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_SETTINGS) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760770);
@@ -212,8 +220,8 @@ final class T3_FLOW3 {
 
 	/**
 	 * Returns an instance of the active component manager. This method is and should only
-	 * be used by unit tests as long as no Dependency Injection is supported. In almost any other
-	 * case, a reference to the component manager can be injected
+	 * be used by unit tests and special cases. In almost any other case, a reference to the
+	 * component manager can be injected.
 	 *
  	 * @return	T3_FLOW3_Component_ManagerInterface
  	 * @author	Robert Lemke <robert@typo3.org>
