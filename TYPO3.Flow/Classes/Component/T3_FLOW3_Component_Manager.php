@@ -241,6 +241,18 @@ class T3_FLOW3_Component_Manager implements T3_FLOW3_Component_ManagerInterface 
 	}
 
 	/**
+	 * Returns an array of component names of all registered components.
+	 * The mixed case component name are used as the array's keys while each
+	 * value is the lower cased variant of its respective key.
+	 *
+	 * @return array An array of component names - mixed case in the key and lower case in the value.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRegisteredComponents() {
+		return $this->registeredComponents;
+	}
+
+	/**
 	 * Returns an array of configuration objects for all registered components.
 	 *
 	 * @return arrray Array of T3_FLOW3_Component_Configuration objects, indexed by component name

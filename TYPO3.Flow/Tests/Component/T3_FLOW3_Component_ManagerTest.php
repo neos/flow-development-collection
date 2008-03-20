@@ -276,5 +276,18 @@ class T3_FLOW3_Component_ManagerTest extends T3_Testing_BaseTestCase {
 		$this->assertEquals('', $component2->argument2, 'The constructor argument2 is still not empty although no argument was passed to getComponent().');
 		$this->assertEquals('', $component2->argument3, 'The constructor argument3 is still not empty although no argument was passed to getComponent().');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRegisteredComponentsReturnsArrayOfMixedCaseAndLowerCaseComponentNames() {
+		$registeredComponents = $this->componentManager->getRegisteredComponents();
+		$this->assertTrue(is_array($registeredComponents), 'The result is not an array.');
+		foreach($registeredComponents as $mixedCase => $lowerCase) {
+			$this->assertTrue(strlen($mixedCase) > 0, 'The component name was an empty string.');
+			$this->assertTrue(strtolower($mixedCase) == $lowerCase, 'The key and value were not equal after strtolower().');
+		}
+	}
 }
 ?>
