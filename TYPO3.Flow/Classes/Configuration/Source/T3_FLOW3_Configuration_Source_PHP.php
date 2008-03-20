@@ -16,19 +16,34 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @version $Id$
+ * @subpackage Configuration
  */
 
 /**
- * A generic FLOW3 Exception
+ * Configuration source based on PHP files
  *
  * @package FLOW3
+ * @subpackage Configuration
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Exception extends Exception {
+class T3_FLOW3_Configuration_Source_PHP implements T3_FLOW3_Configuration_SourceInterface {
 
+	/**
+	 * Loads the specified configuration file and returns its content in a
+	 * configuration container
+	 *
+	 * @param string $pathAndFilename Full path and file name of the file to load
+	 * @return T3_FLOW3_Configuration_Container
+	 * @throws T3_FLOW3_Configuration_Exception_NoSuchFile if the specified file does not exist
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function load($pathAndFilename) {
+		if (!file_exists($pathAndFilename)) throw new T3_FLOW3_Configuration_Exception_NoSuchFile('File "' . $pathAndFilename . '" does not not exist.', 1206030949);
+		$c = new T3_FLOW3_Configuration_Container();
+		require ($pathAndFilename);
+		return $c;
+	}
 }
-
 ?>

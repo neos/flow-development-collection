@@ -16,18 +16,20 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
+ * @subpackage Configuration
  * @version $Id$
  */
 
 /**
- * A generic FLOW3 Exception
+ * A No Such File exception
  *
  * @package FLOW3
+ * @subpackage Configuration
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class T3_FLOW3_Exception extends Exception {
+class T3_FLOW3_Configuration_Exception_NoSuchFile extends T3_FLOW3_Configuration_Exception {
 
 }
 

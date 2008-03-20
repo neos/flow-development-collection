@@ -38,3 +38,5 @@ $c->componentConfigurationCache->backendOptions = array();
  * @type T3_FLOW3_Error_ExceptionHandlerInterface
  */
 $c->exceptionHandler = 'T3_FLOW3_Error_QuietExceptionHandler';
+
+?>

@@ -15,7 +15,7 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 define('FLOW3_PATH_FLOW3', str_replace('\\', '/', dirname(__FILE__)) . '/' );
-define('FLOW3_PATH_PACKAGES', FLOW3_PATH_FLOW3 . '/../../');
+define('FLOW3_PATH_PACKAGES', realpath(FLOW3_PATH_FLOW3 . '../../') . '/');
 
 /**
  * @package FLOW3
@@ -49,7 +49,6 @@ final class T3_FLOW3 {
 	const INITIALIZATION_LEVEL_COMPONENTS = 4;
 	const INITIALIZATION_LEVEL_SETTINGS = 5;
 	const INITIALIZATION_LEVEL_READY = 10;
-
 
 	/**
 	 * @var string The application context
@@ -128,6 +127,10 @@ final class T3_FLOW3 {
 	public function initializeFLOW3() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new T3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
+		require_once(FLOW3_PATH_FLOW3 . 'Configuration/T3_FLOW3_Configuration_Manager.php');
+		$configurationManager = new T3_FLOW3_Configuration_Manager();
+		$this->configuration = $configurationManager->getConfiguration('FLOW3', T3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
+
 		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ErrorHandler.php');
 		require_once(FLOW3_PATH_FLOW3 . 'Error/T3_FLOW3_Error_ExceptionHandler.php');
 		require_once(FLOW3_PATH_FLOW3 . 'Resource/T3_FLOW3_Resource_Manager.php');
@@ -139,6 +142,7 @@ final class T3_FLOW3 {
 
 		$this->componentManager = new T3_FLOW3_Component_Manager();
 		$this->componentManager->setContext($this->context);
+		$this->componentManager->registerComponent('T3_FLOW3_Configuration_Manager', 'T3_FLOW3_Configuration_Manager', $configurationManager);
 		$this->componentManager->registerComponent('T3_FLOW3_Utility_Environment');
 		$this->componentManager->registerComponent('T3_FLOW3_Resource_Manager', 'T3_FLOW3_Resource_Manager', $resourceManager);
 		$this->componentManager->registerComponent('T3_FLOW3_AOP_Framework', 'T3_FLOW3_AOP_Framework');

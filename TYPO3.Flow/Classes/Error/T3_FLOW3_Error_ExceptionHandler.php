@@ -66,8 +66,8 @@ class T3_FLOW3_Error_ExceptionHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionWeb(Exception $exception) {
-		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_ROOT);
-		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_ROOT)) : $exception->getFile();
+		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
+		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
@@ -128,8 +128,8 @@ class T3_FLOW3_Error_ExceptionHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionCLI(Exception $exception) {
-		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_ROOT);
-		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_ROOT)) : $exception->getFile();
+		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
+		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
@@ -150,8 +150,8 @@ class T3_FLOW3_Error_ExceptionHandler {
 		if (count($trace)) {
 			foreach ($trace as $index => $step) {
 				if (isset($step['file'])) {
-					$pathPosition = strpos($step['file'], FLOW3_PATH_ROOT);
-					$stepFileName = ($pathPosition === 0) ? substr($step['file'], strlen(FLOW3_PATH_ROOT)) : $step['file'];
+					$pathPosition = strpos($step['file'], FLOW3_PATH_PACKAGES);
+					$stepFileName = ($pathPosition === 0) ? substr($step['file'], strlen(FLOW3_PATH_PACKAGES)) : $step['file'];
 				} else {
 					$stepFileName = '< unknown >';
 				}
