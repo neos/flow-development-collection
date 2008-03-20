@@ -14,10 +14,8 @@ declare(ENCODING="utf-8");
  * Public License for more details.                                       *
  *                                                                        */
 
-define('FLOW3_PATH_PUBLICFILECACHE', FLOW3_PATH_ROOT . 'FileCache/Public/');
-define('FLOW3_PATH_PRIVATEFILECACHE', FLOW3_PATH_ROOT . 'FileCache/Private/');
-define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
-define('FLOW3_PATH_FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/Classes/' );
+define('FLOW3_PATH_FLOW3', str_replace('\\', '/', dirname(__FILE__)) . '/' );
+define('FLOW3_PATH_PACKAGES', FLOW3_PATH_FLOW3 . '/../../');
 
 /**
  * @package FLOW3
