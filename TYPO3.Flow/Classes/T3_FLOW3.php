@@ -161,7 +161,16 @@ final class T3_FLOW3 {
 	 */
 	public function initializePackages() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new T3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
-		$this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface')->initialize();
+		$packageManager = $this->componentManager->getComponent('T3_FLOW3_Package_ManagerInterface');
+		$configurationManager = $this->componentManager->getComponent('T3_FLOW3_Configuration_Manager');
+
+		$packageManager->initialize();
+		$activePackages = $packageManager->getActivePackages();
+		foreach ($activePackages as $packageKey => $package) {
+			$packageConfiguration = $configurationManager->getConfiguration($packageKey, T3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES, $this->context);
+			$this->evaluatePackageConfiguration($package, $packageConfiguration);
+		}
+
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
 	}
 
@@ -183,7 +192,7 @@ final class T3_FLOW3 {
 			$componentConfigurations = $componentConfigurationsCache->load('componentConfigurations');
 			$this->componentManager->setComponentConfigurations($componentConfigurations);
 		} else {
-			$this->registerAndConfigureAllPackageComponents($packageManager->getPackages());
+			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
 			$this->componentManager->getComponent('T3_FLOW3_AOP_Framework')->initialize();
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 			$componentConfigurationsCache->save('componentConfigurations', $componentConfigurations);
@@ -336,6 +345,36 @@ final class T3_FLOW3 {
 		return $isBlacklisted;
 	}
 
+	/**
+	 * (For now) evaluates the package configuration
+	 *
+	 * @param T3_FLOW3_Package_Package $package The package
+	 * @param T3_FLOW3_Configuration_Container $packageConfiguration The configuration to evaluate
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
+	 */
+	protected function evaluatePackageConfiguration(T3_FLOW3_Package_Package $package, T3_FLOW3_Configuration_Container $packageConfiguration) {
+		if (isset($packageConfiguration->resourceManager->specialClassNameAndPaths)) {
+			$resourceManager = $this->componentManager->getComponent('T3_FLOW3_Resource_Manager');
+			foreach ($packageConfiguration->resourceManager->specialClassNameAndPaths as $className => $classFilePathAndName) {
+				$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
+				$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
+				$classFilePathAndName = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $classFilePathAndName);
+				$resourceManager->registerClassFile($className, $classFilePathAndName);
+			}
+		}
+
+		if (isset($packageConfiguration->resourceManager->includePaths)) {
+			foreach ($packageConfiguration->resourceManager->includePaths as $includePathName => $includePath) {
+				$includePath = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $includePath);
+				$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
+				$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);
+				$includePath = str_replace('/', DIRECTORY_SEPARATOR, $includePath);
+				set_include_path(get_include_path() . PATH_SEPARATOR . $includePath);
+			}
+		}
+	}
 }
 
 ?>

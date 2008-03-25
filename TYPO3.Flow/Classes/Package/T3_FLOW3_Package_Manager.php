@@ -128,7 +128,20 @@ class T3_FLOW3_Package_Manager implements T3_FLOW3_Package_ManagerInterface {
 	 * @return array Array of T3_FLOW3_Package_Meta
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackages() {
+	public function getAvailablePackages() {
+		return $this->packages;
+	}
+
+	/**
+	 * Returns an array of T3_FLOW3_Package_Meta objects of all active packages.
+	 * A package is active, if it is available and has been activated in the package
+	 * manager settings.
+	 *
+	 * @return array Array of T3_FLOW3_Package_Meta
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Implement activation / deactivation of packages
+	 */
+	public function getActivePackages() {
 		return $this->packages;
 	}
 

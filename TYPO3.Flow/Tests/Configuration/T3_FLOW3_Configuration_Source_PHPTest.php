@@ -35,13 +35,9 @@ class T3_FLOW3_Configuration_Source_PHPTest extends T3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function throwsExceptionOnNonExistingFile() {
-		try {
-			T3_FLOW3_Configuration_Source_PHP::load('/ThisFileDoesNotExist.php');
-			$this->fail('No exception was thrown.');
-		} catch (T3_FLOW3_Configuration_Exception_NoSuchFile $exception) {
-
-		}
+	public function returnsEmptyContainerOnNonExistingFile() {
+		$configuration = T3_FLOW3_Configuration_Source_PHP::load('/ThisFileDoesNotExist.php');
+		$this->assertEquals(new T3_FLOW3_Configuration_Container(), $configuration, 'No empty container was returned.');
 	}
 
 	/**

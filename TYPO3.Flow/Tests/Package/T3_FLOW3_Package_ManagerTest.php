@@ -18,8 +18,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Tests
  * @version $Id:T3_FLOW3_Package_ManagerTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright Copyright belongs to the respective authors
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
 /**
@@ -77,15 +75,23 @@ class T3_FLOW3_Package_ManagerTest extends T3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Tests the method getPackages()
-	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackagesReturnsMultiplePackages() {
-		$availablePackages = $this->packageManager->getPackages();
-		$this->assertTrue(key_exists('FLOW3', $availablePackages), 'The package "TYPO3" was not in the result of getPackages().');
-		$this->assertType('T3_FLOW3_Package_PackageInterface', $availablePackages['FLOW3'], 'The meta information about package "TYPO3" delivered by getPackages() is not a valid package object.');
+	public function getAvailablePackagesReturnsAtLeastTheFLOW3Package() {
+		$availablePackages = $this->packageManager->getAvailablePackages();
+		$this->assertTrue(key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getAvailablePackages().');
+		$this->assertType('T3_FLOW3_Package_PackageInterface', $availablePackages['FLOW3'], 'The meta information about package "FLOW3" delivered by getAvailablePackages() is not a valid package object.');
+	}
+
+	/**
+	 * @test
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function getActivePackagesReturnsAtLeastTheFLOW3Package() {
+		$availablePackages = $this->packageManager->getActivePackages();
+		$this->assertTrue(key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getActivePackages().');
+		$this->assertType('T3_FLOW3_Package_PackageInterface', $availablePackages['FLOW3'], 'The meta information about package "FLOW3" delivered by getActiveePackages() is not a valid package object.');
 	}
 
 	/**

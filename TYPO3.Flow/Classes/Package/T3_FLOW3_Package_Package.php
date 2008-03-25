@@ -82,7 +82,6 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 		$this->packagePath = $packagePath;
 		$this->packageMeta = new T3_FLOW3_Package_Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
 		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;
-		$this->includePackageConfiguration();
 	}
 
 	/**
@@ -174,19 +173,6 @@ class T3_FLOW3_Package_Package implements T3_FLOW3_Package_PackageInterface {
 			$componentConfigurations = $packageComponentsConfigurationSource->getComponentConfigurations($this, $componentConfigurations);
 		}
 		return $componentConfigurations;
-	}
-
-	/**
-	 * Includes the package configuration file (if any) with further steps to initialize
-	 * the package (eg. registering an additional class loader).
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function includePackageConfiguration() {
-		if (file_exists($this->packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION)) {
-			include($this->packagePath . self::DIRECTORY_CONFIGURATION . self::FILENAME_PACKAGECONFIGURATION);
-		}
 	}
 
 	/**

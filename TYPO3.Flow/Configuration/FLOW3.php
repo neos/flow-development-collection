@@ -10,6 +10,11 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @version $Id$
+ */
+
+/**
  * Enable or disable caching of the component configurations. If caching is
  * enabled, a cache backend must be properly configured.
  *

@@ -32,17 +32,18 @@ class T3_FLOW3_Configuration_Source_PHP implements T3_FLOW3_Configuration_Source
 
 	/**
 	 * Loads the specified configuration file and returns its content in a
-	 * configuration container
+	 * configuration container. If the file does not exist or could not be loaded,
+	 * the empty configuration container is returned.
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load
 	 * @return T3_FLOW3_Configuration_Container
-	 * @throws T3_FLOW3_Configuration_Exception_NoSuchFile if the specified file does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function load($pathAndFilename) {
-		if (!file_exists($pathAndFilename)) throw new T3_FLOW3_Configuration_Exception_NoSuchFile('File "' . $pathAndFilename . '" does not not exist.', 1206030949);
 		$c = new T3_FLOW3_Configuration_Container();
-		require ($pathAndFilename);
+		if (file_exists($pathAndFilename)) {
+			require ($pathAndFilename);
+		}
 		return $c;
 	}
 }

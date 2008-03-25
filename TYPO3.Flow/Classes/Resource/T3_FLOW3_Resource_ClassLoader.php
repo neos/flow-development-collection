@@ -18,14 +18,20 @@ require_once(FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_PackageInterface.php')
 require_once(FLOW3_PATH_FLOW3 . 'Package/T3_FLOW3_Package_Package.php');
 
 /**
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id:T3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ */
+
+/**
  * Class Loader implementation which loads .php files found in the classes
  * directory of a component.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage Resource
- * @version    $Id:T3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:T3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class T3_FLOW3_Resource_ClassLoader {
 

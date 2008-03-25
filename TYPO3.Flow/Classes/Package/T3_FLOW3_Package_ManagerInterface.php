@@ -59,7 +59,16 @@ interface T3_FLOW3_Package_ManagerInterface {
 	 *
 	 * @return array Array of T3_FLOW3_Package_PackageInterface
 	 */
-	public function getPackages();
+	public function getAvailablePackages();
+
+	/**
+	 * Returns an array of T3_FLOW3_Package_Meta objects of all active packages.
+	 * A package is active, if it is available and has been activated in the package
+	 * manager settings.
+	 *
+	 * @return array Array of T3_FLOW3_Package_PackageInterface
+	 */
+	public function getActivePackages();
 
 	/**
 	 * Returns the absolute path to the root directory of a package.
@@ -81,7 +90,6 @@ interface T3_FLOW3_Package_ManagerInterface {
 #	public function deactivatePackage($packageKey);
 #	public function removePackage($packageKey);
 #	public function downloadPackageFromRepository($packageKey, $version);
-#	public function uploadPackageToRepository($packageKey, $credentials);
 
 }
 ?>
