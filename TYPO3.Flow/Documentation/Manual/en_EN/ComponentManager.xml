@@ -47,28 +47,28 @@
             <title>Don't use the new operator</title>
 
             <programlisting language="php">   // Avoid this:
-$myObject = new T3_MyPackage_MyClassName;</programlisting>
+$myObject = new F3_MyPackage_MyClassName;</programlisting>
           </example>
 
           <example>
             <title>Ask the Component Manager instead</title>
 
-            <programlisting language="php">class T3_MyPackage_SomeClass {
+            <programlisting language="php">class F3_MyPackage_SomeClass {
 
    protected $componentManager;
 
-   public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
+   public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
       $this-&gt;componentManager = $componentManager;
    }
 
    public function someFunction() {
-      $myObject = $this-&gt;componentManager-&gt;getComponent('T3_MyPackage_MyClassName');
+      $myObject = $this-&gt;componentManager-&gt;getComponent('F3_MyPackage_MyClassName');
    }
 }</programlisting>
           </example>
 
           <para>In the above example you ask the Component Manager for the
-          instance of <classname>T3_MyPackage_MyClassName</classname>. In
+          instance of <classname>F3_MyPackage_MyClassName</classname>. In
           order to get an instance of the Component Manager, just add a
           parameter to your class constructor as seen in the example - you
           will automatically get a reference
@@ -104,7 +104,7 @@ $myObject = new T3_MyPackage_MyClassName;</programlisting>
  *
  * @scope prototype
  */
-class T3_MyPackage_SomeClass {
+class F3_MyPackage_SomeClass {
 
 }</programlisting>
           </example>
@@ -224,19 +224,19 @@ class T3_MyPackage_SomeClass {
       you have seen in the shortcut example before, one way of getting it is
       adding a new parameter to your class constructor method:</para>
 
-      <programlisting language="php">public function __construct(T3_FLOW3_Component_ManagerInterface $componentManager) {
+      <programlisting language="php">public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
 }</programlisting>
 
       <para>To explicitly retrieve the instance of a component use the
       <function>getComponent()</function> method:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('T3_MyPackage_MyClassName');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('F3_MyPackage_MyClassName');</programlisting>
 
       <para>It is possible to pass arguments to the constructor of the
       component class just by adding them to the
       <function>getComponent()</function> call:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('T3_MyPackage_MyClassName', 'first argument', 'second argument');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('F3_MyPackage_MyClassName', 'first argument', 'second argument');</programlisting>
     </section>
 
     <section>
@@ -244,7 +244,7 @@ class T3_MyPackage_SomeClass {
 
       <para>By default, the name of a component is identical to the PHP class
       which implements the component's functions. A class called
-      <classname>T3_MyPackage_MyImplementation</classname> will be
+      <classname>F3_MyPackage_MyImplementation</classname> will be
       automatically available as a component with the exact same name. Every
       part of the system which asks for a component instance with a certain
       name will therefore - by default - get an instance of the class of that
@@ -255,7 +255,7 @@ class T3_MyPackage_SomeClass {
 
       <para>If the component name is the same as the name of a PHP interface,
       it is often referred to as a <emphasis>component type</emphasis>. An
-      interface called <interfacename>T3_MyPackage_MyInterface</interfacename>
+      interface called <interfacename>F3_MyPackage_MyInterface</interfacename>
       will be available as a component name as long as there exists at least
       one class implemententing that interface.</para>
     </section>
@@ -301,7 +301,7 @@ class T3_MyPackage_SomeClass {
       <para>In the context of the previous example it means that the
       authentication component announces that it needs a logger which
       implements a certain PHP interface (eg. the
-      <interfacename>T3_Log_LoggerInterface</interfacename>). The component
+      <interfacename>F3_Log_LoggerInterface</interfacename>). The component
       itself has no control over what kind of logger (simple file logger,
       sms-logger, ...) it finally gets and it doesn't have to care about it
       anyway as long as it matches the expected API. As soon as the
@@ -338,11 +338,11 @@ class T3_MyPackage_SomeClass {
         <example>
           <title>A simple example for Constructor Injection</title>
 
-          <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+          <programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $logger;
 
-   public function __construct(T3_Log_LoggerInterface $logger) {
+   public function __construct(F3_Log_LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
@@ -354,7 +354,7 @@ class T3_MyPackage_SomeClass {
 
         <para>So far there's nothing special about this class, it just makes
         sure that an instance of a class implementing the
-        <interfacename>T3_Log_LoggerInterface</interfacename> is passed to the
+        <interfacename>F3_Log_LoggerInterface</interfacename> is passed to the
         constructor. However, this is already a quite flexible approach
         because the type of logger can be determined from outside by just
         passing one or the another implementation to the constructor.</para>
@@ -363,7 +363,7 @@ class T3_MyPackage_SomeClass {
         called <firstterm>Autowiring</firstterm> all dependencies which were
         declared in a constructor will be injected automagically if the
         constructor argument provides a type definition (ie.
-        <classname>T3_Log_LoggerInterface</classname> in the above example).
+        <classname>F3_Log_LoggerInterface</classname> in the above example).
         Autowiring is activated by default (but can be switched off),
         therefore all you have to do is to write your constructor method.
         </para>
@@ -376,14 +376,14 @@ class T3_MyPackage_SomeClass {
         <example>
           <title>Components.ini file for Constructor Injection</title>
 
-          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
-constructorArguments.1.reference = T3_Log_ASpecialLogger</programlisting>
+          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
+constructorArguments.1.reference = F3_Log_ASpecialLogger</programlisting>
         </example>
 
         <para>The two lines above define that a component instance of
-        <interfacename>T3_Log_ASpecialLogger</interfacename> must be passed to
+        <interfacename>F3_Log_ASpecialLogger</interfacename> must be passed to
         the first argument of the constructor when an instance of the
-        component <classname>T3_Authentication_LDAPAuthentication</classname>
+        component <classname>F3_Authentication_LDAPAuthentication</classname>
         is created.</para>
       </section>
 
@@ -399,7 +399,7 @@ constructorArguments.1.reference = T3_Log_ASpecialLogger</programlisting>
         <example>
           <title>A simple example for Setter Injection</title>
 
-          <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+          <programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $someLogger;
 
@@ -407,7 +407,7 @@ constructorArguments.1.reference = T3_Log_ASpecialLogger</programlisting>
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function setSomeLogger(T3_Log_LoggerInterface $someLogger) {
+   public function setSomeLogger(F3_Log_LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -422,8 +422,8 @@ constructorArguments.1.reference = T3_Log_ASpecialLogger</programlisting>
         <example>
           <title>Components.ini file for Setter Injection</title>
 
-          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
-properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
+          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
+properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -439,7 +439,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
           <title>The preferred way of Setter Injection, using an inject
           method</title>
 
-          <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+          <programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $someLogger;
 
@@ -447,7 +447,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function injectSomeLogger(T3_Log_LoggerInterface $someLogger) {
+   public function injectSomeLogger(F3_Log_LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -538,7 +538,7 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
       <example>
         <title>Marking a setter-injected dependency as required</title>
 
-        <programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+        <programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $someLogger;
 
@@ -549,12 +549,12 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
    /**
     * Injects a logger
     *
-    * @param    T3_Log_LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
+    * @param    F3_Log_LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
     * @return   void
     * @author   Robert Lemke &lt;robert@typo3.org&gt;
     * @required
     */
-   public function injectSomeLogger(T3_Log_LoggerInterface $someLogger) {
+   public function injectSomeLogger(F3_Log_LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -706,13 +706,13 @@ properties.someLogger.reference = T3_Log_LoggerInterface</programlisting>
 declare(ENCODING = 'utf-8');
 
    // Alter the component configuration:
-$configuration = $parsedComponentConfigurations['T3_Authentication_LDAPAuthentication'];
+$configuration = $parsedComponentConfigurations['F3_Authentication_LDAPAuthentication'];
 
-$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(1, 'T3_Log_LoggerInterface', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
-$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(2, 'T3_Log_LDAPServerInterface', T3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
-$configuration-&gt;setConstructorArgument(new T3_FLOW3_Component_ConfigurationArgument(3, 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH');
+$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(1, 'F3_Log_LoggerInterface', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(2, 'F3_Log_LDAPServerInterface', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(3, 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH');
 
-$parsedComponentConfigurations['T3_Authentication_LDAPAuthentication'] = $configuration;
+$parsedComponentConfigurations['F3_Authentication_LDAPAuthentication'] = $configuration;
 unset($configuration);
 
 ?&gt;</programlisting>
@@ -721,7 +721,7 @@ unset($configuration);
         <note>
           <para>During the configuration process the
           <filename>Components.php</filename> is included by a class called
-          <classname>T3_FLOW3_Package_PHPFileComponentsConfigurationSource</classname>.
+          <classname>F3_FLOW3_Package_PHPFileComponentsConfigurationSource</classname>.
           You should read the source code of that class (which is located in
           the <filename>Packages/FLOW3/Package/</filename> directory) before
           you create your own PHP-based configuration. It is a good habit to
@@ -759,7 +759,7 @@ unset($configuration);
  *
  * @scope prototype
  */
-class T3_MyPackage_SomeClass {
+class F3_MyPackage_SomeClass {
 
 }</programlisting>
         </example>
@@ -788,7 +788,7 @@ class T3_MyPackage_SomeClass {
       <example>
         <title>A simple Greeter class</title>
 
-        <programlisting language="php">class T3_MyPackage_Greeter {
+        <programlisting language="php">class F3_MyPackage_Greeter {
    public function sayHelloTo($name) {
       echo('Hello ' . $name);
    }
@@ -796,15 +796,15 @@ class T3_MyPackage_SomeClass {
       </example>
 
       <para>During initialization above class will automatically be registered
-      as the component <classname>T3_MyPackage_Greeter</classname> and is
+      as the component <classname>F3_MyPackage_Greeter</classname> and is
       available to other components. In the code of another component you
       might find these lines:</para>
 
       <example>
-        <title>Code using the component T3_MyPackage_Greeter</title>
+        <title>Code using the component F3_MyPackage_Greeter</title>
 
-        <programlisting language="php">   // Explicitly fetch an instance of the T3_MyPackage_Greeter component:
-$greeter = $componentManager-&gt;getComponent('T3_MyPackage_Greeter');
+        <programlisting language="php">   // Explicitly fetch an instance of the F3_MyPackage_Greeter component:
+$greeter = $componentManager-&gt;getComponent('F3_MyPackage_Greeter');
 
    // Say hello to Heike:
 $greeter-&gt;sayHelloTo('Heike');
@@ -813,17 +813,17 @@ $greeter-&gt;sayHelloTo('Heike');
 
       <para>Great, that looks all fine and dandy but what if we want to use
       the much better component
-      <classname>T3_OtherPackage_GreeterWithCompliments</classname>? Well, you
-      just configure the component <classname>T3_MyPackage_Greeter</classname>
+      <classname>F3_OtherPackage_GreeterWithCompliments</classname>? Well, you
+      just configure the component <classname>F3_MyPackage_Greeter</classname>
       to use a different class:</para>
 
       <example>
         <title>Components.ini file for component replacement</title>
 
-        <programlisting language="ini">[T3_MyPackage_Greeter]
+        <programlisting language="ini">[F3_MyPackage_Greeter]
 
-   # Change the name of the class which represents the component "T3_MyPackage_Greeter":
-className = T3_OtherPackage_GreeterWithCompliments</programlisting>
+   # Change the name of the class which represents the component "F3_MyPackage_Greeter":
+className = F3_OtherPackage_GreeterWithCompliments</programlisting>
       </example>
 
       <para>Now all components who ask for a traditional greeter will get the
@@ -836,17 +836,17 @@ className = T3_OtherPackage_GreeterWithCompliments</programlisting>
       <example>
         <title>The Greeter component type</title>
 
-        <programlisting>interface T3_MyPackage_GreeterInterface {
+        <programlisting>interface F3_MyPackage_GreeterInterface {
    public function sayHelloTo($name);
 }
 
-class T3_MyPackage_Greeter implements T3_MyPackage_GreeterInterface {
+class F3_MyPackage_Greeter implements F3_MyPackage_GreeterInterface {
    public function sayHelloTo($name) {
       echo('Hello ' . $name);
    }
 }
 
-class T3_OtherPackage_GreeterWithCompliments implements T3_MyPackage_GreeterInterface{
+class F3_OtherPackage_GreeterWithCompliments implements F3_MyPackage_GreeterInterface{
    public function sayHelloTo($name) {
       echo('Hello ' . $name . '! You look so great!');
    }
@@ -860,10 +860,10 @@ class T3_OtherPackage_GreeterWithCompliments implements T3_MyPackage_GreeterInte
 
       <example>
         <title>Code using the component type
-        T3_MyPackage_GreeterInterface</title>
+        F3_MyPackage_GreeterInterface</title>
 
-        <programlisting>   // Explicitly fetch an instance of any implementation of the T3_MyPackage_GreeterInterface component type:
-$greeter = $componentManager-&gt;getComponent('T3_MyPackage_GreeterInterface');
+        <programlisting>   // Explicitly fetch an instance of any implementation of the F3_MyPackage_GreeterInterface component type:
+$greeter = $componentManager-&gt;getComponent('F3_MyPackage_GreeterInterface');
 
    // Say hello to Heike:
 $greeter-&gt;sayHelloTo('Heike');
@@ -871,14 +871,14 @@ $greeter-&gt;sayHelloTo('Heike');
       </example>
 
       <para>Finally we have to set which implementation of the
-      <interfacename>T3_MyPackage_GreeterInterface</interfacename> should be
+      <interfacename>F3_MyPackage_GreeterInterface</interfacename> should be
       active:</para>
 
       <example>
         <title>Components.ini file for component type definition</title>
 
-        <para><programlisting>[T3_MyPackage_GreeterInterface]
-className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
+        <para><programlisting>[F3_MyPackage_GreeterInterface]
+className = F3_OtherPackage_GreeterWithCompliments</programlisting></para>
       </example>
     </section>
 
@@ -948,19 +948,19 @@ className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
         <example>
           <title>Sample class for Constructor Injection</title>
 
-          <para><programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+          <para><programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $logger;
    protected $LDAPServer;
    protected $distinguishedName = '';
 
-   public function __construct(T3_Log_LoggerInterface $logger, T3_LDAP_LDAPServerInterface $LDAPServer, $distinguishedName) {
+   public function __construct(F3_Log_LoggerInterface $logger, F3_LDAP_LDAPServerInterface $LDAPServer, $distinguishedName) {
       $this-&gt;logger = $logger;
       $this-&gt;LDAPServer = $LDAPServer;
       $this-&gt;distinguishedName = $distinguishedName;
    }
 
-   public function authenticate(T3_Authentication_CredentialsInterface $credentials) {
+   public function authenticate(F3_Authentication_CredentialsInterface $credentials) {
       $this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
@@ -970,11 +970,11 @@ className = T3_OtherPackage_GreeterWithCompliments</programlisting></para>
         <example>
           <title>Sample configuration for Constructor Injection</title>
 
-          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
 
   ; Inject two component references as the first two arguments:
-constructorArguments.1.reference = T3_Log_LoggerInterface
-constructorArguments.2.reference = T3_LDAP_LDAPServerInterface
+constructorArguments.1.reference = F3_Log_LoggerInterface
+constructorArguments.2.reference = F3_LDAP_LDAPServerInterface
 
   ; Inject a straight value as the third argument:
 constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
@@ -984,8 +984,8 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
           <para>It is usually not necessary to configure injection of
           references explicitly. It is much more convent to just declare the
           type of the constructor arguments (like
-          <interfacename>T3_Log_LoggerInterface</interfacename> and
-          <interfacename>T3_LDAP_LDAPServerInterface in the above example) and
+          <interfacename>F3_Log_LoggerInterface</interfacename> and
+          <interfacename>F3_LDAP_LDAPServerInterface in the above example) and
           let the Autowiring feature configure and resolve the dependencies
           for you.</interfacename></para>
         </note>
@@ -1001,22 +1001,22 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
         <example>
           <title>Sample class for Setter Injection</title>
 
-          <para><programlisting language="php">public class T3_Authentication_LDAPAuthentication {
+          <para><programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
    protected $logger;
    protected $LDAPServer;
    protected $distinguishedName = '';
 
-   public function authenticate(T3_Authentication_CredentialsInterface $credentials) {
+   public function authenticate(F3_Authentication_CredentialsInterface $credentials) {
       $this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function setLogger(T3_Log_LoggerInterface $logger) {
+   public function setLogger(F3_Log_LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
-   public function setLDAPServer(T3_LDAP_LDAPServerInterface $LDAPServer) {
+   public function setLDAPServer(F3_LDAP_LDAPServerInterface $LDAPServer) {
       $this-&gt;LDAPServer = $LDAPServer;
    }
 
@@ -1032,11 +1032,11 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
         <example>
           <title>Sample configuration for Setter Injection</title>
 
-          <programlisting language="ini">[T3_Authentication_LDAPAuthentication]
+          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
 
   ; Inject two component references:
-properties.logger.reference = T3_Log_LoggerInterface
-properties.LDAPServer.reference = T3_LDAP_LDAPServerInterface
+properties.logger.reference = F3_Log_LoggerInterface
+properties.LDAPServer.reference = F3_LDAP_LDAPServerInterface
 
   ; Inject a straight value as the third argument:
 properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
@@ -1131,13 +1131,13 @@ properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Assoc
       <example>
         <title>Sample Components.ini with different scopes</title>
 
-        <para><programlisting language="ini">[T3_MyPackage_ASingletonClass]
+        <para><programlisting language="ini">[F3_MyPackage_ASingletonClass]
 scope = singleton
 
-[T3_MyPackage_APrototypeClass]
+[F3_MyPackage_APrototypeClass]
 scope = prototype
 
-[T3_MyPackage_ASessionClass]
+[F3_MyPackage_ASessionClass]
 scope = session</programlisting></para>
       </example>
 
@@ -1161,21 +1161,21 @@ scope = session</programlisting></para>
       <example>
         <title>A simple addressbook</title>
 
-        <programlisting language="php">class T3_Address_Adressbook {
+        <programlisting language="php">class F3_Address_Adressbook {
 
    protected $addresses = array();
 
-   public __construct(T3_iCal_iCalConnectorInterface $iCalConnector) {
+   public __construct(F3_iCal_iCalConnectorInterface $iCalConnector) {
       ...
    }
 
-   public addAddress(T3_Address_Address $address) {
+   public addAddress(F3_Address_Address $address) {
       $this-&gt;addresses[] = $address;
    }
 
 }
 
-class T3_Address_Address {
+class F3_Address_Address {
 
    public __construct($street, $zip, $town, $country) {
       ...
@@ -1188,14 +1188,14 @@ class T3_Address_Address {
 
       <itemizedlist>
         <listitem>
-          <para>The class <classname>T3_Address_Addressbook</classname> is
+          <para>The class <classname>F3_Address_Addressbook</classname> is
           supposed to be a Singleton and obviously depends on a third
-          component type <classname>T3_iCal_iCalConnectorInterface</classname>
+          component type <classname>F3_iCal_iCalConnectorInterface</classname>
           which is possibly solved by Dependency Injection.</para>
         </listitem>
 
         <listitem>
-          <para>The class <classname>T3_Address_Adress</classname> represents
+          <para>The class <classname>F3_Address_Adress</classname> represents
           the address entity and its instances must not be unique - we surely
           want more than one address. The Address component also expects a few
           parameters passed to its constructor.</para>
@@ -1209,13 +1209,13 @@ class T3_Address_Address {
         <title>Passing constructor arguments</title>
 
         <programlisting>   # Fetch a unique instance of the addressbook:
-$myAddressbook = $componentManager-&gt;getComponent('T3_Address_Addressbook');
+$myAddressbook = $componentManager-&gt;getComponent('F3_Address_Addressbook');
 
    # Create two new addresses and add them to the addressbook:
-$newAddress = $componentManager-&gt;getComponent('T3_Address_Address', 'Tryggevældevej', '2720', 'København', 'DK');
+$newAddress = $componentManager-&gt;getComponent('F3_Address_Address', 'Tryggevældevej', '2720', 'København', 'DK');
 $myAddresbook-&gt;addAddress($newAddress);
 
-$newAddress = $componentManager-&gt;getComponent('T3_Address_Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
+$newAddress = $componentManager-&gt;getComponent('F3_Address_Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
 $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       </example>
     </section>
@@ -1235,13 +1235,13 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       <example>
         <title>An autowired logger</title>
 
-        <programlisting language="PHP">public function __construct(T3_Log_LoggerInterface $logger) {
+        <programlisting language="PHP">public function __construct(F3_Log_LoggerInterface $logger) {
    $logger-&gt;log("Hooray");
 }</programlisting>
       </example>
 
       <para>The constructor of the above example will get an instance of the
-      component of type <interfacename>T3_Log_LoggerInterface</interfacename>
+      component of type <interfacename>F3_Log_LoggerInterface</interfacename>
       injected and can use it for further operations.</para>
 
       <para>If, for some reason, you need to disable autowiring support, you
@@ -1250,7 +1250,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       <example>
         <title>Turning off autowiring support in Components.ini</title>
 
-        <programlisting>[T3_MyPackage_MyComponent]
+        <programlisting>[F3_MyPackage_MyComponent]
 autoWiringMode = off</programlisting>
       </example>
     </section>
@@ -1325,11 +1325,11 @@ autoWiringMode = off</programlisting>
       <example>
         <title>A component class with an initialization method</title>
 
-        <programlisting>class T3_MyPackage_MyClass {
+        <programlisting>class F3_MyPackage_MyClass {
 
    protected $logger;
 
-   public function __construct(T3_Log_LoggerInterface $logger) {
+   public function __construct(F3_Log_LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
@@ -1349,7 +1349,7 @@ autoWiringMode = off</programlisting>
         <title>Components.ini configuration of the initialization
         method</title>
 
-        <programlisting>[T3_MyPackage_MyClass]
+        <programlisting>[F3_MyPackage_MyClass]
 lifecycleInitializationMethod = myInitialize</programlisting>
       </example>
     </section>

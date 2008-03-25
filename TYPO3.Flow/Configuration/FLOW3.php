@@ -24,11 +24,11 @@ $c->componentConfigurationCache->enable = TRUE;
 
 /**
  * Define the backend used for caching component configurations. Specify the
- * name of a component implementing the T3_FLOW3_Cache_BackendInterface.
+ * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
  *
- * @type T3_FLOW3_Cache_BackendInterface
+ * @type F3_FLOW3_Cache_BackendInterface
  */
-$c->componentConfigurationCache->backend = 'T3_FLOW3_Cache_Backend_File';
+$c->componentConfigurationCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
 /**
  * Options which are passed the cache backend.
@@ -40,8 +40,8 @@ $c->componentConfigurationCache->backendOptions = array();
 /**
  * Defines the global, last-resort exception handler.
  *
- * @type T3_FLOW3_Error_ExceptionHandlerInterface
+ * @type F3_FLOW3_Error_ExceptionHandlerInterface
  */
-$c->exceptionHandler = 'T3_FLOW3_Error_QuietExceptionHandler';
+$c->exceptionHandler = 'F3_FLOW3_Error_QuietExceptionHandler';
 
 ?>

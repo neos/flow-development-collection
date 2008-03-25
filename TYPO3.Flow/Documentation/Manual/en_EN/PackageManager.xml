@@ -179,9 +179,9 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     classname as well as the file name. An example for a valid class name is
-    be <classname>T3_MyPackage_Controller_Default</classname> while the file
+    be <classname>F3_MyPackage_Controller_Default</classname> while the file
     containing this class would be named
-    "<filename>T3_MyPackage_Controller_Default.php"</filename>.</para>
+    "<filename>F3_MyPackage_Controller_Default.php"</filename>.</para>
 
     <para>All details about naming files, classes, methods and variables
     correctly can be found in the FLOW3 Coding Guidelines. You're highly

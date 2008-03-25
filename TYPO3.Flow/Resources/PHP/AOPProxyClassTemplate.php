@@ -2,7 +2,7 @@
  * AOP Proxy for the class "###TARGET_CLASS_NAME###".
  *
 ###CLASS_ANNOTATIONS### */
-class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###T3_FLOW3_AOP_ProxyInterface {
+class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###F3_FLOW3_AOP_ProxyInterface {
 
 	/**
 	 * @var array An array of target method names and their advices grouped by advice type
@@ -20,7 +20,7 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	protected $methodIsInAdviceMode = array();
 
 	/**
-	 * @var T3_FLOW3_Component_ManagerInterface A reference to the component manager
+	 * @var F3_FLOW3_Component_ManagerInterface A reference to the component manager
 	 */
 	protected $componentManager;
 
@@ -29,11 +29,11 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param T3_FLOW3_AOP_JoinPointInterface: The join point
+	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invokeJoinPoint(T3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function invokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
 			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
@@ -44,7 +44,7 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	 * Advice chains are only used in combination with Around advices.
 	 *
 	 * @param string $methodName: Method to return the advice chains for
-	 * @return mixed The advice chains  (array of T3_FLOW3_AOP_AdviceChain) or NULL
+	 * @return mixed The advice chains  (array of F3_FLOW3_AOP_AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getAdviceChains($methodName) {
@@ -55,8 +55,8 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 			} else {
 				if (isset($this->targetMethodsAndGroupedAdvices[$methodName])) {
 					$groupedAdvices = $this->targetMethodsAndGroupedAdvices[$methodName];
-					if (isset($groupedAdvices['T3_FLOW3_AOP_AroundAdvice'])) {
-						$this->groupedAdviceChains[$methodName]['T3_FLOW3_AOP_AroundAdvice'] = new T3_FLOW3_AOP_AdviceChain($groupedAdvices['T3_FLOW3_AOP_AroundAdvice'], $this);
+					if (isset($groupedAdvices['F3_FLOW3_AOP_AroundAdvice'])) {
+						$this->groupedAdviceChains[$methodName]['F3_FLOW3_AOP_AroundAdvice'] = new F3_FLOW3_AOP_AdviceChain($groupedAdvices['F3_FLOW3_AOP_AroundAdvice'], $this);
 						$adviceChains = $this->groupedAdviceChains[$methodName];
 					}
 				}
