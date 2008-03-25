@@ -37,7 +37,7 @@ class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 	const DIRECTORY_META = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 
-	const FILENAME_PACKAGEINFO = 'PackageInfo.xml';
+	const FILENAME_PACKAGEINFO = 'Package.xml';
 	const FILENAME_PACKAGECONFIGURATION = 'Package.php';
 
 	/**

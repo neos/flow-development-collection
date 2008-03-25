@@ -86,7 +86,7 @@
 
                   <variablelist>
                     <varlistentry>
-                      <term><filename>PackageInfo.xml</filename></term>
+                      <term><filename>Package.xml</filename></term>
 
                       <listitem>
                         <para>This mandatory file contains some basic
@@ -214,7 +214,7 @@
     have not been implemented. The current behaviour is that all directories
     which are found below the <filename>Packages</filename> folder are assumed
     to be packages and are active by default. Just make sure that you created
-    a <filename>PackageInfo.xml</filename> file in the
+    a <filename>Package.xml</filename> file in the
     <filename>Meta</filename> directory of your package.</para>
   </section>
 
@@ -237,7 +237,7 @@
     <title>Creating a New Package</title>
 
     <para>For the time being just create the package folder and subdirectories
-    manually and copy &amp; adapt a <filename>PackageInfo.xml</filename> file
+    manually and copy &amp; adapt a <filename>Package.xml</filename> file
     from one of the other packages. Apart from that no further steps are
     necessary.</para>
   </section>
@@ -247,17 +247,17 @@
 
     <para>All packages need to provide some meta information to the package
     manager. This data is stored in a file called
-    <filename>PackageInfo.xml</filename> which resides in the
+    <filename>Package.xml</filename> which resides in the
     <filename>Meta</filename> directory of a package. We haven't agreed on a
     file schema for this file, so, for the time being, just make sure that the
     file is there and at least contains the correct package key, title and
     probably a description. Dependencies are not checked yet.</para>
 
-    <para>Here is an example of a <filename>PackageInfo.xml</filename>
+    <para>Here is an example of a <filename>Package.xml</filename>
     file:</para>
 
     <example>
-      <title>PackageInfo.xml (preliminary schema)</title>
+      <title>Package.xml (preliminary schema)</title>
 
       <programlisting>
 &lt;packageInfo&gt;
