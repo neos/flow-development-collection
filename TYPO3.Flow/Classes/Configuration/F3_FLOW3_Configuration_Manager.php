@@ -40,17 +40,30 @@ class F3_FLOW3_Configuration_Manager{
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 
 	/**
+	 * @var string The application context of the configuration to manage
+	 */
+	var $context;
+
+	/**
+	 * Constructs the configuration manager
+	 *
+	 * @param string $context The application context to fetch configuration for.
+	 */
+	public function __construct($context) {
+		$this->context = $context;
+	}
+
+	/**
 	 * Loads and returns the specified configuration. The actual configuration will be
 	 * merged from different sources in a defined order.
 	 *
 	 * @param string $packageKey Key of the package the configuration is for
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param string $context The application context to fetch the configuration for
 	 * @return F3_FLOW3_Configuration_Container The configuration
 	 * @throws F3_FLOW3_Configuration_Exception_InvalidConfigurationType on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getConfiguration($packageKey, $configurationType, $context) {
+	public function getConfiguration($packageKey, $configurationType) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_FLOW3 :
 				if ($packageKey != 'FLOW3')	throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Configuration type "' . $configurationType . ' is only allowed for package "FLOW3".', 1206031880);

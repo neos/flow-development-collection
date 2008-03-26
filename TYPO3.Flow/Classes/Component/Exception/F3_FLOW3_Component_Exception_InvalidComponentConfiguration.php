@@ -15,15 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * "Invalid Component Configuration" Exception 
- * 
- * @package		FLOW3
- * @subpackage	Package
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
  */
-class F3_FLOW3_Package_Exception_InvalidComponentConfiguration extends F3_FLOW3_Package_Exception {
+
+/**
+ * "Invalid Component Configuration" Exception
+ *
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class F3_FLOW3_Component_Exception_InvalidComponentConfiguration extends F3_FLOW3_Component_Exception {
 
 }
 ?>

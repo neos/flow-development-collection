@@ -36,9 +36,9 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFLOW3ConfigurationForOtherPackageThanFLOW3ResultsInException() {
-		$manager = new F3_FLOW3_Configuration_Manager();
+		$manager = new F3_FLOW3_Configuration_Manager('Testing');
 		try {
-			$manager->getConfiguration('TestPackage', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, 'Testing');
+			$manager->getConfiguration('TestPackage', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 			$this->fail('No exception was thrown.');
 		} catch (F3_FLOW3_Configuration_Exception_InvalidConfigurationType $exception) {
 		}
@@ -49,8 +49,8 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConfigurationLoadsTestPackageSettings() {
-		$manager = new F3_FLOW3_Configuration_Manager();
-		$configuration = $manager->getConfiguration('TestPackage', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS, 'Testing');
+		$manager = new F3_FLOW3_Configuration_Manager('Testing');
+		$configuration = $manager->getConfiguration('TestPackage', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
 		$this->assertTRUE($configuration->testPackageSettingsWereLoaded, 'The settings were not loaded.');
 	}
 }

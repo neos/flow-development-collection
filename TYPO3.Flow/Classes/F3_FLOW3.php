@@ -128,7 +128,7 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
 		require_once(FLOW3_PATH_FLOW3 . 'Configuration/F3_FLOW3_Configuration_Manager.php');
-		$configurationManager = new F3_FLOW3_Configuration_Manager();
+		$configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
 		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
 
 		require_once(FLOW3_PATH_FLOW3 . 'Error/F3_FLOW3_Error_ErrorHandler.php');
@@ -295,7 +295,6 @@ final class F3_FLOW3 {
 			}
 		}
 
-		$masterComponentConfigurations = $this->componentManager->getComponentConfigurations();
 		foreach ($packages as $packageKey => $package) {
 			foreach ($package->getClassFiles() as $className => $relativePathAndFilename) {
 				if (!$this->classNameIsBlacklisted($className)) {
@@ -310,11 +309,17 @@ final class F3_FLOW3 {
 					}
 				}
 			}
-			foreach ($package->getComponentConfigurations() as $componentName => $componentConfiguration) {
+		}
+
+		$masterComponentConfigurations = $this->componentManager->getComponentConfigurations();
+		$configurationManager = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager');
+		foreach ($packages as $packageKey => $package) {
+			$rawComponentConfigurations = $configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_COMPONENTS);
+			foreach ($rawComponentConfigurations as $componentName => $rawComponentConfiguration) {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
 					throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $componentConfiguration->getConfigurationSourceHint() .'.', 1184926175);
 				}
-				$masterComponentConfigurations[$componentName] = $componentConfiguration;
+				$masterComponentConfigurations[$componentName] = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration);
 			}
 		}
 

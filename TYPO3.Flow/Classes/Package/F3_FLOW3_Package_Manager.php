@@ -34,11 +34,6 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface Holds an instance of the component manager
-	 */
-	protected $componentManager;
-
-	/**
 	 * @var array Array of available packages, indexed by package key
 	 */
 	protected $packages = array();
@@ -62,27 +57,6 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 		'F3_FLOW3_Package.*',
 		'F3_FLOW3_Reflection.*',
 	);
-
-	/**
-	 * @var F3_FLOW3_Package_ComponentsConfigurationSourceInterface	$packageComponentsConfigurationSourceObjects: An array of component configuration source objects which deliver the components configuration for a package
-	 */
-	protected $packageComponentsConfigurationSourceObjects = array();
-
-	/**
-	 * Constructor
-	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface	$componentManager: An instance of the component manager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
-		$this->registerFLOW3Components();
-		$this->packageComponentsConfigurationSourceObjects = array (
-			$this->componentManager->getComponent('F3_FLOW3_Package_IniFileComponentsConfigurationSource'),
-			$this->componentManager->getComponent('F3_FLOW3_Package_PHPFileComponentsConfigurationSource')
-		);
-	}
 
 	/**
 	 * Initializes the package manager
@@ -174,23 +148,6 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	}
 
 	/**
-	 * Registers certain classes of the Package Manager as components, so they can
-	 * be used for dependency injection elsewhere.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function registerFLOW3Components() {
-		$this->componentManager->registerComponent('F3_FLOW3_Package_Package', 'F3_FLOW3_Package_Package');
-		$this->componentManager->registerComponent('F3_FLOW3_Package_IniFileComponentsConfigurationSource');
-		$this->componentManager->registerComponent('F3_FLOW3_Package_PHPFileComponentsConfigurationSource');
-
-		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		$componentConfigurations['F3_FLOW3_Package_Package']->setScope('prototype');
-		$this->componentManager->setComponentConfigurations($componentConfigurations);
-	}
-
-	/**
 	 * Scans all directories in the Packages/ directory for available packages.
 	 * For each package a F3_FLOW3_Package_ object is created and returned as
 	 * an array.
@@ -204,7 +161,7 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
 			if ($filename{0} != '.') {
-				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, ($packagesDirectoryIterator->getPathName() . '/'), $this->packageComponentsConfigurationSourceObjects);
+				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, ($packagesDirectoryIterator->getPathName() . '/'));
 			}
 			$packagesDirectoryIterator->next();
 		}

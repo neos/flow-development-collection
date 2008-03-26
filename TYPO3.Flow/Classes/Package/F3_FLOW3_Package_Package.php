@@ -56,11 +56,6 @@ class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 	protected $packageMeta;
 
 	/**
-	 * @var F3_FLOW3_Package_ComponentsConfigurationSourceInterface	$packageComponentsConfigurationSources: An array of component configuration source objects which deliver the components configuration for this package
-	 */
-	protected $packageComponentsConfigurationSources;
-
-	/**
 	 * @var array Names and relative paths (to this package directory) of files containing classes
 	 */
 	protected $classFiles;
@@ -70,18 +65,16 @@ class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 	 *
 	 * @param  string $packageKey: Key of this package
 	 * @param  string $packagePath: Absolute path to the package's main directory
-	 * @param  array $packageComponentsConfigurationSources: An array of component configuration source objects which deliver the components configuration for this package
 	 * @throws F3_FLOW3_Package_Exception_InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($packageKey, $packagePath, $packageComponentsConfigurationSources) {
+	public function __construct($packageKey, $packagePath) {
 		if (!@is_dir($packagePath)) throw new F3_FLOW3_Package_Exception_InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
 		if (substr($packagePath, -1, 1) != '/') throw new F3_FLOW3_Package_Exception_InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
 		$this->packageMeta = new F3_FLOW3_Package_Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
-		$this->packageComponentsConfigurationSources = $packageComponentsConfigurationSources;
 	}
 
 	/**
@@ -155,24 +148,6 @@ class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 	 */
 	public function getConfigurationPath() {
 		return $this->packagePath . self::DIRECTORY_CONFIGURATION;
-	}
-
-	/**
-	 * Returns the component configurations which were defined by this package.
-	 * The configuration may be delivered by different sources. The order of
-	 * the configuration sources determines which configuration survives as they
-	 * are merged with the configuration of the previous source.
-	 *
-	 * @return array Array of component names and F3_FLOW3_Component_Configuration
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Merge configuration of different sources
-	 */
-	public function getComponentConfigurations() {
-		$componentConfigurations = array();
-		foreach ($this->packageComponentsConfigurationSources as $packageComponentsConfigurationSource) {
-			$componentConfigurations = $packageComponentsConfigurationSource->getComponentConfigurations($this, $componentConfigurations);
-		}
-		return $componentConfigurations;
 	}
 
 	/**

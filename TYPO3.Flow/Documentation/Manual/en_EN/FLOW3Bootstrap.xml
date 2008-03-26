@@ -85,9 +85,9 @@
               <para>Stage 6: Settings</para>
 
               <para>Load settings from global Settings.ini and context
-              Settings.ini</para>
+              Settings.php</para>
 
-              <para>Load settings from package's Settings.ini</para>
+              <para>Load settings from package's Settings.php</para>
 
               <para>Load settings from additional registered sources</para>
 

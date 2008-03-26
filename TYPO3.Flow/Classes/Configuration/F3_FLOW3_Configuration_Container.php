@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Configuration_Container implements Countable, Iterator {
+class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAccess {
 
 	/**
 	 * @var array Configuration options and their values
@@ -130,6 +130,51 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator {
 	 */
 	public function valid() {
 		return $this->iteratorIndex < $this->iteratorCount;
+	}
+
+	/**
+	 * Offset check for the ArrayAccess interface
+	 *
+	 * @param mixed $optionName
+	 * @return boolean TRUE if the offset exists otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function offsetExists($optionName) {
+		return array_key_exists($optionName, $this->options);
+	}
+
+	/**
+	 * Getter for the ArrayAccess interface
+	 *
+	 * @param mixed $optionName Name of the option to retrieve
+	 * @return mixed The value
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function offsetGet($optionName) {
+		return $this->__get($optionName);
+	}
+
+	/**
+	 * Setter for the ArrayAccess interface
+	 *
+	 * @param mixed $optionName Name of the option to set
+	 * @param mixed $optionValue New value for the option
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function offsetSet($optionName, $optionValue) {
+		$this->__set($optionName, $optionValue);
+	}
+
+	/**
+	 * Unsetter for the ArrayAccess interface
+	 *
+	 * @param mixed $optionName Name of the option to unset
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function offsetUnset($optionName) {
+		$this->__unset($optionName);
 	}
 
 	/**

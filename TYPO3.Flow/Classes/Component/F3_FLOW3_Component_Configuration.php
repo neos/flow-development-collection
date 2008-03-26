@@ -37,6 +37,10 @@ class F3_FLOW3_Component_Configuration {
 	const AUTOWIRING_MODE_OFF = 0;
 	const AUTOWIRING_MODE_ON = 1;
 
+	const SCOPE_PROTOTYPE = 'prototype';
+	const SCOPE_SINGLETON = 'singleton';
+	const SCOPE_SESSION = 'session';
+
 	/**
 	 * @var string $componentName: Unique identifier of the component
 	 */
@@ -56,11 +60,6 @@ class F3_FLOW3_Component_Configuration {
 	 * @var array $constructorArguments: Arguments of the constructor detected by reflection
 	 */
 	protected $constructorArguments = array();
-
-	/**
-	 * @var string $constructorMethod: Name of the component's constructor method
-	 */
-	protected $constructorMethod = '__construct';
 
 	/**
 	 * @var array $properties: Array of properties which are injected into the component
