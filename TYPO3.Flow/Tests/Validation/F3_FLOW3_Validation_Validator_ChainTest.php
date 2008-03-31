@@ -41,11 +41,26 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addingValidatorsToAValidatorChainWorks() {
+	public function allValidatorsInTheChainAreInvocedCorrectly() {
 		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
-		
 		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
-		$validatorObject->expects($this->once())->method('');
+		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		
+		$validatorChain->addValidator($validatorObject);
+		$validatorChain->addValidator($secondValidatorObject);
+		
+		$validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors);
+		
+		$validatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
+		$secondValidatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
+	}
+	
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function validatorChainOnlyReturnsTrueIfAllChainedValidatorsReturnTrue() {
+		$this->markTestIncomplete();
 	}
 }
 
