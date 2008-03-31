@@ -1,5 +1,5 @@
 <?php
-declare(ENCODING = 'utf-8');
+declare(encoding = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,32 +19,24 @@ declare(ENCODING = 'utf-8');
  * 
  * @package		FLOW3
  * @subpackage	Validation
- * @version 	$Id:F3_FLOW3_Validation_ValidatorInterface.php 467 2008-02-06 19:34:56Z robert $
+ * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @author		Robert Lemke <robert@typo3.org>
+ * @author		Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Validation_ValidatorInterface {
-
-	/**
-	 * Checks if classes of the given type can be validated with this
-	 * validator.
-	 * 
-	 * @param  string								$className: Specifies the class type which is supposed to be validated. The check succeeds if this validator can handle the specified class or any subclass of it.
-	 * @return boolean								TRUE if this validator can validate the class type or FALSE if it can't
-	 */
-	public function canValidate($className);
 	
 	/**
-	 * Validates the given object. Any errors will be stored in the passed errors
-	 * object. If validation succeeds completely, this method returns TRUE. If at 
-	 * least one error occurred, the result is FALSE.
+	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid.
+	 * Any errors will be stored in the given errors object. 
+	 * If at least one error occurred, the result is FALSE. 
 	 * 
-	 * @param  object								$subject: The object which is supposed to be validated.
-	 * @return boolean								TRUE if validation succeeded completely, FALSE if at least one error occurred.
-	 * @throws F3_FLOW3_Security_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @param  object								$propertyValue: The value that should be validated
+	 * @return boolean								TRUE if the value could be validated. FALSE if an error occured
+	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function validate($subject, F3_FLOW3_Security_Validation_Errors $errors);
+	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors);
 }
 
 ?>
