@@ -71,6 +71,24 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	}
 
 	/**
+	 * Merges this container with another configuration container
+	 *
+	 * @param F3_FLOW3_Configuration_Container $otherConfiguration The other configuration container
+	 * @return F3_FLOW3_Configuration_Container This container
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeWith(F3_FLOW3_Configuration_Container $otherConfiguration) {
+		foreach ($otherConfiguration as $optionName => $newOptionValue) {
+			if ($newOptionValue instanceof F3_FLOW3_Configuration_Container && array_key_exists($optionName, $this->options)) {
+				$existingOptionValue = $this->__get($optionName);
+				$newOptionValue = $existingOptionValue->mergeWith($newOptionValue);
+			}
+			$this->__set($optionName, $newOptionValue);
+		}
+		return $this;
+	}
+
+	/**
 	 * Returns the number of configuration options
 	 *
 	 * @return integer Option count

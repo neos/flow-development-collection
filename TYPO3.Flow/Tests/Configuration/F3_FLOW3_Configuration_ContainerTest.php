@@ -149,5 +149,89 @@ class F3_FLOW3_Configuration_ContainerTest extends F3_Testing_BaseTestCase {
 		unset($configuration->someOption);
 		$this->assertFalse(isset($configuration->someOption), 'isset() returned TRUE.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeJustAddsNonConflictingOptionsToTheExistingContainer() {
+		$configurationA = new F3_FLOW3_Configuration_Container();
+		$configurationA->firstOption = 'firstValue';
+		$configurationB = new F3_FLOW3_Configuration_Container();
+		$configurationB->secondOption = 'secondValue';
+
+		$expectedConfiguration = new F3_FLOW3_Configuration_Container();
+		$expectedConfiguration->firstOption = 'firstValue';
+		$expectedConfiguration->secondOption = 'secondValue';
+
+		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeAlsoMergesNonConflictingOptionsOfSubContainers() {
+		$configurationA = new F3_FLOW3_Configuration_Container();
+		$configurationA->a->aSub = 'aaSub';
+		$configurationA->c = 'c';
+		$configurationB = new F3_FLOW3_Configuration_Container();
+		$configurationB->a->bSub = 'abSub';
+		$configurationB->d = 'd';
+
+		$expectedConfiguration = new F3_FLOW3_Configuration_Container();
+		$expectedConfiguration->a->aSub = 'aaSub';
+		$expectedConfiguration->c = 'c';
+		$expectedConfiguration->a->bSub = 'abSub';
+		$expectedConfiguration->d = 'd';
+
+		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeCanMergeTwoContainersRecursivelyWithConflictingOptions() {
+		$configurationA = new F3_FLOW3_Configuration_Container();
+		$configurationA->a->aSub = 'oldA';
+		$configurationA->a->aSubB = 'oldSubB';
+		$configurationA->b = 'oldB';
+		$configurationB = new F3_FLOW3_Configuration_Container();
+		$configurationB->a->aSub = 'newA';
+		$configurationB->b = 'newB';
+
+		$expectedConfiguration = new F3_FLOW3_Configuration_Container();
+		$expectedConfiguration->a->aSub = 'newA';
+		$expectedConfiguration->a->aSubB = 'oldSubB';
+		$expectedConfiguration->b = 'newB';
+
+		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeCanHandleNestedContainersWithMoreThanTwoLevels() {
+		$configurationA = new F3_FLOW3_Configuration_Container();
+		$configurationA->a->aa->aaa = 'oldAAA';
+		$configurationA->a->ab = 'oldAB';
+		$configurationA->a->aa->aab->aaba->aabaa = 'oldAABAA';
+		$configurationA->b = 'oldB';
+
+		$configurationB = new F3_FLOW3_Configuration_Container();
+		$configurationB->a->aa->aaa = 'newAAA';
+		$configurationB->a->aa->aab->aabb = 'newAABB';
+
+		$expectedConfiguration = new F3_FLOW3_Configuration_Container();
+		$expectedConfiguration->a->aa->aaa = 'newAAA';
+		$expectedConfiguration->a->ab = 'oldAB';
+		$expectedConfiguration->a->aa->aab->aaba->aabaa = 'oldAABAA';
+		$expectedConfiguration->a->aa->aab->aabb = 'newAABB';
+		$expectedConfiguration->b = 'oldB';
+
+		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
+	}
 }
 ?>

@@ -303,6 +303,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	public function setComponentConfiguration(F3_FLOW3_Component_Configuration $newComponentConfiguration) {
 		$componentName = $newComponentConfiguration->getComponentName();
 		$this->componentConfigurations[$newComponentConfiguration->getComponentName()] = clone $newComponentConfiguration;
+		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
 	}
 
 	/**

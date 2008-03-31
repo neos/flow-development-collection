@@ -75,6 +75,14 @@ class F3_FLOW3_Configuration_Manager{
 		}
 
 		$configuration = F3_FLOW3_Configuration_Source_PHP::load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType . '.php');
+		if (file_exists(FLOW3_PATH_CONFIGURATION . $configurationType . '.php')) {
+			$additionalConfiguration = F3_FLOW3_Configuration_Source_PHP::load(FLOW3_PATH_CONFIGURATION . $configurationType . '.php');
+			$configuration->mergeWith($additionalConfiguration);
+		}
+		if (file_exists(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType . '.php')) {
+			$additionalConfiguration = F3_FLOW3_Configuration_Source_PHP::load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType . '.php');
+			$configuration->mergeWith($additionalConfiguration);
+		}
 		return $configuration;
 	}
 

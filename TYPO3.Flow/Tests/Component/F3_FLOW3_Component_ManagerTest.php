@@ -225,6 +225,17 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function setComponentConfigurationsRegistersYetUnknownComponentsFromComponentConfiguration() {
+		$componentConfigurations = $this->componentManager->getComponentConfigurations();
+		$componentConfigurations['F3_TestPackage_SomeNonExistingComponent'] = new F3_FLOW3_Component_Configuration('F3_TestPackage_SomeNonExistingComponent', __CLASS__);
+		$this->componentManager->setComponentConfigurations($componentConfigurations);
+		$this->assertTrue($this->componentManager->isComponentRegistered('F3_TestPackage_SomeNonExistingComponent'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getComponentConfigurationReturnsCloneOfConfiguration() {
 		$configuration1 = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
 		$configuration2 = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');

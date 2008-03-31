@@ -16,6 +16,7 @@ declare(ENCODING="utf-8");
 
 define('FLOW3_PATH_FLOW3', str_replace('\\', '/', dirname(__FILE__)) . '/' );
 define('FLOW3_PATH_PACKAGES', realpath(FLOW3_PATH_FLOW3 . '../../') . '/');
+define('FLOW3_PATH_CONFIGURATION', realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/');
 
 /**
  * @package FLOW3
@@ -87,7 +88,7 @@ final class F3_FLOW3 {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($context = 'Development') {
+	public function __construct($context = 'Production') {
 		$this->checkEnvironment();
 		$this->context = $context;
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_CONSTRUCT;
@@ -186,9 +187,8 @@ final class F3_FLOW3 {
 
 		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
 		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
-
 		$componentConfigurationsCache = new F3_FLOW3_Cache_VariableCache('FLOW3_Component_Configurations', $cacheBackend);
-		if ($componentConfigurationsCache->has('componentConfigurations') && $this->context == 'Production') {
+		if ($componentConfigurationsCache->has('componentConfigurations') && $this->configuration->componentConfigurationCache->enable) {
 			$componentConfigurations = $componentConfigurationsCache->load('componentConfigurations');
 			$this->componentManager->setComponentConfigurations($componentConfigurations);
 		} else {
