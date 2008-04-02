@@ -62,6 +62,11 @@ final class F3_FLOW3 {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Resource_ClassLoader Instance of the class loader
+	 */
+	protected $classLoader;
+
+	/**
 	 * @var integer Flag which states up to which level FLOW3 has been initialized
 	 */
 	protected $initializationLevel;
@@ -108,10 +113,23 @@ final class F3_FLOW3 {
 	public function initialize() {
 		if ($this->initializationLevel > self::INITIALIZATION_LEVEL_CONSTRUCT) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1169546671);
 
+		$this->initializeClassLoader();
 		$this->initializeFLOW3();
 		$this->initializePackages();
 		$this->initializeComponents();
 		$this->initializeSettings();
+	}
+
+	/**
+	 * Initializes the class loader
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeClassLoader() {
+		require_once(dirname(__FILE__) . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
+		$this->classLoader = new F3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
+		spl_autoload_register(array($this->classLoader, 'loadClass'));
 	}
 
 	/**
@@ -128,27 +146,23 @@ final class F3_FLOW3 {
 	public function initializeFLOW3() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
-		require_once(FLOW3_PATH_FLOW3 . 'Configuration/F3_FLOW3_Configuration_Manager.php');
 		$configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
 		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
 
-		require_once(FLOW3_PATH_FLOW3 . 'Error/F3_FLOW3_Error_ErrorHandler.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Error/F3_FLOW3_Error_ExceptionHandler.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Resource/F3_FLOW3_Resource_Manager.php');
-		require_once(FLOW3_PATH_FLOW3 . 'Cache/F3_FLOW3_Cache_Manager.php');
-
 		new F3_FLOW3_Error_ErrorHandler();
 		new F3_FLOW3_Error_ExceptionHandler();
-		$resourceManager = new F3_FLOW3_Resource_Manager();
 
 		$this->componentManager = new F3_FLOW3_Component_Manager();
 		$this->componentManager->setContext($this->context);
 		$this->componentManager->registerComponent('F3_FLOW3_Configuration_Manager', 'F3_FLOW3_Configuration_Manager', $configurationManager);
 		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment');
-		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', $resourceManager);
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework', 'F3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('F3_FLOW3_Package_ManagerInterface', 'F3_FLOW3_Package_Manager');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_File');
+		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
+
+		$resourceManager = new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager);
+		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', $resourceManager);
 
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
 	}

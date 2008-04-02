@@ -36,15 +36,23 @@ abstract class F3_FLOW3_MVC_View_Abstract {
 	protected $packageManager;
 
 	/**
+	 * @var F3_FLOW3_Resource_ManagerInterface
+	 */
+	protected $resourceManager;
+
+	/**
 	 * Constructs the view.
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
 	 * @param F3_FLOW3_Package_ManagerInterface $packageManager: A reference to the Package Manager
+	 * @param F3_FLOW3_Resource_Manager $resourceManager A reference to the Resource Manager
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager, F3_FLOW3_Resource_Manager $resourceManager) {
 		$this->componentManager = $componentManager;
 		$this->packageManager = $packageManager;
+		$this->resourceManager = $resourceManager;
 		$this->initializeView();
 	}
 

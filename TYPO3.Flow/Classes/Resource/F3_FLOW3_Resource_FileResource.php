@@ -35,11 +35,23 @@ class F3_FLOW3_Resource_FileResource extends SplFileObject {
 	/**
 	 * Constructs this file resource
 	 *
-	 * @param string $filename: Name of the file
+	 * @param array $metadata Metadata for the file
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($filename) {
-		parent::__construct($filename);
+	public function __construct(array $metadata) {
+		parent::__construct($metadata['path'] . '/' . $metadata['name']);
+		$this->metadata = $metadata;
+	}
+
+	/**
+	 * Returns the content of the resource represented by this object
+	 *
+	 * @return string|binary The content of the resource
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getContent() {
+		return $this->fpassthru();
 	}
 
 }

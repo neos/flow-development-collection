@@ -29,8 +29,8 @@ class F3_FLOW3_Resource_FileResourceTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPrototype() {
-		$file1 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', __FILE__);
-		$file2 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', __FILE__);
+		$file1 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', array('path' => '', 'name' => __FILE__));
+		$file2 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', array('path' => '', 'name' => __FILE__));
 		$this->assertNotSame($file1, $file2, 'File Resource seems to be singleton!');
 	}
 
@@ -39,7 +39,7 @@ class F3_FLOW3_Resource_FileResourceTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function implementsSPLInterface() {
-		$file = new F3_FLOW3_Resource_FileResource(__FILE__);
+		$file = new F3_FLOW3_Resource_FileResource(array('path' => '', 'name' => __FILE__));
 		$this->assertType('SplFileObject', $file);
 	}
 }

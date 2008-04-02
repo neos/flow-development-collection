@@ -12,11 +12,11 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
  * The default view - a special case.
- * 
+ *
  * @package		FLOW3
  * @subpackage	MVC
  * @version 	$Id:F3_FLOW3_MVC_View_Default.php 467 2008-02-06 19:34:56Z robert $
@@ -24,33 +24,33 @@ declare(ENCODING = 'utf-8');
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_View_Default extends F3_FLOW3_MVC_View_Abstract {
-	
+
 	/**
 	 * @var F3_FLOW3_MVC_Request
 	 */
 	protected $request;
-	
+
 	/**
 	 * Sets the request
-	 * 
-	 * @param  F3_FLOW3_MVC_Request			$request: The request
+	 *
+	 * @param F3_FLOW3_MVC_Request $request The request
 	 * @return void
 	 */
 	public function setRequest(F3_FLOW3_MVC_Request $request) {
 		$this->request = $request;
 	}
-	
+
 	/**
 	 * Renders the default view
 	 *
-	 * @return string				The rendered view
+	 * @return string The rendered view
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws F3_FLOW3_MVC_Exception if no request has been set
 	 */
 	public function render() {
 		if (!is_object($this->request)) throw new F3_FLOW3_MVC_Exception('Can\'t render view without request object.', 1192450280);
-		$template = file_get_contents(dirname(__FILE__) . '/../../../Resources/Public/MVC/DefaultView_Template.html');
-		return str_replace('###BASE_URI###', $this->request->getBaseURI(), $template);
+		return $this->resourceManager->getResource('file://FLOW3/Public/MVC/DefaultView_Template.html')->getContent();
 	}
 
 }
