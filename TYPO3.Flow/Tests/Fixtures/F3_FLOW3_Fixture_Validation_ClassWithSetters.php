@@ -18,7 +18,7 @@ declare(ENCODING = 'utf-8');
  * A dummy class with setters for testing data mapping 
  * 
  * @package		FLOW3
- * @version 	$Id: $
+ * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

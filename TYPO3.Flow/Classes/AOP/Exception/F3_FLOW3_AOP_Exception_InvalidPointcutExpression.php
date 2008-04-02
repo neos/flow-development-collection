@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package  FLOW3
  * @subpackage AOP
- * @version $Id: $
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

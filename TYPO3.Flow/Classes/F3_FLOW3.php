@@ -20,7 +20,7 @@ define('FLOW3_PATH_CONFIGURATION', realpath(FLOW3_PATH_FLOW3 . '../../../Configu
 
 /**
  * @package FLOW3
- * @version $Id: $
+ * @version $Id$
  */
 
 /**

@@ -18,7 +18,7 @@ declare(encoding = 'utf-8');
  * Testcase for Validators
  * 
  * @package		FLOW3
- * @version 	$Id: F3_FLOW3_Validation_Validator_NumberTest.php 469 2008-02-06 19:52:45Z robert $
+ * @version 	$Id$
  * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
