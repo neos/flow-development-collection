@@ -60,6 +60,10 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 		$requestURI = $request->getRequestURI();
 		$requestPath = F3_PHP6_Functions::substr($requestURI->getPath(), F3_PHP6_Functions::strlen((string)$request->getBaseURI()->getPath()));
 		$requestPathSegments = explode('/', $requestPath);
+		if (substr($requestPathSegments[0], -4, 4) == '.php') {
+			array_shift($requestPathSegments);
+		}
+
 		$this->setControllerName($requestPathSegments, $request);
 
 		foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
