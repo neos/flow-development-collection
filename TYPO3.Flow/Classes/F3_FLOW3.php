@@ -147,7 +147,7 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
 		$configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
-		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
+		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 
 		new F3_FLOW3_Error_ErrorHandler();
 		new F3_FLOW3_Error_ExceptionHandler();
