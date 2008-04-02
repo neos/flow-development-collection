@@ -71,15 +71,10 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheDirectoryThrowsExceptionOnNonWritableDirectory() {
-		switch (PHP_OS) {
-			case 'Darwin' :
-				$directoryName = '/private';
-				break;
-			case 'Linux' :
-				$directoryName = '/sbin';
-				break;
-			default :
-				throw new PHPUnit_Framework_IncompleteTestError('Didn\'t know how a non-writable directory for this platform.');
+		if (DIRECTORY_SEPARATOR == '/') {
+			$directoryName = '/sbin';
+		} else {
+			$directoryName = 'c:\\Windows';
 		}
 		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		try {
@@ -101,6 +96,27 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$directory = $environment->getPathToTemporaryDirectory();
 		$backend->setCacheDirectory($directory);
 		$this->assertEquals($directory, $backend->getCacheDirectory(), 'getDirectory() did not return the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function saveRejectsInvalidIdentifiers() {
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$context = $this->componentManager->getContext();
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$data = 'Some data';
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
+			try {
+				$backend->save($entryIdentifier, $data);
+				$this->fail('save() did no reject the entry identifier "' . $entryIdentifier . '".');
+			} catch (InvalidArgumentException $exception) {
+			}
+		}
 	}
 
 	/**

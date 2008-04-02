@@ -66,7 +66,7 @@ class F3_FLOW3_Configuration_Manager{
 	public function getConfiguration($packageKey, $configurationType) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_FLOW3 :
-				if ($packageKey != 'FLOW3')	throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Configuration type "' . $configurationType . ' is only allowed for package "FLOW3".', 1206031880);
+				if ($packageKey != 'FLOW3') throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Configuration type "' . $configurationType . ' is only allowed for package "FLOW3".', 1206031880);
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
 			case self::CONFIGURATION_TYPE_SETTINGS :

@@ -32,6 +32,8 @@ declare(ENCODING = 'utf-8');
  */
 abstract class F3_FLOW3_Cache_AbstractCache {
 
+	const PATTERN_IDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+
 	/**
 	 * @var string Identifies this cache
 	 */
@@ -48,10 +50,10 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	 * @param string $identifier A identifier which describes this cache
 	 * @param F3_FLOW3_Cache_AbstractBackend $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException
+	 * @throws InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
 	 */
 	public function __construct($identifier, F3_FLOW3_Cache_AbstractBackend $backend) {
-		if (!is_string($identifier) || strlen($identifier) == 0) throw new InvalidArgumentException('No valid identifier specified.', 1203584729);
+		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
 		$this->backend->setCache($this);

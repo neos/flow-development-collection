@@ -32,6 +32,11 @@ declare(ENCODING = 'utf-8');
 abstract class F3_FLOW3_Cache_AbstractBackend {
 
 	/**
+	 * @const Pattern an entry identifer must match.
+	 */
+	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+
+	/**
 	 * @var F3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
 	 */
 	protected $cache;

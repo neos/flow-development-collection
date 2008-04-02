@@ -112,7 +112,8 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL) {
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111375);
+		if (!preg_match(F3_FLOW3_Cache_AbstractBackend::PATTERN_ENTRYIDENTIFIER, $entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
+		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;

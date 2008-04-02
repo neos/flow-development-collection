@@ -20,7 +20,7 @@ declare(ENCODING="utf-8");
  *
  * @type boolean
  */
-$c->componentConfigurationCache->enable = TRUE;
+$c->componentConfigurationCache->enable = FALSE;
 
 /**
  * Define the backend used for caching component configurations. Specify the
