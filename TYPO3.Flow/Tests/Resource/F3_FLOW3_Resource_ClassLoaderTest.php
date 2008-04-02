@@ -15,6 +15,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the component class loader
  *
  * @package    FLOW3

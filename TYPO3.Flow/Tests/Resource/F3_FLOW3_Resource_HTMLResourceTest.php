@@ -15,32 +15,31 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Testcase for the File Resource
- *
- * @package    FLOW3
- * @version    $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
-class F3_FLOW3_Resource_FileResourceTest extends F3_Testing_BaseTestCase {
+
+/**
+ * Testcase for the HTMLResource
+ *
+ * @package FLOW3
+ * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class F3_FLOW3_Resource_HTMLResourceTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isPrototype() {
-		$file1 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', array('path' => '', 'name' => __FILE__));
-		$file2 = $this->componentManager->getComponent('F3_FLOW3_Resource_FileResource', array('path' => '', 'name' => __FILE__));
-		$this->assertNotSame($file1, $file2, 'File Resource seems to be singleton!');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function implementsSPLInterface() {
-		$file = new F3_FLOW3_Resource_FileResource(array('path' => '', 'name' => __FILE__));
-		$this->assertType('SplFileObject', $file);
+		$resource1 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
+		$resource2 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
+		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
 	}
 }
+
 ?>
