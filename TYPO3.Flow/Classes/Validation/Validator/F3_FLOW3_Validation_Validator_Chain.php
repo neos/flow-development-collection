@@ -15,13 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id$
+ */
+
+/**
  * Validator to chain many validators
  * 
- * @package		FLOW3
- * @subpackage	Validation
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Validation_Validator_Chain implements F3_FLOW3_Validation_ValidatorInterface {
 
@@ -36,17 +42,17 @@ class F3_FLOW3_Validation_Validator_Chain implements F3_FLOW3_Validation_Validat
 	 * Any errors will be stored in the given errors object. 
 	 * If at least one error occurred, the result is FALSE. 
 	 * 
-	 * @param  object								$propertyValue: The value that should be validated
-	 * @return boolean								TRUE if the value could be validated. FALSE if an error occured
+	 * @param  object $propertyValue: The value that should be validated
+	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
-	 * @author										Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
 		
 		$subjectIsValid = TRUE;
 		
-		foreach($this->validators as $validator) {
-			$subjectIsValid &= $validator->isValidProperty($propertyValue, &$errors);
+		foreach ($this->validators as $validator) {
+			$subjectIsValid &= $validator->isValidProperty($propertyValue, $errors);
 		}
 		
 		return $subjectIsValid;
@@ -55,22 +61,22 @@ class F3_FLOW3_Validation_Validator_Chain implements F3_FLOW3_Validation_Validat
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 * 
-	 * @param F3_FLOW3_Validation_ValidatorInterface	The validator that should be added
-	 * @return integer									The index of the new chain entry
-	 * @author											Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param F3_FLOW3_Validation_ValidatorInterface The validator that should be added
+	 * @return integer The index of the new chain entry
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addValidator(F3_FLOW3_Validation_ValidatorInterface $validator) {
 		$this->validators[] = $validator;
 		return count($this->validators) - 1;
 	}
-	
+
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 * 
-	 * @param  integer									The index of the validator that should be returned
-	 * @return F3_FLOW3_Validation_ValidatorInterface	The requested validator
+	 * @param  integer The index of the validator that should be returned
+	 * @return F3_FLOW3_Validation_ValidatorInterface The requested validator
 	 * @throws F3_FLOW3_Validation_Exception_InvalidChainIndex
-	 * @author											Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValidator($index) {
 		return $this->validators[$index];

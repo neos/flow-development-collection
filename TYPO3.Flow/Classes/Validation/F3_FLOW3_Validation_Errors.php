@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id:F3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
+ */
+ 
+/**
  * Objects of this kind contain a list of validation errors which occurred during
  * validation.
  * 
- * @package		FLOW3
- * @subpackage	Validation
- * @version 	$Id:F3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id:F3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Validation_Errors extends ArrayObject {
 

@@ -15,12 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * Testcase for ValidatorChains
  * 
- * @package		FLOW3
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 
@@ -36,7 +43,7 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 		
 		$this->assertEquals($validatorObject, $validatorChain->getValidator($index));
 	}
-	
+
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -54,7 +61,7 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 		$validatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
 		$secondValidatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
 	}
-	
+
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

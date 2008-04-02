@@ -15,15 +15,21 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id$
+ */
+
+/**
  * Contract for a object validator 
  * 
- * @package		FLOW3
- * @subpackage	Validation
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @author		Robert Lemke <robert@typo3.org>
- * @author		Andreas Förthner <andreas.foerthner@netlogix.de>
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @author Robert Lemke <robert@typo3.org>
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Validation_ObjectValidatorInterface {
 
@@ -31,8 +37,8 @@ interface F3_FLOW3_Validation_ObjectValidatorInterface {
 	 * Checks if classes of the given type can be validated with this
 	 * validator.
 	 * 
-	 * @param  string								$className: Specifies the class type which is supposed to be validated. The check succeeds if this validator can handle the specified class or any subclass of it.
-	 * @return boolean								TRUE if this validator can validate the class type or FALSE if it can't
+	 * @param  string $className: Specifies the class type which is supposed to be validated. The check succeeds if this validator can handle the specified class or any subclass of it.
+	 * @return boolean TRUE if this validator can validate the class type or FALSE if it can't
 	 */
 	public function canValidate($className);
 	
@@ -41,9 +47,9 @@ interface F3_FLOW3_Validation_ObjectValidatorInterface {
 	 * object. If validation succeeds completely, this method returns TRUE. If at 
 	 * least one error occurred, the result is FALSE.
 	 * 
-	 * @param  object								$object: The object which is supposed to be validated.
-	 * @param  F3_FLOW3_Validation_Errors		$errors: Here any occured validation error is stored
-	 * @return boolean								TRUE if validation succeeded completely, FALSE if at least one error occurred.
+	 * @param  object $object: The object which is supposed to be validated.
+	 * @param  F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @return boolean TRUE if validation succeeded completely, FALSE if at least one error occurred.
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function validate($object, F3_FLOW3_Validation_Errors &$errors);
@@ -52,10 +58,10 @@ interface F3_FLOW3_Validation_ObjectValidatorInterface {
 	 * Validates a specific property ($propertyName) of the given object. Any errors will be stored
 	 * in the given errors object. If validation succeeds, this method returns TRUE, else it will return FALSE.
 	 * 
-	 * @param  object								$object: The object of which the property should be validated
-	 * @param  string								$propertyName: The name of the property that should be validated
-	 * @param  F3_FLOW3_Validation_Errors		$errors: Here any occured validation error is stored
-	 * @return boolean								TRUE if the property could be validated, FALSE if an error occured
+	 * @param  object $object: The object of which the property should be validated
+	 * @param  string $propertyName: The name of the property that should be validated
+	 * @param  F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @return boolean TRUE if the property could be validated, FALSE if an error occured
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function validateProperty($object, $proptertyName, F3_FLOW3_Validation_Errors &$errors);
@@ -64,10 +70,10 @@ interface F3_FLOW3_Validation_ObjectValidatorInterface {
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid value for the property ($propertyName) of the class ($className). 
 	 * Any errors will be stored in the given errors object. If at least one error occurred, the result is FALSE. 
 	 * 
-	 * @param  string								$className: The propterty's class name
-	 * @param  string								$propertyName: The name of the property for wich the value should be validated
-	 * @param  object								$propertyValue: The value that should be validated
-	 * @return boolean								TRUE if the value could be validated for the given property, FALSE if an error occured
+	 * @param  string $className: The propterty's class name
+	 * @param  string $propertyName: The name of the property for wich the value should be validated
+	 * @param  object $propertyValue: The value that should be validated
+	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function isValidProperty($className, $propertyName, $propertyValue, F3_FLOW3_Validation_Errors &$errors);

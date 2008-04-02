@@ -15,12 +15,19 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * Testcase for Validators
  * 
- * @package		FLOW3
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
 
@@ -34,7 +41,7 @@ class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
 		
 		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
 	}
-	
+
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
