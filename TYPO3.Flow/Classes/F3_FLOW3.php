@@ -274,6 +274,9 @@ final class F3_FLOW3 {
 		if (version_compare(phpversion(), self::MAXIMUM_PHP_VERSION, '>')) {
 			die ('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 		}
+		if (version_compare(phpversion(), '6.0.0', '<') && !(extension_loaded('iconv') || extension_loaded('mbstring'))) {
+			die ('FLOW3 requires the PHP extension "mbstring" or "iconv" for PHP versions below 6.0.0 (Error #1207148809)');
+		}
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');
 		ini_set('unicode.stream_encoding', 'utf-8');
