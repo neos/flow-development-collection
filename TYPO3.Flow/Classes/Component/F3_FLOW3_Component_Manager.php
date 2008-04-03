@@ -122,7 +122,8 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		if (!$this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
 
 		$componentConfiguration = $this->componentConfigurations[$componentName];
-		$overridingConstructorArguments = $this->getOverridingConstructorArguments(array_slice(func_get_args(), 1), $componentConfiguration);
+		$arguments = array_slice(func_get_args(), 1);
+		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments, $componentConfiguration);
 		$scope = $this->getComponentScope($componentName, $componentConfiguration);
 		switch ($scope) {
 			case 'prototype' :
