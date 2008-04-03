@@ -47,6 +47,12 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	protected $context;
 
 	/**
+	 * @var integer Default lifetime of a cache entry in seconds
+	 */
+	protected $defaultLifetime = 3600;
+
+	
+	/**
 	 * Constructs this backend
 	 *
 	 * @param string $context: FLOW3's application context
@@ -64,7 +70,18 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	public function setCache(F3_FLOW3_Cache_AbstractCache $cache) {
 		$this->cache = $cache;
 	}
-
+	/**
+	 * Checks the validity of an entry identifier. Returns true if it's valid.
+	 *
+	 * @param string An identifier to be checked for validity 
+	 * @return boolean
+	 * 
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	public function checkEntryIdentifierValidity($entryIdentifier) {
+		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $entryIdentifier);
+	}
+	
 	/**
 	 * Saves data in the cache.
 	 *
@@ -73,7 +90,9 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws F3_FLOW3_Cache_Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
+	 * @throws F3_FLOW3_Cache_Exception if no cache frontend has been set.
+	 * @throws InvalidArgumentException if the identifier is not valid
+	 * @throws F3_FLOW3_Cache_Exception_InvalidData if $data is not a string
 	 */
 	abstract public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL);
 

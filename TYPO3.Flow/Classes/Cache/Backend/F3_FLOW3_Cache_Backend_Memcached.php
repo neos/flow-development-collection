@@ -1,0 +1,181 @@
+<?php
+declare(ENCODING = 'utf-8');
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Cache
+ * @version $Id:$
+ */
+
+/**
+ * 
+ *
+ * @package FLOW3
+ * @subpackage Cache
+ * @version $Id:$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype 
+ */
+class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
+	/**
+	 * @var Memcache
+	 */
+	protected $memcache;
+	/**
+	 * @var array
+	 */
+	protected $servers;
+	/**
+	 * whether the memcache uses compression or not (requires zlib)
+	 * 
+	 * @var boolean
+	 */
+	protected $useCompressed;
+	
+	/**
+	 * setter for servers property
+	 * should be an array of entries like host:port
+	 *
+	 * @param array $serverConf
+	 */
+	public function setServers(array $serverConf) {
+		$this->servers = $serverConf;
+	}
+	/**
+	 * getter for servers property
+	 *
+	 * @return unknown
+	 */
+	public function getServers() {
+		return $this->servers;
+	}
+
+	/**
+	 * setter for useCompressed
+	 *
+	 * @param boolean $enableCompression
+	 */
+	public function setCompression($enableCompression) {
+		$this->useCompressed = $enableCompression;
+	}
+	/**
+	 * Getter for useCompressed
+	 *
+	 * @return boolean
+	 */
+	public function getCompression() {
+		return $this->useCompressed;
+	}
+	
+	
+	/**
+	 * Saves data in the cache.
+	 *
+	 * @param string $data: The data to be stored
+	 * @param string $entryIdentifier: An identifier for this specific cache entry
+	 * @param array $tags: Tags to associate with this cache entry
+	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @return void
+	 * @throws F3_FLOW3_Cache_Exception if no cache frontend has been set.
+	 * @throws InvalidArgumentException if the identifier is not valid
+	 * @throws F3_FLOW3_Cache_Exception_InvalidData if $data is not a string
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 **/
+	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL){
+		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
+		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		$expiration = $lifetime?$lifetime:$this->defaultLifetime;
+		try {
+			$success = $this->getMemcache()->set($entryIdentifier,$data,$this->useCompressed,$expiration);
+			if(!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server',1207165277);
+		} catch(F3_FLOW3_Error_Exception $exception) {
+			throw new F3_FLOW3_Cache_Exception($exception->getMessage(),1207208100);
+		}
+	}
+
+	/**
+	 * Loads data from the cache.
+	 *
+	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 **/
+	public function load($entryIdentifier){
+		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
+		return $this->getMemcache()->get($entryIdentifier);
+	}
+
+	/**
+	 * Checks if a cache entry with the specified identifier exists.
+	 *
+	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @author Christian Jul Jensen <julle@typo3.org> 
+	 */
+	public function has($entryIdentifier){
+		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
+		return (boolean) $this->getMemcache()->get($entryIdentifier);
+	}
+
+	/**
+	 * Removes all cache entries matching the specified identifier.
+	 * Usually this only affects one entry but if - for what reason ever -
+	 * old entries for the identifier still exist, they are removed as well.
+	 *
+	 * @param string $entryIdentifier: Specifies the cache entry to remove
+	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 * 
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	public function remove($entryIdentifier){
+		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
+		return $this->getMemcache()->delete($entryIdentifier);
+	}
+	
+	/**
+	 * Creates and/or returns the memcache instance
+	 *
+	 * @return Memcache
+	 * 
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	protected function getMemcache() {
+		if(!$this->memcache instanceof Memcache) {
+			$this->memcache = new Memcache();
+			$this->setupMemcache($this->memcache);
+		}
+		return $this->memcache;
+	}
+	
+	/**
+	 * Setting up the Memcache, just adding servers for now. 
+	 *
+	 * @param Memcache $memcache
+	 * 
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	protected function setupMemcache(Memcache $memcache) {
+		if(!is_array($this->getServers()) or sizeof($this->getServers())==0) throw new F3_FLOW3_Cache_Exception('No servers was configured for Memcache',1207161347);
+		foreach($this->servers as $serverConf) {
+			$conf = explode(':',$serverConf,2);
+			$memcache->addServer($conf[0],$conf[1]);
+		}
+	}
+}
+
+?>
