@@ -89,7 +89,9 @@ class F3_FLOW3_AOP_PointcutFilter implements F3_FLOW3_AOP_PointcutFilterInterfac
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __wakeup() {
-		$this->aopFramework = $GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'];
+		if (isset($GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'])) {
+			$this->aopFramework = $GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'];
+		}
 	}
 }
 
