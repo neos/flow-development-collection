@@ -34,7 +34,7 @@ class F3_FLOW3_Error_ErrorHandler {
 	/**
 	 * @var array
 	 */
-	protected $exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR, E_WARNING, E_NOTICE, E_USER_ERROR, E_USER_WARNING, E_USER_NOTICE);
+	protected $exceptionalErrors = array();
 
 	/**
 	 * Constructs this error handler - registers itself as the default error handler.
@@ -43,6 +43,17 @@ class F3_FLOW3_Error_ErrorHandler {
 	 */
 	public function __construct() {
 		set_error_handler(array($this, 'handleError'));
+	}
+
+	/**
+	 * Defines which error levels result should result in an exception thrown.
+	 *
+	 * @param array $exceptionalErros An array of E_* error levels
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setExceptionalErrors(array $exceptionalErrors) {
+		$this->exceptionalErrors = $exceptionalErrors;
 	}
 
 	/**

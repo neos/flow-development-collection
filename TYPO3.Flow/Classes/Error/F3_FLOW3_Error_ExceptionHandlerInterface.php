@@ -16,47 +16,33 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Default.php 467 2008-02-06 19:34:56Z robert $
+ * @subpackage Error
+ * @version $Id: $
  */
 
 /**
- * The default view - a special case.
+ * Contract for an exception handler
  *
  * @package FLOW3
- * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Default.php 467 2008-02-06 19:34:56Z robert $
- * @copyright Copyright belongs to the respective authorst
+ * @subpackage Error
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_View_Default extends F3_FLOW3_MVC_View_Abstract {
+interface F3_FLOW3_Error_ExceptionHandlerInterface {
 
 	/**
-	 * @var F3_FLOW3_MVC_Request
+	 * Constructs this exception handler - registers itself as the default exception handler.
 	 */
-	protected $request;
+	public function __construct();
 
 	/**
-	 * Sets the request
+	 * Handles the given exception
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request
+	 * @param Exception $exception: The exception object
 	 * @return void
 	 */
-	public function setRequest(F3_FLOW3_MVC_Request $request) {
-		$this->request = $request;
-	}
+	public function handleException(Exception $exception);
 
-	/**
-	 * Renders the default view
-	 *
-	 * @return string The rendered view
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception if no request has been set
-	 */
-	public function render() {
-		if (!is_object($this->request)) throw new F3_FLOW3_MVC_Exception('Can\'t render view without request object.', 1192450280);
-		return $this->resourceManager->getResource('file://FLOW3/Public/MVC/DefaultView_Template.html')->getContent();
-	}
 }
-
 ?>

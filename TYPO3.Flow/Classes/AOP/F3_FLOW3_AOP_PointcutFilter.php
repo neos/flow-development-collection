@@ -72,6 +72,25 @@ class F3_FLOW3_AOP_PointcutFilter implements F3_FLOW3_AOP_PointcutFilterInterfac
 		if ($pointcut === FALSE) throw new RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $pointcut->matches($class, $method, $pointcutQueryIdentifier);
 	}
+
+	/**
+	 * Prepares this pointcut filter for sleep
+	 *
+	 * @return void
+	 */
+	public function __sleep() {
+		return array("\0*\0aspectClassName", "\0*\0pointcutMethodName");
+	}
+
+	/**
+	 * Updates the reference to the AOP framework
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __wakeup() {
+		$this->aopFramework = $GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'];
+	}
 }
 
 ?>

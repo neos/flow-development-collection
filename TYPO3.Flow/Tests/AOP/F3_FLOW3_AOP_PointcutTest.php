@@ -15,12 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the default AOP Pointcut implementation
  *
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 
@@ -36,6 +43,9 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setUp() {
 		$this->AOPFramework = $this->componentManager->getComponent('F3_FLOW3_AOP_Framework');
+		if(!$this->AOPFramework->isInitialized()) {
+			$this->AOPFramework->initialize($this->componentManager->getComponentConfigurations());
+		}
 	}
 
 	/**
@@ -100,7 +110,7 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 
 		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
-		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut didn\'t match the F3_TestPackage_PointcutTestingTargetClass1 although it shouldt!');
+		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut didn\'t match the F3_TestPackage_PointcutTestingTargetClass1 although it should!');
 
 		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass2');
 		$method = $class->getMethod('otherMethodOther');

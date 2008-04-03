@@ -37,6 +37,11 @@ class F3_FLOW3_AOP_Framework {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
+	 */
+	protected $configuration;
+
+	/**
 	 * @var F3_FLOW3_AOP_PointcutExpressionParserInterface An instance of the pointcut expression parser
 	 */
 	protected $pointcutExpressionParser;
@@ -55,16 +60,6 @@ class F3_FLOW3_AOP_Framework {
 	 * @var array An array target class names and their proxy class name.
 	 */
 	protected $targetAndProxyClassNames = array();
-
-	/**
-	 * @var F3_FLOW3_Cache_VariableCache The cache for AOP proxy classes
-	 */
-	protected $proxyCache;
-
-	/**
-	 * @var F3_FLOW3_Cache_VariableCache The cache for AOP configuration
-	 */
-	protected $configurationCache;
 
 	/**
 	 * @var array List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
@@ -86,6 +81,7 @@ class F3_FLOW3_AOP_Framework {
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 		$this->registerFrameworkComponents();
+		$this->configuration = $componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 	}
 
 	/**
@@ -119,42 +115,77 @@ class F3_FLOW3_AOP_Framework {
 	 * During initialization the configuration of all registered components is searched for
 	 * possible aspect annotations. If an aspect class is found, the poincut expressions are
 	 * parsed and a new aspect with one or more advisors is added to the aspect registry of the
-	 * AOP framework.
+	 * AOP framework. Finally all advices are woven into their target classes by generating
+	 * proxy classes.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize() {
+	public function initialize($componentConfigurations) {
 		if ($this->isInitialized) throw new F3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
 
+		$loadedFromCache = FALSE;
 		$context = $this->componentManager->getContext();
-		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
-		$this->proxyCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Proxy', $cacheBackend);
-		$this->configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
-		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		if ($context != 'Testing' && $this->configurationCache->has('targetAndProxyClassNames') && $this->configurationCache->has('advicedMethodsInformationByTargetClass')) {
-			$aspectContainers = $this->configurationCache->load('aspectContainers');
-			$this->targetAndProxyClassNames = $this->configurationCache->load('targetAndProxyClassNames');
-			$this->advicedMethodsInformationByTargetClass = $this->configurationCache->load('advicedMethodsInformationByTargetClass');
-		} else {
+		if ($this->configuration->aop->proxyCache->enable) {
+			$cacheBackend = $this->componentManager->getComponent($this->configuration->aop->proxyCache->backend, $context);
+			$proxyCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Proxy', $cacheBackend);
+			$configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
+
+			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
+				$GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'] = $this;
+				$proxyBuildResults =  $proxyCache->load('proxyBuildResults');
+				$this->advicedMethodsInformationByTargetClass = $configurationCache->load('advicedMethodsInformationByTargetClass');
+				$aspectContainers = $configurationCache->load('aspectContainers');
+				$loadedFromCache = TRUE;
+			}
+		}
+
+		if (!$loadedFromCache) {
 			$namesOfAvailableClasses = array();
 			foreach ($componentConfigurations as $componentConfiguration) {
 				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
 			}
-
 			$aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
-			$this->targetAndProxyClassNames = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
-			$this->configurationCache->save('targetAndProxyClassNames', $this->targetAndProxyClassNames);
-			$this->configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
+			$proxyBuildResults = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
 		}
 
-		foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
-			$componentConfigurations[$targetClassName]->setClassName($proxyClassName);
+		foreach ($proxyBuildResults as $targetClassName => $proxyBuildResult) {
+			$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
+			if (!class_exists($proxyBuildResult['proxyClassName'])) {
+				eval($proxyBuildResult['proxyClassCode']);
+			}
 		}
-		$this->componentManager->setComponentConfigurations($componentConfigurations);
+
+		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
+			$configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
+			$configurationCache->save('aspectContainers', $aspectContainers);
+			$proxyCache->save('proxyBuildResults', $proxyBuildResults);
+		}
+
 		$this->aspectContainers = $aspectContainers;
 		$this->isInitialized = TRUE;
+	}
+
+	/**
+	 * If the AOP Framework has been initilaized already.
+	 *
+	 * @return boolean If the framework has been initialized
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isInitialized() {
+		return $this->isInitialized;
+	}
+
+	/**
+	 * Returns the names of all target and their proxy classes which were affected by
+	 * at least one advice and therefore needed to be proxied.
+	 *
+	 * @return array An array of target class names and their proxy counterpart.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTargetAndProxyClassNames() {
+		return $this->targetAndProxyClassNames;
 	}
 
 	/**
@@ -168,6 +199,7 @@ class F3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
+		if (!$this->isInitialized) throw new F3_FLOW3_AOP_Exception('The AOP framework has not yet been initialized!', 1207216396);
 		if (!isset($this->aspectContainers[$aspectClassName])) throw new F3_FLOW3_AOP_Exception('No aspect class "' . $aspectClassName . '" found while searching for pointcut "' . $pointcutMethodName . '".', 1172223654);
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
 			if ($pointcut->getPointcutMethodName() == $pointcutMethodName) {
@@ -188,17 +220,6 @@ class F3_FLOW3_AOP_Framework {
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
 		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
 		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
-	}
-
-	/**
-	 * Returns an array of all target class names which have been proxied and the name
-	 * of the respective proxy class.
-	 *
-	 * @return array target class names and their proxy class name
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTargetAndProxyClassNames() {
-		return $this->targetAndProxyClassNames;
 	}
 
 	/**
@@ -309,14 +330,14 @@ class F3_FLOW3_AOP_Framework {
 	 * names (and the name of their new proxy class) of those classes which needed to
 	 * be proxied.
 	 *
-	 * @param array $classNames: Class names to take into consideration.
-	 * @param array $aspectContainers: Aspect containers whose pointcuts are matched against the specified classes.
-	 * @param string $context: The application context to build proxy classes for.
-	 * @return array $targetAndProxyClassNames The names of target classes which have been proxied - and the name of the respective proxy class.
+	 * @param array $classNames Class names to take into consideration.
+	 * @param array $aspectContainers Aspect containers whose pointcuts are matched against the specified classes.
+	 * @param string $context The application context to build proxy classes for.
+	 * @return array $proxyBuildResults An array which contains at least the proxy class name and the generated code, indexed by the target class names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function buildProxyClasses(array $classNames, array $aspectContainers, $context) {
-		$targetAndProxyClassNames = array();
+		$proxyBuildResults = array();
 
 		foreach ($classNames as $targetClassName) {
 			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3_FLOW3_') {
@@ -325,11 +346,7 @@ class F3_FLOW3_AOP_Framework {
 					if (!$class->implementsInterface('F3_FLOW3_AOP_AspectInterface') && !$class->isAbstract() && !$class->isFinal()) {
 						$proxyBuildResult = F3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass($class, $aspectContainers, $context);
 						if ($proxyBuildResult !== FALSE) {
-							eval($proxyBuildResult['proxyClassCode']);
-							if ($this->proxyCache !== NULL) {
-								$this->proxyCache->save($proxyBuildResult['proxyClassName'], $proxyBuildResult['proxyClassCode']);
-							}
-							$targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
+							$proxyBuildResults[$targetClassName] = $proxyBuildResult;
 							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
 						}
 					}
@@ -338,7 +355,7 @@ class F3_FLOW3_AOP_Framework {
 				}
 			}
 		}
-		return $targetAndProxyClassNames;
+		return $proxyBuildResults;
 	}
 
 	/**

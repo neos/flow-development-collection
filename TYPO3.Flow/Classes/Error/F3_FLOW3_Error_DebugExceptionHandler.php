@@ -22,7 +22,8 @@ declare(ENCODING = 'utf-8');
 
 /**
  * A basic but solid exception handler which catches everything which
- * falls through the other exception handlers.
+ * falls through the other exception handlers and provides useful debugging
+ * information.
  *
  * @package FLOW3
  * @subpackage Error
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Error_ExceptionHandler {
+class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHandlerInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.

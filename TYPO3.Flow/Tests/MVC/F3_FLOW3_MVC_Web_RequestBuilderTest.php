@@ -72,7 +72,6 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 
 		$this->environment->SERVER['REQUEST_URI'] = $realBaseURI->getPath() . 'TestPackage';
 		$request = $this->requestBuilder->build();
-		var_dump($request);
 		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerName(), 'The controller name of the built request object is not as expected.');
 	}
 

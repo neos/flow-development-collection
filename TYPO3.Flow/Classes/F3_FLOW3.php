@@ -147,10 +147,11 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
 		$configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
-		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
 
-		new F3_FLOW3_Error_ErrorHandler();
-		new F3_FLOW3_Error_ExceptionHandler();
+		$errorHandler = new F3_FLOW3_Error_ErrorHandler();
+		$errorHandler->setExceptionalErrors($this->configuration->errorHandler->exceptionalErrors);
+		new $this->configuration->exceptionHandler->className;
 
 		$this->componentManager = new F3_FLOW3_Component_Manager();
 		$this->componentManager->setContext($this->context);
@@ -176,6 +177,7 @@ final class F3_FLOW3 {
 	 */
 	public function initializePackages() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
+
 		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
 		$configurationManager = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager');
 
@@ -185,7 +187,6 @@ final class F3_FLOW3 {
 			$packageConfiguration = $configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES, $this->context);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
-
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
 	}
 
@@ -199,18 +200,32 @@ final class F3_FLOW3 {
 	public function initializeComponents() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_COMPONENTS) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760769);
 
-		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
-		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
-		$componentConfigurationsCache = new F3_FLOW3_Cache_VariableCache('FLOW3_Component_Configurations', $cacheBackend);
-		if ($componentConfigurationsCache->has('componentConfigurations') && $this->configuration->componentConfigurationCache->enable) {
-			$componentConfigurations = $componentConfigurationsCache->load('componentConfigurations');
-			$this->componentManager->setComponentConfigurations($componentConfigurations);
-		} else {
-			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
-			$this->componentManager->getComponent('F3_FLOW3_AOP_Framework')->initialize();
-			$componentConfigurations = $this->componentManager->getComponentConfigurations();
-			$componentConfigurationsCache->save('componentConfigurations', $componentConfigurations);
+		$configurationHasBeenLoaded = FALSE;
+
+		if ($this->configuration->component->configurationCache->enable) {
+			$cacheBackend = $this->componentManager->getComponent($this->configuration->component->configurationCache->backend, $this->context);
+			$componentConfigurationsCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Component_Configurations', $cacheBackend);
+			if ($componentConfigurationsCache->has('baseComponentConfigurations')) {
+				$componentConfigurations = $componentConfigurationsCache->load('baseComponentConfigurations');
+				$configurationHasBeenLoaded = TRUE;
+			}
 		}
+		if (!$configurationHasBeenLoaded) {
+			$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
+			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
+			$componentConfigurations = $this->componentManager->getComponentConfigurations();
+			if ($this->configuration->component->configurationCache->enable) {
+				$componentConfigurationsCache->save('baseComponentConfigurations', $componentConfigurations);
+			}
+		}
+
+		$AOPFramework = $this->componentManager->getComponent('F3_FLOW3_AOP_Framework');
+		$AOPFramework->initialize($componentConfigurations);
+		foreach ($AOPFramework->getTargetAndProxyClassnames() as $targetClassName => $proxyClassName) {
+			$componentConfigurations[$targetClassName]->setClassName($proxyClassName);
+		}
+
+		$this->componentManager->setComponentConfigurations($componentConfigurations);
 
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_COMPONENTS;
 	}
@@ -398,5 +413,4 @@ final class F3_FLOW3 {
 		}
 	}
 }
-
 ?>
