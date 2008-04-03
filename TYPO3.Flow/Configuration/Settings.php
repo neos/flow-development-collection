@@ -17,10 +17,10 @@ declare(ENCODING="utf-8");
 
 
 /**
- * The path for the public assets mirror used by the configuration path
+ * The path for the public resources mirror used by the configuration path
  *
  * @type string
  */
-$c->resourceManager->publicMirrorPath = FLOW3_PATH_PUBLIC . 'Assets/';
+$c->resourceManager->publicResourcePath = FLOW3_PATH_PUBLIC . 'Resources/';
 
 ?>

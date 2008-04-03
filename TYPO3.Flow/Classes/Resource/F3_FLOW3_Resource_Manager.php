@@ -91,7 +91,7 @@ class F3_FLOW3_Resource_Manager {
 			return $this->loadedResources[$URIString];
 		}
 
-		$metadata = $this->componentManager->getComponent('F3_FLOW3_Resource_AssetTools')->getMetadata($URI);
+		$metadata = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher')->getMetadata($URI);
 		$this->loadedResources[$URIString] = $this->instantiateResource($metadata);
 
 		return $this->loadedResources[$URIString];

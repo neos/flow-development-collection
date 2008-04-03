@@ -30,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Resource_AssetTools {
+class F3_FLOW3_Resource_Publisher {
 
 	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 base configuration
@@ -40,7 +40,7 @@ class F3_FLOW3_Resource_AssetTools {
 	/**
 	 * @var string The base path for the mirrored public assets
 	 */
-	protected $publicMirrorPath;
+	protected $publicResourcePath;
 
 	/**
 	 * @var F3_FLOW3_Cache_VariableCache
@@ -48,7 +48,7 @@ class F3_FLOW3_Resource_AssetTools {
 	protected $resourceMetadataCache;
 
 	/**
-	 * Constructs the AssetTools
+	 * Constructs the Publisher
 	 *
 	 * @param F3_FLOW3_Component_Manager $componentManager
 	 * @return void
@@ -71,12 +71,12 @@ class F3_FLOW3_Resource_AssetTools {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeMirrorDirectory() {
-		$this->publicMirrorPath = $this->configuration['resourceManager']['publicMirrorPath'];
-		if (!is_writable($this->publicMirrorPath)) {
-			F3_FLOW3_Utility_Files::createDirectoryRecursively($this->publicMirrorPath);
+		$this->publicResourcePath = $this->configuration['resourceManager']['publicResourcePath'];
+		if (!is_writable($this->publicResourcePath)) {
+			F3_FLOW3_Utility_Files::createDirectoryRecursively($this->publicResourcePath);
 		}
-		if (!is_dir($this->publicMirrorPath)) throw new F3_FLOW3_Cache_Exception('The directory "' . $this->publicMirrorPath . '" does not exist.', 1207124538);
-		if (!is_writable($this->publicMirrorPath)) throw new F3_FLOW3_Cache_Exception('The directory "' . $this->publicMirrorPath . '" is not writable.', 1207124546);
+		if (!is_dir($this->publicResourcePath)) throw new F3_FLOW3_Cache_Exception('The directory "' . $this->publicResourcePath . '" does not exist.', 1207124538);
+		if (!is_writable($this->publicResourcePath)) throw new F3_FLOW3_Cache_Exception('The directory "' . $this->publicResourcePath . '" is not writable.', 1207124546);
 	}
 
 	/**
@@ -144,7 +144,7 @@ class F3_FLOW3_Resource_AssetTools {
 	 */
 	public function mirrorPackageResource(F3_FLOW3_Property_DataType_URI $URI) {
 		$source = FLOW3_PATH_PACKAGES . $URI->getHost() . '/Resources' . $URI->getPath();
-		$destination = $this->publicMirrorPath . $URI->getHost() . '/Resources' . $URI->getPath();
+		$destination = $this->publicResourcePath . $URI->getHost() . '/Resources' . $URI->getPath();
 
 		if(!file_exists($source)) {
 			throw new F3_FLOW3_Resource_Exception('The resource "' . $URI . '" could not be retrieved.', 1207053263);
@@ -168,7 +168,7 @@ class F3_FLOW3_Resource_AssetTools {
 		$metadata = array();
 
 		$metadata['URI'] = $URI;
-		$metadata['path'] = $this->publicMirrorPath . $URI->getHost() . '/Resources' . dirname($URI->getPath());
+		$metadata['path'] = $this->publicResourcePath . $URI->getHost() . '/Resources' . dirname($URI->getPath());
 		$metadata['name'] = basename($URI->getPath());
 		$metadata['mimeType'] = F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath());
 		$metadata['mediaType'] = F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath());
