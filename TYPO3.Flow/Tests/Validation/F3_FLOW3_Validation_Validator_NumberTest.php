@@ -21,8 +21,8 @@ declare(encoding = 'utf-8');
  */
 
 /**
- * Testcase for Validators
- * 
+ * Testcase for the number validator
+ *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
@@ -38,7 +38,7 @@ class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
 	public function numberValidatorReturnsTrueForASimpleInteger() {
 		$numberValidator = new F3_FLOW3_Validation_Validator_Number;
 		$validationErrors = new F3_FLOW3_Validation_Errors;
-		
+
 		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
 	}
 
@@ -49,7 +49,7 @@ class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
 	public function numberValidatorReturnsFalseForAString() {
 		$numberValidator = new F3_FLOW3_Validation_Validator_Number;
 		$validationErrors = new F3_FLOW3_Validation_Errors;
-		
+
 		$this->assertFalse($numberValidator->isValidProperty('not a number', $validationErrors));
 	}
 }

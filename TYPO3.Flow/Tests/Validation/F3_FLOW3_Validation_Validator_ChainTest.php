@@ -22,7 +22,7 @@ declare(encoding = 'utf-8');
 
 /**
  * Testcase for ValidatorChains
- * 
+ *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
@@ -38,9 +38,9 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	public function addingValidatorsToAValidatorChainWorks() {
 		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
 		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
-		
+
 		$index = $validatorChain->addValidator($validatorObject);
-		
+
 		$this->assertEquals($validatorObject, $validatorChain->getValidator($index));
 	}
 
@@ -51,23 +51,31 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	public function allValidatorsInTheChainAreInvocedCorrectly() {
 		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
 		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorObject->expects($this->once())->method('isValidProperty');
 		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
-		
+		$secondValidatorObject->expects($this->once())->method('isValidProperty');
+
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
-		
+
 		$validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors);
-		
-		$validatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
-		$secondValidatorObject->expects($this->once())->method('isValidProperty')->with($this->returnValue(TRUE));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function validatorChainOnlyReturnsTrueIfAllChainedValidatorsReturnTrue() {
-		$this->markTestIncomplete();
+	public function validatorChainReturnsTrueIfAllChainedValidatorsReturnTrue() {
+		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$secondValidatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+
+		$validatorChain->addValidator($validatorObject);
+		$validatorChain->addValidator($secondValidatorObject);
+
+		$this->assertTrue($validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors));
 	}
 }
 

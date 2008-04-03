@@ -22,7 +22,7 @@ declare(encoding = 'utf-8');
 
 /**
  * Validator to chain many validators
- * 
+ *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
@@ -35,32 +35,32 @@ class F3_FLOW3_Validation_Validator_Chain implements F3_FLOW3_Validation_Validat
 	 * @var array
 	 */
 	protected $validators = array();
-	
-	
+
+
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid.
-	 * Any errors will be stored in the given errors object. 
-	 * If at least one error occurred, the result is FALSE. 
-	 * 
-	 * @param  object $propertyValue: The value that should be validated
+	 * Any errors will be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
+	 *
+	 * @param object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
-		
+
 		$subjectIsValid = TRUE;
-		
+
 		foreach ($this->validators as $validator) {
 			$subjectIsValid &= $validator->isValidProperty($propertyValue, $errors);
 		}
-		
-		return $subjectIsValid;
+
+		return (boolean)$subjectIsValid;
 	}
-	
+
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
-	 * 
+	 *
 	 * @param F3_FLOW3_Validation_ValidatorInterface The validator that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -71,8 +71,8 @@ class F3_FLOW3_Validation_Validator_Chain implements F3_FLOW3_Validation_Validat
 	}
 
 	/**
-	 * Adds a new validator to the chain. Returns the index of the chain entry.
-	 * 
+	 * Returns the validator with the given index of the chain.
+	 *
 	 * @param  integer The index of the validator that should be returned
 	 * @return F3_FLOW3_Validation_ValidatorInterface The requested validator
 	 * @throws F3_FLOW3_Validation_Exception_InvalidChainIndex
