@@ -39,10 +39,10 @@ class F3_FLOW3_Cache_CacheManagerTest extends F3_Testing_BaseTestCase {
 		$manager = new F3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$cache2 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
 		$manager->registerCache($cache1);
@@ -61,10 +61,10 @@ class F3_FLOW3_Cache_CacheManagerTest extends F3_Testing_BaseTestCase {
 		$manager = new F3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 
-		$cache2 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 
 		$manager->registerCache($cache1);
@@ -80,7 +80,7 @@ class F3_FLOW3_Cache_CacheManagerTest extends F3_Testing_BaseTestCase {
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
 		$manager = new F3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
 		$manager->registerCache($cache);
@@ -99,7 +99,7 @@ class F3_FLOW3_Cache_CacheManagerTest extends F3_Testing_BaseTestCase {
 	public function hasCacheReturnsCorrectResult() {
 		$manager = new F3_FLOW3_Cache_Manager();
 		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
-		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$manager->registerCache($cache1);
 

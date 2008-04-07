@@ -107,5 +107,14 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	abstract public function has($entryIdentifier);
+	
+	/**
+	 * Removes the given cache entry from the cache.
+	 *
+	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @return boolean TRUE if such an entry exists, FALSE if not 
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	abstract public function remove($entryIdentifier);
 }
 ?>

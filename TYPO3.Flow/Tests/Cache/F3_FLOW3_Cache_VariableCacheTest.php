@@ -107,5 +107,18 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 		$this->assertTRUE($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 */
+	public function removeCallsBackend() {
+		$cacheIdentifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		
+		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
+		
+		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
+		$this->assertTRUE($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+	}
 }
 ?>
