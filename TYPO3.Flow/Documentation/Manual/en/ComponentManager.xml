@@ -99,7 +99,7 @@ $myObject = new F3_MyPackage_MyClassName;</programlisting>
           <example>
             <title>Sample scope annotation</title>
 
-            <programlisting language="ini">/**
+            <programlisting language="php">/**
  * This is my great class.
  *
  * @scope prototype
@@ -365,8 +365,8 @@ class F3_MyPackage_SomeClass {
         constructor argument provides a type definition (ie.
         <classname>F3_Log_LoggerInterface</classname> in the above example).
         Autowiring is activated by default (but can be switched off),
-        therefore all you have to do is to write your constructor method.
-        </para>
+        therefore all you have to do is to write your constructor
+        method.</para>
 
         <para>The Component Manager can also be configured manually to inject
         a certain component or component type. You'll have to do that either
@@ -374,10 +374,10 @@ class F3_MyPackage_SomeClass {
         configuration which differs from would be done automatically.</para>
 
         <example>
-          <title>Components.ini file for Constructor Injection</title>
+          <title>Components.php file for Constructor Injection</title>
 
-          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
-constructorArguments.1.reference = F3_Log_ASpecialLogger</programlisting>
+          <programlisting language="php">$c->F3_Authentication_LDAPAuthentication->
+constructorArguments[1]->reference = 'F3_Log_ASpecialLogger';</programlisting>
         </example>
 
         <para>The two lines above define that a component instance of
@@ -420,10 +420,13 @@ constructorArguments.1.reference = F3_Log_ASpecialLogger</programlisting>
         configuration for the above example looks like this:</para>
 
         <example>
-          <title>Components.ini file for Setter Injection</title>
+          <title>Components.php file for Setter Injection</title>
 
-          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
-properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
+          <programlisting language="php">&lt;?php
+
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;reference = 'F3_Log_LoggerInterface';
+
+?&gt;</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -455,7 +458,9 @@ properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
 
         <para>Note the new method name
         <methodname>injectSomeLogger</methodname> - for the above example no
-        further configuration is required (but possible).</para>
+        further configuration is required (but possible). Using
+        <methodname>inject*</methodname> methods is the preferred way for
+        setter injection in FLOW3.</para>
 
         <note>
           <para>If both, a <methodname>set*</methodname> and a
@@ -532,7 +537,7 @@ properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
       responsability to test for the availability of the desired object. There
       is a way though to declare a setter-injected dependency as required
       without the need to configure the dependency in a
-      <filename>Components.ini</filename> file. FLOW3 uses the @required
+      <filename>Components.php</filename> file. FLOW3 uses the @required
       annotation for this purpose:</para>
 
       <example>
@@ -606,16 +611,14 @@ properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
     <orderedlist>
       <listitem>
         <para>If it exists, the file
-        <filename><replaceable>PackageName</replaceable>/Configuration/Components.ini</filename>
-        will be parsed and the configuration applied.</para>
+        <filename><replaceable>PackageName</replaceable>/Configuration/Components.php</filename>
+        will be included. PHP code in this file must follow the general rules
+        for PHP configuration files in FLOW3.</para>
       </listitem>
 
       <listitem>
-        <para>If it exists, the file
-        <filename><replaceable>PackageName</replaceable>/Configuration/Components.php</filename>
-        will be included. PHP code found in that file will be executed and
-        allows for programatically modifying the components
-        configuration</para>
+        <para>Additional configuration defined in the global
+        <filename>Configuration/</filename> directory is applied.</para>
       </listitem>
 
       <listitem>
@@ -646,54 +649,19 @@ properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
       <title>Configuration sources</title>
 
       <para>As already mentioned, the configuration for each component is
-      compiled from different sources. The <filename>Components.ini</filename>
-      file is probably the most frequently used of them and is therefore used
-      in most of the examples. However, the names of the configuration options
-      and their possible values are identical to all configuration
-      sources.</para>
-
-      <section>
-        <title>Components.ini format</title>
-
-        <para>The <filename>Components.ini</filename> file basically follows
-        the .ini file format. Although this format is not standardized, it is
-        usually well known and widely used. The following example demonstrates
-        the syntax:</para>
-
-        <example>
-          <title>A sample Components.ini file</title>
-
-          <para><programlisting>; An example for a Components.ini file
-;
-# Comments may either start with a semicolon or
-# a hash sign.
-
-[<replaceable>Component Name</replaceable>]
-<replaceable>optionName</replaceable> = <replaceable>optionValue</replaceable>
-<replaceable>optionName</replaceable> = "<replaceable>option Value with non-alphanumeric chars</replaceable>"
-</programlisting></para>
-        </example>
-
-        <para><note>
-            <para>Internally the <filename>Components.ini</filename> files are
-            parsed with PHP's built-in <function>parse_ini_file</function>
-            function. Please refer to the <link
-            xl:href="http://www.php.net/manual/en/function.parse-ini-file.php">PHP
-            manual</link> for more details.</para>
-          </note></para>
-      </section>
+      compiled from different sources. The <filename>Components.php</filename>
+      file is the recommended format and is therefore used in most of the
+      examples. However, the names of the configuration options and their
+      possible values are identical to all configuration sources.</para>
 
       <section>
         <title>Components.php</title>
 
-        <para>As an alternative to the <filename>Components.ini</filename>
-        file, it is possible to configure components programatically. If a
-        file named <filename>Components.php</filename> exists in the
-        <filename>Configuration</filename> directory of a package, it will be
-        included during the configuration process (ie. before the first
-        component class is instantiated!). In general, the PHP file may
-        contain any code which prepares the environment or configuration for
-        the components of its package.</para>
+        <para>If a file named <filename>Components.php</filename> exists in
+        the <filename>Configuration</filename> directory of a package, it will
+        be included during the configuration process (ie. before the first
+        component class is instantiated!). The PHP file should stick to
+        FLOW3's general rules for PHP-based configuration.</para>
 
         <para>The following code adds the same configuration as in the
         Constructor Injection example which will be used in the next
@@ -705,32 +673,27 @@ properties.someLogger.reference = F3_Log_LoggerInterface</programlisting>
           <programlisting language="php">&lt;?php
 declare(ENCODING = 'utf-8');
 
-   // Alter the component configuration:
-$configuration = $parsedComponentConfigurations['F3_Authentication_LDAPAuthentication'];
+/*                                                                        *
+ * Component Configuration for the Authentication package                 *
+ * (this package doesn't really exist, and even if so, the configuration  *
+ * would probably be different)                                           *
+ *                                                                        */
 
-$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(1, 'F3_Log_LoggerInterface', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
-$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(2, 'F3_Log_LDAPServerInterface', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
-$configuration-&gt;setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(3, 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH');
+/**
+ * @package Authentication
+ * @version $Id: Components.php 123 2008-01-01 12:00:00Z robert $
+ */
 
-$parsedComponentConfigurations['F3_Authentication_LDAPAuthentication'] = $configuration;
-unset($configuration);
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3_Log_LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3_LDAP_LDAPServerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH';
 
 ?&gt;</programlisting>
         </example>
 
-        <note>
-          <para>During the configuration process the
-          <filename>Components.php</filename> is included by a class called
-          <classname>F3_FLOW3_Package_PHPFileComponentsConfigurationSource</classname>.
-          You should read the source code of that class (which is located in
-          the <filename>Packages/FLOW3/Package/</filename> directory) before
-          you create your own PHP-based configuration. It is a good habit to
-          unset any variables you might have created in the course of your
-          code.</para>
-        </note>
-
         <caution>
-          <para>Don't register autoloader methods in the
+          <para>Only use these files for configuration, for example don't
+          register autoloader methods in the
           <filename>Components.php</filename> as this code must be invoked in
           an earlier stage. The <filename>Package.php</filename> is the right
           place for registering autoloaders.</para>
@@ -744,12 +707,14 @@ unset($configuration);
         components are annotations. You write down the configuration directly
         where it takes effect: in the class file. However, this way of
         configuring components is not really flexible, as it is hard coded.
-        That's why currently only the <property>scope</property> option can be
-        set through annotations. It's up to you defining the scope in the
-        class directly or doing it in a Components.ini file – both have the
-        same effect. We recommend using annotations in this case, as the scope
-        usually is a design decision which is very unlikely to be
-        changed.</para>
+        That's why only those options can be set through annotations which are
+        part of the class design and won't change afterwards. Currently
+        <literal>scope</literal> is the only supported annotation.</para>
+
+        <para>It's up to you defining the scope in the class directly or doing
+        it in a Components.php file – both have the same effect. We recommend
+        using annotations in this case, as the scope usually is a design
+        decision which is very unlikely to be changed.</para>
 
         <example>
           <title>Sample scope annotation</title>
@@ -818,12 +783,11 @@ $greeter-&gt;sayHelloTo('Heike');
       to use a different class:</para>
 
       <example>
-        <title>Components.ini file for component replacement</title>
+        <title>Components.php file for component replacement</title>
 
-        <programlisting language="ini">[F3_MyPackage_Greeter]
-
-   # Change the name of the class which represents the component "F3_MyPackage_Greeter":
-className = F3_OtherPackage_GreeterWithCompliments</programlisting>
+        <programlisting language="php">   # Change the name of the class which represents the component "F3_MyPackage_Greeter":
+$c-&gt;F3_MyPackage_Greeter-&gt;className = 'F3_OtherPackage_GreeterWithCompliments';
+</programlisting>
       </example>
 
       <para>Now all components who ask for a traditional greeter will get the
@@ -875,10 +839,10 @@ $greeter-&gt;sayHelloTo('Heike');
       active:</para>
 
       <example>
-        <title>Components.ini file for component type definition</title>
+        <title>Components.php file for component type definition</title>
 
-        <para><programlisting>[F3_MyPackage_GreeterInterface]
-className = F3_OtherPackage_GreeterWithCompliments</programlisting></para>
+        <para><programlisting>$c-&gt;F3_MyPackage_GreeterInterface-&gt;className = 'F3_OtherPackage_GreeterWithCompliments';
+</programlisting></para>
       </example>
     </section>
 
@@ -892,17 +856,9 @@ className = F3_OtherPackage_GreeterWithCompliments</programlisting></para>
       to be the default implementation and the component's
       <option>className</option> option is set accordingly. Of course it is
       still possible that the class name is defined explicitly in the
-      <filename>Components.ini</filename> file or any other configuration
-      source. This is especially important if more than one implementing class
-      exists.</para>
-    </section>
-
-    <section>
-      <title>Configuration inheritance</title>
-
-      <remark>This section still has to be written ... See <link
-      xl:href="http://5-0.dev.typo3.org/trac/TYPO3/ticket/11">ticket
-      #11</link></remark>
+      package's <filename>Components.php</filename> file or any other
+      configuration source. This is especially important if more than one
+      implementing class exists.</para>
     </section>
 
     <section>
@@ -942,7 +898,7 @@ className = F3_OtherPackage_GreeterWithCompliments</programlisting></para>
         <title>Constructor Injection</title>
 
         <para>The following class and the related
-        <filename>Components.ini</filename> file demonstrate the syntax for
+        <filename>Components.php</filename> file demonstrate the syntax for
         the definition of Constructor Injection:</para>
 
         <example>
@@ -970,14 +926,12 @@ className = F3_OtherPackage_GreeterWithCompliments</programlisting></para>
         <example>
           <title>Sample configuration for Constructor Injection</title>
 
-          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
+          <programlisting language="php">  # Inject two component references as the first two arguments:
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3_Log_LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3_LDAP_LDAPServerInterface';
 
-  ; Inject two component references as the first two arguments:
-constructorArguments.1.reference = F3_Log_LoggerInterface
-constructorArguments.2.reference = F3_LDAP_LDAPServerInterface
-
-  ; Inject a straight value as the third argument:
-constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
+  # Inject a straight value as the third argument:
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH';</programlisting>
         </example>
 
         <note>
@@ -995,7 +949,7 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
         <title>Setter Injection</title>
 
         <para>The following class and the related
-        <filename>Components.ini</filename> file demonstrate the syntax for
+        <filename>Components.php</filename> file demonstrate the syntax for
         the definition of Setter Injection:</para>
 
         <example>
@@ -1012,40 +966,40 @@ constructorArguments.3 = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function setLogger(F3_Log_LoggerInterface $logger) {
+   /**
+    * @required
+    */
+   public function injectLogger(F3_Log_LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
-   public function setLDAPServer(F3_LDAP_LDAPServerInterface $LDAPServer) {
+   /**
+    * @required
+    */
+   public function injectLDAPServer(F3_LDAP_LDAPServerInterface $LDAPServer) {
       $this-&gt;LDAPServer = $LDAPServer;
    }
 
-   public function setProperty($propertyName, $value) {
-      if (array_search($propertyName, array('distinguishedName')) !== FALSE) {
-         $this-&gt;$propertyName = $value;
-      }
+   public function setDistinguishedName($distinguishedName) {
+      $this-&gt;distinguishedName = $distinguishedName;
    }
-
 }</programlisting></para>
         </example>
 
         <example>
           <title>Sample configuration for Setter Injection</title>
 
-          <programlisting language="ini">[F3_Authentication_LDAPAuthentication]
+          <programlisting language="php">  # Inject two component references:
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;logger-&gt;reference = 'F3_Log_LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;LDAPServer-&gt;reference = 'F3_LDAP_LDAPServerInterface';
 
-  ; Inject two component references:
-properties.logger.reference = F3_Log_LoggerInterface
-properties.LDAPServer.reference = F3_LDAP_LDAPServerInterface
-
-  ; Inject a straight value as the third argument:
-properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH"</programlisting>
+  # Inject a straight value as the third argument:
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;distinguishedName = 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH';</programlisting>
         </example>
 
         <para>As you can see, it is important that a setter method with the
-        same name as the property, preceded by "set" exists or the setting is
-        handled by a generic method called
-        <methodname>setProperty()</methodname>.</para>
+        same name as the property, preceded by "inject" or "set"
+        exists.</para>
       </section>
     </section>
   </section>
@@ -1129,16 +1083,12 @@ properties.distinguishedName = "cn=John Smith,ou=TYPO3 Development,o=TYPO3 Assoc
       scope:</para>
 
       <example>
-        <title>Sample Components.ini with different scopes</title>
+        <title>Sample Components.php with different scopes</title>
 
-        <para><programlisting language="ini">[F3_MyPackage_ASingletonClass]
-scope = singleton
-
-[F3_MyPackage_APrototypeClass]
-scope = prototype
-
-[F3_MyPackage_ASessionClass]
-scope = session</programlisting></para>
+        <para><programlisting language="php">$c-&gt;F3_MyPackage_ASingletonClass-&gt;scope = F3_FLOW3_Component_Configuration::SCOPE_SINGLETON;
+$c-&gt;F3_MyPackage_APrototypeClass-&gt;scope = F3_FLOW3_Component_Configuration::SCOPE_PROTOTYPE;
+$c-&gt;F3_MyPackage_ASessionClass-&gt;scope = F3_FLOW3_Component_Configuration::SCOPE_SESSION;
+</programlisting></para>
       </example>
 
       <note>
@@ -1248,10 +1198,9 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       can do so by setting an option in your component configuration:</para>
 
       <example>
-        <title>Turning off autowiring support in Components.ini</title>
+        <title>Turning off autowiring support in Components.php</title>
 
-        <programlisting>[F3_MyPackage_MyComponent]
-autoWiringMode = off</programlisting>
+        <programlisting>$c-&gt;F3_MyPackage_MyComponent-&gt;autoWiringMode = FALSE;</programlisting>
       </example>
     </section>
 
@@ -1346,26 +1295,11 @@ autoWiringMode = off</programlisting>
       configuration:</para>
 
       <example>
-        <title>Components.ini configuration of the initialization
+        <title>Components.php configuration of the initialization
         method</title>
 
-        <programlisting>[F3_MyPackage_MyClass]
-lifecycleInitializationMethod = myInitialize</programlisting>
+        <programlisting>$c-&gt;F3_MyPackage_MyClass-&gt;lifecycleInitializationMethod = 'myInitialize';</programlisting>
       </example>
-    </section>
-
-    <section>
-      <title>Instantiation process</title>
-
-      <para><figure>
-          <title>Component instantiation sequence</title>
-
-          <mediaobject>
-            <imageobject>
-              <imagedata fileref="ComponentManager_ComponentInstantiation.png"></imagedata>
-            </imageobject>
-          </mediaobject>
-        </figure></para>
     </section>
   </section>
 </section>

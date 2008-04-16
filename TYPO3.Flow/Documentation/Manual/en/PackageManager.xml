@@ -58,10 +58,12 @@
                 <listitem>
                   <para>All kinds of configuration which are delivered with
                   the package reside in this directory. The configuration
-                  files are immutable must not be changed by the user or
-                  administrator. The most prominent configuration file is the
-                  <filename>Components.ini</filename> file which may be used
-                  to configure the package's components.</para>
+                  files are immutable and must not be changed by the user or
+                  administrator. The most prominent configuration files are
+                  the <filename>Components.php</filename> file which may be
+                  used to configure the package's components and the
+                  <filename>Settings.php file which contains general
+                  user-level settings</filename>.</para>
                 </listitem>
               </varlistentry>
 
@@ -71,7 +73,7 @@
                 <listitem>
                   <para>Holds the package documentation. The english (DocBook)
                   manual for example must be located in a subdirectory called
-                  <filename>Manual/en_EN/</filename>. Please refer to the
+                  <filename>Manual/en/</filename>. Please refer to the
                   Documentor's Guide for more details about the directories
                   and files within this directory.</para>
                 </listitem>
@@ -115,11 +117,10 @@
                         <para>This directory holds images, PDF, Flash, CSS and
                         other files that will be delivered to the client
                         directly without further processing. The content of
-                        this directory will be copied into the content
-                        repository and propagated to the
-                        <filename>FileCache</filename> automatically by the
-                        resource manager. You're free to create subdirectories
-                        as they become necessary.</para>
+                        the <filename>Media/Public/</filename> directory will
+                        be automatically mirrored to the public file cache
+                        directory by the resource manager. You're free to
+                        create subdirectories as they become necessary.</para>
                       </listitem>
                     </varlistentry>
 
@@ -192,18 +193,18 @@
     <title>Package Keys</title>
 
     <para>Package keys are used to uniquely identify packages and provide them
-    with a namespace for different purposes. The save you from conflicts
+    with a namespace for different purposes. They save you from conflicts
     between packages which were provided by different parties.</para>
 
     <para>Any public package needs to have a unique packge key which you need
-    to register at <link ns6:href="http://typo3.org">typo3.org</link> prior to
-    use. But even if you develop a package for private use only, it's clever
-    to register a package key for it.</para>
+    to register at <link ns6:href="http://typo3.org">forge.typo3.org</link>
+    prior to use. But even if you develop a package for private use only, it's
+    clever to register a package key for it.</para>
 
     <note>
       <para>At the time of this writing the package key registration has not
       yet been implemented and you therefore can't register package keys. Just
-      get in touch with the FLOW3 core team in case you need one.</para>
+      get in touch with the TYPO3 Forge team in case you need one.</para>
     </note>
   </section>
 
@@ -214,8 +215,8 @@
     have not been implemented. The current behaviour is that all directories
     which are found below the <filename>Packages</filename> folder are assumed
     to be packages and are active by default. Just make sure that you created
-    a <filename>Package.xml</filename> file in the
-    <filename>Meta</filename> directory of your package.</para>
+    a <filename>Package.xml</filename> file in the <filename>Meta</filename>
+    directory of your package.</para>
   </section>
 
   <section>
@@ -237,8 +238,8 @@
     <title>Creating a New Package</title>
 
     <para>For the time being just create the package folder and subdirectories
-    manually and copy &amp; adapt a <filename>Package.xml</filename> file
-    from one of the other packages. Apart from that no further steps are
+    manually and copy &amp; adapt a <filename>Package.xml</filename> file from
+    one of the other packages. Apart from that no further steps are
     necessary.</para>
   </section>
 
@@ -248,28 +249,82 @@
     <para>All packages need to provide some meta information to the package
     manager. This data is stored in a file called
     <filename>Package.xml</filename> which resides in the
-    <filename>Meta</filename> directory of a package. We haven't agreed on a
-    file schema for this file, so, for the time being, just make sure that the
-    file is there and at least contains the correct package key, title and
-    probably a description. Dependencies are not checked yet.</para>
+    <filename>Meta</filename> directory of a package. The format of this file
+    follows a RelaxNG schema which is available at <link
+    ns6:href="http://typo3.org/ns/2008/flow3/package/Package.rng">http://typo3.org/ns/2008/flow3/package/Package.rng</link>.</para>
 
-    <para>Here is an example of a <filename>Package.xml</filename>
+    <para>Here is an example of a valid <filename>Package.xml</filename>
     file:</para>
 
     <example>
-      <title>Package.xml (preliminary schema)</title>
+      <title>Package.xml</title>
 
       <programlisting>
-&lt;packageInfo&gt;
-   &lt;packageKey&gt;FLOW3&lt;/packageKey&gt;
+&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
+&lt;package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0"&gt;
+   &lt;key&gt;TestPackage&lt;/key&gt;
+   &lt;title&gt;Test Package&lt;/title&gt;
+   &lt;description&gt;The test package to demonstrate the features of Package.xml&lt;/description&gt;
    &lt;version&gt;0.0.1&lt;/version&gt;
-   &lt;title&gt;FLOW3 Framework&lt;/title&gt;
-   &lt;description&gt;The FLOW3 Framework is really powerful.&lt;/description&gt;
-   &lt;category&gt;system&lt;/category&gt;
-   &lt;authorName&gt;Robert Lemke&lt;/authorName&gt;
-     &lt;authorEmail&gt;robert@typo3.org&lt;/authorEmail&gt;
-   &lt;authorCompany/&gt;
-&lt;/packageInfo&gt;
+   &lt;state&gt;Alpha&lt;/state&gt;
+   &lt;categories&gt;
+      &lt;category&gt;System&lt;/category&gt;
+      &lt;category&gt;Testing&lt;/category&gt;
+   &lt;/categories&gt;
+   &lt;parties&gt;
+      &lt;person role="LeadDeveloper"&gt;
+         &lt;name&gt;David Brühlmeier&lt;/name&gt;
+         &lt;email&gt;typo3@bruehlmeier.com&lt;/email&gt;
+      &lt;/person&gt;
+      &lt;person role="Maintainer"&gt;
+         &lt;name&gt;John Smith&lt;/name&gt;
+         &lt;email&gt;john@smith.com&lt;/email&gt;
+         &lt;organisation&gt;Smith Ltd.&lt;/organisation&gt;
+         &lt;repositoryUserName&gt;jsmith&lt;/repositoryUserName&gt;
+      &lt;/person&gt;
+      &lt;organisation role="Sponsor"&gt;
+         &lt;name&gt;John Doe Co.&lt;/name&gt;
+         &lt;email&gt;info@johndoe.com&lt;/email&gt;
+         &lt;website&gt;www.johndoe.com&lt;/website&gt;
+      &lt;/organisation&gt;
+   &lt;/parties&gt;
+   &lt;constraints&gt;
+      &lt;depends&gt;
+         &lt;package minVersion="1.0.0" maxVersion="1.9.9"&gt;FLOW3&lt;/package&gt;
+         &lt;system type="PHP" minVersion="5.1.0" /&gt;
+         &lt;system type="PHPExtension"&gt;xml&lt;/system&gt;
+         &lt;system type="PHPExtension"&gt;pgsql&lt;/system&gt;
+         &lt;system type="PEAR" minVersion="1.5.1"&gt;XML_RPC&lt;/system&gt;
+      &lt;/depends&gt;
+      &lt;conflicts&gt;
+         &lt;system type="OperatingSystem"&gt;Windows_NT&lt;/system&gt;
+      &lt;/conflicts&gt;
+      &lt;suggests&gt;
+         &lt;system type="Memory"&gt;16M&lt;/system&gt;
+      &lt;/suggests&gt;
+   &lt;/constraints&gt;
+
+   &lt;!-- The following elements are only used and generated by the repository --&gt;
+   &lt;repository&gt;
+      &lt;downloads&gt;
+         &lt;total&gt;3929&lt;/total&gt;
+         &lt;thisVersion&gt;444&lt;/thisVersion&gt;
+      &lt;/downloads&gt;
+      &lt;uploads&gt;
+         &lt;upload&gt;
+            &lt;comment&gt;Just a comment...&lt;/comment&gt;
+            &lt;repositoryUserName&gt;jsmith&lt;/repositoryUserName&gt;
+            &lt;timestamp&gt;2008-04-22T17:23:09Z&lt;/timestamp&gt;
+         &lt;/upload&gt;
+         &lt;upload&gt;
+            &lt;comment/&gt;
+            &lt;repositoryUserName&gt;jsmith&lt;/repositoryUserName&gt;
+            &lt;timestamp&gt;2008-04-19T03:54:13Z&lt;/timestamp&gt;
+         &lt;/upload&gt;
+      &lt;/uploads&gt;
+   &lt;/repository&gt;
+&lt;/package&gt;
+
       </programlisting>
     </example>
   </section>

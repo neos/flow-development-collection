@@ -13,7 +13,20 @@
   <section>
     <title>Application Context</title>
 
-    <para></para>
+    <para>The FLOW3 Framework can be started in different application
+    contexts. An application context basically is a set of configuration which
+    has been defined for a certain context. By default, FLOW3 provides
+    configuration for the <literal>Production</literal>,
+    <literal>Development</literal>, <literal>Testing</literal>, and
+    <literal>Staging</literal> context. More contexts may be defined by just
+    adding configuration for it accordingly (refer to the Configuration
+    section to learn more about configuration).</para>
+
+    <para>The FLOW3 boot strap is always instantiated in a certain application
+    context. By default (when calling the <filename>index.php</filename> file)
+    the context is <literal>Production</literal>. In the standard distribution
+    a file <filename>index_dev.php</filename> exists which runs FLOW3 in the
+    <literal>Development</literal> context.</para>
   </section>
 
   <section>
