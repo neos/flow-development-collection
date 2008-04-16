@@ -15,23 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * 
- * 
- * @package		FLOW3
- * @subpackage	Property
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- */
-class F3_FLOW3_Property_Editor_Registry {
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id:F3_FLOW3_Validation_Exception_InvalidSubject.php 467 2008-02-06 19:34:56Z robert $
+ /*
 
-	public function registerCustomEditor($componentType, F3_FLOW3_Property_EditorInterface $propertyEditor) {
-		
-	}
-	
-	public function findCustomEditor($componentType) {
-		
-	}
+ /** An "Invalid Chain Index" Exception for a validator chain
+ *
+ * @package FLOW3
+ * @subpackage Validation
+ * @version $Id:F3_FLOW3_Validation_Exception_InvalidSubject.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class F3_FLOW3_Validation_Exception_InvalidChainIndex extends F3_FLOW3_Validation_Exception {
+
 }
 
 ?>

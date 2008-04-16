@@ -58,7 +58,7 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors);
+		$validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors());
 	}
 
 	/**
@@ -75,7 +75,58 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors));
+		$this->assertTrue($validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors()));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function removingAValidatorOfTheValidatorChainWorks() {
+		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorChain->addValidator($validatorObject);
+		$index = $validatorChain->addValidator($secondValidatorObject);
+
+		$validatorChain->removeValidator($index);
+
+		try {
+			$validatorChain->getValidator($index);
+			$this->fail('The validator chain did not remove the validator with the given index.');
+		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function accessingANotExistingValidatorIndexThrowsException() {
+		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+
+		try {
+			$validatorChain->getValidator(100);
+			$this->fail('The validator chain did throw an error on accessing an invalid validator index.');
+		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function removingANotExistingValidatorIndexThrowsException() {
+		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+
+		try {
+			$validatorChain->removeValidator(100);
+			$this->fail('The validator chain did throw an error on removing an invalid validator index.');
+		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+
+		}
 	}
 }
 

@@ -17,40 +17,51 @@ declare(encoding = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_NotEmptyTest.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
- * Testcase for the number validator
+ * Testcase for the not empty validator
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_NotEmptyTest.php 688 2008-04-03 09:35:36Z andi $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Validation_Validator_NotEmptyTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberValidatorReturnsTrueForASimpleInteger() {
-		$numberValidator = new F3_FLOW3_Validation_Validator_Number();
+	public function notEmptyValidatorReturnsTrueForASimpleString() {
+		$notEmptyValidator = new F3_FLOW3_Validation_Validator_NotEmpty();
 		$validationErrors = new F3_FLOW3_Validation_Errors();
 
-		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
+		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberValidatorReturnsFalseForAString() {
-		$numberValidator = new F3_FLOW3_Validation_Validator_Number();
+	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
+		$notEmptyValidator = new F3_FLOW3_Validation_Validator_NotEmpty();
 		$validationErrors = new F3_FLOW3_Validation_Errors();
 
-		$this->assertFalse($numberValidator->isValidProperty('not a number', $validationErrors));
+		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function notEmptyValidatorReturnsFalseForANullValue() {
+		$notEmptyValidator = new F3_FLOW3_Validation_Validator_NotEmpty();
+		$validationErrors = new F3_FLOW3_Validation_Errors();
+
+		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
 	}
 }
 

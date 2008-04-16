@@ -16,14 +16,14 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Validation
  * @version $Id:F3_FLOW3_Validation_Exception_InvalidSubject.php 467 2008-02-06 19:34:56Z robert $
  /*
 
- *  * An "Invalid Subject" Exception
- * 
+ /** An "Invalid Subject" Exception
+ *
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Validation
  * @version $Id:F3_FLOW3_Validation_Exception_InvalidSubject.php 467 2008-02-06 19:34:56Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2

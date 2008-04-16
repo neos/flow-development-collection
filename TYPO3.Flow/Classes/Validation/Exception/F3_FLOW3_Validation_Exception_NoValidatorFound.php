@@ -17,27 +17,19 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
- */
+ * @version $Id:F3_FLOW3_Validation_Exception_NoValidatorFound.php 467 2008-02-06 19:34:56Z robert $
+ /*
 
-/**
- * Contract for a filter
+ /** A "NoValidatorFound" Exception
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id:F3_FLOW3_Validation_Exception_NoValidatorFound.php 467 2008-02-06 19:34:56Z robert $
  * @copyright Copyright belongs to the respective authors
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Validation_FilterInterface {
+class F3_FLOW3_Validation_Exception_NoValidatorFound extends F3_FLOW3_Validation_Exception {
 
-	/**
-	 * Returns the filtered subject.
-	 *
-	 * @param object The subject that should be filtered
-	 */
-	public function filter($subject, F3_FLOW3_Validation_Errors &$errors);
 }
 
 ?>

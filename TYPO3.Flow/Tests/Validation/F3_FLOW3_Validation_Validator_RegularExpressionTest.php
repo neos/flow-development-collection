@@ -1,5 +1,5 @@
 <?php
-declare(ENCODING = 'utf-8');
+declare(encoding = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,28 +16,32 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id: F3_FLOW3_Validation_Validator_RegularExpressionTest.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
- * Contract for a filter
+ * Testcase for the regular expression validator
  *
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id: F3_FLOW3_Validation_Validator_RegularExpressionTest.php 688 2008-04-03 09:35:36Z andi $
  * @copyright Copyright belongs to the respective authors
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Validation_FilterInterface {
+class F3_FLOW3_Validation_Validator_RegularExpressionTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Returns the filtered subject.
-	 *
-	 * @param object The subject that should be filtered
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function filter($subject, F3_FLOW3_Validation_Errors &$errors);
+	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
+		$regularExpressionValidator = new F3_FLOW3_Validation_Validator_RegularExpression('/^simple[0-9]expression$/');
+		$validationErrors = new F3_FLOW3_Validation_Errors();
+
+		$this->assertTrue($regularExpressionValidator->isValidProperty('simple1expression', $validationErrors));
+		$this->assertFalse($regularExpressionValidator->isValidProperty('simple1expressions', $validationErrors));
+	}
 }
 
 ?>

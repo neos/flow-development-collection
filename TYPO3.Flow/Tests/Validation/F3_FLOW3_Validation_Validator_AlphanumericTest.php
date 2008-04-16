@@ -1,5 +1,5 @@
 <?php
-declare(ENCODING = 'utf-8');
+declare(encoding = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,59 +16,41 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Error
+ * @subpackage Tests
+ * @version $Id: F3_FLOW3_Validation_Validator_AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
- * An object representation of a generic error. Subclass this to create
- * more specific errors if necessary.
+ * Testcase for the alphanumeric validator
  *
  * @package FLOW3
- * @subpackage Error
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id: F3_FLOW3_Validation_Validator_AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Error_Error {
+class F3_FLOW3_Validation_Validator_AlphanumericTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected $message = 'Unknown error';
+	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
+		$alphanumericValidator = new F3_FLOW3_Validation_Validator_Alphanumeric();
+		$validationErrors = new F3_FLOW3_Validation_Errors();
 
-	/**
-	 * @var string The error code
-	 */
-	protected $code;
-
-	/**
-	 * Constructs this error
-	 *
-	 * @param string $message: An english error message which is used if no other error message can be resolved
-	 * @param integer $code: A unique error code
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($message, $code) {
-		$this->message = $message;
-		$this->code = 0;
+		$this->assertTrue($alphanumericValidator->isValidProperty('12ssDF34daweidf', $validationErrors));
 	}
 
 	/**
-	 * Returns the error message
-	 * @return string The error message
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getErrorMessage() {
-		return $this->message;
-	}
+	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
+		$alphanumericValidator = new F3_FLOW3_Validation_Validator_Alphanumeric();
+		$validationErrors = new F3_FLOW3_Validation_Errors();
 
-	/**
-	 * Returns the error code
-	 * @return string The error code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getErrorCode() {
-		return $this->code;
+		$this->assertFalse($alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors));
 	}
 }
 

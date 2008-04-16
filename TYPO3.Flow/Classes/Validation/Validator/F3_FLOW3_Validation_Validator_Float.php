@@ -1,5 +1,5 @@
 <?php
-declare(ENCODING = 'utf-8');
+declare(encoding = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -14,30 +14,37 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-/**
+/*
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_Float.php 681 2008-04-02 14:00:27Z andi $
  */
 
 /**
- * Contract for a filter
+ * Validator for floats
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_Float.php 681 2008-04-02 14:00:27Z andi $
  * @copyright Copyright belongs to the respective authors
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Validation_FilterInterface {
+class F3_FLOW3_Validation_Validator_Float implements F3_FLOW3_Validation_ValidatorInterface {
 
 	/**
-	 * Returns the filtered subject.
+	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid float.
+	 * Any errors will be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param object The subject that should be filtered
+	 * @param  object $propertyValue: The value that should be validated
+	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
+	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function filter($subject, F3_FLOW3_Validation_Errors &$errors);
+	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
+
+		return is_float($propertyValue);
+	}
 }
 
 ?>

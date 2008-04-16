@@ -17,7 +17,7 @@ declare(encoding = 'utf-8');
 /*
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_NumberRange.php 681 2008-04-02 14:00:27Z andi $
  */
 
 /**
@@ -25,14 +25,40 @@ declare(encoding = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: F3_FLOW3_Validation_Validator_NumberRange.php 681 2008-04-02 14:00:27Z andi $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_Number implements F3_FLOW3_Validation_ValidatorInterface {
+class F3_FLOW3_Validation_Validator_NumberRange implements F3_FLOW3_Validation_ValidatorInterface {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid number.
+	 * @var number The start value of the range
+	 */
+	protected $startRange;
+
+	/**
+	 * @var number The end value of the range
+	 */
+	protected $endRange;
+
+	/**
+	 * constructor
+	 * @param number The start of the range
+	 * @param number The end of the range
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct($startRange, $endRange) {
+		if ($startRange > $endRange) {
+			$this->endRange = $startRange;
+			$this->startRange = $endRange;
+		} else {
+			$this->endRange = $endRange;
+			$this->startRange = $startRange;
+		}
+	}
+
+	/**
+	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid number in the given range.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -43,7 +69,7 @@ class F3_FLOW3_Validation_Validator_Number implements F3_FLOW3_Validation_Valida
 	 */
 	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
 
-		return is_numeric($propertyValue);
+		return is_numeric($propertyValue) && $propertyValue >= $this->startRange && $propertyValue <= $this->endRange;
 	}
 }
 
