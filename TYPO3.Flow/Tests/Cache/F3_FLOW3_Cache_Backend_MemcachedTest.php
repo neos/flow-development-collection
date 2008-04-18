@@ -132,7 +132,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$inCache = $backend->has($identifier);
 		$this->assertTrue($inCache,'Memcache failed to set and check entry');
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -184,7 +184,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
 	}
-	
+
 	/**
 	 * @test
 	 */
@@ -195,26 +195,26 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
 	}
-	
+
 	protected function getMockCache() {
-		return $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has'), array(), '', FALSE);
+		return $this->getMock('F3_FLOW3_Cache_AbstractCache', array(), array(), '', FALSE);
 	}
 
 	/**
 	 * @return F3_FLOW3_Cache_Backend_Memcached
 	 */
 	protected function setUpBackend() {
-		$cache = $this->getMockCache(); 
+		$cache = $this->getMockCache();
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		return $backend;
 	}
-	
+
 	/**
  	* Enter description here...
- 	* @author 
+ 	* @author
  	*/
 	public function tearDown() {
 		if (is_object($this->backend)) {
