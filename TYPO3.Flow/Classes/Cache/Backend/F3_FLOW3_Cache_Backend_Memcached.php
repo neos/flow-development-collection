@@ -17,40 +17,43 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * 
+ *  A caching backend which stores cache entries by using Memcached
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:$
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype 
+ * @scope prototype
  */
 class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
+
 	/**
 	 * @var Memcache
 	 */
 	protected $memcache;
+
 	/**
 	 * @var array
 	 */
 	protected $servers;
+
 	/**
-	 * whether the memcache uses compression or not (requires zlib)
-	 * 
-	 * @var boolean
+	 * @var boolean whether the memcache uses compression or not (requires zlib)
 	 */
 	protected $useCompressed;
-	
+
 	/**
 	 * setter for servers property
 	 * should be an array of entries like host:port
 	 *
 	 * @param array $serverConf
+	 * @return void
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setServers(array $serverConf) {
 		$this->servers = $serverConf;
@@ -58,16 +61,19 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * getter for servers property
 	 *
-	 * @return unknown
+	 * @return array
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function getServers() {
 		return $this->servers;
 	}
 
 	/**
-	 * setter for useCompressed
+	 * Setter for useCompressed
 	 *
 	 * @param boolean $enableCompression
+	 * @return void
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setCompression($enableCompression) {
 		$this->useCompressed = $enableCompression;
@@ -75,13 +81,13 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Getter for useCompressed
 	 *
-	 * @return boolean
+	 * @return boolean If compression can / should be used or not
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function getCompression() {
 		return $this->useCompressed;
 	}
-	
-	
+
 	/**
 	 * Saves data in the cache.
 	 *
@@ -99,12 +105,12 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
-		$expiration = $lifetime?$lifetime:$this->defaultLifetime;
+		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
-			$success = $this->getMemcache()->set($entryIdentifier,$data,$this->useCompressed,$expiration);
+			$success = $this->getMemcache()->set($entryIdentifier, $data, $this->useCompressed, $expiration);
 			if(!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server',1207165277);
 		} catch(F3_FLOW3_Error_Exception $exception) {
-			throw new F3_FLOW3_Cache_Exception($exception->getMessage(),1207208100);
+			throw new F3_FLOW3_Cache_Exception($exception->getMessage(), 1207208100);
 		}
 	}
 
@@ -114,9 +120,8 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Christian Jul Jensen <julle@typo3.org>
-	 **/
+	 */
 	public function load($entryIdentifier){
-		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
 		return $this->getMemcache()->get($entryIdentifier);
 	}
 
@@ -125,10 +130,9 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $entryIdentifier: An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Christian Jul Jensen <julle@typo3.org> 
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function has($entryIdentifier){
-		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
 		return (boolean) $this->getMemcache()->get($entryIdentifier);
 	}
 
@@ -139,19 +143,16 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $entryIdentifier: Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
-	 * 
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function remove($entryIdentifier){
-		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207165898);
 		return $this->getMemcache()->delete($entryIdentifier);
 	}
-	
+
 	/**
 	 * Creates and/or returns the memcache instance
 	 *
 	 * @return Memcache
-	 * 
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function getMemcache() {
@@ -161,12 +162,11 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		}
 		return $this->memcache;
 	}
-	
+
 	/**
-	 * Setting up the Memcache, just adding servers for now. 
+	 * Setting up the Memcache, just adding servers for now.
 	 *
 	 * @param Memcache $memcache
-	 * 
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function setupMemcache(Memcache $memcache) {
