@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A basic Template View 
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope		prototype
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
+ * A basic Template View
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 
@@ -30,7 +36,7 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 	 * @var string
 	 */
 	protected $templateResource;
-	
+
 	/**
 	 * @var array Marker identifiers and their replacement content
 	 */
@@ -40,29 +46,29 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 	 * @var array Parts
 	 */
 	protected $parts = array();
-	
+
 	/**
 	 * Sets the text resource which contains the markers this template view
-	 * is going to fill in. 
-	 * 
+	 * is going to fill in.
+	 *
 	 * As long as we don't have a Resource Framework, this method just accepts
 	 * a string.
 	 *
-	 * @param  string					$template: The template
+	 * @param string $template The template
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Adapt as soon as we have a Resource Management
+	 * @todo Adapt as soon as we have a Resource Management
 	 */
 	public function setTemplateResource($templateResource) {
-		$this->templateResource = $templateResource;	
+		$this->templateResource = $templateResource;
 	}
-	
+
 	/**
 	 * Sets the content of a marker. All markers with this name will be
 	 * replaced by the content when this template is rendered.
 	 *
-	 * @param  string									$marker: The marker which will be replaced by $content
-	 * @param  string									$content: The fill-in for the specified marker
+	 * @param string $marker The marker which will be replaced by $content
+	 * @param string $content The fill-in for the specified marker
 	 * @return void
 	 * @throws F3_FLOW3_MVC_Exception_InvalidMarker if the marker is not a valid string
 	 * @author Robert Lemke <robert@typo3.org>
@@ -71,14 +77,14 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 		if (!is_string($marker)) throw new F3_FLOW3_MVC_Exception_InvalidMarker('A template marker must be a valid string, ' . gettype($marker) . ' given.', 1187334295);
 		$this->markers[$marker] = $content;
 	}
-	
+
 	/**
 	 * Sets the content of a part. All parts which are enclosed by markers
 	 * with this name will be replaced by the content when this template
 	 * is rendered.
 	 *
-	 * @param  string									$partMarker: Marker which identifies the part
-	 * @param  string									$content: The fill-in for the specified part
+	 * @param string $partMarker Marker which identifies the part
+	 * @param string $content The fill-in for the specified part
 	 * @return void
 	 * @throws F3_FLOW3_MVC_Exception_InvalidPart if the part marker is not a valid string
 	 * @author Robert Lemke <robert@typo3.org>
@@ -87,11 +93,11 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 		if (!is_string($partMarker)) throw new F3_FLOW3_MVC_Exception_InvalidPart('A template part marker must be a valid string, ' . gettype($partMarker) . ' given.', 1187334296);
 		$this->parts[$partMarker] = $content;
 	}
-	
+
 	/**
 	 * Renders this template view.
 	 *
-	 * @return string									The rendered template view
+	 * @return string The rendered template view
 	 * @throws F3_FLOW3_MVC_Exception_InvalidTemplateResource if no template resource has been defined yet
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -107,18 +113,17 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 		}
 		return $output;
 	}
-	
+
 	/**
 	 * Substitutes a subpart in $content with the content of $subpartContent.
 	 *
-	 * @param	string		Content with subpart wrapped in fx. "###CONTENT_PART###" inside.
-	 * @param	string		Marker string, eg. "###CONTENT_PART###"
-	 * @param	array		
-	 * @return	string		Processed input content
+	 * @param string Content with subpart wrapped in fx. "###CONTENT_PART###" inside.
+	 * @param string Marker string, eg. "###CONTENT_PART###"
+	 * @param array
+	 * @return string Processed input content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function substitutePart($subject, $marker, $replacement) {
-		
 	}
 }
 ?>

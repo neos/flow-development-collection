@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "Invalid Marker" Exception 
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
+ * An "Invalid Marker" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Exception_InvalidMarker extends F3_FLOW3_MVC_Exception {
 

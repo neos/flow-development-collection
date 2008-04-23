@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "Invalid Part" Exception 
- * 
- * @package		Framework
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
+ * An "Invalid Part" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Exception_InvalidPart extends F3_FLOW3_MVC_Exception {
 

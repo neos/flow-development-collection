@@ -15,14 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "invalid argument type" exception 
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
  */
+
+/**
+ * An "Invalid Argument Type" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+
 class F3_FLOW3_MVC_Exception_InvalidArgumentType extends F3_FLOW3_MVC_Exception {
 
 }

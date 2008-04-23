@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Dispatcher.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * Dispatches requests to the controller which was specified by the request and
  * returns the response the controller generated.
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_Dispatcher.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_Dispatcher.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Dispatcher {
 
@@ -43,8 +49,8 @@ class F3_FLOW3_MVC_Dispatcher {
 	/**
 	 * Dispatches a request to a controller
 	 *
-	 * @param  F3_FLOW3_MVC_RequestInterface $request: The request to dispatch
-	 * @param  F3_FLOW3_MVC_ResponseInterface $response: The response, to be modified by the controller
+	 * @param F3_FLOW3_MVC_RequestInterface $request The request to dispatch
+	 * @param F3_FLOW3_MVC_ResponseInterface $response The response, to be modified by the controller
 	 * @return void
 	 * @throws F3_FLOW3_MVC_Exception_NoSuchController, F3_FLOW3_MVC_Exception_InvalidController
 	 * @author Robert Lemke <robert@typo3.org>

@@ -15,16 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "Unsupported Request Type" exception.
- * 
- * Usually this kind of exception is thrown by Controllers which don't support the
- * current request type they were supposed to handle.
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
+ * An "Unsupported Request Type" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Exception_UnsupportedRequestType extends F3_FLOW3_MVC_Exception {
 

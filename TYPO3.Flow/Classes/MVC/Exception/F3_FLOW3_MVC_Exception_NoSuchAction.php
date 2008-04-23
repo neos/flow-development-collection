@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A "No such action" Exception
- *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id$
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id$
+ */
+
+/**
+ * A "No Such Action" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Exception_NoSuchAction extends F3_FLOW3_MVC_Exception {
 }

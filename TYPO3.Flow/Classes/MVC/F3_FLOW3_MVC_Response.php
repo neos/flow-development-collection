@@ -12,17 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Response.php 467 2008-02-06 19:34:56Z robert $
+ */
 
 /**
  * A generic and very basic response implementation
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:F3_FLOW3_MVC_Response.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Response.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
 class F3_FLOW3_MVC_Response {
@@ -31,33 +36,33 @@ class F3_FLOW3_MVC_Response {
 	 * @var string The response content
 	 */
 	protected $content = NULL;
-	
+
 	/**
 	 * Overrides and sets the content of the response
 	 *
-	 * @param  string										$content: The response content
+	 * @param string $content The response content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContent($content) {
 		$this->content = $content;
 	}
-	
+
 	/**
 	 * Appends content to the already existing content.
-	 * 
-	 * @param  string										$content: More response content
+	 *
+	 * @param string $content More response content
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function appendContent($content) {
 		$this->content .= $content;
 	}
-	
+
 	/**
 	 * Returns the response content without sending it.
 	 *
-	 * @return string										The response content
+	 * @return string The response content
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContent() {
@@ -66,7 +71,7 @@ class F3_FLOW3_MVC_Response {
 
 	/**
 	 * Sends the response
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -76,5 +81,4 @@ class F3_FLOW3_MVC_Response {
 		}
 	}
 }
-
 ?>

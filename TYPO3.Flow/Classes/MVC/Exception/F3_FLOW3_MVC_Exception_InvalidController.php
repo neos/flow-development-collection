@@ -15,14 +15,21 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "Invalid controller" Exception
- *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id$
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id$
  */
+
+/**
+ * An "Invalid Controller" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+
 class F3_FLOW3_MVC_Exception_InvalidController extends F3_FLOW3_MVC_Exception {
 }
 ?>

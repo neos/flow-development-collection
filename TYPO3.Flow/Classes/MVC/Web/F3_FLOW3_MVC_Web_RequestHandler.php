@@ -54,10 +54,10 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	/**
 	 * Constructs the Web Request Handler
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
-	 * @param  F3_FLOW3_Utility_Environment $utilityEnvironment: A reference to the environment
-	 * @param  F3_FLOW3_MVC_Dispatcher $dispatcher: The request dispatcher
-	 * @param  F3_FLOW3_MVC_RequestProcessorChainManager: A reference to the request processor chain manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
+	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The request dispatcher
+	 * @param F3_FLOW3_MVC_RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Controller_RequestHandlingController.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * An abstract base class for Controllers which can handle requests
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_Controller_RequestHandlingController.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_Controller_RequestHandlingController.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Controller_Abstract {
 
@@ -48,8 +54,8 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
-	 * @param  F3_FLOW3_Package_ManagerInterface $packageManager: A reference to the Package Manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
@@ -74,8 +80,8 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	/**
 	 * Processes a general request. The result can be returned by altering the given response.
 	 *
-	 * @param  F3_FLOW3_MVC_Request $request: The request object
-	 * @param  F3_FLOW3_MVC_Response $response The response, modified by this handler
+	 * @param F3_FLOW3_MVC_Request $request The request object
+	 * @param F3_FLOW3_MVC_Response $response The response, modified by this handler
 	 * @return void
 	 * @throws F3_FLOW3_MVC_Exception_UnsupportedRequestType if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
@@ -97,7 +103,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * replace / modify the supporteRequestTypes property or override this
 	 * method.
 	 *
-	 * @param  F3_FLOW3_MVC_Request $request: The current request
+	 * @param F3_FLOW3_MVC_Request $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -121,5 +127,4 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 		$argumentsMapper->map(new ArrayObject($this->request->getArguments()));
 	}
 }
-
 ?>

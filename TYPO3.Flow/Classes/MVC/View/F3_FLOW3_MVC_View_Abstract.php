@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_View_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * An abstract View
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_View_Abstract.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_View_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class F3_FLOW3_MVC_View_Abstract {
 
@@ -43,8 +49,8 @@ abstract class F3_FLOW3_MVC_View_Abstract {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
-	 * @param F3_FLOW3_Package_ManagerInterface $packageManager: A reference to the Package Manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @param F3_FLOW3_Resource_Manager $resourceManager A reference to the Resource Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

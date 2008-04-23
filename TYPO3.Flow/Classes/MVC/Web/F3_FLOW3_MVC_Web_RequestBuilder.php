@@ -15,15 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Web_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * Builds a web request object from the raw HTTP information
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_Web_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
- * @author     Robert Lemke <robert@typo3.org>
+ * @version $Id:F3_FLOW3_MVC_Web_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope      prototype
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_MVC_Web_RequestBuilder {
 
@@ -45,9 +50,9 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	/**
 	 * Constructs the Web Request Builder
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
-	 * @param  F3_FLOW3_Utility_Environment $utilityEnvironment: A reference to the environment
-	 * @param  F3_FLOW3_MVC_Web_RouterInterface $router: A router which routes the web request to a controller and action
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
+	 * @param F3_FLOW3_MVC_Web_RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

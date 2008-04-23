@@ -12,20 +12,24 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_CLI_Request.php 467 2008-02-06 19:34:56Z robert $
+ */
 
 /**
  * Represents a CLI request.
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:F3_FLOW3_MVC_CLI_Request.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope		prototype
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_CLI_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_MVC_CLI_Request extends F3_FLOW3_MVC_Request {
-	
 }
-
 ?>

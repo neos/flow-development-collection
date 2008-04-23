@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * The default web router
  *
- * @package    FLOW3
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 
@@ -38,8 +44,8 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	/**
 	 * Constructs the Web Request Builder
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
-	 * @param  F3_FLOW3_Utility_Environment $utilityEnvironment: A reference to the environment
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -52,7 +58,7 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param  F3_FLOW3_MVC_Web_Request $request
+	 * @param F3_FLOW3_MVC_Web_Request $request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -77,8 +83,8 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	/**
 	 * Determines and sets the controller name for the given web request
 	 *
-	 * @param  array $requestPathSegments: An array of the request path segements
-	 * @param  F3_FLOW3_MVC_Web_Request	$request: The web request
+	 * @param array $requestPathSegments An array of the request path segements
+	 * @param F3_FLOW3_MVC_Web_Request $request The web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -87,16 +93,15 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 
 		$controllerNamePrefix = 'F3_' . $requestPathSegments[0] . '_Controller_';
 		$controllerName = $controllerNamePrefix . 'Default';
-
 		if (isset($requestPathSegments[1]) && F3_PHP6_Functions::strlen($requestPathSegments[1])) {
-		 	$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $requestPathSegments[1]);
+			$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $requestPathSegments[1]);
 		 	if ($controllerName === FALSE) return;
 
 		 	$this->setActionName($requestPathSegments, $request);
 			$request->setControllerName($controllerName);
 		} else {
-		 	$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerName);
-		 	if ($controllerName === FALSE) return;
+			$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerName);
+			if ($controllerName === FALSE) return;
 		}
 		$request->setControllerName($controllerName);
 	}
@@ -104,8 +109,8 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	/**
 	 * Determines and sets the action name for the given web request
 	 *
-	 * @param  array $requestPathSegments: An array of the request path segements
-	 * @param  F3_FLOW3_MVC_Web_Request	$request: The web request
+	 * @param array $requestPathSegments An array of the request path segements
+	 * @param F3_FLOW3_MVC_Web_Request $request The web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

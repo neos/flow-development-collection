@@ -15,15 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * An "invalid action name" exception 
- * 
- * @package		Framework
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
+ * An "invalid action name" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Exception_InvalidActionName extends F3_FLOW3_MVC_Exception {
-
 }
 ?>

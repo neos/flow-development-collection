@@ -51,7 +51,7 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Injects the environment
 	 *
-	 * @param  F3_FLOW3_Utility_Environment $environment
+	 * @param F3_FLOW3_Utility_Environment $environment
 	 * @return void
 	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
@@ -63,7 +63,7 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Sets the request URI
 	 *
-	 * @param  F3_FLOW3_Property_DataType_URI URI of this web request
+	 * @param F3_FLOW3_Property_DataType_URI $requestURI URI of this web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -85,7 +85,7 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Sets the base URI for this request.
 	 *
-	 * @param  F3_FLOW3_Property_DataType_URI New base URI
+	 * @param F3_FLOW3_Property_DataType_URI $baseURI New base URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -106,10 +106,10 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Tries to detect the base URI of this request and returns it.
 	 *
-	 * @param  F3_FLOW3_Property_DataType_URI $requestURI: URI of this web request
+	 * @param F3_FLOW3_Property_DataType_URI $requestURI URI of this web request
 	 * @return F3_FLOW3_Property_DataType_URI The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   externalize this method into a strategy
+	 * @todo externalize this method into a strategy
 	 */
 	protected function detectBaseURI(F3_FLOW3_Property_DataType_URI $requestURI) {
 		$baseURI = clone $requestURI;

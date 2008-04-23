@@ -15,14 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_CLI_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * Builds a CLI request object from the raw command call
  *
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:F3_FLOW3_MVC_CLI_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
- * @author 		Karsten Dambekalns <karsten@typo3.org>
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_CLI_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_CLI_RequestBuilder {
 
@@ -39,7 +44,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -86,8 +91,8 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Converts the first element of the input array to an argument name for a F3_FLOW3_MVC_Request object.
 	 *
-	 * @return string converted argument name
 	 * @param array array of the remaining command line arguments
+	 * @return string converted argument name
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function convertCurrentCommandLineArgumentToRequestArgumentName(&$commandLineArguments) {
@@ -103,8 +108,8 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Returns the value of the first argument of the given input array. Shifts the parsed argument off the array.
 	 *
-	 * @param  array		array of the remaining command line arguments
-	 * @return string		The value of the first argument
+	 * @param array Array of the remaining command line arguments
+	 * @return string The value of the first argument
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getValueOfCurrentCommandLineArgument(array &$commandLineArguments) {
@@ -131,5 +136,4 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 		return $valueString;
 	}
 }
-
 ?>

@@ -15,13 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * An empty view - a special case.
  *
- * @package    Framework
+ * @package FLOW3
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authorst
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authorst
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_View_Empty extends F3_FLOW3_MVC_View_Abstract {
 

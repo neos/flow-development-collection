@@ -15,32 +15,38 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
  * A Manager for the Request Processor Chain. This chain is used to post-process
- * the Request object prior to handing it over to the Request Dispatcher. 
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * the Request object prior to handing it over to the Request Dispatcher.
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_RequestProcessorChainManager {
-	
+
 	/**
-	 * @var array Supported request types 
+	 * @var array Supported request types
 	 */
 	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Request', 'F3_FLOW3_MVC_Web_Request', 'F3_FLOW3_MVC_CLI_Request');
-	
+
 	/**
 	 * @var array Registered request processors, grouped by request type
 	 */
 	protected $requestProcessors = array();
-	
+
 	/**
 	 * Processes the given request object by invoking the processors
 	 * of the processor chain.
 	 *
-	 * @param  F3_FLOW3_MVC_Request $request:		The request object - changes are applied directly to this object by the processors.
+	 * @param F3_FLOW3_MVC_Request $request The request object - changes are applied directly to this object by the processors.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -54,31 +60,31 @@ class F3_FLOW3_MVC_RequestProcessorChainManager {
 			}
 		}
 	}
-	
+
 	/**
 	 * Registers a Request Processor for the specified request type.
 	 *
-	 * @param  F3_FLOW3_MVC_RequestProcessorInterface	$requestProcessor: The request processor
-	 * @param  string										$requestType: Type (class- or interface name) of the request this processor is interested in 
+	 * @param F3_FLOW3_MVC_RequestProcessorInterface $requestProcessor: The request processor
+	 * @param string $requestType: Type (class- or interface name) of the request this processor is interested in
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestType if the request type is not supported. 
+	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestType if the request type is not supported.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerRequestProcessor(F3_FLOW3_MVC_RequestProcessorInterface $requestProcessor, $requestType) {
 		if (!in_array($requestType, $this->supportedRequestTypes, TRUE)) throw new F3_FLOW3_MVC_Exception_InvalidRequestType('"' . $requestType . '" is not a valid request type - or at least it\'s not supported by the Request Processor Chain.', 1187260972);
 		$this->requestProcessors[$requestType][] = $requestProcessor;
 	}
-	
+
 	/**
 	 * Unregisters the given Request Processor. If a request type is specified,
 	 * the Processor will only be removed from that chain accordingly.
-	 * 
+	 *
 	 * Triggers _no_ error if the request processor did not exist.
-	 * 
-	 * @param  F3_FLOW3_MVC_RequestProcessorInterface	$requestProcessor: The request processor
-	 * @param  string										$requestType: Type (class- or interface name) of the request this processor is interested in 
+	 *
+	 * @param F3_FLOW3_MVC_RequestProcessorInterface $requestProcessor The request processor
+	 * @param string $requestType Type (class- or interface name) of the request this processor is interested in
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestType if the request type is not supported. 
+	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestType if the request type is not supported.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unregisterRequestProcessor(F3_FLOW3_MVC_RequestProcessorInterface $requestProcessor, $requestType = NULL) {
@@ -96,14 +102,14 @@ class F3_FLOW3_MVC_RequestProcessorChainManager {
 						unset($this->requestProcessors[$requestType][$index]);
 					}
 				}
-			}			
+			}
 		}
 	}
-	
+
 	/**
 	 * Returns an array of all registered request processors, grouped by request type.
-	 * 
-	 * @return array							An array of request types of request processor objects
+	 *
+	 * @return array An array of request types of request processor objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRegisteredRequestProcessors() {

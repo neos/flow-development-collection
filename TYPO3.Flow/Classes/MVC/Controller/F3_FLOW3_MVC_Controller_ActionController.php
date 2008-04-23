@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package Framework
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * A multi action controller
  *
- * @package    Framework
+ * @package Framework
  * @subpackage MVC
- * @version    $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
- * @copyright  Copyright belongs to the respective authors
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
@@ -48,8 +54,8 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param  F3_FLOW3_MVC_Request $request: The request object
-	 * @param  F3_FLOW3_MVC_Response $response The response, modified by this handler
+	 * @param F3_FLOW3_MVC_Request $request The request object
+	 * @param F3_FLOW3_MVC_Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

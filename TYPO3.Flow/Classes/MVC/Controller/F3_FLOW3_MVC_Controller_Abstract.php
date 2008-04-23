@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package Framework
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Controller_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ */
 
 /**
  * An abstract base class for Controllers
- * 
- * @package		Framework
- * @subpackage	MVC
- * @version 	$Id:F3_FLOW3_MVC_Controller_Abstract.php 467 2008-02-06 19:34:56Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package Framework
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_MVC_Controller_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class F3_FLOW3_MVC_Controller_Abstract {
 
@@ -34,15 +40,15 @@ abstract class F3_FLOW3_MVC_Controller_Abstract {
 	 * @var F3_FLOW3_Package_ManagerInterface A reference to the Package Manager
 	 */
 	protected $packageManager;
-	
+
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface		$componentManager: A reference to the Component Manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			F3_FLOW3_Component_ManagerInterface $componentManager, 
+			F3_FLOW3_Component_ManagerInterface $componentManager,
 			F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->componentManager = $componentManager;
 		$this->packageManager = $packageManager;
@@ -50,17 +56,17 @@ abstract class F3_FLOW3_MVC_Controller_Abstract {
 
 	/**
 	 * Initializes this component after all dependencies have been resolved.
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeComponent() {
-		$this->initializeController();		
+		$this->initializeController();
 	}
-	
+
 	/**
 	 * Initializes this controller.
-	 * 
+	 *
 	 * Override this method for initializing your concrete controller implementation.
 	 * Recommended actions for your controller initialization method are setting up the expected
 	 * arguments and narrowing down the supported request types if neccessary.

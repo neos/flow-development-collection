@@ -15,22 +15,28 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
  * Contract for a Request Processor. Objects of this kind are registered
  * via the Request Processor Chain Manager.
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
- * @author		Robert Lemke <robert@typo3.org>
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @copyright Copyright belongs to the respective authors
+ * @author Robert Lemke <robert@typo3.org>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_MVC_RequestProcessorInterface {
 
 	/**
 	 * Processes the given request (ie. analyzes and modifies if necessary).
 	 *
-	 * @param  F3_FLOW3_MVC_Request 	$request: The request
+	 * @param F3_FLOW3_MVC_Request $request The request
 	 * @return void
 	 */
 	public function processRequest(F3_FLOW3_MVC_Request $request);
