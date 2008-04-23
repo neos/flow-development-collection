@@ -38,15 +38,18 @@
 
   <xi:include href="PackageManager.xml" />
 
+  <xi:include href="ComponentManager.xml" />
+
+  <xi:include href="ConfigurationManager.xml" />
+
+  <xi:include href="ResourceManager.xml" />
+
   <xi:include href="MVCFramework.xml" />
 
   <xi:include href="CacheFramework.xml" />
 
   <xi:include href="ErrorException.xml" />
 
-  <xi:include href="ComponentManager.xml" />
-
   <xi:include href="AOPFramework.xml" />
 
-  <xi:include href="ResourceManager.xml" />
 </chapter>

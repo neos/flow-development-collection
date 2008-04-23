@@ -50,14 +50,19 @@
 
       <listitem>
         <para>The <emphasis>Package</emphasis> Manager allows you to download,
-        install, configure and uninstall packages. It takes care of the
-        packages and registers their components and resources.</para>
+        install, configure and uninstall packages.</para>
       </listitem>
 
       <listitem>
         <para>The <emphasis>Component</emphasis> Manager is in charge of
         building, caching and combining objects, which in this context are
         called <firstterm>components</firstterm>.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Configuration Manager</emphasis> reads and
+        cascades various kinds of configuration from different sources and
+        provides access to it.</para>
       </listitem>
 
       <listitem>
