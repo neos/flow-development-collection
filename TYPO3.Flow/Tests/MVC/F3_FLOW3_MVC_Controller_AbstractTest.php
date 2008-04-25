@@ -15,18 +15,25 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the MVC Abstract Controller
- * 
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @copyright Copyright belongs to the respective authors
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Controller_AbstractTest extends F3_Testing_BaseTestCase {
-	
+
 	/**
 	 * Checks if the TestPackage controller handles a web request
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -35,11 +42,11 @@ class F3_FLOW3_MVC_Controller_AbstractTest extends F3_Testing_BaseTestCase {
 
 		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
 		$request->setControllerName('F3_TestPackage_Controller_Default');
-		$request->lock();		
+		$request->lock();
 
 		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
-		
-		$dispatcher->dispatch($request, $response);		
+
+		$dispatcher->dispatch($request, $response);
 		$this->assertEquals('TestPackage Default Controller - Web Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
 	}
 
@@ -54,12 +61,31 @@ class F3_FLOW3_MVC_Controller_AbstractTest extends F3_Testing_BaseTestCase {
 
 		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Request');
 		$request->setControllerName('F3_TestPackage_Controller_Default');
-		$request->lock();		
+		$request->lock();
 
 		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Response');
 
 		$dispatcher->dispatch($request, $response);
 		$this->assertEquals('TestPackage Default Controller - CLI Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeComponentSetsCurrentPackage() {
+		$package = new F3_FLOW3_Package_Package('FLOW3', dirname(__FILE__) . '/../../');
+		$packageKey = uniqid('Test');
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array('getPackage'), array(), '', FALSE);
+		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
+
+		$controller = $this->getMock('F3_FLOW3_MVC_Controller_Abstract', array(), array($this->componentManager, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
+		$controllerReflection = new F3_FLOW3_Reflection_Class('F3_FLOW3_MVC_Controller_Abstract');
+		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
+		$packagePropertyReflection = $controllerReflection->getProperty('package');
+
+		$this->assertEquals($packageKey, $packageKeyPropertyReflection->getValue($controller), 'The package key is not as expected.');
+		$this->assertEquals($package, $packagePropertyReflection->getValue($controller), 'The package is not the one we injected.');
 	}
 }
 ?>

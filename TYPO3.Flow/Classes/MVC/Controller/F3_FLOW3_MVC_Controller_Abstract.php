@@ -42,6 +42,16 @@ abstract class F3_FLOW3_MVC_Controller_Abstract {
 	protected $packageManager;
 
 	/**
+	 * @var string Key of the package this controller belongs to
+	 */
+	protected $packageKey;
+
+	/**
+	 * @var F3_FLOW3_Package_Package The package this controller belongs to
+	 */
+	protected $package;
+
+	/**
 	 * Constructs the controller.
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
@@ -52,6 +62,8 @@ abstract class F3_FLOW3_MVC_Controller_Abstract {
 			F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->componentManager = $componentManager;
 		$this->packageManager = $packageManager;
+		list($dummy, $this->packageKey) = explode('_', get_class($this));
+		$this->package = $this->packageManager->getPackage($this->packageKey);
 	}
 
 	/**

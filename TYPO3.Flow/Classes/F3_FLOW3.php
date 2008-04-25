@@ -147,7 +147,7 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
 		$configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
-		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3, $this->context);
+		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 
 		$errorHandler = new F3_FLOW3_Error_ErrorHandler();
 		$errorHandler->setExceptionalErrors($this->configuration->errorHandler->exceptionalErrors);
@@ -184,7 +184,7 @@ final class F3_FLOW3 {
 		$packageManager->initialize();
 		$activePackages = $packageManager->getActivePackages();
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES, $this->context);
+			$packageConfiguration = $configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
@@ -373,13 +373,12 @@ final class F3_FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function classNameIsBlacklisted($className) {
-		$isBlacklisted = FALSE;
 		foreach ($this->componentRegistrationClassBlacklist as $blacklistedClassName) {
 			if ($className == $blacklistedClassName || preg_match('/^' . $blacklistedClassName . '$/', $className)) {
-				$isBlacklisted = TRUE;
+				return TRUE;
 			}
 		}
-		return $isBlacklisted;
+		return FALSE;
 	}
 
 	/**
