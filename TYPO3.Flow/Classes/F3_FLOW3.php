@@ -351,7 +351,8 @@ final class F3_FLOW3 {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
 					throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $componentConfiguration->getConfigurationSourceHint() .'.', 1184926175);
 				}
-				$masterComponentConfigurations[$componentName] = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration);
+				$existingComponentConfiguration = (array_key_exists($componentName, $masterComponentConfigurations)) ? $masterComponentConfigurations[$componentName] : NULL;
+				$masterComponentConfigurations[$componentName] = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration, 'Package ' . $packageKey, $existingComponentConfiguration);
 			}
 		}
 
@@ -361,7 +362,6 @@ final class F3_FLOW3 {
 				$masterComponentConfigurations[$componentType]->setClassName($defaultImplementationClassName);
 			}
 		}
-
 		$this->componentManager->setComponentConfigurations($masterComponentConfigurations);
 	}
 

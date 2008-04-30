@@ -38,12 +38,13 @@ class F3_FLOW3_Component_ConfigurationBuilder {
 	 * @param string $componentName Name of the component
 	 * @param F3_FLOW3_Configuration_Container configurationContainer The configuration container with options for the component configuration
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+	 * @param F3_FLOW3_Component_Configuration existingComponentConfiguration If set, this component configuration object will be used instead of creating a fresh one
 	 * @return F3_FLOW3_Component_Configuration The component configuration object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function buildFromConfigurationContainer($componentName, F3_FLOW3_Configuration_Container $configurationContainer, $configurationSourceHint = '') {
+	static public function buildFromConfigurationContainer($componentName, F3_FLOW3_Configuration_Container $configurationContainer, $configurationSourceHint = '', $existingComponentConfiguration = NULL) {
 		$className = (isset($configurationContainer->className) ? $configurationContainer->className : $componentName);
-		$componentConfiguration = new F3_FLOW3_Component_Configuration($componentName, $className);
+		$componentConfiguration = ($existingComponentConfiguration instanceof F3_FLOW3_Component_Configuration) ? $componentConfiguration = $existingComponentConfiguration : new F3_FLOW3_Component_Configuration($componentName, $className);
 		$componentConfiguration->setConfigurationSourceHint($configurationSourceHint);
 
 		foreach ($configurationContainer as $optionName => $optionValue) {

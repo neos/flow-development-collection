@@ -57,9 +57,7 @@ abstract class F3_FLOW3_MVC_Controller_Abstract {
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(
-			F3_FLOW3_Component_ManagerInterface $componentManager,
-			F3_FLOW3_Package_ManagerInterface $packageManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->componentManager = $componentManager;
 		$this->packageManager = $packageManager;
 		list($dummy, $this->packageKey) = explode('_', get_class($this));

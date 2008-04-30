@@ -64,6 +64,21 @@ class F3_FLOW3_Component_ConfigurationBuilderTest extends F3_Testing_BaseTestCas
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function existingComponentConfigurationIsUsedIfSpecified() {
+		$configurationContainer = new F3_FLOW3_Configuration_Container();
+		$configurationContainer->scope = 'prototype';
+		$configurationContainer->properties->firstProperty = 'straightValue';
+
+		$componentConfiguration = new F3_FLOW3_Component_Configuration('TestComponent', __CLASS__);
+
+		$builtComponentConfiguration = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer('TestComponent', $configurationContainer, __CLASS__, $componentConfiguration);
+		$this->assertSame($componentConfiguration, $builtComponentConfiguration, 'The returned component configuration object is not the one we passed to the builder.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function invalidOptionResultsInException() {
 		$configurationContainer = new F3_FLOW3_Configuration_Container();
 		$configurationContainer->scoopy = 'prototype';
