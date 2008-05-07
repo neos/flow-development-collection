@@ -21,42 +21,48 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Testcase for the HTMLResource
+ * Testcase for the resource manager
  *
  * @package FLOW3
  * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_HTMLResourceTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var F3_FLOW3_Resource_Manager
+	 */
+	protected $manager;
+
+	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isPrototype() {
-		$resource1 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
-		$resource2 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
-		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
+	public function setUp() {
+		$mockClassLoader = $this->getMock('F3_FLOW3_Resource_ClassLoader', array(), array(), '', FALSE);
+		$this->manager = new F3_FLOW3_Resource_Manager($mockClassLoader, $this->componentManager);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function canReturnContent() {
-		$HTMLResource = new F3_FLOW3_Resource_HTMLResource($this->componentManager);
-		$HTMLResource->setMetadata(array(
-			'URI' => 'file://TestPackage/Public/TestTemplate.html',
-			'path' => FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public',
-			'name' => 'TestTemplate.html',
-			'mediaType' => 'text',
-			'mimeType' => 'text/html',
-		));
-
-		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public/TestTemplate.html'));
+	public function getResourceReturnsAResourceImplementation() {
+		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
+		$this->assertType('F3_FLOW3_Resource_ResourceInterface', $resource);
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getResourceReturnsRequestedResource() {
+		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
+		$this->assertType('F3_FLOW3_Resource_HTMLResource', $resource);
+		$this->assertEquals('TestTemplate.html', $resource->getName());
+		$this->assertEquals('text/html', $resource->getMIMEType());
+	}
+
 }
 
 ?>

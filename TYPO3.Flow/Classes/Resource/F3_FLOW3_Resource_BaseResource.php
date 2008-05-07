@@ -61,15 +61,18 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * Imports content from an URI
 	 *
 	 * @param F3_FLOW3_Property_DataType_URI $URI
+	 * @return boolean TRUE or FALSE depending on import success
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function importFromURI(F3_FLOW3_Property_DataType_URI $URI) {
-
+		return FALSE;
 	}
 
 	/**
 	 * Returns the type of source the resource originates
 	 *
 	 * @return string Type, e.g. file, http, ftp, ...
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDataSourceType() {
 		return $this->URI->getScheme();
@@ -79,6 +82,7 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * The URI representing
 	 *
 	 * @return F3_FLOW3_Property_DataType_URI
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getURI() {
 		return $this->URI;
@@ -88,6 +92,7 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * Returns the name the resource was obtained from
 	 *
 	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getName() {
 		return $this->name;
@@ -97,6 +102,7 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * Returns the path the resource was obtained from
 	 *
 	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getPath() {
 		return $this->path;
@@ -107,6 +113,7 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * Returns the media type of the resource
 	 *
 	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMediaType() {
 		return $this->mediaType;
@@ -116,6 +123,7 @@ abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_Resou
 	 * Returns the MIME type of the resource
 	 *
 	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getMIMEType() {
 		return $this->mimeType;

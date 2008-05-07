@@ -28,8 +28,16 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope singleton
  */
 class F3_FLOW3_Resource_Manager {
+
+	/**
+	 * Constants reflecting the file caching strategies
+	 */
+	const CACHE_STRATEGY_NONE = 1;
+	const CACHE_STRATEGY_PACKAGE = 2;
+	const CACHE_STRATEGY_FILE = 3;
 
 	/**
 	 * @var F3_FLOW3_Resource_ClassLoader Instance of the class loader
@@ -79,6 +87,7 @@ class F3_FLOW3_Resource_Manager {
 	 * Returns a file resource if found using the supplied URI
 	 *
 	 * @param F3_FLOW3_Property_DataType_URI|string $URI
+	 * @return F3_FLOW3_Resource_ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResource($URI) {

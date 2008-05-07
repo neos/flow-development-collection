@@ -21,41 +21,51 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Testcase for the HTMLResource
+ * Testcase for the resource processor
  *
  * @package FLOW3
  * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_HTMLResourceTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function isPrototype() {
-		$resource1 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
-		$resource2 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
-		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
-	}
+class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function canReturnContent() {
-		$HTMLResource = new F3_FLOW3_Resource_HTMLResource($this->componentManager);
-		$HTMLResource->setMetadata(array(
-			'URI' => 'file://TestPackage/Public/TestTemplate.html',
-			'path' => FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public',
-			'name' => 'TestTemplate.html',
-			'mediaType' => 'text',
-			'mimeType' => 'text/html',
-		));
-
-		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public/TestTemplate.html'));
+	public function canAdjustRelativePathsInHTML() {
+		$originalHTML = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<style type="text/css">
+			.F3_WidgetLibrary_Widgets_FloatingWindow {
+				background-image: url(DefaultView_FloatingWindow.png);
+			}
+		</style>
+	</head>
+	<body>
+		<img src="DefaultView_Package.png" class="DefaultView_Package" />
+	</body>
+</html>';
+		$expectedHTML = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+	<head>
+		<style type="text/css">
+			.F3_WidgetLibrary_Widgets_FloatingWindow {
+				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
+			}
+		</style>
+	</head>
+	<body>
+		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
+	</body>
+</html>';
+		$processor = $this->componentManager->getComponent('F3_FLOW3_Resource_Processor');
+		$processedHTML = $processor->adjustRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
+		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}
 }
 

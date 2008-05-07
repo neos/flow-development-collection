@@ -32,6 +32,29 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Utility_Files {
 
 	/**
+	 * Returns all filenames from the specified directory. Filters hidden files and
+	 * directories.
+	 *
+	 * @param string $path Path to the directory which shall be read.
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public static function readDirectoryRecursively($path, &$files = array()) {
+		if (!is_dir($path)) throw new F3_FLOW3_Utility_Exception('"' . $path . '" is no directory.', 1207253462);
+
+		$directoryIterator = new DirectoryIterator($path);
+		foreach ($directoryIterator as $file) {
+			if($file->isFile() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
+				$files[] = $file->getPathname();
+			}
+			if($file->isDir() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
+				self::readDirectoryRecursively($file->getPathname(), $files);
+			}
+		}
+		return $files;
+	}
+
+	/**
 	 * Deletes all files, directories and subdirectories from the specified
 	 * directory. The passed directory itself won't be deleted though.
 	 *

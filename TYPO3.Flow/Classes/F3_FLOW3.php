@@ -42,13 +42,15 @@ final class F3_FLOW3 {
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
-	 * Constants reflected the initialization levels
+	 * Constants reflecting the initialization levels
 	 */
 	const INITIALIZATION_LEVEL_CONSTRUCT = 1;
-	const INITIALIZATION_LEVEL_FLOW3 = 2;
-	const INITIALIZATION_LEVEL_PACKAGES = 3;
-	const INITIALIZATION_LEVEL_COMPONENTS = 4;
-	const INITIALIZATION_LEVEL_SETTINGS = 5;
+	const INITIALIZATION_LEVEL_CLASSLOADER = 2;
+	const INITIALIZATION_LEVEL_FLOW3 = 3;
+	const INITIALIZATION_LEVEL_PACKAGES = 4;
+	const INITIALIZATION_LEVEL_COMPONENTS = 5;
+	const INITIALIZATION_LEVEL_SETTINGS = 6;
+	const INITIALIZATION_LEVEL_RESOURCES = 7;
 	const INITIALIZATION_LEVEL_READY = 10;
 
 	/**
@@ -118,6 +120,7 @@ final class F3_FLOW3 {
 		$this->initializePackages();
 		$this->initializeComponents();
 		$this->initializeSettings();
+		$this->initializeResources();
 	}
 
 	/**
@@ -127,9 +130,13 @@ final class F3_FLOW3 {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeClassLoader() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
+
 		require_once(dirname(__FILE__) . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
 		$this->classLoader = new F3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
+
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_CLASSLOADER;
 	}
 
 	/**
@@ -240,6 +247,33 @@ final class F3_FLOW3 {
 	public function initializeSettings() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_SETTINGS) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760770);
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_SETTINGS;
+	}
+
+	/**
+	 * Publishes the public resources of all found packages
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeResources() {
+		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_RESOURCES) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1210080996);
+
+		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
+
+		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
+		$metadataCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Resource_Manager', $cacheBackend);
+
+		$resourcePublisher = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher');
+		$resourcePublisher->initializeMirrorDirectory($this->configuration->resource->cache->publicPath);
+		$resourcePublisher->setMetadataCache($metadataCache);
+		$resourcePublisher->setCacheStrategy($this->configuration->resource->cache->strategy);
+
+		$activePackages = $packageManager->getActivePackages();
+		foreach ($activePackages as $packageKey => $package) {
+			$resourcePublisher->mirrorPublicPackageResources($packageKey);
+		}
+
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_RESOURCES;
 	}
 
 	/**

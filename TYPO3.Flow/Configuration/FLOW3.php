@@ -66,4 +66,19 @@ $c->aop->proxyCache->enable = TRUE;
  */
 $c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
+/**
+ * The path for the public resources mirror used by the configuration path
+ *
+ * @type string
+ */
+$c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
+
+/**
+ * The strategy to use when caching files for public resources. Specify one of
+ * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE or
+ * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE
+ *
+ * @type string
+ */
+$c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
 ?>

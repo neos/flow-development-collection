@@ -21,24 +21,26 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A Text Resource
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_FLOW3_Resource_TextResource extends F3_FLOW3_Resource_BaseResource {
+class F3_FLOW3_Resource_Processor {
 
 	/**
-	 * Returns the content of this resource.
+	 * Prepends the given prefix to relative paths in links, css, ...
 	 *
-	 * @return string|binary Resource content (text)
+	 * @param string $HTML
+	 * @param string $pathPrefix
+	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Make regular expression water-tight
 	 */
-	public function getContent() {
+	static public function adjustRelativePathsInHTML($HTML, $pathPrefix) {
+		return preg_replace('/(src="|url\()(?!\/)/iUu', '$1' . $pathPrefix, $HTML);
 	}
 }
 

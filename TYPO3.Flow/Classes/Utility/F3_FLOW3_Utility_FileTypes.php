@@ -349,6 +349,7 @@ class F3_FLOW3_Utility_FileTypes {
 	private static $extensionToMediaType = array(
 		'ogg'=> 'audio',
 
+		'txt'=> 'text',
 		'doc'=> 'text',
 		'dot'=> 'text',
 		'pdf'=> 'text',
@@ -360,6 +361,7 @@ class F3_FLOW3_Utility_FileTypes {
 
 		'ai'=> 'image',
 		'eps'=> 'image',
+		'png' => 'image',
 
 		'csv'=> 'dataset',
 		'xls'=> 'dataset',
@@ -413,7 +415,7 @@ class F3_FLOW3_Utility_FileTypes {
 	 */
 	public static function mimeTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
-		return self::$extensionToMimeType[$pathinfo['extension']];
+		return isset(self::$extensionToMimeType[$pathinfo['extension']]) ? self::$extensionToMimeType[$pathinfo['extension']] : 'application/octet-stream';
 	}
 
 	/**
@@ -425,7 +427,7 @@ class F3_FLOW3_Utility_FileTypes {
 	 */
 	public static function mediaTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
-		return self::$extensionToMediaType[$pathinfo['extension']];
+		return isset(self::$extensionToMediaType[$pathinfo['extension']]) ? self::$extensionToMediaType[$pathinfo['extension']] : '';
 	}
 
 }

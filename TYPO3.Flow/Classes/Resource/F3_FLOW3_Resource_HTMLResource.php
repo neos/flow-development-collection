@@ -41,7 +41,7 @@ class F3_FLOW3_Resource_HTMLResource extends F3_FLOW3_Resource_TextResource {
 	 */
 	public function setMetadata(array $metadata) {
 		$this->URI = $metadata['URI'];
-		$this->path =$metadata['path'];
+		$this->path = $metadata['path'];
 		$this->name = $metadata['name'];
 		$this->mediaType = $metadata['mediaType'];
 		$this->mimeType = $metadata['mimeType'];
