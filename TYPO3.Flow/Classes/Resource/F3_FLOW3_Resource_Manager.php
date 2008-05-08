@@ -114,7 +114,7 @@ class F3_FLOW3_Resource_Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function instantiateResource(array $metadata) {
-		switch(F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($metadata['name'])) {
+		switch($metadata['mimeType']) {
 			case 'text/html':
 				$resource = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
 				break;
