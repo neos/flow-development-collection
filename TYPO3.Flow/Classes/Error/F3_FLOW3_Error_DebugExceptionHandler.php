@@ -79,7 +79,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 				"http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">
 			<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" dir="ltr">
 			<head>
-				<title>TYPO3 Exception</title>
+				<title>FLOW3 Exception</title>
 				<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 			</head>
 			<style>
@@ -105,7 +105,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 					margin: 10px;
 					padding: 0;
 				">
-				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught TYPO3 Exception</div>
+				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught FLOW3 Exception</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
 					<strong style="color: #BE0027;">' . $exceptionCodeNumber . $exception->getMessage() . '</strong> ' . $moreInformationLink . '<br />
 					<br />
