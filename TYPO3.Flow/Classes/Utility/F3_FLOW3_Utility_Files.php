@@ -102,17 +102,11 @@ class F3_FLOW3_Utility_Files {
 	 * @todo Make mode configurable / make umask configurable
 	 */
 	public static function createDirectoryRecursively($path) {
-		$directoryNames = explode('/', $path);
-		if (!is_array($directoryNames) || count($directoryNames) == 0) throw new InvalidArgumentException('Invalid path "' . $path . '" specified for creating directory recursively.', 1170251395);
-		$currentPath = '';
-		foreach ($directoryNames as $directoryName) {
-			$currentPath .= $directoryName . '/';
-			if (!is_dir($currentPath) && F3_PHP6_Functions::strlen($directoryName) > 0) {
-				$oldMask = umask(000);
-				mkdir($currentPath, 0777);
-				umask($oldMask);
-				if (!is_dir($currentPath)) throw new F3_FLOW3_Utility_Exception('Could not create directory "' . $path . '"!', 1170251400);
-			}
+		if (!is_dir($path) && F3_PHP6_Functions::strlen($path) > 0) {
+			$oldMask = umask(000);
+			mkdir($path, 0777, TRUE);
+			umask($oldMask);
+			if (!is_dir($path)) throw new F3_FLOW3_Utility_Exception('Could not create directory "' . $path . '"!', 1170251400);
 		}
 	}
 }
