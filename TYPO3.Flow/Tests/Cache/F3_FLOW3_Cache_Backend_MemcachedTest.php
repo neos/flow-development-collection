@@ -18,11 +18,10 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
- * @author Christian Jul Jensen <julle@typo3.org>
  */
 
 /**
- * Testcase for the cache to file backend
+ * Testcase for the cache to memcached backend
  *
  * @package FLOW3
  * @subpackage Tests
@@ -41,6 +40,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 * Sets up this testcase
 	 *
 	 * @return void
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setUp() {
 		if(!extension_loaded('memcache')) {
@@ -56,7 +56,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function isPrototype() {
 		$backend1 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $this->componentManager->getContext());
 		$backend2 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $this->componentManager->getContext());
-		$this->assertNotSame($backend1, $backend2, 'File Backend seems to be singleton!');
+		$this->assertNotSame($backend1, $backend2, 'Memcached Backend seems to be singleton!');
 	}
 
 	/**
@@ -75,6 +75,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		} catch (F3_FLOW3_Cache_Exception $exception) {
 		}
 	}
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -91,9 +92,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			}
 		}
 	}
+
 	/**
 	 * @test
-	 *
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function saveThrowsExceptionIfNoMemcacheServerIsConfigured() {
 		$backend = $this->setUpBackend();
@@ -105,9 +107,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
 	}
+
 	/**
 	 * @test
-	 *
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function saveThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend();
@@ -120,8 +123,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
 	}
+
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSaveAndCheckExistenceInCache() {
 		$backend = $this->setUpBackend();
@@ -135,6 +140,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSaveAndGetEntry() {
 		$backend = $this->setUpBackend();
@@ -145,8 +151,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$fetchedData = $backend->load($identifier);
 		$this->assertEquals($data,$fetchedData,'Memcache failed to set and retrieve data');
 	}
+
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToRemoveEntryFromCache() {
 		$backend = $this->setUpBackend();
@@ -161,6 +169,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		$backend = $this->setUpBackend();
@@ -176,6 +185,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -187,6 +197,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
@@ -196,12 +207,21 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
 	}
 
+	/**
+	 * Creates a cache mock
+	 *
+	 * @return F3_FLOW3_Cache_AbstractCache mock
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
 	protected function getMockCache() {
 		return $this->getMock('F3_FLOW3_Cache_AbstractCache', array(), array(), '', FALSE);
 	}
 
 	/**
+	 * Sets up the memcached backend used for testing
+	 *
 	 * @return F3_FLOW3_Cache_Backend_Memcached
+	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function setUpBackend() {
 		$cache = $this->getMockCache();
@@ -212,14 +232,5 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		return $backend;
 	}
 
-	/**
- 	* Enter description here...
- 	* @author
- 	*/
-	public function tearDown() {
-		if (is_object($this->backend)) {
-			$context = $this->componentManager->getContext();
-		}
-	}
 }
 ?>
