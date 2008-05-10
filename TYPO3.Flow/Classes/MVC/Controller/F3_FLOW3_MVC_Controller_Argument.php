@@ -241,7 +241,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isValid() {
-		return $this->isValid();
+		return $this->isValid;
 	}
 
 	/**
@@ -264,7 +264,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 * @see addError(F3_FLOW3_Error_Error $error)
 	 */
 	public function getErrors() {
-		$this->errors[] = $error;
+		return $this->errors;
 	}
 
 	/**

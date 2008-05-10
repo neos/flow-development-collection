@@ -34,6 +34,12 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_ObjectValidatorInterface {
 //TODO: call validators of the argument objects
 
+	public $componentManger;
+
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
+	}
+
 	/**
 	 * Checks if classes of the given type can be validated with this
 	 * validator.
@@ -78,6 +84,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
 		$isValid &= $object[$propertyName]->getDatatypeValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
 
+		if (!$isValid) $errors[] = $this->componentManager->getComponent('F3_FLOW3_Validation_Error');
 		return $isValid;
 	}
 

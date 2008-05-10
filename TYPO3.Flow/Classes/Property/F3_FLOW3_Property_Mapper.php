@@ -436,7 +436,11 @@ class F3_FLOW3_Property_Mapper {
 		if($this->validator !== NULL) {
 			$errors = $this->createNewValidationErrorsObject();
 			$this->validator->validate($this->target, $errors);
-			if (count($errors) > 0) foreach ($errors as $error) $this->mappingResults->addError($error, $propertyName);
+			/*if (count($errors) > 0) {
+				foreach ($errors as $error) {
+					$this->mappingResults->addError($error);
+				}
+			}*/
 		}
 	}
 
