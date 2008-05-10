@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,30 +16,60 @@ declare(encoding = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Error
  */
 
 /**
- * This object holds a validation error.
+ * An object representation of a generic warning. Subclass this to create
+ * more specific warnings if necessary.
  *
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Error
+ * @version $Id: F3_FLOW3_Error_Warning.php 726 2008-04-16 15:36:28Z andi $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Error extends F3_FLOW3_Error_Error {
+class F3_FLOW3_Error_Warning {
 
 	/**
 	 * @var string The default (english) error message.
 	 */
-	protected $message = 'Unknown validation error';
+	protected $message = 'Unknown warning';
 
 	/**
 	 * @var string The error code
 	 */
-	protected $code = 1201447005;
+	protected $code;
+
+	/**
+	 * Constructs this warning
+	 *
+	 * @param string $message: An english error message which is used if no other error message can be resolved
+	 * @param integer $code: A unique error code
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($message, $code) {
+		$this->message = $message;
+		$this->code = 0;
+	}
+
+	/**
+	 * Returns the error message
+	 * @return string The error message
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getErrorMessage() {
+		return $this->message;
+	}
+
+	/**
+	 * Returns the error code
+	 * @return string The error code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getErrorCode() {
+		return $this->code;
+	}
 }
 
 ?>

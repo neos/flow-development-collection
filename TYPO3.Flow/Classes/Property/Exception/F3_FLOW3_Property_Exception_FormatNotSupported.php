@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -15,31 +15,21 @@ declare(encoding = 'utf-8');
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @package		Framework
+ * @subpackage	Property
+ * @version 	$Id: F3_FLOW3_Property_Exception_FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
  */
 
 /**
- * This object holds a validation error.
+ * An "Format not supported" Exception
  *
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
- * @copyright Copyright belongs to the respective authors
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package		Framework
+ * @subpackage	Property
+ * @version 	$Id: F3_FLOW3_Property_Exception_FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
+ * @copyright	Copyright belongs to the respective authors
+ * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Error extends F3_FLOW3_Error_Error {
+class F3_FLOW3_Property_Exception_FormatNotSupported extends F3_FLOW3_Property_Exception {
 
-	/**
-	 * @var string The default (english) error message.
-	 */
-	protected $message = 'Unknown validation error';
-
-	/**
-	 * @var string The error code
-	 */
-	protected $code = 1201447005;
 }
-
 ?>

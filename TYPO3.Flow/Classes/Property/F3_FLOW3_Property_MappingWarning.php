@@ -16,30 +16,30 @@ declare(encoding = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Property
+ * @version $Id: F3_FLOW3_Property_MappingWarning.php 681 2008-04-02 14:00:27Z andi $
  */
 
 /**
- * This object holds a validation error.
+ * This object holds a mapping warning.
  *
  * @package FLOW3
- * @subpackage Validation
- * @version $Id$
+ * @subpackage Property
+ * @version $Id: F3_FLOW3_Property_MappingWarning.php 681 2008-04-02 14:00:27Z andi $
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Error extends F3_FLOW3_Error_Error {
+class F3_FLOW3_Property_MappingWarning extends F3_FLOW3_Error_Warning {
 
 	/**
 	 * @var string The default (english) error message.
 	 */
-	protected $message = 'Unknown validation error';
+	protected $message = 'Unknown mapping warning';
 
 	/**
 	 * @var string The error code
 	 */
-	protected $code = 1201447005;
+	protected $code = 1210351446;
 }
 
 ?>

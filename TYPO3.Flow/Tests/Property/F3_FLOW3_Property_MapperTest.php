@@ -44,7 +44,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_mapperOnlyAcceptsObjectsAsTarget() {
+	public function mapperOnlyAcceptsObjectsAsTarget() {
 		try {
 			$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 			$mapper->setTarget(array());
@@ -60,7 +60,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_mappingWithArrayObjectTargetBasicallyWorks() {
+	public function mappingWithArrayObjectTargetBasicallyWorks() {
 		$target = new ArrayObject();
 		$source = new ArrayObject(
 			array(
@@ -70,6 +70,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key1', 'key2'));
 		$mapper->map($source);
 		$this->assertEquals($source, $target, 'The two ArrayObjects are not equal after mapping them together.');
 	}
@@ -80,7 +81,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_mappingWithNestedArrayObjectWorks() {
+	public function mappingWithNestedArrayObjectWorks() {
 		$target = new ArrayObject();
 		$source = new ArrayObject(
 			array(
@@ -98,6 +99,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
 		$mapper->map($source);
 		$this->assertEquals($source, $target, 'The two ArrayObjects are not equal after mapping them together.');
 	}
@@ -108,9 +110,9 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function test_mappingWithSetterAccesBasicallyWorks() {
-		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters;
-		$source = new ArrayObject(
+	public function mappingWithSetterAccesBasicallyWorks() {
+		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
+		$source = new ArrayObject (
 			array(
 				'property1' => 'value1',
 				'property2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -126,6 +128,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('property1', 'property2', 'property3', 'property4'));
 		$mapper->map($source);
 
 		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
@@ -192,7 +195,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function noPropertyIsMappedNoPropertiesAreAllowed() {
+	public function noPropertyIsMappedIfNoPropertiesAreAllowed() {
 		$source = new ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -211,6 +214,202 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$expectedTarget = new ArrayObject;
 		$mapper->map($source);
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing no property at all.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function registeredPropertyEditorsAreCalledForTheRightProperties() {
+		$source = new ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new ArrayObject();
+		$propertyEditor = $this->getMock('F3_FLOW3_Property_EditorInterface');
+		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value1'));
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key1'));
+		$mapper->registerPropertyEditor($propertyEditor);
+
+		$mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function registeredFiltersAreCalledForTheRightProperties() {
+		$source = new ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new ArrayObject();
+		$filter = $this->getMock('F3_FLOW3_Validation_FilterInterface');
+		$filter->expects($this->once())->method('filter')->with($this->equalTo('value1'));
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key1'));
+		$mapper->registerFilter($filter);
+
+		$mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function mappingAnAllowedPropertyAddsAWarningIfItIsNotAccessibleInTheTargetObject() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
+		$mapper->map($source);
+		$mappingResults = $mapper->getMappingResults();
+
+		$this->assertTrue($mappingResults->hasWarnings());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function mappingARequiredPropertyAddsAnErrorIfItIsNotAccessibleInTheTargetObject() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
+		$mapper->setRequiredProperties(array('key'));
+		$mapper->map($source);
+		$mappingResults = $mapper->getMappingResults();
+
+		$this->assertTrue($mappingResults->hasErrors());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function mappingANotDefinedPropertyAddsAnWarning() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3'));
+		$mapper->map($source);
+		$mappingResults = $mapper->getMappingResults();
+
+		$this->assertTrue($mappingResults->hasWarnings());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function onlyWriteOnNoErrorsModeBasicallyWorks() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
+		$originalTargetCopy = clone $target;
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
+		$mapper->setRequiredProperties(array('notExistantKey'));
+		$mapper->setOnlyWriteOnNoErrors(TRUE);
+		$mapper->map($source);
+
+		$this->assertEquals($originalTargetCopy, $target);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function validatorIsInvokedCorrectly() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new ArrayObject();
+		$validator = $this->getMock('F3_FLOW3_Validation_ObjectValidatorInterface');
+
+		$validator->expects($this->once())->method('validate')->with($this->equalTo($source));
+		$validator->expects($this->atLeastOnce())->method('validateProperty');
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
+		$mapper->registerValidator($validator);
+		$mapper->map($source);
 	}
 }
 ?>

@@ -59,17 +59,55 @@ class F3_FLOW3_MVC_Controller_Argument {
 	protected $shortHelpMessage = NULL;
 
 	/**
+	 * @var boolean The argument is valid
+	 */
+	protected $isValid = TRUE;
+
+	/**
+	 * @var array Any error (F3_FLOW3_Error_Error) that occured while initializing this argument (e.g. a mapping error or warning)
+	 */
+	protected $errors = array();
+
+	/**
+	 * @var F3_FLOW3_Validation_ValidatorInterface The property validator for this argument
+	 */
+	protected $validator = NULL;
+
+	/**
+	 * @var F3_FLOW3_Validation_ValidatorInterface The property validator for this arguments datatype
+	 */
+	protected $datatypeValidator;
+
+	/**
+	 * @var F3_FLOW3_Validation_FilterInterface The filter for this argument
+	 */
+	protected $filter = NULL;
+
+	/**
+	 * @var F3_FLOW3_Property_EditorInterface The property editor for this argument
+	 */
+	protected $propertyEditor = NULL;
+
+	/**
+	 * @var string The property editor's input format for this argument
+	 */
+	protected $propertyEditorInputFormat = 'string';
+
+	/**
 	 * Constructs this controller argument
 	 *
 	 * @param string $name Name of this argument
 	 * @param string $dataType The data type of this argument
+	 * @param F3_FLOW3_Component_ManagerInterface The component manager
 	 * @throws InvalidArgumentException if $name is not a string or empty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($name, $dataType = 'Text') {
+	public function __construct($name, $dataType = 'Text', F3_FLOW3_Component_ManagerInterface $componentManager) {
 		if (!is_string($name) || F3_PHP6_Functions::strlen($name) < 1) throw new InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
+		$this->componentManager = $componentManager;
 		$this->name = $name;
 		$this->setDataType($dataType);
+		if ($dataType != '') $this->datatypeValidator = $this->componentManager->getComponent($this->componentManager->getCaseSensitiveComponentName('F3_FLOW3_Validation_Validator_' . $dataType));
 	}
 
 	/**
@@ -183,6 +221,166 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 */
 	public function getShortHelpMessage() {
 		return $this->shortHelpMessage;
+	}
+
+	/**
+	 * Set the validity status of the argument
+	 *
+	 * @þaram boolen TRUE if the argument is valid, FALSE otherwise
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setValidity($isValid) {
+		$this->isValid = $isValid;
+	}
+
+	/**
+	 * Returns TRUE when the argument is valid
+	 *
+	 * @return boolean TRUE if the argument is valid
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isValid() {
+		return $this->isValid();
+	}
+
+	/**
+	 * Add an initialization error (e.g. a mapping error or warning)
+	 *
+	 * @param F3_FLOW3_Error_Error An error object
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addError(F3_FLOW3_Error_Error $error) {
+		$this->errors[] = $error;
+	}
+
+	/**
+	 * Get all initialization errors
+	 *
+	 * @param F3_FLOW3_Error_Error An error object
+	 * @return array An array containing F3_FLOW3_Error_Error object
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @see addError(F3_FLOW3_Error_Error $error)
+	 */
+	public function getErrors() {
+		$this->errors[] = $error;
+	}
+
+	/**
+	 * Set an additional validator
+	 *
+	 * @param string Class name of a validator
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setValidator($className) {
+		$this->validator = $this->componentManager->getComponent($className);
+		return $this;
+	}
+
+	/**
+	 * Returns the set validator
+	 *
+	 * @return F3_FLOW3_Validation_ValidatorInterface The set validator, NULL if none was set
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getValidator() {
+		return $this->validator;
+	}
+
+	/**
+	 * Returns the set datatype validator
+	 *
+	 * @return F3_FLOW3_Validation_ValidatorInterface The set datatype validator
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getDatatypeValidator() {
+		return $this->datatypeValidator;
+	}
+
+	/**
+	 * Set a filter
+	 *
+	 * @param string Class name of a filter
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setFilter($className) {
+		$this->filter = $this->componentManager->getComponent($className);
+		return $this;
+	}
+
+	/**
+	 * Create and set a filter chain
+	 *
+	 * @param array Class names of a filters
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	/*
+	public function setNewFilterChain(array $classNames) {
+		$this->filter = $this->componentManager->getComponent('F3_FLOW3');
+
+		foreach($classNames as $className) {
+
+		}
+
+		return $this;
+	}*/
+
+	/**
+	 * Returns the set filter
+	 *
+	 * @return F3_FLOW3_Validation_FilterInterface The set filter, NULL if none was set
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getFilter() {
+		return $this->filter;
+	}
+
+	/**
+	 * Set a property editor
+	 *
+	 * @param string Class name of a property editor
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setPropertyEditor($className) {
+		$this->propertyEditor = $this->componentManager->getComponent($className);
+		return $this;
+	}
+
+	/**
+	 * Returns the set property editor
+	 *
+	 * @return F3_FLOW3_Property_EditorInterface The set property editor, NULL if none was set
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPropertyEditor() {
+		return $this->propertyEditor;
+	}
+
+	/**
+	 * Set a property editor input format
+	 *
+	 * @param string Input format the property editor should use
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setPropertyEditorInputFormat($format) {
+		$this->propertyEditorInputFormat = $format;
+		return $this;
+	}
+
+	/**
+	 * Returns the set property editor input format
+	 *
+	 * @return string The set property editor input format
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPropertyEditorInputFormat() {
+		return $this->propertyEditorInputFormat;
 	}
 }
 ?>

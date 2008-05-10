@@ -47,6 +47,11 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	protected $arguments;
 
 	/**
+	 * @var F3_FLOW3_Property_MappingResults Mapping results of the arguments mapping process
+	 */
+	protected $argumentMappingResults;
+
+	/**
 	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
 	 */
 	protected $supportedRequestTypes = array('F3_FLOW3_MVC_Request');
@@ -123,8 +128,21 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	protected function mapRequestArgumentsToLocalArguments() {
 		$argumentsMapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$argumentsMapper->setTarget($this->arguments);
+
+		foreach($this->arguments as $argument) {
+
+			if ($argument->getFilter() != NULL) $argumentsMapper->registerFilter($argument->getFilter());
+			if ($argument->getPropertyEditor() != NULL) $argumentsMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
+		}
+
+		$argumentsMapper->setOnlyWriteOnNoErrors(TRUE);
 		$argumentsMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
 		$argumentsMapper->map(new ArrayObject($this->request->getArguments()));
+
+		$this->argumentMappingResults = $argumentsMapper->getMappingResults();
+		foreach($this->argumentMappingResults->getErrors() as $propertyName => $error) {
+			$this->arguments[$propertyName]->setValidity(FALSE);
+		}
 	}
 }
 ?>
