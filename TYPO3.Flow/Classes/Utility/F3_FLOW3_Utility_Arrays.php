@@ -20,7 +20,6 @@ declare(ENCODING = 'utf-8');
  * @package		FLOW3
  * @subpackage	Utility
  * @version     $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
- * @copyright   Copyright belongs to the respective authors
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @internal	(robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */

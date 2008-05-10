@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @subpackage MVC
  * @version $Id:F3_FLOW3_MVC_RequestHandlerInterface.php 467 2008-02-06 19:34:56Z robert $
  * @author Robert Lemke <robert@typo3.org>
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_MVC_RequestHandlerInterface {

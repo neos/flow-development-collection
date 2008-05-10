@@ -26,7 +26,6 @@ declare(encoding = 'utf-8');
  * @package FLOW3
  * @subpackage Property
  * @version $Id: F3_FLOW3_Property_MappingWarning.php 681 2008-04-02 14:00:27Z andi $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_MappingWarning extends F3_FLOW3_Error_Warning {

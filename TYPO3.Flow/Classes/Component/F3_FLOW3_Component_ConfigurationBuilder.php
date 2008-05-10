@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Component
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_ConfigurationBuilder {

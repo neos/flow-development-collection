@@ -21,7 +21,6 @@ require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestP
  *
  * @package		Framework
  * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_RequestProcessorChainManagerTest extends F3_Testing_BaseTestCase {

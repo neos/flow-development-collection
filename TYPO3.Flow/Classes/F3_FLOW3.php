@@ -29,7 +29,6 @@ define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(real
  *
  * @package FLOW3
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 final class F3_FLOW3 {

@@ -26,7 +26,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Tests
  * @version $Id: F3_FLOW3_Property_CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_CompositeEditorAbstractTest extends F3_Testing_BaseTestCase {

@@ -18,7 +18,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Package
  * @version $Id:F3_FLOW3_Package_Manager.php 203 2007-03-30 13:17:37Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -28,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Package
  * @version $Id:F3_FLOW3_Package_Manager.php 203 2007-03-30 13:17:37Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {

@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @package		FLOW3
  * @subpackage	Property
  * @version 	$Id: F3_FLOW3_Property_Editor_CompositeEditorAbstract.php 661 2008-03-25 14:03:49Z robert $
- * @copyright	Copyright belongs to the respective authors
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

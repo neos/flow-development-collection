@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @subpackage Package
  * @version $Id:F3_FLOW3_Package_PackageInterface.php 203 2007-03-30 13:17:37Z robert $
  * @author Robert Lemke <robert@typo3.org>
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Package_PackageInterface {

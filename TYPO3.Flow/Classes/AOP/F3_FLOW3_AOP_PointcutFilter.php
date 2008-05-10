@@ -26,7 +26,6 @@ declare(ENCODING = 'utf-8');
  * @package Framework
  * @subpackage AOP
  * @version $Id:F3_FLOW3_AOP_PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_AOP_PointcutFilter implements F3_FLOW3_AOP_PointcutFilterInterface {

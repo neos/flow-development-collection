@@ -19,7 +19,6 @@ declare(ENCODING = 'utf-8');
  * 
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_MVC_Controller_ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {

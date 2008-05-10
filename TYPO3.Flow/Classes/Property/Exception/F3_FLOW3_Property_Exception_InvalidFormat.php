@@ -20,7 +20,6 @@ declare(ENCODING = 'utf-8');
  * @package		Framework
  * @subpackage	Property
  * @version 	$Id$
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_Exception_InvalidFormat extends F3_FLOW3_Property_Exception {

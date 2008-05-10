@@ -31,7 +31,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Utility
  * @version $Id:F3_FLOW3_Utility_Environment.php 467 2008-02-06 19:34:56Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Utility_Environment {

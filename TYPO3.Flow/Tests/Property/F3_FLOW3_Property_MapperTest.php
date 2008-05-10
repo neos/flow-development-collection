@@ -21,7 +21,6 @@ require_once (dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_Validation_Clas
  *
  * @package     FLOW3
  * @version     $Id$
- * @copyright   Copyright belongs to the respective authors
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {

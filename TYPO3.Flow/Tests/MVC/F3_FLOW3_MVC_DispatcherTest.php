@@ -21,7 +21,6 @@ require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_DummyClass.php')
  *
  * @package		Framework
  * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @copyright	Copyright belongs to the respective authors
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {

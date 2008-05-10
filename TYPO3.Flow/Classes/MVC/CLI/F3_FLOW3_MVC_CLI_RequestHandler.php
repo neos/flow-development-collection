@@ -26,7 +26,6 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage MVC
  * @version $Id:F3_FLOW3_MVC_CLI_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInterface {

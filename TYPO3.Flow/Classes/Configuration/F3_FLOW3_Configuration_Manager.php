@@ -29,7 +29,6 @@ require_once(FLOW3_PATH_FLOW3 . 'Configuration/Source/F3_FLOW3_Configuration_Sou
  * @package FLOW3
  * @subpackage Configuration
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Configuration_Manager{

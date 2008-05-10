@@ -26,7 +26,6 @@ declare(encoding = 'utf-8');
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @author Robert Lemke <robert@typo3.org>
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2

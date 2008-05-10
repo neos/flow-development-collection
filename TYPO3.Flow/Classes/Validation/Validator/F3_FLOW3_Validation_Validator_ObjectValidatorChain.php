@@ -26,7 +26,6 @@ declare(encoding = 'utf-8');
  * @package FLOW3
  * @subpackage Validation
  * @version $Id: F3_FLOW3_Validation_Validator_Chain.php 688 2008-04-03 09:35:36Z andi $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Validation_ObjectValidatorInterface {

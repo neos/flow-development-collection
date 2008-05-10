@@ -30,7 +30,6 @@ require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
  * @package FLOW3
  * @subpackage Resource
  * @version $Id:F3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Resource_ClassLoader {
