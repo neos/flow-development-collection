@@ -32,6 +32,18 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Utility_Files {
 
 	/**
+	 * Replacing backslashes and double slashes to slashes.
+	 * It's needed to compare paths (especially on windows).
+	 *
+	 * @param string $path Path which should transformed to the Unix Style.
+	 * @return string
+	 * @author Malte Jansen <typo3@maltejansen.de>
+	 */
+	public static function getUnixStylePath($path) {
+		return str_replace('//', '/', str_replace('\\', '/', $path));
+	}
+
+	/**
 	 * Returns all filenames from the specified directory. Filters hidden files and
 	 * directories.
 	 *
@@ -45,7 +57,7 @@ class F3_FLOW3_Utility_Files {
 		$directoryIterator = new DirectoryIterator($path);
 		foreach ($directoryIterator as $file) {
 			if($file->isFile() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
-				$files[] = $file->getPathname();
+				$files[] = F3_FLOW3_Utility_Files::getUnixStylePath($file->getPathname());
 			}
 			if($file->isDir() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
 				self::readDirectoryRecursively($file->getPathname(), $files);

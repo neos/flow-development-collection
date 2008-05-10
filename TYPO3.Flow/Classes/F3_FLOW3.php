@@ -14,9 +14,10 @@ declare(ENCODING="utf-8");
  * Public License for more details.                                       *
  *                                                                        */
 
-define('FLOW3_PATH_FLOW3', str_replace('\\', '/', dirname(__FILE__)) . '/' );
-define('FLOW3_PATH_PACKAGES', realpath(FLOW3_PATH_FLOW3 . '../../') . '/');
-define('FLOW3_PATH_CONFIGURATION', realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/');
+require_once(dirname(__FILE__) . '/Utility/F3_FLOW3_Utility_Files.php');
+define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(dirname(__FILE__) . '/'));
+define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
+define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
 
 /**
  * @package FLOW3
