@@ -312,20 +312,36 @@ class F3_FLOW3_MVC_Controller_Argument {
 	/**
 	 * Create and set a filter chain
 	 *
-	 * @param array Class names of a filters
+	 * @param array Class names of the filters
 	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	/*
 	public function setNewFilterChain(array $classNames) {
-		$this->filter = $this->componentManager->getComponent('F3_FLOW3');
+		$this->filter = $this->createNewFilterChainObject();
 
 		foreach($classNames as $className) {
-
+			$this->filter->addFilter($this->componentManager->getComponent($className));
 		}
 
 		return $this;
-	}*/
+	}
+
+	/**
+	 * Create and set a validator chain
+	 *
+	 * @param array Class names of the validators
+	 * @return F3_FLOW3_MVC_Controller_Argument Returns $this (used for fluent interface)
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewValidatorChain(array $classNames) {
+		$this->validator = $this->createNewValidatorChainObject();
+
+		foreach($classNames as $className) {
+			$this->validator->addFilter($this->componentManager->getComponent($className));
+		}
+
+		return $this;
+	}
 
 	/**
 	 * Returns the set filter
@@ -379,6 +395,26 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 */
 	public function getPropertyEditorInputFormat() {
 		return $this->propertyEditorInputFormat;
+	}
+
+	/**
+	 * Factory method that creates a new filter chain
+	 *
+	 * @return F3_FLOW3_Validation_Filter_Chain A new filter chain
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function createNewFilterChainObject() {
+		return $this->componentManager->getComponent('F3_FLOW3_Validation_Filter_Chain');
+	}
+
+	/**
+	 * Factory method that creates a new validator chain
+	 *
+	 * @return F3_FLOW3_Validation_Validator_Chain A new validator chain
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function createNewValidatorChainObject() {
+		return $this->componentManager->getComponent('F3_FLOW3_Validation_Validator_Chain');
 	}
 }
 ?>

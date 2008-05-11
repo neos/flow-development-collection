@@ -340,6 +340,17 @@ class F3_FLOW3_Property_Mapper {
 	 * @todo   Implement error logging into MappingResult
 	 */
 	protected function setPropertyValue($propertyName, $propertyValue) {
+
+		if($this->validator !== NULL) {
+			$errors = $this->createNewValidationErrorsObject();
+			if (!$this->validator->isValidProperty('F3_FLOW3_MVC_Controller_Arguments', $propertyName, $propertyValue, $errors)) {
+				foreach ($errors as $error) {
+					$this->mappingResults->addError($error, $propertyName);
+				}
+				return FALSE;
+			}
+		}
+
 		$setterMethodName = 'set' . ucfirst($propertyName);
 		try {
 			if (is_callable(array($this->target, $setterMethodName))) {
@@ -351,12 +362,6 @@ class F3_FLOW3_Property_Mapper {
 			}
 		} catch (Exception $exception) {
 			return FALSE;
-		}
-
-		if($this->validator !== NULL) {
-			$errors = $this->createNewValidationErrorsObject();
-			$this->validator->validateProperty($this->target, $propertyName, $errors);
-			if (count($errors) > 0) foreach ($errors as $error) $this->mappingResults->addError($error, $propertyName);
 		}
 
 		return TRUE;
@@ -432,14 +437,13 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function validateTarget() {
-		if($this->validator !== NULL) {
+		if ($this->validator != NULL) {
 			$errors = $this->createNewValidationErrorsObject();
-			$this->validator->validate($this->target, $errors);
-			/*if (count($errors) > 0) {
-				foreach ($errors as $error) {
-					$this->mappingResults->addError($error);
+			if (!$this->validator->validate($this->target, $errors)) {
+				foreach ($errors as $propertyName => $error) {
+					$this->mappingResults->addError($error, $propertyName);
 				}
-			}*/
+			}
 		}
 	}
 

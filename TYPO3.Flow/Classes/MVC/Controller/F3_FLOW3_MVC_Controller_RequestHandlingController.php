@@ -31,6 +31,11 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Controller_Abstract {
 
 	/**
+	 * @var F3_FLOW3_Component_ManagerInterface The component manager
+	 */
+	protected $componentManager;
+
+	/**
 	 * @var F3_FLOW3_MVC_Request The current request
 	 */
 	protected $request;
@@ -64,6 +69,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->arguments = $componentManager->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$this->componentManager = $componentManager;
 		parent::__construct($componentManager, $packageManager);
 	}
 
@@ -134,7 +140,8 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 			if ($argument->getPropertyEditor() != NULL) $argumentsMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
 		}
 
-		$argumentsMapper->setOnlyWriteOnNoErrors(TRUE);
+		$argumentsValidator = $this->createNewArgumentsValidator($this->arguments);
+		$argumentsMapper->registerValidator($argumentsValidator);
 		$argumentsMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
 		$argumentsMapper->map(new ArrayObject($this->request->getArguments()));
 
@@ -143,5 +150,16 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 			$this->arguments[$propertyName]->setValidity(FALSE);
 		}
 	}
+
+	/**
+	 * Factory method to create a arguments validator
+	 *
+	 * @return F3_FLOW3_MVC_Controller_ArgumentsValidator An argument validator
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function createNewArgumentsValidator() {
+		return $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_ArgumentsValidator', $this->arguments);
+	}
 }
+
 ?>

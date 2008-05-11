@@ -401,14 +401,45 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$target = new ArrayObject();
 		$validator = $this->getMock('F3_FLOW3_Validation_ObjectValidatorInterface');
 
-		$validator->expects($this->once())->method('validate')->with($this->equalTo($source));
-		$validator->expects($this->atLeastOnce())->method('validateProperty');
+		$validator->expects($this->once())->method('validate');
+		$validator->expects($this->atLeastOnce())->method('isValidProperty');
 
 		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->registerValidator($validator);
 		$mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function propertyIsNotMappedIfValidatorReturnsFalse() {
+		$source = new ArrayObject(
+			array(
+				'key' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new ArrayObject();
+		$validator = $this->getMock('F3_FLOW3_Validation_ObjectValidatorInterface');
+
+		$validator->expects($this->once())->method('validate')->will($this->returnValue(FALSE));
+		$validator->expects($this->atLeastOnce())->method('isValidProperty')->will($this->returnValue(FALSE));
+
+		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper->setTarget($target);
+		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
+		$mapper->registerValidator($validator);
+		$mapper->map($source);
+
+		$this->assertEquals($target, new ArrayObject());
 	}
 }
 ?>
