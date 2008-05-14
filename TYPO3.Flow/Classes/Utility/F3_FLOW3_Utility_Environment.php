@@ -155,7 +155,7 @@ class F3_FLOW3_Utility_Environment {
 		if (isset($this->SERVER['REQUEST_URI'])) {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI'];
 		} else {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ereg_replace('^/', '', $this->getScriptName()) . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
+			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ltrim($this->getScriptPathAndFileName(), '/') . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
 		}
 
 		$requestURI = new F3_FLOW3_Property_DataType_URI($requestURIString);
@@ -179,7 +179,7 @@ class F3_FLOW3_Utility_Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScriptPathAndFilename() {
-		return str_replace('\\', '/', $this->SERVER['SCRIPT_FILENAME']);
+		return F3_FLOW3_Utility_Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
 	}
 
 	/**
@@ -262,7 +262,7 @@ class F3_FLOW3_Utility_Environment {
 			if (isset($this->SERVER['TMP'])) return $this->SERVER['TMP'];
 			if (isset($this->SERVER['SystemRoot'])) return $this->SERVER['SystemRoot'] . '\\temp\\';
 			if (isset($this->SERVER['windir'])) return $this->SERVER['windir'] . '\\temp\\';
-			return '\\\temp\\';
+			return '\\temp\\';
 		} else {
 			if (isset($this->SERVER['TMPDIR'])) return $this->SERVER['TMPDIR'] . '/';
 			return '/tmp/';

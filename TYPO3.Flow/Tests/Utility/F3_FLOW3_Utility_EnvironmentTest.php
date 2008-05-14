@@ -49,5 +49,49 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertTrue(file_exists($path), 'The temporary path does not exist.');
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getScriptPathAndFilenameReturnsCorrectPathAndFilename() {
+		$expectedPathAndFilename = '/this/is/the/file.php';
+		$environment = new F3_FLOW3_Utility_MockEnvironment();
+		$environment->SERVER = array(
+			'SCRIPT_FILENAME' => '/this/is/the/file.php'
+		);
+		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getScriptPathAndFilenameReturnsCorrectPathAndFilenameForWindowsStylePath() {
+		$expectedPathAndFilename = '/this/is/the/file.php';
+		$environment = new F3_FLOW3_Utility_MockEnvironment();
+		$environment->SERVER = array(
+			'SCRIPT_FILENAME' => '\\this\\is\\the\\file.php'
+		);
+		$returnedPathAndFilename = $environment->getScriptPathAndFilename();
+		$this->assertEquals($expectedPathAndFilename, $returnedPathAndFilename, 'The returned path did not match the expected value.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRequestURIReturnsExpectedURI() {
+		$expectedURIString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
+		$environment = new F3_FLOW3_Utility_MockEnvironment();
+		$environment->SERVER = array(
+			'HTTP_HOST' => 'flow3.typo3.org',
+			'QUERY_STRING' => '5=0',
+			'SCRIPT_FILENAME' => '/is/the/base/for/typo3'
+		);
+		$returnedURIString = (string)$environment->getRequestURI();
+		$this->assertEquals($expectedURIString, $returnedURIString, 'The URI returned did not match the expected value.');
+	}
 }
 ?>
