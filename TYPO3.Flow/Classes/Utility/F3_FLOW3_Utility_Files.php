@@ -110,9 +110,13 @@ class F3_FLOW3_Utility_Files {
 	 * @param string $path: Path to the directory which shall be created
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Make mode configurable / make umask configurable
 	 */
 	public static function createDirectoryRecursively($path) {
+		if(substr($path, -2) === '/.') {
+			$path = substr($path, 0, -1);
+		}
 		if (!is_dir($path) && F3_PHP6_Functions::strlen($path) > 0) {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
