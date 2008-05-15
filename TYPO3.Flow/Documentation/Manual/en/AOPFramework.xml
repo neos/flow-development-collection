@@ -97,11 +97,11 @@
             <para>A join point is a point in the flow of a program. Examples
             are the execution of a method or the throw of an exception. In
             FLOW3, join points are represented by the
-            <classname>F3_FLOW3_AOPJoinPoint</classname> object which
-            contains more information about the circumstances like name of the
-            called method, the passed arguments or type of the exception
-            thrown. A join point is an event which occurs during the program
-            flow, not a definition which defines that point.</para>
+            <classname>F3_FLOW3_AOPJoinPoint</classname> object which contains
+            more information about the circumstances like name of the called
+            method, the passed arguments or type of the exception thrown. A
+            join point is an event which occurs during the program flow, not a
+            definition which defines that point.</para>
           </listitem>
         </varlistentry>
 
@@ -257,9 +257,9 @@
       developer-friendly solution) when the development of TYPO3 5.0 began. We
       therefore decided to create a sophisticated but pragmatic implementation
       which adopts the concepts of AOP but takes PHP's specialities and the
-      requirements of typical FLOW3 applications into account. In a few
-      cases this even lead to new features or simplifications because they
-      were easier to implement in PHP compared to Java.</para>
+      requirements of typical FLOW3 applications into account. In a few cases
+      this even lead to new features or simplifications because they were
+      easier to implement in PHP compared to Java.</para>
 
       <para>FLOW3 pragmatically implements a reduced subset of AOP, which
       satisfies most needs of web applications. The join point model allows
@@ -284,10 +284,9 @@
       based on pure PHP and doesn't need any specific PHP extension. However,
       it does require the Component Manager to fulfill its task.</para>
 
-      <para>FLOW3 uses PHP's reflection capabilities to analyze
-      declarations of aspects, pointcuts and advices and implements method
-      interceptors as a dynamic proxy. In accordance to the GoF
-      patterns<footnote>
+      <para>FLOW3 uses PHP's reflection capabilities to analyze declarations
+      of aspects, pointcuts and advices and implements method interceptors as
+      a dynamic proxy. In accordance to the GoF patterns<footnote>
           <para>GoF means Group of Four and refers to the authors of the
           classic book <citetitle>Design Patterns – Elements of Reusable
           Object-Oriented Software</citetitle></para>
@@ -400,10 +399,10 @@ class F3_MySecurityPackage_FooSecurityAspect implements F3_FLOW3_AOPAspectInterf
       <note>
         <para>The AOP framework <productname>AspectJ</productname> provides a
         complete pointcut language with dozens of pointcut types and
-        expression constructs. FLOW3 makes do with only a small subset of
-        that language, which we think already suffice for even complex
-        enterprise applications. If you're interested in the original feature
-        set, it doesn't hurt throwing a glance at the <link
+        expression constructs. FLOW3 makes do with only a small subset of that
+        language, which we think already suffice for even complex enterprise
+        applications. If you're interested in the original feature set, it
+        doesn't hurt throwing a glance at the <link
         xl:href="http://www.eclipse.org/aspectj/doc/released/progguide/index.html">AspectJ
         Programming Guide</link>.</para>
       </note>
@@ -721,9 +720,9 @@ class F3_TestPackage_PointcutTestingAspect implements F3_FLOW3_AOPAspectInterfac
 
       <para>As you have seen in the previous section, advice methods always
       expect an argument of the type
-      <interfacename>F3_FLOW3_AOPJoinPointInterface</interfacename>. This
-      join point object contains all important information about the current
-      join point. Methods like <methodname>getClassName()</methodname> or
+      <interfacename>F3_FLOW3_AOPJoinPointInterface</interfacename>. This join
+      point object contains all important information about the current join
+      point. Methods like <methodname>getClassName()</methodname> or
       <methodname>getMethodArguments()</methodname> let the advice method
       classify the current context and enable you to implement advices in a
       way that they can be reused in different situations. For a full
@@ -858,12 +857,11 @@ class F3_MyPackage_LastNameRejectionAspect {
     <title>Introductions</title>
 
     <para>Introductions (also known as <firstterm>Inter-type
-    Declarations</firstterm>) allow for redeclaring the target class that it
-    implements a given interface. The probably newly introduced methods
-    (required by the new interface) can by implemented by declaring an advice.
-    If no implementation is defined, an empty placeholder method will be
-    generated automatically to satisfy the contract of the introduced
-    interface.</para>
+    Declarations</firstterm>) allow to subsequently implement an interface in
+    a given target class. The (usually) newly introduced methods (required by
+    the new interface) can then be implemented by declaring an advice. If no
+    implementation is defined, an empty placeholder method will be generated
+    automatically to satisfy the contract of the introduced interface.</para>
 
     <section>
       <title>Declaring introductions</title>
