@@ -76,6 +76,9 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheDirectory($cacheDirectory) {
+		if($cacheDirectory{strlen($cacheDirectory)-1} !== '/') {
+			$cacheDirectory .= '/';
+		}
 		if (!is_writable($cacheDirectory)) {
 			F3_FLOW3_Utility_Files::createDirectoryRecursively($cacheDirectory);
 		}
@@ -113,7 +116,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		$entryIdentifierHash = sha1($entryIdentifier);
-		$path = $this->cacheDirectory . '/' . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
+		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($path)) {
