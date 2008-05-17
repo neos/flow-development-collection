@@ -14,7 +14,7 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestHandlingController.php');
+require_once(dirname(__FILE__) . '/../../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestHandlingController.php');
 
 /**
  * Testcase for the MVC Request Handling Controller

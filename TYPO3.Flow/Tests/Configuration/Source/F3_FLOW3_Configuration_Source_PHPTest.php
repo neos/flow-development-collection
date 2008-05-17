@@ -44,7 +44,7 @@ class F3_FLOW3_Configuration_Source_PHPTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheContainer() {
-		$pathAndFilename = dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile.php';
+		$pathAndFilename = dirname(__FILE__) . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile.php';
 		$configuration = F3_FLOW3_Configuration_Source_PHP::load($pathAndFilename);
 		$this->assertTrue($configuration->configurationFileHasBeenLoaded, 'The option has not been set by the fixture.');
 	}

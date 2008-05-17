@@ -30,7 +30,7 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInterface {
 
-	/*
+	/**
 	 * @var array
 	 */
 	protected $filters = array();
