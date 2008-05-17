@@ -157,7 +157,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 			$joinPoint = new F3_FLOW3_AOP_JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments);
 			$result = $this->invokeJoinPoint($joinPoint);
 				';
-			}
+		}
 
 		if (isset ($groupedAdvices['F3_FLOW3_AOP_AfterReturningAdvice'])) {
 			$advicesCode .= '
@@ -197,3 +197,5 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 		return $constructorName;
 	}
 }
+
+?>

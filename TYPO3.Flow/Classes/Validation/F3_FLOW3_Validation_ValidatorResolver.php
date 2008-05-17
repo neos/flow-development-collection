@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -55,10 +55,10 @@ class F3_FLOW3_Validation_ValidatorResolver {
 	public function resolveValidator($class) {
 		$validatorName = $class . 'Validator';
 
-		if(!$this->componentManager->isComponentRegistered($validatorName)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('No validator with name ' . $validatorName . ' found!');
+		if (!$this->componentManager->isComponentRegistered($validatorName)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036055);
 
 		$validator = $this->componentManager->getComponent($validatorName);
-		if(!($validator instanceof F3_FLOW3_Validation_ObjectValidatorInterface)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('The found validator class did not implement F3_FLOW3_Validation_ObjectValidatorInterface');
+		if (!($validator instanceof F3_FLOW3_Validation_ObjectValidatorInterface)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('The found validator class did not implement F3_FLOW3_Validation_ObjectValidatorInterface', 1211036068);
 
 		return $validator;
 	}
@@ -74,10 +74,10 @@ class F3_FLOW3_Validation_ValidatorResolver {
 	public function resolveValidatorName($class) {
 		$validatorName = $class . 'Validator';
 
-		if(!$this->componentManager->isComponentRegistered($validatorName)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('No validator with name ' . $validatorName . ' found!');
+		if (!$this->componentManager->isComponentRegistered($validatorName)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036084);
 
 		$validator = $this->componentManager->getComponent($validatorName);
-		if(!($validator instanceof F3_FLOW3_Validation_ObjectValidatorInterface)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('The found validator class did not implement F3_FLOW3_Validation_ObjectValidatorInterface');
+		if (!($validator instanceof F3_FLOW3_Validation_ObjectValidatorInterface)) throw new F3_FLOW3_Validation_Exception_NoValidatorFound('The found validator class did not implement F3_FLOW3_Validation_ObjectValidatorInterface', 1211036095);
 
 		return $validatorName;
 	}

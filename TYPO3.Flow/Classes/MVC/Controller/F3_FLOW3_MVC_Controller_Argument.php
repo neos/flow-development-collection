@@ -319,7 +319,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	public function setNewFilterChain(array $classNames) {
 		$this->filter = $this->createNewFilterChainObject();
 
-		foreach($classNames as $className) {
+		foreach ($classNames as $className) {
 			$this->filter->addFilter($this->componentManager->getComponent($className));
 		}
 
@@ -336,7 +336,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	public function setNewValidatorChain(array $classNames) {
 		$this->validator = $this->createNewValidatorChainObject();
 
-		foreach($classNames as $className) {
+		foreach ($classNames as $className) {
 			$this->validator->addFilter($this->componentManager->getComponent($className));
 		}
 

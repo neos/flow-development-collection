@@ -15,8 +15,8 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A mock RequestHandlingController 
- * 
+ * A mock RequestHandlingController
+ *
  * @package		FLOW3
  * @subpackage	Tests
  * @version 	$Id$
@@ -28,7 +28,7 @@ class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Co
 	 * @var F3_FLOW3_MVC_Controller_Arguments Arguments passed to the controller
 	 */
 	public $arguments;
-	
+
 	/**
 	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
 	 */
@@ -38,10 +38,10 @@ class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Co
 	 * @var boolean If processRequest() has been called
 	 */
 	public $requestHasBeenProcessed = FALSE;
-	
+
 	/**
 	 * Doesn't really process the request but sets a flag that this method was called.
-	 * 
+	 *
 	 * @param  F3_FLOW3_MVC_Request							$request
 	 * @param  F3_FLOW3_MVC_Response						$response
 	 * @return void
@@ -51,4 +51,6 @@ class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Co
 		parent::processRequest($request, $response);
 		$this->requestHasBeenProcessed = TRUE;
 	}
-}?>
+}
+
+?>

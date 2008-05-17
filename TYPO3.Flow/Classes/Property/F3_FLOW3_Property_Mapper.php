@@ -341,7 +341,7 @@ class F3_FLOW3_Property_Mapper {
 	 */
 	protected function setPropertyValue($propertyName, $propertyValue) {
 
-		if($this->validator !== NULL) {
+		if ($this->validator !== NULL) {
 			$errors = $this->createNewValidationErrorsObject();
 			if (!$this->validator->isValidProperty('F3_FLOW3_MVC_Controller_Arguments', $propertyName, $propertyValue, $errors)) {
 				foreach ($errors as $error) {
@@ -399,13 +399,19 @@ class F3_FLOW3_Property_Mapper {
 	protected function invokePropertyEditor($propertyName, $propertyValue) {
 		try {
 			if (isset($this->propertyEditors[$propertyName])) {
-				if ($this->propertyEditors[$propertyName]['format'] == 'default') $this->propertyEditors[$propertyName]->setProperty($propertyValue);
-				else $this->propertyEditors[$propertyName]->setAs($propertyValue, $this->propertyEditors[$propertyName]['format']);
+				if ($this->propertyEditors[$propertyName]['format'] == 'default') {
+					$this->propertyEditors[$propertyName]->setProperty($propertyValue);
+				} else {
+					$this->propertyEditors[$propertyName]->setAs($propertyValue, $this->propertyEditors[$propertyName]['format']);
+				}
 				$propertyValue = $this->propertyEditors[$propertyName]->getProperty();
 
 			} elseif (isset($this->propertyEditors['all'])) {
-				if ($this->propertyEditors['all']['format'] == 'default') $this->propertyEditors['all']['propertyEditor']->setProperty($propertyValue);
-				else $this->propertyEditors['all']->setAs($propertyValue, $this->propertyEditors['all']['format']);
+				if ($this->propertyEditors['all']['format'] == 'default') {
+					$this->propertyEditors['all']['propertyEditor']->setProperty($propertyValue);
+				} else {
+					$this->propertyEditors['all']->setAs($propertyValue, $this->propertyEditors['all']['format']);
+				}
 				$propertyValue = $this->propertyEditors['all']['propertyEditor']->getProperty();
 			}
 

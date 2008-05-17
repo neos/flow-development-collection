@@ -30,10 +30,19 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Reflection_PropertyTest extends F3_Testing_BaseTestCase {
 
+	/**
+	 * @var string
+	 */
 	public $publicProperty = 'I\'m public';
 
+	/**
+	 * @var string
+	 */
 	protected $protectedProperty = 'abc';
 
+	/**
+	 * @var string
+	 */
 	private $privateProperty = '123';
 
 	/**

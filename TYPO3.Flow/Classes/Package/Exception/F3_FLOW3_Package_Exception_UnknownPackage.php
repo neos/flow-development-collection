@@ -15,8 +15,8 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * "Unknown Package" Exception 
- * 
+ * "Unknown Package" Exception
+ *
  * @package		FLOW3
  * @subpackage	Package
  * @version 	$Id$

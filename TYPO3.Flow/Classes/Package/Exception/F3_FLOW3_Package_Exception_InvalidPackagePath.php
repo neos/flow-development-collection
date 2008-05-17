@@ -15,8 +15,8 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * "Invalid Package Path" Exception 
- * 
+ * "Invalid Package Path" Exception
+ *
  * @package		FLOW3
  * @subpackage	Package
  * @version 	$Id$

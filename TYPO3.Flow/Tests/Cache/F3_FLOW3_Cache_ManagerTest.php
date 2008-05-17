@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Cache_CacheManagerTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Cache_ManagerTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test

@@ -93,7 +93,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 			$preparedArguments = array();
 			$this->injectConstructorArguments($constructorArguments, $valuesForInjection, $preparedArguments);
 
-			$instruction = '$componentObject = new ' . $className .'(' . implode(', ', $preparedArguments) . ');';
+			$instruction = '$componentObject = new ' . $className . '(' . implode(', ', $preparedArguments) . ');';
 			$evalResult = eval($instruction);
 			if (!is_object($componentObject)) {
 				$errorMessage = error_get_last();
@@ -125,7 +125,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 		$className = $class->getName();
 		$constructor = $class->getConstructor();
 		if ($constructor !== NULL) {
-			foreach($constructor->getParameters() as $parameterIndex => $parameter) {
+			foreach ($constructor->getParameters() as $parameterIndex => $parameter) {
 				$index = $parameterIndex + 1;
 				if (!isset($constructorArguments[$index])) {
 					try {
@@ -140,7 +140,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 							$this->debugMessages[] = 'Tried everything to autowire parameter $' . $parameter->getName() . ' in ' . $className . '::' . $constructor->getName() . '() but I saw no way.';
 						}
 					} catch (ReflectionException $exception) {
-						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the parameter $' . $parameter->getName() . ' of the method ' . $className . '::' . $constructor->getName() .'() a ReflectionException was thrown. Please verify the definition of your constructor method in ' . $constructor->getFileName() . ' line ' . $constructor->getStartLine() .'. Original message: ' . $exception->getMessage(), 1176467813);
+						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the parameter $' . $parameter->getName() . ' of the method ' . $className . '::' . $constructor->getName() . '() a ReflectionException was thrown. Please verify the definition of your constructor method in ' . $constructor->getFileName() . ' line ' . $constructor->getStartLine() . '. Original message: ' . $exception->getMessage(), 1176467813);
 					}
 				} else {
 					$this->debugMessages[] = 'Did not try to autowire parameter $' . $parameter->getName() . ' in ' . $className . '::' . $constructor->getName() . '() because it was already set.';
@@ -164,7 +164,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 	 */
 	protected function autoWireSetterProperties(array $setterProperties, F3_FLOW3_Reflection_Class $class) {
 		$className = $class->getName();
-		foreach($class->getMethods(F3_FLOW3_Reflection_Method::IS_PUBLIC) as $method) {
+		foreach ($class->getMethods(F3_FLOW3_Reflection_Method::IS_PUBLIC) as $method) {
 			$methodName = $method->getName();
 			if (F3_PHP6_Functions::substr($methodName, 0, 6) == 'inject') {
 				$propertyName = F3_PHP6_Functions::strtolower(F3_PHP6_Functions::substr($methodName, 6, 1)) . F3_PHP6_Functions::substr($methodName, 7);
@@ -186,7 +186,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 				if ($dependencyClass === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
 					if ($method->isTaggedWith('required')) {
-						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() .'. Original message: ' . $exception->getMessage(), 1203413346);
+						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() . '. Original message: ' . $exception->getMessage(), 1203413346);
 					}
 					continue;
 				}

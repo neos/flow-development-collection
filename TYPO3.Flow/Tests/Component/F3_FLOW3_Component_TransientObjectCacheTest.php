@@ -19,15 +19,18 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
 
 /**
  * Testcase for the default component manager
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_TransientObjectCacheTest extends F3_Testing_BaseTestCase {
-	
+
+	/**
+	 * @var F3_FLOW3_Component_TransientObjectCache
+	 */
 	protected $componentObjectCache;
-	
+
 	/**
 	 * Sets up this test case
 	 *
@@ -36,10 +39,10 @@ class F3_FLOW3_Component_TransientObjectCacheTest extends F3_Testing_BaseTestCas
 	protected function setUp() {
 		$this->componentObjectCache = new F3_FLOW3_Component_TransientObjectCache();
 	}
-	
+
 	/**
 	 * Checks if getComponentObject() returns the object we have put into the cache previously
-	 * 
+	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
@@ -68,10 +71,10 @@ class F3_FLOW3_Component_TransientObjectCacheTest extends F3_Testing_BaseTestCas
 		} catch (Exception $exception) {
 			$exceptionsThrown ++;
 		}
-		
+
 		$this->assertEquals(2, $exceptionsThrown, 'putComponentObject() did not throw enough exceptions.');
 	}
-	
+
 	/**
 	 * Checks if removeComponentObject() really removes the instance from the cache
 	 *
@@ -84,7 +87,7 @@ class F3_FLOW3_Component_TransientObjectCacheTest extends F3_Testing_BaseTestCas
 		$this->componentObjectCache->removeComponentObject('DummyComponent');
 		$this->assertFalse($this->componentObjectCache->componentObjectExists('DummyComponent'), 'removeComponentObject() did not really remove the object.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>

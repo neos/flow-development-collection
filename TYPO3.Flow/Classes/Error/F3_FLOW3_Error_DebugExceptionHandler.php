@@ -205,7 +205,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 				$startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
 				$endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
 				if ($endLine > $startLine) {
-					$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName .':</span><br /><pre>';
+					$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
 					for ($line = $startLine; $line < $endLine; $line++) {
 						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
 

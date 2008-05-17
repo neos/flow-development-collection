@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ declare(encoding = 'utf-8');
  */
 class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Validation_ObjectValidatorInterface {
 
-	/*
+	/**
 	 * @var array
 	 */
 	protected $validators = array();
@@ -131,7 +131,7 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValidator($index) {
-		if(!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex(1207215864);
+		if (!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207215864);
 		return $this->validators[$index];
 	}
 
@@ -142,7 +142,7 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeValidator($index) {
-		if(!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex(1207020177);
+		if (!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207020177);
 		unset($this->validators[$index]);
 	}
 }

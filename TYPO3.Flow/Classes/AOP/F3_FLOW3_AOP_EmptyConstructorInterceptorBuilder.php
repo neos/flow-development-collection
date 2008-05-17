@@ -61,3 +61,5 @@ class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abstr
 		return $constructorCode;
 	}
 }
+
+?>

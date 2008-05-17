@@ -85,9 +85,9 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 * @todo   Maybe support private properties as well
 	 */
 	public function getValue($object) {
-		if (!is_object($object)) throw new F3_FLOW3_Reflection_Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.');
+		if (!is_object($object)) throw new F3_FLOW3_Reflection_Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
 		if ($this->isPublic()) return parent::getValue($object);
-		if ($this->isPrivate()) throw new F3_FLOW3_Reflection_Exception('Cannot return value of private property "' . $this->name .'.');
+		if ($this->isPrivate()) throw new F3_FLOW3_Reflection_Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
 
 		$propertyValues = (array)$object;
 		$index = chr(0) . '*' . chr(0) . $this->name;

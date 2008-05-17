@@ -33,7 +33,7 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	/**
 	 * @var F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
 	 */
-	 protected $componentManager;
+	protected $componentManager;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment
@@ -94,9 +94,9 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 		$controllerName = $controllerNamePrefix . 'Default';
 		if (isset($requestPathSegments[1]) && F3_PHP6_Functions::strlen($requestPathSegments[1])) {
 			$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $requestPathSegments[1]);
-		 	if ($controllerName === FALSE) return;
+			if ($controllerName === FALSE) return;
 
-		 	$this->setActionName($requestPathSegments, $request);
+			$this->setActionName($requestPathSegments, $request);
 			$request->setControllerName($controllerName);
 		} else {
 			$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerName);
@@ -115,7 +115,7 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	 */
 	protected function setActionName(array $requestPathSegments, F3_FLOW3_MVC_Web_Request $request) {
 		if (isset($requestPathSegments[2]) && F3_PHP6_Functions::strlen($requestPathSegments[2])) {
-		 	$actionName = $requestPathSegments[2];
+			$actionName = $requestPathSegments[2];
 			$request->setActionName($actionName);
 		}
 	}

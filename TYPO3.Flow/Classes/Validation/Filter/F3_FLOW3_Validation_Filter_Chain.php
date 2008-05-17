@@ -20,7 +20,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Validation_Filter_Chain.php 467 2008-02-06 19:34:56Z robert $
  /*
 
- /** A filter to chain many filters
+/**
+ * A filter to chain many filters
  *
  * @package FLOW3
  * @subpackage Validation
@@ -66,7 +67,7 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getFilter($index) {
-		if(!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex(1207215864);
+		if (!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207215864);
 		return $this->filters[$index];
 	}
 
@@ -77,7 +78,7 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeFilter($index) {
-		if(!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex(1207020177);
+		if (!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207020177);
 		unset($this->filters[$index]);
 	}
 }

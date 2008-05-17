@@ -42,7 +42,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setUp() {
-		if(!extension_loaded('memcache')) {
+		if (!extension_loaded('memcache')) {
 			$this->markTestSkipped('memcache extension was not available');
 		}
 		$this->backend = NULL;

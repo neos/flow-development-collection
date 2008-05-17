@@ -16,12 +16,14 @@ declare(ENCODING = 'utf-8');
 
 /**
  * An generic Property related exception
- * 
+ *
  * @package		FLOW3
  * @subpackage	Property
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_Exception extends F3_FLOW3_Exception {
-	
+
 }
+
+?>

@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,8 +21,8 @@ declare(encoding = 'utf-8');
  */
 
 /**
- * Contract for a validator 
- * 
+ * Contract for a validator
+ *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
@@ -34,9 +34,9 @@ interface F3_FLOW3_Validation_ValidatorInterface {
 
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid.
-	 * Any errors will be stored in the given errors object. 
-	 * If at least one error occurred, the result is FALSE. 
-	 * 
+	 * Any errors will be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
+	 *
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.

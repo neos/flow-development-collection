@@ -125,7 +125,7 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function defaultAction() {
-		 return 'No default action has been implemented yet for this controller.';
+		return 'No default action has been implemented yet for this controller.';
 	}
 }
 ?>

@@ -16,20 +16,23 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the MVC CLI Request Handler class
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
-	
+
+	/**
+	 * @var F3_FLOW3_MVC_CLI_RequestHandler
+	 */
 	protected $requestHandler;
 
 	/**
 	 * @var F3_FLOW3_Utility_MockEnvironment
 	 */
 	protected $environment;
-	
+
 	/**
 	 * Sets up this test case
 	 *
@@ -37,7 +40,7 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 	 */
 	protected function setUp() {
 		$this->environment = $this->componentManager->getComponent('F3_FLOW3_Utility_MockEnvironment');
-		
+
 			// Inject the mock environment into Builder and Handler:
 		$requestBuilder = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->environment);
 		$this->requestHandler = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentManager, $this->environment);
@@ -45,7 +48,7 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if a mock request asking for the TestPackage default controller is handled and dispatched correctly.
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

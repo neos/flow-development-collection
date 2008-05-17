@@ -31,6 +31,9 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase {
 
+	/**
+	 * @var mixed
+	 */
 	protected $someProperty;
 
 	/**

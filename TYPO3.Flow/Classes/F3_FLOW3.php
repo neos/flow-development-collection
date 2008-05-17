@@ -1,5 +1,5 @@
 <?php
-declare(ENCODING="utf-8");
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -330,7 +330,7 @@ final class F3_FLOW3 {
 		ini_set('unicode.output_encoding', 'utf-8');
 		ini_set('unicode.stream_encoding', 'utf-8');
 		ini_set('unicode.runtime_encoding', 'utf-8');
-#		locale_set_default('en_UK');
+		#locale_set_default('en_UK');
 		if (ini_get('date.timezone') == '') {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
@@ -383,7 +383,7 @@ final class F3_FLOW3 {
 			$rawComponentConfigurations = $configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_COMPONENTS);
 			foreach ($rawComponentConfigurations as $componentName => $rawComponentConfiguration) {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
-					throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $componentConfiguration->getConfigurationSourceHint() .'.', 1184926175);
+					throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $componentConfiguration->getConfigurationSourceHint() . '.', 1184926175);
 				}
 				$existingComponentConfiguration = (array_key_exists($componentName, $masterComponentConfigurations)) ? $masterComponentConfigurations[$componentName] : NULL;
 				$masterComponentConfigurations[$componentName] = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration, 'Package ' . $packageKey, $existingComponentConfiguration);

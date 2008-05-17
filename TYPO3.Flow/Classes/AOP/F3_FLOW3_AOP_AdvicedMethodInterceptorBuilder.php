@@ -62,21 +62,21 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
 		';
-			if ($method !== NULL) {
-				$methodInterceptorCode .= '
+		if ($method !== NULL) {
+			$methodInterceptorCode .= '
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
 				';
 
-				if ($declaringClass->isInterface()) {
-					$methodInterceptorCode .= '
+			if ($declaringClass->isInterface()) {
+				$methodInterceptorCode .= '
 			$result = NULL;
 					';
-				} else {
-					$methodInterceptorCode .= '
+			} else {
+				$methodInterceptorCode .= '
 			$result = parent::' . $methodName . '(' . self::buildMethodParametersCode($method, FALSE) . ');
 					';
-				}
-				$methodInterceptorCode .= '
+			}
+			$methodInterceptorCode .= '
 		} else {
 			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringClass->getMethod($methodName)) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
@@ -85,10 +85,12 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 		}
 		return $result;
 				';
-			}
-			$methodInterceptorCode .= '
+		}
+		$methodInterceptorCode .= '
 	}
 			';
 		return $methodInterceptorCode;
 	}
 }
+
+?>

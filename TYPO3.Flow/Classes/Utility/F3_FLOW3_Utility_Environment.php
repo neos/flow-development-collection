@@ -61,9 +61,9 @@ class F3_FLOW3_Utility_Environment {
 		$this->SERVER = $_SERVER;
 		$this->POST = $_POST;
 		$this->SAPIName = php_sapi_name();
-#		$_SERVER = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
-#		$_GET = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
-#		$_POST = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+		#$_SERVER = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
+		#$_GET = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
+		#$_POST = $componentManager->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 	}
 
 	/**

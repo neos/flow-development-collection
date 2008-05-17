@@ -34,7 +34,7 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	/**
 	 * @var F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
 	 */
-	 protected $componentManager;
+	protected $componentManager;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment

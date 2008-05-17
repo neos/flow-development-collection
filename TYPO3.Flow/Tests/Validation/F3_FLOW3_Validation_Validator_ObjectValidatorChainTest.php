@@ -1,5 +1,5 @@
 <?php
-declare(encoding = 'utf-8');
+declare(ENCODING = 'utf-8');
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ declare(encoding = 'utf-8');
  * @version $Id: F3_FLOW3_Validation_Validator_ChainTest.php 688 2008-04-03 09:35:36Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_ObjectChainTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Validation_Validator_ObjectValidatorChainTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test

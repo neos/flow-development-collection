@@ -112,7 +112,7 @@ class F3_FLOW3_Resource_Publisher {
 	public function getMetadata(F3_FLOW3_Property_DataType_URI $URI) {
 		$metadata = array();
 		$identifier = md5((string)$URI);
-		if($this->resourceMetadataCache->has($identifier)) {
+		if ($this->resourceMetadataCache->has($identifier)) {
 			$metadata = $this->resourceMetadataCache->load($identifier);
 		} else {
 			$metadata = $this->extractResourceMetadata($URI);
@@ -129,38 +129,38 @@ class F3_FLOW3_Resource_Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mirrorPublicPackageResources($packageName) {
-		if($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE && $this->resourceMetadataCache->has($packageName . 'IsMirrored')) {
+		if ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE && $this->resourceMetadataCache->has($packageName . 'IsMirrored')) {
 			return;
-		} elseif($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE) {
+		} elseif ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE) {
 			$this->resourceMetadataCache->save($packageName . 'IsMirrored', TRUE);
 		}
 
 		$sourcePath = FLOW3_PATH_PACKAGES . $packageName . '/Resources/Public/';
-		if(!is_dir($sourcePath)) return;
+		if (!is_dir($sourcePath)) return;
 
 		$destinationPath = $this->publicResourcePath . $packageName . '/Public/';
 		$resourcesDirectoryIterator = new RecursiveDirectoryIterator($sourcePath);
 		$resourceFilenames = F3_FLOW3_Utility_Files::readDirectoryRecursively($sourcePath);
 
-		foreach($resourceFilenames as $file) {
+		foreach ($resourceFilenames as $file) {
 			$relativeFile = str_replace($sourcePath, '', $file);
 			$sourceMTime = filemtime($file);
-			if($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
+			if ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
 				$destMTime = filemtime($destinationPath . $relativeFile);
-				if($sourceMTime === $destMTime) continue;
+				if ($sourceMTime === $destMTime) continue;
 			}
 
 			$URI = $this->createURI('file://' . $packageName . '/Public/' . $relativeFile);
 			$metadata = $this->extractResourceMetadata($URI);
 
 			F3_FLOW3_Utility_Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
-			if($metadata['mimeType'] == 'text/html') {
+			if ($metadata['mimeType'] == 'text/html') {
 				$HTML = F3_FLOW3_Resource_Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {
 				copy($file, $destinationPath . $relativeFile);
 			}
-			if(!file_exists($destinationPath . $relativeFile)) {
+			if (!file_exists($destinationPath . $relativeFile)) {
 				throw new F3_FLOW3_Resource_Exception('The resource "' . $relativeFile . '" could not be mirrored.', 1207255453);
 			}
 			touch($destinationPath . $relativeFile, $sourceMTime);

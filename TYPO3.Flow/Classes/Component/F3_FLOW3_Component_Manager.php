@@ -85,7 +85,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContext($context) {
-		if (!is_string($context)) throw new InvalidArgumentException();
+		if (!is_string($context)) throw new InvalidArgumentException('Context must be given as string.', 1210857671);
 		$this->context = $context;
 	}
 
@@ -137,7 +137,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 				}
 				break;
 			default :
-				throw new F3_FLOW3_Component_Exception('Support for scope "' . $scope .'" has not been implemented (yet)', 1167484148);
+				throw new F3_FLOW3_Component_Exception('Support for scope "' . $scope . '" has not been implemented (yet)', 1167484148);
 		}
 
 		return $componentObject;

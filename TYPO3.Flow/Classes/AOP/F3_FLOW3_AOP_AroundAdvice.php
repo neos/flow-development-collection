@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_AOP_AroundAdvice.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface{
+class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface {
 
 	/**
 	 * @var string Holds the name of the aspect component containing the advice

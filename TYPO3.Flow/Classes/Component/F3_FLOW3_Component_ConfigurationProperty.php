@@ -27,16 +27,27 @@ class F3_FLOW3_Component_ConfigurationProperty {
 	const PROPERTY_TYPES_STRAIGHTVALUE = 0;
 	const PROPERTY_TYPES_REFERENCE = 1;
 
+	/**
+	 * @var string Name of the property
+	 */
 	private $name;
+
+	/**
+	 * @var mixed Value of the property
+	 */
 	private $value;
+
+	/**
+	 * @var integer Type of the property - one of the PROPERTY_TYPE_* constants
+	 */
 	private $type;
 
 	/**
 	 * Constructor - sets the name, type and value of the property
 	 *
-	 * @param  string $name: Name of the property
-	 * @param  mixed $value: Value of the property
-	 * @param  integer $type: Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param  string $name Name of the property
+	 * @param  mixed $value Value of the property
+	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -47,9 +58,9 @@ class F3_FLOW3_Component_ConfigurationProperty {
 	/**
 	 * Sets the name, type and value of the property
 	 *
-	 * @param  string $name: Name of the property
-	 * @param  mixed $value: Value of the property
-	 * @param  integer $type: Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param  string $name Name of the property
+	 * @param  mixed $value Value of the property
+	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

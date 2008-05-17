@@ -285,7 +285,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	static protected function getAdvicedMethodsInformation(array $interceptedMethods) {
 		$advicedMethodsInformation = array();
 		foreach ($interceptedMethods as $methodName => $interceptionInformation) {
-			foreach($interceptionInformation['groupedAdvices'] as $adviceType => $advices) {
+			foreach ($interceptionInformation['groupedAdvices'] as $adviceType => $advices) {
 				foreach ($advices as $advice) {
 					$adviceName = $advice->getAspectComponentName() . '::' . $advice->getAdviceMethodName();
 					$advicedMethodsInformation[$methodName][$adviceType][] = array (

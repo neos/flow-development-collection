@@ -53,6 +53,8 @@ class F3_FLOW3_MVC_Dispatcher {
 	 * @return void
 	 * @throws F3_FLOW3_MVC_Exception_NoSuchController, F3_FLOW3_MVC_Exception_InvalidController
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo dispatch until $request->isHandled()
+	 * @todo implement forwards
 	 */
 	public function dispatch(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
 		$controllerName = $request->getControllerName();
@@ -62,8 +64,6 @@ class F3_FLOW3_MVC_Dispatcher {
 		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerName . '". The controller must be a valid request handling controller.', 1202921619);
 
 		$controller->processRequest($request, $response);
-// @TODO dispatch until $request->isHandled()
-// @TODO implement forwards
 	}
 }
 ?>

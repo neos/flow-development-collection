@@ -15,22 +15,34 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A dummy class with setters for testing data mapping 
- * 
+ * A dummy class with setters for testing data mapping
+ *
  * @package		FLOW3
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Fixture_Validation_ClassWithSetters {
 
+	/**
+	 * @var mixed
+	 */
 	public $property1;
-	
+
+	/**
+	 * @var mixed
+	 */
 	public $property2;
-	
+
+	/**
+	 * @var mixed
+	 */
 	public $property3;
 
+	/**
+	 * @var mixed
+	 */
 	public $property4;
-	
+
 	public function setProperty1($value) {
 		$this->property1 = $value;
 	}

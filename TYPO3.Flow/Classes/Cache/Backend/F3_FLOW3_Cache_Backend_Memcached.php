@@ -135,14 +135,14 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
-	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL){
+	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL) {
 		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
 			$success = $this->getMemcache()->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
-			if(!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server',1207165277);
+			if (!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server',1207165277);
 		} catch(F3_FLOW3_Error_Exception $exception) {
 			throw new F3_FLOW3_Cache_Exception($exception->getMessage(), 1207208100);
 		}
@@ -156,7 +156,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function load($entryIdentifier){
+	public function load($entryIdentifier) {
 		return $this->getMemcache()->get($this->identifierPrefix . $entryIdentifier);
 	}
 
@@ -168,7 +168,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function has($entryIdentifier){
+	public function has($entryIdentifier) {
 		return (boolean) $this->getMemcache()->get($this->identifierPrefix . $entryIdentifier);
 	}
 
@@ -182,7 +182,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function remove($entryIdentifier){
+	public function remove($entryIdentifier) {
 		return $this->getMemcache()->delete($this->identifierPrefix . $entryIdentifier);
 	}
 
@@ -193,7 +193,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function getMemcache() {
-		if(!$this->memcache instanceof Memcache) {
+		if (!$this->memcache instanceof Memcache) {
 			$this->memcache = new Memcache();
 			$this->setupMemcache($this->memcache);
 		}
@@ -207,8 +207,8 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function setupMemcache(Memcache $memcache) {
-		if(!is_array($this->getServers()) or sizeof($this->getServers())==0) throw new F3_FLOW3_Cache_Exception('No servers was configured for Memcache',1207161347);
-		foreach($this->servers as $serverConf) {
+		if (!is_array($this->getServers()) or sizeof($this->getServers())==0) throw new F3_FLOW3_Cache_Exception('No servers was configured for Memcache',1207161347);
+		foreach ($this->servers as $serverConf) {
 			$conf = explode(':',$serverConf,2);
 			$memcache->addServer($conf[0],$conf[1]);
 		}

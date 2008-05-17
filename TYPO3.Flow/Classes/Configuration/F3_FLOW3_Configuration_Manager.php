@@ -31,7 +31,7 @@ require_once(FLOW3_PATH_FLOW3 . 'Configuration/Source/F3_FLOW3_Configuration_Sou
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Configuration_Manager{
+class F3_FLOW3_Configuration_Manager {
 
 	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
 	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
@@ -41,7 +41,7 @@ class F3_FLOW3_Configuration_Manager{
 	/**
 	 * @var string The application context of the configuration to manage
 	 */
-	var $context;
+	protected $context;
 
 	/**
 	 * Constructs the configuration manager

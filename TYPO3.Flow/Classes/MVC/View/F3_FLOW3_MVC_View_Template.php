@@ -107,7 +107,7 @@ class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
 			$output = str_replace('###' . F3_PHP6_Functions::strtoupper($marker) . '###', $content, $output);
 		}
 
-		foreach($this->parts as $marker => $content) {
+		foreach ($this->parts as $marker => $content) {
 			$output = preg_replace('/<!--\s*###' . F3_PHP6_Functions::strtoupper(preg_quote($marker, '/')) . '###.*###' . F3_PHP6_Functions::strtoupper(preg_quote($marker, '/')) . '###.*-->/msU', $content, $output);
 		}
 		return $output;

@@ -274,7 +274,7 @@ class F3_FLOW3_Component_Configuration {
 		$lastConstructorArgument = end($this->constructorArguments);
 		$argumentsCount = $lastConstructorArgument->getIndex();
 		$sortedConstructorArguments = array();
-		for($index = 1; $index <= $argumentsCount; $index++) {
+		for ($index = 1; $index <= $argumentsCount; $index++) {
 			$sortedConstructorArguments[$index] = isset($this->constructorArguments[$index]) ? $this->constructorArguments[$index] : NULL;
 		}
 		return $sortedConstructorArguments;

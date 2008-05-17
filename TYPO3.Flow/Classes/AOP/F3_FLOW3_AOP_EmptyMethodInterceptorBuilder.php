@@ -66,3 +66,5 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 	}
 
 }
+
+?>

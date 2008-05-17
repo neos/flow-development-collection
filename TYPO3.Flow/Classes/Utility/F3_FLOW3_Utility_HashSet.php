@@ -67,7 +67,7 @@ class F3_FLOW3_Utility_HashSet {
 	 *
 	 * @author Ronny Unger <ru@php-workx.de>
 	 */
-	function clear() {
+	public function clear() {
 		$this->table = array();
 	}
 

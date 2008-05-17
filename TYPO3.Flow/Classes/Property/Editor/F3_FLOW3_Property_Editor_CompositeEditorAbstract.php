@@ -42,7 +42,6 @@ abstract class F3_FLOW3_Property_Editor_CompositeEditorAbstract implements F3_FL
 	 */
 	protected $property = NULL;
 
-//TODO: this should be just a setter used by the configuration
 	/**
 	 * Register a new format, the editor will support in the future
 	 *
@@ -50,6 +49,7 @@ abstract class F3_FLOW3_Property_Editor_CompositeEditorAbstract implements F3_FL
 	 * @param F3_FLOW3_Property_EditorInterface The property Editor that can do the editing to and from the given format.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo this should be just a setter used by the configuration
 	 */
 	public function registerNewFormat($name, F3_FLOW3_Property_EditorInterface &$propertyEditor) {
 		$this->propertyEditors[$name] = $propertyEditor;
@@ -64,7 +64,7 @@ abstract class F3_FLOW3_Property_Editor_CompositeEditorAbstract implements F3_FL
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeFormat($name) {
-		if (!isset($this->propertyEditors[$name])) throw new F3_FLOW3_Property_Exception_InvalidFormat();
+		if (!isset($this->propertyEditors[$name])) throw new F3_FLOW3_Property_Exception_InvalidFormat('Format cannot be removed.', 1210858932);
 		unset($this->propertyEditors[$name]);
 	}
 
@@ -77,7 +77,7 @@ abstract class F3_FLOW3_Property_Editor_CompositeEditorAbstract implements F3_FL
 	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the property editor does not support the given format
 	 */
 	public function setAs($format, $property) {
-		if (!isset($this->propertyEditors[$format])) throw new F3_FLOW3_Property_Exception_InvalidFormat();
+		if (!isset($this->propertyEditors[$format])) throw new F3_FLOW3_Property_Exception_InvalidFormat('Format not supported.', 1210858950);
 
 		$this->propertyEditors[$format]->setAs($format, $property);
 	}
@@ -90,7 +90,7 @@ abstract class F3_FLOW3_Property_Editor_CompositeEditorAbstract implements F3_FL
 	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the property editor does not support the given format
 	 */
 	public function getAs($format) {
-		if (!isset($this->propertyEditors[$format])) throw new F3_FLOW3_Property_Exception_InvalidFormat();
+		if (!isset($this->propertyEditors[$format])) throw new F3_FLOW3_Property_Exception_InvalidFormat('Format not supported.', 1210858967);
 
 		return $this->propertyEditors[$format]->getAs($format);
 	}

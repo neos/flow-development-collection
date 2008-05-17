@@ -56,7 +56,7 @@ class F3_FLOW3_Utility_Arrays {
 	public function trimExplode($delimiter, $string, $onlyNonEmptyValues=FALSE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
-		while(list($key, $value) = each($chunksArr))	{
+		foreach ($chunksArr as $key => $value) {
 			if ($onlyNonEmptyValues === FALSE || strcmp('', trim($value))) {
 				$newChunksArr[] = trim($value);
 			}
@@ -83,7 +83,7 @@ class F3_FLOW3_Utility_Arrays {
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {
 			if (key_exists($key, $firstArray) && is_array($firstArray[$key])) {
-				if (is_array($secondArray[$key]))	{
+				if (is_array($secondArray[$key])) {
 					$firstArray[$key] = self::arrayMergeRecursiveOverrule($firstArray[$key], $secondArray[$key], $dontAddNewKeys, $emptyValuesOverride);
 				}
 			} else {

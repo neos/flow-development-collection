@@ -99,7 +99,7 @@ class F3_FLOW3_MVC_Request {
 	 */
 	public function setArgument($argumentName, $value) {
 		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181134254);
-		if (!is_string($argumentName) || F3_PHP6_Functions::strlen($argumentName) == 0) throw new F3_FLOW3_MVC_Exception_InvalidArgumentName();
+		if (!is_string($argumentName) || F3_PHP6_Functions::strlen($argumentName) == 0) throw new F3_FLOW3_MVC_Exception_InvalidArgumentName('Invalid argument name.', 1210858767);
 		$this->arguments[$argumentName] = $value;
 	}
 

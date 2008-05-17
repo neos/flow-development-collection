@@ -77,7 +77,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	public function validate($object, F3_FLOW3_Validation_Errors &$errors) {
 		$isValid = TRUE;
 
-		foreach($object as $argument) {
+		foreach ($object as $argument) {
 			$isValid &= $this->validateProperty($object, $argument->getName(), $errors);
 		}
 	}

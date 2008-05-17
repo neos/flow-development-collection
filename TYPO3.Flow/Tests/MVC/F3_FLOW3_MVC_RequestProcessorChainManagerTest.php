@@ -46,7 +46,7 @@ class F3_FLOW3_MVC_RequestProcessorChainManagerTest extends F3_Testing_BaseTestC
 		$this->assertTrue(count($registeredProcessors) > 0, 'It seems like no request processors are registered.');
 
 		$ok = TRUE;
-		foreach($registeredProcessors['F3_FLOW3_MVC_Request'] as $registeredProcessor) {
+		foreach ($registeredProcessors['F3_FLOW3_MVC_Request'] as $registeredProcessor) {
 			if ($registeredProcessor !== array_shift($processorFixtures)) $ok = FALSE;
 		}
 
@@ -75,7 +75,7 @@ class F3_FLOW3_MVC_RequestProcessorChainManagerTest extends F3_Testing_BaseTestC
 		$registeredProcessors = $manager->getRegisteredRequestProcessors();
 
 		$found = FALSE;
-		foreach($registeredProcessors['F3_FLOW3_MVC_Request'] as $registeredProcessor) {
+		foreach ($registeredProcessors['F3_FLOW3_MVC_Request'] as $registeredProcessor) {
 			if ($registeredProcessor === $processorFixtures[1]) $found = TRUE;
 		}
 

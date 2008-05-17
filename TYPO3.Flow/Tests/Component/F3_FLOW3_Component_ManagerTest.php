@@ -293,7 +293,7 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	public function getRegisteredComponentsReturnsArrayOfMixedCaseAndLowerCaseComponentNames() {
 		$registeredComponents = $this->componentManager->getRegisteredComponents();
 		$this->assertTrue(is_array($registeredComponents), 'The result is not an array.');
-		foreach($registeredComponents as $mixedCase => $lowerCase) {
+		foreach ($registeredComponents as $mixedCase => $lowerCase) {
 			$this->assertTrue(strlen($mixedCase) > 0, 'The component name was an empty string.');
 			$this->assertTrue(strtolower($mixedCase) == $lowerCase, 'The key and value were not equal after strtolower().');
 		}

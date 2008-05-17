@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the MVC Controller Argument
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_MVC_Controller_ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -56,7 +56,7 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 		} catch (InvalidArgumentException $exception) {
 		}
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -65,7 +65,7 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 		$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', 'dummy', 'number');
 		$this->assertEquals('number', $argument->getDataType(), 'The specified data type has not been set correctly.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>

@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_AOP_Introduction implements F3_FLOW3_AOP_IntroductionInterface{
+class F3_FLOW3_AOP_Introduction implements F3_FLOW3_AOP_IntroductionInterface {
 
 	/**
 	 * @var string Name of the aspect declaring this introduction

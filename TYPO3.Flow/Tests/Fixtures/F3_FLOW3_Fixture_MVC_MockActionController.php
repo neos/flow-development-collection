@@ -33,4 +33,6 @@ class F3_FLOW3_Fixture_MVC_MockActionController extends F3_FLOW3_MVC_Controller_
 	public function returnSomeStringAction() {
 		return 'Mock Action Controller Return String';
 	}
-}?>
+}
+
+?>

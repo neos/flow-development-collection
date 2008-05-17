@@ -55,10 +55,10 @@ class F3_FLOW3_Utility_Files {
 
 		$directoryIterator = new DirectoryIterator($path);
 		foreach ($directoryIterator as $file) {
-			if($file->isFile() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
+			if ($file->isFile() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
 				$files[] = F3_FLOW3_Utility_Files::getUnixStylePath($file->getPathname());
 			}
-			if($file->isDir() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
+			if ($file->isDir() && F3_PHP6_Functions::substr($file->getFilename(),0,1) != '.') {
 				self::readDirectoryRecursively($file->getPathname(), $files);
 			}
 		}
@@ -114,7 +114,7 @@ class F3_FLOW3_Utility_Files {
 	 * @todo Make mode configurable / make umask configurable
 	 */
 	public static function createDirectoryRecursively($path) {
-		if(substr($path, -2) === '/.') {
+		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
 		if (!is_dir($path) && F3_PHP6_Functions::strlen($path) > 0) {

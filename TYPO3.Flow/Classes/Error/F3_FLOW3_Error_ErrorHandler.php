@@ -83,7 +83,7 @@ class F3_FLOW3_Error_ErrorHandler {
 			E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
 		);
 		if (in_array($errorLevel, $this->exceptionalErrors)) {
-			throw new F3_FLOW3_Error_Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine);
+			throw new F3_FLOW3_Error_Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 		}
 	}
 }

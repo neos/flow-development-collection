@@ -51,13 +51,14 @@ class F3_FLOW3_Component_ClassFileManipulator {
 	 * @param  string					&$classFilePathAndName: Path and name of the class path file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo Fix code for case of existing $targetClassFilePathAndName
 	 */
 	public function manipulate(&$classFilePathAndName) {
 		$checksum = md5_file($classFilePathAndName);
 		$targetClassFilePathAndName = 'FLOW3/Component/' . basename($classFilePathAndName) . $checksum . '.php';
 		if (file_exists($targetClassFilePathAndName)) {
-#			$classFilePathAndName = $targetClassFilePathAndName;
-#			return;
+			#$classFilePathAndName = $targetClassFilePathAndName;
+			#return;
 		}
 
 		$sourceCode = file_get_contents($classFilePathAndName);

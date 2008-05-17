@@ -90,12 +90,12 @@ class F3_FLOW3_Resource_Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResource($URI) {
-		if(is_string($URI)) {
+		if (is_string($URI)) {
 			$URI = $this->componentManager->getComponent('F3_FLOW3_Property_DataType_URI', $URI);
 		}
 		$URIString = (string)$URI;
 
-		if(key_exists($URIString, $this->loadedResources)) {
+		if (key_exists($URIString, $this->loadedResources)) {
 			return $this->loadedResources[$URIString];
 		}
 
@@ -113,7 +113,7 @@ class F3_FLOW3_Resource_Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function instantiateResource(array $metadata) {
-		switch($metadata['mimeType']) {
+		switch ($metadata['mimeType']) {
 			case 'text/html':
 				$resource = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
 				break;

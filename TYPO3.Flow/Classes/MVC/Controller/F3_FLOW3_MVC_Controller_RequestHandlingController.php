@@ -97,7 +97,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
-		if (!$this->canProcessRequest($request)) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType(get_class($this). ' does not support requests of type "' . get_class($request) . '"' , 1187701131);
+		if (!$this->canProcessRequest($request)) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '"' , 1187701131);
 
 		$this->request = $request;
 		$this->response = $response;
@@ -134,7 +134,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 		$argumentsMapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
 		$argumentsMapper->setTarget($this->arguments);
 
-		foreach($this->arguments as $argument) {
+		foreach ($this->arguments as $argument) {
 
 			if ($argument->getFilter() != NULL) $argumentsMapper->registerFilter($argument->getFilter());
 			if ($argument->getPropertyEditor() != NULL) $argumentsMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
@@ -146,7 +146,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 		$argumentsMapper->map(new ArrayObject($this->request->getArguments()));
 
 		$this->argumentMappingResults = $argumentsMapper->getMappingResults();
-		foreach($this->argumentMappingResults->getErrors() as $propertyName => $error) {
+		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
 			$this->arguments[$propertyName]->setValidity(FALSE);
 		}
 	}

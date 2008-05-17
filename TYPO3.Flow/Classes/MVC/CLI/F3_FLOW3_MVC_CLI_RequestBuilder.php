@@ -76,7 +76,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 
 		$remainingArguments = array_slice($commandLineArguments, 4);
 
-		while(count($remainingArguments) > 0) {
+		while (count($remainingArguments) > 0) {
 			$argumentName = $this->convertCurrentCommandLineArgumentToRequestArgumentName($remainingArguments);
 			$argumentValue = $this->getValueOfCurrentCommandLineArgument($remainingArguments);
 			if (F3_PHP6_Functions::strlen($argumentName) > 0) {
@@ -98,7 +98,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 		$argumentName = explode('=', $commandLineArguments[0]);
 		$convertedName = '';
 
-		foreach(explode('-', $argumentName[0]) as $part)
+		foreach (explode('-', $argumentName[0]) as $part)
 			$convertedName .= ($convertedName !== '' ? F3_PHP6_Functions::ucfirst($part) : $part);
 
 		return $convertedName;

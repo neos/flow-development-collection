@@ -76,7 +76,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheDirectory($cacheDirectory) {
-		if($cacheDirectory{strlen($cacheDirectory)-1} !== '/') {
+		if ($cacheDirectory{strlen($cacheDirectory)-1} !== '/') {
 			$cacheDirectory .= '/';
 		}
 		if (!is_writable($cacheDirectory)) {
