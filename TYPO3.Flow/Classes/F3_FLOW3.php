@@ -128,6 +128,8 @@ final class F3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @throws F3_FLOW3_Exception if the class loader has already been initialized.
+	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
@@ -180,6 +182,7 @@ final class F3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3_FLOW3_Exception if the package system has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializePackages() {
@@ -202,6 +205,7 @@ final class F3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3_FLOW3_Exception if the component system has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeComponents() {
@@ -242,6 +246,7 @@ final class F3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3_FLOW3_Exception if the settings have already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeSettings() {
@@ -254,6 +259,8 @@ final class F3_FLOW3 {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @throws F3_FLOW3_Exception if the resource system has already been initialized.
+	 * @see initialize()
 	 */
 	public function initializeResources() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_RESOURCES) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1210080996);
@@ -297,8 +304,8 @@ final class F3_FLOW3 {
 	 * be used by unit tests and special cases. In almost any other case, a reference to the
 	 * component manager can be injected.
 	 *
- 	 * @return	F3_FLOW3_Component_ManagerInterface
- 	 * @author	Robert Lemke <robert@typo3.org>
+ 	 * @return F3_FLOW3_Component_ManagerInterface
+ 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentManager() {
 		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has not yet been fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759260);

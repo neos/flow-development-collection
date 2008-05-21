@@ -132,11 +132,13 @@ class F3_FLOW3_AOP_Framework {
 			$configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
 			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
-				$GLOBALS['FLOW3']['Cache']['Wakeup']['F3_FLOW3_AOP_Framework'] = $this;
+					// The AOP Pointcut Filter needs a fresh reference to the AOP framework - this is passed through a global:
+				$GLOBALS['FLOW3']['F3_FLOW3_AOP_Framework'] = $this;
 				$proxyBuildResults =  $proxyCache->load('proxyBuildResults');
 				$this->advicedMethodsInformationByTargetClass = $configurationCache->load('advicedMethodsInformationByTargetClass');
 				$aspectContainers = $configurationCache->load('aspectContainers');
 				$loadedFromCache = TRUE;
+				unset($GLOBALS['FLOW3']['F3_FLOW3_AOP_Framework']);
 			}
 		}
 
