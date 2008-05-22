@@ -28,10 +28,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_FLOW3_MVC_Widget_Abstract {
+abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 
 	/**
-	 * @var F3_FLOW3_MVC_Widget_Abstract The parent widget. If it is NULL, this widget is a toplevel widget
+	 * @var F3_FLOW3_MVC_Widget_AbstractWidget The parent widget. If it is NULL, this widget is a toplevel widget
 	 */
 	protected $parent = NULL;
 
@@ -48,14 +48,14 @@ abstract class F3_FLOW3_MVC_Widget_Abstract {
 	/**
 	 * Constructs this widget
 	 *
-	 * @param F3_FLOW3_MVC_Widget_Abstract $parent A reference to the parent widget, if any
+	 * @param F3_FLOW3_MVC_Widget_AbstractWidget $parent A reference to the parent widget, if any
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws InvalidArgumentException if parent was of the wrong type
 	 */
 	public function __construct($parent = NULL) {
 		$this->id = uniqid();
 		if (is_object($parent)) {
-			if (!$parent instanceof F3_FLOW3_MVC_Widget_Abstract) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_Abstract.', 1186730161);
+			if (!$parent instanceof F3_FLOW3_MVC_Widget_AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_AbstractWidget.', 1186730161);
 			$parent->addChildWidget($this);
 			$this->parent = $parent;
 		}
@@ -69,7 +69,7 @@ abstract class F3_FLOW3_MVC_Widget_Abstract {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setParent($parent) {
-		if (!is_object($parent) || !$parent instanceof F3_FLOW3_MVC_Widget_Abstract) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_Abstract.', 1186730280);
+		if (!is_object($parent) || !$parent instanceof F3_FLOW3_MVC_Widget_AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_AbstractWidget.', 1186730280);
 		$this->parent = $parent;
 	}
 
@@ -78,7 +78,7 @@ abstract class F3_FLOW3_MVC_Widget_Abstract {
 	 * If it is NULL, this widget is considered to be a
 	 * toplevel widget.
 	 *
-	 * @return F3_FLOW3_MVC_Widget_Abstract	Reference to the parent widget or NULL
+	 * @return F3_FLOW3_MVC_Widget_AbstractWidget	Reference to the parent widget or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
@@ -98,11 +98,11 @@ abstract class F3_FLOW3_MVC_Widget_Abstract {
 	/**
 	 * Adds a child to this widget
 	 *
-	 * @param F3_FLOW3_MVC_Widget_Abstract	$childWidget: The child widget to add
+	 * @param F3_FLOW3_MVC_Widget_AbstractWidget	$childWidget: The child widget to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addChildWidget(F3_FLOW3_MVC_Widget_Abstract $childWidget) {
+	public function addChildWidget(F3_FLOW3_MVC_Widget_AbstractWidget $childWidget) {
 		$this->childWidgets[] = $childWidget;
 		$childWidget->setParent($this);
 	}
@@ -110,7 +110,7 @@ abstract class F3_FLOW3_MVC_Widget_Abstract {
 	/**
 	 * Returns an array of all child widgets
 	 *
-	 * @return array An array of F3_FLOW3_MVC_Widget_Abstract objects
+	 * @return array An array of F3_FLOW3_MVC_Widget_AbstractWidget objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildWidgets() {

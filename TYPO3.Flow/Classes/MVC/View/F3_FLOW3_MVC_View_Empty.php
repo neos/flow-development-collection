@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_MVC_View_Empty.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_View_Empty extends F3_FLOW3_MVC_View_Abstract {
+class F3_FLOW3_MVC_View_Empty extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
 	 * Renders the empty view

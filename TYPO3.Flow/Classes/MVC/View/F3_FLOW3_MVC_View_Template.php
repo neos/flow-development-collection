@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_Abstract {
+class F3_FLOW3_MVC_View_Template extends F3_FLOW3_MVC_View_AbstractView {
 
 	/**
 	 * @var string

@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class F3_FLOW3_Resource_BaseResource implements F3_FLOW3_Resource_ResourceInterface {
+abstract class F3_FLOW3_Resource_AbstractResource implements F3_FLOW3_Resource_ResourceInterface {
 
 	/**
 	 * @var F3_FLOW3_Property_DataType_URI

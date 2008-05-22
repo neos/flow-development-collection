@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_AbstractTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the TestPackage controller handles a web request
@@ -78,8 +78,8 @@ class F3_FLOW3_MVC_Controller_AbstractTest extends F3_Testing_BaseTestCase {
 		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array('getPackage'), array(), '', FALSE);
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
 
-		$controller = $this->getMock('F3_FLOW3_MVC_Controller_Abstract', array(), array($this->componentManager, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
-		$controllerReflection = new F3_FLOW3_Reflection_Class('F3_FLOW3_MVC_Controller_Abstract');
+		$controller = $this->getMock('F3_FLOW3_MVC_Controller_AbstractController', array(), array($this->componentManager, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
+		$controllerReflection = new F3_FLOW3_Reflection_Class('F3_FLOW3_MVC_Controller_AbstractController');
 		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
 		$packagePropertyReflection = $controllerReflection->getProperty('package');
 

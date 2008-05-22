@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3_FLOW3_MVC_View_AbstractView.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,10 +25,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Abstract.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3_FLOW3_MVC_View_AbstractView.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_FLOW3_MVC_View_Abstract {
+abstract class F3_FLOW3_MVC_View_AbstractView {
 
 	/**
 	 * @var F3_FLOW3_Component_ManagerInterface A reference to the Component Manager

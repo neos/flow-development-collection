@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_MVC_Controller_PresentationController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_PresentationController extends F3_FLOW3_MVC_Controller_Abstract {
+class F3_FLOW3_MVC_Controller_PresentationController extends F3_FLOW3_MVC_Controller_AbstractController {
 
 }
 ?>
