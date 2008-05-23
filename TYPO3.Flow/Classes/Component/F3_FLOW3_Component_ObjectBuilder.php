@@ -83,18 +83,17 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 
 			$setterProperties = $componentConfiguration->getProperties();
 
+			$class = new F3_FLOW3_Reflection_Class($className);
 			if ($componentConfiguration->getAutoWiringMode() == F3_FLOW3_Component_Configuration::AUTOWIRING_MODE_ON) {
-				$class = new F3_FLOW3_Reflection_Class($className);
 				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
 				$setterProperties = $this->autoWireSetterProperties($setterProperties, $class);
 			}
 
-			$valuesForInjection = array();
 			$preparedArguments = array();
-			$this->injectConstructorArguments($constructorArguments, $valuesForInjection, $preparedArguments);
+			$this->injectConstructorArguments($constructorArguments, $preparedArguments);
 
-			$instruction = '$componentObject = new ' . $className . '(' . implode(', ', $preparedArguments) . ');';
-			$evalResult = eval($instruction);
+			$componentObject = (count($preparedArguments) > 0) ? $class->newInstanceArgs($preparedArguments) : $class->newInstance();
+
 			if (!is_object($componentObject)) {
 				$errorMessage = error_get_last();
 				throw new F3_FLOW3_Component_Exception_CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . '). The evaluated PHP code was: ' . $instruction, 1187164523);
@@ -186,7 +185,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 				if ($dependencyClass === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
 					if ($method->isTaggedWith('required')) {
-						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() . '. Original message: ' . $exception->getMessage(), 1203413346);
+						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() .'. Original message: ' . $exception->getMessage(), 1203413346);
 					}
 					continue;
 				}
@@ -200,13 +199,12 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 	 * Checks and resolves dependencies of the constructor arguments (objects) and prepares an array of constructor
 	 * arguments (strings) which can be used in a "new" statement to instantiate the component.
 	 *
-	 * @param array $constructorArguments: Array of F3_FLOW3_Component_ConfigurationArgument for the current component
-	 * @param array &$valuesForInjection: An empty array passed by reference. Will contain instances of the components which were injected into the constructor
-	 * @param array &$preparedArguments: An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
+	 * @param array $constructorArguments Array of F3_FLOW3_Component_ConfigurationArgument for the current component
+	 * @param array &$preparedArguments An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function injectConstructorArguments($constructorArguments, &$valuesForInjection, &$preparedArguments) {
+	protected function injectConstructorArguments($constructorArguments, &$preparedArguments) {
 		foreach ($constructorArguments as $index => $constructorArgument) {
 			if (is_object($constructorArgument)) {
 				if (gettype($constructorArgument->getValue()) == 'integer') {
@@ -217,20 +215,10 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 					} else {
 						$value = $constructorArgument->getValue();
 					}
-					if (is_string($value)) {
-						$escapedValue = str_replace("'", "\\'", str_replace('\\', '\\\\', $value));
-						$preparedArguments[] = "'" . $escapedValue . "'";
-					} elseif (is_numeric($value)) {
-						$preparedArguments[] = $value;
-					} elseif ($value === NULL) {
-						$preparedArguments[] = 'NULL';
-					} else {
-						$preparedArguments[] = '$valuesForInjection[' . $index . ']';
-						$valuesForInjection[$index] = $value;
-					}
+					$preparedArguments[] = $value;
 				}
 			} else {
-				$preparedArguments[] = 'NULL';
+				$preparedArguments[] = null;
 			}
 		}
 	}
