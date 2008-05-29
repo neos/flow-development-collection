@@ -17,7 +17,7 @@ declare(ENCODING="utf-8");
 /**
  * Defines the global, last-resort exception handler.
  *
- * @type F3_FLOW3_Error_DevelopmentExceptionHandlerInterface
+ * @var F3_FLOW3_Error_DevelopmentExceptionHandlerInterface
  */
 $c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
 
@@ -25,7 +25,7 @@ $c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
  * Defines which errors should result in an exception thrown - all other error
  * levels will be silently ignored.
  *
- * @type array
+ * @var array
  */
 $c->errorHandler->exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR);
 
@@ -33,7 +33,7 @@ $c->errorHandler->exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR);
  * Enable or disable caching of the component configurations. If caching is
  * enabled, a cache backend must be properly configured.
  *
- * @type boolean
+ * @var boolean
  */
 $c->component->configurationCache->enable = TRUE;
 
@@ -41,14 +41,14 @@ $c->component->configurationCache->enable = TRUE;
  * Define the backend used for caching component configurations. Specify the
  * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
  *
- * @type F3_FLOW3_Cache_BackendInterface
+ * @var F3_FLOW3_Cache_BackendInterface
  */
 $c->component->configurationCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
 /**
  * Options which are passed the cache backend.
  *
- * @type array
+ * @var array
  */
 $c->component->configurationCache->backendOptions = array();
 
@@ -62,14 +62,14 @@ $c->aop->proxyCache->enable = TRUE;
  * Define the backend used for caching AOP proxy classes. Specify the
  * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
  *
- * @type F3_FLOW3_Cache_BackendInterface
+ * @var F3_FLOW3_Cache_BackendInterface
  */
 $c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
 /**
  * The path for the public resources mirror used by the configuration path
  *
- * @type string
+ * @var string
  */
 $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
 
@@ -78,7 +78,7 @@ $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
  * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE or
  * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE
  *
- * @type string
+ * @var string
  */
 $c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
 ?>

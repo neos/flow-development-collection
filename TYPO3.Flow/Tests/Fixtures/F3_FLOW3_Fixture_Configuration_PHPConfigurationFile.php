@@ -21,7 +21,7 @@ declare(ENCODING='utf-8');
 /**
  * Some dummy option
  *
- * @type boolean
+ * @var boolean
  */
 $c->configurationFileHasBeenLoaded = TRUE;
 
