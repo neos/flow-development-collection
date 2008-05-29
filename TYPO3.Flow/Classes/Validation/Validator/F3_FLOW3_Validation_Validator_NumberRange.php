@@ -14,7 +14,7 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-/*
+/**
  * @package FLOW3
  * @subpackage Validation
  * @version $Id: F3_FLOW3_Validation_Validator_NumberRange.php 681 2008-04-02 14:00:27Z andi $

@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:F3_FLOW3_Utility_SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * This class can be used as a replacement for superglobals such as $_SERVER etc.
  * to give the caller a hint to use a different way for accessing the information.
- *  
- * @package		FLOW3
- * @subpackage	Utility
- * @version     $Id:F3_FLOW3_Utility_SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:F3_FLOW3_Utility_SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
@@ -31,12 +37,12 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @var string Name of the super global which was replaced by this object
 	 */
 	protected $replacedSuperGlobalName;
-	
+
 	/**
 	 * @var string A little hint how to access this super global alternatively
 	 */
 	protected $accessHintMessage;
-	
+
 	/**
 	 * Constructs the super global replacement.
 	 *
@@ -49,7 +55,7 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 		$this->replacedSuperGlobalName = $replacedSuperGlobalName;
 		$this->accessHintMessage = $accessHintMessage;
 	}
-	
+
 	/**
 	 * Intercepts count() calls.
 	 *
@@ -59,7 +65,7 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	public function count() {
 		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to run isset() for offsets
 	 *
@@ -68,9 +74,9 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetExists($offset) {
-		$this->throwException();		
+		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to read array items
 	 *
@@ -81,7 +87,7 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	public function offsetGet($offset) {
 		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to read properties.
 	 *
@@ -92,7 +98,7 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	public function __get($propertyName) {
 		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to write properties.
 	 *
@@ -102,9 +108,9 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __set($propertyName, $value) {
-		$this->throwException();		
+		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to call methods
 	 *
@@ -114,9 +120,9 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __call($methodName, $arguments) {
-		$this->throwException();		
+		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to run isset() on properties
 	 *
@@ -125,9 +131,9 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __isset($propertyName) {
-		$this->throwException();		
+		$this->throwException();
 	}
-	
+
 	/**
 	 * Intercepts all attempts to unset properties.
 	 *
@@ -136,12 +142,12 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __unset($propertyName) {
-		$this->throwException();		
+		$this->throwException();
 	}
-	
+
 	/**
 	 * Throws an exception on unauthorized access
-	 * 
+	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -153,7 +159,7 @@ class F3_FLOW3_Utility_SuperGlobalReplacement extends ArrayObject {
 			$callingMethod = 'in file ' . $debugBacktrace[1]['file'];
 		}
 		$message = sprintf('You tried to access the the $%s super global in %s but access to this variable has been restricted. %s', $this->replacedSuperGlobalName, $callingMethod, $this->accessHintMessage);
-		throw new F3_FLOW3_Utility_Exception($message, 1176548856);		
+		throw new F3_FLOW3_Utility_Exception($message, 1176548856);
 	}
 }
 ?>

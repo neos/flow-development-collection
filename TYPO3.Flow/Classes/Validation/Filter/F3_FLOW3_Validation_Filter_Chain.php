@@ -18,7 +18,7 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Validation
  * @version $Id:F3_FLOW3_Validation_Filter_Chain.php 467 2008-02-06 19:34:56Z robert $
- /*
+ */
 
 /**
  * A filter to chain many filters

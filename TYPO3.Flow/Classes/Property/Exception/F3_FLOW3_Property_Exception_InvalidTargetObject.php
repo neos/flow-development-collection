@@ -15,14 +15,20 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id$
+ */
+
+/**
  * An "Invalid Target Object" Exception
- * 
- * @package		FLOW3
- * @subpackage	Property
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Property_Exception_InvalidTargetObject extends F3_FLOW3_Security_Exception {
-	
+
 }
 ?>

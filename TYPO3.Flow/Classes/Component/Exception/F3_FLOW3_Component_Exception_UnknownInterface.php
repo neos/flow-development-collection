@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * "Unknown Interface" Exception 
- * 
- * @package		Framework
- * @subpackage	Component
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
+ */
+
+/**
+ * "Unknown Interface" Exception
+ *
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_Exception_UnknownInterface extends F3_FLOW3_Component_Exception {
 

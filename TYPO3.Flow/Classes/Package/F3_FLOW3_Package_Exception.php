@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A generic Package Exception 
- * 
- * @package		Framework
- * @subpackage	Package
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id$
+ */
+
+/**
+ * A generic Package Exception
+ *
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Package_Exception extends F3_FLOW3_Exception {
 

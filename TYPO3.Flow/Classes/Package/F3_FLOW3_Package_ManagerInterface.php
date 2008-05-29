@@ -15,6 +15,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:F3_FLOW3_Package_ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
+ */
+
+/**
  * Interface for the TYPO3 Package Manager
  *
  * @package FLOW3

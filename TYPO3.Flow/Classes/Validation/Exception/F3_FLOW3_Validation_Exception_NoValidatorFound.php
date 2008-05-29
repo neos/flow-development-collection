@@ -18,9 +18,10 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Validation
  * @version $Id:F3_FLOW3_Validation_Exception_NoValidatorFound.php 467 2008-02-06 19:34:56Z robert $
- /*
+ */
 
- /** A "NoValidatorFound" Exception
+/**
+ * A "NoValidatorFound" Exception
  *
  * @package FLOW3
  * @subpackage Validation

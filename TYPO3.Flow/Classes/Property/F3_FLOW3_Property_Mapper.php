@@ -15,6 +15,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id:F3_FLOW3_Property_Mapper.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * The Property Mapper maps properties onto a given target object, often a (domain-) model.
  * Which properties are bound, required and how they should be filtered can be customized.
  * During the mapping process, the property values are validated and the result of this
@@ -33,10 +39,10 @@ declare(ENCODING = 'utf-8');
  *
  * Now the target object equals the source object.
  *
- * @package  FLOW3
- * @subpackage	Property
- * @version 	$Id:F3_FLOW3_Property_Mapper.php 467 2008-02-06 19:34:56Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id:F3_FLOW3_Property_Mapper.php 467 2008-02-06 19:34:56Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */

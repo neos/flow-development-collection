@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:F3_FLOW3_Package_MetaInterface.php 203 2007-03-30 13:17:37Z robert $
+ */
 
 /**
  * Interface for TYPO3 Package Meta information
- * 
- * @package		FLOW3
- * @subpackage	Package
- * @version 	$Id:F3_FLOW3_Package_MetaInterface.php 203 2007-03-30 13:17:37Z robert $
- * @author		Robert Lemke <robert@typo3.org>
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:F3_FLOW3_Package_MetaInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @author Robert Lemke <robert@typo3.org>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Package_MetaInterface {
 

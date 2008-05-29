@@ -23,7 +23,7 @@ declare(ENCODING = 'utf-8');
 /**
  * A filter which refers to another pointcut.
  *
- * @package Framework
+ * @package FLOW3
  * @subpackage AOP
  * @version $Id:F3_FLOW3_AOP_PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2

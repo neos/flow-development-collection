@@ -15,7 +15,7 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package Framework
+ * @package FLOW3
  * @subpackage MVC
  * @version $Id:F3_FLOW3_MVC_Controller_AbstractController.php 467 2008-02-06 19:34:56Z robert $
  */
@@ -23,7 +23,7 @@ declare(ENCODING = 'utf-8');
 /**
  * An abstract base class for Controllers
  *
- * @package Framework
+ * @package FLOW3
  * @subpackage MVC
  * @version $Id:F3_FLOW3_MVC_Controller_AbstractController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2

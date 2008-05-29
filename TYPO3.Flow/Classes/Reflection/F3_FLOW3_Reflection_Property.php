@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Reflection
+ * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * Extended version of the ReflectionProperty
  *
- * @package     FLOW3
- * @subpackage  Reflection
- * @version     $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Reflection
+ * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 

@@ -15,6 +15,12 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package		FLOW3
+ * @subpackage	Component
+ * @version 	$Id$
+ */
+
+/**
  * This class is used to manipulate the PHP source code of certain registered
  * components. Specifically the "new" operator is replaced by a call to the
  * getComponent() method of the component manager.
@@ -36,7 +42,7 @@ class F3_FLOW3_Component_ClassFileManipulator {
 	/**
 	 * Constructs the class file manipulator
 	 *
-	 * @param  F3_FLOW3_Component_ManagerInterface		$componentManager: The component manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager The component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -48,7 +54,7 @@ class F3_FLOW3_Component_ClassFileManipulator {
 	 * Mainpulates the specified class file if neccessary and probably overrides
 	 * the path and let it point to a manipulated version of the file.
 	 *
-	 * @param  string					&$classFilePathAndName: Path and name of the class path file
+	 * @param string &$classFilePathAndName Path and name of the class path file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Fix code for case of existing $targetClassFilePathAndName
@@ -99,10 +105,10 @@ class F3_FLOW3_Component_ClassFileManipulator {
 	 * operator with a call to the component manager if the class to be instantiated
 	 * is registered as a component.
 	 *
-	 * @param
-	 * @param
-	 * @param
-	 * @return boolean					Returns TRUE if the new operator really has been replaced, otherwise FALSE
+	 * @param array $tokens Tokens to parse
+	 * @param integer &$index Token index to start at
+	 * @param string &$targetCode Target source code for replacement
+	 * @return boolean Returns TRUE if the new operator really has been replaced, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function replaceNewOperator(Array $tokens, &$index, &$targetCode) {
@@ -147,9 +153,9 @@ class F3_FLOW3_Component_ClassFileManipulator {
 	/**
 	 * Parses the tokens of the constructor arguments and finds the closing brackets.
 	 *
-	 * @param  array					$tokens: The tokenized source code
-	 * @param  integer					&$index: The current index in the tokens array - the expected starting position is one token after the opening bracket.
-	 * @return string					returns the content between the parentheses
+	 * @param array $tokens The tokenized source code
+	 * @param integer &$index The current index in the tokens array - the expected starting position is one token after the opening bracket.
+	 * @return string returns the content between the parentheses
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function parseConstructorArguments(Array $tokens, &$index) {

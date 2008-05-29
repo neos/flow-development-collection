@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:F3_FLOW3_Component_ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Injection property as used in a Component Configuration
  *
- * @package     FLOW3
- * @subpackage  Component
- * @version     $Id:F3_FLOW3_Component_ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:F3_FLOW3_Component_ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_ConfigurationProperty {
 

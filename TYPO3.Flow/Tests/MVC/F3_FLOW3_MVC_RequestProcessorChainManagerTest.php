@@ -14,14 +14,21 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+/**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
 require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestProcessor.php');
 
 /**
  * Testcase for the MVC Request Processor Chain Manager
  *
- * @package		Framework
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_RequestProcessorChainManagerTest extends F3_Testing_BaseTestCase {
 

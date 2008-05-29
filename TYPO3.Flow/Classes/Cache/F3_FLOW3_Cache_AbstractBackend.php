@@ -31,7 +31,7 @@ declare(ENCODING = 'utf-8');
 abstract class F3_FLOW3_Cache_AbstractBackend {
 
 	/**
-	 * @const Pattern an entry identifer must match.
+	 * Pattern an entry identifer must match.
 	 */
 	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
 
@@ -50,7 +50,7 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 */
 	protected $defaultLifetime = 3600;
 
-	
+
 	/**
 	 * Constructs this backend
 	 *
@@ -72,15 +72,15 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Checks the validity of an entry identifier. Returns true if it's valid.
 	 *
-	 * @param string An identifier to be checked for validity 
+	 * @param string An identifier to be checked for validity
 	 * @return boolean
-	 * 
+	 *
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function checkEntryIdentifierValidity($entryIdentifier) {
 		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $entryIdentifier);
 	}
-	
+
 	/**
 	 * Saves data in the cache.
 	 *

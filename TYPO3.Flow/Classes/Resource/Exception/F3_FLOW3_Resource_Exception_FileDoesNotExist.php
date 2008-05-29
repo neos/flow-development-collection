@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * "File does not exist" Exception 
- * 
- * @package		FLOW3
- * @subpackage	Resource
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ */
+
+/**
+ * "File does not exist" Exception
+ *
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Resource_Exception_FileDoesNotExist extends F3_FLOW3_Resource_Exception {
 

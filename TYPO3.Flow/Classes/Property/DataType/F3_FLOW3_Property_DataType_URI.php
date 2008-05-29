@@ -12,15 +12,21 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id:F3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
+ */
 
 /**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986
- * 
- * @package		FLOW3
- * @subpackage	MVC
- * @version 	$Id:F3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Property
+ * @version $Id:F3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
@@ -33,52 +39,52 @@ class F3_FLOW3_Property_DataType_URI {
 	const PATTERN_MATCH_PORT = '/^[0-9]*$/';
 	const PATTERN_MATCH_PATH = '/^.*$/';
 	const PATTERN_MATCH_FRAGMENT = '/^(?:[a-zA-Z0-9_~!&\',;=:@\/?\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';
-	
+
 	/**
 	 * @var string The scheme / protocol of the locator, eg. http
 	 */
 	protected $scheme;
-	
+
 	/**
 	 * @var string User name of a login, if any
 	 */
 	protected $username;
-	
+
 	/**
 	 * @var string Password of a login, if any
 	 */
 	protected $password;
-	
+
 	/**
 	 * @var string Host of the locator, eg. some.subdomain.example.com
 	 */
 	protected $host;
-	
+
 	/**
 	 * @var integer Port of the locator, if any was specified. Eg. 80
 	 */
 	protected $port;
-	
+
 	/**
 	 * @var string The hierarchical part of the URI, eg. /products/acme_soap
 	 */
 	protected $path;
-	
+
 	/**
 	 * @var string Query string of the locator, if any. Eg. color=red&size=large
 	 */
 	protected $query;
-	
+
 	/**
 	 * @var array Array representation of the URI query
 	 */
 	protected $arguments = array();
-	
+
 	/**
 	 * @var string Fragment / anchor, if one was specified.
 	 */
 	protected $fragment;
-	
+
 	/**
 	 * Constructs the URI object from a string
 	 *
@@ -86,9 +92,9 @@ class F3_FLOW3_Property_DataType_URI {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($URIString) {		
+	public function __construct($URIString) {
 		if (!is_string($URIString)) throw new InvalidArgumentException('The URI must be a valid string.', 1176550571);
-		
+
 		$URIParts = parse_url($URIString);
 		if (is_array($URIParts)) {
 			$this->scheme = isset($URIParts['scheme']) ? $URIParts['scheme'] : NULL;
@@ -113,10 +119,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getScheme() {
 		return $this->scheme;
 	}
-	
+
 	/**
 	 * Sets the URI's scheme / protocol
-	 * 
+	 *
 	 * @param  string				$scheme: The scheme. Allowed values are "http" and "https"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -138,10 +144,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getUsername() {
 		return $this->username;
 	}
-	
+
 	/**
 	 * Sets the URI's username
-	 * 
+	 *
 	 * @param  string				$username: User name of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -166,7 +172,7 @@ class F3_FLOW3_Property_DataType_URI {
 
 	/**
 	 * Sets the URI's password
-	 * 
+	 *
 	 * @param  string				$password: Password of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -191,7 +197,7 @@ class F3_FLOW3_Property_DataType_URI {
 
 	/**
 	 * Sets the host(s) of the URI
-	 * 
+	 *
 	 * @param  string				$host: The hostname(s)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -203,7 +209,7 @@ class F3_FLOW3_Property_DataType_URI {
 			throw new InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
 		}
 	}
-	
+
 	/**
 	 * Returns the port of the URI
 	 *
@@ -213,10 +219,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getPort() {
 		return $this->port;
 	}
-	
+
 	/**
 	 * Sets the port in the URI
-	 * 
+	 *
 	 * @param  string				$port: The port number
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -228,7 +234,7 @@ class F3_FLOW3_Property_DataType_URI {
 			throw new InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
 		}
 	}
-	
+
 	/**
 	 * Returns the URI path
 	 *
@@ -238,10 +244,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getPath() {
 		return $this->path;
 	}
-	
+
 	/**
 	 * Sets the path of the URI
-	 * 
+	 *
 	 * @param  string				$path: The path
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -253,7 +259,7 @@ class F3_FLOW3_Property_DataType_URI {
 			throw new InvalidArgumentException('"' . $path . '" is not valid path as part of a URI.', 1184071242);
 		}
 	}
-	
+
 	/**
 	 * Returns the URI's query part
 	 *
@@ -263,10 +269,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getQuery() {
 		return $this->query;
 	}
-	
+
 	/**
 	 * Sets the URI's query part. Updates (= overwrites) the arguments accordingly!
-	 * 
+	 *
 	 * @param  string				$query: The query string.
 	 * @return void
 	 */
@@ -274,7 +280,7 @@ class F3_FLOW3_Property_DataType_URI {
 		$this->query = $query;
 		parse_str($query, $this->arguments);
 	}
-	
+
 	/**
 	 * Returns the arguments from the URI's query part
 	 *
@@ -284,7 +290,7 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getArguments() {
 		return $this->arguments;
 	}
-	
+
 	/**
 	 * Returns the fragment / anchor, if any
 	 *
@@ -294,10 +300,10 @@ class F3_FLOW3_Property_DataType_URI {
 	public function getFragment() {
 		return $this->fragment;
 	}
-	
+
 	/**
 	 * Sets the fragment in the URI
-	 * 
+	 *
 	 * @param  string				$fragment: The fragment (aka "anchor")
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -309,16 +315,16 @@ class F3_FLOW3_Property_DataType_URI {
 			throw new InvalidArgumentException('"' . $fragment . '" is not valid fragment as part of a URI.', 1184071252);
 		}
 	}
-	
+
 	/**
 	 * Returns a string representation of this URI
-	 * 
+	 *
 	 * @return string				This URI as a string
 	 * @author Robert Lemke	<robert@typo3.org>
 	 */
 	public function __toString() {
 		$URIString = '';
-		
+
 		$URIString .= isset($this->scheme) ? $this->scheme . '://' : '';
 		if (isset($this->username)) {
 			if (isset($this->password)) {

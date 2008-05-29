@@ -18,9 +18,10 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Validation
  * @version $Id:F3_FLOW3_Validation_Exception_InvalidSubject.php 467 2008-02-06 19:34:56Z robert $
- /*
+ */
 
- /** An "Invalid Chain Index" Exception for a validator chain
+/**
+ * An "Invalid Chain Index" Exception for a validator chain
  *
  * @package FLOW3
  * @subpackage Validation

@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Generic Resource Exception 
- * 
- * @package		FLOW3
- * @subpackage	Resource
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ */
+
+/**
+ * Generic Resource Exception
+ *
+ * @package FLOW3
+ * @subpackage Resource
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Resource_Exception extends F3_FLOW3_Exception {
 

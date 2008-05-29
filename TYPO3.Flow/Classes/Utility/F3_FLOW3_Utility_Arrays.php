@@ -15,13 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
+ */
+
+/**
  * The array functions from the good old t3lib_div.
  *
- * @package		FLOW3
- * @subpackage	Utility
- * @version     $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @internal	(robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
+ * @package FLOW3
+ * @subpackage Utility
+ * @version $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @internal (robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */
 class F3_FLOW3_Utility_Arrays {
 

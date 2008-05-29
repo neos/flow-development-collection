@@ -14,21 +14,28 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+/**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
 require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyClass.php');
 require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_SecondDummyClass.php');
 
 /**
  * Testcase for the Pointcut Class Filter
- * 
- * @package		Framework
- * @version 	$Id:F3_FLOW3_AOP_PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_AOP_PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the class filter fires on a concrete and simple class expression
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -41,31 +48,31 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the class filter fails on a simple but wrong class name
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches_failsOnWrongSimpleClass() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_IDontExist');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');		
+		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_Dummy');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');		
+		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 	}
 
 	/**
 	 * Checks if the class filter fires on a simple class name with wildcard
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches_simpleClassWithWildcard() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_Dummy.*');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');		
+		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertTrue($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return TRUE although the specified class should match.');
 
@@ -75,41 +82,41 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * Checks if the class filter fails on a simple class name with wildcard which shouldn't match
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches_failsOnWrongSimpleClassWithWildcard() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_IDont.*');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');		
+		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 	}
 
 	/**
 	 * Checks if the class filter ignores classes declared "final"
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches_ignoresFinalClasses() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_.*');
-		$class = new ReflectionClass('F3_TestPackage_FinalClass');		
+		$class = new ReflectionClass('F3_TestPackage_FinalClass');
 		$methods = $class->getMethods();
-		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified final class should be ignored.');		
+		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified final class should be ignored.');
 	}
-	
+
 	/**
 	 * Checks if the class filter ignores classes with a constructor declared "final"
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org> und Karsten
 	 */
 	public function matches_ignoresClassWithFinalConstructor() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_.*');
-		$class = new ReflectionClass('F3_TestPackage_ClassWithFinalConstructor');		
+		$class = new ReflectionClass('F3_TestPackage_ClassWithFinalConstructor');
 		$method = $class->getMethod('__construct');
-		$this->assertFalse($classFilter->matches($class, $method, microtime()), 'The class filter did not return FALSE although the specified class contains a final constructor.');		
+		$this->assertFalse($classFilter->matches($class, $method, microtime()), 'The class filter did not return FALSE although the specified class contains a final constructor.');
 	}
 }
 ?>

@@ -12,16 +12,22 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:F3_FLOW3_Component_ObjectBuilderInterface.php 201 2007-03-30 11:18:30Z robert $
+ */
 
 /**
  * Component Object Builder interface
- * 
- * @package    FLOW3
+ *
+ * @package FLOW3
  * @subpackage Component
- * @version    $Id:F3_FLOW3_Component_ObjectBuilderInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author     Robert Lemke <robert@typo3.org>
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id:F3_FLOW3_Component_ObjectBuilderInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @author Robert Lemke <robert@typo3.org>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Component_ObjectBuilderInterface {
 
@@ -31,7 +37,7 @@ interface F3_FLOW3_Component_ObjectBuilderInterface {
 	 * @param  F3_FLOW3_Component_Manager $componentManager: A reference to the component manager - used for fetching other component objects while solving dependencies
 	 * @return void
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager);	
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager);
 
 	/**
 	 * Creates and returns a ready to use component object of the specified type.

@@ -101,7 +101,7 @@ class F3_FLOW3_AOP_Framework {
 	 *
 	 * @param string $componentName: Name of the component to add to the blacklist
 	 * @return void
-	 * @auhor Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addComponentNameToProxyBlacklist($componentName) {
 		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);

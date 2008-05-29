@@ -14,14 +14,21 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+/**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
 require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_DummyClass.php');
 
 /**
  * Testcase for the MVC Dispatcher
  *
- * @package		Framework
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 

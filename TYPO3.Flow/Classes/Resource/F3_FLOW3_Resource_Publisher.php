@@ -15,7 +15,7 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package FLOW3F3_FLOW3_Property_DataType_URI
+ * @package FLOW3
  * @subpackage Resource
  * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
  */

@@ -201,7 +201,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 * Sets a short help message for this argument. Mainly used at the command line, but maybe
 	 * used elsewhere, too.
 	 *
-	 * @param  string $message: A short help message
+	 * @param string $message: A short help message
 	 * @return F3_FLOW3_MVC_Controller_Argument		$this
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -224,7 +224,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 	/**
 	 * Set the validity status of the argument
 	 *
-	 * @þaram boolen TRUE if the argument is valid, FALSE otherwise
+	 * @param boolean TRUE if the argument is valid, FALSE otherwise
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

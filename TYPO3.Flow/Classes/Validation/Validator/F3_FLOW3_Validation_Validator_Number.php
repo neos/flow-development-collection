@@ -14,7 +14,7 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-/*
+/**
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$

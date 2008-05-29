@@ -12,24 +12,30 @@ declare(ENCODING = 'utf-8');
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
  * Public License for more details.                                       *
- *                                                                        */ 
+ *                                                                        */
 
 /**
- * A transient Component Object Cache which provides a transient memory-based 
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:F3_FLOW3_Component_TransientObjectCache.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
+ * A transient Component Object Cache which provides a transient memory-based
  * registry of component objects.
- * 
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCache.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:F3_FLOW3_Component_TransientObjectCache.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_ObjectCacheInterface {
-	
+
 	/**
 	 * @var array Location where component objects are stored
 	 */
 	protected $componentObjects = array();
-	
+
 	/**
 	 * Returns a component object from the cache. If an instance of the required
 	 * component does not exist yet, an exception is thrown.
@@ -54,9 +60,9 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	public function putComponentObject($componentName, $componentObject) {
 		if (!is_string($componentName) || strlen($componentName) == 0) throw new RuntimeException('No valid component name specified.', 1167919564);
 		if (!is_object($componentObject)) throw new RuntimeException('$componentObject must be of type Object', 1167917199);
-		$this->componentObjects[$componentName] = $componentObject;		
+		$this->componentObjects[$componentName] = $componentObject;
 	}
-	
+
 	/**
 	 * Remove a component object from the cache.
 	 *
@@ -64,11 +70,11 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function removeComponentObject($componentName) {	
+	public function removeComponentObject($componentName) {
 		if (!$this->componentObjectExists($componentName)) throw new RuntimeException('Component "' . $componentName . '" does not exist in the component object cache.', 1167917200);
 		unset ($this->componentObjects[$componentName]);
 	}
-	
+
 	/**
 	 * Checks if an object of the given component already exists in the object cache.
 	 *
@@ -76,10 +82,10 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	 * @return boolean		TRUE if an object exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function componentObjectExists($componentName) {		
+	public function componentObjectExists($componentName) {
 		return key_exists($componentName, $this->componentObjects);
 	}
-	
+
 }
 
 ?>

@@ -17,8 +17,12 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Configuration
+ * @version $Id$
  */
 
+/**
+ * Those are needed before the autoloader is active
+ */
 require_once(FLOW3_PATH_FLOW3 . 'Configuration/F3_FLOW3_Configuration_Container.php');
 require_once(FLOW3_PATH_FLOW3 . 'Configuration/F3_FLOW3_Configuration_SourceInterface.php');
 require_once(FLOW3_PATH_FLOW3 . 'Configuration/Source/F3_FLOW3_Configuration_Source_PHP.php');

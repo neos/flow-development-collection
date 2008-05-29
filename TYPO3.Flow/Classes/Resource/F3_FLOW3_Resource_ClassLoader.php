@@ -14,14 +14,17 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
-require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
-
 /**
  * @package FLOW3
  * @subpackage Resource
  * @version $Id:F3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  */
+
+/**
+ * PackageInterface and Package are needed before the autoloader is active
+ */
+require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
+require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
 
 /**
  * Class Loader implementation which loads .php files found in the classes

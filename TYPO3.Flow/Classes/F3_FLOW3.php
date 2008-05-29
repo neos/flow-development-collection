@@ -14,15 +14,19 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(dirname(__FILE__) . '/Utility/F3_FLOW3_Utility_Files.php');
-define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(dirname(__FILE__) . '/'));
-define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
-define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
-
 /**
  * @package FLOW3
  * @version $Id$
  */
+
+/**
+ * Utility_Files is needed before the autoloader is active
+ */
+require_once(dirname(__FILE__) . '/Utility/F3_FLOW3_Utility_Files.php');
+
+define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(dirname(__FILE__) . '/'));
+define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
+define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
 
 /**
  * General purpose central core hyper FLOW3 class
@@ -54,27 +58,32 @@ final class F3_FLOW3 {
 	const INITIALIZATION_LEVEL_READY = 10;
 
 	/**
-	 * @var string The application context
+	 * The application context
+	 * @var string
 	 */
 	protected $context;
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface An instance of the component manager
+	 * An instance of the component manager
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Resource_ClassLoader Instance of the class loader
+	 * Instance of the class loader
+	 * @var F3_FLOW3_Resource_ClassLoader
 	 */
 	protected $classLoader;
 
 	/**
-	 * @var integer Flag which states up to which level FLOW3 has been initialized
+	 * Flag which states up to which level FLOW3 has been initialized
+	 * @var integer
 	 */
 	protected $initializationLevel;
 
 	/**
-	 * @var array Array of class names which must not be registered as components automatically. Class names may also be regular expressions.
+	 * Array of class names which must not be registered as components automatically. Class names may also be regular expressions.
+	 * @var array
 	 */
 	protected $componentRegistrationClassBlacklist = array(
 		'F3_FLOW3_AOP_.*',
@@ -84,7 +93,8 @@ final class F3_FLOW3 {
 	);
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container The FLOW3 base configuration  (for this class)
+	 * The FLOW3 base configuration  (for this class)
+	 * @var F3_FLOW3_Configuration_Container
 	 */
 	protected $configuration;
 
@@ -348,7 +358,7 @@ final class F3_FLOW3 {
 	 * components at the component manager. Finally the component configuration
 	 * defined by the package is loaded and applied to the registered components.
 	 *
-	 * @param array $packages: The packages whose classes should be registered
+	 * @param array $packages The packages whose classes should be registered
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -409,7 +419,7 @@ final class F3_FLOW3 {
 	/**
 	 * Checks if the given class name appears on in the component blacklist.
 	 *
-	 * @param string $className: The class name to check. May be a regular expression.
+	 * @param string $className The class name to check. May be a regular expression.
 	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
