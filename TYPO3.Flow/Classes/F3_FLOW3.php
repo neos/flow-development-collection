@@ -53,8 +53,7 @@ final class F3_FLOW3 {
 	const INITIALIZATION_LEVEL_FLOW3 = 3;
 	const INITIALIZATION_LEVEL_PACKAGES = 4;
 	const INITIALIZATION_LEVEL_COMPONENTS = 5;
-	const INITIALIZATION_LEVEL_SETTINGS = 6;
-	const INITIALIZATION_LEVEL_RESOURCES = 7;
+	const INITIALIZATION_LEVEL_RESOURCES = 6;
 	const INITIALIZATION_LEVEL_READY = 10;
 
 	/**
@@ -129,7 +128,6 @@ final class F3_FLOW3 {
 		$this->initializeFLOW3();
 		$this->initializePackages();
 		$this->initializeComponents();
-		$this->initializeSettings();
 		$this->initializeResources();
 	}
 
@@ -252,19 +250,6 @@ final class F3_FLOW3 {
 	}
 
 	/**
-	 * Loads and initializes the settings
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Exception if the settings have already been initialized.
-	 * @see initialize()
-	 */
-	public function initializeSettings() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_SETTINGS) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760770);
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_SETTINGS;
-	}
-
-	/**
 	 * Publishes the public resources of all found packages
 	 *
 	 * @return void
@@ -302,7 +287,7 @@ final class F3_FLOW3 {
 	 */
 	public function run() {
 		if ($this->initializationLevel == self::INITIALIZATION_LEVEL_CONSTRUCT) $this->initialize();
-		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_SETTINGS) throw new F3_FLOW3_Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
+		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_RESOURCES) throw new F3_FLOW3_Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
 
 		$requestHandlerResolver = $this->componentManager->getComponent('F3_FLOW3_MVC_RequestHandlerResolver');
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
