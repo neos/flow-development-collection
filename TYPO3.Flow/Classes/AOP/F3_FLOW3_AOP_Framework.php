@@ -122,6 +122,7 @@ class F3_FLOW3_AOP_Framework {
 	 */
 	public function initialize($componentConfigurations) {
 		if ($this->isInitialized) throw new F3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
+		$this->isInitialized = TRUE;
 
 		$loadedFromCache = FALSE;
 		$context = $this->componentManager->getContext();
@@ -136,7 +137,7 @@ class F3_FLOW3_AOP_Framework {
 				$GLOBALS['FLOW3']['F3_FLOW3_AOP_Framework'] = $this;
 				$proxyBuildResults =  $proxyCache->load('proxyBuildResults');
 				$this->advicedMethodsInformationByTargetClass = $configurationCache->load('advicedMethodsInformationByTargetClass');
-				$aspectContainers = $configurationCache->load('aspectContainers');
+				$this->aspectContainers = $configurationCache->load('aspectContainers');
 				$loadedFromCache = TRUE;
 				unset($GLOBALS['FLOW3']['F3_FLOW3_AOP_Framework']);
 			}
@@ -147,8 +148,8 @@ class F3_FLOW3_AOP_Framework {
 			foreach ($componentConfigurations as $componentConfiguration) {
 				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
 			}
-			$aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
-			$proxyBuildResults = $this->buildProxyClasses($namesOfAvailableClasses, $aspectContainers, $context);
+			$this->aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
+			$proxyBuildResults = $this->buildProxyClasses($namesOfAvailableClasses, $this->aspectContainers, $context);
 		}
 
 		foreach ($proxyBuildResults as $targetClassName => $proxyBuildResult) {
@@ -160,12 +161,9 @@ class F3_FLOW3_AOP_Framework {
 
 		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
 			$configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
-			$configurationCache->save('aspectContainers', $aspectContainers);
+			$configurationCache->save('aspectContainers', $this->aspectContainers);
 			$proxyCache->save('proxyBuildResults', $proxyBuildResults);
 		}
-
-		$this->aspectContainers = $aspectContainers;
-		$this->isInitialized = TRUE;
 	}
 
 	/**

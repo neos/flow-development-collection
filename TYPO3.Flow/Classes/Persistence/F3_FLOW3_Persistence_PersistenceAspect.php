@@ -27,14 +27,22 @@ declare(ENCODING = 'utf-8');
  * @subpackage Persistence
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @aspect
  */
 class F3_FLOW3_Persistence_PersistenceAspect {
 
 	/**
-	 * Registers the target object as a new instance at the unit of work
-	 *
+	 * @pointcut classTaggedWith(repository) || classTaggedWith(entity) || classTaggedWith(valueobject)
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerNewInstance() {
+	public function aggregateModels() {}
+
+	/**
+	 *
+	 * @afterreturning method(.*->__construct()) && F3_FLOW3_Persistence_PersistenceAspect->aggregateModels
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function sayHello(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 
 	}
 
