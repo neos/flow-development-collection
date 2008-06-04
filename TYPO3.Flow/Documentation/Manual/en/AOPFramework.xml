@@ -310,8 +310,8 @@
 
     <para>Aspects are abstract containers which accommodate pointcut-,
     introduction- and advice declarations. In most frameworks, including
-    FLOW3, aspects are defined as plain PHP classes which are tagged as an
-    aspect. The following example shows the definition of a hypothetical
+    FLOW3, aspects are defined as plain classes which are tagged (annotated)
+    as an aspect. The following example shows the definition of a hypothetical
     <emphasis>FooSecurity</emphasis> aspect:</para>
 
     <example>
@@ -324,7 +324,7 @@
  * @author  John Doe &lt;john@typo3.org&gt;
  * @aspect
  */
-class F3_MySecurityPackage_FooSecurityAspect implements F3_FLOW3_AOPAspectInterface {
+class F3_MySecurityPackage_FooSecurityAspect {
 
 }</programlisting>
     </example>
@@ -334,11 +334,8 @@ class F3_MySecurityPackage_FooSecurityAspect implements F3_FLOW3_AOPAspectInterf
     regular PHP class which may (actually must) contain methods and
     properties. What it makes it an aspect is solely the
     <markup>@aspect</markup> annotation mentioned the class comment. The AOP
-    framework recognizes this tag and registers the class as an aspect. To
-    identify the aspect as an aspect without relying on the annotation,
-    implementing the marker interface
-    <interfacename>F3_FLOW3_AOPAspectInterface</interfacename> is
-    mandatory.</para>
+    framework recognizes this tag and registers the class as an aspect.
+    </para>
 
     <note>
       <para>A void aspect class doesn't make any sense and if you try to run
@@ -538,7 +535,7 @@ class F3_MySecurityPackage_FooSecurityAspect implements F3_FLOW3_AOPAspectInterf
  * @package TestPackage
  * @aspect
  */
-class F3_TestPackage_PointcutTestingAspect implements F3_FLOW3_AOPAspectInterface {
+class F3_TestPackage_PointcutTestingAspect {
 
    /**
     * Pointcut which includes all method executions in pointcutTestingTargetClasses except those from Target Class number 3.
