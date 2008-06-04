@@ -31,18 +31,27 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Persistence_Manager {
 
 	/**
-	 * @var F3_FLOW3_Persistence_ClassSchemaBuilder
+	 * The component manager
+	 *
+	 * @var F3_FLOW3_Component_ManagerInterface
 	 */
-	protected $classSchemaBuilder;
+	protected $componentManager;
 
 	/**
-	 * Injects a class schema builder
+	 * Schemata of all classes which need to be persisted
 	 *
-	 * @param F3_FLOW3_Persistence_ClassSchemaBuilder
-	 * @return void
+	 * @var array of F3_FLOW3_Persistence_ClassSchema
 	 */
-	public function injectClassSchemaBuilder(F3_FLOW3_Persistence_ClassSchemaBuilder $classSchemaBuilder) {
-		$this->classSchemaBuilder = $classSchemaBuilder;
+	protected $classSchemata = array();
+
+	/**
+	 * Constructor
+	 *
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -52,6 +61,34 @@ class F3_FLOW3_Persistence_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
+		$loadedFromCache = FALSE;
+		if (!$loadedFromCache) {
+			$namesOfAvailableClasses = array();
+			foreach ($this->componentManager->getComponentConfigurations() as $componentConfiguration) {
+				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
+			}
+			$this->classSchemata = $this->buildClassSchemataFromClasses($namesOfAvailableClasses);
+		}
+	}
+
+	/**
+	 * Builds class schemata from the specified classes. Only classes which are the root
+	 * or part of an Aggregate (ie. repositories, entities and value objects) are taken
+	 * into consideration.
+	 *
+	 * @param array $classNames Names of the classes to take into account.
+	 * @return array of F3_FLOW3_Persistence_ClassSchema
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function buildClassSchemataFromClasses(array $classNames) {
+		$classSchemata = array();
+		foreach ($classNames as $className) {
+			$class = new F3_FLOW3_Reflection_Class($className);
+			if ($class->isTaggedWith('repository') || $class->isTaggedWith('entity') || $class->isTaggedWith('valueobject')) {
+				$classSchemata[$className] = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+			}
+		}
+		return $classSchemata;
 	}
 
 }

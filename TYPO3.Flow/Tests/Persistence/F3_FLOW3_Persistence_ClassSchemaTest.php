@@ -21,42 +21,31 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Class Schema Builder
+ * Testcase for the Class Schema.
+ *
+ * Note that many parts of the class schema functionality are already tested by the class
+ * schema builder testcase.
  *
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_ClassSchemaBuilder {
+class F3_FLOW3_Persistence_ClassSchemaTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Builds a class schema from the specified class
-	 *
-	 * @param F3_FLOW3_Reflection_Class $class Reflection of the class to be analyzed
-	 * @return F3_FLOW3_Persistence_ClassSchema
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Persistence_Exception_InvalidClass if the specified class does not exist
 	 */
-	static public function build(F3_FLOW3_Reflection_Class $class) {
-		$classSchema = new F3_FLOW3_Persistence_ClassSchema($class->getName());
+	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
+		$classSchema = new F3_FLOW3_Persistence_ClassSchema('SomeClass');
+		$classSchema->setProperty('a', 'string');
+		$classSchema->setProperty('b', 'integer');
 
-		if ($class->isTaggedWith('entity')) {
-			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_ENTITY);
-		} elseif ($class->isTaggedWith('repository')) {
-			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_REPOSITORY);
-		} elseif ($class->isTaggedWith('valueobject')) {
-			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_VALUEOBJECT);
-		}
-
-		foreach ($class->getProperties() as $property) {
-			if (!$property->isTaggedWith('transient') && $property->isTaggedWith('var')) {
-				$classSchema->setProperty($property->getName(), implode(' ', $property->getTagValues('var')));
-			}
-		}
-
-		return $classSchema;
+		$this->assertTrue($classSchema->hasProperty('a'));
+		$this->assertTrue($classSchema->hasProperty('b'));
+		$this->assertFalse($classSchema->hasProperty('c'));
 	}
-
 }
+
 ?>

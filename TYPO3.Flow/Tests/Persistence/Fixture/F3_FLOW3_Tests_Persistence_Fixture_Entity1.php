@@ -27,6 +27,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage Persistence
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @entity
  */
 class F3_FLOW3_Tests_Persistence_Fixture_Entity1 {
 

@@ -16,28 +16,20 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Persistence
  * @version $Id$
  */
 
 /**
- * An aspect is a modularized form of cross-cutting concerns to prevent the
- * violation of the separation of concerns. More concretely a FLOW3 Aspect
- * class is a container for advisors which represent single advices which
- * can be applied to join points.
- *
- * In FLOW3 aspects are encapsulated in a normal PHP class which is tagged
- * by the "aspect" annotation. This marker interface must be implemented by
- * any aspect.
+ * A model fixture which is used for testing the class schema builder
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AspectInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Persistence
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @repository
  */
-interface F3_FLOW3_AOP_AspectInterface {
+class F3_FLOW3_Tests_Persistence_Fixture_Repository1 extends F3_FLOW3_Persistence_Repository {
 
 }
-
 ?>

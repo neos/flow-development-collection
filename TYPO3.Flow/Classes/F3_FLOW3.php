@@ -246,6 +246,10 @@ final class F3_FLOW3 {
 
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 
+		$persistenceManager = $this->componentManager->getComponent('F3_FLOW3_Persistence_Manager');
+		$persistenceManager->initialize();
+
+
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_COMPONENTS;
 	}
 

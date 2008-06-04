@@ -35,6 +35,13 @@ class F3_FLOW3_Persistence_ClassSchema {
 	const MODELTYPE_VALUEOBJECT = 3;
 
 	/**
+	 * Name of the class this schema is referring to
+	 *
+	 * @var string
+	 */
+	protected $className;
+
+	/**
 	 * Model type of the class this schema is referring to
 	 *
 	 * @var integer
@@ -47,6 +54,26 @@ class F3_FLOW3_Persistence_ClassSchema {
 	 * @var array
 	 */
 	protected $properties = array();
+
+	/**
+	 * Constructs this class schema
+	 *
+	 * @param string $className Name of the class this schema is referring to
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($className) {
+		$this->className = $className;
+	}
+
+	/**
+	 * Returns the class name this schema is referring to
+	 *
+	 * @return string The class name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassName() {
+		return $this->className;
+	}
 
 	/**
 	 * Sets (defines) a specific property and its type.
@@ -100,7 +127,7 @@ class F3_FLOW3_Persistence_ClassSchema {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
-		return FALSE;
+		return key_exists($propertyName, $this->properties);
 	}
 
 }

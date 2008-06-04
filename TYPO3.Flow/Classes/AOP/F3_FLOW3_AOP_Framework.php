@@ -266,35 +266,30 @@ class F3_FLOW3_AOP_Framework {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'around' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an around advice but does not implement the neccessary aspect interface.', 1168868680);
 							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AroundAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains a before advice but does not implement the neccessary aspect interface.', 1169035119);
 							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_BeforeAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" icontains an after returning advice but does not implement the neccessary aspect interface.', 1171484136);
 							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterReturningAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an after throwing advice but does not implement the neccessary aspect interface.', 1171551836);
 							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterThrowingAdvice', $aspectClass->getName(), $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'pointcut' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains a pointcut declaration but does not implement the neccessary aspect interface.', 1172158809);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
 						break;
@@ -309,7 +304,6 @@ class F3_FLOW3_AOP_Framework {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'introduce' :
-							if (!$aspectClass->implementsInterface('F3_FLOW3_AOP_AspectInterface')) throw new RuntimeException('The class "' . $aspectClassName . '" contains an introduction declaration but does not implement the neccessary aspect interface.', 1172694758);
 							$splittedTagValue = explode(',', $tagValue);
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
@@ -344,7 +338,7 @@ class F3_FLOW3_AOP_Framework {
 			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3_FLOW3_') {
 				try {
 					$class = new F3_FLOW3_Reflection_Class($targetClassName);
-					if (!$class->implementsInterface('F3_FLOW3_AOP_AspectInterface') && !$class->isAbstract() && !$class->isFinal()) {
+					if (!$class->isTaggedWith('aspect') && !$class->isAbstract() && !$class->isFinal()) {
 						$proxyBuildResult = F3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass($class, $aspectContainers, $context);
 						if ($proxyBuildResult !== FALSE) {
 							$proxyBuildResults[$targetClassName] = $proxyBuildResult;

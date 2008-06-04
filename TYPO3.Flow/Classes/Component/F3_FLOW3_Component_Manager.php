@@ -377,7 +377,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	}
 
 	/**
-	 * Returns straight-value constructor arguments for a component by creating approriate
+	 * Returns straight-value constructor arguments for a component by creating appropriate
 	 * F3_FLOW3_Component_ConfigurationArgument objects.
 	 *
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
