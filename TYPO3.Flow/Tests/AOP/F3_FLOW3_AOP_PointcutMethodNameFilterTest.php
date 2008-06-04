@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the Pointcut Method Name Filter
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_AOP_PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -25,14 +25,14 @@ class F3_FLOW3_AOP_PointcutMethodNameFilterTest extends F3_Testing_BaseTestCase 
 
 	/**
 	 * Checks if the method name filter ignores methods declared as final
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pointcutFilterDoesNotMatchFinalMethod() {
-		$targetClass = new ReflectionClass('F3_TestPackage_BasicClass');
+		$targetClass = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$targetMethod = $targetClass->getMethod('someFinalMethod');
-		
+
 		$methodNameFilter = new F3_FLOW3_AOP_PointcutMethodNameFilter('.*');
 		$matches = $methodNameFilter->matches($targetClass, $targetMethod, 1);
 		$this->assertFalse($matches, 'Method name filter matches final method although it should not.');

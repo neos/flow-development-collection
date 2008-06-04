@@ -34,7 +34,7 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_AOP_PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(class|method|within)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|method|within)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
@@ -84,6 +84,9 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 				$pointcutDesignator = $matches[0];
 				$signaturePattern = $this->getSubstringBetweenParentheses($expression);
 				switch ($pointcutDesignator) {
+					case 'classTaggedWith' :
+						$this->parseDesignatorClassTaggedWith($operator, $signaturePattern, $pointcutFilterComposite);
+					break;
 					case 'class' :
 						$this->parseDesignatorClass($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
@@ -99,6 +102,19 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 			}
 		}
 		return $pointcutFilterComposite;
+	}
+
+	/**
+	 * Takes a class tag filter pattern and adds a so configured class tag filter to the
+	 * filter composite object.
+	 *
+	 * @param string $classTagPattern: The pattern expression as configuration for the class tag filter
+	 * @param F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function parseDesignatorClassTaggedWith($operator, $classTagPattern, F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, new F3_FLOW3_AOP_PointcutClassTaggedWithFilter($classTagPattern));
 	}
 
 	/**

@@ -79,6 +79,16 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	public function getTagValues($tag) {
 		return $this->docCommentParser->getTagValues($tag);
 	}
+
+	/**
+	 * Returns the declaring class
+	 *
+	 * @return F3_FLOW3_Reflection_Class The declaring class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDeclaringClass() {
+		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
+	}
 }
 
 ?>

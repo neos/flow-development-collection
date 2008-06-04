@@ -67,6 +67,34 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	}
 
 	/**
+	 * Replacement for the original getMethod() method which makes sure
+	 * that F3_FLOW3_Reflection_Method objects are returned instead of the
+	 * orginal ReflectionMethod instances.
+	 *
+	 * @return F3_FLOW3_Reflection_Method Method reflection object of the constructor method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMethod($name) {
+		$parentMethod = parent::getMethod($name);
+		if (!is_object($parentMethod)) return $parentMethod;
+		return new F3_FLOW3_Reflection_Method($this->getName(), $parentMethod->getName());
+	}
+
+	/**
+	 * Replacement for the original getConstructor() method which makes sure
+	 * that F3_FLOW3_Reflection_Method objects are returned instead of the
+	 * orginal ReflectionMethod instances.
+	 *
+	 * @return F3_FLOW3_Reflection_Method Method reflection object of the constructor method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getConstructor() {
+		$parentConstructor = parent::getConstructor();
+		if (!is_object($parentConstructor)) return $parentConstructor;
+		return new F3_FLOW3_Reflection_Method($this->getName(), $parentConstructor->getName());
+	}
+
+	/**
 	 * Replacement for the original getProperties() method which makes sure
 	 * that F3_FLOW3_Reflection_Property objects are returned instead of the
 	 * orginal ReflectionProperty instances.

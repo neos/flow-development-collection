@@ -57,19 +57,19 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function pointcutTestingTargetClassesWorks() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'pointcutTestingTargetClasses');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut didn\'t match target class 1 although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass2');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass2');
 		$method = $class->getMethod('otherMethodOther');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut didn\'t match target class 2 although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass3');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass3');
 		$method = $class->getMethod('method1');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut matched target class 3 although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('setSomeProperty');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut matched the BasicClass although it shouldn\'t!');
 	}
@@ -84,15 +84,15 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function otherPointcutTestingTargetClassesWorks() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'otherPointcutTestingTargetClass');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut matched the F3_TestPackage_PointcutTestingTargetClass1 although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_OtherPointcutTestingTargetClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_OtherPointcutTestingTargetClass');
 		$method = $class->getMethod('justOneMethod');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut didn\'t match F3_TestPackage_OtherPointcutTestingTargetClass although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('setSomeProperty');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The pointcutTestingTargetClasses pointcut matched the BasicClass although it shouldn\'t!');
 	}
@@ -107,19 +107,19 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function bothPointcutsPointcutWorks() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'bothPointcuts');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut didn\'t match the F3_TestPackage_PointcutTestingTargetClass1 although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass2');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass2');
 		$method = $class->getMethod('otherMethodOther');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut didn\'t match target class 2 although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_OtherPointcutTestingTargetClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_OtherPointcutTestingTargetClass');
 		$method = $class->getMethod('justOneMethod');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut didn\'t match F3_TestPackage_OtherPointcutTestingTargetClass although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('setSomeProperty');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The bothPointcuts pointcut matched the BasicClass although it shouldn\'t!');
 	}
@@ -134,7 +134,7 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function ambiguousMethodNamesAreMatchedCorrectly() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'otherMethodButNotOtherMethodOther');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass2');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass2');
 		$method = $class->getMethod('otherMethod');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The otherMethodButNotOtherMethodOther pointcut did not match the "otherMethod" method although it should!');
 
@@ -150,7 +150,7 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwsExceptionOnCircularReference() {
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 
 		try {
@@ -171,11 +171,11 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function withinDesignatorBasicallyWorks() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'serviceLayerClasses');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The serviceLayerClasses pointcut matched the F3_TestPackage_PointcutTestingTargetClass1 although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_ServiceLayerClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_ServiceLayerClass');
 		$method = $class->getMethod('someMethod');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The serviceLayerClasses pointcut didn\'t match the target class although it should!');
 	}
@@ -189,15 +189,15 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function withinDesignatorWorksInCombinationWithMethod() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'basicClassOrServiceLayerClasses');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The basicClassOrServiceLayerClasses pointcut matched the F3_TestPackage_PointcutTestingTargetClass1 although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_ServiceLayerClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_ServiceLayerClass');
 		$method = $class->getMethod('someMethod');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The basicClassOrServiceLayerClasses pointcut didn\'t match the service layer class although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('setSomeProperty');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The basicClassOrServiceLayerClasses pointcut didn\'t match the basic class although it should!');
 	}
@@ -211,19 +211,19 @@ class F3_FLOW3_AOP_PointcutTest extends F3_Testing_BaseTestCase {
 	public function visibilityModifierWorks() {
 		$pointcut = $this->AOPFramework->findPointcut('F3_TestPackage_PointcutTestingAspect', 'publicMethodsOfBasicClass');
 
-		$class = new ReflectionClass('F3_TestPackage_PointcutTestingTargetClass1');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_PointcutTestingTargetClass1');
 		$method = $class->getMethod('method1');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The publicMethodsOfBasicClass pointcut matched the F3_TestPackage_PointcutTestingTargetClass1 although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('setSomeProperty');
 		$this->assertTrue($pointcut->matches($class, $method, microtime()), 'The publicMethodsOfBasicClass pointcut didn\'t match the basic class although it should!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('someProtectedMethod');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The publicMethodsOfBasicClass pointcut matched a protected method although it shouldn\'t!');
 
-		$class = new ReflectionClass('F3_TestPackage_BasicClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$method = $class->getMethod('somePrivateMethod');
 		$this->assertFalse($pointcut->matches($class, $method, microtime()), 'The publicMethodsOfBasicClass pointcut matched a private method although it shouldn\'t!');
 	}

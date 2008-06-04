@@ -58,5 +58,26 @@ class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMethodsReturnsFLOW3sMethodReflection() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$methods = $class->getMethods();
+		foreach ($methods as $method) {
+			$this->assertType('F3_FLOW3_Reflection_Method', $method, 'The returned methods are not of type F3_FLOW3_Reflection_Method.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getConstructorReturnsFLOW3sMethodReflection() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$constructor = $class->getConstructor();
+		$this->assertType('F3_FLOW3_Reflection_Method', $constructor, 'The returned method is not of type F3_FLOW3_Reflection_Method.');
+	}
 }
 ?>

@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the default AOP Pointcut Expression Parser implementation
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_AOP_PointcutExpressionParserTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -27,7 +27,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 	 * @var F3_FLOW3_AOP_PointcutExpressionParser
 	 */
 	protected $parser;
-	
+
 	/**
 	 * Sets up this test case
 	 *
@@ -39,7 +39,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 
 	/**
 	 * Checks if the parser throws an exception if the expression is no string
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -68,7 +68,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 		}
 		$this->fail('The pointcut expression parser throwed no exception although the expression was invalid.');
 	}
-	
+
 	/**
 	 * Checks if the parser throws an exception if no "->" is found in the signature pattern
 	 *
@@ -84,29 +84,41 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 		}
 		$this->fail('The pointcut expression parser throwed no exception although the expression was invalid.');
 	}
-	
+
 	/**
 	 * Checks if the parser parses an expression with two simple classes connected by an || operator
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function simpleClassWithOrOperatorIsParsedCorrectly() {
 		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
-		
+
 		$firstSubComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
 		$firstSubComposite->addFilter('&&', new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_BasicClass'));
 		$firstSubComposite->addFilter('&&', new F3_FLOW3_AOP_PointcutMethodNameFilter('*'));
-		
+
 		$secondSubComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
 		$secondSubComposite->addFilter('&&', new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_BasicClass'));
 		$secondSubComposite->addFilter('&&', new F3_FLOW3_AOP_PointcutMethodNameFilter('get*'));
-		
+
 		$expectedPointcutFilterComposite->addFilter('&&', $firstSubComposite);
 		$expectedPointcutFilterComposite->addFilter('||', $secondSubComposite);
-		
-		$actualPointcutFilterComposite = $this->parser->parse('method(F3_TestPackage_BasicClass->*(..)) || method(F3_TestPackage_BasicClass->get*(..))');	
+
+		$actualPointcutFilterComposite = $this->parser->parse('method(F3_TestPackage_BasicClass->*(..)) || method(F3_TestPackage_BasicClass->get*(..))');
 		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite, 'The filter chain while parsing a simple class expression was not correct.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function classTaggedWithDesignatorIsParsedCorrectly() {
+		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new F3_FLOW3_AOP_PointcutClassTaggedWithFilter('someTag'));
+
+		$actualPointcutFilterComposite = $this->parser->parse('classTaggedWith(someTag)');
+		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
 	}
 }
 ?>

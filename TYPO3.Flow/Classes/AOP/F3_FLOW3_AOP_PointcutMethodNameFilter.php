@@ -45,8 +45,8 @@ class F3_FLOW3_AOP_PointcutMethodNameFilter implements F3_FLOW3_AOP_PointcutFilt
 	/**
 	 * Constructor - initializes the filter with the name filter pattern
 	 *
-	 * @param  string	$methodNameFilterExpression: A regular expression which filters method names
-	 * @param  string   $methodVisibility: The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
+	 * @param string $methodNameFilterExpression A regular expression which filters method names
+	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -60,16 +60,16 @@ class F3_FLOW3_AOP_PointcutMethodNameFilter implements F3_FLOW3_AOP_PointcutFilt
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
-	 * @param  ReflectionClass		$class: The class - won't be checked here
-	 * @param  ReflectionMethod		$method: The method to check the name of
-	 * @param  mixed				$pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean				TRUE if the method name matches, otherwise FALSE
+	 * @param F3_FLOW3_Reflection_Class $class The class - won't be checked here
+	 * @param F3_FLOW3_Reflection_Method $method The method to check the name of
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if the method name matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $method->getName());
 		if ($matchResult === FALSE) {
-			throw new RuntimeException('Error in regular expression', 1168876915);
+			throw new F3_FLOW3_AOP_Exception('Error in regular expression', 1168876915);
 		}
 		$methodNameMatches = ($matchResult === 1);
 		switch ($this->methodVisibility) {

@@ -36,22 +36,22 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 *
 	 * @param string $methodName: Name of the method to build an interceptor for
 	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
+	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract static public function build($methodName, array $methodMetaInformation, ReflectionClass $targetClass);
+	abstract static public function build($methodName, array $methodMetaInformation, F3_FLOW3_Reflection_Class $targetClass);
 
 	/**
 	 * Builds the PHP code for the parameters of the specified method to be
 	 * used in a method interceptor in the proxy class
 	 *
-	 * @param ReflectionMethod $method: The method to create the parameters code for
+	 * @param F3_FLOW3_Reflection_Method $method The method to create the parameters code for
 	 * @param boolean $addTypeAndDefaultValue: Adds the type and default value for each parameters (if any)
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function buildMethodParametersCode(ReflectionMethod $method, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
+	static public function buildMethodParametersCode(F3_FLOW3_Reflection_Method $method, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
 		$parametersCode = '';
 		$parameterTypeName = '';
 		$defaultValue = '';
@@ -68,7 +68,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 							$parameterTypeName = 'array';
 						} else {
 							$parameterReflectionClass = $parameter->getClass();
-							$parameterTypeName = ($parameterReflectionClass instanceof ReflectionClass ? $parameterReflectionClass->getName() : '');
+							$parameterTypeName = ($parameterReflectionClass instanceof F3_FLOW3_Reflection_Class ? $parameterReflectionClass->getName() : '');
 						}
 					} catch (Exception $exception) {
 						throw new F3_FLOW3_AOP_Exception_InvalidConstructorSignature('The parameter reflection for the method ' . $method->getDeclaringClass()->getName() . '::' . $method->getName() . '() declared in file "' . $method->getFileName() . '" throwed an exception. Please check if the classes of the parameters exist.', 1169420882);
@@ -101,11 +101,11 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * the constructor of a new join point. Used in the method interceptor
 	 * functions
 	 *
-	 * @param ReflectionMethod $method: The method to create arguments array code for
+	 * @param F3_FLOW3_Reflection_Method $method The method to create arguments array code for
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function buildMethodArgumentsArrayCode(ReflectionMethod $method) {
+	static protected function buildMethodArgumentsArrayCode(F3_FLOW3_Reflection_Method $method) {
 		if ($method === NULL) return '';
 		$argumentsArrayCode = '';
 		if ($method->getNumberOfParameters() > 0) {
@@ -124,11 +124,11 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 *
 	 * @param array $groupedAdvices: The advices grouped by advice type
 	 * @param string $methodName: Name of the method the advice applies to
-	 * @param ReflectionClass $targetClass: Reflection of the target class
+	 * @param F3_FLOW3_Reflection_Class $targetClass: Reflection of the target class
 	 * @return string PHP code to be used in the method interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function buildAdvicesCode(array $groupedAdvices, $methodName, ReflectionClass $targetClass) {
+	static protected function buildAdvicesCode(array $groupedAdvices, $methodName, F3_FLOW3_Reflection_Class $targetClass) {
 		$advicesCode = '';
 
 		if (isset ($groupedAdvices['F3_FLOW3_AOP_AfterThrowingAdvice'])) {
@@ -187,11 +187,11 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * Returns the constructor name of the given class. If no constructor exists,
 	 * the name "__construct" will be returned.
 	 *
-	 * @param ReflectionClass $class: The class to return the constructor name for
+	 * @param F3_FLOW3_Reflection_Class $class: The class to return the constructor name for
 	 * @return string Name of the constructor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function getConstructorName(ReflectionClass $class) {
+	static protected function getConstructorName(F3_FLOW3_Reflection_Class $class) {
 		$constructor = $class->getConstructor();
 		$constructorName = ($constructor !== NULL) ? $constructor->getName() : '__construct';
 		return $constructorName;

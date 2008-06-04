@@ -334,8 +334,7 @@ class F3_MySecurityPackage_FooSecurityAspect {
     regular PHP class which may (actually must) contain methods and
     properties. What it makes it an aspect is solely the
     <markup>@aspect</markup> annotation mentioned the class comment. The AOP
-    framework recognizes this tag and registers the class as an aspect.
-    </para>
+    framework recognizes this tag and registers the class as an aspect.</para>
 
     <note>
       <para>A void aspect class doesn't make any sense and if you try to run
@@ -508,6 +507,31 @@ class F3_MySecurityPackage_FooSecurityAspect {
           layer:</para>
 
           <para><code>within(F3_FLOW3_FooLayerInterface)</code></para>
+        </example>
+      </section>
+
+      <section>
+        <title>classTaggedWith()</title>
+
+        <para>The <function>classTaggedWith()</function> designator matches on
+        classes which are tagged with a certain annotation. As with class and
+        method names, a regular expression can be used to describe the
+        matching tags. The syntax of this designator is as follows:</para>
+
+        <synopsis><function>classTaggedWith(<replaceable>tag</replaceable>)</function></synopsis>
+
+        <example>
+          <title>classTaggedWith() pointcut designator</title>
+
+          <para>Matches all classes which are tagged with an "@entity"
+          annotation:</para>
+
+          <para><code>classTaggedWith(entity)</code></para>
+
+          <para>Matches all classes which are tagged with an annotation
+          starting with "@cool":</para>
+
+          <para><code>classTaggedWith(cool.*)</code></para>
         </example>
       </section>
     </section>

@@ -42,13 +42,13 @@ class F3_FLOW3_AOP_PointcutFilterComposite implements F3_FLOW3_AOP_PointcutFilte
 	 * Checks if the specified class and method match the registered class-
 	 * and method filter patterns.
 	 *
-	 * @param  ReflectionClass		$class: The class to check against
-	 * @param  ReflectionMethod		$method: The method to check against
-	 * @param  mixed				$pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean				TRUE if class and method match the pattern, otherwise FALSE
+	 * @param F3_FLOW3_Reflection_Class $class The class to check against
+	 * @param F3_FLOW3_Reflection_Method $method The method to check against
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
 		$matches = TRUE;
 		foreach ($this->filters as $operatorAndFilter) {
 			list($operator, $filter) = $operatorAndFilter;
@@ -73,8 +73,8 @@ class F3_FLOW3_AOP_PointcutFilterComposite implements F3_FLOW3_AOP_PointcutFilte
 	/**
 	 * Adds a class filter to the composite
 	 *
-	 * @param  string				$operator: The operator for this filter
-	 * @param  F3_FLOW3_AOP_PointcutFilterInterface		$classFilter: A configured class filter
+	 * @param string$operator The operator for this filter
+	 * @param F3_FLOW3_AOP_PointcutFilterInterface $classFilter A configured class filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

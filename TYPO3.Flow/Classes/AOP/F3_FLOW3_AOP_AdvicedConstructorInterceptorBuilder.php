@@ -35,11 +35,11 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 *
 	 * @param string $methodName: Name of the method to build an interceptor for
 	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
+	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, ReflectionClass $targetClass) {
+	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$constructor = $targetClass->getConstructor();
 		$methodsAndAdvicesArrayCode = self::buildMethodsAndAdvicesArrayCode($interceptedMethods);
 		$callParentCode = ($constructor === NULL) ? 'return;' : 'parent::' . $constructor->getName() . '(' . self::buildMethodParametersCode($constructor, FALSE) . ');';

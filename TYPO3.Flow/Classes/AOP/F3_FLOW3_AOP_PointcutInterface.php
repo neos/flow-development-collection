@@ -34,10 +34,10 @@ interface F3_FLOW3_AOP_PointcutInterface {
 	/**
 	 * The constructor
 	 *
-	 * @param  string		$pointcutExpression: A pointcut expression which configures the pointcut
-	 * @param  F3_FLOW3_AOP_PointcutExpressionParserInterface	$pointcutExpressionParser: The parser to use for parsing the pointcut expression
-	 * @param  string		$aspectClassName: The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
-	 * @param  string		$pointcutMethodName: (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
+	 * @param string $pointcutExpression A pointcut expression which configures the pointcut
+	 * @param F3_FLOW3_AOP_PointcutExpressionParserInterface $pointcutExpressionParser: The parser to use for parsing the pointcut expression
+	 * @param string $aspectClassName  The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
+	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 * @return void
 	 */
 	public function __construct($pointcutExpression, F3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser, $aspectClassName, $pointcutMethodName = NULL);
@@ -46,32 +46,32 @@ interface F3_FLOW3_AOP_PointcutInterface {
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
 	 *
-	 * @param  ReflectionClass		$class: Class to check against
-	 * @param  ReflectionMethod		$method: Method to check against
-	 * @param  mixed				$pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean				TRUE if class and method match this point cut, otherwise FALSE
+	 * @param F3_FLOW3_Reflection_Class $class Class to check against
+	 * @param F3_FLOW3_Reflection_Methd $method Method to check against
+	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 */
-	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier);
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
 
 	/**
 	 * Returns the pointcut expression which has been passed to the constructor.
 	 * This can be used for debugging pointcuts.
 	 *
-	 * @return string		The pointcut expression
+	 * @return string The pointcut expression
 	 */
 	public function getPointcutExpression();
 
 	/**
 	 * Returns the aspect class name where the pointcut was declared.
 	 *
-	 * @return string		The aspect class name where the pointcut was declared
+	 * @return string The aspect class name where the pointcut was declared
 	 */
 	public function getAspectClassName();
 
 	/**
 	 * Returns the pointcut method name (if any was defined)
 	 *
-	 * @return string		The pointcut method name
+	 * @return string The pointcut method name
 	 */
 	public function getPointcutMethodName();
 }

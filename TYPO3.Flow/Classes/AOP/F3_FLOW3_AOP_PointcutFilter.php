@@ -60,13 +60,13 @@ class F3_FLOW3_AOP_PointcutFilter implements F3_FLOW3_AOP_PointcutFilterInterfac
 	/**
 	 * Checks if the specified class and method matches with the pointcut
 	 *
-	 * @param ReflectionClass $class: The class to check against
-	 * @param ReflectionMethod $method: The method to check against
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @param F3_FLOW3_Reflection_Class $class The class to check against
+	 * @param F3_FLOW3_Reflection_Method $method The method to check against
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class and method matches the pointcut, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
 		$pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		if ($pointcut === FALSE) throw new RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $pointcut->matches($class, $method, $pointcutQueryIdentifier);

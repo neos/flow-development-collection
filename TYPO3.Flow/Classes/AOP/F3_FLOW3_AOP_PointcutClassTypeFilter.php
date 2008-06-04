@@ -49,13 +49,13 @@ class F3_FLOW3_AOP_PointcutClassTypeFilter implements F3_FLOW3_AOP_PointcutFilte
 	/**
 	 * Checks if the specified class matches with the class type filter pattern
 	 *
-	 * @param ReflectionClass $class: The class to check against
-	 * @param ReflectionMethod $method: The method - not used here
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @param F3_FLOW3_Reflection_Class $class The class to check against
+	 * @param F3_FLOW3_Reflection_Method $method The method - not used here
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(ReflectionClass $class, ReflectionMethod $method, $pointcutQueryIdentifier) {
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
 		$matches = FALSE;
 		foreach ($class->getInterfaceNames() as $interfaceName) {
 			$matchResult =  @preg_match('/^' . $this->classTypeFilterExpression . '$/', $interfaceName);

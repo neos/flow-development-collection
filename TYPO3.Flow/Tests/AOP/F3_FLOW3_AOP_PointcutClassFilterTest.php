@@ -41,7 +41,7 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_simpleClass() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_DummyClass');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertTrue($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return TRUE although the specified class should match.');
 	}
@@ -54,12 +54,12 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_failsOnWrongSimpleClass() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_IDontExist');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_Dummy');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 	}
@@ -72,11 +72,11 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_simpleClassWithWildcard() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_Dummy.*');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertTrue($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return TRUE although the specified class should match.');
 
-		$class = new ReflectionClass('F3_FLOW3_Fixture_SecondDummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_SecondDummyClass');
 		$this->assertFALSE($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class should not match.');
 	}
 
@@ -88,7 +88,7 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_failsOnWrongSimpleClassWithWildcard() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_FLOW3_Fixture_IDont.*');
-		$class = new ReflectionClass('F3_FLOW3_Fixture_DummyClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Fixture_DummyClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified class doesn\'t match.');
 	}
@@ -101,7 +101,7 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_ignoresFinalClasses() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_.*');
-		$class = new ReflectionClass('F3_TestPackage_FinalClass');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_FinalClass');
 		$methods = $class->getMethods();
 		$this->assertFalse($classFilter->matches($class, $methods[0], microtime()), 'The class filter did not return FALSE although the specified final class should be ignored.');
 	}
@@ -114,7 +114,7 @@ class F3_FLOW3_AOP_PointcutClassFilterTest extends F3_Testing_BaseTestCase {
 	 */
 	public function matches_ignoresClassWithFinalConstructor() {
 		$classFilter = new F3_FLOW3_AOP_PointcutClassFilter('F3_TestPackage_.*');
-		$class = new ReflectionClass('F3_TestPackage_ClassWithFinalConstructor');
+		$class = new F3_FLOW3_Reflection_Class('F3_TestPackage_ClassWithFinalConstructor');
 		$method = $class->getMethod('__construct');
 		$this->assertFalse($classFilter->matches($class, $method, microtime()), 'The class filter did not return FALSE although the specified class contains a final constructor.');
 	}

@@ -16,30 +16,27 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Persistence
  * @version $Id$
  */
 
 /**
- * The contract for an AOP Pointcut Filter class
+ * Adds the aspect of persistence to repositories, entities and value objects
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Persistence
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_PointcutFilterInterface {
+class F3_FLOW3_Persistence_PersistenceAspect {
 
 	/**
-	 * Checks if the specified class and method matches against the filter
+	 * Registers the target object as a new instance at the unit of work
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method: The method to check the name of
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the names matche, otherwise FALSE
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
-}
+	public function registerNewInstance() {
 
+	}
+
+}
 ?>

@@ -16,30 +16,33 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * The contract for an AOP Pointcut Filter class
+ * Testcase for Reflection Method
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Tests
+ * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
-interface F3_FLOW3_AOP_PointcutFilterInterface {
+class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Checks if the specified class and method matches against the filter
-	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method: The method to check the name of
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the names matche, otherwise FALSE
+	 * @var mixed
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
-}
+	protected $someProperty;
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDeclaringClassReturnsFLOW3sClassReflection() {
+		$method = new F3_FLOW3_Reflection_Method(__CLASS__, 'getDeclaringClassReturnsFLOW3sClassReflection');
+		$this->assertType('F3_FLOW3_Reflection_Class', $method->getDeclaringClass());
+	}
+}
 ?>

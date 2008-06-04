@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Testcase for the AOP Adviced Method Interceptor Builder
- * 
+ *
  * @package		FLOW3
  * @version 	$Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
@@ -25,17 +25,17 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilderTest extends F3_Testing_BaseTe
 
 	/**
 	 * checkIfParameterOfTypeArrayIsReflectedCorrectly
-	 * 
+	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function checkIfParameterOfTypeArrayIsReflectedCorrectly() {
-		$targetClass = new ReflectionClass('F3_TestPackage_BasicClass');
+		$targetClass = new F3_FLOW3_Reflection_Class('F3_TestPackage_BasicClass');
 		$targetMethod = $targetClass->getMethod('methodWhichExpectsAnArrayArgument');
-		
+
 		$builder = new F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder();
 		$parameterCode = $builder->buildMethodParametersCode($targetMethod, TRUE);
-		
+
 		$this->assertEquals('array $someArray', $parameterCode, 'The parameters code for an array-type argument is not as expected.');
 	}
 }
