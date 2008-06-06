@@ -68,7 +68,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 							$parameterTypeName = 'array';
 						} else {
 							$parameterReflectionClass = $parameter->getClass();
-							$parameterTypeName = ($parameterReflectionClass instanceof F3_FLOW3_Reflection_Class ? $parameterReflectionClass->getName() : '');
+							$parameterTypeName = (is_object($parameterReflectionClass) ? $parameterReflectionClass->getName() : '');
 						}
 					} catch (Exception $exception) {
 						throw new F3_FLOW3_AOP_Exception_InvalidConstructorSignature('The parameter reflection for the method ' . $method->getDeclaringClass()->getName() . '::' . $method->getName() . '() declared in file "' . $method->getFileName() . '" throwed an exception. Please check if the classes of the parameters exist.', 1169420882);
