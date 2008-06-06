@@ -164,7 +164,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 						if (is_object($argument)) {
 							$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
 						} elseif (is_string($argument)) {
-							$preparedArgument = (strlen($argument) < 40) ? $argument : substr($argument, 0, 20) . '…' . substr($argument, -20, 18);
+							$preparedArgument = (strlen($argument) < 40) ? $argument : substr($argument, 0, 20) . '…' . substr($argument, -20);
 							$preparedArgument = htmlspecialchars($preparedArgument);
 							$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
 							$arguments .= '"<span style="color:#FF8700;">' . $preparedArgument . '</span>"';
