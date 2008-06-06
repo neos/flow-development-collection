@@ -50,6 +50,32 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	}
 
 	/**
+	 * Returns the declaring class
+	 *
+	 * @return F3_FLOW3_Reflection_Class The declaring class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDeclaringClass() {
+		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
+	}
+
+	/**
+	 * Replacement for the original getParameters() method which makes sure
+	 * that F3_FLOW3_Reflection_Parameter objects are returned instead of the
+	 * orginal ReflectionParameter instances.
+	 *
+	 * @return array of F3_FLOW3_Reflection_Parameter Parameter reflection objects of the parameters of this method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParameters() {
+		$extendedParameters = array();
+		foreach (parent::getParameters() as $parameter) {
+			$extendedParameters[] = new F3_FLOW3_Reflection_Parameter(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
+		}
+		return $extendedParameters;
+	}
+
+	/**
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
@@ -78,16 +104,6 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	 */
 	public function getTagValues($tag) {
 		return $this->docCommentParser->getTagValues($tag);
-	}
-
-	/**
-	 * Returns the declaring class
-	 *
-	 * @return F3_FLOW3_Reflection_Class The declaring class
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getDeclaringClass() {
-		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
 	}
 }
 

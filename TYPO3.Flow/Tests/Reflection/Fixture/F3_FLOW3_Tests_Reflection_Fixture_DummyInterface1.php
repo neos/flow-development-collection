@@ -16,45 +16,18 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Reflection
  * @version $Id$
  */
 
 /**
- * Testcase for Reflection Method
+ * Dummy interface number 1 for the Reflection tests
  *
  * @package FLOW3
- * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @subpackage Reflection
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @var mixed
-	 */
-	protected $someProperty;
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		$this->assertType('F3_FLOW3_Reflection_Class', $method->getDeclaringClass());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3_FLOW3_Reflection_Parameter', $parameter);
-			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
-		}
-	}
+interface F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1 {
 }
 ?>

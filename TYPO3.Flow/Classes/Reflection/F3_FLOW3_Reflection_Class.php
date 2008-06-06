@@ -126,6 +126,36 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	}
 
 	/**
+	 * Replacement for the original getInterfaces() method which makes sure
+	 * that F3_FLOW3_Reflection_Class objects are returned instead of the
+	 * orginal ReflectionClass instances.
+	 *
+	 * @return array of F3_FLOW3_Reflection_Class Class reflection objects of the properties in this class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getInterfaces() {
+		$extendedInterfaces = array();
+		$interfaces = parent::getInterfaces();
+		foreach ($interfaces as $interface) {
+			$extendedInterfaces[] = new F3_FLOW3_Reflection_Class($interface->getName());
+		}
+		return $extendedInterfaces;
+	}
+
+	/**
+	 * Replacement for the original getParentClass() method which makes sure
+	 * that a F3_FLOW3_Reflection_Class object is returned instead of the
+	 * orginal ReflectionClass instance.
+	 *
+	 * @return F3_FLOW3_Reflection_Class Reflection of the parent class - if any
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParentClass() {
+		$parentClass = parent::getParentClass();
+		return ($parentClass === NULL) ? NULL : new F3_FLOW3_Reflection_Class($parentClass->getName());
+	}
+
+	/**
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *

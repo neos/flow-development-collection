@@ -20,6 +20,9 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
+require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1.php');
+require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2.php');
+
 /**
  * Testcase for Reflection Class
  *
@@ -29,12 +32,17 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase implements F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1, F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2 {
 
 	/**
 	 * @var mixed
 	 */
 	protected $someProperty;
+
+	/**
+	 * @var mixed
+	 */
+	static protected $someStaticProperty = 'statix';
 
 	/**
 	 * @test
@@ -74,10 +82,42 @@ class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getMethodReturnsFLOW3sMethodReflection() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$method = $class->getMethod('getMethodReturnsFLOW3sMethodReflection');
+		$this->assertType('F3_FLOW3_Reflection_Method', $method, 'The returned method is not of type F3_FLOW3_Reflection_Method.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getConstructorReturnsFLOW3sMethodReflection() {
 		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
 		$constructor = $class->getConstructor();
 		$this->assertType('F3_FLOW3_Reflection_Method', $constructor, 'The returned method is not of type F3_FLOW3_Reflection_Method.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getInterfacesReturnsFLOW3sClassReflection() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$interfaces = $class->getInterfaces();
+		foreach ($interfaces as $interface) {
+			$this->assertType('F3_FLOW3_Reflection_Class', $interface);
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParentClassReturnsFLOW3sClassReflection() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$parentClass = $class->getParentClass();
+		$this->assertType('F3_FLOW3_Reflection_Class', $parentClass);
 	}
 }
 ?>

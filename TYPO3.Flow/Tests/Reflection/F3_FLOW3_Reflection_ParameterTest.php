@@ -21,40 +21,37 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Testcase for Reflection Method
+ * Testcase for the Parameter Reflection
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @var mixed
-	 */
-	protected $someProperty;
+class F3_FLOW3_Reflection_ParameterTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		$this->assertType('F3_FLOW3_Reflection_Class', $method->getDeclaringClass());
+	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
+		$parameter = new F3_FLOW3_Reflection_Parameter(array(__CLASS__, 'fixtureMethod'), 'arg2');
+		$this->assertType('F3_FLOW3_Reflection_Class', $parameter->getDeclaringClass());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3_FLOW3_Reflection_Parameter', $parameter);
-			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
-		}
+	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
+		$parameter = new F3_FLOW3_Reflection_Parameter(array(__CLASS__, 'fixtureMethod'), 'arg1');
+		$this->assertType('F3_FLOW3_Reflection_Class', $parameter->getClass());
+	}
+
+	/**
+	 * Just a fixture method
+	 */
+	protected function fixtureMethod(ArrayObject $arg1, $arg2 = NULL) {
 	}
 }
 ?>

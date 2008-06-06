@@ -16,45 +16,53 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Tests
- * @version $Id$
+ * @subpackage Reflection
+ * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
- * Testcase for Reflection Method
+ * Extended version of the ReflectionParameter
  *
  * @package FLOW3
- * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @subpackage Reflection
+ * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Reflection_Parameter extends ReflectionParameter {
 
 	/**
-	 * @var mixed
-	 */
-	protected $someProperty;
-
-	/**
-	 * @test
+	 * The constructor, initializes the reflection parameter
+	 *
+	 * @param  string $functionName: Name of the function
+	 * @param  string $propertyName: Name of the property to reflect
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		$this->assertType('F3_FLOW3_Reflection_Class', $method->getDeclaringClass());
+	public function __construct($function, $parameterName) {
+		parent::__construct($function, $parameterName);
 	}
 
 	/**
-	 * @test
+	 * Returns the declaring class
+	 *
+	 * @return F3_FLOW3_Reflection_Class The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3_FLOW3_Reflection_Parameter', $parameter);
-			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
-		}
+	public function getDeclaringClass() {
+		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
 	}
+
+	/**
+	 * Returns the parameter class
+	 *
+	 * @return F3_FLOW3_Reflection_Class The parameter class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClass() {
+		$class = parent::getClass();
+		return (is_object($class)) ? new F3_FLOW3_Reflection_Class(parent::getClass()->getName()) : NULL;
+	}
+
 }
+
 ?>
