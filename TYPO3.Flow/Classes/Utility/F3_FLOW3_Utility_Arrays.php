@@ -40,7 +40,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @return	array		Exploded values, all converted to integers
 	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public function integerExplode($delimiter, $string) {
+	public static function integerExplode($delimiter, $string) {
 		$chunksArr = explode($delimiter, $string);
 		while (list($key, $value) = each($chunksArr)) {
 			$chunks[$key] = intval($value);
@@ -59,7 +59,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @return	array		Exploded values
 	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public function trimExplode($delimiter, $string, $onlyNonEmptyValues=FALSE) {
+	public static function trimExplode($delimiter, $string, $onlyNonEmptyValues=FALSE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
 		foreach ($chunksArr as $key => $value) {
@@ -82,7 +82,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @return	array		Resulting array where $secondArray values has overruled $firstArray values
 	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public function arrayMergeRecursiveOverrule($firstArray, $secondArray, $dontAddNewKeys=FALSE, $emptyValuesOverride=TRUE) {
+	public static function arrayMergeRecursiveOverrule($firstArray, $secondArray, $dontAddNewKeys=FALSE, $emptyValuesOverride=TRUE) {
 		if (!is_array($firstArray)) throw new InvalidArgumentException('$firstArray is not of type Array.', 1166719211, array($firstArray));
 		if (!is_array($secondArray)) throw new InvalidArgumentException('$secondArray is not of type Array.', 1166719212, array($secondArray));
 
@@ -119,7 +119,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public function randomizeArrayOrder($array) {
+	public static function randomizeArrayOrder($array) {
 		$reorderedArray = array();
 		if (count($array) > 1) {
 			$keysInRandomOrder = array_rand($array, count($array));

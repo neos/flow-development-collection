@@ -37,7 +37,7 @@ class F3_FLOW3_Utility_Algorithms {
 	 * @return string The universally unique id
 	 * @author Unkown
 	 */
-	public function generateUUID() {
+	public static function generateUUID() {
 		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
 			mt_rand( 0, 0x0fff ) | 0x4000,
