@@ -75,6 +75,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeComponent() {
+		$this->memcache = new Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 	}
 
@@ -82,12 +83,20 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * setter for servers property
 	 * should be an array of entries like host:port
 	 *
-	 * @param array $serverConf
+	 * @param array $servers
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setServers(array $serverConf) {
-		$this->servers = $serverConf;
+	public function setServers(array $servers) {
+		if (!count($servers)) {
+			throw new F3_FLOW3_Cache_Exception('No servers were given to Memcache', 1213115903);
+		}
+		foreach ($servers as $serverConf) {
+			$conf = explode(':',$serverConf, 2);
+			$this->memcache->addServer($conf[0], $conf[1]);
+		}
+		$this->servers = $servers;
 	}
 
 	/**
@@ -139,14 +148,19 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
-		if (count($tags)) throw new F3_FLOW3_Cache_Exception('Tagging is not yet supported by the memcache backend.', 1213111770);
+		foreach($tags as $tag) {
+			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
+		}
 
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
-			$success = $this->getMemcache()->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
-			if (!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server',1207165277);
+			$this->remove($entryIdentifier);
+			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
+			if (!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server.', 1207165277);
+			$this->addTagsToTagIndex($tags);
+			$this->addIdentifierToTags($entryIdentifier, $tags);
 		} catch(F3_FLOW3_Error_Exception $exception) {
-			throw new F3_FLOW3_Cache_Exception($exception->getMessage(), 1207208100);
+			throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
 		}
 	}
 
@@ -159,7 +173,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function load($entryIdentifier) {
-		return $this->getMemcache()->get($this->identifierPrefix . $entryIdentifier);
+		return $this->memcache->get($this->identifierPrefix . $entryIdentifier);
 	}
 
 	/**
@@ -171,7 +185,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function has($entryIdentifier) {
-		return (boolean) $this->getMemcache()->get($this->identifierPrefix . $entryIdentifier);
+		return (boolean) $this->memcache->get($this->identifierPrefix . $entryIdentifier);
 	}
 
 	/**
@@ -185,7 +199,8 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove($entryIdentifier) {
-		return $this->getMemcache()->delete($this->identifierPrefix . $entryIdentifier);
+		$this->removeIdentifierFromAllTags($entryIdentifier);
+		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
 	}
 
 	/**
@@ -195,10 +210,18 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $tag The tag to search for, the "*" wildcard is supported
 	 * @return array An array of F3_FLOW3_Cache_Entry with all matching entries. An empty array if no entries matched
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findEntriesByTag($tag) {
-		throw new F3_FLOW3_Cache_Exception('Tagging is not yet supported by the memcache backend.', 1213111771);
+		if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
+
+		$entries = array();
+		$identifiers = $this->findIdentifiersTaggedWith($tag);
+		foreach($identifiers as $identifier) {
+			$entries[] = $this->load($identifier);
+		}
+
+		return $entries;
 	}
 
 	/**
@@ -216,38 +239,112 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		throw new F3_FLOW3_Cache_Exception('flushByTag() has not yet been implemented.', 1213111711);
-	}
-
-	/**
-	 * Creates and/or returns the memcache instance
-	 *
-	 * @return Memcache
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 */
-	protected function getMemcache() {
-		if (!$this->memcache instanceof Memcache) {
-			$this->memcache = new Memcache();
-			$this->setupMemcache($this->memcache);
+		$identifiers = $this->findIdentifiersTaggedWith($tag);
+		foreach($identifiers as $identifier) {
+			$this->remove($identifier);
 		}
-		return $this->memcache;
 	}
 
 	/**
-	 * Setting up the Memcache, just adding servers for now.
+	 * Returns an array with all known tags
 	 *
-	 * @param Memcache $memcache
-	 * @return void
-	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setupMemcache(Memcache $memcache) {
-		if (!is_array($this->getServers()) or sizeof($this->getServers())==0) throw new F3_FLOW3_Cache_Exception('No servers was configured for Memcache',1207161347);
-		foreach ($this->servers as $serverConf) {
-			$conf = explode(':',$serverConf,2);
-			$memcache->addServer($conf[0],$conf[1]);
+	protected function getTagIndex() {
+		return (array)$this->memcache->get($this->identifierPrefix . '_tagIndex');
+	}
+
+	/**
+	 * Saves the tags known to the backend
+	 *
+	 * @param array $tags
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function setTagIndex(array $tags) {
+		$this->memcache->set($this->identifierPrefix . '_tagIndex', array_unique($tags), 0, 0);
+	}
+
+	/**
+	 * Adds the given tags to the tag index
+	 *
+	 * @param array $tags
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function addTagsToTagIndex(array $tags) {
+		if(count($tags)) {
+			$this->setTagIndex(array_merge($tags, $this->getTagIndex()));
+		}
+	}
+
+	/**
+	 * Removes the given tags from the tag index
+	 *
+	 * @param array $tags
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function removeTagsFromTagIndex(array $tags) {
+		if(count($tags)) {
+			$this->setTagIndex(array_diff($this->getTagIndex(), $tags));
+		}
+	}
+
+	/**
+	 * Associates the identifier with the given tags
+	 *
+	 * @param string $entryIdentifier
+	 * @param array $tags
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function addIdentifierToTags($entryIdentifier, array $tags) {
+		foreach($tags as $tag) {
+			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			$identifiers[] = $entryIdentifier;
+			$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
+		}
+	}
+
+	/**
+	 * Removes association of the identifier with the given tags
+	 *
+	 * @param string $entryIdentifier
+	 * @param array $tags
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function removeIdentifierFromAllTags($entryIdentifier) {
+		$tags = $this->getTagIndex();
+		foreach($tags as $tag) {
+			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			if(array_search($entryIdentifier, $identifiers) !== FALSE) {
+				unset($identifiers[array_search($entryIdentifier, $identifiers)]);
+			}
+			if(count($identifiers)) {
+				$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
+			} else {
+				$this->removeTagsFromTagIndex(array($tag));
+				$this->memcache->delete($this->identifierPrefix . '_tag_' . $tag);
+			}
+		}
+	}
+
+	/**
+	 * Returns all identifiers associated with $tag
+	 *
+	 * @param string $tag
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findIdentifiersTaggedWith($tag) {
+		$identifiers = $this->memcache->get($this->identifierPrefix . '_tag_' . $tag);
+		if($identifiers !== FALSE) {
+			return (array) $identifiers;
+		} else {
+			return array();
 		}
 	}
 }

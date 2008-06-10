@@ -31,11 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_Cache_Backend_File If set, the tearDown() method will clean up the cache subdirectory used by this unit test.
-	 */
-	protected $backend;
-
-	/**
 	 * Sets up this testcase
 	 *
 	 * @return void
@@ -45,7 +40,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		if (!extension_loaded('memcache')) {
 			$this->markTestSkipped('memcache extension was not available');
 		}
-		$this->backend = NULL;
 	}
 
 	/**
@@ -65,7 +59,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function saveThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
-		$this->backend = $backend;
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
@@ -184,17 +177,40 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function saveReallySavesSpecifiedTags() {
-		$this->markTestSkipped('Tagging is not yet supported by the memcache backend.');
-
+	public function findEntriesByTagFindsSavedEntries() {
 		$backend = $this->setUpBackend();
-
 		$backend->setServers(array('localhost:11211'));
+
 		$data = 'Some data';
 		$entryIdentifier = 'MyIdentifier';
 		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+
+		$retrieved = $backend->findEntriesByTag('UnitTestTag%tag1');
+		$this->assertArrayHasKey(0, $retrieved, 'Could not retrieve expected data by tag.');
+		$this->assertEquals($data, $retrieved[0], 'Could not retrieve expected data by tag.');
+
+		$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
+		$this->assertArrayHasKey(0, $retrieved, 'Could not retrieve expected data by tag.');
+		$this->assertEquals($data, $retrieved[0], 'Could not retrieve expected data by tag.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function saveRemovesTagsFromPreviousSave() {
+		$backend = $this->setUpBackend();
+		$backend->setServers(array('localhost:11211'));
+
+		$data = 'Some data';
+		$entryIdentifier = 'MyIdentifier';
+		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag3'));
+
+		$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
+		$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
 	}
 
 	/**
@@ -222,6 +238,27 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
+		$backend = $this->setUpBackend();
+		$backend->setServers(array('localhost:11211'));
+
+		$data = 'some data' . microtime();
+		$backend->save('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
+		$backend->save('BackendMemcacheTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+		$backend->save('BackendMemcacheTest3', $data, array('UnitTestTag%test'));
+
+		$backend->flushByTag('UnitTestTag%special');
+
+		$this->assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
+		$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
+		$this->assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
+	}
+
+	/**
 	 * Creates a cache mock
 	 *
 	 * @return F3_FLOW3_Cache_AbstractCache mock
@@ -236,12 +273,12 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 *
 	 * @return F3_FLOW3_Cache_Backend_Memcached
 	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend() {
 		$cache = $this->getMockCache();
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
-		$this->backend = $backend;
 		$backend->setCache($cache);
 		return $backend;
 	}
