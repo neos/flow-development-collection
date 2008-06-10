@@ -162,7 +162,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function load($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFiles($entryIdentifier);
+		$pathsAndFilenames = $this->findCacheFilesByEntry($entryIdentifier);
 		return ($pathsAndFilenames !== FALSE) ? file_get_contents(array_pop($pathsAndFilenames)) : FALSE;
 	}
 
@@ -174,7 +174,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function has($entryIdentifier) {
-		return $this->findCacheFiles($entryIdentifier) !== FALSE;
+		return $this->findCacheFilesByEntry($entryIdentifier) !== FALSE;
 	}
 
 	/**
@@ -186,7 +186,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFiles($entryIdentifier);
+		$pathsAndFilenames = $this->findCacheFilesByEntry($entryIdentifier);
 		if ($pathsAndFilenames === FALSE) return FALSE;
 
 		foreach ($pathsAndFilenames as $pathAndFilename) {
@@ -223,9 +223,42 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		$cacheEntries = array();
 		foreach ($filesFound as $filename) {
 			list(,$entryIdentifier) = explode('_', basename($filename));
-			$cacheEntries[] = $entryIdentifier;
+			$cacheEntries[$entryIdentifier] = $entryIdentifier;
 		}
-		return $cacheEntries;
+		return array_values($cacheEntries);
+	}
+
+	/**
+	 * Removes all cache entries of this cache.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flush() {
+		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+
+		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
+		$pattern = $path . '*/*/*';
+		$filesFound = glob($pattern);
+		if ($filesFound === FALSE || count($filesFound) == 0) return;
+
+		foreach($filesFound as $filename) {
+			list(,$entryIdentifier) = explode('_', basename($filename));
+			$this->remove($entryIdentifier);
+		}
+	}
+
+	/**
+	 * Removes all cache entries of this cache which are tagged by the specified tag.
+	 *
+	 * @param string $tag The tag the entries must have
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTag($tag) {
+		foreach ($this->findEntriesByTag($tag) as $entryIdentifier) {
+			$this->remove($entryIdentifier);
+		}
 	}
 
 	/**
@@ -237,7 +270,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renderCacheFilename($identifier, DateTime $expiryTime) {
-		$filename = $expiryTime->format('Y-m-d\TH\;i\;s\Z') . '_' . $identifier . '.cachedata';
+		$filename = $expiryTime->format('Y-m-d\TH\;i\;s\Z') . '_' . $identifier;
 		return $filename;
 	}
 
@@ -251,10 +284,10 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws F3_FLOW3_Cache_Exception if no frontend has been set
 	 */
-	protected function findCacheFiles($entryIdentifier) {
+	protected function findCacheFilesByEntry($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
-		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;

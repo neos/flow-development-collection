@@ -116,6 +116,21 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	abstract public function remove($entryIdentifier);
 
 	/**
+	 * Removes all cache entries of this cache.
+	 *
+	 * @return void
+	 */
+	abstract public function flush();
+
+	/**
+	 * Removes all cache entries of this cache which are tagged by the specified tag.
+	 *
+	 * @param string $tag The tag the entries must have
+	 * @return void
+	 */
+	abstract public function flushByTag($tag);
+
+	/**
 	 * Finds and returns all cache entries which are tagged by the specified tag.
 	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
 	 * the tag.

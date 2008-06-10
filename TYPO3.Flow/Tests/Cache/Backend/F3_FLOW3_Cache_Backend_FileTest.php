@@ -159,7 +159,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$backend->save($entryIdentifier, $data);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 
@@ -189,7 +189,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$backend->save($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier ;
 		$filesFound = glob($pattern);
 		$this->assertEquals(1, count($filesFound), 'There was not exactly one cache entry.');
 	}
@@ -290,7 +290,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
 
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
 
 		$backend->save($entryIdentifier, $data);
 		$filesFound = glob($pattern);
@@ -351,6 +351,66 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$this->assertTrue(is_array($actualEntries), 'actualEntries is not an array.');
 
 		$this->assertEquals($expectedEntry, array_pop($actualEntries));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushRemovesAllCacheEntriesAndRelatedTags() {
+		$context = $this->componentManager->getContext();
+		$data = 'some data' . microtime();
+
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend->setCache($cache);
+		$this->backend = $backend;
+		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
+		$cacheDirectory = $backend->getCacheDirectory() . $context . '/Cache/UnitTestCache/';
+
+		$backend->save('BackendFileTest1', $data, array('UnitTestTag%test'));
+		$backend->save('BackendFileTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+		$backend->save('BackendFileTest3', $data, array('UnitTestTag%test'));
+
+		$backend->flush();
+
+		$pattern = $cacheDirectory . '*/*/*';
+		$filesFound = glob($pattern);
+		$this->assertTrue(count($filesFound) == 0, 'Still files in the cache directory');
+
+		$entryIdentifier = 'BackendFileTest1';
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier . '" still exists.');
+		$entryIdentifier = 'BackendFileTest2';
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier . '" still exists.');
+		$entryIdentifier = 'BackendFileTest3';
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier . '" still exists.');
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%special/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%special/' . $entryIdentifier . '" still exists.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$data = 'some data' . microtime();
+		$backend->save('BackendFileTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
+		$backend->save('BackendFileTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+		$backend->save('BackendFileTest3', $data, array('UnitTestTag%test'));
+
+		$backend->flushByTag('UnitTestTag%special');
+
+		$this->assertTrue($backend->has('BackendFileTest1'), 'BackendFileTest1');
+		$this->assertFalse($backend->has('BackendFileTest2'), 'BackendFileTest2');
+		$this->assertTrue($backend->has('BackendFileTest3'), 'BackendFileTest3');
 	}
 
 	/**

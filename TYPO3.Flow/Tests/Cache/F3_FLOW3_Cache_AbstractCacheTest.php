@@ -35,9 +35,9 @@ class F3_FLOW3_Cache_AbstractCacheTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorAcceptsValidIdentifiers() {
-		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
+		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
 		foreach (array('x', 'someValue', '123fivesixseveneight', 'ab_cd%', rawurlencode('package://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
-			$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag'), array($identifier, $mockBackend));
+			$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
 		}
 	}
 
@@ -46,10 +46,10 @@ class F3_FLOW3_Cache_AbstractCacheTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorRejectsInvalidIdentifiers() {
-		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
+		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $identifier) {
 			try {
-				$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag'), array($identifier, $mockBackend));
+				$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
 				$this->fail('Identifier "' . $identifier . '" was not rejected.');
 			} catch (InvalidArgumentException $exception) {
 			}

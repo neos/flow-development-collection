@@ -202,6 +202,27 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	}
 
 	/**
+	 * Removes all cache entries of this cache.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flush() {
+		throw new F3_FLOW3_Cache_Exception('flush() has not yet been implemented.', 1213111710);
+	}
+
+	/**
+	 * Removes all cache entries of this cache which are tagged by the specified tag.
+	 *
+	 * @param string $tag The tag the entries must have
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTag($tag) {
+		throw new F3_FLOW3_Cache_Exception('flushByTag() has not yet been implemented.', 1213111711);
+	}
+
+	/**
 	 * Creates and/or returns the memcache instance
 	 *
 	 * @return Memcache

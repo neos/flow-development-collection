@@ -71,5 +71,19 @@ class F3_FLOW3_Cache_Manager {
 	public function hasCache($identifier) {
 		return key_exists($identifier, $this->caches);
 	}
+
+	/**
+	 * Flushes entries tagged by the specified tag of all registered
+	 * caches.
+	 *
+	 * @param string $tag Tag to search for
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushCachesByTag($tag) {
+		foreach ($this->caches as $cache) {
+			$cache->flushByTag($tag);
+		}
+	}
 }
 ?>
