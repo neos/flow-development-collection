@@ -125,5 +125,25 @@ class F3_FLOW3_Cache_ManagerTest extends F3_Testing_BaseTestCase {
 
 		$manager->flushCachesByTag('theTag');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushCashesCallsTheFlushMethodOfAllRegisteredCaches() {
+		$manager = new F3_FLOW3_Cache_Manager();
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array(), array(), '', FALSE);
+
+		$cache1 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
+		$cache1->expects($this->once())->method('flush');
+		$manager->registerCache($cache1);
+
+		$cache2 = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2->expects($this->once())->method('flush');
+		$manager->registerCache($cache2);
+
+		$manager->flushCaches();
+	}
 }
 ?>

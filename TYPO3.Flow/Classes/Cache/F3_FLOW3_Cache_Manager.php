@@ -73,6 +73,18 @@ class F3_FLOW3_Cache_Manager {
 	}
 
 	/**
+	 * Flushes all registered caches
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushCaches() {
+		foreach ($this->caches as $cache) {
+			$cache->flush();
+		}
+	}
+
+	/**
 	 * Flushes entries tagged by the specified tag of all registered
 	 * caches.
 	 *
