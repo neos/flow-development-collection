@@ -36,6 +36,11 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
 
 	/**
+	 * Pattern an entry identifer must match.
+	 */
+	const PATTERN_TAG = '/^[a-zA-Z0-9%]{1,250}$/';
+
+	/**
 	 * @var F3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
 	 */
 	protected $cache;
@@ -69,23 +74,12 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	public function setCache(F3_FLOW3_Cache_AbstractCache $cache) {
 		$this->cache = $cache;
 	}
-	/**
-	 * Checks the validity of an entry identifier. Returns true if it's valid.
-	 *
-	 * @param string An identifier to be checked for validity
-	 * @return boolean
-	 *
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 */
-	public function checkEntryIdentifierValidity($entryIdentifier) {
-		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $entryIdentifier);
-	}
 
 	/**
 	 * Saves data in the cache.
 	 *
-	 * @param string $data: The data to be stored
 	 * @param string $entryIdentifier: An identifier for this specific cache entry
+	 * @param string $data: The data to be stored
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
@@ -93,7 +87,7 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 * @throws InvalidArgumentException if the identifier is not valid
 	 * @throws F3_FLOW3_Cache_Exception_InvalidData if $data is not a string
 	 */
-	abstract public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL);
+	abstract public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL);
 
 	/**
 	 * Loads data from the cache.
@@ -121,5 +115,36 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 */
 	abstract public function remove($entryIdentifier);
 
+	/**
+	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
+	 * the tag.
+	 *
+	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+	 */
+	abstract public function findEntriesByTag($tag);
+
+	/**
+	 * Checks the validity of an entry identifier. Returns true if it's valid.
+	 *
+	 * @param string An identifier to be checked for validity
+	 * @return boolean
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	static public function isValidEntryIdentifier($identifier) {
+		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
+	}
+
+	/**
+	 * Checks the validity of a tag. Returns true if it's valid.
+	 *
+	 * @param string An identifier to be checked for validity
+	 * @return boolean
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static public function isValidTag($tag) {
+		return preg_match(self::PATTERN_TAG, $tag) === 1;
+	}
 }
 ?>

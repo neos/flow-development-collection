@@ -69,7 +69,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
-			$backend->save($data,$identifier);
+			$backend->save($identifier, $data);
 			$this->fail('save() did not throw exception on missing cache frontend');
 		} catch (F3_FLOW3_Cache_Exception $exception) {
 		}
@@ -81,7 +81,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 */
 	public function saveRejectsInvalidIdentifiers() {
 		$backend = $this->setUpBackend();
-		$data = 'Some data';
+		$data = 'Somedata';
 
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
 			try {
@@ -101,7 +101,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
-			$backend->save($data,$identifier);
+			$backend->save($identifier, $data);
 			$this->fail('save() did not throw exception on missing configuration of servers');
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
@@ -114,10 +114,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function saveThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend();
 		$backend->setServers(array('julle.did.this:1234'));
-		$data = 'Some data';
+		$data = 'Somedata';
 		$identifier = 'MyIdentifier';
 		try {
-			$backend->save($data,$identifier);
+			$backend->save($identifier, $data);
 			$this->fail('save() did not throw exception on missing connection');
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
@@ -132,7 +132,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$backend->setServers(array('localhost:11211'));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
-		$backend->save($data,$identifier);
+		$backend->save($identifier, $data);
 		$inCache = $backend->has($identifier);
 		$this->assertTrue($inCache,'Memcache failed to set and check entry');
 	}
@@ -146,7 +146,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$backend->setServers(array('localhost:11211'));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
-		$backend->save($data,$identifier);
+		$backend->save($identifier, $data);
 		$fetchedData = $backend->load($identifier);
 		$this->assertEquals($data,$fetchedData,'Memcache failed to set and retrieve data');
 	}
@@ -160,7 +160,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$backend->setServers(array('localhost:11211'));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
-		$backend->save($data,$identifier);
+		$backend->save($identifier, $data);
 		$backend->remove($identifier);
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'Failed to set and remove data from Memcache');
@@ -175,11 +175,26 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		$backend->setServers(array('localhost:11211'));
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
-		$backend->save($data,$identifier);
+		$backend->save($identifier, $data);
 		$otherData = 'some other data';
-		$backend->save($otherData,$identifier);
+		$backend->save($identifier, $otherData);
 		$fetchedData = $backend->load($identifier);
-		$this->assertEquals($otherData,$fetchedData,'Memcache failed to overwrite and retrieve data');
+		$this->assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function saveReallySavesSpecifiedTags() {
+		$this->markTestSkipped('Tagging is not yet supported by the memcache backend.');
+
+		$backend = $this->setUpBackend();
+
+		$backend->setServers(array('localhost:11211'));
+		$data = 'Some data';
+		$entryIdentifier = 'MyIdentifier';
+		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 	}
 
 	/**

@@ -36,7 +36,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 */
 	public function savePassesSerializedStringToBackend() {
 		$theString = 'Just some value';
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -49,7 +49,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 */
 	public function savePassesSerializedArrayToBackend() {
 		$theArray = array('Just some value', 'and another one.');
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theArray)));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -61,7 +61,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadLoadsStringValueFromBackend() {
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize('Just some value')));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -74,7 +74,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 */
 	public function loadLoadsArrayValueFromBackend() {
 		$theArray = array('Just some value', 'and another one.');
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize($theArray)));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -86,7 +86,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadLoadsFalseBooleanValueFromBackend() {
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue(serialize(FALSE)));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -99,7 +99,7 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 */
 	public function hasReturnsResultFromBackend() {
 		$theString = 'Just some value';
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
 		$backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(TRUE));
 
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
@@ -112,10 +112,10 @@ class F3_FLOW3_Cache_VariableCacheTest extends F3_Testing_BaseTestCase {
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';
-		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove'), array(), '', FALSE);
-		
+		$backend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag'), array(), '', FALSE);
+
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
-		
+
 		$cache = new F3_FLOW3_Cache_VariableCache('VariableCache', $backend);
 		$this->assertTRUE($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
 	}

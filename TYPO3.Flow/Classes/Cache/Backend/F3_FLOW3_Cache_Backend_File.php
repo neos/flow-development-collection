@@ -60,7 +60,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 */
 	public function initializeComponent() {
 		$pathHash = md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName());
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . '/FLOW3/' . $pathHash . '/';
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'FLOW3/' . $pathHash . '/';
 		try {
 			$this->setCacheDirectory($cacheDirectory);
 		} catch(F3_FLOW3_Cache_Exception $exception) {
@@ -84,6 +84,11 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		}
 		if (!is_dir($cacheDirectory)) throw new F3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
 		if (!is_writable($cacheDirectory)) throw new F3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+
+		$tagsDirectory = $cacheDirectory . $this->context . '/Tags/';
+		if (!is_writable($tagsDirectory)) {
+			F3_FLOW3_Utility_Files::createDirectoryRecursively($tagsDirectory);
+		}
 		$this->cacheDirectory = $cacheDirectory;
 	}
 
@@ -109,32 +114,43 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL) {
-		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
+		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
 		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
+		foreach ($tags as $tag) {
+			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213105438);
+		}
 
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		$entryIdentifierHash = sha1($entryIdentifier);
-		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
+		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
-		if (!is_writable($path)) {
+		if (!is_writable($cacheEntryPath)) {
 			try {
-				F3_FLOW3_Utility_Files::createDirectoryRecursively($path);
+				F3_FLOW3_Utility_Files::createDirectoryRecursively($cacheEntryPath);
 			} catch(Exception $exception) {
 			}
-			if (!is_writable($path)) throw new F3_FLOW3_Cache_Exception('The cache directory "' . $path . '" could not be created.', 1204026250);
+			if (!is_writable($cacheEntryPath)) throw new F3_FLOW3_Cache_Exception('The cache directory "' . $cacheEntryPath . '" could not be created.', 1204026250);
 		}
 
 		$this->remove($entryIdentifier);
 
 		$temporaryFilename = $filename . '.' . uniqid() . '.temp';
-		$result = @file_put_contents($path . $temporaryFilename, $data);
+		$result = file_put_contents($cacheEntryPath . $temporaryFilename, $data);
 		if ($result === FALSE) throw new F3_FLOW3_Cache_Exception('The temporary cache file "' . $temporaryFilename . '" could not be written.', 1204026251);
 		for ($i=0; $i<5; $i++) {
-			$result = rename($path . $temporaryFilename, $path . $filename);
+			$result = rename($cacheEntryPath . $temporaryFilename, $cacheEntryPath . $filename);
 			if ($result === TRUE) break;
+		}
+
+		foreach ($tags as $tag) {
+			$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
+			if (!is_writable($tagPath)) {
+				mkdir($tagPath);
+			}
+			touch($tagPath . $this->cache->getIdentifier() . '_' . $entryIdentifier);
 		}
 	}
 
@@ -177,7 +193,39 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 			$result = unlink ($pathAndFilename);
 			if ($result === FALSE) return FALSE;
 		}
+
+		$pathsAndFilenames = $this->findTagFilesByEntry($entryIdentifier);
+		if ($pathsAndFilenames === FALSE) return FALSE;
+
+		foreach ($pathsAndFilenames as $pathAndFilename) {
+			$result = unlink ($pathAndFilename);
+			if ($result === FALSE) return FALSE;
+		}
 		return TRUE;
+	}
+
+	/**
+	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
+	 * the tag.
+	 *
+	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findEntriesByTag($tag) {
+		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		$path = $this->cacheDirectory . $this->context . '/Tags/';
+		$pattern = $path . $tag . '/*';
+		$filesFound = glob($pattern);
+		if ($filesFound === FALSE || count($filesFound) == 0) return array();
+
+		$cacheEntries = array();
+		foreach ($filesFound as $filename) {
+			list(,$entryIdentifier) = explode('_', basename($filename));
+			$cacheEntries[] = $entryIdentifier;
+		}
+		return $cacheEntries;
 	}
 
 	/**
@@ -207,6 +255,24 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier . '.cachedata';
+		$filesFound = glob($pattern);
+		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
+		return $filesFound;
+	}
+
+
+	/**
+	 * Tries to find the tag entries for the specified cache entry.
+	 *
+	 * @param string $identifier: The cache entry identifier to find tag files for
+	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3_FLOW3_Cache_Exception if no frontend has been set
+	 */
+	protected function findTagFilesByEntry($entryIdentifier) {
+		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		$path = $this->cacheDirectory . $this->context . '/Tags/';
+		$pattern = $path . '*/' . $this->cache->getIdentifier() . '_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;

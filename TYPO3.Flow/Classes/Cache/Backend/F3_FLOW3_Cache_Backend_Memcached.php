@@ -124,10 +124,10 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Saves data in the cache.
 	 *
-	 * @param string $data: The data to be stored
-	 * @param string $entryIdentifier: An identifier for this specific cache entry
-	 * @param array $tags: Tags to associate with this cache entry
-	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @param string $entryIdentifier An identifier for this specific cache entry
+	 * @param string $data The data to be stored
+	 * @param array $tags Tags to associate with this cache entry
+	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws F3_FLOW3_Cache_Exception if no cache frontend has been set.
 	 * @throws InvalidArgumentException if the identifier is not valid
@@ -135,10 +135,12 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
-	public function save($data, $entryIdentifier, $tags = array(), $lifetime = NULL) {
-		if (!$this->checkEntryIdentifierValidity($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
+	public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL) {
+		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		if (count($tags)) throw new F3_FLOW3_Cache_Exception('Tagging is not yet supported by the memcache backend.', 1213111770);
+
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
 			$success = $this->getMemcache()->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
@@ -187,6 +189,19 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	}
 
 	/**
+	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
+	 * the tag.
+	 *
+	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @return array An array of F3_FLOW3_Cache_Entry with all matching entries. An empty array if no entries matched
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findEntriesByTag($tag) {
+		throw new F3_FLOW3_Cache_Exception('Tagging is not yet supported by the memcache backend.', 1213111771);
+	}
+
+	/**
 	 * Creates and/or returns the memcache instance
 	 *
 	 * @return Memcache
@@ -204,6 +219,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * Setting up the Memcache, just adding servers for now.
 	 *
 	 * @param Memcache $memcache
+	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function setupMemcache(Memcache $memcache) {

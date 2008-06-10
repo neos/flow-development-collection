@@ -198,6 +198,38 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function saveReallySavesSpecifiedTags() {
+		$cacheIdentifier = 'UnitTestCache';
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileTest';
+		$entryIdentifierHash = sha1($entryIdentifier);
+
+		$context = $this->componentManager->getContext();
+
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$this->backend = $backend;
+		$backend->setCache($cache);
+		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
+
+		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+
+		$this->assertTrue(is_dir($tagsDirectory . 'UnitTestTag%tag1'), 'Tag directory UnitTestTag%tag1 does not exist.');
+		$this->assertTrue(is_dir($tagsDirectory . 'UnitTestTag%tag2'), 'Tag directory UnitTestTag%tag2 does not exist.');
+
+		$filename = $tagsDirectory . 'UnitTestTag%tag1/' . $cacheIdentifier . '_' . $entryIdentifier;
+		$this->assertTrue(file_exists($filename), 'File "' . $filename . '" does not exist.');
+
+		$filename = $tagsDirectory . 'UnitTestTag%tag2/' . $cacheIdentifier . '_' . $entryIdentifier;
+		$this->assertTrue(file_exists($filename), 'File "' . $filename . '" does not exist.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function loadReturnsContentOfTheCorrectCacheFile() {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
@@ -272,12 +304,80 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 *
+	 */
+	public function removeReallyRemovesTagsOfRemovedEntry() {
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileTest';
+
+		$context = $this->componentManager->getContext();
+
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
+
+		$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+		$backend->remove($entryIdentifier);
+
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%tag1/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%tag1/' . $entryIdentifier . '" still exists.');
+		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%tag2/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%tag2/' . $entryIdentifier . '" still exists.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findByTagFindsCacheEntriesWithSpecifiedTag() {
+		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$data = 'some data' . microtime();
+		$backend->save('BackendFileTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
+		$backend->save('BackendFileTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+		$backend->save('BackendFileTest3', $data, array('UnitTestTag%test'));
+
+		$expectedEntry = 'BackendFileTest2';
+
+		$actualEntries = $backend->findEntriesByTag('UnitTestTag%special');
+		$this->assertTrue(is_array($actualEntries), 'actualEntries is not an array.');
+
+		$this->assertEquals($expectedEntry, array_pop($actualEntries));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tearDown() {
 		if (is_object($this->backend)) {
 			$context = $this->componentManager->getContext();
 			$directory = $this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache';
 			if (is_dir($directory)) F3_FLOW3_Utility_Files::removeDirectoryRecursively($directory);
+
+			$pattern = $this->backend->getCacheDirectory() . $context . '/Tags/UnitTestTag%*/*';
+			$filesFound = glob($pattern);
+			if ($filesFound === FALSE || count($filesFound) == 0) return;
+
+			foreach ($filesFound as $filename) {
+				unlink($filename);
+			}
+
+			$pattern = $this->backend->getCacheDirectory() . $context . '/Tags/UnitTestTag%*';
+			$directoriesFound = glob($pattern);
+			if ($directoriesFound === FALSE || count($directoriesFound) == 0) return;
+
+			foreach ($directoriesFound as $directory) {
+				rmdir($directory);
+			}
 		}
 	}
 }
