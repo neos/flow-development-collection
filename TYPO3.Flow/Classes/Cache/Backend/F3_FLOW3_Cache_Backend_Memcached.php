@@ -227,11 +227,16 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Removes all cache entries of this cache.
 	 *
+	 * Beware that this flushes the complete memcached, not only the cache
+	 * entries we stored there. We do this because:
+	 *  it is expensive to keep track of all identifiers we put there
+	 *  memcache is a cache, you should never rely on things being there
+	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flush() {
-		throw new F3_FLOW3_Cache_Exception('flush() has not yet been implemented.', 1213111710);
+		$this->memcache->flush();
 	}
 
 	/**
