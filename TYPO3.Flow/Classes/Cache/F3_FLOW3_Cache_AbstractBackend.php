@@ -38,7 +38,7 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Pattern an entry identifer must match.
 	 */
-	const PATTERN_TAG = '/^[a-zA-Z0-9%]{1,250}$/';
+	const PATTERN_TAG = '/^[a-zA-Z0-9_%]{1,250}$/';
 
 	/**
 	 * @var F3_FLOW3_Cache_AbstractCache Reference to the cache which uses this backend
@@ -59,10 +59,19 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * Constructs this backend
 	 *
-	 * @param string $context: FLOW3's application context
+	 * @param string $context FLOW3's application context
+	 * @param mixed $options Configuration options - depends on the actual backend
 	 */
-	public function __construct($context) {
+	public function __construct($context, $options = array()) {
 		$this->context = $context;
+		if ($options instanceof ArrayAccess) {
+			foreach ($options as $optionKey => $optionValue) {
+				$methodName = 'set' . ucfirst($optionKey);
+				if (method_exists($this, $methodName)) {
+					$this->$methodName($optionValue);
+				}
+			}
+		}
 	}
 
 	/**
@@ -87,7 +96,7 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 * @throws InvalidArgumentException if the identifier is not valid
 	 * @throws F3_FLOW3_Cache_Exception_InvalidData if $data is not a string
 	 */
-	abstract public function save($entryIdentifier, $data, $tags = array(), $lifetime = NULL);
+	abstract public function save($entryIdentifier, $data, array $tags = array(), $lifetime = NULL);
 
 	/**
 	 * Loads data from the cache.

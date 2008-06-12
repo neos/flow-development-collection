@@ -128,7 +128,7 @@ class F3_FLOW3_AOP_Framework {
 		$context = $this->componentManager->getContext();
 
 		if ($this->configuration->aop->proxyCache->enable) {
-			$cacheBackend = $this->componentManager->getComponent($this->configuration->aop->proxyCache->backend, $context);
+			$cacheBackend = $this->componentManager->getComponent($this->configuration->aop->proxyCache->backend, $context, $this->configuration->aop->proxyCache->backendOptions);
 			$proxyCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Proxy', $cacheBackend);
 			$configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
@@ -160,16 +160,17 @@ class F3_FLOW3_AOP_Framework {
 		}
 
 		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
-			$configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass);
-			$configurationCache->save('aspectContainers', $this->aspectContainers);
-			$proxyCache->save('proxyBuildResults', $proxyBuildResults);
+			$tags = array('F3_FLOW3_AOP', F3_FLOW3_Cache_Manager::TAG_PACKAGES_CODE);
+			$configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
+			$configurationCache->save('aspectContainers', $this->aspectContainers, $tags);
+			$proxyCache->save('proxyBuildResults', $proxyBuildResults, $tags);
 		}
 	}
 
 	/**
-	 * If the AOP Framework has been initilaized already.
+	 * If the AOP Framework has been initialized already.
 	 *
-	 * @return boolean If the framework has been initialized
+	 * @return boolean If the AOP framework has been initialized
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isInitialized() {

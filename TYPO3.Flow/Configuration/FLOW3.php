@@ -19,7 +19,7 @@ declare(ENCODING="utf-8");
  *
  * @var F3_FLOW3_Error_DevelopmentExceptionHandlerInterface
  */
-$c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
+$c->exceptionHandler->className = 'F3_FLOW3_Error_DebugExceptionHandler';
 
 /**
  * Defines which errors should result in an exception thrown - all other error
@@ -46,7 +46,7 @@ $c->component->configurationCache->enable = TRUE;
 $c->component->configurationCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
 /**
- * Options which are passed the cache backend.
+ * Options which are passed the backend of the component configuration cache.
  *
  * @var array
  */
@@ -67,6 +67,13 @@ $c->aop->proxyCache->enable = TRUE;
 $c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
 
 /**
+ * Options which are passed the backend of the AOP proxy cache.
+ *
+ * @var array
+ */
+$c->aop->proxyCache->backendOptions = array();
+
+/**
  * The path for the public resources mirror used by the configuration path
  *
  * @var string
@@ -81,4 +88,5 @@ $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
  * @var string
  */
 $c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
+
 ?>

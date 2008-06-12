@@ -177,6 +177,7 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework', 'F3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('F3_FLOW3_Package_ManagerInterface', 'F3_FLOW3_Package_Manager');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_File');
+		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_Memcached');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 
 		$resourceManager = new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager);
@@ -222,7 +223,7 @@ final class F3_FLOW3 {
 		$configurationHasBeenLoaded = FALSE;
 
 		if ($this->configuration->component->configurationCache->enable) {
-			$cacheBackend = $this->componentManager->getComponent($this->configuration->component->configurationCache->backend, $this->context);
+			$cacheBackend = $this->componentManager->getComponent($this->configuration->component->configurationCache->backend, $this->context, $this->configuration->component->configurationCache->backendOptions);
 			$componentConfigurationsCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Component_Configurations', $cacheBackend);
 			if ($componentConfigurationsCache->has('baseComponentConfigurations')) {
 				$componentConfigurations = $componentConfigurationsCache->load('baseComponentConfigurations');

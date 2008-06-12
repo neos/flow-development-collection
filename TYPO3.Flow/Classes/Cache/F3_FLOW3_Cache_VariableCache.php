@@ -42,7 +42,7 @@ class F3_FLOW3_Cache_VariableCache extends F3_FLOW3_Cache_AbstractCache {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function save($entryIdentifier, $variable, $tags = array()) {
-		$this->backend->save($entryIdentifier, serialize($variable));
+		$this->backend->save($entryIdentifier, serialize($variable), $tags);
 	}
 
 	/**
@@ -67,12 +67,12 @@ class F3_FLOW3_Cache_VariableCache extends F3_FLOW3_Cache_AbstractCache {
 	public function has($entryIdentifier) {
 		return $this->backend->has($entryIdentifier);
 	}
-	
+
 	/**
 	 * Removes the given cache entry from the cache.
 	 *
 	 * @param string $entryIdentifier: An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not 
+	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function remove($entryIdentifier) {

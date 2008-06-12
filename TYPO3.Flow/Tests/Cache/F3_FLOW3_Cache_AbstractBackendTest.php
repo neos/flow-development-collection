@@ -55,7 +55,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidTagsAreRecognizedAsInvalid() {
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&', 'a_c') as $tag) {
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
 			$this->assertFalse(F3_FLOW3_Cache_AbstractBackend::isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
 		}
 	}
@@ -65,7 +65,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validTagsAreRecognizedAsValid() {
-		foreach (array('abcdef', 'foo', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
+		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
 			$this->assertTrue(F3_FLOW3_Cache_AbstractBackend::isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
 		}
 	}

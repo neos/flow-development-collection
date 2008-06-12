@@ -31,6 +31,11 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Cache_Manager {
 
 	/**
+	 * @const Cache Entry depends on the PHP code of the packages
+	 */
+	const TAG_PACKAGES_CODE = '%PACKAGES_CODE';
+
+	/**
 	 * @var array Registered Caches
 	 */
 	protected $caches = array();
