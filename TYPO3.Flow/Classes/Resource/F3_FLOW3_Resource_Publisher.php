@@ -139,7 +139,6 @@ class F3_FLOW3_Resource_Publisher {
 		if (!is_dir($sourcePath)) return;
 
 		$destinationPath = $this->publicResourcePath . $packageName . '/Public/';
-		$resourcesDirectoryIterator = new RecursiveDirectoryIterator($sourcePath);
 		$resourceFilenames = F3_FLOW3_Utility_Files::readDirectoryRecursively($sourcePath);
 
 		foreach ($resourceFilenames as $file) {
