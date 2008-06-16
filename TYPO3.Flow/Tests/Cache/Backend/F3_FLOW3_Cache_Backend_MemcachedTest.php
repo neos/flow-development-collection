@@ -47,8 +47,8 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPrototype() {
-		$backend1 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $this->componentManager->getContext());
-		$backend2 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $this->componentManager->getContext());
+		$backend1 = $this->setUpBackend();
+		$backend2 = $this->setUpBackend();
 		$this->assertNotSame($backend1, $backend2, 'Memcached Backend seems to be singleton!');
 	}
 
@@ -57,8 +57,9 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function saveThrowsExceptionIfNoFrontEndHasBeenSet() {
+		$backendOptions = array('servers' => array('localhost:11211'));
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
@@ -87,15 +88,13 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function saveThrowsExceptionIfNoMemcacheServerIsConfigured() {
-		$backend = $this->setUpBackend();
-		$data = 'Some data';
-		$identifier = 'MyIdentifier';
+	public function initializeComponentThrowsExceptionIfNoMemcacheServerIsConfigured() {
+		$context = $this->componentManager->getContext();
 		try {
-			$backend->save($identifier, $data);
-			$this->fail('save() did not throw exception on missing configuration of servers');
+			$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
+			$this->fail('initializeComponent() did not throw exception on missing configuration of servers');
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
 	}
@@ -105,8 +104,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function saveThrowsExceptionIfConfiguredServersAreUnreachable() {
-		$backend = $this->setUpBackend();
-		$backend->setServers(array('julle.did.this:1234'));
+		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
 		$data = 'Somedata';
 		$identifier = 'MyIdentifier';
 		try {
@@ -123,7 +121,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function itIsPossibleToSaveAndCheckExistenceInCache() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
 			$backend->save($identifier, $data);
@@ -141,7 +138,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function itIsPossibleToSaveAndGetEntry() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
 			$backend->save($identifier, $data);
@@ -159,7 +155,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function itIsPossibleToRemoveEntryFromCache() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
 			$backend->save($identifier, $data);
@@ -178,7 +173,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function itIsPossibleToOverwriteAnEntryInTheCache() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
 			$backend->save($identifier, $data);
@@ -198,7 +192,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function findEntriesByTagFindsSavedEntries() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 
 			$data = 'Some data';
 			$entryIdentifier = 'MyIdentifier';
@@ -223,7 +216,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function saveRemovesTagsFromPreviousSave() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 
 			$data = 'Some data';
 			$entryIdentifier = 'MyIdentifier';
@@ -243,7 +235,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 */
 	public function hasReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$backend->setServers(array('localhost:11211'));
 		$identifier = 'NonExistingIdentifier';
 		$inCache = $backend->has($identifier);
 		$this->assertFalse($inCache,'"has" did not return false when checking on non existing identifier');
@@ -255,7 +246,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	 */
 	public function removeReturnsFalseIfTheEntryDoesntExist() {
 		$backend = $this->setUpBackend();
-		$backend->setServers(array('localhost:11211'));
 		$identifier = 'NonExistingIdentifier';
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
@@ -269,7 +259,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 
 			$data = 'some data' . microtime();
 			$backend->save('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
@@ -293,7 +282,6 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function flushRemovesAllCacheEntries() {
 		try {
 			$backend = $this->setUpBackend();
-			$backend->setServers(array('localhost:11211'));
 
 			$data = 'some data' . microtime();
 			$backend->save('BackendMemcacheTest1', $data);
@@ -323,14 +311,18 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	/**
 	 * Sets up the memcached backend used for testing
 	 *
+	 * @param array $backendOptions Options for the memcache backend
 	 * @return F3_FLOW3_Cache_Backend_Memcached
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setUpBackend() {
+	protected function setUpBackend(array $backendOptions = array()) {
 		$cache = $this->getMockCache();
+		if ($backendOptions == array()) {
+			$backendOptions = array('servers' => array('localhost:11211'));
+		}
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
+		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
 		$backend->setCache($cache);
 		return $backend;
 	}

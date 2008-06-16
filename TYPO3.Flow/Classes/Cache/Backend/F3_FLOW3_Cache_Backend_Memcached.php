@@ -39,7 +39,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	/**
 	 * @var array
 	 */
-	protected $servers;
+	protected $servers = array();
 
 	/**
 	 * @var boolean whether the memcache uses compression or not (requires zlib)
@@ -75,12 +75,8 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param array $servers
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setServers(array $servers) {
-		if (!count($servers)) {
-			throw new F3_FLOW3_Cache_Exception('No servers were given to Memcache', 1213115903);
-		}
 		$this->servers = $servers;
 	}
 
@@ -94,6 +90,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		$this->memcache = new Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 
+		if (!count($this->servers)) throw new F3_FLOW3_Cache_Exception('No servers were given to Memcache', 1213115903);
 		foreach ($this->servers as $serverConf) {
 			$conf = explode(':',$serverConf, 2);
 			$this->memcache->addServer($conf[0], $conf[1]);
