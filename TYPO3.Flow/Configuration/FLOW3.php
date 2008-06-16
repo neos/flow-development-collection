@@ -74,7 +74,22 @@ $c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
 $c->aop->proxyCache->backendOptions = array();
 
 /**
- * The path for the public resources mirror used by the configuration path
+ * Define the backend used for caching resource metadata. Specify the
+ * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ *
+ * @var F3_FLOW3_Cache_BackendInterface
+ */
+$c->resource->cache->backend = 'F3_FLOW3_Cache_Backend_File';
+
+/**
+ * Options which are passed the backend of the resource metadata cache.
+ *
+ * @var array
+ */
+$c->resource->cache->backendOptions = array();
+
+/**
+ * The path for the public resources mirror
  *
  * @var string
  */

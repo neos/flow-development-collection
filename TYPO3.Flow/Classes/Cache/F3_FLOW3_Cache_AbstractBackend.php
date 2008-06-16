@@ -64,7 +64,7 @@ abstract class F3_FLOW3_Cache_AbstractBackend {
 	 */
 	public function __construct($context, $options = array()) {
 		$this->context = $context;
-		if ($options instanceof ArrayAccess) {
+		if (is_array($options) || $options instanceof ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
 				$methodName = 'set' . ucfirst($optionKey);
 				if (method_exists($this, $methodName)) {

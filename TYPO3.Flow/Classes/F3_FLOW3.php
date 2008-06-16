@@ -258,8 +258,8 @@ final class F3_FLOW3 {
 	 * Publishes the public resources of all found packages
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws F3_FLOW3_Exception if the resource system has already been initialized.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
 	 */
 	public function initializeResources() {
@@ -267,7 +267,7 @@ final class F3_FLOW3 {
 
 		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
 
-		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
+		$cacheBackend = $this->componentManager->getComponent($this->configuration->resource->cache->backend, $this->context, $this->configuration->resource->cache->backendOptions);
 		$metadataCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Resource_Manager', $cacheBackend);
 
 		$resourcePublisher = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher');
