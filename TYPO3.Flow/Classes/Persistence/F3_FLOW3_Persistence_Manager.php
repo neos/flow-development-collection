@@ -38,6 +38,11 @@ class F3_FLOW3_Persistence_Manager {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Persistence_BackendInterface
+	 */
+	protected $backend;
+
+	/**
 	 * Schemata of all classes which need to be persisted
 	 *
 	 * @var array of F3_FLOW3_Persistence_ClassSchema
@@ -55,10 +60,22 @@ class F3_FLOW3_Persistence_Manager {
 	}
 
 	/**
+	 * Set the backend to use for persistence
+	 *
+	 * @param F3_FLOW3_Persistence_BackendInterface $backend
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setBackend(F3_FLOW3_Persistence_BackendInterface $backend) {
+		$this->backend = $backend;
+	}
+
+	/**
 	 * Initializes the persistence manager
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
 		$loadedFromCache = FALSE;
@@ -68,6 +85,10 @@ class F3_FLOW3_Persistence_Manager {
 				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
 			}
 			$this->classSchemata = $this->buildClassSchemataFromClasses($namesOfAvailableClasses);
+		}
+
+		if ($this->backend instanceof F3_FLOW3_Persistence_BackendInterface) {
+			$this->backend->initialize($this->classSchemata);
 		}
 	}
 

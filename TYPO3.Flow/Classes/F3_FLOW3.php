@@ -248,6 +248,10 @@ final class F3_FLOW3 {
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
 
 		$persistenceManager = $this->componentManager->getComponent('F3_FLOW3_Persistence_Manager');
+		if ($this->componentManager->isComponentRegistered($this->configuration->persistence->backend)) {
+			$persistenceBackend = $this->componentManager->getComponent($this->configuration->persistence->backend);
+			$persistenceManager->setBackend($persistenceBackend);
+		}
 		$persistenceManager->initialize();
 
 
