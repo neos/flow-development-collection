@@ -37,9 +37,7 @@ interface F3_FLOW3_Security_Authorization_InterceptorInterface {
 	 * @return boolean TRUE if the security checks was passed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function invoke() {
-
-	}
+	public function invoke();
 }
 
 ?>

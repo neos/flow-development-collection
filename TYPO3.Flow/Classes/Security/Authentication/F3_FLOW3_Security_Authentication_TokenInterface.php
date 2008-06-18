@@ -58,9 +58,7 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	 * @return boolean True if a F3_FLOW3_Security_RequestPattern was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function hasRequestPattern() {
-
-	}
+	public function hasRequestPattern();
 
 	/**
 	 * Returns the set F3_FLOW3_Security_RequestPattern, NULL if none was set
@@ -69,9 +67,7 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	 * @see hasRequestPattern()
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRequestPattern() {
-
-	}
+	public function getRequestPattern();
 
 	/**
 	 *
