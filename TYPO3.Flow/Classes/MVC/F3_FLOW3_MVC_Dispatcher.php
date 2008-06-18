@@ -37,27 +37,12 @@ class F3_FLOW3_MVC_Dispatcher {
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Security_ContextHolderInterface A reference to the security contextholder
-	 */
-	protected $securityContextHolder;
-
-	/**
-	 * @var F3_FLOW3_Security_Auhtorization_FirewallInterface A reference to the firewall
-	 */
-	protected $firewall;
-
-	/**
 	 * Constructs the global dispatcher
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 */
-	public function __construct(
-				F3_FLOW3_Component_ManagerInterface $componentManager,
-				F3_FLOW3_Security_ContextHolderInterface $securityContextHolder,
-				F3_FLOW3_Security_Authorization_FirewallInterface $firewall) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
-		$this->securityContextHolder = $securityContextHolder;
-		$this->firewall = $firewall;
 	}
 
 	/**
@@ -77,9 +62,6 @@ class F3_FLOW3_MVC_Dispatcher {
 
 		$controller = $this->componentManager->getComponent($controllerName);
 		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerName . '". The controller must be a valid request handling controller.', 1202921619);
-
-		//$this->securityContextHolder->initializeContext($request);
-		//$this->firewall->analyzeRequest($request);
 
 		$controller->processRequest($request, $response);
 	}
