@@ -37,9 +37,12 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidControllersResultInException() {
+		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
+		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
+
 		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
-		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager);
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $securityContextHolder, $firewall);
 
 		$this->componentManager->registerComponent('F3_FLOW3_Fixture_DummyClass');
 		$request->setControllerName('F3_FLOW3_Fixture_DummyClass');
@@ -57,9 +60,12 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatcherCallsProcessRequestMethodOfController() {
+		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
+		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
+
 		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
-		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager);
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $securityContextHolder, $firewall);
 
 		$this->componentManager->registerComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
 		$controller = $this->componentManager->getComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');

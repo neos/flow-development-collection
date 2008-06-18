@@ -39,7 +39,7 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setContext(F3_FLOW3_Security_ContextInterface $securityContext);
+	public function setContext(F3_FLOW3_Security_Context $securityContext);
 
 	/**
 	 * Returns the current security context.

@@ -46,7 +46,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setContext(F3_FLOW3_Security_ContextInterface $securityContext) {}
+	public function setContext(F3_FLOW3_Security_Context $securityContext) {}
 
 	/**
 	 * Returns the current F3_FLOW3_Security_Context

@@ -45,9 +45,9 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 			);
 
 	/**
+	 * Returns TRUE if this token is currently authenticated
 	 *
-	 *
-	 * @return boolean
+	 * @return boolean TRUE if this this token is currently authenticated
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticated();
