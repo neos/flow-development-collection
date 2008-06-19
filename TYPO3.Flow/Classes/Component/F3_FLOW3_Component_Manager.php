@@ -108,7 +108,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 *       pass additional parameters which are then used as parameters passed
 	 *       to the constructor of the component class. However, you whould only
 	 *       use this feature if your parameters are truly dynamic. Otherwise just
-	 *       configure them in your Components.ini file.
+	 *       configure them in your Components.php file.
 	 *
 	 * @param  string $componentName: The unique identifier (name) of the component to return an instance of
 	 * @return object The component instance
@@ -122,9 +122,8 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 
 		$componentConfiguration = $this->componentConfigurations[$componentName];
 		$arguments = array_slice(func_get_args(), 1);
-		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments, $componentConfiguration);
-		$scope = $this->getComponentScope($componentName, $componentConfiguration);
-		switch ($scope) {
+		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
+		switch ($componentConfiguration->getScope()) {
 			case 'prototype' :
 				$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
 				break;
@@ -137,7 +136,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 				}
 				break;
 			default :
-				throw new F3_FLOW3_Component_Exception('Support for scope "' . $scope . '" has not been implemented (yet)', 1167484148);
+				throw new F3_FLOW3_Component_Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
 		}
 
 		return $componentObject;
@@ -168,7 +167,12 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 			if (!is_object($componentObject) || !$componentObject instanceof $className) throw new F3_FLOW3_Component_Exception_InvalidComponentObject('The component instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
 			$this->componentObjectCache->putComponentObject($componentName, $componentObject);
 		}
+
 		$this->componentConfigurations[$componentName] = new F3_FLOW3_Component_Configuration($componentName, $className);
+		if ($class->isTaggedWith('scope')) {
+			$scope = trim(implode('', $class->getTagValues('scope')));
+			$this->componentConfigurations[$componentName]->setScope($scope);
+		}
 		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
 	}
 
@@ -180,10 +184,17 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentType($componentName) {
+		$reflectionService = $this->getComponent('F3_FLOW3_Reflection_Service');
+		$className = $reflectionService->getDefaultImplementationClassNameForInterface($componentName);
 		$componentConfiguration = new F3_FLOW3_Component_Configuration($componentName);
-		$className = $this->getDefaultImplementationClassNameForInterface($componentName);
 		if ($className !== FALSE) {
 			$componentConfiguration->setClassName($className);
+
+			$class = new F3_FLOW3_Reflection_Class($className);
+			if ($class->isTaggedWith('scope')) {
+				$scope = trim(implode('', $class->getTagValues('scope')));
+				$componentConfiguration->setScope($scope);
+			}
 		}
 		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
 		$this->componentConfigurations[$componentName] = $componentConfiguration;
@@ -327,90 +338,20 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	}
 
 	/**
-	 * Searches for and returns the class name of the default implementation of the given
-	 * interface name. If no class implementing the interface was found or more than one
-	 * implementation was found in the package defining the interface, FALSE is returned.
-	 *
-	 * @param string $interfaceName: Name of the interface
-	 * @return mixed Either the class name of the default implementation for the component type or FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownInterface if the specified interface does not exist.
-	 */
-	public function getDefaultImplementationClassNameForInterface($interfaceName) {
-		if (!interface_exists($interfaceName, TRUE)) throw new F3_FLOW3_Component_Exception_UnknownInterface('The interface "' . $interfaceName . '" does not exist.', 1203578679);
-		$classNamesFound = array();
-		foreach ($this->componentConfigurations as $componentConfiguration) {
-			$className = $componentConfiguration->getClassName();
-			if (class_exists($className)) {
-				$class = new ReflectionClass($className);
-				if ($class->implementsInterface($interfaceName) && !$class->isAbstract()) {
-					$classNamesFound[] = $className;
-				}
-			}
-		}
-		return (count($classNamesFound) == 1 ? $classNamesFound[0] : FALSE);
-	}
-
-	/**
-	 * Searches for and returns all class names of implementations of the given component type
-	 * (interface name). If no class implementing the interface was found, FALSE is returned.
-	 *
-	 * @param string $interfaceName: Name of the interface
-	 * @return array An array of class names of the default implementation for the component type
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownInterface if the given interface does not exist
-	 */
-	public function getAllImplementationClassNamesForInterface($interfaceName) {
-		if (!interface_exists($interfaceName)) throw new F3_FLOW3_Component_Exception_UnknownInterface('Cannot find implementations for non-existing interface "' . $interfaceName . '".', 1176468683);
-
-		$classNamesFound = array();
-		foreach ($this->componentConfigurations as $componentConfiguration) {
-			$className = $componentConfiguration->getClassName();
-			if (class_exists($className)) {
-				$class = new ReflectionClass($className);
-				if ($class->implementsInterface($interfaceName) && !$class->isAbstract()) {
-					$classNamesFound[$className] = $className;
-				}
-			}
-		}
-		return $classNamesFound;
-	}
-
-	/**
 	 * Returns straight-value constructor arguments for a component by creating appropriate
 	 * F3_FLOW3_Component_ConfigurationArgument objects.
 	 *
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @param F3_FLOW3_Component_Configuration $componentConfiguration: The component configuration of the component in question
 	 * @return array An array of F3_FLOW3_Component_ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see getComponent()
 	 */
-	protected function getOverridingConstructorArguments(array $arguments, F3_FLOW3_Component_Configuration $componentConfiguration) {
+	protected function getOverridingConstructorArguments(array $arguments) {
 		$constructorArguments = array();
 		foreach ($arguments as $index => $value) {
 			$constructorArguments[$index + 1] = new F3_FLOW3_Component_ConfigurationArgument($index + 1, $value, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
 		return $constructorArguments;
-	}
-
-	/**
-	 * Returns the scope of the specified component. If it is not defined in the component
-	 * configuration, the scope is determined from the annotation.
-	 *
-	 * @param string $componentName: Name of the component
-	 * @param F3_FLOW3_Component_Configuration $componentConfiguration: The component configuration
-	 * @return string The scope
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo needs cleanup
-	 */
-	protected function getComponentScope($componentName, $componentConfiguration) {
-		$scope = $componentConfiguration->getScope();
-		if ($scope === '') {
-			$class = new F3_FLOW3_Reflection_Class($componentConfiguration->getClassName());
-			$scope = $class->isTaggedWith('scope') ? trim(implode('', $class->getTagValues('scope'))) : 'singleton';
-		}
-		return $scope;
 	}
 
 	/**

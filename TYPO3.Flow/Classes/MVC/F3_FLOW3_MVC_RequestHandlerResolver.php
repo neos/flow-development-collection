@@ -36,6 +36,11 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Configuration_Container FLOW3 configuration
+	 */
+	protected $configuration;
+
+	/**
 	 * Constructs the Request Handler Resolver
 	 *
 	 * @param  F3_FLOW3_ComponentManagerInterface $componentManager: A reference to the component manager
@@ -44,6 +49,8 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
+		$configurationManager = $componentManager->getComponent('F3_FLOW3_Configuration_Manager');
+		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 	}
 
 	/**
@@ -55,7 +62,7 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
-		$availableRequestHandlerClassNames = $this->componentManager->getAllImplementationClassNamesForInterface('F3_FLOW3_MVC_RequestHandlerInterface');
+		$availableRequestHandlerClassNames = $this->configuration->mvc->availableRequestHandlers;
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
 			$requestHandler = $this->componentManager->getComponent($requestHandlerClassName);

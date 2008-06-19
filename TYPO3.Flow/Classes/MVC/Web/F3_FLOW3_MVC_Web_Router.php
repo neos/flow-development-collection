@@ -89,7 +89,6 @@ class F3_FLOW3_MVC_Web_Router implements F3_FLOW3_MVC_Web_RouterInterface {
 	 */
 	protected function setControllerName(array $requestPathSegments, F3_FLOW3_MVC_Web_Request $request) {
 		if (!isset($requestPathSegments[0]) || $requestPathSegments[0] == '') return;
-
 		$controllerNamePrefix = 'F3_' . $requestPathSegments[0] . '_Controller_';
 		$controllerName = $controllerNamePrefix . 'Default';
 		if (isset($requestPathSegments[1]) && F3_PHP6_Functions::strlen($requestPathSegments[1])) {

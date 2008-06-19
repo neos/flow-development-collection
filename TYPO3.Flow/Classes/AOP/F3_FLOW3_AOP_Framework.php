@@ -44,6 +44,11 @@ class F3_FLOW3_AOP_Framework {
 	 * @var F3_FLOW3_AOP_PointcutExpressionParserInterface An instance of the pointcut expression parser
 	 */
 	protected $pointcutExpressionParser;
+	
+	/**
+	 * @var F3_FLOW3_Reflection_ClassFactory The class reflection factory
+	 */
+	protected $classReflectionFactory;
 
 	/**
 	 * @var array A registry of all known aspects
@@ -93,6 +98,17 @@ class F3_FLOW3_AOP_Framework {
 	 */
 	public function injectPointcutExpressionParser(F3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
+	}
+	
+	/**
+	 * Injects the cached class reflection factory
+	 *
+	 * @param F3_FLOW3_Reflection_ClassFactory $classReflectionFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectClassReflectionFactory(F3_FLOW3_Reflection_ClassFactory $classReflectionFactory) {
+		$this->classReflectionFactory = $classReflectionFactory;
 	}
 
 	/**
@@ -234,7 +250,7 @@ class F3_FLOW3_AOP_Framework {
 		$aspectContainers = array();
 		foreach ($classNames as $className) {
 			if (class_exists($className, TRUE)) {
-				$class = new F3_FLOW3_Reflection_Class($className);
+				$class = $this->classReflectionFactory->reflect($className);
 				if ($class->isTaggedWith('aspect')) {
 					$aspectContainer =  $this->buildAspectContainerFromClass($class);
 					if ($aspectContainer !== NULL) {
@@ -298,15 +314,15 @@ class F3_FLOW3_AOP_Framework {
 		}
 
 		foreach ($aspectClass->getProperties() as $property) {
-			$propertyName = $property->getName();
 			foreach ($property->getTagsValues() as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'introduce' :
 							$splittedTagValue = explode(',', $tagValue);
-							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new RuntimeException('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
+							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new F3_FLOW3_AOP_Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
-							$introduction = $this->componentManager->getComponent('F3_FLOW3_AOP_Introduction', $aspectClassName, trim($splittedTagValue[0]), $pointcut);
+							$interface = $this->classReflectionFactory->reflect(trim($splittedTagValue[0]));
+							$introduction = $this->componentManager->getComponent('F3_FLOW3_AOP_Introduction', $aspectClassName, $interface, $pointcut);
 							$aspectContainer->addIntroduction($introduction);
 						break;
 					}
@@ -336,7 +352,7 @@ class F3_FLOW3_AOP_Framework {
 		foreach ($classNames as $targetClassName) {
 			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3_FLOW3_') {
 				try {
-					$class = new F3_FLOW3_Reflection_Class($targetClassName);
+					$class = $this->classReflectionFactory->reflect($targetClassName);
 					if (!$class->isTaggedWith('aspect') && !$class->isAbstract() && !$class->isFinal()) {
 						$proxyBuildResult = F3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass($class, $aspectContainers, $context);
 						if ($proxyBuildResult !== FALSE) {

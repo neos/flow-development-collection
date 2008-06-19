@@ -129,11 +129,11 @@ class F3_FLOW3_AOP_AspectContainer {
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param F3_FLOW3_AOP_IntroductionInterface $introduction
+	 * @param F3_FLOW3_AOP_Introduction $introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addIntroduction(F3_FLOW3_AOP_IntroductionInterface $introduction) {
+	public function addIntroduction(F3_FLOW3_AOP_Introduction $introduction) {
 		$this->introductions[] = $introduction;
 	}
 

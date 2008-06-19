@@ -52,6 +52,15 @@ $c->component->configurationCache->backend = 'F3_FLOW3_Cache_Backend_File';
  */
 $c->component->configurationCache->backendOptions = array();
 
+
+/**
+ * Defines the available request handlers. Each of them must implement the
+ * F3_FLOW3_MVC_RequestHandlerInterface.
+ *
+ * @var array
+ */
+$c->mvc->availableRequestHandlers = array('F3_FLOW3_MVC_Web_RequestHandler', 'F3_FLOW3_MVC_CLI_RequestHandler');
+
 /**
  * Enable or disable the caching of proxy classes which were built by
  * the AOP Framework.

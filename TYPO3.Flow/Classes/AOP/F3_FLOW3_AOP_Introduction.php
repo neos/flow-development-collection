@@ -29,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_AOP_Introduction implements F3_FLOW3_AOP_IntroductionInterface {
+class F3_FLOW3_AOP_Introduction {
 
 	/**
 	 * @var string Name of the aspect declaring this introduction
@@ -37,9 +37,9 @@ class F3_FLOW3_AOP_Introduction implements F3_FLOW3_AOP_IntroductionInterface {
 	protected $declaringAspectClassName;
 
 	/**
-	 * @var string Name of the introduced interface
+	 * @var F3_FLOW3_Reflection_Class The introduced interface
 	 */
-	protected $interfaceName;
+	protected $interface;
 
 	/**
 	 * @var F3_FLOW3_AOP_PointcutInterface The poincut this introduction applies to
@@ -50,25 +50,25 @@ class F3_FLOW3_AOP_Introduction implements F3_FLOW3_AOP_IntroductionInterface {
 	 * Constructor
 	 *
 	 * @param string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
-	 * @param string $interfaceName: Name of the interface to introduce
+	 * @param F3_FLOW3_Reflection_Class $interface: Reflection of the interface to introduce
 	 * @param F3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($declaringAspectClassName, $interfaceName, F3_FLOW3_AOP_PointcutInterface $pointcut) {
+	public function __construct($declaringAspectClassName, F3_FLOW3_Reflection_Class $interface, F3_FLOW3_AOP_PointcutInterface $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
-		$this->interfaceName = $interfaceName;
+		$this->interface = $interface;
 		$this->pointcut = $pointcut;
 	}
 
 	/**
-	 * Returns the name of the introduced interface
+	 * Returns a reflection of the introduced interface
 	 *
-	 * @return string Name of the introduced interface
+	 * @return F3_FLOW3_Reflection_Class A reflection of the introduced interface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getInterfaceName() {
-		return $this->interfaceName;
+	public function getInterface() {
+		return $this->interface;
 	}
 
 	/**

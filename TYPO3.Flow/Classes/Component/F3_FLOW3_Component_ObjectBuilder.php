@@ -96,19 +96,17 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 
 			if (!is_object($componentObject)) {
 				$errorMessage = error_get_last();
-				throw new F3_FLOW3_Component_Exception_CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . '). The evaluated PHP code was: ' . $instruction, 1187164523);
+				throw new F3_FLOW3_Component_Exception_CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . ').', 1187164523);
 			}
 
 			$this->injectSetterProperties($setterProperties, $componentObject);
-
 			$this->callLifecycleInitializationMethod($componentObject, $componentConfiguration);
-
-			unset ($this->componentsBeingBuilt[$componentName]);
-			return $componentObject;
 		} catch (Exception $exception) {
 			unset ($this->componentsBeingBuilt[$componentName]);
 			throw $exception;
 		}
+		unset ($this->componentsBeingBuilt[$componentName]);
+		return $componentObject;
 	}
 
 	/**
@@ -205,7 +203,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function injectConstructorArguments($constructorArguments, &$preparedArguments) {
-		foreach ($constructorArguments as $index => $constructorArgument) {
+		foreach ($constructorArguments as $constructorArgument) {
 			if (is_object($constructorArgument)) {
 				if (gettype($constructorArgument->getValue()) == 'integer') {
 					$preparedArguments[] = $constructorArgument->getValue();

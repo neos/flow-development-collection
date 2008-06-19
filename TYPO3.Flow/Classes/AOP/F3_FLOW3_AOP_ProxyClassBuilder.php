@@ -108,17 +108,12 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	static protected function buildMethodsInterceptorCode(array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$methodsInterceptorCode = '';
 
-		$advicedMethodInterceptorBuilder = new F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder();
-		$emptyMethodInterceptorBuilder = new F3_FLOW3_AOP_EmptyMethodInterceptorBuilder();
-		$advicedConstructorInterceptorBuilder = new F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder();
-		$emptyConstructorInterceptorBuilder = new F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder();
-
 		foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
 			$hasAdvices = (count($methodMetaInformation['groupedAdvices']) > 0);
 			$isConstructor = $methodMetaInformation['isConstructor'];
-			$builderName = ($hasAdvices ? 'adviced' : 'empty') . ($isConstructor ? 'Constructor' : 'Method') . 'InterceptorBuilder';
+			$builderClassName = 'F3_FLOW3_AOP_' . ($hasAdvices ? 'Adviced' : 'Empty') . ($isConstructor ? 'Constructor' : 'Method') . 'InterceptorBuilder';
 
-			$methodsInterceptorCode .= $$builderName->build($methodName, $interceptedMethods, $targetClass);
+			$methodsInterceptorCode .= call_user_func_array(array($builderClassName, 'build'), array($methodName, $interceptedMethods, $targetClass));
 		}
 		return $methodsInterceptorCode;
 	}
@@ -240,13 +235,13 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	 * Returns an array of interface names introduced by the given introductions
 	 *
 	 * @param array $introductions An array of introductions
-	 * @return array Array of interface names
+	 * @return array Array of interface reflections
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function getInterfaceNamesFromIntroductions(array $introductions) {
 		$interfaceNames = array();
 		foreach ($introductions as $introduction) {
-			$interfaceNames[] = $introduction->getInterfaceName();
+			$interfaceNames[] = $introduction->getInterface()->getName();
 		}
 		return $interfaceNames;
 	}
@@ -254,7 +249,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	/**
 	 * Returns all methods declared by the introduced interfaces
 	 *
-	 * @param array $introductions An array of F3_FLOW3_AOP_IntroductionInterface
+	 * @param array $introductions An array of F3_FLOW3_AOP_Introduction
 	 * @return array An array of F3_FLOW3_Reflection_Method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -262,10 +257,10 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 		$methods = array();
 		$methodsAndIntroductions = array();
 		foreach ($introductions as $introduction) {
-			$interface = new F3_FLOW3_Reflection_Class($introduction->getInterfaceName());
+			$interface = $introduction->getInterface();
 			foreach ($interface->getMethods() as $newMethod) {
 				$newMethodName = $newMethod->getName();
-				if (isset($methods[$newMethodName])) throw new RuntimeException('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $interface->getName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
+				if (isset($methods[$newMethodName])) throw new F3_FLOW3_AOP_Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $interface->getName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
 				$methods[$newMethodName] = $newMethod;
 				$methodsAndIntroductions[$newMethodName] = $introduction;
 			}
@@ -287,7 +282,6 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 		foreach ($interceptedMethods as $methodName => $interceptionInformation) {
 			foreach ($interceptionInformation['groupedAdvices'] as $adviceType => $advices) {
 				foreach ($advices as $advice) {
-					$adviceName = $advice->getAspectComponentName() . '::' . $advice->getAdviceMethodName();
 					$advicedMethodsInformation[$methodName][$adviceType][] = array (
 						'aspectComponentName' => $advice->getAspectComponentName(),
 						'adviceMethodName' => $advice->getAdviceMethodName()

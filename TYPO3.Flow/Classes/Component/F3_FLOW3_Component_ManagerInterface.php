@@ -161,25 +161,6 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 * @return void
 	 */
 	public function setComponentClassName($componentName, $className);
-
-	/**
-	 * Searches for and returns the class name of the default implementation of the given
-	 * interface name. If no class implementing the interface was found or more than one
-	 * implementation was found in the package defining the interface, FALSE is returned.
-	 *
-	 * @param string $interfaceName: Name of the interface
-	 * @return mixed Either the class name of the default implementation for the component type or FALSE
-	 */
-	public function getDefaultImplementationClassNameForInterface($interfaceName);
-
-	/**
-	 * Searches for and returns all class names of implementations of the given component type
-	 * (interface name). If no class implementing the interface was found, FALSE is returned.
-	 *
-	 * @param string $interfaceName: Name of the interface
-	 * @return array An array of class names of the default implementation for the component type
-	 */
-	public function getAllImplementationClassNamesForInterface($interfaceName);
 }
 
 ?>

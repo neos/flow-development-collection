@@ -52,7 +52,7 @@ class F3_FLOW3_Component_Configuration {
 	/**
 	 * @var string $scope: Instantiation scope for this component - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
 	 */
-	protected $scope = '';
+	protected $scope = 'singleton';
 
 	/**
 	 * @var array $constructorArguments: Arguments of the constructor detected by reflection

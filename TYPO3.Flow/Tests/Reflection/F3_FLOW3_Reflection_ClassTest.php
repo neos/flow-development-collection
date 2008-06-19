@@ -82,6 +82,18 @@ class F3_FLOW3_Reflection_ClassTest extends F3_Testing_BaseTestCase implements F
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getMethodsReturnsArrayWithNumericIndex() {
+		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
+		$methods = $class->getMethods();
+		foreach (array_keys($methods) as $key) {
+			$this->assertType('integer', $key, 'The index was not an integer.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getMethodReturnsFLOW3sMethodReflection() {
 		$class = new F3_FLOW3_Reflection_Class(__CLASS__);
 		$method = $class->getMethod('getMethodReturnsFLOW3sMethodReflection');
