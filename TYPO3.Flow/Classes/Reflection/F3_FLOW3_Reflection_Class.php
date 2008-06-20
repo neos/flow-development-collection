@@ -43,8 +43,6 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	 */
 	public function __construct($className) {
 		parent::__construct($className);
-		$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
-		$this->docCommentParser->parseDocComment($this->getDocComment());
 	}
 
 	/**
@@ -164,7 +162,7 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isTaggedWith($tag) {
-		$result = $this->docCommentParser->isTaggedWith($tag);
+		$result = $this->getDocCommentParser()->isTaggedWith($tag);
 		return $result;
 	}
 
@@ -175,7 +173,7 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
-		return $this->docCommentParser->getTagsValues();
+		return $this->getDocCommentParser()->getTagsValues();
 	}
 
 	/**
@@ -184,7 +182,22 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {
-		return $this->docCommentParser->getTagValues($tag);
+		return $this->getDocCommentParser()->getTagValues($tag);
+	}
+
+	/**
+	 * Returns an instance of the doc comment parser and 
+	 * runs the parse() method.
+	 *
+	 * @return F3_FLOW3_Reflection_DocCommentParser
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getDocCommentParser() {
+		if (!is_object($this->docCommentParser)) {
+			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
+			$this->docCommentParser->parseDocComment($this->getDocComment());
+		}
+		return $this->docCommentParser;
 	}
 }
 

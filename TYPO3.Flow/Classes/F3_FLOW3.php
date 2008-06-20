@@ -76,11 +76,11 @@ final class F3_FLOW3 {
 	protected $classLoader;
 
 	/**
-	 * Instance of the class reflection factory
+	 * Instance of the reflection service
 	 *
-	 * @var F3_FLOW3_Reflection_ClassFactory
+	 * @var F3_FLOW3_Reflection_ClassService
 	 */
-	protected $classReflectionFactory;
+	protected $reflectionService;
 
 	/**
 	 * Flag which states up to which level FLOW3 has been initialized
@@ -105,6 +105,17 @@ final class F3_FLOW3 {
 	 */
 	protected $configuration;
 
+	/**
+	 * Some interfaces (component types) which need to be defined before the reflection 
+	 * service is initialized.
+	 *
+	 * @var array
+	 */
+	protected $predefinedInterfaceImplementations = array(
+		'F3_FLOW3_Security_ContextHolderInterface' => array('F3_FLOW3_Security_ContextHolderSession'),
+		'F3_FLOW3_MVC_Web_RouterInterface' => array('F3_FLOW3_MVC_Web_Router')
+	);
+	
 	/**
 	 * Constructor
 	 *
@@ -178,8 +189,14 @@ final class F3_FLOW3 {
 		$errorHandler->setExceptionalErrors($this->configuration->errorHandler->exceptionalErrors);
 		new $this->configuration->exceptionHandler->className;
 
-		$this->componentManager = new F3_FLOW3_Component_Manager();
+		$this->reflectionService = new F3_FLOW3_Reflection_Service();
+		foreach ($this->predefinedInterfaceImplementations as $interfaceName => $classNames) {
+			$this->reflectionService->setInterfaceImplementations($interfaceName, $classNames);
+		}
+		
+		$this->componentManager = new F3_FLOW3_Component_Manager($this->reflectionService);
 		$this->componentManager->setContext($this->context);
+		
 		$this->componentManager->registerComponent('F3_FLOW3_Configuration_Manager', NULL, $configurationManager);
 		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment');
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework');
@@ -188,9 +205,8 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_Memcached');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 
-		$this->classReflectionFactory = new F3_FLOW3_Reflection_ClassFactory();
-		$this->componentManager->registerComponent('F3_FLOW3_Reflection_ClassFactory', NULL, $this->classReflectionFactory);
-
+		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service', NULL, $this->reflectionService);
+		
 		$resourceManager = new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager);
 		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', $resourceManager);
 
@@ -371,10 +387,21 @@ final class F3_FLOW3 {
 			}
 		}
 
-		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service');
-		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
-		$reflectionService->initialize($availableClassNames);
-
+		if ($this->configuration->reflection->cache->enable === TRUE) {
+			$reflectionCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Reflection', $this->componentManager->getComponent($this->configuration->reflection->cache->backend, $this->context, $this->configuration->reflection->cache->backendOptions));
+			if ($reflectionCache->has('reflectionServiceData')) {
+				$this->reflectionService->import($reflectionCache->load('reflectionServiceData'));
+			}
+		}
+		
+		if (!$this->reflectionService->isInitialized()) {
+			$this->reflectionService->initialize($availableClassNames);
+			if ($this->configuration->reflection->cache->enable === TRUE) {
+				$reflectionCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Reflection', $this->componentManager->getComponent($this->configuration->reflection->cache->backend, $this->context, $this->configuration->reflection->cache->backendOptions));
+				$reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
+			}
+		}
+		
 		foreach ($availableClassNames as $className) {
 			if (substr($className, -9, 9) == 'Interface') {
 				$componentTypes[] = $className;
@@ -388,7 +415,7 @@ final class F3_FLOW3 {
 			if (substr($className, -9, 9) != 'Interface') {
 				$componentName = $className;
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
-					$class = $this->classReflectionFactory->reflect($className);
+					$class = new ReflectionClass($className);
 					if (!$class->isAbstract()) {
 						$this->componentManager->registerComponent($componentName, $className);
 					}
@@ -410,7 +437,7 @@ final class F3_FLOW3 {
 		}
 
 		foreach ($componentTypes as $componentType) {
-			$defaultImplementationClassName = $reflectionService->getDefaultImplementationClassNameForInterface($componentType);
+			$defaultImplementationClassName = $this->reflectionService->getDefaultImplementationClassNameForInterface($componentType);
 			if ($defaultImplementationClassName !== FALSE) {
 				$masterComponentConfigurations[$componentType]->setClassName($defaultImplementationClassName);
 			}

@@ -36,6 +36,11 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	protected $context = 'Development';
 
 	/**
+	 * @var F3_FLOW3_Reflection_Service
+	 */
+	protected $reflectionService;
+	
+	/**
 	 * @var F3_FLOW3_Component_ObjectCacheInterface Holds an instance of the Component Object Cache
 	 */
 	protected $componentObjectCache;
@@ -58,16 +63,18 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Constructor. Instantiates the object cache and object builder.
 	 *
+	 * @param F3_FLOW3_Reflection_Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct() {
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
 		$this->componentObjectCache = new F3_FLOW3_Component_TransientObjectCache();
 		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this);
 
 		$this->registerComponent('F3_FLOW3_Component_ManagerInterface', __CLASS__, $this);
 	}
-
+	
 	/**
 	 * Sets the Component Manager to a specific context. All operations related to components
 	 * will be carried out based on the configuration for the current context.
@@ -159,9 +166,11 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 			$className = $componentName;
 		}
 		if (!class_exists($className, TRUE)) throw new F3_FLOW3_Component_Exception_UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
+		$useReflectionService = $this->reflectionService->isInitialized();
+		if (!$useReflectionService)	$class = new F3_FLOW3_Reflection_Class($className);
 
-		$class = new F3_FLOW3_Reflection_Class($className);
-		if ($class->isAbstract()) throw new F3_FLOW3_Component_Exception_InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
+		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
+		if ($classIsAbstract) throw new F3_FLOW3_Component_Exception_InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
 
 		if ($componentObject !== NULL) {
 			if (!is_object($componentObject) || !$componentObject instanceof $className) throw new F3_FLOW3_Component_Exception_InvalidComponentObject('The component instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
@@ -169,7 +178,13 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		}
 
 		$this->componentConfigurations[$componentName] = new F3_FLOW3_Component_Configuration($componentName, $className);
-		if ($class->isTaggedWith('scope')) {
+		
+		if ($useReflectionService) {
+			if ($this->reflectionService->isClassTaggedWith('scope')) {
+				$scope = trim(implode('', $this->reflectionService->getClassTagsValues('scope')));
+				$this->componentConfigurations[$componentName]->setScope($scope);				
+			}
+		} elseif ($class->isTaggedWith('scope')) {
 			$scope = trim(implode('', $class->getTagValues('scope')));
 			$this->componentConfigurations[$componentName]->setScope($scope);
 		}
@@ -184,8 +199,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentType($componentName) {
-		$reflectionService = $this->getComponent('F3_FLOW3_Reflection_Service');
-		$className = $reflectionService->getDefaultImplementationClassNameForInterface($componentName);
+		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($componentName);
 		$componentConfiguration = new F3_FLOW3_Component_Configuration($componentName);
 		if ($className !== FALSE) {
 			$componentConfiguration->setClassName($className);

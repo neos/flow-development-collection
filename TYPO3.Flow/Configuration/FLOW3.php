@@ -82,6 +82,28 @@ $c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
  */
 $c->aop->proxyCache->backendOptions = array();
 
+
+/**
+ * Enable or disable the caching of reflection information which is provided
+ * by the reflection service.
+ */
+$c->reflection->cache->enable = TRUE;
+
+/**
+ * Defines the backend used for caching reflection information. Specify the
+ * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ *
+ * @var F3_FLOW3_Cache_BackendInterface
+ */
+$c->reflection->cache->backend = 'F3_FLOW3_Cache_Backend_File';
+
+/**
+ * Options which are passed the backend of the reflection cache
+ *
+ * @var array
+ */
+$c->reflection->cache->backendOptions = array();
+
 /**
  * Define the backend used for caching resource metadata. Specify the
  * name of a component implementing the F3_FLOW3_Cache_BackendInterface.

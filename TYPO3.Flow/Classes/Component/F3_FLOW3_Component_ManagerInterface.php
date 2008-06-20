@@ -33,9 +33,10 @@ interface F3_FLOW3_Component_ManagerInterface {
 	/**
 	 * Constructor. Instantiates the object cache and object builder.
 	 *
+	 * @param F3_FLOW3_Reflection_Service $reflectionService A reference to the reflection service
 	 * @return  void
 	 */
-	public function __construct();
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService);
 
 	/**
 	 * Sets the Component Manager to a specific context. All operations related to components

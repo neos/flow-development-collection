@@ -38,7 +38,8 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getContextReturnsDefaultContext() {
-		$componentManager = new F3_FLOW3_Component_Manager();
+		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
+		$componentManager = new F3_FLOW3_Component_Manager($mockReflectionService);
 		$this->assertEquals('Development', $componentManager->getContext(), 'getContext() did not return "Development".');
 	}
 
@@ -49,7 +50,8 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContextBasicallyWorks() {
-		$componentManager = new F3_FLOW3_Component_Manager();
+		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
+		$componentManager = new F3_FLOW3_Component_Manager($mockReflectionService);
 		$componentManager->setContext('halululu');
 		$this->assertEquals('halululu', $componentManager->getContext(), 'getContext() did not return the context we set.');
 
@@ -74,7 +76,7 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getComponentFailsOnNonExistentComponent() {
 		try {
-			$testComponentInstance = $this->componentManager->getComponent('F3_TestPackage_ThisClassDoesNotExist');
+			$this->componentManager->getComponent('F3_TestPackage_ThisClassDoesNotExist');
 		} catch (F3_FLOW3_Component_Exception_UnknownComponent $exception) {
 			return;
 		}
@@ -139,7 +141,8 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterNormalClasses() {
-		$componentManager = new F3_FLOW3_Component_Manager();
+		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertEquals($componentManager->isComponentRegistered('F3_TestPackage_BasicClass'), FALSE, 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$componentManager->registerComponent('F3_TestPackage_BasicClass');
 		$this->assertTrue($componentManager->isComponentRegistered('F3_TestPackage_BasicClass'), 'isComponentRegistered() did not return TRUE although component has been registered.');
@@ -153,7 +156,8 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterClassesInSubDirectories() {
-		$componentManager = new F3_FLOW3_Component_Manager();
+		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_BasicClass'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_SubDirectory_ClassInSubDirectory'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$componentManager->registerComponent('F3_TestPackage_SubDirectory_ClassInSubDirectory');
@@ -165,7 +169,8 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentRejectsAbstractClasses() {
-		$componentManager = new F3_FLOW3_Component_Manager();
+		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_AbstractClass'), 'isComponentRegistered() did not return FALSE although the abstract class is not yet registered.');
 		try {
 			$componentManager->registerComponent('F3_TestPackage_AbstractClass');

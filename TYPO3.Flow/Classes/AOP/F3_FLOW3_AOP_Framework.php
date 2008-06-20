@@ -31,9 +31,14 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_AOP_Framework {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface An instance of the component manager
+	 * @var F3_FLOW3_Component_ManagerInterface A reference to the component manager
 	 */
 	protected $componentManager;
+	
+	/**
+	 * @var F3_FLOW3_Reflection_Service A reference to the reflection service
+	 */
+	protected $reflectionService;
 
 	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
@@ -45,11 +50,6 @@ class F3_FLOW3_AOP_Framework {
 	 */
 	protected $pointcutExpressionParser;
 	
-	/**
-	 * @var F3_FLOW3_Reflection_ClassFactory The class reflection factory
-	 */
-	protected $classReflectionFactory;
-
 	/**
 	 * @var array A registry of all known aspects
 	 */
@@ -87,6 +87,17 @@ class F3_FLOW3_AOP_Framework {
 		$this->registerFrameworkComponents();
 		$this->configuration = $componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 	}
+	
+	/**
+	 * Injects the reflection service
+	 *
+	 * @param F3_FLOW3_Reflection_Service $reflectionService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(F3_FLOW3_Reflection_Service $reflectionService) {
+		$this->reflectionService = $reflectionService;		
+	}
 
 	/**
 	 * Injects an instance of the pointcut expression parser
@@ -100,17 +111,6 @@ class F3_FLOW3_AOP_Framework {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
 	}
 	
-	/**
-	 * Injects the cached class reflection factory
-	 *
-	 * @param F3_FLOW3_Reflection_ClassFactory $classReflectionFactory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectClassReflectionFactory(F3_FLOW3_Reflection_ClassFactory $classReflectionFactory) {
-		$this->classReflectionFactory = $classReflectionFactory;
-	}
-
 	/**
 	 * Adds a registered component to the proxy blacklist to prevent the component class
 	 * from being proxied by the AOP framework.
@@ -149,6 +149,7 @@ class F3_FLOW3_AOP_Framework {
 			$configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
 
 			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
+
 					// The AOP Pointcut Filter needs a fresh reference to the AOP framework - this is passed through a global:
 				$GLOBALS['FLOW3']['F3_FLOW3_AOP_Framework'] = $this;
 				$proxyBuildResults =  $proxyCache->load('proxyBuildResults');
@@ -160,12 +161,17 @@ class F3_FLOW3_AOP_Framework {
 		}
 
 		if (!$loadedFromCache) {
-			$namesOfAvailableClasses = array();
+			$allAvailableClasses = array();
+			$proxyableClasses = array();
 			foreach ($componentConfigurations as $componentConfiguration) {
-				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
+				$className = $componentConfiguration->getClassName();
+				$allAvailableClasses[] = $className;
+				if (substr($className, 0, 9) != 'F3_FLOW3_') {
+					$proxyableClasses[] = $className;
+				}
 			}
-			$this->aspectContainers = $this->buildAspectContainersFromClasses($namesOfAvailableClasses);
-			$proxyBuildResults = $this->buildProxyClasses($namesOfAvailableClasses, $this->aspectContainers, $context);
+			$this->aspectContainers = $this->buildAspectContainersFromClasses($allAvailableClasses);
+			$proxyBuildResults = $this->buildProxyClasses($proxyableClasses, $this->aspectContainers, $context);
 		}
 
 		foreach ($proxyBuildResults as $targetClassName => $proxyBuildResult) {
@@ -250,11 +256,10 @@ class F3_FLOW3_AOP_Framework {
 		$aspectContainers = array();
 		foreach ($classNames as $className) {
 			if (class_exists($className, TRUE)) {
-				$class = $this->classReflectionFactory->reflect($className);
-				if ($class->isTaggedWith('aspect')) {
-					$aspectContainer =  $this->buildAspectContainerFromClass($class);
+				if ($this->reflectionService->isClassTaggedWith($className, 'aspect')) {
+					$aspectContainer =  $this->buildAspectContainerFromClass($className);
 					if ($aspectContainer !== NULL) {
-						$aspectContainers[$class->getName()] = $aspectContainer;
+						$aspectContainers[$className] = $aspectContainer;
 					}
 				}
 			}
@@ -267,39 +272,37 @@ class F3_FLOW3_AOP_Framework {
 	 * is tagged as an aspect. The component acting as an advice will already be
 	 * fetched (and therefore instantiated if neccessary).
 	 *
-	 * @param  F3_FLOW3_Reflection_Class $aspectClass: Class which forms the aspect, contains advices etc.
+	 * @param  string $aspectClassName: Name of the class which forms the aspect, contains advices etc.
 	 * @return F3_FLOW3_AOP_AspectContainer The aspect container containing one or more advisors
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function buildAspectContainerFromClass(F3_FLOW3_Reflection_Class $aspectClass) {
-		$aspectClassName = $aspectClass->getName();
+	protected function buildAspectContainerFromClass($aspectClassName) {
 		$aspectContainer = new F3_FLOW3_AOP_AspectContainer($aspectClassName);
 
-		foreach ($aspectClass->getMethods() as $method) {
-			$methodName = $method->getName();
-			foreach ($method->getTagsValues() as $tagName => $tagValues) {
+		foreach ($this->reflectionService->getClassMethodNames($aspectClassName) as $methodName) {
+			foreach ($this->reflectionService->getMethodTagsValues($aspectClassName, $methodName) as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'around' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AroundAdvice', $aspectClass->getName(), $methodName);
+							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AroundAdvice', $aspectClassName, $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_BeforeAdvice', $aspectClass->getName(), $methodName);
+							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_BeforeAdvice', $aspectClassName, $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterReturningAdvice', $aspectClass->getName(), $methodName);
+							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterReturningAdvice', $aspectClassName, $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterThrowingAdvice', $aspectClass->getName(), $methodName);
+							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterThrowingAdvice', $aspectClassName, $methodName);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
 							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
@@ -313,15 +316,15 @@ class F3_FLOW3_AOP_Framework {
 			}
 		}
 
-		foreach ($aspectClass->getProperties() as $property) {
-			foreach ($property->getTagsValues() as $tagName => $tagValues) {
+		foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
+			foreach ($this->reflectionService->getPropertyTagsValues($aspectClassName, $propertyName) as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'introduce' :
 							$splittedTagValue = explode(',', $tagValue);
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new F3_FLOW3_AOP_Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
-							$interface = $this->classReflectionFactory->reflect(trim($splittedTagValue[0]));
+							$interface = new F3_FLOW3_Reflection_Class(trim($splittedTagValue[0]));
 							$introduction = $this->componentManager->getComponent('F3_FLOW3_AOP_Introduction', $aspectClassName, $interface, $pointcut);
 							$aspectContainer->addIntroduction($introduction);
 						break;
@@ -330,7 +333,7 @@ class F3_FLOW3_AOP_Framework {
 			}
 		}
 
-		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getIntroductions()) < 1) throw new RuntimeException('The class "' . $aspectClass->getName() . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
+		if (count($aspectContainer->getAdvisors()) < 1 && count($aspectContainer->getPointcuts()) < 1 && count($aspectContainer->getIntroductions()) < 1) throw new F3_FLOW3_AOP_Exception('The class "' . $aspectClassName . '" is tagged to be an aspect but doesn\'t contain advices nor pointcut or introduction declarations.', 1169124534);
 		return $aspectContainer;
 	}
 
@@ -352,9 +355,8 @@ class F3_FLOW3_AOP_Framework {
 		foreach ($classNames as $targetClassName) {
 			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3_FLOW3_') {
 				try {
-					$class = $this->classReflectionFactory->reflect($targetClassName);
-					if (!$class->isTaggedWith('aspect') && !$class->isAbstract() && !$class->isFinal()) {
-						$proxyBuildResult = F3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass($class, $aspectContainers, $context);
+					if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
+						$proxyBuildResult = F3_FLOW3_AOP_ProxyClassBuilder::buildProxyClass(new F3_FLOW3_Reflection_Class($targetClassName), $aspectContainers, $context, $this->reflectionService);
 						if ($proxyBuildResult !== FALSE) {
 							$proxyBuildResults[$targetClassName] = $proxyBuildResult;
 							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];

@@ -45,8 +45,6 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 */
 	public function __construct($className, $propertyName) {
 		parent::__construct($className, $propertyName);
-		$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
-		$this->docCommentParser->parseDocComment($this->getDocComment());
 	}
 
 	/**
@@ -57,7 +55,7 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 */
 	public function isTaggedWith($tag) {
-		$result = $this->docCommentParser->isTaggedWith($tag);
+		$result = $this->getDocCommentParser()->isTaggedWith($tag);
 		return $result;
 	}
 
@@ -68,7 +66,7 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagsValues() {
-		return $this->docCommentParser->getTagsValues();
+		return $this->getDocCommentParser()->getTagsValues();
 	}
 
 	/**
@@ -78,7 +76,7 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTagValues($tag) {
-		return $this->docCommentParser->getTagValues($tag);
+		return $this->getDocCommentParser()->getTagValues($tag);
 	}
 
 	/**
@@ -100,6 +98,21 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 		if (!isset($propertyValues[$index])) return;
 
 		return $propertyValues[$index];
+	}
+
+	/**
+	 * Returns an instance of the doc comment parser and 
+	 * runs the parse() method.
+	 *
+	 * @return F3_FLOW3_Reflection_DocCommentParser
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getDocCommentParser() {
+		if (!is_object($this->docCommentParser)) {
+			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
+			$this->docCommentParser->parseDocComment($this->getDocComment());
+		}
+		return $this->docCommentParser;
 	}
 }
 

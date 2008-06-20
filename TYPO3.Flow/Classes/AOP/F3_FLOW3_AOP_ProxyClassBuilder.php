@@ -260,7 +260,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			$interface = $introduction->getInterface();
 			foreach ($interface->getMethods() as $newMethod) {
 				$newMethodName = $newMethod->getName();
-				if (isset($methods[$newMethodName])) throw new F3_FLOW3_AOP_Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $interface->getName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterfaceName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
+				if (isset($methods[$newMethodName])) throw new F3_FLOW3_AOP_Exception('Method name conflict! Method "' . $newMethodName . '" introduced by "' . $interface->getName() . '" declared in aspect "' . $introduction->getDeclaringAspectClassName() . '" has already been introduced by "' . $methodsAndIntroductions[$newMethodName]->getInterface()->getName() . '" declared in aspect "' . $methodsAndIntroductions[$newMethodName]->getDeclaringAspectClassName() . '".', 1173020942);
 				$methods[$newMethodName] = $newMethod;
 				$methodsAndIntroductions[$newMethodName] = $introduction;
 			}

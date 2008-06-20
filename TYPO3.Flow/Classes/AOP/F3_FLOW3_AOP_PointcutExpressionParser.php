@@ -79,6 +79,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 			if (strpos($expression, '(') === FALSE) {
 				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite);
 			} else {
+				$matches = array();
 				$numberOfMatches = preg_match(self::PATTERN_MATCHPOINTCUTDESIGNATOR, $expression, $matches);
 				if ($numberOfMatches !== 1) throw new F3_FLOW3_AOP_Exception_InvalidPointcutExpression('Syntax error: Pointcut designator expected near "' . $expression . '"', 1168874739);
 				$pointcutDesignator = $matches[0];
