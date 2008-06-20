@@ -36,7 +36,7 @@ class F3_FLOW3_Reflection_Service {
 	 * @var boolean
 	 */
 	protected $initialized = FALSE;
-	
+
 	/**
 	 * All available class names to consider
 	 *
@@ -57,63 +57,63 @@ class F3_FLOW3_Reflection_Service {
 	 * @var array
 	 */
 	protected $abstractClasses = array();
-	
+
 	/**
 	 * Names of classes which are final
 	 *
 	 * @var array
 	 */
 	protected $finalClasses = array();
-	
+
 	/**
 	 * Array of tags and the names of classes which are tagged with them
 	 *
 	 * @var array
 	 */
 	protected $taggedClasses = array();
-	
+
 	/**
 	 * Array of class names and their tags and values
 	 *
 	 * @var array
 	 */
 	protected $classTagsValues = array();
-	
+
 	/**
 	 * Array of class names and names of their methods
 	 *
 	 * @var array
 	 */
 	protected $classMethodNames = array();
-	
+
 	/**
 	 * Array of class names and names of their constructors if they have one
 	 *
 	 * @var array
 	 */
 	protected $classConstructorMethodNames = array();
-	
+
 	/**
 	 * Array of class names, method names and their tags and values
 	 *
 	 * @var array
 	 */
 	protected $methodTagsValues = array();
-	
+
 	/**
 	 * Array of class names and names of their properties
 	 *
 	 * @var array
 	 */
 	protected $classPropertyNames = array();
-	
+
 	/**
 	 * Array of class names, property names and their tags and values
 	 *
 	 * @var array
 	 */
 	protected $propertyTagsValues = array();
-	
+
 	/**
 	 * List of tags which are ignored while reflecting class and method annotations
 	 *
@@ -143,9 +143,9 @@ class F3_FLOW3_Reflection_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isInitialized() {
-		$this->initialized;
+		return $this->initialized;
 	}
-	
+
 	/**
 	 * Initializes this service
 	 *
@@ -192,7 +192,7 @@ class F3_FLOW3_Reflection_Service {
 			foreach ($class->getMethods() as $method) {
 				$methodName = $method->getName();
 				$this->classMethodNames[$className][] = $methodName;
-				
+
 				foreach ($method->getTagsValues() as $tag => $values) {
 					if (array_search($tag, $this->ignoredTags) === FALSE) {
 						$this->methodTagsValues[$className][$methodName][$tag] = $values;
@@ -200,7 +200,7 @@ class F3_FLOW3_Reflection_Service {
 				}
 			}
 		}
-		
+
 		foreach ($this->taggedClasses as $tag => $classes) {
 			$this->taggedClasses[$tag] = array_unique($classes);
 		}
@@ -213,7 +213,7 @@ class F3_FLOW3_Reflection_Service {
 		foreach ($this->interfaceImplementations as $interfaceName => $classNames) {
 			$this->interfaceImplementations[$interfaceName] = array_unique($classNames);
 		}
-		
+
 		$this->initialized = TRUE;
 	}
 
@@ -226,8 +226,8 @@ class F3_FLOW3_Reflection_Service {
 	public function export() {
 		$data = array();
 		$propertyNames = array(
-			'abstractClasses', 
-			'availableClassNames', 
+			'abstractClasses',
+			'availableClassNames',
 			'classConstructorMethodNames',
 			'classMethodNames',
 			'classPropertyNames',
@@ -243,12 +243,12 @@ class F3_FLOW3_Reflection_Service {
 		}
 		return $data;
 	}
-	
+
 	/**
 	 * Allows to tweak the information about which classes implement a certain interface.
 	 * This is used by the FLOW3 bootstrap to register some built in implementations as
 	 * long as the reflection service is not analyzed.
-	 * 
+	 *
 	 * Note that this information will be overriden by intialize().
 	 *
 	 * @param string $interfaceName Name of the interface
@@ -259,7 +259,7 @@ class F3_FLOW3_Reflection_Service {
 	public function setInterfaceImplementations($interfaceName, array $classNames) {
 		$this->interfaceImplementations[$interfaceName] = $classNames;
 	}
-	
+
 	/**
 	 * Searches for and returns the class name of the default implementation of the given
 	 * interface name. If no class implementing the interface was found or more than one
@@ -297,11 +297,11 @@ class F3_FLOW3_Reflection_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassNamesByTag($tag) {
-		return key_exists($tag, $this->taggedClasses) ? $this->taggedClasses[$tag] : array();		
+		return key_exists($tag, $this->taggedClasses) ? $this->taggedClasses[$tag] : array();
 	}
 
 	/**
-	 * Returns all tags and their values the specified class is tagged with 
+	 * Returns all tags and their values the specified class is tagged with
 	 *
 	 * @param string $className The class name to reflect
 	 * @return array An array of tags and their values or an empty array of no tags were found
@@ -309,6 +309,19 @@ class F3_FLOW3_Reflection_Service {
 	 */
 	public function getClassTagsValues($className) {
 		return (key_exists($className, $this->classTagsValues)) ? $this->classTagsValues[$className] : array();
+	}
+
+	/**
+	 * Returns values of the specified class tag.
+	 *
+	 * @param string $className The class name to reflect
+	 * @param string $tag The tag to return values of
+	 * @return array An array of values or an empty array of the class is not tagged with the tag or the tag has no values
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassTagValues($className, $tag) {
+		if (!key_exists($className, $this->classTagsValues)) return array();
+		return (key_exists($tag, $this->classTagsValues[$className])) ? $this->classTagsValues[$className][$tag] : array();
 	}
 
 	/**
@@ -323,7 +336,7 @@ class F3_FLOW3_Reflection_Service {
 		if (!key_exists($className, $this->classTagsValues)) return array();
 		return key_exists($tag, $this->classTagsValues[$className]);
 	}
-	
+
 	/**
 	 * Tells if the specified class is abstract or not
 	 *
@@ -332,7 +345,7 @@ class F3_FLOW3_Reflection_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassAbstract($className) {
-		return (key_exists($className, $this->abstractClasses));	
+		return (key_exists($className, $this->abstractClasses));
 	}
 
 	/**
@@ -343,44 +356,44 @@ class F3_FLOW3_Reflection_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassFinal($className) {
-		return (key_exists($className, $this->finalClasses));	
+		return (key_exists($className, $this->finalClasses));
 	}
 
 	/**
-	 * Returns the names of all methods of the specified class 
+	 * Returns the names of all methods of the specified class
 	 *
 	 * @param string $className Name of the class to return the method names of
 	 * @return array An array of method names or an empty array if none exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassMethodNames($className) {
-		return (key_exists($className, $this->classMethodNames)) ? $this->classMethodNames[$className] : array();		
+		return (key_exists($className, $this->classMethodNames)) ? $this->classMethodNames[$className] : array();
 	}
 
 	/**
-	 * Returns the name of the classe's constructor method if it has one 
+	 * Returns the name of the classe's constructor method if it has one
 	 *
 	 * @param string $className Name of the class to return the constructor name of
 	 * @return mixed Name of the constructor method or NULL if it has no constructor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassConstructorName($className) {
-		return (key_exists($className, $this->classConstructorMethodNames)) ? $this->classConstructorMethodNames[$className] : NULL;		
+		return (key_exists($className, $this->classConstructorMethodNames)) ? $this->classConstructorMethodNames[$className] : NULL;
 	}
 
 	/**
-	 * Returns the names of all properties of the specified class 
+	 * Returns the names of all properties of the specified class
 	 *
 	 * @param string $className Name of the class to return the property names of
 	 * @return array An array of property names or an empty array if none exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassPropertyNames($className) {
-		return (key_exists($className, $this->classPropertyNames)) ? $this->classPropertyNames[$className] : array();		
+		return (key_exists($className, $this->classPropertyNames)) ? $this->classPropertyNames[$className] : array();
 	}
 
 	/**
-	 * Returns all tags and their values the specified method is tagged with 
+	 * Returns all tags and their values the specified method is tagged with
 	 *
 	 * @param string $className Name of the class containing the method
 	 * @param string $methodName Name of the method to return the tags and values of
@@ -393,7 +406,7 @@ class F3_FLOW3_Reflection_Service {
 	}
 
 	/**
-	 * Returns all tags and their values the specified class property is tagged with 
+	 * Returns all tags and their values the specified class property is tagged with
 	 *
 	 * @param string $className Name of the class containing the property
 	 * @param string $propertyName Name of the property to return the tags and values of

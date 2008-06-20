@@ -232,5 +232,22 @@ class F3_FLOW3_Configuration_ContainerTest extends F3_Testing_BaseTestCase {
 
 		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
 	}
+	
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mergeDoesNotTryToMergeAContainerWithAnArray() {
+		$configurationA = new F3_FLOW3_Configuration_Container();
+		$configurationA->parent->children = array('a' => 'A');
+
+		$configurationB = new F3_FLOW3_Configuration_Container();
+		$configurationB->parent->children->a = 'A';
+		
+		$expectedConfiguration = new F3_FLOW3_Configuration_Container();
+		$expectedConfiguration->parent->children->a = 'A';
+
+		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
+	}
 }
 ?>

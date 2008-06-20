@@ -57,6 +57,18 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	protected $environment;
 
 	/**
+	 * Constructs this backend
+	 *
+	 * @param string $context FLOW3's application context
+	 * @param mixed $options Configuration options - depends on the actual backend
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($context, $options = array()) {
+		if (!extension_loaded('memcache')) throw new F3_FLOW3_Cache_Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
+		parent::__construct($context, $options);
+	}
+	
+	/**
 	 * Injects the environment utility
 	 *
 	 * @param F3_FLOW3_Utility_Environment $environment

@@ -39,7 +39,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @var F3_FLOW3_Reflection_Service
 	 */
 	protected $reflectionService;
-	
+
 	/**
 	 * @var F3_FLOW3_Component_ObjectCacheInterface Holds an instance of the Component Object Cache
 	 */
@@ -74,7 +74,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 
 		$this->registerComponent('F3_FLOW3_Component_ManagerInterface', __CLASS__, $this);
 	}
-	
+
 	/**
 	 * Sets the Component Manager to a specific context. All operations related to components
 	 * will be carried out based on the configuration for the current context.
@@ -178,11 +178,11 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		}
 
 		$this->componentConfigurations[$componentName] = new F3_FLOW3_Component_Configuration($componentName, $className);
-		
+
 		if ($useReflectionService) {
-			if ($this->reflectionService->isClassTaggedWith('scope')) {
-				$scope = trim(implode('', $this->reflectionService->getClassTagsValues('scope')));
-				$this->componentConfigurations[$componentName]->setScope($scope);				
+			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
+				$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
+				$this->componentConfigurations[$componentName]->setScope($scope);
 			}
 		} elseif ($class->isTaggedWith('scope')) {
 			$scope = trim(implode('', $class->getTagValues('scope')));
@@ -204,8 +204,15 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		if ($className !== FALSE) {
 			$componentConfiguration->setClassName($className);
 
-			$class = new F3_FLOW3_Reflection_Class($className);
-			if ($class->isTaggedWith('scope')) {
+			$useReflectionService = $this->reflectionService->isInitialized();
+			if (!$useReflectionService)	$class = new F3_FLOW3_Reflection_Class($className);
+
+			if ($useReflectionService) {
+				if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
+					$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
+					$componentConfiguration->setScope($scope);
+				}
+			} elseif ($class->isTaggedWith('scope')) {
 				$scope = trim(implode('', $class->getTagValues('scope')));
 				$componentConfiguration->setScope($scope);
 			}

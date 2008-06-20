@@ -80,7 +80,9 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 		foreach ($otherConfiguration as $optionName => $newOptionValue) {
 			if ($newOptionValue instanceof F3_FLOW3_Configuration_Container && array_key_exists($optionName, $this->options)) {
 				$existingOptionValue = $this->__get($optionName);
-				$newOptionValue = $existingOptionValue->mergeWith($newOptionValue);
+				if ($existingOptionValue instanceof F3_FLOW3_Configuration_Container) {
+					$newOptionValue = $existingOptionValue->mergeWith($newOptionValue);
+				}
 			}
 			$this->__set($optionName, $newOptionValue);
 		}
@@ -199,6 +201,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 * it will be created automatically - if this container is not locked.
 	 *
 	 * @param string $optionName Name of the configuration option to retrieve
+	 * @return mixed The option value
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __get($optionName) {
@@ -213,6 +216,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 *
 	 * @param string $optionName Name of the configuration option to set
 	 * @param mixed $optionValue The option value
+	 * @return void
 	 * @throws F3_FLOW3_Configuration_Exception_ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -237,6 +241,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 * Magic unsetter method for configuration options.
 	 *
 	 * @param string $optionName Name of the configuration option to unset
+	 * @return void
 	 * @throws F3_FLOW3_Configuration_Exception_ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

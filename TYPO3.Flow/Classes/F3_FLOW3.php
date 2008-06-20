@@ -106,7 +106,7 @@ final class F3_FLOW3 {
 	protected $configuration;
 
 	/**
-	 * Some interfaces (component types) which need to be defined before the reflection 
+	 * Some interfaces (component types) which need to be defined before the reflection
 	 * service is initialized.
 	 *
 	 * @var array
@@ -115,7 +115,7 @@ final class F3_FLOW3 {
 		'F3_FLOW3_Security_ContextHolderInterface' => array('F3_FLOW3_Security_ContextHolderSession'),
 		'F3_FLOW3_MVC_Web_RouterInterface' => array('F3_FLOW3_MVC_Web_Router')
 	);
-	
+
 	/**
 	 * Constructor
 	 *
@@ -193,10 +193,10 @@ final class F3_FLOW3 {
 		foreach ($this->predefinedInterfaceImplementations as $interfaceName => $classNames) {
 			$this->reflectionService->setInterfaceImplementations($interfaceName, $classNames);
 		}
-		
+
 		$this->componentManager = new F3_FLOW3_Component_Manager($this->reflectionService);
 		$this->componentManager->setContext($this->context);
-		
+
 		$this->componentManager->registerComponent('F3_FLOW3_Configuration_Manager', NULL, $configurationManager);
 		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment');
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework');
@@ -206,7 +206,7 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 
 		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service', NULL, $this->reflectionService);
-		
+
 		$resourceManager = new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager);
 		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', $resourceManager);
 
@@ -393,7 +393,7 @@ final class F3_FLOW3 {
 				$this->reflectionService->import($reflectionCache->load('reflectionServiceData'));
 			}
 		}
-		
+
 		if (!$this->reflectionService->isInitialized()) {
 			$this->reflectionService->initialize($availableClassNames);
 			if ($this->configuration->reflection->cache->enable === TRUE) {
@@ -401,7 +401,7 @@ final class F3_FLOW3 {
 				$reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
 			}
 		}
-		
+
 		foreach ($availableClassNames as $className) {
 			if (substr($className, -9, 9) == 'Interface') {
 				$componentTypes[] = $className;
