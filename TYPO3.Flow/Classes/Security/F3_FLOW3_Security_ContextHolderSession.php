@@ -66,6 +66,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeContext(F3_FLOW3_MVC_Request $request) {
+		//The AuthenticationManager has to be instanciated here, to set the authentication tokens.
 		//$this->context->setRequest($request);
 	}
 

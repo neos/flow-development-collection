@@ -27,10 +27,18 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
 
+	/**
+	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface for the given authentication token.
+	 *
+	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
+	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
+	 */
+	public function loadUserDetials(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
 }
 
 ?>

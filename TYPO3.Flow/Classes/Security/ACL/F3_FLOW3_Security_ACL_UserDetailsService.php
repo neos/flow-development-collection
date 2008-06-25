@@ -17,28 +17,29 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Contract for a simple session.
+ * The ACL UserDetailsService. It mainly calculates the current roles for the set request patterns from the given authentication token.
  *
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Session_Interface {
+class F3_FLOW3_Security_ACL_UserDetailsService implements F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
 
 	/**
-	 * Returns the contents (array) associated with the given key.
+	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface object for the given authentication token.
 	 *
-	 * @param string $key An identifier for the content stored in the session.
-	 * @return array The contents associated with the given key
+	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
+	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
 	 */
-	public function getContentsByKey($key);
+	public function loadUserDetials(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+		//Uses the credentials in the token to figure out which user should be loaded
+	}
 }
 
 ?>

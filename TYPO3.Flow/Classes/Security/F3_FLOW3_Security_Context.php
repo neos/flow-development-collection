@@ -32,11 +32,28 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Context {
 
-//TODO: This must be confiugred/filled by configuration
+//TODO: This must be confiugred/filled by configuration. The order of the tokens is important, because this is the order they are tried to authenticate.
 	/**
 	 * @var array Array of configured tokens (might have request patterns)
 	 */
 	protected $tokens = array();
+
+	/**
+	 * @var boolean TRUE, if all tokens have to be authenticated, FALSE if one is sufficient.
+	 */
+	protected $authenticateAllTokens = FALSE;
+
+//TODO: Prevent duplicate entries
+	/**
+	 * Adds a new authentication token to the context, usually called by an authenticaton manager
+	 *
+	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be added
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addAuthenticationToken(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+
+	}
 
 	/**
 	 * Sets the request the context is used for.
@@ -49,6 +66,15 @@ class F3_FLOW3_Security_Context {
 		//$this->request = $request;
 	}
 
+	/**
+	 * Returns TRUE, if all active tokens have to be authenticated.
+	 *
+	 * @return boolean TRUE, if all active tokens have to be authenticated.
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function authenticateAllTokens() {
+		return $this->authenticateAllTokens;
+	}
 
 	/**
 	 * Returns all F3_FLOW3_Security_Authentication_Tokens of the security context which are active for the current request
@@ -57,7 +83,7 @@ class F3_FLOW3_Security_Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
-		//cache tokens acitve for the current request in an extra array
+		//cache tokens active for the current request in an extra array
 	}
 }
 

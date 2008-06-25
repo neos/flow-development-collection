@@ -22,11 +22,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for an authentication provider used by the F3_FLOW3_Security_Authenticaton_TokenManager
+ * Contract for an authentication provider used by the F3_FLOW3_Security_Authenticaton_ProviderManager.
+ * Has to add a F3_FLOW3_Security_Authentication_TokenInterface to the securit context, which contains
+ * a F3_FLOW3_Security_Authentication_UserDetailsInterface.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_Authentication_ProviderInterface {
@@ -36,7 +39,6 @@ interface F3_FLOW3_Security_Authentication_ProviderInterface {
 	 *
 	 * @param string $className The class name of the token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate($className);
 
@@ -45,7 +47,6 @@ interface F3_FLOW3_Security_Authentication_ProviderInterface {
 	 *
 	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
 }

@@ -22,22 +22,25 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for an authentication manager
+ * Contract for an authentication manager.
+ * Has to add a F3_FLOW3_Security_Authentication_TokenInterface to the securit context
+ * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_Authentication_ManagerInterface {
 
 	/**
-	 * Authenticates someone somewhere. (Have a look at the F3_FLOW3_Security_Authentication_TokenManager for an implementation example)
+	 * Authenticates the given token. (Have a look at the F3_FLOW3_Security_Authentication_TokenManager for an implementation example)
 	 *
+	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
 	 * @return F3_FLOW3_Security_Authentication_TokenInterface The authenticated token, NULL if authentication failed
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate();
+	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
 }
 
 ?>

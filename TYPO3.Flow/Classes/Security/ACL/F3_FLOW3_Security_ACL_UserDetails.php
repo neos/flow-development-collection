@@ -22,15 +22,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for a UserDetails object. A UserDetails object e.g. identifies a person that is authenticated.
+ * The representation of an authenticated user that has specific roles depending on request patterns.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authentication_UserDetailsInterface {
+class F3_FLOW3_Security_ACL_UserDetails implements F3_FLOW3_Security_Authentication_UserDetailsInterface {
 
 	/**
 	 * Compares this user to another.
@@ -38,21 +37,40 @@ interface F3_FLOW3_Security_Authentication_UserDetailsInterface {
 	 * @param F3_FLOW3_Security_Authentication_UserDetailsInterface $userDetails The UserDetails object that should be compared with $this.
 	 * @return boolean TRUE if the two UserDetails are equal.
 	 */
-	public function compare(F3_FLOW3_Security_Authentication_UserDetailsInterface $userDetails);
+	public function compare(F3_FLOW3_Security_Authentication_UserDetailsInterface $userDetails) {
+
+	}
 
 	/**
 	 * Returns the string representation of this user
 	 *
 	 * @return string The string representation of this user.
 	 */
-	public function getName();
+	public function getName() {
+
+	}
+
+//TODO: This should be filled by configuration
+	/**
+	 * Adds a new role to this user, they role is only active if the given request pattern matches. If no pattern is given, the role will always be active.
+	 *
+	 * @param F3_FLOW3_Security_ACL_Role $role The role the user should have
+	 * @param F3_FLOW3_Security_RequestPattern $requestPattern A request pattern for which the role should be active
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addRole(F3_FLOW3_Security_ACL_Role $role, F3_FLOW3_Security_RequestPattern $requestPattern = NULL) {
+
+	}
 
 	/**
-	 * Returns an array of F3_FLOW3_Security_Authentication_GrantedAuthorityInterfaces (e.g. Roles), the user currently has.
+	 * Returns an array of F3_FLOW3_Security_Authentication_GrantedAuthorityInterfaces (roles), the user currently has.
 	 *
 	 * @return array Array of F3_FLOW3_Security_Authentication_GrantedAuthorityInterfaces (e.g. Roles), the user currently has.
 	 */
-	public function getAuthorities();
+	public function getAuthorities() {
+
+	}
 }
 
 ?>

@@ -27,10 +27,18 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_Authentication_GrantedAuthorityInterface {
 
+	/**
+	 * Returns the granted authority in a string representation, if this is possible. Otherwise NULL is returned,
+	 * the AccessDecisionManager has to support this special GrantedAuthority.
+	 *
+	 * @return string The string representation of the GrantedAuthority
+	 */
+	public function getAuthority();
 }
 
 ?>

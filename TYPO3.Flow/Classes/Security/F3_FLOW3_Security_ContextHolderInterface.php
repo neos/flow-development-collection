@@ -28,6 +28,7 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_ContextHolderInterface {
@@ -37,7 +38,6 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	 *
 	 * @param F3_FLOW3_Security_ContextInterface $securityContext The current security context
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setContext(F3_FLOW3_Security_Context $securityContext);
 
@@ -45,16 +45,15 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	 * Returns the current security context.
 	 *
 	 * @return F3_FLOW3_Security_ContextInterface The current security context
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getContext();
 
 	/**
-	 * Initializes the security context for the given reques. Dependig on the strategy the context may be loaded from a session.
+	 * Initializes the security context for the given request. Depending on the strategy the context may be loaded from a session.
+	 * The AuthenticationManager has to be instanciated here, to set the authentication tokens.
 	 *
 	 * @param F3_FLOW3_MVC_Request $request The request the context should be initialized for
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeContext(F3_FLOW3_MVC_Request $request);
 
@@ -62,7 +61,6 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	 * Clears the current security context.
 	 *
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearContext();
 }

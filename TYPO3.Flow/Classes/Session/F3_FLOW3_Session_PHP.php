@@ -31,6 +31,26 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 
+	/**
+	 * Constructor.
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct() {
+
+	}
+
+	/**
+	 * Returns the contents (array) associated with the given key.
+	 *
+	 * @param string $key An identifier for the content stored in the session.
+	 * @return array The contents associated with the given key
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getContentsByKey($key) {
+
+	}
 }
 
 ?>

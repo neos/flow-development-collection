@@ -22,40 +22,44 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A mock authentication provider that authenticates every F3_FLOW3_Security_Authentication_TokenInterface.
+ * The default authentication manager, which uses different F3_FLOW3_Security_Authentication_Providers
+ * to authenticate the tokens stored in the security context.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security_Authentication_ProviderInterface {
+class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Security_Authentication_ManagerInterface {
 
+//TODO: this has to be set/filled by configuration
 	/**
-	 * @var F3_FLOW3_Security_Authentication_EntryPointInterface The entry point for this provider
+	 * @var array Array of F3_FLOW3_Security_Authentication_ProviderInterface objects
 	 */
-	protected $entryPoint = NULL;
+	protected $providers = array();
 
 	/**
-	 * Returns TRUE if the given token class can be authenticated by this provider
+	 * Constructor.
 	 *
-	 * @param string $className The class name of the token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function canAuthenticate($className) {
-		return TRUE;
-	}
-
-	/**
-	 * Sets isAuthenticated to TRUE for all tokens.
-	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
+	 * @param F3_FLOW3_Security_ContextHolderInterface $securityContextHolder The global security context holder
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function __construct(F3_FLOW3_Security_ContextHolderInterface $securityContextHolder) {
 
+	}
+
+	/**
+	 * Tries to authenticate the given token with the available authentication providers.
+	 * If authentication fails and a F3_FLOW3_Security_Authentication_EntryPoint is set for the token, the entry point
+	 * is called.
+	 *
+	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
+	 * @return F3_FLOW3_Security_Authentication_TokenInterface The authenticated token, NULL if authentication failed
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+		//foreach providers: if($provider->canAuthenticate()) $provider->authenticate();
 	}
 }
 

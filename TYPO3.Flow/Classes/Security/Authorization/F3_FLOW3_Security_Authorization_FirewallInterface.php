@@ -27,6 +27,7 @@ declare(ENCODING = 'utf-8');
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface F3_FLOW3_Security_Authorization_FirewallInterface {
@@ -36,7 +37,6 @@ interface F3_FLOW3_Security_Authorization_FirewallInterface {
 	 *
 	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function analyzeRequest(F3_FLOW3_MVC_Request $request);
 }

@@ -22,39 +22,40 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A mock authentication provider that authenticates every F3_FLOW3_Security_Authentication_TokenInterface.
+ * An access decision voter, that always grants access for specific objects.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security_Authentication_ProviderInterface {
+class F3_FLOW3_Security_Authorization_AccessGrantVoter implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
 
+//TODO: This has to be set by configuration
 	/**
-	 * @var F3_FLOW3_Security_Authentication_EntryPointInterface The entry point for this provider
+	 * @var array Array of classnames this voter should support
 	 */
-	protected $entryPoint = NULL;
+	protected $supportedClasses = array();
 
 	/**
-	 * Returns TRUE if the given token class can be authenticated by this provider
+	 * Votes to grant access, if the given object is one of the supported types
 	 *
-	 * @param string $className The class name of the token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
+	 * @param object $object The object to decide on
+	 * @return integer One of: ACCESS_GRANTED, ACCESS_ABSTAIN, ACCESS_DENIED
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function canAuthenticate($className) {
-		return TRUE;
+	public function vote(F3_FLOW3_Security_Context $securityContext, object $object) {
+
 	}
 
 	/**
-	 * Sets isAuthenticated to TRUE for all tokens.
+	 * Returns TRUE if the given classname is contained in $this->supportedClasses
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param string $className The classname that should be checked
+	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function supports($className) {
 
 	}
 }

@@ -22,39 +22,45 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A mock authentication provider that authenticates every F3_FLOW3_Security_Authentication_TokenInterface.
+ * This security interceptor switches the current channel between HTTP and HTTPS protocol.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security_Authentication_ProviderInterface {
+class F3_FLOW3_Security_Channel_HTTPSInterceptor implements F3_FLOW3_Security_Authorization_InterceptorInterface {
 
+//TODO: this has to be set by configuration
 	/**
-	 * @var F3_FLOW3_Security_Authentication_EntryPointInterface The entry point for this provider
+	 * @var boolean If set to TRUE, the HTTPS protocol will be einforced.
 	 */
-	protected $entryPoint = NULL;
+	protected $useSSL = FALSE;
 
 	/**
-	 * Returns TRUE if the given token class can be authenticated by this provider
+	 * Constructor.
 	 *
-	 * @param string $className The class name of the token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function canAuthenticate($className) {
-		return TRUE;
-	}
-
-	/**
-	 * Sets isAuthenticated to TRUE for all tokens.
-	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
+	 * @param F3_FLOW3_Security_Context $securityContext The current security context
+	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
+	 * @param F3_Log_LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function __construct(
+					F3_FLOW3_Security_Context $securityContext,
+					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
+					F3_Log_LoggerInterface $logger
+					) {
+
+	}
+
+	/**
+	 * Redirects the current request to HTTP or HTTPS depending on $this->useSSL;
+	 *
+	 * @return boolean TRUE if the security checks was passed
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function invoke() {
 
 	}
 }

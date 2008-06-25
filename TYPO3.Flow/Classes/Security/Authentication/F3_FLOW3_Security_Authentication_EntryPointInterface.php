@@ -17,28 +17,27 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Contract for a simple session.
+ * Contract for an authentication entry point
  *
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Session_Interface {
+interface F3_FLOW3_Security_Authentication_EntryPointInterface {
 
 	/**
-	 * Returns the contents (array) associated with the given key.
+	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
 	 *
-	 * @param string $key An identifier for the content stored in the session.
-	 * @return array The contents associated with the given key
+	 * @return void
 	 */
-	public function getContentsByKey($key);
+	public function startAuthentication();
 }
 
 ?>

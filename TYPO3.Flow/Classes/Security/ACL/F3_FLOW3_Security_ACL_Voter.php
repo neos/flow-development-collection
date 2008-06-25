@@ -22,41 +22,37 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The default authentication manager, which uses different F3_FLOW3_Security_Authentication_Providers
- * to authenticate the tokens stored in the security context.
+ * An access decision voter, that asks the FLOW3 ACLService for a decision.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_TokenManager implements F3_FLOW3_Security_Authentication_ManagerInterface {
-
-//TODO: this has to be set/filled by configuration
-	/**
-	 * @var array Array of F3_FLOW3_Security_Authentication_ProviderInterface objects
-	 */
-	protected $providers = array();
+class F3_FLOW3_Security_ACL_Voter implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
 
 	/**
-	 * Constructor.
+	 * This is the default ACL voter. Note: The whole ACL package is based on AOP.
 	 *
-	 * @param F3_FLOW3_Security_ContextHolderInterface $securityContextHolder The global security context holder
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
+	 * @param object $joinPoint The join point (method invocation) to vote for, must be a F3_FLOW3_AOP_JoinPointInterface object
+	 * @return integer One of: ACCESS_GRANTED, ACCESS_ABSTAIN, ACCESS_DENIED
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function __construct(F3_FLOW3_Security_ContextHolderInterface $securityContextHolder) {
-
+	public function vote(F3_FLOW3_Security_Context $securityContext, object $joinPoint) {
+		//Throw exception if $joinPoint is not a join point
+		//search the acl tree for rules for this method invocation
+		//ask the current token if for the rules the user currently has and compare to the ones in the acl tree
 	}
 
 	/**
-	 * Tries to authenticate all tokens in the security context with the available authentication providers
 	 *
-	 * @return F3_FLOW3_Security_Authentication_TokenInterface The authenticated token, NULL if authentication failed
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 *
+	 * @param string $className The classname that should be checked
+	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
 	 */
-	public function authenticate() {
-		//foreach providers: if($provider->canAuthenticate()) $provider->authenticate();
+	public function supports($className) {
+
 	}
 }
 

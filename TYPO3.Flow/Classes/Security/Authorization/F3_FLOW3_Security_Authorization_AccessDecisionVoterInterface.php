@@ -17,28 +17,43 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Contract for a simple session.
+ * Contract for an access decision voter.
  *
  * @package FLOW3
- * @subpackage Session
+ * @subpackage Security
  * @version $Id:$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Session_Interface {
+interface F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
+
+	const
+		ACCESS_GRANTED = 1,
+		ACCESS_ABSTAIN = 2,
+		ACCESS_DENIED = 3;
 
 	/**
-	 * Returns the contents (array) associated with the given key.
+	 * Votes if access should be granted on the given object in the current security context
 	 *
-	 * @param string $key An identifier for the content stored in the session.
-	 * @return array The contents associated with the given key
+	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
+	 * @param object $object The object to decide on
+	 * @return integer One of: ACCESS_GRANTED, ACCESS_ABSTAIN, ACCESS_DENIED
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function getContentsByKey($key);
+	public function vote(F3_FLOW3_Security_Context $securityContext, object $object);
+
+	/**
+	 * Returns TRUE if this access decision voter can vote for objects with the given classname
+	 *
+	 * @param string $className The classname that should be checked
+	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
+	 */
+	public function supports($className);
 }
 
 ?>
