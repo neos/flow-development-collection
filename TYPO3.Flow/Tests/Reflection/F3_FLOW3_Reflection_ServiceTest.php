@@ -286,10 +286,27 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 		$reflectionService = new F3_FLOW3_Reflection_Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$expectedTags = array('firsttag' => array(), 'secondtag' => array('x', 'y'));
+		$expectedTags = array('firsttag' => array(), 'secondtag' => array('x', 'y'), 'var' => array('mixed'));
 		$detectedTags = $reflectionService->getPropertyTagsValues('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty');
 		ksort($detectedTags);
 		$this->assertEquals($expectedTags, $detectedTags);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPropertyTagValuesReturnsArrayOfValuesOfAPropertysTag() {
+		$availableClassNames = array(
+			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+		);
+		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService->initialize($availableClassNames);
+
+		$expectedValues = array('x', 'y');
+		$detectedValues = $reflectionService->getPropertyTagValues('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'secondtag');
+		ksort($detectedValues);
+		$this->assertEquals($expectedValues, $detectedValues);
 	}
 
 	/**
@@ -307,6 +324,23 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 		$reflectionService->import(array());
 		$this->assertTrue($reflectionService->isInitialized());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isPropertyTaggedWithReturnsTrueIfTheSpecifiedClassPropertyIsTaggedWithTheGivenTag() {
+		$availableClassNames = array(
+			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+		);
+		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService->initialize($availableClassNames);
+
+		$this->assertTrue($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'firsttag'));
+		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'nothing'));
+		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'noProperty', 'firsttag'));
+	}
+
 }
 
 ?>

@@ -119,7 +119,7 @@ class F3_FLOW3_Reflection_Service {
 	 *
 	 * @var array
 	 */
-	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'var', 'const');
+	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const');
 
 	/**
 	 * Imports the given reflection data, usually from a cache
@@ -245,6 +245,16 @@ class F3_FLOW3_Reflection_Service {
 	}
 
 	/**
+	 * Returns the names of all classes known to this reflection service.
+	 *
+	 * @return array Class names
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAvailableClassNames() {
+		return $this->availableClassNames;
+	}
+
+	/**
 	 * Allows to tweak the information about which classes implement a certain interface.
 	 * This is used by the FLOW3 bootstrap to register some built in implementations as
 	 * long as the reflection service is not analyzed.
@@ -333,7 +343,7 @@ class F3_FLOW3_Reflection_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassTaggedWith($className, $tag) {
-		if (!key_exists($className, $this->classTagsValues)) return array();
+		if (!key_exists($className, $this->classTagsValues)) return FALSE;
 		return key_exists($tag, $this->classTagsValues[$className]);
 	}
 
@@ -417,5 +427,36 @@ class F3_FLOW3_Reflection_Service {
 		if (!key_exists($className, $this->propertyTagsValues)) return array();
 		return (key_exists($propertyName, $this->propertyTagsValues[$className])) ? $this->propertyTagsValues[$className][$propertyName] : array();
 	}
+
+	/**
+	 * Returns the values of the specified class property tag
+	 *
+	 * @param string $className Name of the class containing the property
+	 * @param string $propertyName Name of the tagged property
+	 * @param string $tag Tag to return the values of
+	 * @return array An array of values or an empty array if the tag was not found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPropertyTagValues($className, $propertyName, $tag) {
+		if (!key_exists($className, $this->propertyTagsValues)) return array();
+		if (!key_exists($propertyName, $this->propertyTagsValues[$className])) return array();
+		return (key_exists($tag, $this->propertyTagsValues[$className][$propertyName])) ? $this->propertyTagsValues[$className][$propertyName][$tag] : array();
+	}
+
+	/**
+	 * Tells if the specified class property is tagged with the given tag
+	 *
+	 * @param string $className Name of the class
+	 * @param string $propertyName Name of the property
+	 * @param string $tag Tag to check for
+	 * @return boolean TRUE if the class property is tagged with $tag, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isPropertyTaggedWith($className, $propertyName, $tag) {
+		if (!key_exists($className, $this->propertyTagsValues)) return FALSE;
+		if (!key_exists($propertyName, $this->propertyTagsValues[$className])) return FALSE;
+		return key_exists($tag, $this->propertyTagsValues[$className][$propertyName]);
+	}
+
 }
 ?>

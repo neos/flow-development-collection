@@ -35,14 +35,37 @@ require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_ValueObject1.php');
 class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCase {
 
 	/**
+	 * @var F3_FLOW3_Reflection_Service
+	 */
+	protected $reflectionService;
+
+	/**
+	 * @var F3_FLOW3_Persistence_ClassSchemaBuilder
+	 */
+	protected $builder;
+
+	/**
+	 * Sets up this testcase
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setUp() {
+		$this->reflectionService = new F3_FLOW3_Reflection_Service();
+		$this->reflectionService->initialize(
+			array('F3_FLOW3_Tests_Persistence_Fixture_Entity1', 'F3_FLOW3_Tests_Persistence_Fixture_Repository1', 'F3_FLOW3_Tests_Persistence_Fixture_ValueObject1')
+		);
+		$this->builder = new F3_FLOW3_Persistence_ClassSchemaBuilder($this->reflectionService);
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
 		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean');
 
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 		$actualProperties = array_keys($builtClassSchema->getProperties());
 		sort($expectedProperties);
 		sort($actualProperties);
@@ -62,8 +85,7 @@ class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCas
 			'someDate' => 'DateTime'
 		);
 
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 		$actualProperties = $builtClassSchema->getProperties();
 		asort($expectedProperties);
 		asort($actualProperties);
@@ -75,8 +97,7 @@ class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCas
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeRepositoryIsRecognizedByRepositoryAnnotation() {
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_Repository1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_Repository1');
 		$this->assertEquals($builtClassSchema->getModelType(), F3_FLOW3_Persistence_ClassSchema::MODELTYPE_REPOSITORY);
 	}
 
@@ -85,8 +106,7 @@ class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCas
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeEntityIsRecognizedByValueObjectAnnotation() {
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 		$this->assertEquals($builtClassSchema->getModelType(), F3_FLOW3_Persistence_ClassSchema::MODELTYPE_ENTITY);
 	}
 
@@ -95,8 +115,7 @@ class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCas
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_ValueObject1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_ValueObject1');
 		$this->assertEquals($builtClassSchema->getModelType(), F3_FLOW3_Persistence_ClassSchema::MODELTYPE_VALUEOBJECT);
 	}
 
@@ -105,8 +124,7 @@ class F3_FLOW3_Persistence_ClassSchemaBuilderTest extends F3_Testing_BaseTestCas
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaContainsNameOfItsRelatedClass() {
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
-		$builtClassSchema = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+		$builtClassSchema = $this->builder->build('F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 		$this->assertEquals($builtClassSchema->getClassName(), 'F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 	}
 }

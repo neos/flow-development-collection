@@ -31,6 +31,23 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Persistence_ClassSchemaBuilder {
 
 	/**
+	 * The reflection service
+	 *
+	 * @var F3_FLOW3_Reflection_Service
+	 */
+	protected $reflectionService;
+
+	/**
+	 * Constructor
+	 *
+	 * @param F3_FLOW3_Reflection_Service $reflectionService The reflection service
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Builds a class schema from the specified class
 	 *
 	 * @param F3_FLOW3_Reflection_Class $class Reflection of the class to be analyzed
@@ -38,20 +55,22 @@ class F3_FLOW3_Persistence_ClassSchemaBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws F3_FLOW3_Persistence_Exception_InvalidClass if the specified class does not exist
 	 */
-	static public function build(F3_FLOW3_Reflection_Class $class) {
-		$classSchema = new F3_FLOW3_Persistence_ClassSchema($class->getName());
+	public function build($className) {
+		if (!class_exists($className)) throw new F3_FLOW3_Persistence_Exception_InvalidClass('Unknown class "' . $className . '".', 1214495364);
 
-		if ($class->isTaggedWith('entity')) {
+		$classSchema = new F3_FLOW3_Persistence_ClassSchema($className);
+
+		if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
 			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_ENTITY);
-		} elseif ($class->isTaggedWith('repository')) {
+		} elseif ($this->reflectionService->isClassTaggedWith($className, 'repository')) {
 			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_REPOSITORY);
-		} elseif ($class->isTaggedWith('valueobject')) {
+		} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
 			$classSchema->setModelType(F3_FLOW3_Persistence_ClassSchema::MODELTYPE_VALUEOBJECT);
 		}
 
-		foreach ($class->getProperties() as $property) {
-			if (!$property->isTaggedWith('transient') && $property->isTaggedWith('var')) {
-				$classSchema->setProperty($property->getName(), implode(' ', $property->getTagValues('var')));
+		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+			if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
+				$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
 			}
 		}
 

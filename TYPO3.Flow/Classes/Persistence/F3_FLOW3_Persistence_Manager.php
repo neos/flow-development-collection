@@ -31,11 +31,18 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Persistence_Manager {
 
 	/**
-	 * The component manager
+	 * The reflection service
 	 *
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3_FLOW3_Reflection_Service
 	 */
-	protected $componentManager;
+	protected $reflectionService;
+
+	/**
+	 * The class schema builder
+	 *
+	 * @var F3_FLOW3_Persistence_ClassSchemaBuilder
+	 */
+	protected $classSchemaBuilder;
 
 	/**
 	 * @var F3_FLOW3_Persistence_BackendInterface
@@ -52,11 +59,13 @@ class F3_FLOW3_Persistence_Manager {
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Reflection_Service $reflectionService
+	 * @param F3_FLOW3_Persistence_ClassSchemaBuilder $classSchemaBuilder
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService, F3_FLOW3_Persistence_ClassSchemaBuilder $classSchemaBuilder) {
+		$this->reflectionService = $reflectionService;
+		$this->classSchemaBuilder = $classSchemaBuilder;
 	}
 
 	/**
@@ -75,18 +84,9 @@ class F3_FLOW3_Persistence_Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initialize() {
-		$loadedFromCache = FALSE;
-		if (!$loadedFromCache) {
-			$namesOfAvailableClasses = array();
-			foreach ($this->componentManager->getComponentConfigurations() as $componentConfiguration) {
-				$namesOfAvailableClasses[] = $componentConfiguration->getClassName();
-			}
-			$this->classSchemata = $this->buildClassSchemataFromClasses($namesOfAvailableClasses);
-		}
-
+		$this->classSchemata = $this->buildClassSchemataFromClasses($this->reflectionService->getAvailableClassNames());
 		if ($this->backend instanceof F3_FLOW3_Persistence_BackendInterface) {
 			$this->backend->initialize($this->classSchemata);
 		}
@@ -104,9 +104,8 @@ class F3_FLOW3_Persistence_Manager {
 	protected function buildClassSchemataFromClasses(array $classNames) {
 		$classSchemata = array();
 		foreach ($classNames as $className) {
-			$class = new F3_FLOW3_Reflection_Class($className);
-			if ($class->isTaggedWith('repository') || $class->isTaggedWith('entity') || $class->isTaggedWith('valueobject')) {
-				$classSchemata[$className] = F3_FLOW3_Persistence_ClassSchemaBuilder::build($class);
+			if ($this->reflectionService->isClassTaggedWith($className, 'repository') || $this->reflectionService->isClassTaggedWith($className, 'entity') || $this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
+				$classSchemata[$className] = $this->classSchemaBuilder->build($className);
 			}
 		}
 		return $classSchemata;
