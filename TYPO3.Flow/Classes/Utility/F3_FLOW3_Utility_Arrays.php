@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The array functions from the good old t3lib_div.
+ * The array functions from the good old t3lib_div plus new code.
  *
  * @package FLOW3
  * @subpackage Utility
@@ -59,7 +59,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @return array Exploded values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public static function trimExplode($delimiter, $string, $onlyNonEmptyValues=FALSE) {
+	public static function trimExplode($delimiter, $string, $onlyNonEmptyValues = FALSE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
 		foreach ($chunksArr as $value) {
@@ -82,10 +82,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @return array Resulting array where $secondArray values has overruled $firstArray values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public static function arrayMergeRecursiveOverrule($firstArray, $secondArray, $dontAddNewKeys=FALSE, $emptyValuesOverride=TRUE) {
-		if (!is_array($firstArray)) throw new InvalidArgumentException('$firstArray is not of type Array.', 1166719211, array($firstArray));
-		if (!is_array($secondArray)) throw new InvalidArgumentException('$secondArray is not of type Array.', 1166719212, array($secondArray));
-
+	public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {
 			if (key_exists($key, $firstArray) && is_array($firstArray[$key])) {
@@ -119,7 +116,7 @@ class F3_FLOW3_Utility_Arrays {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
-	public static function randomizeArrayOrder($array) {
+	public static function randomizeArrayOrder(array $array) {
 		$reorderedArray = array();
 		if (count($array) > 1) {
 			$keysInRandomOrder = array_rand($array, count($array));
@@ -130,6 +127,27 @@ class F3_FLOW3_Utility_Arrays {
 			$reorderedArray = $array;
 		}
 		return $reorderedArray;
+	}
+
+	/**
+	 * Returns TRUE if the given array contains elements of varying types
+	 *
+	 * @param array $array
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public static function containsMultipleTypes(array $array) {
+		if (count($array) > 0) {
+			reset($array);
+			$previousType = gettype(current($array));
+			next($array);
+			while (list(, $value) = each($array)) {
+				if ($previousType !== gettype($value)) {
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
 	}
 }
 ?>
