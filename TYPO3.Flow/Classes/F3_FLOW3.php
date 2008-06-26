@@ -40,7 +40,8 @@ final class F3_FLOW3 {
 	/**
 	 * The version of the FLOW3 framework
 	 */
-	const VERSION = '0.2.0svn';
+	const VERSION = '0.2.0';
+	const REVISION = 2;
 
 	const MINIMUM_PHP_VERSION = '5.2.0';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
