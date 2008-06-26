@@ -40,6 +40,7 @@ class F3_FLOW3Test extends F3_Testing_BaseTestCase {
 	public function getComponentManagerReturnsComponentManager() {
 		$FLOW3 = new F3_FLOW3;
 		$FLOW3->initializeClassLoader();
+		$FLOW3->initializeConfiguration();
 		$FLOW3->initializeFLOW3();
 		$this->assertTrue($FLOW3->getComponentManager() instanceof F3_FLOW3_Component_ManagerInterface, 'getComponentManager did not deliver an object implementing F3_FLOW3_Component_ManagerInterface!');
 	}

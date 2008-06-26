@@ -62,6 +62,14 @@ $c->component->configurationCache->backendOptions = array();
 $c->mvc->availableRequestHandlers = array('F3_FLOW3_MVC_Web_RequestHandler', 'F3_FLOW3_MVC_CLI_RequestHandler');
 
 /**
+ * Enable or disable the whole AOP framework.
+ *
+ * Note that certain features depend on and might not work anymore if you
+ * disable the AOP framework.
+ */
+$c->aop->enable = TRUE;
+
+/**
  * Enable or disable the caching of proxy classes which were built by
  * the AOP Framework.
  */

@@ -34,7 +34,7 @@ class F3_FLOW3_AOP_Framework {
 	 * @var F3_FLOW3_Component_ManagerInterface A reference to the component manager
 	 */
 	protected $componentManager;
-	
+
 	/**
 	 * @var F3_FLOW3_Reflection_Service A reference to the reflection service
 	 */
@@ -49,7 +49,7 @@ class F3_FLOW3_AOP_Framework {
 	 * @var F3_FLOW3_AOP_PointcutExpressionParserInterface An instance of the pointcut expression parser
 	 */
 	protected $pointcutExpressionParser;
-	
+
 	/**
 	 * @var array A registry of all known aspects
 	 */
@@ -87,7 +87,7 @@ class F3_FLOW3_AOP_Framework {
 		$this->registerFrameworkComponents();
 		$this->configuration = $componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 	}
-	
+
 	/**
 	 * Injects the reflection service
 	 *
@@ -96,7 +96,7 @@ class F3_FLOW3_AOP_Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectReflectionService(F3_FLOW3_Reflection_Service $reflectionService) {
-		$this->reflectionService = $reflectionService;		
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -110,7 +110,7 @@ class F3_FLOW3_AOP_Framework {
 	public function injectPointcutExpressionParser(F3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
 	}
-	
+
 	/**
 	 * Adds a registered component to the proxy blacklist to prevent the component class
 	 * from being proxied by the AOP framework.
@@ -127,16 +127,17 @@ class F3_FLOW3_AOP_Framework {
 	/**
 	 * Initializes the AOP framework.
 	 *
-	 * During initialization the configuration of all registered components is searched for
-	 * possible aspect annotations. If an aspect class is found, the poincut expressions are
-	 * parsed and a new aspect with one or more advisors is added to the aspect registry of the
-	 * AOP framework. Finally all advices are woven into their target classes by generating
-	 * proxy classes.
+	 * During initialization the specified configuration of components is searched for possible
+	 * aspect annotations. If an aspect class is found, the poincut expressions are parsed and
+	 * a new aspect with one or more advisors is added to the aspect registry of the AOP framework.
+	 * Finally all advices are woven into their target classes by generating proxy classes.
+	 *
+	 * The class names of all proxied classes is stored back in the $componentConfigurations array.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize($componentConfigurations) {
+	public function initialize(array &$componentConfigurations) {
 		if ($this->isInitialized) throw new F3_FLOW3_AOP_Exception('The AOP framework has already been initialized!', 1169550994);
 		$this->isInitialized = TRUE;
 
@@ -179,6 +180,7 @@ class F3_FLOW3_AOP_Framework {
 			if (!class_exists($proxyBuildResult['proxyClassName'])) {
 				eval($proxyBuildResult['proxyClassCode']);
 			}
+			$componentConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
 		}
 
 		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
