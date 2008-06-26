@@ -337,7 +337,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 		$this->validator = $this->createNewValidatorChainObject();
 
 		foreach ($classNames as $className) {
-			$this->validator->addFilter($this->componentManager->getComponent($className));
+			$this->validator->addValidator($this->componentManager->getComponent($className));
 		}
 
 		return $this;
@@ -415,6 +415,16 @@ class F3_FLOW3_MVC_Controller_Argument {
 	 */
 	public function createNewValidatorChainObject() {
 		return $this->componentManager->getComponent('F3_FLOW3_Validation_Validator_Chain');
+	}
+
+	/**
+	 * Returns a string representation of this argument's value
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return (string)$this->value;
 	}
 }
 ?>

@@ -41,8 +41,7 @@ class F3_FLOW3_Validation_Validator_NotEmpty implements F3_FLOW3_Validation_Vali
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
-
-		return $propertyValue != NULL && $propertyValue != '';
+		return $propertyValue !== NULL && $propertyValue != '';
 	}
 }
 

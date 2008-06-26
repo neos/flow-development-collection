@@ -39,7 +39,7 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 	 */
 	public function constructingArgumentWithoutNameThrowsException() {
 		try {
-			$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument');
+			$this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument');
 			$this->fail('Constructing an argument without specifying a name did not throw an exception.');
 		} catch (InvalidArgumentException $exception) {
 		}
@@ -51,7 +51,7 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 	 */
 	public function constructingArgumentWithInvalidNameThrowsException() {
 		try {
-			$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', new ArrayObject());
+			$this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', new ArrayObject());
 			$this->fail('Constructing an argument with invalid name did not throw an exception.');
 		} catch (InvalidArgumentException $exception) {
 		}
@@ -94,6 +94,18 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 		$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', 'dummy');
 		$returnedArgument = $argument->setShortHelpMessage('x');
 		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function toStringReturnsTheStringVersionOfTheArgumentsValue() {
+		$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', 'dummy');
+		$argument->setValue(123);
+
+		$this->assertSame((string)$argument, '123', 'The returned argument is not a string.');
+		$this->assertNotSame((string)$argument, 123, 'The returned argument is identical to the set value.');
 	}
 }
 ?>

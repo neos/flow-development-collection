@@ -31,7 +31,7 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Validation_Validator_EmailAddress implements F3_FLOW3_Validation_ValidatorInterface {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid email address.
+	 * Returns TRUE, if the given property ($proptertyValue) is a valid email address.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *

@@ -35,10 +35,10 @@ class F3_FLOW3_Utility_Arrays {
 	 * Explodes a $string delimited by $delimeter and passes each item in the array through intval().
 	 * Corresponds to explode(), but with conversion to integers for all values.
 	 *
-	 * @param	string		$delimiter: Delimiter string to explode with
-	 * @param	string		$string: The string to explode
-	 * @return	array		Exploded values, all converted to integers
-	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
+	 * @param string $delimiter Delimiter string to explode with
+	 * @param string $string The string to explode
+	 * @return array Exploded values, all converted to integers
+	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	public static function integerExplode($delimiter, $string) {
 		$chunksArr = explode($delimiter, $string);
@@ -53,16 +53,16 @@ class F3_FLOW3_Utility_Arrays {
 	 * Explodes a string and trims all values for whitespace in the ends.
 	 * If $onlyNonEmptyValues is set, then all blank ('') values are removed.
 	 *
-	 * @param	string		$delimiter: Delimiter string to explode with
-	 * @param	string		$string: The string to explode
-	 * @param	boolean		$onlyNonEmptyValues: If set, all empty values (='') will NOT be set in output
-	 * @return	array		Exploded values
-	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
+	 * @param string $delimiter Delimiter string to explode with
+	 * @param string $string The string to explode
+	 * @param boolean $onlyNonEmptyValues If set, all empty values (='') will NOT be set in output
+	 * @return array Exploded values
+	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	public static function trimExplode($delimiter, $string, $onlyNonEmptyValues=FALSE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
-		foreach ($chunksArr as $key => $value) {
+		foreach ($chunksArr as $value) {
 			if ($onlyNonEmptyValues === FALSE || strcmp('', trim($value))) {
 				$newChunksArr[] = trim($value);
 			}
@@ -75,12 +75,12 @@ class F3_FLOW3_Utility_Arrays {
 	 * Merges two arrays recursively and "binary safe" (integer keys are overridden as well), overruling similar values in the first array ($firstArray) with the values of the second array ($secondArray)
 	 * In case of identical keys, ie. keeping the values of the second.
 	 *
-	 * @param	array		First array
-	 * @param	array		Second array, overruling the first array
-	 * @param	boolean		If set, keys that are NOT found in $firstArray (first array) will not be set. Thus only existing value can/will be overruled from second array.
-	 * @param	boolean		If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
-	 * @return	array		Resulting array where $secondArray values has overruled $firstArray values
-	 * @author  Kasper Skårhøj <kasperYYYY@typo3.com>
+	 * @param array First array
+	 * @param array Second array, overruling the first array
+	 * @param boolean If set, keys that are NOT found in $firstArray (first array) will not be set. Thus only existing value can/will be overruled from second array.
+	 * @param boolean If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
+	 * @return array Resulting array where $secondArray values has overruled $firstArray values
+	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
 	public static function arrayMergeRecursiveOverrule($firstArray, $secondArray, $dontAddNewKeys=FALSE, $emptyValuesOverride=TRUE) {
 		if (!is_array($firstArray)) throw new InvalidArgumentException('$firstArray is not of type Array.', 1166719211, array($firstArray));
@@ -114,8 +114,8 @@ class F3_FLOW3_Utility_Arrays {
 	 * Randomizes the order of array values. The array should not be an associative array
 	 * as the key-value relations will be lost.
 	 *
-	 * @param  array			$array: Array to reorder
-	 * @return array			The array with randomly ordered values
+	 * @param array $array Array to reorder
+	 * @return array The array with randomly ordered values
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
 	 */
