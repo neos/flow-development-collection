@@ -40,9 +40,9 @@ class F3_FLOW3_Persistence_Manager {
 	/**
 	 * The class schema builder
 	 *
-	 * @var F3_FLOW3_Persistence_ClassSchemaBuilder
+	 * @var F3_FLOW3_Persistence_ClassSchemataBuilder
 	 */
-	protected $classSchemaBuilder;
+	protected $ClassSchemataBuilder;
 
 	/**
 	 * @var F3_FLOW3_Persistence_BackendInterface
@@ -60,12 +60,12 @@ class F3_FLOW3_Persistence_Manager {
 	 * Constructor
 	 *
 	 * @param F3_FLOW3_Reflection_Service $reflectionService
-	 * @param F3_FLOW3_Persistence_ClassSchemaBuilder $classSchemaBuilder
+	 * @param F3_FLOW3_Persistence_ClassSchemataBuilder $ClassSchemataBuilder
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Reflection_Service $reflectionService, F3_FLOW3_Persistence_ClassSchemaBuilder $classSchemaBuilder) {
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService, F3_FLOW3_Persistence_ClassSchemataBuilder $ClassSchemataBuilder) {
 		$this->reflectionService = $reflectionService;
-		$this->classSchemaBuilder = $classSchemaBuilder;
+		$this->ClassSchemataBuilder = $ClassSchemataBuilder;
 	}
 
 	/**
@@ -86,30 +86,14 @@ class F3_FLOW3_Persistence_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$this->classSchemata = $this->buildClassSchemataFromClasses($this->reflectionService->getAvailableClassNames());
+		$classNames = $this->reflectionService->getClassNamesByTag('repository') +
+			$this->reflectionService->getClassNamesByTag('entity') +
+			$this->reflectionService->getClassNamesByTag('valueobject');
+
+		$this->classSchemata = $this->ClassSchemataBuilder->build($classNames);
 		if ($this->backend instanceof F3_FLOW3_Persistence_BackendInterface) {
 			$this->backend->initialize($this->classSchemata);
 		}
 	}
-
-	/**
-	 * Builds class schemata from the specified classes. Only classes which are the root
-	 * or part of an Aggregate (ie. repositories, entities and value objects) are taken
-	 * into consideration.
-	 *
-	 * @param array $classNames Names of the classes to take into account.
-	 * @return array of F3_FLOW3_Persistence_ClassSchema
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function buildClassSchemataFromClasses(array $classNames) {
-		$classSchemata = array();
-		foreach ($classNames as $className) {
-			if ($this->reflectionService->isClassTaggedWith($className, 'repository') || $this->reflectionService->isClassTaggedWith($className, 'entity') || $this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
-				$classSchemata[$className] = $this->classSchemaBuilder->build($className);
-			}
-		}
-		return $classSchemata;
-	}
-
 }
 ?>
