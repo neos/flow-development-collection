@@ -17,9 +17,9 @@ declare(ENCODING = 'utf-8');
 /**
  * Testcase for the MVC CLI Request Handler class
  *
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 
@@ -42,7 +42,7 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 		$this->environment = $this->componentManager->getComponent('F3_FLOW3_Utility_MockEnvironment');
 
 			// Inject the mock environment into Builder and Handler:
-		$requestBuilder = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->environment);
+		$this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->environment);
 		$this->requestHandler = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentManager, $this->environment);
 	}
 
@@ -53,8 +53,6 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function CLIRequestHandlerHandlesTestPackageRequestCorrectly() {
-		$realRequestURI = $this->environment->getRequestURI();
-
 		$this->environment->SAPIName = 'cli';
 		$this->environment->SERVER['argc'] = 2;
 		$this->environment->SERVER['argv'][0] = 'index.php';

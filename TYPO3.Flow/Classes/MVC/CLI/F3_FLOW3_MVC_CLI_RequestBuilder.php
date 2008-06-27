@@ -55,7 +55,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Builds a CLI request object from the raw command call
 	 *
-	 * @return F3_FLOW3_MVC_CLI_Request		The CLI request as an object
+	 * @return F3_FLOW3_MVC_CLI_Request The CLI request as an object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -103,7 +103,9 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 
 		return $convertedName;
 	}
-
+public function getE() {
+	return $this->environment;
+}
 	/**
 	 * Returns the value of the first argument of the given input array. Shifts the parsed argument off the array.
 	 *
