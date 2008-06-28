@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for an after invocation processor. This is used to check return values of a method against the configured security rules.
+ * Contract for an after invocation manager. It is used to check return values of a method against security rules.
  *
  * @package FLOW3
  * @subpackage Security
@@ -33,15 +33,14 @@ interface F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface {
 
 	/**
 	 * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
-	 * It is resolved and called automatically by the after invocation manager. The naming convention is: [InterceptedClassName]_[InterceptedMethodName]AfterInvocationProcessor
-	 *
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
 	 * @param object $object The return object to be processed
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function process(F3_FLOW3_Security_Context $securityContext, object $object);
+	public function process(F3_FLOW3_Security_Context $securityContext, object $object, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns TRUE if this after invocation processor can process return objects of the given classname

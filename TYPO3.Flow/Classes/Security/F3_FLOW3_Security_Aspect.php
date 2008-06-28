@@ -22,38 +22,28 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for an access decision voter.
+ * The central security aspect.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @aaspect
  */
-interface F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
-
-	const
-		VOTE_GRANT = 1,
-		VOTE_ABSTAIN = 2,
-		VOTE_DENY = 3;
+class F3_FLOW3_Security_Aspect {
 
 	/**
-	 * Votes if access should be granted on the given object in the current security context
+	 * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @aaround callback(F3_FLOW3_Security_ACL_PolicyService)
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
-
-	/**
-	 * Returns TRUE if this access decision voter can vote for objects with the given classname
-	 *
-	 * @param string $className The classname that should be checked
-	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
-	 */
-	public function supports($className);
+	public function enforcePolicy() {
+		//Asks the policy service to return the roles for this joinpoint (it will have a cache to speed this up)
+		//Set the joinpoint in the interceptor
+		//invoke the policy enforcement interceptor
+	}
 }
 
 ?>

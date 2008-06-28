@@ -16,39 +16,36 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
+ * @package
+ * @subpackage
  * @version $Id:$
  */
 
 /**
- * Contract for an access decision voter.
+ * Contract for an after invocation processor.
  *
- * @package FLOW3
- * @subpackage Security
+ * @package
+ * @subpackage
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
-
-	const
-		VOTE_GRANT = 1,
-		VOTE_ABSTAIN = 2,
-		VOTE_DENY = 3;
+interface F3_FLOW3_Security_Authorization_AfterInvocationProcessorInterface {
 
 	/**
-	 * Votes if access should be granted on the given object in the current security context
+	 * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
+	 * It is resolved and called automatically by the after invocation processor manager. The naming convention for after invocation processors is:
+	 * [InterceptedClassName]_[InterceptedMethodName]AfterInvocationProcessor
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
+	 * @param object $object The return object to be processed
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint of the returning method
+	 * @return void
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function process(F3_FLOW3_Security_Context $securityContext, object $object, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
 
 	/**
-	 * Returns TRUE if this access decision voter can vote for objects with the given classname
+	 * Returns TRUE if this after invocation processor can process return objects of the given classname
 	 *
 	 * @param string $className The classname that should be checked
 	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname

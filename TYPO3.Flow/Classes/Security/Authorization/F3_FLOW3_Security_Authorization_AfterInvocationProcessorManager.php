@@ -21,8 +21,8 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The default after invocation manager that uses AfterInvocationProcessors to process the return objects.
- * It resolves automatically any available AfterInvcocationProcessors for the given return object and calls them.
+ * The default after invocation manager that uses AfterInvocationProcessorInterface to process the return objects.
+ * It resolves automatically any available AfterInvcocationProcessorInterface for the given return object and calls them.
  *
  * @package FLOW3
  * @subpackage Security
@@ -31,18 +31,20 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authorization_AfterInvocationProcessorManager implements F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface {
 
+//TODO: processors must also be configurable
 	/**
 	 * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
 	 * It resolves any available AfterInvocationProcessor for the given return object and invokes them.
-	 * The naming convention is: [InterceptedClassName]_[InterceptedMethodName]AfterInvocationProcessor
+	 * The naming convention is: [InterceptedClassName]_[InterceptedMethodName]_AfterInvocationProcessor
 	 *
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
 	 * @param object $object The return object to be processed
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function process(F3_FLOW3_Security_Context $securityContext, object $object) {
+	public function process(F3_FLOW3_Security_Context $securityContext, object $object, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 
 	}
 

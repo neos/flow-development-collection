@@ -32,17 +32,16 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Security_ACL_Voter implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
 
 	/**
-	 * This is the default ACL voter. Note: The whole ACL package is based on AOP.
+	 * This is the default ACL voter, it votes for the ACCESS privilege
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param object $joinPoint The join point (method invocation) to vote for, must be a F3_FLOW3_AOP_JoinPointInterface object
-	 * @return integer One of: ACCESS_GRANTED, ACCESS_ABSTAIN, ACCESS_DENIED
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, object $joinPoint) {
-		//Throw exception if $joinPoint is not a join point
-		//search the acl tree for rules for this method invocation
-		//ask the current token if for the rules the user currently has and compare to the ones in the acl tree
+	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+		//ask the current token if for the roles the user currently has
+		//search for an ACCESS privilege, that isGrant(), any of the user's roles has for this joinpoint (ask the policyservice to return the privileges for each role)
 	}
 
 	/**

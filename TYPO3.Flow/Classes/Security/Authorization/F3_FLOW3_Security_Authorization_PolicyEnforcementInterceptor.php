@@ -29,8 +29,8 @@ declare(ENCODING = 'utf-8');
  *    authenticated token to have a valid authentication.
  * 1.1. If there is no valid authentication the configured authentication manager is called to authenticate its tokens
  *      If there hast to be only one authenticated token, authentication stops after the first successfully authenticated token.
- * 2. Then the configured AccessDecisionManager is called to authorize the request/action
- * 3. If we have something like a "run as" functionality in the future, it will be invoked at this point (for now we don't have something like that)
+ * 2. If we have something like a "run as" functionality in the future, it will be invoked at this point (for now we don't have something like that)
+ * 3. Then the configured AccessDecisionManager is called to authorize the request/action
  * 4. If no exception has been thrown we pass over the controll to the requested resource (i.e. a secured method)
  * 5. Right before the method returns we call the AfterInvocationManager with the method's return value as paramter
  * 6. If we had a "run as" support, we would have to reset the security context
@@ -74,6 +74,17 @@ class F3_FLOW3_Security_Authorization_PolicyEnforcementInterceptor implements F3
 					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
 					F3_Log_LoggerInterface $logger
 					) {
+
+	}
+
+	/**
+	 * Sets the current joinpoint for this interception
+	 *
+	 * @param F3_FLOW3_AOP_JoinPoint $joinPoint The current joinpoint
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setJoinPoint(F3_FLOW3_AOP_JoinPoint $joinPoint) {
 
 	}
 

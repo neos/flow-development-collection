@@ -22,38 +22,25 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for an access decision voter.
+ * The security exception handler.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
-
-	const
-		VOTE_GRANT = 1,
-		VOTE_ABSTAIN = 2,
-		VOTE_DENY = 3;
+class F3_FLOW3_Security_Exception_Handler {
 
 	/**
-	 * Votes if access should be granted on the given object in the current security context
+	 * Handles an exception. If possible it calls an AuthenticationEntryPoint to start authentication.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @param F3_FLOW3_Security_Exception $securityException The exception to be handled
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function handleException(F3_FLOW3_Security_Exception $securityException) {
 
-	/**
-	 * Returns TRUE if this access decision voter can vote for objects with the given classname
-	 *
-	 * @param string $className The classname that should be checked
-	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
-	 */
-	public function supports($className);
+	}
 }
 
 ?>

@@ -36,11 +36,11 @@ interface F3_FLOW3_Security_Authorization_AccessDecisionManagerInterface {
 	 * Decides if access should be granted on the given object in the current security context
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param object $object The object to decide on
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function decide(F3_FLOW3_Security_Context $securityContext, object $object);
+	public function decide(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns TRUE if this access decision manager can decide on objects with the given classname

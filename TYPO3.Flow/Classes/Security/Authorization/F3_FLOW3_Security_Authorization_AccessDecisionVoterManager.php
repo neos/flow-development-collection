@@ -31,7 +31,7 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authorization_AccessDecisionVoterManager implements F3_FLOW3_Security_Authorization_AccessDecisionManagerInterface {
 
-//TODO: This has to be filled by configuration
+//TODO: This has to be filled by configuration and is extended by automatic resolving jointpoint voters in the decide method
 	/**
 	 * @var array Array of F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface objects
 	 */
@@ -45,17 +45,17 @@ class F3_FLOW3_Security_Authorization_AccessDecisionVoterManager implements F3_F
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context.
-	 * It iterates over all configured F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface objects.
+	 * It iterates over all available F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param object $object The object to decide on
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function decide(F3_FLOW3_Security_Context $securityContext, object $object) {
-		//TODO: resolve voters that could vote on the given method parameters (this maybe checked somewhere else)
+	public function decide(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+		//TODO: resolve voters that could vote on the given method parameters (if $object is a joinpoint)
+		//return values of the voters: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	}
 
 	/**

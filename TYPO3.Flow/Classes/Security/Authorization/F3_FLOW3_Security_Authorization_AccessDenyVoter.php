@@ -41,11 +41,11 @@ class F3_FLOW3_Security_Authorization_AccessDenyVoter implements F3_FLOW3_Securi
 	 * Votes to deny access, if the given object is one of the supported types
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param object $object The object to decide on
-	 * @return integer One of: ACCESS_GRANTED, ACCESS_ABSTAIN, ACCESS_DENIED
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @return integer VOTE_DENY
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, object $object) {
+	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 
 	}
 

@@ -22,51 +22,65 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * This class holds a pattern an decides, if a F3_FLOW3_MVC_Request object matches against this pattern
+ * The representation of a privilege, that a role has for a given resource. E.g. READ or WRITE.
+ * A privilege can be explicitly granted or denied. In the policy file this is expressed by appending
+ * _DENY or _GRANT to the privilege's identifier.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_RequestPattern {
-
-//TODO: This can also be set by configuration
-	/**
-	 * @var string The preg_match() styled URL pattern
-	 */
-	protected $URLPattern = '';
+class F3_FLOW3_Security_ACL_Privilege {
 
 	/**
-	 * Compares this pattern to another. Returns TRUE if both are equal
+	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_RequestPattern $pattern The pattern to compare with
-	 * @return TRUE if both are equal, FALSE otherwise
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function compare(F3_FLOW3_Security_RequestPattern $pattern) {
-
-	}
-
-	/**
-	 * Sets an URL pattern (preg_match() syntax)
-	 *
-	 * @param string $pattern The preg_match() styled URL pattern
+	 * @param string $identifier An identifier for this privilege. Note: Always prefix your package key for custom privileges!
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setURLPattern($pattern) {
+	public function __construct($identifier) {
 
 	}
 
 	/**
-	 * Matches a F3_FLOW3_MVC_Request against its set pattern rules
+	 * Sets this privilege to a granting privilege
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request that should be matched
-	 * @return boolean TRUE if the pattern matched, FALSE otherwise
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(F3_FLOW3_MVC_Request $request) {
+	public function setGrant() {
+
+	}
+
+	/**
+	 * Sets this privilege to a denying privilege
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setDeny() {
+
+	}
+
+	/**
+	 * Returns TRUE if this privilege object grants the privilege it represents
+	 *
+	 * @return boolean TRUE if this privilege object grants the privilege it represents
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isGrant() {
+
+	}
+
+	/**
+	 * Returns TRUE if this privilege object denies the privilege it represents
+	 *
+	 * @return boolean TRUE if this privilege object denies the privilege it represents
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isDeny() {
 
 	}
 }

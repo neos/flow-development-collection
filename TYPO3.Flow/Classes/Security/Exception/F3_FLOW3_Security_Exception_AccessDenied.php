@@ -30,6 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Security_Exception_AccessDenied extends F3_FLOW3_Security_Exception {
+
 }
 
 ?>
