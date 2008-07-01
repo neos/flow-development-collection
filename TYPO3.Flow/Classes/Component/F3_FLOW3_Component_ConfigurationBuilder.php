@@ -102,11 +102,11 @@ class F3_FLOW3_Component_ConfigurationBuilder {
 	 *
 	 * @param  string $value: Value of the option
 	 * @return integer The scope translated into a scope constant
-	 * @throws F3_FLOW3_Package_Exception_InvalidComponentConfiguration if an invalid scope has been specified
+	 * @throws F3_FLOW3_Component_Exception_InvalidComponentConfiguration if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static protected function parseScope($value) {
-		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Invalid scope', 1167574991);
+		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new F3_FLOW3_Component_Exception_InvalidComponentConfiguration('Invalid scope', 1167574991);
 		return $value;
 	}
 }

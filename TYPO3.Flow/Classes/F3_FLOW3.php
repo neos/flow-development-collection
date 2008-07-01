@@ -472,7 +472,7 @@ final class F3_FLOW3 {
 			$rawComponentConfigurations = $this->configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_COMPONENTS);
 			foreach ($rawComponentConfigurations as $componentName => $rawComponentConfiguration) {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
-					throw new F3_FLOW3_Package_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '". The configuration came from ' . $rawComponentConfiguration->getConfigurationSourceHint() . '.', 1184926175);
+					throw new F3_FLOW3_Component_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
 				}
 				$existingComponentConfiguration = (array_key_exists($componentName, $componentConfigurations)) ? $componentConfigurations[$componentName] : NULL;
 				$componentConfigurations[$componentName] = F3_FLOW3_Component_ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration, 'Package ' . $packageKey, $existingComponentConfiguration);
