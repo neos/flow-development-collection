@@ -365,6 +365,8 @@ final class F3_FLOW3 {
 		$requestHandlerResolver = $this->componentManager->getComponent('F3_FLOW3_MVC_RequestHandlerResolver');
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
+
+		$this->componentManager->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
 	}
 
 	/**

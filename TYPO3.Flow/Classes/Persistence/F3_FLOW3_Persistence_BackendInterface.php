@@ -38,6 +38,36 @@ interface F3_FLOW3_Persistence_BackendInterface {
 	 */
 	public function initialize(array $classSchemata);
 
-}
+	/**
+	 * Sets the new objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setNewObjects(array $objects);
 
+	/**
+	 * Sets the updated objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setUpdatedObjects(array $objects);
+
+	/**
+	 * Sets the deleted objects
+	 *
+	 * @param array $objects
+	 * @return void
+	 */
+	public function setDeletedObjects(array $objects);
+
+	/**
+	 * Commits the current persistence session
+	 *
+	 * @return void
+	 */
+	public function commit();
+
+}
 ?>

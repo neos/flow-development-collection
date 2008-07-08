@@ -21,24 +21,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Adds the aspect of persistence to repositories
+ * A "Missing Backend" exception
  *
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @aspect
  */
-class F3_FLOW3_Persistence_Aspect_Repository {
-
-	/**
-	 *
-	 * @afterreturning method(.*->__construct()) && classTaggedWith(repository)
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function register(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
-
-	}
-
+class F3_FLOW3_Persistence_Exception_MissingBackend extends F3_FLOW3_Persistence_Exception {
 }
+
 ?>

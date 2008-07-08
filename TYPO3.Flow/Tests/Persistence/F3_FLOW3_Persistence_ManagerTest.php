@@ -34,9 +34,17 @@ class F3_FLOW3_Persistence_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function dummy() {
+	public function getSessionReturnsATheCurrentPersistenceSession() {
+		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
+		$mockClassSchemataBuilder = $this->getMock('F3_FLOW3_Persistence_ClassSchemataBuilder', array(), array(), '', FALSE);
 
+		$session = new F3_FLOW3_Persistence_Session();
+		$manager = new F3_FLOW3_Persistence_Manager($mockReflectionService, $mockClassSchemataBuilder);
+		$manager->injectSession($session);
+
+		$this->assertType('F3_FLOW3_Persistence_Session', $manager->getSession());
 	}
+
 
 }
 

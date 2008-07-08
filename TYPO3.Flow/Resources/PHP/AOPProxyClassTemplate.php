@@ -33,10 +33,34 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function AOPProxyInvokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
 			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
+	}
+
+	/**
+	 * Returns the name of the class this proxy extends.
+	 *
+	 * @return string Name of the target class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function AOPProxyGetProxyTargetClassName() {
+		return '###TARGET_CLASS_NAME###';
+	}
+
+	/**
+	 * Returns the value of any (even protected) property of this class.
+	 *
+	 * Even though this might be appealing, make sure to only use this
+	 * backdoor in well-thought situations (like for the persistence framework).
+	 *
+	 * @param string Name of the property
+	 * @return mixed Value of the specified property
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function AOPProxyGetPropertyValue($propertyName) {
+		return $this->$propertyName;
 	}
 
 	/**
@@ -47,7 +71,7 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	 * @return mixed The advice chains  (array of F3_FLOW3_AOP_AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getAdviceChains($methodName) {
+	protected function AOPProxyGetAdviceChains($methodName) {
 		$adviceChains = NULL;
 		if (is_array($this->groupedAdviceChains)) {
 			if (isset($this->groupedAdviceChains[$methodName])) {

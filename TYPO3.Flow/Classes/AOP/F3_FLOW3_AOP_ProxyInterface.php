@@ -34,10 +34,10 @@ interface F3_FLOW3_AOP_ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param  F3_FLOW3_AOP_JoinPointInterface: The join point
+	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function invokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function AOPProxyInvokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint);
 }
 
 ?>

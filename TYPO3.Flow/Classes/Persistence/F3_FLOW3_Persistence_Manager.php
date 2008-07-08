@@ -42,12 +42,22 @@ class F3_FLOW3_Persistence_Manager {
 	 *
 	 * @var F3_FLOW3_Persistence_ClassSchemataBuilder
 	 */
-	protected $ClassSchemataBuilder;
+	protected $classSchemataBuilder;
 
 	/**
 	 * @var F3_FLOW3_Persistence_BackendInterface
 	 */
 	protected $backend;
+
+	/**
+	 * @var F3_FLOW3_Persistence_Session
+	 */
+	protected $session;
+
+	/**
+	 * @var F3_FLOW3_Component_ManagerInterface
+	 */
+	protected $componentManager;
 
 	/**
 	 * Schemata of all classes which need to be persisted
@@ -63,19 +73,42 @@ class F3_FLOW3_Persistence_Manager {
 	 * @param F3_FLOW3_Persistence_ClassSchemataBuilder $ClassSchemataBuilder
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Reflection_Service $reflectionService, F3_FLOW3_Persistence_ClassSchemataBuilder $ClassSchemataBuilder) {
+	public function __construct(F3_FLOW3_Reflection_Service $reflectionService, F3_FLOW3_Persistence_ClassSchemataBuilder $classSchemataBuilder) {
 		$this->reflectionService = $reflectionService;
-		$this->ClassSchemataBuilder = $ClassSchemataBuilder;
+		$this->classSchemataBuilder = $classSchemataBuilder;
 	}
 
 	/**
-	 * Set the backend to use for persistence
+	 * Injects the persistence session
+	 *
+	 * @param F3_FLOW3_Persistence_Session $session The persistence session
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSession(F3_FLOW3_Persistence_Session $session) {
+		$this->session = $session;
+	}
+
+	/**
+	 * Injects the component manager
+	 *
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
+	}
+
+	/**
+	 * Injects the backend to use for persistence
 	 *
 	 * @param F3_FLOW3_Persistence_BackendInterface $backend
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setBackend(F3_FLOW3_Persistence_BackendInterface $backend) {
+	public function injectBackend(F3_FLOW3_Persistence_BackendInterface $backend) {
 		$this->backend = $backend;
 	}
 
@@ -86,13 +119,74 @@ class F3_FLOW3_Persistence_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$classNames = $this->reflectionService->getClassNamesByTag('repository') +
-			$this->reflectionService->getClassNamesByTag('entity') +
+		if (!$this->backend instanceof F3_FLOW3_Persistence_BackendInterface) throw new F3_FLOW3_Persistence_Exception_MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		$classNames = $this->reflectionService->getClassNamesByTag('entity') +
 			$this->reflectionService->getClassNamesByTag('valueobject');
 
-		$this->classSchemata = $this->ClassSchemataBuilder->build($classNames);
-		if ($this->backend instanceof F3_FLOW3_Persistence_BackendInterface) {
-			$this->backend->initialize($this->classSchemata);
+		$this->classSchemata = $this->classSchemataBuilder->build($classNames);
+		$this->backend->initialize($this->classSchemata);
+	}
+
+	/**
+	 * Returns the current persistence session
+	 *
+	 * @return F3_FLOW3_Persistence_Session
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSession() {
+		return $this->session;
+	}
+
+	/**
+	 * Commits changes of the current persistence session into the backend
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function persistAll() {
+		$repositoryClassNames = $this->reflectionService->getClassNamesByTag('repository');
+		foreach ($repositoryClassNames as $repositoryClassName) {
+			$aggregateRootObjects = $this->componentManager->getComponent($repositoryClassName)->findAll();
+			$newObjects = array();
+			$dirtyObjects = array();
+			$allObjects = array();
+			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
+		}
+
+		$this->backend->setNewObjects($newObjects);
+#		$this->backend->setUpdatedObjects($dirtyObjects);
+#		$this->backend->setDeletedObjects($deletedObjects);
+		$this->backend->commit();
+	}
+
+	/**
+	 * Traverses the given object references and collects information about all, new and dirty objects.
+	 *
+	 * @param array $referenceObjects The reference objects to analyze
+	 * @param array $newObjects Pass an empty array - will contain all new objects which were found in the aggregate
+	 * @param array $dirtyObjects Pass an empty array - will contain all dirty objects which were found in the aggregate
+	 * @param array $allObjects Pass an empty array - will contain all objects which were found in the aggregate
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function traverseAndInspectReferenceObjects(array $referenceObjects, array &$newObjects, array &$dirtyObjects, array &$allObjects) {
+		if (count($referenceObjects) == 0 || !$referenceObjects[0] instanceof F3_FLOW3_AOP_ProxyInterface) return;
+
+		$referenceClassName = $referenceObjects[0]->AOPProxyGetProxyTargetClassName();
+		$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
+
+		foreach($referenceObjects as $referenceObject) {
+			$objectHash = spl_object_hash($referenceObject);
+			$allObjects[$objectHash] = $referenceObject;
+			if ($this->session->isNew($referenceObject)) {
+				$newObjects[$objectHash] = $referenceObject;
+			} elseif (FALSE && $this->session->isDirty($referenceObject)) {
+#				$dirtyObjects[$objectHash] = $referenceObject;
+			}
+		}
+		foreach ($referencePropertyNames as $propertyName) {
+			$subReferenceObject = $referenceObject->AOPProxyGetPropertyValue($propertyName);
+			$this->traverseAndInspectReferenceObjects($subReferenceObject, $newObjects, $dirtyObjects, $allObjects);
 		}
 	}
 }

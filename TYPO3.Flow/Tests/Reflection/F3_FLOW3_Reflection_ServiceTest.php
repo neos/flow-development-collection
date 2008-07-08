@@ -279,6 +279,23 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getPropertyNamesByTagReturnsArrayOfPropertiesTaggedBySpecifiedTag() {
+		$availableClassNames = array(
+			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
+			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+		);
+		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService->initialize($availableClassNames);
+
+		$expectedPropertyNames = array('firstProperty');
+		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firsttag');
+		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getPropertyTagsValuesReturnsArrayOfTagsAndValuesOfAProperty() {
 		$availableClassNames = array(
 			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',

@@ -16,45 +16,54 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Persistence
  * @version $Id$
  */
 
 /**
- * Testcase for the Persistence Session
+ * Adds the aspect of persistence to repositories
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Persistence
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @aspect
  */
-class F3_FLOW3_Persistence_SessionTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Persistence_Aspect_DirtyMonitoring {
 
 	/**
-	 * @test
+	 * The persistence manager
+	 *
+	 * @var F3_FLOW3_Persistence_Manager
+	 */
+	protected $persistenceManager;
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param F3_FLOW3_Persistence_Manager $persistenceManager
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function objectRegisteredWithRegisterNewObjectCanBeRetrievedWithGetNewObjects() {
-		$someObject = new ArrayObject();
-		$session = new F3_FLOW3_Persistence_Session();
-		$session->registerNewObject($someObject);
-
-		$this->assertSame($someObject, array_pop($session->getNewObjects()));
+	public function injectPersistenceManager(F3_FLOW3_Persistence_Manager $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
-	 * @test
+	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isNewReturnsTrueForObjectsRegisteredAsNew() {
-		$newObject = new ArrayObject();
-		$notRegisteredObject = new ArrayObject();
+	public function entityOrValueObject() {}
 
-		$session = new F3_FLOW3_Persistence_Session();
-		$session->registerNewObject($newObject);
-
-		$this->assertTrue($session->isNew($newObject));
-		$this->assertFalse($session->isNew($notRegisteredObject));
+	/**
+	 *
+	 * @afterreturning method(.*->__construct()) && F3_FLOW3_Persistence_Aspect_DirtyMonitoring->entityOrValueObject
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function registerNewObject(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+		$this->persistenceManager->getSession()->registerNewObject($joinPoint->getProxy());
 	}
 }
 ?>

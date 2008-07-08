@@ -416,6 +416,24 @@ class F3_FLOW3_Reflection_Service {
 	}
 
 	/**
+	 * Searches for and returns all names of class properties which are tagged by the specified tag.
+	 * If no properties were found, an empty array is returned.
+	 *
+	 * @param string $className Name of the class containing the properties
+	 * @param string $tag Tag to search for
+	 * @return array An array of property names tagged by the tag
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPropertyNamesByTag($className, $tag) {
+		if (!key_exists($className, $this->propertyTagsValues)) return array();
+		$propertyNames = array();
+		foreach ($this->propertyTagsValues[$className] as $propertyName => $tagsValues) {
+			if (key_exists($tag, $tagsValues)) $propertyNames[$propertyName] = TRUE;
+		}
+		return array_keys($propertyNames);
+	}
+
+	/**
 	 * Returns all tags and their values the specified class property is tagged with
 	 *
 	 * @param string $className Name of the class containing the property

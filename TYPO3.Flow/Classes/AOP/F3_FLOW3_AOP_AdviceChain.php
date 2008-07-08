@@ -44,8 +44,8 @@ class F3_FLOW3_AOP_AdviceChain {
 	/**
 	 * Initializes the advice chain
 	 *
-	 * @param  array $advices: An array of F3_FLOW3_AOP_AdviceInterface compatible objects which form the chain of advices
-	 * @param  F3_FLOW3_AOP_ProxyInterface	$proxy: A reference to the proxy object using the advice chain
+	 * @param array $advices An array of F3_FLOW3_AOP_AdviceInterface compatible objects which form the chain of advices
+	 * @param F3_FLOW3_AOP_ProxyInterface $proxy A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -69,7 +69,7 @@ class F3_FLOW3_AOP_AdviceChain {
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
 		} else {
-			$result = $this->proxy->invokeJoinpoint($joinPoint);
+			$result = $this->proxy->AOPProxyInvokeJoinpoint($joinPoint);
 		}
 		return $result;
 	}

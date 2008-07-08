@@ -32,31 +32,44 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Persistence_Session {
 
 	/**
-	 * New components
+	 * New objects
 	 *
 	 * @var array
 	 */
-	protected $newComponents = array();
+	protected $newObjects = array();
 
 	/**
-	 * Registers an object as new
+	 * Registers a newly instantiated object
 	 *
-	 * @param object The object to register as new
+	 * @param object The object to register
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerNewComponent($object) {
-		$this->newComponents[spl_object_hash($object)] = $object;
+	public function registerNewObject($object) {
+		$this->newObjects[spl_object_hash($object)] = $object;
 	}
 
 	/**
-	 * Returns all objects which are flagged as being new
+	 * States if the given object is registered as a new object
+	 *
+	 * @param object $object The object to check
+	 * @return boolean TRUE if the object is new
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isNew($object) {
+		return array_key_exists(spl_object_hash($object), $this->newObjects);
+	}
+
+	/**
+	 * Returns all objects which have been registered as new objects
 	 *
 	 * @return array All new objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getNewComponents() {
-		return $this->newComponents;
+	public function getNewObjects() {
+		return $this->newObjects;
 	}
+
+
 }
 ?>
