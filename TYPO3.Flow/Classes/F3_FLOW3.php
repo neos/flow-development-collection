@@ -317,8 +317,10 @@ final class F3_FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePersistence() {
-		$persistenceManager = $this->componentManager->getComponent('F3_FLOW3_Persistence_Manager');
-		$persistenceManager->initialize();
+		if ($this->configuration->persistence->enable === TRUE) {
+			$persistenceManager = $this->componentManager->getComponent('F3_FLOW3_Persistence_Manager');
+			$persistenceManager->initialize();
+		}
 
 	}
 
@@ -366,7 +368,9 @@ final class F3_FLOW3 {
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
-		$this->componentManager->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
+		if ($this->configuration->persistence->enable) {
+			$this->componentManager->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
+		}
 	}
 
 	/**

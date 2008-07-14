@@ -143,4 +143,19 @@ $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
  */
 $c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
 
+/**
+ * Whether to enable FLOW3's persistence manager or not.
+ *
+ * @var boolean
+ */
+$c->persistence->enable = FALSE;
+
+/**
+ * Define the backend used for object persistence. Specify the
+ * name of a component implementing the F3_FLOW3_Persistence_BackendInterface.
+ *
+ * @var F3_FLOW3_Persistence_BackendInterface
+ */
+$c->persistence->backend = '';
+
 ?>
