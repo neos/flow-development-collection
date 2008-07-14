@@ -33,12 +33,57 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_Session_Interface {
 
 	/**
+	 * Starts the session, if is has not been already started
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function start();
+
+	/**
+	 * Returns the current session ID.
+	 *
+	 * @return string The current session ID
+	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getSessionID();
+
+	/**
 	 * Returns the contents (array) associated with the given key.
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
+	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 * @throws F3_FLOW3_Session_Exception_NotExistingKey
 	 */
 	public function getContentsByKey($key);
+
+	/**
+	 * Stores the given data under the given key in the session
+	 *
+	 * @param object $data The data to be stored
+	 * @param string $key The key under whicht the data should be stored
+	 * @return void
+	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 */
+	public function storeContents($data, $key);
+
+	/**
+	 * Explicitly writes (persists) and closes the session
+	 *
+	 * @return void
+	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 */
+	public function close();
+
+	/**
+	 * Explicitly destroys all session data
+	 *
+	 * @return void
+	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 */
+	public function destroySession();
 }
 
 ?>

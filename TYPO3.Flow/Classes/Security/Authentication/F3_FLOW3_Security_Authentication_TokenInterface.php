@@ -69,6 +69,7 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	 */
 	public function getRequestPattern();
 
+//TODO: this method should be called while initialzing the security context
 	/**
 	 * Sets the authentication credentials, the authentication manager needs to authenticate this token.
 	 * This could be a username/password from a login controller. It also could be empty if no special
