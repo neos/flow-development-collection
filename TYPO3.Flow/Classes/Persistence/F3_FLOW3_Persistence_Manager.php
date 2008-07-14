@@ -144,12 +144,13 @@ class F3_FLOW3_Persistence_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function persistAll() {
+		$newObjects = array();
+		$dirtyObjects = array();
+		$allObjects = array();
+
 		$repositoryClassNames = $this->reflectionService->getClassNamesByTag('repository');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$aggregateRootObjects = $this->componentManager->getComponent($repositoryClassName)->findAll();
-			$newObjects = array();
-			$dirtyObjects = array();
-			$allObjects = array();
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
 		}
 

@@ -45,7 +45,22 @@ class F3_FLOW3_Persistence_ManagerTest extends F3_Testing_BaseTestCase {
 		$this->assertType('F3_FLOW3_Persistence_Session', $manager->getSession());
 	}
 
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function persistAllWorksIfNoRepositoryClassesAreFound() {
+		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
+		$mockClassSchemataBuilder = $this->getMock('F3_FLOW3_Persistence_ClassSchemataBuilder', array(), array(), '', FALSE);
+		$mockBackend = $this->getMock('F3_FLOW3_Persistence_BackendInterface');
 
+		$mockReflectionService->expects($this->any())->method('getClassNamesByTag')->will($this->returnValue(array()));
+
+		$manager = new F3_FLOW3_Persistence_Manager($mockReflectionService, $mockClassSchemataBuilder);
+		$manager->injectBackend($mockBackend);
+
+		$manager->persistAll();
+	}
 }
 
 ?>
