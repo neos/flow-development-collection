@@ -50,7 +50,7 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 	public function getConfigurationLoadsTestPackageSettings() {
 		$manager = new F3_FLOW3_Configuration_Manager('Testing');
 		$configuration = $manager->getConfiguration('TestPackage', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS);
-		$this->assertTRUE($configuration->testPackageSettingsWereLoaded, 'The settings were not loaded.');
+		$this->assertTrue($configuration->testPackageSettingsWereLoaded, 'The settings were not loaded.');
 	}
 }
 ?>

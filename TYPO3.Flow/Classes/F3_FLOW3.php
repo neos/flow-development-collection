@@ -368,7 +368,7 @@ final class F3_FLOW3 {
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
-		if ($this->configuration->persistence->enable) {
+		if ($this->configuration->persistence->enable === TRUE) {
 			$this->componentManager->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
 		}
 	}

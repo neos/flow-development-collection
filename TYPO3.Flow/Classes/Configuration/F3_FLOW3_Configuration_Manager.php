@@ -73,8 +73,9 @@ class F3_FLOW3_Configuration_Manager {
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
 			case self::CONFIGURATION_TYPE_SETTINGS :
-			break;
-			default: throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
+				break;
+			default:
+				throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 
 		$configuration = F3_FLOW3_Configuration_Source_PHP::load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType . '.php');
@@ -86,7 +87,15 @@ class F3_FLOW3_Configuration_Manager {
 			$additionalConfiguration = F3_FLOW3_Configuration_Source_PHP::load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType . '.php');
 			$configuration->mergeWith($additionalConfiguration);
 		}
-		return $configuration;
+
+		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_FLOW3 :
+			case self::CONFIGURATION_TYPE_COMPONENTS :
+				return $configuration;
+			case self::CONFIGURATION_TYPE_PACKAGES :
+			case self::CONFIGURATION_TYPE_SETTINGS :
+				return $configuration->$packageKey;
+		}
 	}
 
 }
