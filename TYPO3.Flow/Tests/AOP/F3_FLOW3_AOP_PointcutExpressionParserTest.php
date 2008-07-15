@@ -14,12 +14,17 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
+require_once('F3_FLOW3_AOP_MockPointcutExpressionParser.php');
+require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_CustomFilter.php');
+require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_EmptyClass.php');
+
 /**
  * Testcase for the default AOP Pointcut Expression Parser implementation
  *
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_AOP_PointcutExpressionParserTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage AOP
+ * @version $Id:F3_FLOW3_AOP_PointcutExpressionParserTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase {
 
@@ -119,6 +124,38 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 
 		$actualPointcutFilterComposite = $this->parser->parse('classTaggedWith(someTag)');
 		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function customFilterDesignatorIsParsedCorrectly() {
+		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentManager);
+
+		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new F3_FLOW3_Tests_AOP_Fixture_CustomFilter());
+
+		$actualPointcutFilterComposite = $parser->parse('filter(F3_FLOW3_Tests_AOP_Fixture_CustomFilter)');
+		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifACustomFilterDoesNotImplementThePointcutFilterInterfaceAnExceptionIsThrown() {
+		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentManager);
+
+		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new F3_FLOW3_Tests_AOP_Fixture_CustomFilter());
+
+		try {
+			$parser->parse('filter(F3_FLOW3_Tests_AOP_Fixture_EmptyClass)');
+			$this->fail('No exception was thrown.');
+		} catch (Exception  $exception) {
+
+		}
 	}
 }
 ?>

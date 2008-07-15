@@ -34,7 +34,7 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_AOP_PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|method|within)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|method|within|filter)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
@@ -45,7 +45,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	/**
 	 * Constructs this expression parser
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
@@ -56,7 +56,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * Parses a string pointcut expression and returns the pointcut
 	 * objects accordingly
 	 *
-	 * @param  string $poincutExpression: The expression defining the pointcut
+	 * @param string $poincutExpression The expression defining the pointcut
 	 * @return F3_FLOW3_AOP_PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws F3_FLOW3_AOP_Exception_InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -97,6 +97,9 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 					case 'within' :
 						$this->parseDesignatorWithin($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
+					case 'filter' :
+						$this->parseDesignatorFilter($operator, $signaturePattern, $pointcutFilterComposite);
+					break;
 					default :
 						throw new RuntimeException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet).', 1168874740);
 				}
@@ -109,8 +112,9 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * Takes a class tag filter pattern and adds a so configured class tag filter to the
 	 * filter composite object.
 	 *
-	 * @param string $classTagPattern: The pattern expression as configuration for the class tag filter
-	 * @param F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
+	 * @param string $operator The operator
+	 * @param string $classTagPattern The pattern expression as configuration for the class tag filter
+	 * @param F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class tag filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -122,8 +126,9 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * Takes a class filter pattern and adds a so configured class filter to the
 	 * filter composite object.
 	 *
-	 * @param string $classPattern: The pattern expression as configuration for the class filter
-	 * @param F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
+	 * @param string $operator The operator
+	 * @param string $classPattern The pattern expression as configuration for the class filter
+	 * @param F3_FLOW3_AOP_PointcutFilterComposite &$pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -136,8 +141,9 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * and a method part and adds the appropriately configured filters to the
 	 * filter composite object.
 	 *
-	 * @param string $signaturePattern: The pattern expression defining the class and method - the "signature"
-	 * @param F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
+	 * @param string $operator The operator
+	 * @param string $signaturePattern The pattern expression defining the class and method - the "signature"
+	 * @param F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class and method filter) will be added to this composite object.
 	 * @return void
 	 * @throws F3_FLOW3_AOP_Exception_InvalidPointcutExpression if there's an error in the pointcut expression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -160,7 +166,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	/**
 	 * Adds a class type filter to the poincut filter composite
 	 *
-	 * @param string $signaturePattern: The pattern expression defining the class type
+	 * @param string $signaturePattern The pattern expression defining the class type
 	 * @param F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -174,7 +180,8 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * class- and a pointcut method part and adds the appropriately configured
 	 * filter to the composite object.
 	 *
-	 * @param string $pointcutExpression: The pointcut expression (value of the designator)
+	 * @param string $operator The operator
+	 * @param string $pointcutExpression The pointcut expression (value of the designator)
 	 * @param F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @return void
 	 * @throws F3_FLOW3_AOP_Exception_InvalidPointcutExpression
@@ -187,10 +194,23 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	}
 
 	/**
+	 * Adds a custom filter to the poincut filter composite
+	 *
+	 * @param string $operator The operator
+	 * @param string $filterComponentName Component Name of the custom filter (value of the designator)
+	 * @param F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function parseDesignatorFilter($operator, $filterComponentName, F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, $this->createCustomFilter($filterComponentName));
+	}
+
+	/**
 	 * Returns the substring of $string which is enclosed by parentheses
 	 * of the first level.
 	 *
-	 * @param  string $string: The string to parse
+	 * @param string $string The string to parse
 	 * @return string The inner part between the first level of parentheses
 	 * @throws F3_FLOW3_AOP_Exception_InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -214,13 +234,14 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * Parses the signature pattern and returns the visibility modifier if any. If a modifier
 	 * was found, it will be removed from the $signaturePattern.
 	 *
-	 * @param  string &$signaturePattern: The regular expression for matching the method() signature
+	 * @param string &$signaturePattern The regular expression for matching the method() signature
 	 * @return string Visibility modifier or NULL of none was found
 	 * @throws F3_FLOW3_AOP_Exception_InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getVisibilityFromSignaturePattern(&$signaturePattern) {
 		$visibility = NULL;
+		$matches = array();
 		$numberOfMatches = preg_match_all(self::PATTERN_MATCHVISIBILITYMODIFIER, $signaturePattern, $matches, PREG_SET_ORDER);
 		if ($numberOfMatches > 1) throw new F3_FLOW3_AOP_Exception_InvalidPointcutExpression('Syntax error: method name expected after visibility modifier in "' . $signaturePattern . '".', 1172492754);
 		if ($numberOfMatches === FALSE) throw new F3_FLOW3_AOP_Exception_InvalidPointcutExpression('Error while matching visibility modifier in "' . $signaturePattern . '".', 1172492967);
@@ -229,6 +250,17 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 			$signaturePattern = trim(substr($signaturePattern, F3_PHP6_Functions::strlen($visibility)));
 		}
 		return $visibility;
+	}
+
+	/**
+	 * Factory method for creating custom filter instances
+	 *
+	 * @param string Component name of the filter
+	 * @return object An instance of the filter component
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function createCustomFilter($filterComponentName) {
+		return $this->componentManager->getComponent($filterComponentName);
 	}
 }
 ?>

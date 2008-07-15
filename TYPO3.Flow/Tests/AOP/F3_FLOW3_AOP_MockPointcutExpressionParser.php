@@ -21,25 +21,24 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The contract for an AOP Pointcut Filter class
+ * A mock pointcut expression parser - used to test the real pointcut expression parser
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @version $Id:F3_FLOW3_AOP_PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_PointcutFilterInterface {
+class F3_FLOW3_AOP_MockPointcutExpressionParser extends F3_FLOW3_AOP_PointcutExpressionParser {
 
 	/**
-	 * Checks if the specified class and method matches against the filter
+	 * Factory method for creating custom filter instances
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method: The method to check the name of
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class / method match, otherwise FALSE
+	 * @param string Component name of the filter
+	 * @return object An instance of the filter component
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
+	protected function createCustomFilter($filterComponentName) {
+		return new $filterComponentName;
+	}
 }
-
 ?>

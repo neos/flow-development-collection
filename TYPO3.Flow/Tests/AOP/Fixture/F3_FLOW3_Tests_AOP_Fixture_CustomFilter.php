@@ -21,25 +21,24 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The contract for an AOP Pointcut Filter class
+ * A dummy custom pointcut filter
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_PointcutFilterInterface {
+class F3_FLOW3_Tests_AOP_Fixture_CustomFilter implements F3_FLOW3_AOP_PointcutFilterInterface {
 
 	/**
-	 * Checks if the specified class and method matches against the filter
+	 * Matches always
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method: The method to check the name of
-	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class / method match, otherwise FALSE
+	 * @return TRUE
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
-}
+	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
+		return TRUE;
+	}
 
+}
 ?>

@@ -534,6 +534,29 @@ class F3_MySecurityPackage_FooSecurityAspect {
           <para><code>classTaggedWith(cool.*)</code></para>
         </example>
       </section>
+
+      <section>
+        <title>filter()</title>
+
+        <para>If the built-in filters don't suit your needs you can even
+        define your own custom filters. All you need to do is create a class
+        implementing the
+        <interfacename>F3_FLOW3_AOP_PointcutFilterInterface</interfacename>
+        and develop your own logic for the <methodname>matches()</methodname>
+        method. The custom filter can then be invoked by using the
+        <methodname>filter()</methodname> designator:</para>
+
+        <synopsis><function>filter(<replaceable>CustomFilterComponentName</replaceable>)</function></synopsis>
+
+        <example>
+          <title>filter() pointcut designator</title>
+
+          <para>If the current method matches is determined by the custom
+          filter:</para>
+
+          <para><code>filter(F3_MyPackage_MyCustomPointcutFilter)</code></para>
+        </example>
+      </section>
     </section>
 
     <section>
@@ -555,7 +578,7 @@ class F3_MySecurityPackage_FooSecurityAspect {
 
         <para><programlisting language="php">/**
  * Fixture class for testing poincut definitions
- * 
+ *
  * @package TestPackage
  * @aspect
  */
@@ -567,29 +590,29 @@ class F3_TestPackage_PointcutTestingAspect {
     * @pointcut method(F3_TestPackage_PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; !method(F3_TestPackage_PointcutTestingTargetClass3-&gt;.*())
     */
    public function pointcutTestingTargetClasses() {}
-   
+
    /**
     * Pointcut which consists of only the F3_TestPackage_OtherPointcutTestingTargetClass.
     *
     * @pointcut method(F3_TestPackage_OtherPointcutTestingTargetClass-&gt;.*())
     */
    public function otherPointcutTestingTargetClass() {}
-   
+
    /**
     * A combination of both above pointcuts
-    * 
+    *
     * @pointcut F3_TestPackage_PointcutTestingAspect-&gt;pointcutTestingTargetClasses || F3_TestPackage_PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
     * @author Robert Lemke &lt;robert@typo3.org&gt;
     */
    public function bothPointcuts() {}
-   
+
    /**
     * A pointcut which matches all classes from the service layer
     *
     * @pointcut within(F3_FLOW3_ServiceLayerInterface)
     */
    public function serviceLayerClasses() {}
-   
+
    /**
     * A pointcut which matches any method from the BasicClass and all classes from the service layer
     *
@@ -935,7 +958,7 @@ class F3_MyPackage_IntroductionAspect {
     */
    public function newMethod(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
          // We call the advice chain, in case any other advice is declared for this method,
-         // but we don't care about the result. 
+         // but we don't care about the result.
       $someResult = $joinPoint-&gt;getAdviceChain-&gt;proceed($joinPoint);
 
       $a = $joinPoint-&gt;getMethodArgument('a');
