@@ -536,7 +536,7 @@ final class F3_FLOW3 {
 				$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
 				$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);
 				$includePath = str_replace('/', DIRECTORY_SEPARATOR, $includePath);
-				set_include_path(get_include_path() . PATH_SEPARATOR . $includePath);
+				set_include_path($includePath . PATH_SEPARATOR . get_include_path());
 			}
 		}
 	}
