@@ -7,5 +7,211 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Configuration Manager</title>
 
-  <para></para>
+  <para>The configuration manager handles configuration tasks, like reading
+  configuration, configuration cascading, and (later) also writing
+  configuration.</para>
+
+  <section>
+    <title>Configuration files</title>
+
+    <para>There are different configuration files that are handled by the
+    configuration manager:</para>
+
+    <variablelist>
+      <varlistentry>
+        <term><filename>FLOW3.php</filename></term>
+
+        <listitem>
+          <para>Contains configuration for FLOW3 itself and always refers to
+          the FLOW3 package.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Components.php</filename></term>
+
+        <listitem>
+          <para>Contains component configuration, see the Component Manager
+          section for more information.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Packages.php</filename></term>
+
+        <listitem>
+          <para>Contains package configuration. Configuration options in this
+          file <emphasis>must</emphasis> explicitly contain the package
+          name!</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Settings.php</filename></term>
+
+        <listitem>
+          <para>Contains user-level settings, i.e. configuration options the
+          users are likely to change. Configuration options in this file
+          <emphasis>must</emphasis> explicitly contain the package
+          name!</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section>
+      <title>Defining configuration options</title>
+
+      <para>Available configuration options must be defined in the respective
+      package-level configuration files.</para>
+
+      <example>
+        <title>Example for a package-level Settings.php</title>
+
+        <para><programlisting><literal>&lt;?php
+declare(ENCODING="utf-8");
+
+/*                                                                        *
+ * Settings Configuration for the TYPO3CR Package                         *
+ *                                                                        */
+
+/**
+ * @package TYPO3CR
+ * @version $Id: Components.php 888 2008-05-30 16:00:05Z k-fish $
+ */
+
+/**
+ * The storage backend to use for TYPO3CR.
+ *
+ * @var F3_TYPO3CR_Storage_BackendInterface
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3_TYPO3CR_Storage_Backend_PDO';
+
+/**
+ * Options which are passed to the storage backend used by TYPO3CR
+ *
+ * @var array
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
+  'dataSourceName' =&gt; 'sqlite:/tmp/TYPO3CR.db',
+  'username' =&gt; NULL,
+  'password' =&gt; NULL
+);
+
+?&gt;</literal></programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>Special configuration options for
+      <filename>Packages.php</filename></title>
+
+      <para>In <filename>Packages.php</filename> you can use two special
+      options influencing the class autoloader of FLOW3's resource
+      manager.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;specialClassNameAndPaths</term>
+
+          <listitem>
+            <para>This can be used to register classes outside the
+            include_path and not covered by the FLOW3 class autloader.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;includePaths</term>
+
+          <listitem>
+            <para>This can be used to add paths to the PHP
+            include_path.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The values for those options may contain markers which are
+      replaced before the value is used:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>%PATH_PACKAGE%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package folder.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>%PATH_PACKAGE_CLASSES%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package's
+            <filename>Classes</filename> folder.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>%PATH_PACKAGE_RESOURCES%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package's
+            <filename>Resources</filename> folder.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <example>
+        <title>Example for using specialClassNameAndPaths</title>
+
+        <programlisting><literal>&lt;?php
+declare(ENCODING="utf-8");
+
+/*                                                                        *
+ * Packages configuration of the Smarty package                           *
+ *                                                                        */
+
+/**
+ * @package Smarty
+ * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
+ */
+
+$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%/PHP/Smarty/Smarty.class.php';
+
+?&gt;</literal></programlisting>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Configuration cascade</title>
+
+    <orderedlist>
+      <listitem>
+        <para>The package-level configuration (residing the package's
+        <filename>Configuration</filename> folder) is read first.</para>
+      </listitem>
+
+      <listitem>
+        <para>The global configuration from the top-level
+        <filename>Configuration</filename> folder is merged and takes
+        precedence.</para>
+      </listitem>
+
+      <listitem>
+        <para>Configuration for the current context is merged and takes
+        precedence.</para>
+      </listitem>
+    </orderedlist>
+  </section>
+
+  <section>
+    <title>Reading configuration</title>
+
+    <para>In your code you can read configuration with the configuration
+    manager's getConfiguration() method. It will return a configuration
+    container object providing array-style and object-style access to the
+    configuration options. The returned configuration will never contain the
+    package name, it is filtered out for packages and settings
+    configuration.</para>
+  </section>
 </section>
