@@ -334,14 +334,18 @@ final class F3_FLOW3 {
 	 */
 	public function initializeResources() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_RESOURCES) throw new F3_FLOW3_Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1210080996);
+		$this->initializationLevel = self::INITIALIZATION_LEVEL_RESOURCES;
 
 		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
 
 		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
 		$metadataCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Resource_Manager', $cacheBackend);
+		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
+
+		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
 		$resourcePublisher = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher');
-		$resourcePublisher->initializeMirrorDirectory($this->configuration->resource->cache->publicPath);
+		$resourcePublisher->initializeMirrorDirectory($this->configuration->resource->cache->publicPath . $requestType . '/');
 		$resourcePublisher->setMetadataCache($metadataCache);
 		$resourcePublisher->setCacheStrategy($this->configuration->resource->cache->strategy);
 
@@ -349,8 +353,6 @@ final class F3_FLOW3 {
 		foreach (array_keys($activePackages) as $packageKey) {
 			$resourcePublisher->mirrorPublicPackageResources($packageKey);
 		}
-
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_RESOURCES;
 	}
 
 	/**
