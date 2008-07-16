@@ -159,7 +159,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$backend->save($entryIdentifier, $data);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 
@@ -189,7 +189,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$backend->save($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier ;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier ;
 		$filesFound = glob($pattern);
 		$this->assertEquals(1, count($filesFound), 'There was not exactly one cache entry.');
 	}
@@ -290,7 +290,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
 
-		$pattern = $cacheDirectory . $context . '/Cache/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
 
 		$backend->save($entryIdentifier, $data);
 		$filesFound = glob($pattern);
@@ -368,7 +368,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$backend->setCache($cache);
 		$this->backend = $backend;
 		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
-		$cacheDirectory = $backend->getCacheDirectory() . $context . '/Cache/UnitTestCache/';
+		$cacheDirectory = $backend->getCacheDirectory() . $context . '/Data/UnitTestCache/';
 
 		$backend->save('BackendFileTest1', $data, array('UnitTestTag%test'));
 		$backend->save('BackendFileTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
@@ -420,7 +420,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	public function tearDown() {
 		if (is_object($this->backend)) {
 			$context = $this->componentManager->getContext();
-			$directory = $this->backend->getCacheDirectory() . $context . '/Cache/UnitTestCache';
+			$directory = $this->backend->getCacheDirectory() . $context . '/Data/UnitTestCache';
 			if (is_dir($directory)) F3_FLOW3_Utility_Files::removeDirectoryRecursively($directory);
 
 			$pattern = $this->backend->getCacheDirectory() . $context . '/Tags/UnitTestTag%*/*';

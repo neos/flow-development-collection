@@ -250,8 +250,7 @@ class F3_FLOW3_Utility_Environment {
 	}
 
 	/**
-	 * Returns the full path to the temp dir as defined by the system or
-	 * in the php.ini
+	 * Returns the full path to the temp dir as defined by the system
 	 *
 	 * @return string Path to PHP's temporary directory
 	 * @author Robert Lemke <robert@typo3.org>
@@ -263,7 +262,10 @@ class F3_FLOW3_Utility_Environment {
 		} else {
 			if (substr($temporaryDirectory, -1, 1) != '/') $temporaryDirectory .= '/';
 		}
-		return $temporaryDirectory;
+
+		$pathHash = md5($this->getScriptPathAndFilename() . $this->getSAPIName());
+		$processUser = posix_getpwuid(posix_geteuid());
+		return $temporaryDirectory . 'FLOW3/' . $processUser['name'] . '/' . $pathHash . '/';
 	}
 }
 ?>

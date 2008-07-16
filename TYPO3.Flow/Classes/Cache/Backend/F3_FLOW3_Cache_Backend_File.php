@@ -59,8 +59,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @return void
 	 */
 	public function initializeComponent() {
-		$pathHash = md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName());
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'FLOW3/' . $pathHash . '/';
+		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
 		try {
 			$this->setCacheDirectory($cacheDirectory);
 		} catch(F3_FLOW3_Cache_Exception $exception) {
@@ -124,7 +123,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		$entryIdentifierHash = sha1($entryIdentifier);
-		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
+		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($cacheEntryPath)) {
@@ -237,7 +236,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	public function flush() {
 		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
+		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return;
@@ -286,7 +285,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 */
 	protected function findCacheFilesByEntry($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
-		$path = $this->cacheDirectory . $this->context . '/Cache/' . $this->cache->getIdentifier() . '/';
+		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
