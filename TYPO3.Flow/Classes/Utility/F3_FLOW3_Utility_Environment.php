@@ -256,12 +256,8 @@ class F3_FLOW3_Utility_Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectory() {
-		$temporaryDirectory = sys_get_temp_dir();
-		if (DIRECTORY_SEPARATOR == '\\') {
-			if (substr($temporaryDirectory, -1, 1) != '\\') $temporaryDirectory .= '\\';
-		} else {
-			if (substr($temporaryDirectory, -1, 1) != '/') $temporaryDirectory .= '/';
-		}
+		$temporaryDirectory = F3_FLOW3_Utility_Files::getUnixStylePath(sys_get_temp_dir());
+		if (substr($temporaryDirectory, -1, 1) != '/') $temporaryDirectory .= '/';
 
 		$pathHash = md5($this->getScriptPathAndFilename() . $this->getSAPIName());
 		$processUser = posix_getpwuid(posix_geteuid());
