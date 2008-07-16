@@ -257,16 +257,13 @@ class F3_FLOW3_Utility_Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectory() {
+		$temporaryDirectory = sys_get_temp_dir();
 		if (DIRECTORY_SEPARATOR == '\\') {
-			if (isset($this->SERVER['TEMP'])) return $this->SERVER['TEMP'];
-			if (isset($this->SERVER['TMP'])) return $this->SERVER['TMP'];
-			if (isset($this->SERVER['SystemRoot'])) return $this->SERVER['SystemRoot'] . '\\temp\\';
-			if (isset($this->SERVER['windir'])) return $this->SERVER['windir'] . '\\temp\\';
-			return '\\temp\\';
+			if (substr($temporaryDirectory, -1, 1) != '\\') $temporaryDirectory .= '\\';
 		} else {
-			if (isset($this->SERVER['TMPDIR'])) return $this->SERVER['TMPDIR'] . '/';
-			return '/tmp/';
+			if (substr($temporaryDirectory, -1, 1) != '/') $temporaryDirectory .= '/';
 		}
+		return $temporaryDirectory;
 	}
 }
 ?>
