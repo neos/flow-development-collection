@@ -71,7 +71,6 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
-		$codeSnippet = $this->getCodeSnippet($exception->getFile(), $exception->getLine());
 		$backtraceCode = $this->getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
@@ -149,12 +148,6 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 		$backtraceCode = '';
 		if (count($trace)) {
 			foreach ($trace as $index => $step) {
-				if (isset($step['file'])) {
-					$pathPosition = strpos($step['file'], FLOW3_PATH_PACKAGES);
-					$stepFileName = ($pathPosition === 0) ? substr($step['file'], strlen(FLOW3_PATH_PACKAGES)) : $step['file'];
-				} else {
-					$stepFileName = '< unknown >';
-				}
 				$class = isset($step['class']) ? $step['class'] . '<span style="color:white;">::</span>' : '';
 
 				$arguments = '';
@@ -164,7 +157,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 						if (is_object($argument)) {
 							$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
 						} elseif (is_string($argument)) {
-							$preparedArgument = (strlen($argument) < 40) ? $argument : substr($argument, 0, 20) . '…' . substr($argument, -20);
+							$preparedArgument = (strlen($argument) < 80) ? $argument : substr($argument, 0, 40) . '…' . substr($argument, -40);
 							$preparedArgument = htmlspecialchars($preparedArgument);
 							$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
 							$arguments .= '"<span style="color:#FF8700;">' . $preparedArgument . '</span>"';
