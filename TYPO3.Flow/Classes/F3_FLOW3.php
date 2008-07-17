@@ -91,6 +91,13 @@ final class F3_FLOW3 {
 	protected $reflectionService;
 
 	/**
+	 * Instance of the cache factory
+	 *
+	 * @var F3_FLOW3_Cache_Factory
+	 */
+	protected $cacheFactory;
+
+	/**
 	 * Flag which states up to which level FLOW3 has been initialized
 	 * @var integer
 	 */
@@ -213,6 +220,8 @@ final class F3_FLOW3 {
 		$errorHandler->setExceptionalErrors($this->configuration->errorHandler->exceptionalErrors);
 		new $this->configuration->exceptionHandler->className;
 
+		$environment = new F3_FLOW3_Utility_Environment($this->configuration->utility->environment);
+
 		$this->reflectionService = new F3_FLOW3_Reflection_Service();
 		foreach ($this->predefinedInterfaceImplementations as $interfaceName => $classNames) {
 			$this->reflectionService->setInterfaceImplementations($interfaceName, $classNames);
@@ -222,7 +231,7 @@ final class F3_FLOW3 {
 		$this->componentManager->setContext($this->context);
 
 		$this->componentManager->registerComponent('F3_FLOW3_Configuration_Manager', NULL, $this->configurationManager);
-		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment');
+		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment', NULL, $environment);
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('F3_FLOW3_Package_ManagerInterface', 'F3_FLOW3_Package_Manager');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_File');
@@ -230,6 +239,7 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service', NULL, $this->reflectionService);
 		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager));
+
 
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
 	}
@@ -341,7 +351,6 @@ final class F3_FLOW3 {
 		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
 		$metadataCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Resource_Manager', $cacheBackend);
 		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
-
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
 		$resourcePublisher = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher');

@@ -110,6 +110,17 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	public function canMirrorPublicPackageResources() {
 		$this->markTestIncomplete('Test not yet implemented.');
 	}
+
+
+	/**
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function tearDown() {
+		if (is_dir($this->publicResourcePath)) {
+			F3_FLOW3_Utility_Files::removeDirectoryRecursively($this->publicResourcePath);
+		}
+	}
+
 }
 
 ?>

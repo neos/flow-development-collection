@@ -30,6 +30,17 @@ $c->exceptionHandler->className = 'F3_FLOW3_Error_DebugExceptionHandler';
 $c->errorHandler->exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR);
 
 /**
+ * Defines the base directory which FLOW3 may use for storing different kinds
+ * of temporary files.
+ *
+ * The directory must be writable and FLOW3 will automatically create a sub
+ * directory "FLOW3" which will contain the actualy temporary files.
+ *
+ * @var string
+ */
+$c->utility->environment->temporaryDirectoryBase = sys_get_temp_dir();
+
+/**
  * Enable or disable caching of the component configurations. If caching is
  * enabled, a cache backend must be properly configured.
  *

@@ -51,13 +51,20 @@ class F3_FLOW3_Utility_Environment {
 	protected $SAPIName;
 
 	/**
+	 * @var string
+	 */
+	protected $temporaryDirectory;
+
+	/**
 	 * This constructor copies the superglobal $_SERVER to a local variable
 	 * and unsets the orginal.
 	 *
-	 * @return void
+	 * @param  array The configuration for the utility environment
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct() {
+	public function __construct(F3_FLOW3_Configuration_Container $configuration) {
+		$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
+
 		$this->SERVER = $_SERVER;
 		$this->POST = $_POST;
 		$this->SAPIName = php_sapi_name();
@@ -250,18 +257,45 @@ class F3_FLOW3_Utility_Environment {
 	}
 
 	/**
-	 * Returns the full path to the temp dir as defined by the system
+	 * Returns the full path to FLOW3's temporary directory.
 	 *
 	 * @return string Path to PHP's temporary directory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectory() {
-		$temporaryDirectory = F3_FLOW3_Utility_Files::getUnixStylePath(sys_get_temp_dir());
-		if (substr($temporaryDirectory, -1, 1) != '/') $temporaryDirectory .= '/';
+		return $this->temporaryDirectory;
+	}
+
+	/**
+	 * Creates FLOW3's temporary directory - or at least asserts that it exists and is
+	 * writeable.
+	 *
+	 * @param string Full path to the base for the temporary directory
+	 * @return string The full path to the temporary directory
+	 * @throws F3_FLOW3_Utility_Exception if the temporary directory could not be created or is not writeable
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function createTemporaryDirectory($temporaryDirectoryBase) {
+		$temporaryDirectoryBase = F3_FLOW3_Utility_Files::getUnixStylePath($temporaryDirectoryBase);
+		if (substr($temporaryDirectoryBase, -1, 1) != '/') $temporaryDirectoryBase .= '/';
 
 		$pathHash = md5($this->getScriptPathAndFilename() . $this->getSAPIName());
 		$processUser = posix_getpwuid(posix_geteuid());
-		return $temporaryDirectory . 'FLOW3/' . $processUser['name'] . '/' . $pathHash . '/';
+		$temporaryDirectory = $temporaryDirectoryBase . 'FLOW3/' . $pathHash . '/' . $processUser['name'] . '/';
+
+		if (!is_dir($temporaryDirectory)) {
+			try {
+				F3_FLOW3_Utility_Files::createDirectoryRecursively($temporaryDirectory);
+			} catch (F3_FLOW3_Error_Exception $exception) {
+			}
+		}
+
+		if (!is_writable($temporaryDirectory)) {
+			$userInfo = posix_getpwuid(posix_geteuid());
+			throw new F3_FLOW3_Utility_Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $userInfo['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 configuration.', 1216287176);
+		}
+
+		return $temporaryDirectory;
 	}
 }
 ?>
