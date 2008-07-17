@@ -85,7 +85,7 @@ class F3_FLOW3_Cache_Manager {
 	 */
 	public function flushCaches() {
 		foreach ($this->caches as $cache) {
-			$cache->getBackend()->flush();
+			$cache->flush();
 		}
 	}
 

@@ -280,7 +280,7 @@ class F3_FLOW3_Utility_Environment {
 		if (substr($temporaryDirectoryBase, -1, 1) != '/') $temporaryDirectoryBase .= '/';
 
 		$pathHash = md5(FLOW3_PATH_PUBLIC . $this->getSAPIName());
-		$processUser = posix_getpwuid(posix_geteuid());
+		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
 		$temporaryDirectory = $temporaryDirectoryBase . 'FLOW3/' . $pathHash . '/' . $processUser['name'] . '/';
 
 		if (!is_dir($temporaryDirectory)) {
@@ -291,8 +291,7 @@ class F3_FLOW3_Utility_Environment {
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			$userInfo = posix_getpwuid(posix_geteuid());
-			throw new F3_FLOW3_Utility_Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $userInfo['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 configuration.', 1216287176);
+			throw new F3_FLOW3_Utility_Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 configuration.', 1216287176);
 		}
 
 		return $temporaryDirectory;
