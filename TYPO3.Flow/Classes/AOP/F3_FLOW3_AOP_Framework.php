@@ -36,19 +36,24 @@ class F3_FLOW3_AOP_Framework {
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Reflection_Service A reference to the reflection service
-	 */
-	protected $reflectionService;
-
-	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
 	 */
 	protected $configuration;
 
 	/**
+	 * @var F3_FLOW3_Reflection_Service A reference to the reflection service
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @var F3_FLOW3_AOP_PointcutExpressionParserInterface An instance of the pointcut expression parser
 	 */
 	protected $pointcutExpressionParser;
+
+	/**
+	 * @var F3_FLOW3_Cache_Factory A reference to the cache factory
+	 */
+	protected $cacheFactory;
 
 	/**
 	 * @var array A registry of all known aspects
@@ -112,6 +117,18 @@ class F3_FLOW3_AOP_Framework {
 	}
 
 	/**
+	 * Injects a reference to the cache factory
+	 *
+	 * @param F3_FLOW3_Cache_Factory $cacheFactory
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectCacheFactory(F3_FLOW3_Cache_Factory $cacheFactory) {
+		$this->cacheFactory = $cacheFactory;
+	}
+
+	/**
 	 * Adds a registered component to the proxy blacklist to prevent the component class
 	 * from being proxied by the AOP framework.
 	 *
@@ -145,9 +162,8 @@ class F3_FLOW3_AOP_Framework {
 		$context = $this->componentManager->getContext();
 
 		if ($this->configuration->aop->proxyCache->enable) {
-			$cacheBackend = $this->componentManager->getComponent($this->configuration->aop->proxyCache->backend, $context, $this->configuration->aop->proxyCache->backendOptions);
-			$proxyCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Proxy', $cacheBackend);
-			$configurationCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_AOP_Configuration', clone $cacheBackend);
+			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3_FLOW3_Cache_VariableCache', $this->configuration->aop->proxyCache->backend, $this->configuration->aop->proxyCache->backendOptions);
+			$configurationCache = $this->cacheFactory->create('FLOW3_AOP_Configuration', 'F3_FLOW3_Cache_VariableCache', $this->configuration->aop->proxyCache->backend, $this->configuration->aop->proxyCache->backendOptions);
 
 			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
 

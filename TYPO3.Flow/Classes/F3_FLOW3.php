@@ -234,12 +234,15 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_Utility_Environment', NULL, $environment);
 		$this->componentManager->registerComponent('F3_FLOW3_AOP_Framework');
 		$this->componentManager->registerComponent('F3_FLOW3_Package_ManagerInterface', 'F3_FLOW3_Package_Manager');
+		$this->componentManager->registerComponent('F3_FLOW3_Cache_Factory');
+		$this->componentManager->registerComponent('F3_FLOW3_Cache_Manager');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_File');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_Backend_Memcached');
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service', NULL, $this->reflectionService);
 		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentManager));
 
+		$this->cacheFactory = $this->componentManager->getComponent('F3_FLOW3_Cache_Factory');
 
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
 	}
@@ -280,7 +283,7 @@ final class F3_FLOW3 {
 		$componentConfigurations = NULL;
 
 		if ($this->configuration->component->configurationCache->enable === TRUE) {
-			$componentConfigurationsCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Component_Configurations', $this->componentManager->getComponent($this->configuration->component->configurationCache->backend, $this->context, $this->configuration->component->configurationCache->backendOptions));
+			$componentConfigurationsCache = $this->cacheFactory->create('FLOW3_Component_Configurations', 'F3_FLOW3_Cache_VariableCache', $this->configuration->component->configurationCache->backend, $this->configuration->component->configurationCache->backendOptions);
 			if ($componentConfigurationsCache->has('baseComponentConfigurations')) {
 				$componentConfigurations = $componentConfigurationsCache->load('baseComponentConfigurations');
 			}
@@ -348,8 +351,7 @@ final class F3_FLOW3 {
 
 		$packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
 
-		$cacheBackend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->context);
-		$metadataCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Resource_Manager', $cacheBackend);
+		$metadataCache = $this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3_FLOW3_Cache_VariableCache', 'F3_FLOW3_Cache_Backend_File');
 		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
@@ -449,7 +451,7 @@ final class F3_FLOW3 {
 		}
 
 		if ($this->configuration->reflection->cache->enable === TRUE) {
-			$reflectionCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Reflection', $this->componentManager->getComponent($this->configuration->reflection->cache->backend, $this->context, $this->configuration->reflection->cache->backendOptions));
+			$reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3_FLOW3_Cache_VariableCache', $this->configuration->reflection->cache->backend, $this->configuration->reflection->cache->backendOptions);
 			if ($reflectionCache->has('reflectionServiceData')) {
 				$this->reflectionService->import($reflectionCache->load('reflectionServiceData'));
 			}
@@ -458,7 +460,6 @@ final class F3_FLOW3 {
 		if (!$this->reflectionService->isInitialized()) {
 			$this->reflectionService->initialize($availableClassNames);
 			if ($this->configuration->reflection->cache->enable === TRUE) {
-				$reflectionCache = $this->componentManager->getComponent('F3_FLOW3_Cache_VariableCache', 'FLOW3_Reflection', $this->componentManager->getComponent($this->configuration->reflection->cache->backend, $this->context, $this->configuration->reflection->cache->backendOptions));
 				$reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
 			}
 		}
