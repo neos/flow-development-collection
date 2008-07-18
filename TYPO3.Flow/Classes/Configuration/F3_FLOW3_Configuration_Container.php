@@ -206,6 +206,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 */
 	public function __get($optionName) {
 		if (!array_key_exists($optionName, $this->options)) {
+			if ($this->locked) throw new F3_FLOW3_Configuration_Exception_NoSuchOption('An option "' . $optionName . '" does not exist in this configuration container.', 1216385011);
 			$this->__set($optionName, new self());
 		}
 		return $this->options[$optionName];
