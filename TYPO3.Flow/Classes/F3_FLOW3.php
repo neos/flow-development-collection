@@ -86,7 +86,7 @@ final class F3_FLOW3 {
 	/**
 	 * Instance of the reflection service
 	 *
-	 * @var F3_FLOW3_Reflection_ClassService
+	 * @var F3_FLOW3_Reflection_Service
 	 */
 	protected $reflectionService;
 
@@ -477,8 +477,7 @@ final class F3_FLOW3 {
 			if (substr($className, -9, 9) != 'Interface') {
 				$componentName = $className;
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
-					$class = new ReflectionClass($className);
-					if (!$class->isAbstract()) {
+					if (!$this->reflectionService->isClassAbstract($className)) {
 						$this->componentManager->registerComponent($componentName, $className);
 					}
 				}
@@ -532,23 +531,25 @@ final class F3_FLOW3 {
 	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
 	 */
 	protected function evaluatePackageConfiguration(F3_FLOW3_Package_Package $package, F3_FLOW3_Configuration_Container $packageConfiguration) {
-		if (isset($packageConfiguration->resourceManager->specialClassNameAndPaths)) {
-			$resourceManager = $this->componentManager->getComponent('F3_FLOW3_Resource_Manager');
-			foreach ($packageConfiguration->resourceManager->specialClassNameAndPaths as $className => $classFilePathAndName) {
-				$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
-				$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
-				$classFilePathAndName = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $classFilePathAndName);
-				$resourceManager->registerClassFile($className, $classFilePathAndName);
+		if (isset($packageConfiguration->resourceManager)) {
+			if (isset($packageConfiguration->resourceManager->specialClassNameAndPaths)) {
+				$resourceManager = $this->componentManager->getComponent('F3_FLOW3_Resource_Manager');
+				foreach ($packageConfiguration->resourceManager->specialClassNameAndPaths as $className => $classFilePathAndName) {
+					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
+					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
+					$classFilePathAndName = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $classFilePathAndName);
+					$resourceManager->registerClassFile($className, $classFilePathAndName);
+				}
 			}
-		}
 
-		if (isset($packageConfiguration->resourceManager->includePaths)) {
-			foreach ($packageConfiguration->resourceManager->includePaths as $includePath) {
-				$includePath = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $includePath);
-				$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
-				$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);
-				$includePath = str_replace('/', DIRECTORY_SEPARATOR, $includePath);
-				set_include_path($includePath . PATH_SEPARATOR . get_include_path());
+			if (isset($packageConfiguration->resourceManager->includePaths)) {
+				foreach ($packageConfiguration->resourceManager->includePaths as $includePath) {
+					$includePath = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $includePath);
+					$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
+					$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);
+					$includePath = str_replace('/', DIRECTORY_SEPARATOR, $includePath);
+					set_include_path($includePath . PATH_SEPARATOR . get_include_path());
+				}
 			}
 		}
 	}

@@ -106,14 +106,36 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	abstract public function has($entryIdentifier);
-	
+
 	/**
 	 * Removes the given cache entry from the cache.
 	 *
 	 * @param string $entryIdentifier: An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not 
+	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	abstract public function remove($entryIdentifier);
+
+	/**
+	 * Removes all cache entries of this cache.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flush() {
+		$this->backend->flush();
+	}
+
+	/**
+	 * Removes all cache entries of this cache which are tagged by the specified tag.
+	 *
+	 * @param string $tag The tag the entries must have
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTag($tag) {
+		$this->backend->flushByTag($tag);
+	}
+
 }
 ?>

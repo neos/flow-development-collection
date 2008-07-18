@@ -91,9 +91,11 @@ class F3_FLOW3_Configuration_Manager {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_FLOW3 :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
+				$configuration->lock();
 				return $configuration;
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_SETTINGS :
+				$configuration->$packageKey->lock();
 				return $configuration->$packageKey;
 		}
 	}
