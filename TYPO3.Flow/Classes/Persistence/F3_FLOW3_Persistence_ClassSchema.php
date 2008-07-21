@@ -79,7 +79,7 @@ class F3_FLOW3_Persistence_ClassSchema {
 	 * Sets (defines) a specific property and its type.
 	 *
 	 * @param string $name Name of the property
-	 * @param string $type Type of the property (ie. one of "integer", "float", "boolean", "string", "array of xy" or some class typ
+	 * @param string $type Type of the property (ie. one of "integer", "float", "boolean", "string", "array" or some class type
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

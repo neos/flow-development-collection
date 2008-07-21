@@ -120,8 +120,8 @@ class F3_FLOW3_Persistence_Manager {
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof F3_FLOW3_Persistence_BackendInterface) throw new F3_FLOW3_Persistence_Exception_MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
-		$classNames = $this->reflectionService->getClassNamesByTag('entity') +
-			$this->reflectionService->getClassNamesByTag('valueobject');
+		$classNames = array_merge($this->reflectionService->getClassNamesByTag('entity'),
+			$this->reflectionService->getClassNamesByTag('valueobject'));
 
 		$this->classSchemata = $this->classSchemataBuilder->build($classNames);
 		$this->backend->initialize($this->classSchemata);
