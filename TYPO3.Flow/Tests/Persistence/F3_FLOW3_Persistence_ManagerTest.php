@@ -34,7 +34,7 @@ class F3_FLOW3_Persistence_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSessionReturnsATheCurrentPersistenceSession() {
+	public function getSessionReturnsTheCurrentPersistenceSession() {
 		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
 		$mockClassSchemataBuilder = $this->getMock('F3_FLOW3_Persistence_ClassSchemataBuilder', array(), array(), '', FALSE);
 
@@ -43,6 +43,23 @@ class F3_FLOW3_Persistence_ManagerTest extends F3_Testing_BaseTestCase {
 		$manager->injectSession($session);
 
 		$this->assertType('F3_FLOW3_Persistence_Session', $manager->getSession());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function initializeRecognizesEntityAndValueObjects() {
+		$mockReflectionService = $this->getMock('F3_FLOW3_Reflection_Service');
+		$mockReflectionService->expects($this->any())->method('getClassNamesByTag')->will($this->onConsecutiveCalls(array('EntityClass'), array('ValueClass')));
+		$mockClassSchemataBuilder = $this->getMock('F3_FLOW3_Persistence_ClassSchemataBuilder', array(), array(), '', FALSE);
+			// with() here holds the important assertion
+		$mockClassSchemataBuilder->expects($this->once())->method('build')->with(array('EntityClass', 'ValueClass'))->will($this->returnValue(array()));
+		$mockBackend = $this->getMock('F3_FLOW3_Persistence_BackendInterface');
+
+		$manager = new F3_FLOW3_Persistence_Manager($mockReflectionService, $mockClassSchemataBuilder);
+		$manager->injectBackend($mockBackend);
+		$manager->initialize();
 	}
 
 	/**
