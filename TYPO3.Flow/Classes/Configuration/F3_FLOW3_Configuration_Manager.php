@@ -41,6 +41,7 @@ class F3_FLOW3_Configuration_Manager {
 	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
 	const CONFIGURATION_TYPE_COMPONENTS = 'Components';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+	const CONFIGURATION_TYPE_ROUTES = 'Routes';
 
 	/**
 	 * @var string The application context of the configuration to manage
@@ -73,6 +74,7 @@ class F3_FLOW3_Configuration_Manager {
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
 			case self::CONFIGURATION_TYPE_SETTINGS :
+			case self::CONFIGURATION_TYPE_ROUTES :
 				break;
 			default:
 				throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
@@ -91,6 +93,7 @@ class F3_FLOW3_Configuration_Manager {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_FLOW3 :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
+			case self::CONFIGURATION_TYPE_ROUTES :
 				$configuration->lock();
 				return $configuration;
 			case self::CONFIGURATION_TYPE_PACKAGES :

@@ -251,5 +251,27 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 		unset($this->options[$optionName]);
 		$this->iteratorCount = count($this->options);
 	}
+
+	/**
+	 * Magic method to allow setting of configuration options via dummy setters in the format "set[OptionName]([optionValue])".
+	 *
+	 * @param string $methodName Name of the called setter method.
+	 * @param array $arguments Method arguments, passed to the configuration option.
+	 * @return F3_FLOW3_Configuration_Container This configuration container object
+	 * @throws F3_FLOW3_Configuration_Exception if $methodName does not start with "set" or number of arguments are empty
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function __call($methodName, $arguments) {
+		if (F3_PHP6_Functions::substr($methodName, 0, 3) != 'set') {
+			throw new F3_FLOW3_Configuration_Exception('Method "' . $methodName . '" does not exist.', 1213444319);
+		}
+		if (count($arguments) != 1) {
+			throw new F3_FLOW3_Configuration_Exception('You have to pass exactly one argument to a configuration option setter.', 1213444809);
+		}
+		$optionName = F3_PHP6_Functions::lcfirst(F3_PHP6_Functions::substr($methodName, 3));
+		$this->__set($optionName, $arguments[0]);
+
+		return $this;
+	}
 }
 ?>

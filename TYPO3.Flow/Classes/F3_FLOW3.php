@@ -127,7 +127,7 @@ final class F3_FLOW3 {
 	 */
 	protected $predefinedInterfaceImplementations = array(
 		'F3_FLOW3_Security_ContextHolderInterface' => array('F3_FLOW3_Security_ContextHolderSession'),
-		'F3_FLOW3_MVC_Web_RouterInterface' => array('F3_FLOW3_MVC_Web_Router')
+		'F3_FLOW3_MVC_Web_Routing_RouterInterface' => array('F3_FLOW3_MVC_Web_Routing_Router')
 	);
 
 	/**

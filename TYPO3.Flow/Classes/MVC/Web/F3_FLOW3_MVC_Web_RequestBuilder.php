@@ -42,7 +42,7 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_RouterInterface
+	 * @var F3_FLOW3_MVC_Web_Routing_RouterInterface
 	 */
 	protected $router;
 
@@ -51,11 +51,11 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
 	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
-	 * @param F3_FLOW3_MVC_Web_RouterInterface $router A router which routes the web request to a controller and action
+	 * @param F3_FLOW3_MVC_Web_Routing_RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_MVC_Web_RouterInterface $router) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {
 		$this->componentManager = $componentManager;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->router = $router;
