@@ -31,11 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Controller_AbstractController {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface The component manager
-	 */
-	protected $componentManager;
-
-	/**
 	 * @var F3_FLOW3_MVC_Request The current request
 	 */
 	protected $request;
@@ -69,7 +64,6 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->arguments = $componentManager->getComponent('F3_FLOW3_MVC_Controller_Arguments');
-		$this->componentManager = $componentManager;
 		parent::__construct($componentManager, $packageManager);
 	}
 

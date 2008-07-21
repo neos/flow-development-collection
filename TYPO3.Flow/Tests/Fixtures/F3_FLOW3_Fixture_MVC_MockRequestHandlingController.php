@@ -15,12 +15,18 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ */
+
+/**
  * A mock RequestHandlingController
  *
- * @package		FLOW3
- * @subpackage	Tests
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
@@ -42,14 +48,24 @@ class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Co
 	/**
 	 * Doesn't really process the request but sets a flag that this method was called.
 	 *
-	 * @param  F3_FLOW3_MVC_Request							$request
-	 * @param  F3_FLOW3_MVC_Response						$response
+	 * @param F3_FLOW3_MVC_Request $request
+	 * @param F3_FLOW3_MVC_Response $response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
 		parent::processRequest($request, $response);
 		$this->requestHasBeenProcessed = TRUE;
+	}
+
+	/**
+	 * Returns the package settings which were injected into this controller
+	 *
+	 * @return F3_FLOW3_Configuration_Container
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSettings() {
+		return $this->settings;
 	}
 }
 

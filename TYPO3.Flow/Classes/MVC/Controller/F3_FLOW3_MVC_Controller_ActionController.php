@@ -31,11 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
 	/**
-	 * @var (not used yet)
-	 */
-	protected $configuration;
-
-	/**
 	 * @var string Method name of the default action. Set it to the name of another action to define an alternative method as the default action.
 	 */
 	protected $defaultActionMethodName = 'defaultAction';

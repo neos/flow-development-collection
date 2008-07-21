@@ -36,11 +36,6 @@ abstract class F3_FLOW3_MVC_Controller_AbstractController {
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Package_ManagerInterface A reference to the Package Manager
-	 */
-	protected $packageManager;
-
-	/**
 	 * @var string Key of the package this controller belongs to
 	 */
 	protected $packageKey;
@@ -51,16 +46,34 @@ abstract class F3_FLOW3_MVC_Controller_AbstractController {
 	protected $package;
 
 	/**
+	 * Contains the settings of the current package
+	 *
+	 * @var F3_FLOW3_Configuration_Container
+	 */
+	protected $settings;
+
+	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
 		$this->componentManager = $componentManager;
-		$this->packageManager = $packageManager;
-		list($dummy, $this->packageKey) = explode('_', get_class($this));
-		$this->package = $this->packageManager->getPackage($this->packageKey);
+		list(, $this->packageKey) = explode('_', get_class($this));
+		$this->package = $packageManager->getPackage($this->packageKey);
+	}
+
+	/**
+	 * Sets / injects the settings of the package this controller belongs to.
+	 *
+	 * @param F3_FLOW3_Configuration_Container $settings Settings container of the current package
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setSettings(F3_FLOW3_Configuration_Container $settings) {
+		$this->settings = $settings;
 	}
 
 	/**
