@@ -40,7 +40,7 @@
 
     <xi:include href="PackageManager.xml"/>
 
-    <xi:include href="ComponentManager.xml"/>
+    <xi:include href="ComponentFramework.xml"/>
 
     <xi:include href="ConfigurationManager.xml"/>
 

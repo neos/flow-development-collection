@@ -6,9 +6,9 @@
          xmlns:svg="http://www.w3.org/2000/svg"
          xmlns:ns="http://docbook.org/ns/docbook"
          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
-  <title>Component Manager</title>
+  <title>Component Framework</title>
 
-  <para>All objects are controlled centrally by the Component Manager. It
+  <para>All objects are controlled centrally by the Component Framework. It
   implements the <firstterm>Inversion of Control</firstterm>
   (<acronym>IoC</acronym>) principle and provides some additional features
   such as a caching mechanism for objects. Because all packages are built on
@@ -38,10 +38,10 @@
           <para><emphasis>Use <function>getComponent()</function> instead of
           the <function>new</function> operator!</emphasis></para>
 
-          <para>The instantiation of classes must be handled by the Component
-          Factory. Therefore if you have to instantiate a class or need an
-          existing instance of a class, use the Component Factory for
-          retrieving one:</para>
+          <para>The instantiation of classes must be handled by the
+          <firstterm>Component Factory</firstterm>. Therefore if you have to
+          instantiate a class or need an existing instance of a class, use the
+          Component Factory for retrieving one:</para>
 
           <example>
             <title>Don't use the new operator</title>
@@ -51,16 +51,32 @@ $myObject = new F3_MyPackage_MyClassName;</programlisting>
           </example>
 
           <example>
-            <title>Ask the Component Manager instead</title>
+            <title>Ask the Component Factory instead</title>
 
-            <programlisting language="php">class F3_MyPackage_SomeClass {
+            <programlisting language="php">/**
+ * A sample class
+ */
+class F3_MyPackage_SomeClass {
 
+   /**
+    * @var F3_FLOW3_Component_FactoryInterface
+    */
    protected $componentFactory;
 
+   /**
+    * Constructs this sample class
+    *
+    * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
+    */
    public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
       $this-&gt;componentFactory = $componentFactory;
    }
 
+   /**
+    * Just some method
+    *
+    * @return void
+    */
    public function someFunction() {
       $myObject = $this-&gt;componentFactory-&gt;getComponent('F3_MyPackage_MyClassName');
    }
@@ -204,39 +220,39 @@ class F3_MyPackage_SomeClass {
     </section>
 
     <section>
-      <title>Component Manager API</title>
+      <title>Component Framework API</title>
 
-      <para>The Component Manager provides a lean API for registering,
+      <para>The Component Framework provides a lean API for registering,
       configuring and retrieving instances of components. Some of the methods
       provided are exclusively used within the <package>FLOW3</package>
       package or in unit tests and should possibly not be used elsewhere. By
-      offering Dependency Injection, the Component Manager helps you to avoid
-      creating rigid interdependencies between components. It allows for
+      offering Dependency Injection, the Component Framework helps you to
+      avoid creating rigid interdependencies between components. It allows for
       writing code which is hardly or even not at all aware of the framework
       it is working in.</para>
 
       <para>Although Dependency Injection is what you should strive for, it
       might happen that you need to retrieve component instances directly.
       Instead of using PHP's <function>new</function> operator, you must ask
-      the Component Manager for the instance of a component.</para>
+      the Component Factory for the instance of a component.</para>
 
-      <para>First, you need an instance of the Component Manager itself and as
+      <para>First, you need an instance of the Component Factory itself and as
       you have seen in the shortcut example before, one way of getting it is
       adding a new parameter to your class constructor method:</para>
 
-      <programlisting language="php">public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+      <programlisting language="php">public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 }</programlisting>
 
       <para>To explicitly retrieve the instance of a component use the
       <function>getComponent()</function> method:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('F3_MyPackage_MyClassName');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;getComponent('F3_MyPackage_MyClassName');</programlisting>
 
       <para>It is possible to pass arguments to the constructor of the
       component class just by adding them to the
       <function>getComponent()</function> call:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('F3_MyPackage_MyClassName', 'first argument', 'second argument');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;getComponent('F3_MyPackage_MyClassName', 'first argument', 'second argument');</programlisting>
     </section>
 
     <section>
@@ -368,7 +384,7 @@ class F3_MyPackage_SomeClass {
         therefore all you have to do is to write your constructor
         method.</para>
 
-        <para>The Component Manager can also be configured manually to inject
+        <para>The Component Factory can also be configured manually to inject
         a certain component or component type. You'll have to do that either
         if you want to switch off autowiring or want to specify a
         configuration which differs from would be done automatically.</para>
@@ -376,8 +392,8 @@ class F3_MyPackage_SomeClass {
         <example>
           <title>Components.php file for Constructor Injection</title>
 
-          <programlisting language="php">$c->F3_Authentication_LDAPAuthentication->
-constructorArguments[1]->reference = 'F3_Log_ASpecialLogger';</programlisting>
+          <programlisting language="php">$c-&gt;F3_Authentication_LDAPAuthentication-&gt;
+constructorArguments[1]-&gt;reference = 'F3_Log_ASpecialLogger';</programlisting>
         </example>
 
         <para>The two lines above define that a component instance of
@@ -566,8 +582,8 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       </example>
 
       <para>Due to the @required annotation, the injection of a logger is now
-      required. If the object builder can't autowire a logger for this
-      injection method, it will now throw an exception.</para>
+      required. If the component object builder can't autowire a logger for
+      this injection method, it will now throw an exception.</para>
     </section>
 
     <section>
@@ -864,7 +880,7 @@ $greeter-&gt;sayHelloTo('Heike');
     <section>
       <title>Injecting properties and constructor arguments</title>
 
-      <para>As mentioned earlier, the Component Manager allows for injection
+      <para>As mentioned earlier, the Component Factory allows for injection
       of straight values or references (ie. dependencies) either by passing
       them as constructor arguments during instantiation of the component
       class or by calling a setter method which sets the wished property
@@ -882,7 +898,7 @@ $greeter-&gt;sayHelloTo('Heike');
             <para><emphasis>Straight values</emphasis> are static values of a
             simple type. They can be strings, integers, booleans, array or
             even custom objects (ie. objects which are not handled by the
-            Component Manager) and are passed on as they are.</para>
+            Component Framework) and are passed on as they are.</para>
           </listitem>
 
           <listitem>
@@ -1012,7 +1028,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;distinguishedName
     the instantiation of the component classes. Usually it's sufficient to
     know that you have to either retrieve an instance manually with the
     <function>getComponent</function> method or get them injected by the
-    Component Manager. From the component's point of view, a few options may
+    Component Factory. From the component's point of view, a few options may
     be set to take influence on the instantiation of its class. This section
     explains these configuration options and finally outlines the
     instantiation process as a whole.</para>
@@ -1020,10 +1036,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;distinguishedName
     <section>
       <title>Scopes</title>
 
-      <para>The objects created by the Component Manager all exist in a
+      <para>The objects created by the Component Factory all exist in a
       certain <firstterm>scope</firstterm>. By default, an instance of a
       component class is unique which makes sure that the exact same object is
-      returned whenever the Component Manager is asked for a specific
+      returned whenever the Component Factory is asked for a specific
       component. This default scope is called
       <firstterm>Singleton</firstterm>. Of course other scopes are supported
       as well:</para>
@@ -1076,9 +1092,9 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;distinguishedName
         </tgroup>
       </table>
 
-      <para>A great feature of the Component Manager is that components don't
-      have to implement their own mechanism for administrating their scope -
-      it only has to be configured. The following example contains
+      <para>A great feature of the Component Framework is that components
+      don't have to implement their own mechanism for administrating their
+      scope - it only has to be configured. The following example contains
       configurations for three components, all living in a different
       scope:</para>
 
