@@ -62,8 +62,8 @@ class F3_FLOW3_MVC_Controller_ArgumentTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingDataTypeToConstructorReallySetsTheDataType() {
-		$argument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'dummy', 'number');
-		$this->assertEquals('number', $argument->getDataType(), 'The specified data type has not been set correctly.');
+		$argument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'dummy', 'Number');
+		$this->assertEquals('Number', $argument->getDataType(), 'The specified data type has not been set correctly.');
 	}
 
 	/**
