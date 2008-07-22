@@ -50,17 +50,27 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	}
 
 	/**
-	 * Returns the value of any (even protected) property of this class.
+	 * Returns the value of an arbitrary property.
+	 * The method does not have to check if the property exists.
 	 *
-	 * Even though this might be appealing, make sure to only use this
-	 * backdoor in well-thought situations (like for the persistence framework).
-	 *
-	 * @param string Name of the property
-	 * @return mixed Value of the specified property
+	 * @param string $propertyName Name of the property
+	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxyGetPropertyValue($propertyName) {
+	public function AOPProxyGetProperty($propertyName) {
 		return $this->$propertyName;
+	}
+
+	/**
+	 * Sets the value of an arbitrary property.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @param mixed $propertyValue Value to set
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function AOPProxySetProperty($propertyName, $propertyValue) {
+		$this->$propertyName = $propertyValue;
 	}
 
 	/**

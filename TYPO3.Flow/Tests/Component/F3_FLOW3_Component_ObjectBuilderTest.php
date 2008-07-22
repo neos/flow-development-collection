@@ -43,7 +43,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory);
+		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
 	}
 
 	/**
@@ -330,7 +330,12 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectReturnsAnObjectOfTheSpecifiedType() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+		$this->assertType('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $object);
 	}
 
 	/**
@@ -338,7 +343,19 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectSetsTheSpecifiedPropertiesInTheTargetObjectRegardlessIfTheyArePublicOrProtected() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+
+		$properties = array(
+			'firstProperty' => 'firstValue',
+			'secondProperty' => 1928,
+			'publicProperty' => 'I am public'
+		);
+
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, $properties);
+
+		$this->assertEquals($properties['firstProperty'], $object->AOPProxyGetProperty('firstProperty'));
 	}
 
 	/**
@@ -346,7 +363,17 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectRejectsComponentTypesWhichAreNotPersistable() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_NonPersistableClass');
+
+		try {
+			$componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_NonPersistableClass', $componentConfiguration, array());
+			$this->fail('No exception was thrown.');
+		} catch (F3_FLOW3_Component_Exception_CannotReconstituteObject $exception) {
+
+		}
 	}
 
 	/**
@@ -354,15 +381,45 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectTakesPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+
+		$this->assertFalse($object->constructorHasBeenCalled);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethodAfterReconstitution() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethod() {
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+
+		$this->assertTrue($object->wakeupHasBeenCalled);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethodOnlyAfterAllPropertiesHaveBeenRestored() {
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+
+		$properties = array(
+			'wakeupHasBeenCalled' => FALSE
+		);
+
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, $properties);
+
+		$this->assertTrue($object->wakeupHasBeenCalled);
 	}
 
 	/**

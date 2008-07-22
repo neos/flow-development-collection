@@ -16,45 +16,20 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Component
  * @version $Id$
  */
 
 /**
- * Contract and marker interface for the AOP Proxy classes
+ * "Cannot reconstitute object" Exception
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_ProxyInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Component
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_ProxyInterface {
+class F3_FLOW3_Component_Exception_CannotReconstituteObject extends F3_FLOW3_Component_Exception {
 
-	/**
-	 * Invokes the joinpoint - calls the target methods.
-	 *
-	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point
-	 * @return mixed Result of the target (ie. original) method
-	 */
-	public function AOPProxyInvokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint);
-
-	/**
-	 * Returns the value of an arbitrary property.
-	 * The method does not have to check if the property exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return mixed Value of the property
-	 */
-	public function AOPProxyGetProperty($propertyName);
-
-	/**
-	 * Sets the value of an arbitrary property.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $propertyValue Value to set
-	 * @return void
-	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue);}
+}
 
 ?>

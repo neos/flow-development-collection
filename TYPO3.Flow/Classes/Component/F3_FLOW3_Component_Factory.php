@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Component
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface {
@@ -49,15 +49,6 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	protected $componentObjectBuilder;
 
 	/**
-	 * Constructs the component factory
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this);
-	}
-
-	/**
 	 * Injects the component manager
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
@@ -67,6 +58,17 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	 */
 	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
+	}
+
+	/**
+	 * Injects the component object builder
+	 *
+	 * @param F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectComponentObjectBuilder(F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder) {
+		$this->componentObjectBuilder = $componentObjectBuilder;
 	}
 
 	/**
@@ -101,11 +103,9 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	 * @param string $componentName The name of the component to return an instance of
 	 * @return object The component instance
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException if $componentName is not a string
 	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if a component with the given name does not exist
 	 */
 	public function getComponent($componentName) {
-		if (!is_string($componentName)) throw new InvalidArgumentException('The component name must be of type string, ' . gettype($componentName) . ' given.', 1181908191);
 		if (!$this->componentManager->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);

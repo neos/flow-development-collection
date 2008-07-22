@@ -64,8 +64,8 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 * @return mixed			Result of the advice chain or the original method
 	 */
 	public function ' . $methodName . '(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
-		$result = NULL;
 		$this->componentFactory = $AOPProxyComponentFactory;
+		$result = NULL;
 		' . $methodsAndAdvicesArrayCode . '
 		' . $interceptionCode . '
 		return $result;

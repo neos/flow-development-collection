@@ -38,6 +38,11 @@ class F3_FLOW3_Component_ObjectBuilder {
 	protected $componentFactory;
 
 	/**
+	 * @var F3_FLOW3_Reflection_Service A reference to the reflection service
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @var array A little registry of component names which are currently being built. Used to prevent endless loops due to circular dependencies.
 	 */
 	protected $componentsBeingBuilt = array();
@@ -50,12 +55,14 @@ class F3_FLOW3_Component_ObjectBuilder {
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_Factory $componentFactory: A reference to the component factory - used for fetching other component objects while solving dependencies
+	 * @param F3_FLOW3_Component_Factory $componentFactory A reference to the component factory - used for fetching other component objects while solving dependencies
+	 * @param F3_FLOW3_Reflection_Service $reflectionService A reference to the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Reflection_Service $reflectionService) {
 		$this->componentFactory = $componentFactory;
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -105,6 +112,34 @@ class F3_FLOW3_Component_ObjectBuilder {
 			unset ($this->componentsBeingBuilt[$componentName]);
 			throw $exception;
 		}
+		unset ($this->componentsBeingBuilt[$componentName]);
+		return $componentObject;
+	}
+
+	/**
+	 * Reconstitutes the specified component and fills it with the given properties.
+	 *
+	 * @param string $componentName Name of the component to reconstitute
+	 * @param F3_FLOW3_Component_Configuration $componentConfiguration The component configuration
+	 * @param array $properties The names of properties and their values which should be set during the reconstitution
+	 * @return object The reconstituted object
+	 * @throws F3_FLOW3_Component_Exception_CannotReconstituteObject if the class cannot be reconstituted or a circular dependency ocurred.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObject($componentName, F3_FLOW3_Component_Configuration $componentConfiguration, array $properties) {
+		if (isset ($this->componentsBeingBuilt[$componentName])) throw new F3_FLOW3_Component_Exception_CannotReconstituteObject('Circular component dependency for component "' . $componentName . '".', 1216742543);
+		$this->componentsBeingBuilt[$componentName] = TRUE;
+
+		$className = $componentConfiguration->getClassName();
+		if (!in_array('F3_FLOW3_AOP_ProxyInterface', class_implements($className))) throw new F3_FLOW3_Component_Exception_CannotReconstituteObject('Cannot reconstitute the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1216738485);
+
+		$serializedProperties = '';
+		foreach ($properties as $propertyName => $propertyValue) {
+			$serializedProperties .= 's:' . (strlen($propertyName) + 3) . ':"' . chr(0) . '*' . chr(0) . $propertyName . '";' . serialize($propertyValue);
+		}
+		$serializedObject = 'O:' . strlen($className) . ':"' . $className . '":' . count($properties) . ':{' . $serializedProperties . '};';
+		$componentObject = unserialize($serializedObject);
+
 		unset ($this->componentsBeingBuilt[$componentName]);
 		return $componentObject;
 	}

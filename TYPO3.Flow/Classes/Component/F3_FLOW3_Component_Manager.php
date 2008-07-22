@@ -72,8 +72,11 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		$this->componentObjectCache = new F3_FLOW3_Component_TransientObjectCache();
 		$this->registerComponent('F3_FLOW3_Component_ManagerInterface', __CLASS__, $this);
 
+
 		$this->componentFactory = new F3_FLOW3_Component_Factory();
+		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory, $this->reflectionService);
 		$this->componentFactory->injectComponentManager($this);
+		$this->componentFactory->injectComponentObjectBuilder($componentObjectBuilder);
 		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
 		$this->registerComponent('F3_FLOW3_Component_FactoryInterface', 'F3_FLOW3_Component_Factory', $this->componentFactory);
 	}
