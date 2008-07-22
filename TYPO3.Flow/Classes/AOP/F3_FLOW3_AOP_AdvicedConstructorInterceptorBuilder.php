@@ -48,7 +48,7 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
 			' . $callParentCode . '
 		} else {
-			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($constructor) . '	\'AOPProxyComponentManager\' => $AOPProxyComponentManager
+			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($constructor) . '	\'AOPProxyComponentFactory\' => $AOPProxyComponentFactory
 			);
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . self::buildAdvicesCode($interceptedMethods[$methodName]['groupedAdvices'], $methodName, $targetClass) . '
@@ -63,9 +63,9 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed			Result of the advice chain or the original method
 	 */
-	public function ' . $methodName . '(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_ManagerInterface $AOPProxyComponentManager) {
+	public function ' . $methodName . '(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
 		$result = NULL;
-		$this->componentManager = $AOPProxyComponentManager;
+		$this->componentFactory = $AOPProxyComponentFactory;
 		' . $methodsAndAdvicesArrayCode . '
 		' . $interceptionCode . '
 		return $result;

@@ -46,13 +46,13 @@ class F3_FLOW3_MVC_Web_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
 		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
-		$this->requestURI = $this->componentManager->getComponent('F3_FLOW3_Property_DataType_URI', $URIString);
+		$this->requestURI = $this->componentFactory->getComponent('F3_FLOW3_Property_DataType_URI', $URIString);
 	}
 
 	/**
@@ -60,8 +60,8 @@ class F3_FLOW3_MVC_Web_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function webRequestIsPrototype() {
-		$request1 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
-		$request2 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$this->assertNotSame($request1, $request2, 'Obviously the web request is not prototype!');
 	}
 

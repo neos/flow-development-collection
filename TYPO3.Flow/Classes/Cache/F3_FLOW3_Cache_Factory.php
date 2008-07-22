@@ -40,6 +40,13 @@ class F3_FLOW3_Cache_Factory {
 	protected $componentManager;
 
 	/**
+	 * A reference to the component factory
+	 *
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory;
+
+	/**
 	 * A reference to the cache manager
 	 *
 	 * @var F3_FLOW3_Cache_Manager
@@ -50,11 +57,13 @@ class F3_FLOW3_Cache_Factory {
 	 * Constructs this cache factory
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
-	 * @param F3_FLOW3_Cache_Manager $cacheManager A reference to the cache manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentFactory A reference to the component factory
+	 * 	 * @param F3_FLOW3_Cache_Manager $cacheManager A reference to the cache manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Cache_Manager $cacheManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Cache_Manager $cacheManager) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->cacheManager = $cacheManager;
 	}
 
@@ -71,9 +80,9 @@ class F3_FLOW3_Cache_Factory {
 	 */
 	public function create($cacheIdentifier, $cacheComponentName, $backendComponentName, array $backendOptions = array()) {
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent($backendComponentName, $context, $backendOptions);
+		$backend = $this->componentFactory->getComponent($backendComponentName, $context, $backendOptions);
 		if (!$backend instanceof F3_FLOW3_Cache_AbstractBackend) throw new F3_FLOW3_Cache_Exception_InvalidBackend('"' .$backendComponentName . '" is not a valid cache backend component.', 1216304301);
-		$cache = $this->componentManager->getComponent($cacheComponentName, $cacheIdentifier, $backend);
+		$cache = $this->componentFactory->getComponent($cacheComponentName, $cacheIdentifier, $backend);
 		if (!$cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception_InvalidCache('"' . $cacheComponentName . '" is not a valid cache component.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);

@@ -20,9 +20,9 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	protected $methodIsInAdviceMode = array();
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface A reference to the component manager
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 ###METHODS_INTERCEPTOR_CODE###
 

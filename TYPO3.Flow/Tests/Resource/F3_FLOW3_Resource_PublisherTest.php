@@ -43,13 +43,13 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
+		$environment = $this->componentFactory->getComponent('F3_FLOW3_Utility_Environment');
 		$this->publicResourcePath = $environment->getPathToTemporaryDirectory() . uniqid() . '/';
 
 		$metadataCache = $this->getMock('F3_FLOW3_Cache_VariableCache', array(), array(), '', FALSE);
 
 		$this->publisher = new F3_FLOW3_Resource_Publisher();
-		$this->publisher->injectComponentManager($this->componentManager);
+		$this->publisher->injectComponentFactory($this->componentFactory);
 		$this->publisher->initializeMirrorDirectory($this->publicResourcePath);
 		$this->publisher->setMetadataCache($metadataCache);
 	}

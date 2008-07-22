@@ -39,8 +39,8 @@
           the <function>new</function> operator!</emphasis></para>
 
           <para>The instantiation of classes must be handled by the Component
-          Manager. Therefore if you have to instantiate a class or need an
-          existing instance of a class, use the Component Manager's API for
+          Factory. Therefore if you have to instantiate a class or need an
+          existing instance of a class, use the Component Factory for
           retrieving one:</para>
 
           <example>
@@ -55,21 +55,21 @@ $myObject = new F3_MyPackage_MyClassName;</programlisting>
 
             <programlisting language="php">class F3_MyPackage_SomeClass {
 
-   protected $componentManager;
+   protected $componentFactory;
 
-   public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-      $this-&gt;componentManager = $componentManager;
+   public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+      $this-&gt;componentFactory = $componentFactory;
    }
 
    public function someFunction() {
-      $myObject = $this-&gt;componentManager-&gt;getComponent('F3_MyPackage_MyClassName');
+      $myObject = $this-&gt;componentFactory-&gt;getComponent('F3_MyPackage_MyClassName');
    }
 }</programlisting>
           </example>
 
-          <para>In the above example you ask the Component Manager for the
+          <para>In the above example you ask the Component Factory for the
           instance of <classname>F3_MyPackage_MyClassName</classname>. In
-          order to get an instance of the Component Manager, just add a
+          order to get an instance of the Component Factory, just add a
           parameter to your class constructor as seen in the example - you
           will automatically get a reference
           <emphasis>injected</emphasis>.</para>
@@ -90,7 +90,7 @@ $myObject = new F3_MyPackage_MyClassName;</programlisting>
           with unit testing (sometimes the Singleton is referred to as a
           <emphasis>Anti Pattern</emphasis>).</para>
 
-          <para>The Component Manager will, if not configured differently,
+          <para>The Component Factory will, if not configured differently,
           <emphasis>always return a unique instance</emphasis> of a component.
           Therefore Singleton is the default behaviour! If you need a fresh
           instance of your class, you will have to configure the scope of it

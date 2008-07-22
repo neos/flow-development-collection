@@ -62,7 +62,7 @@ class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
 		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
 	</body>
 </html>';
-		$processor = $this->componentManager->getComponent('F3_FLOW3_Resource_Processor');
+		$processor = $this->componentFactory->getComponent('F3_FLOW3_Resource_Processor');
 		$processedHTML = $processor->adjustRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}

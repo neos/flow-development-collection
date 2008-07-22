@@ -31,9 +31,9 @@ declare(ENCODING = 'utf-8');
 abstract class F3_FLOW3_MVC_Controller_AbstractController {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface A reference to the Component Manager
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the Component Factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var string Key of the package this controller belongs to
@@ -55,12 +55,12 @@ abstract class F3_FLOW3_MVC_Controller_AbstractController {
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the Component Factory
 	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Package_ManagerInterface $packageManager) {
+		$this->componentFactory = $componentFactory;
 		list(, $this->packageKey) = explode('_', get_class($this));
 		$this->package = $packageManager->getPackage($this->packageKey);
 	}

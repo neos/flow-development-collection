@@ -49,8 +49,8 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPrototype() {
-		$backend1 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
-		$backend2 = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend1 = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend2 = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->assertNotSame($backend1, $backend2, 'File Backend seems to be singleton!');
 	}
 
@@ -59,7 +59,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultCacheDirectoryIsWritable() {
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$propertyReflection = new F3_FLOW3_Reflection_Property($backend, 'cacheDirectory');
 		$cacheDirectory = $propertyReflection->getValue($backend);
 		$this->assertTrue(is_writable($cacheDirectory), 'The default cache directory "' . $cacheDirectory . '" is not writable.');
@@ -75,7 +75,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		} else {
 			$directoryName = 'c:\\Windows';
 		}
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		try {
 			$backend->setCacheDirectory($directoryName);
 			$this->fail('setCacheDirectory() to non-writable directory did not result in an exception.');
@@ -89,8 +89,8 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCacheDirectoryReturnsThePreviouslySetDirectory() {
-		$environment = $this->componentManager->getComponent('F3_FLOW3_Utility_Environment');
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$environment = $this->componentFactory->getComponent('F3_FLOW3_Utility_Environment');
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 
 		$directory = $environment->getPathToTemporaryDirectory();
 		$backend->setCacheDirectory($directory);
@@ -104,7 +104,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	public function saveRejectsInvalidIdentifiers() {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$data = 'Some data';
 		$this->backend = $backend;
 		$backend->setCache($cache);
@@ -129,7 +129,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		try {
@@ -153,7 +153,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 
 		$context = $this->componentManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$backend->save($entryIdentifier, $data);
@@ -182,7 +182,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 
 		$context = $this->componentManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$backend->save($entryIdentifier, $data1, array(), 500);
@@ -209,7 +209,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 
 		$context = $this->componentManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
@@ -234,7 +234,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -258,7 +258,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -285,7 +285,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$entryIdentifierHash = sha1($entryIdentifier);
 
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
@@ -315,7 +315,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 
 		$context = $this->componentManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $context);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -336,7 +336,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -364,7 +364,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$backend->setCache($cache);
 		$this->backend = $backend;
 		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
@@ -397,7 +397,7 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 		$cache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 

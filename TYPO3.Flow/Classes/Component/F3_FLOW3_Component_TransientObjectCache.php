@@ -40,8 +40,8 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	 * Returns a component object from the cache. If an instance of the required
 	 * component does not exist yet, an exception is thrown.
 	 *
-	 * @param  string		$componentName: Name of the component to return an object of
-	 * @return object		The component object
+	 * @param string $componentName Name of the component to return an object of
+	 * @return object The component object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentObject($componentName) {
@@ -52,8 +52,8 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	/**
 	 * Put a component object into the cache.
 	 *
-	 * @param  string		$componentName: Name of the component the object is made for
-	 * @param  object		$componentObject: The component object to store in the cache
+	 * @param string $componentName Name of the component the object is made for
+	 * @param object $componentObject The component object to store in the cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -66,7 +66,7 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	/**
 	 * Remove a component object from the cache.
 	 *
-	 * @param  string		$componentName: Name of the component to remove the object for
+	 * @param string componentName Name of the component to remove the object for
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -78,8 +78,8 @@ class F3_FLOW3_Component_TransientObjectCache implements F3_FLOW3_Component_Obje
 	/**
 	 * Checks if an object of the given component already exists in the object cache.
 	 *
-	 * @param  string		$componentName: Name of the component to check for an object
-	 * @return boolean		TRUE if an object exists, otherwise FALSE
+	 * @param string $componentName Name of the component to check for an object
+	 * @return boolean TRUE if an object exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function componentObjectExists($componentName) {

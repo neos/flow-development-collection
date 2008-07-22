@@ -43,7 +43,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentManager);
+		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory);
 	}
 
 	/**
@@ -290,7 +290,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function autoWiringWorksForConstructorInjection() {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_InjectedClassWithDependencies');
-		$component = $this->componentManager->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
+		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertType('F3_TestPackage_SomeImplementation', $component->argument1, 'Autowiring didn\'t work out for F3_TestPackage_ClassWithSomeImplementationInjected');
 	}
 
@@ -300,7 +300,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringForConstructorInjectionRespectsAlreadyDefinedArguments() {
-		$component = $this->componentManager->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
+		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->argument2 instanceof F3_TestPackage_InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
 	}
 
@@ -309,7 +309,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringWorksForSetterInjectionViaInjectMethod() {
-		$component = $this->componentManager->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
+		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->optionalSetterArgument instanceof F3_TestPackage_SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
 
@@ -319,10 +319,58 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function autoWiringThrowsExceptionForUnmatchedDependenciesOfRequiredSetterInjectedDependencies() {
 		try {
-			$component = $this->componentManager->getComponent('F3_TestPackage_ClassWithUnmatchedRequiredSetterDependency');
+			$this->componentFactory->getComponent('F3_TestPackage_ClassWithUnmatchedRequiredSetterDependency');
 			$this->fail('The object builder did not throw an exception.');
 		} catch (F3_FLOW3_Component_Exception_CannotBuildObject $exception) {
 		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectReturnsAnObjectOfTheSpecifiedType() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectSetsTheSpecifiedPropertiesInTheTargetObjectRegardlessIfTheyArePublicOrProtected() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectRejectsComponentTypesWhichAreNotPersistable() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectTakesPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethodAfterReconstitution() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function reconstituteComponentObjectTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
+		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
 	}
 }
 ?>

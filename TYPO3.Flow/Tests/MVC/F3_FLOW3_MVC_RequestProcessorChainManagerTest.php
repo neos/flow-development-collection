@@ -99,11 +99,11 @@ class F3_FLOW3_MVC_RequestProcessorChainManagerTest extends F3_Testing_BaseTestC
 		$manager = new F3_FLOW3_MVC_RequestProcessorChainManager;
 		$manager->registerRequestProcessor(new F3_FLOW3_Fixture_MVC_MockRequestProcessor, 'F3_FLOW3_MVC_Web_Request');
 
-		$webRequest = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
+		$webRequest = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$manager->processRequest($webRequest);
 		$this->assertTrue($webRequest->hasArgument('F3_FLOW3_Fixture_MVC_MockRequestProcessor'), 'Seems like the Dummy Request Processor has not been called.');
 
-		$cliRequest = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Request');
+		$cliRequest = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
 		$manager->processRequest($cliRequest);
 		$this->assertFalse($cliRequest->hasArgument('F3_FLOW3_Fixture_MVC_MockRequestProcessor'), 'Seems like the Dummy Request Processor has been called although it was not registered for CLI requests.');
 	}

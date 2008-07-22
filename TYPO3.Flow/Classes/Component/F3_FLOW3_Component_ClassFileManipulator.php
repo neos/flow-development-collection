@@ -15,9 +15,9 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id$
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
  */
 
 /**
@@ -25,10 +25,10 @@ declare(ENCODING = 'utf-8');
  * components. Specifically the "new" operator is replaced by a call to the
  * getComponent() method of the component manager.
  *
- * @package		FLOW3
- * @subpackage	Component
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @todo NOTE: This class does not work at the moment!
  */

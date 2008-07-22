@@ -31,9 +31,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface Reference to the component manager
+	 * @var F3_FLOW3_Component_FactoryInterface Reference to the component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment Reference to the environment utility component
@@ -53,7 +53,7 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	/**
 	 * Constructs the Web Request Handler
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
 	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
 	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The request dispatcher
 	 * @param F3_FLOW3_MVC_RequestProcessorChainManager A reference to the request processor chain manager
@@ -61,11 +61,11 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			F3_FLOW3_Component_ManagerInterface $componentManager,
+			F3_FLOW3_Component_FactoryInterface $componentFactory,
 			F3_FLOW3_Utility_Environment $utilityEnvironment,
 			F3_FLOW3_MVC_Dispatcher $dispatcher,
 			F3_FLOW3_MVC_RequestProcessorChainManager $requestProcessorChainManager) {
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
 		$this->requestProcessorChainManager = $requestProcessorChainManager;
@@ -78,11 +78,11 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_RequestBuilder')->build();
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_RequestBuilder')->build();
 		$this->requestProcessorChainManager->processRequest($request);
 		$request->lock();
 			# TODO intercepting filter chain should be invoked here.
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}

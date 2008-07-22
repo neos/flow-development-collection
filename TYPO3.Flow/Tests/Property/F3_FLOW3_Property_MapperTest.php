@@ -32,8 +32,8 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function test_checkIfItsPrototype() {
-		$mapper1 = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
-		$mapper2 = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper1 = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper2 = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$this->assertNotSame($mapper1, $mapper2, 'The Property Mapper instances are not unique - seem to be singleton.');
 	}
 
@@ -45,7 +45,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 	 */
 	public function mapperOnlyAcceptsObjectsAsTarget() {
 		try {
-			$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+			$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 			$mapper->setTarget(array());
 			$this->fail('The Property Mapper accepted a non-object as a target.');
 		} catch(F3_FLOW3_Property_Exception_InvalidTargetObject $exception) {
@@ -67,7 +67,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.'
 			)
 		);
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key2'));
 		$mapper->map($source);
@@ -96,7 +96,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 				)
 			)
 		);
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
 		$mapper->map($source);
@@ -125,7 +125,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 				)
 			)
 		);
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('property1', 'property2', 'property3', 'property4'));
 		$mapper->map($source);
@@ -153,7 +153,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 
 		$target = new ArrayObject();
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key3'));
 		$expectedTarget = new ArrayObject(
@@ -183,7 +183,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 
 		$target = new ArrayObject();
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key.*'));
 		$mapper->map($source);
@@ -207,7 +207,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		);
 
 		$target = new ArrayObject();
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array());
 		$expectedTarget = new ArrayObject;
@@ -235,7 +235,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$propertyEditor = $this->getMock('F3_FLOW3_Property_EditorInterface');
 		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value1'));
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1'));
 		$mapper->registerPropertyEditor($propertyEditor);
@@ -263,7 +263,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$filter = $this->getMock('F3_FLOW3_Validation_FilterInterface');
 		$filter->expects($this->once())->method('filter')->with($this->equalTo('value1'));
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1'));
 		$mapper->registerFilter($filter);
@@ -289,7 +289,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 
 		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->map($source);
@@ -316,7 +316,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 
 		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->setRequiredProperties(array('key'));
@@ -344,7 +344,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 
 		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3'));
 		$mapper->map($source);
@@ -372,7 +372,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$target = new F3_FLOW3_Fixture_Validation_ClassWithSetters();
 		$originalTargetCopy = clone $target;
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->setRequiredProperties(array('notExistantKey'));
@@ -404,7 +404,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$validator->expects($this->once())->method('validate');
 		$validator->expects($this->atLeastOnce())->method('isValidProperty');
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->registerValidator($validator);
@@ -433,7 +433,7 @@ class F3_FLOW3_Property_MapperTest extends F3_Testing_BaseTestCase {
 		$validator->expects($this->once())->method('validate')->will($this->returnValue(FALSE));
 		$validator->expects($this->atLeastOnce())->method('isValidProperty')->will($this->returnValue(FALSE));
 
-		$mapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$mapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->registerValidator($validator);

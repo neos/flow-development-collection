@@ -44,9 +44,9 @@ class F3_FLOW3_Resource_Manager {
 	protected $classLoader;
 
 	/**
-	 * @var F3_FLOW3_Component_Manager
+	 * @var F3_FLOW3_Component_Factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var array The loaded resources (identity map)
@@ -60,9 +60,9 @@ class F3_FLOW3_Resource_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Resource_ClassLoader $classLoader, F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_FLOW3_Resource_ClassLoader $classLoader, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->classLoader = $classLoader;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -91,7 +91,7 @@ class F3_FLOW3_Resource_Manager {
 	 */
 	public function getResource($URI) {
 		if (is_string($URI)) {
-			$URI = $this->componentManager->getComponent('F3_FLOW3_Property_DataType_URI', $URI);
+			$URI = $this->componentFactory->getComponent('F3_FLOW3_Property_DataType_URI', $URI);
 		}
 		$URIString = (string)$URI;
 
@@ -99,7 +99,7 @@ class F3_FLOW3_Resource_Manager {
 			return $this->loadedResources[$URIString];
 		}
 
-		$metadata = $this->componentManager->getComponent('F3_FLOW3_Resource_Publisher')->getMetadata($URI);
+		$metadata = $this->componentFactory->getComponent('F3_FLOW3_Resource_Publisher')->getMetadata($URI);
 		$this->loadedResources[$URIString] = $this->instantiateResource($metadata);
 
 		return $this->loadedResources[$URIString];
@@ -115,7 +115,7 @@ class F3_FLOW3_Resource_Manager {
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {
 			case 'text/html':
-				$resource = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
+				$resource = $this->componentFactory->getComponent('F3_FLOW3_Resource_HTMLResource');
 				break;
 			default:
 				throw new F3_FLOW3_Resource_Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);

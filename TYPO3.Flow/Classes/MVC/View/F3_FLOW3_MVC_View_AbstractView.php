@@ -31,12 +31,12 @@ declare(ENCODING = 'utf-8');
 abstract class F3_FLOW3_MVC_View_AbstractView {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface A reference to the Component Manager
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the Component Factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Package_ManagerInterface A reference to the Package Manager
+	 * @var F3_FLOW3_Package_FactoryInterface A reference to the Package Factory
 	 */
 	protected $packageManager;
 
@@ -48,14 +48,14 @@ abstract class F3_FLOW3_MVC_View_AbstractView {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the Component Factory
 	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @param F3_FLOW3_Resource_Manager $resourceManager A reference to the Resource Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager, F3_FLOW3_Resource_Manager $resourceManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Package_ManagerInterface $packageManager, F3_FLOW3_Resource_Manager $resourceManager) {
+		$this->componentFactory = $componentFactory;
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
 		$this->initializeView();

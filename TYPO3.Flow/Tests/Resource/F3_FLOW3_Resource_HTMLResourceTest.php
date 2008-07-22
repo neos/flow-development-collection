@@ -35,8 +35,8 @@ class F3_FLOW3_Resource_HTMLResourceTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isPrototype() {
-		$resource1 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
-		$resource2 = $this->componentManager->getComponent('F3_FLOW3_Resource_HTMLResource');
+		$resource1 = $this->componentFactory->getComponent('F3_FLOW3_Resource_HTMLResource');
+		$resource2 = $this->componentFactory->getComponent('F3_FLOW3_Resource_HTMLResource');
 		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
 	}
 
@@ -45,7 +45,7 @@ class F3_FLOW3_Resource_HTMLResourceTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canReturnContent() {
-		$HTMLResource = new F3_FLOW3_Resource_HTMLResource($this->componentManager);
+		$HTMLResource = new F3_FLOW3_Resource_HTMLResource();
 		$HTMLResource->setMetadata(array(
 			'URI' => 'file://TestPackage/Public/TestTemplate.html',
 			'path' => FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public',

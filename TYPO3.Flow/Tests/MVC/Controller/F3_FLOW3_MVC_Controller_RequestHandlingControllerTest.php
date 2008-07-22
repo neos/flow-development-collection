@@ -30,9 +30,9 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function onlySupportedRequestTypesAreAccepted() {
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
-		$controller = new F3_FLOW3_Fixture_MVC_MockRequestHandlingController($this->componentManager, $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$controller = new F3_FLOW3_Fixture_MVC_MockRequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
 		$controller->supportedRequestTypes = array('F3_Something_Request');
 
 		try {
@@ -48,7 +48,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentsReturnsAnArgumentsObject() {
-		$controller = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_RequestHandlingController');
+		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_RequestHandlingController');
 		$this->assertType('F3_FLOW3_MVC_Controller_Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
 	}
 }

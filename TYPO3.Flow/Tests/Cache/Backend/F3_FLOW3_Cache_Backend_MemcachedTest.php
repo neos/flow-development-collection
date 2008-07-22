@@ -59,7 +59,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function saveThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
@@ -93,7 +93,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function initializeComponentThrowsExceptionIfNoMemcacheServerIsConfigured() {
 		$context = $this->componentManager->getContext();
 		try {
-			$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
+			$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
 			$this->fail('initializeComponent() did not throw exception on missing configuration of servers');
 		} catch (F3_FLOW3_Cache_Exception  $exception) {
 		}
@@ -322,7 +322,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
+		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
 		$backend->setCache($cache);
 		return $backend;
 	}

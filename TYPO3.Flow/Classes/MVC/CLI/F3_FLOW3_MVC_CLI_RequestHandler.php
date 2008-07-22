@@ -31,9 +31,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface Reference to the component manager
+	 * @var F3_FLOW3_Component_FactoryInterface Reference to the component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment Reference to the environment utility component
@@ -43,13 +43,13 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	/**
 	 * Constructs the CLI Request Handler
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
 	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment Reference to the environment utility component
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment) {
+		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 	}
 
@@ -60,11 +60,11 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder')->build();
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Response');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder')->build();
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
 		$request->lock();
 
-		$dispatcher = $this->componentManager->getComponent('F3_FLOW3_MVC_Dispatcher');
+		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
 		$dispatcher->dispatch($request, $response);
 
 		$response->send();

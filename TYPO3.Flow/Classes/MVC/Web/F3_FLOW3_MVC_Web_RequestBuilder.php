@@ -32,9 +32,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Web_RequestBuilder {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
+	 * @var F3_FLOW3_Component_FactoryInterface $componentFactory: A reference to the Component Factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment
@@ -42,21 +42,21 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Routing_RouterInterface
+	 * @var F3_FLOW3_MVC_Web_RouterInterface
 	 */
 	protected $router;
 
 	/**
 	 * Constructs the Web Request Builder
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
 	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
-	 * @param F3_FLOW3_MVC_Web_Routing_RouterInterface $router A router which routes the web request to a controller and action
+	 * @param F3_FLOW3_MVC_Web_RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {
+		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->router = $router;
 	}
@@ -68,7 +68,7 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$request->injectEnvironment($this->utilityEnvironment);
 		$request->setRequestURI($this->utilityEnvironment->getRequestURI());
 		$this->router->route($request);

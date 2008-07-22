@@ -39,7 +39,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->parser = $this->componentManager->getComponent('F3_FLOW3_AOP_PointcutExpressionParser');
+		$this->parser = $this->componentFactory->getComponent('F3_FLOW3_AOP_PointcutExpressionParser');
 	}
 
 	/**
@@ -131,7 +131,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function customFilterDesignatorIsParsedCorrectly() {
-		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentManager);
+		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentFactory);
 
 		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
 		$expectedPointcutFilterComposite->addFilter('&&', new F3_FLOW3_Tests_AOP_Fixture_CustomFilter());
@@ -145,7 +145,7 @@ class F3_FLOW3_AOP_PointcutExpressionParserTest extends F3_Testing_BaseTestCase 
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifACustomFilterDoesNotImplementThePointcutFilterInterfaceAnExceptionIsThrown() {
-		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentManager);
+		$parser = new F3_FLOW3_AOP_MockPointcutExpressionParser($this->componentFactory);
 
 		$expectedPointcutFilterComposite = new F3_FLOW3_AOP_PointcutFilterComposite();
 		$expectedPointcutFilterComposite->addFilter('&&', new F3_FLOW3_Tests_AOP_Fixture_CustomFilter());

@@ -58,13 +58,13 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the Component Factory
 	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Package_ManagerInterface $packageManager) {
-		$this->arguments = $componentManager->getComponent('F3_FLOW3_MVC_Controller_Arguments');
-		parent::__construct($componentManager, $packageManager);
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Package_ManagerInterface $packageManager) {
+		$this->arguments = $componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		parent::__construct($componentFactory, $packageManager);
 	}
 
 	/**
@@ -125,7 +125,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function mapRequestArgumentsToLocalArguments() {
-		$argumentsMapper = $this->componentManager->getComponent('F3_FLOW3_Property_Mapper');
+		$argumentsMapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
 		$argumentsMapper->setTarget($this->arguments);
 
 		foreach ($this->arguments as $argument) {
@@ -152,7 +152,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewArgumentsValidator() {
-		return $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_ArgumentsValidator', $this->arguments);
+		return $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_ArgumentsValidator', $this->arguments);
 	}
 }
 

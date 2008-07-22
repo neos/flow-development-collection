@@ -21,6 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_DummyClass.php');
+require_once(dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestHandlingController.php');
 
 /**
  * Testcase for the MVC Dispatcher
@@ -43,10 +44,10 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
 
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager);
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
 		$dispatcher->injectSecurityContextHolder($securityContextHolder);
 		$dispatcher->injectFirewall($firewall);
 		$dispatcher->injectConfigurationManager($configurationManager);
@@ -72,16 +73,16 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
 
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager);
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
 		$dispatcher->injectSecurityContextHolder($securityContextHolder);
 		$dispatcher->injectFirewall($firewall);
 		$dispatcher->injectConfigurationManager($configurationManager);
 
 		$this->componentManager->registerComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
-		$controller = $this->componentManager->getComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
+		$controller = $this->componentFactory->getComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
 		$request->setControllerName('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
 
 		$dispatcher->dispatch($request, $response);
@@ -99,16 +100,16 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
 
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager);
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
 		$dispatcher->injectSecurityContextHolder($securityContextHolder);
 		$dispatcher->injectFirewall($firewall);
 		$dispatcher->injectConfigurationManager($configurationManager);
 
 		$this->componentManager->registerComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
-		$controller = $this->componentManager->getComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
+		$controller = $this->componentFactory->getComponent('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
 		$request->setControllerName('F3_FLOW3_Fixture_MVC_MockRequestHandlingController');
 
 		$dispatcher->dispatch($request, $response);

@@ -37,13 +37,13 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestCanProcessWebRequest() {
-		$dispatcher = $this->componentManager->getComponent('F3_FLOW3_MVC_Dispatcher');
+		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
 
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$request->setControllerName('F3_TestPackage_Controller_Default');
 		$request->lock();
 
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Response');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
 		$dispatcher->dispatch($request, $response);
 		$this->assertEquals('TestPackage Default Controller - Web Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
@@ -56,13 +56,13 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestCanProcessCLIRequest() {
-		$dispatcher = $this->componentManager->getComponent('F3_FLOW3_MVC_Dispatcher');
+		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
 
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Request');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
 		$request->setControllerName('F3_TestPackage_Controller_Default');
 		$request->lock();
 
-		$response = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Response');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
 
 		$dispatcher->dispatch($request, $response);
 		$this->assertEquals('TestPackage Default Controller - CLI Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
@@ -78,7 +78,7 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array('getPackage'), array(), '', FALSE);
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
 
-		$controller = $this->getMock('F3_FLOW3_MVC_Controller_AbstractController', array(), array($this->componentManager, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
+		$controller = $this->getMock('F3_FLOW3_MVC_Controller_AbstractController', array(), array($this->componentFactory, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
 		$controllerReflection = new F3_FLOW3_Reflection_Class('F3_FLOW3_MVC_Controller_AbstractController');
 		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
 		$packagePropertyReflection = $controllerReflection->getProperty('package');

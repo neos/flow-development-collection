@@ -38,10 +38,10 @@ interface F3_FLOW3_AOP_AdviceInterface {
 	 *
 	 * @param  string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component factory
 	 * @return void
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3_FLOW3_Component_ManagerInterface $componentManager);
+	public function __construct($aspectComponentName, $adviceMethodName, F3_FLOW3_Component_FactoryInterface $componentFactory);
 
 	/**
 	 * Invokes the advice method

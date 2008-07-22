@@ -32,9 +32,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Resource_Publisher {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3_FLOW3_Component_FactoryInterface
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 base configuration
@@ -57,12 +57,12 @@ class F3_FLOW3_Resource_Publisher {
 	protected $cacheStrategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_NONE;
 
 	/**
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**

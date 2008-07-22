@@ -38,7 +38,7 @@ abstract class F3_FLOW3_AOP_AbstractConstructorInterceptorBuilder extends F3_FLO
 	 *	$this->targetMethodsAndGroupedAdvices = array(
 	 *		'getSomeProperty' => array(
 	 *			'F3_FLOW3_AOP_AroundAdvice' => array(
-	 *				$this->componentManager->getComponent('F3_FLOW3_AOP_AroundAdvice', 'F3_TestPackage_GetSomeChinesePropertyAspect', 'aroundFourtyTwoToChinese'),
+	 *				$this->componentFactory->getComponent('F3_FLOW3_AOP_AroundAdvice', 'F3_TestPackage_GetSomeChinesePropertyAspect', 'aroundFourtyTwoToChinese'),
 	 *			),
 	 *		),
 	 *	);
@@ -58,7 +58,7 @@ abstract class F3_FLOW3_AOP_AbstractConstructorInterceptorBuilder extends F3_FLO
 			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
 				foreach ($advices as $advice) {
-					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->componentManager->getComponent('" . get_class($advice) . "', '" . $advice->getAspectComponentName() . "', '" . $advice->getAdviceMethodName() . "', \$this->componentManager),\n";
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->componentFactory->getComponent('" . get_class($advice) . "', '" . $advice->getAspectComponentName() . "', '" . $advice->getAdviceMethodName() . "', \$this->componentFactory),\n";
 				}
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
 			}

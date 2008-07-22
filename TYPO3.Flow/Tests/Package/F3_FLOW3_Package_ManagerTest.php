@@ -41,7 +41,7 @@ class F3_FLOW3_Package_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->packageManager = $this->componentManager->getComponent('F3_FLOW3_Package_ManagerInterface');
+		$this->packageManager = $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface');
 	}
 
 	/**

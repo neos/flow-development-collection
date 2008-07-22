@@ -35,7 +35,7 @@ class F3_FLOW3_Security_AuthenticationTest extends F3_Testing_BaseTestCase {
 	 * @category acceptance
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticatingAnUserInitiatedByTheRequireAuthenticationIntercepotrWorks() {
+	public function authenticatingAnUserInitiatedByTheRequireAuthenticationInterceptorWorks() {
 		$this->markTestIncomplete();
 	}
 }

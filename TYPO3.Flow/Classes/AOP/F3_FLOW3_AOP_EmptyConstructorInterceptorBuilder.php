@@ -52,8 +52,8 @@ class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abstr
 	 * ' . $parametersDocumentation . '
 	 * @return void
 	 */
-	public function ' . $methodName . '(' . $parametersCode . (F3_PHP6_Functions::strlen($parametersCode) ? ', ' : '') . 'F3_FLOW3_Component_ManagerInterface $AOPProxyComponentManager) {
-		$this->componentManager = $AOPProxyComponentManager;
+	public function ' . $methodName . '(' . $parametersCode . (F3_PHP6_Functions::strlen($parametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
+		$this->componentFactory = $AOPProxyComponentFactory;
 		' . $methodsAndAdvicesArrayCode . '
 		' . $callParentCode . '
 	}

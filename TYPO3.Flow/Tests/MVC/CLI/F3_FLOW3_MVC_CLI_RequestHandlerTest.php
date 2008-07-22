@@ -39,12 +39,12 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 
 			// Inject the mock environment into Builder and Handler:
-		$this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->environment);
-		$this->requestHandler = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentManager, $this->environment);
+		$this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->componentFactory, $this->environment);
+		$this->requestHandler = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentFactory, $this->environment);
 	}
 
 	/**

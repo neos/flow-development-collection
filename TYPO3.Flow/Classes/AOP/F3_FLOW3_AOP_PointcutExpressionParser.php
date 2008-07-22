@@ -38,18 +38,18 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @var F3_FLOW3_Component_FactoryInterface $componentFactory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * Constructs this expression parser
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -190,7 +190,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, F3_FLOW3_AOP_PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($pointcutExpression, '->') === FALSE) throw new F3_FLOW3_AOP_Exception_InvalidPointcutExpression('Syntax error: "->" expected in "' . $pointcutExpression . '".', 1172219205);
 		list($aspectClassName, $pointcutMethodName) = explode ('->', $pointcutExpression, 2);
-		$pointcutFilterComposite->addFilter($operator, $this->componentManager->getComponent('F3_FLOW3_AOP_PointcutFilter', $aspectClassName, $pointcutMethodName));
+		$pointcutFilterComposite->addFilter($operator, $this->componentFactory->getComponent('F3_FLOW3_AOP_PointcutFilter', $aspectClassName, $pointcutMethodName));
 	}
 
 	/**
@@ -260,7 +260,7 @@ class F3_FLOW3_AOP_PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createCustomFilter($filterComponentName) {
-		return $this->componentManager->getComponent($filterComponentName);
+		return $this->componentFactory->getComponent($filterComponentName);
 	}
 }
 ?>

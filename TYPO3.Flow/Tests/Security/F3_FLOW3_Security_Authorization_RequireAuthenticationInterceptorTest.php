@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_RequireAuthencticationInterceptorTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Security_Authorization_RequireAuthenticationInterceptorTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
@@ -36,6 +36,7 @@ class F3_FLOW3_Security_Authorization_RequireAuthencticationInterceptorTest exte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function xy() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

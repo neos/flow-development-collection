@@ -62,7 +62,7 @@ class F3_FLOW3_MVC_Controller_DefaultController extends F3_FLOW3_MVC_Controller_
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function processWebRequest(F3_FLOW3_MVC_Web_Request $request, F3_FLOW3_MVC_Web_Response $response) {
-		$view = $this->componentManager->getComponent('F3_FLOW3_MVC_View_Default');
+		$view = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Default');
 		$view->setRequest($request);
 		$response->setContent($view->render());
 	}

@@ -54,7 +54,6 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 */
 	public function setContext($context);
 
-
 	/**
 	 * Returns the name of the currently set context.
 	 *
@@ -62,15 +61,13 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 */
 	public function getContext();
 
+
 	/**
-	 * Returns an instance of the component specified by $componentName.
-	 * Always ask this method for class instances instead of using the "new"
-	 * operator!
+	 * Returns a reference to the component factory used by the component manager.
 	 *
-	 * @param string $componentNameOrType
-	 * @return object
+	 * @return F3_FLOW3_Component_FactoryInterface
 	 */
-	public function getComponent($componentName);
+	public function getComponentFactory();
 
 	/**
 	 * Registers the given class as a component

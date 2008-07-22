@@ -45,8 +45,8 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->routePart1 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
-		$this->routePart2 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+		$this->routePart1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+		$this->routePart2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
 	}
 
 	/**
@@ -63,13 +63,13 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	 */
 	public function dynamicRoutePartDoesNotMatchIfUrlSegmentIsEmptyOrNullAndNoDefaultValueIsSet() {
 		$this->routePart1->setName('foo');
-		
+
 		$urlSegments = array();
 		$this->assertFalse($this->routePart1->match($urlSegments), 'dynamic route part should not match if urlSegments array is empty and no default value is set.');
-		
+
 		$urlSegments = array(NULL, 'foo');
 		$this->assertFalse($this->routePart1->match($urlSegments), 'dynamic route part should never match if urlSegment is NULL.');
-		
+
 		$urlSegments = array('', 'foo');
 		$this->assertFalse($this->routePart1->match($urlSegments), 'dynamic route part should never match if current urlSegment is empty and no default value is set.');
 	}
@@ -84,7 +84,7 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 
 		$urlSegments = array();
 		$this->assertTrue($this->routePart1->match($urlSegments), 'dynamic route part should match if urlSegments array is empty and a default value is set.');
-		
+
 		$urlSegments = array('', 'foo');
 		$this->assertTrue($this->routePart1->match($urlSegments), 'dynamic route part should match if current urlSegment is empty and a default value is set.');
 	}
@@ -96,7 +96,7 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	public function dynamicRoutePartDoesNotMatchIfNameIsNotSet() {
 		$urlSegments = array('foo', 'bar');
 		$this->routePart1->setDefaultValue('foo');
-		
+
 		$this->assertFalse($this->routePart1->match($urlSegments), 'dynamic route part should not match if name is not set.');
 	}
 
@@ -111,7 +111,7 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 
 		$urlSegments = array('firstSegment', 'secondSegment');
 		$this->routePart1->match($urlSegments);
-		
+
 		$this->assertEquals('firstSegment', $this->routePart1->getValue(), 'value of dynamic route part should be equal to first urlSegment after successful match.');
 	}
 
@@ -121,10 +121,10 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch () {
 		$this->routePart1->setName('foo');
-		
+
 		$urlSegments = array('foo', 'bar');
 		$this->routePart1->match($urlSegments);
-		
+
 		$urlSegments = array('', 'foo');
 		$this->routePart1->match($urlSegments);
 		$this->assertNull($this->routePart1->getValue(), 'dynamic route part value should be NULL after unsuccessful match.');
@@ -136,11 +136,11 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	 */
 	public function urlSegmentsAreShortenedByOneSegmentAfterSuccessfulMatch () {
 		$this->routePart1->setName('bar');
-		
+
 		$urlSegments = array('bar', 'foo', 'test');
-		
+
 		$this->routePart1->match($urlSegments);
-		
+
 		$this->assertSame(array('foo', 'test'), $urlSegments, 'dynamic route part should shorten urlSegments array by one entry on successful match.');
 	}
 }

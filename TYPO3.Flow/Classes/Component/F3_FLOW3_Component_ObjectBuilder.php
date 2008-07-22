@@ -30,12 +30,12 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Component_ObjectBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuilderInterface {
+class F3_FLOW3_Component_ObjectBuilder {
 
 	/**
-	 * @var F3_FLOW3_Component_Manager A reference to the component manager - used for fetching other component objects while solving dependencies
+	 * @var F3_FLOW3_Component_Factory A reference to the component factory - used for fetching other component objects while solving dependencies
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var array A little registry of component names which are currently being built. Used to prevent endless loops due to circular dependencies.
@@ -50,12 +50,12 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_Manager $componentManager: A reference to the component manager - used for fetching other component objects while solving dependencies
+	 * @param F3_FLOW3_Component_Factory $componentFactory: A reference to the component factory - used for fetching other component objects while solving dependencies
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -209,7 +209,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 					$preparedArguments[] = $constructorArgument->getValue();
 				} else {
 					if ($constructorArgument->getType() === F3_FLOW3_Component_configurationArgument::ARGUMENT_TYPES_REFERENCE) {
-						$value = $this->componentManager->getComponent($constructorArgument->getValue());
+						$value = $this->componentFactory->getComponent($constructorArgument->getValue());
 					} else {
 						$value = $constructorArgument->getValue();
 					}
@@ -233,7 +233,7 @@ class F3_FLOW3_Component_ObjectBuilder implements F3_FLOW3_Component_ObjectBuild
 		foreach ($setterProperties as $propertyName => $property) {
 			switch ($property->getType()) {
 				case F3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_REFERENCE:
-					$propertyValue = $this->componentManager->getComponent($property->getValue());
+					$propertyValue = $this->componentFactory->getComponent($property->getValue());
 				break;
 				case F3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
 					$propertyValue = $property->getValue();

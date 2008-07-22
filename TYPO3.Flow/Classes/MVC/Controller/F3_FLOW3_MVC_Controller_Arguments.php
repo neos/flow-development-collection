@@ -32,9 +32,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_Arguments extends ArrayObject {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface A reference to the component manager
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var array Names of the arguments contained by this object
@@ -46,8 +46,8 @@ class F3_FLOW3_MVC_Controller_Arguments extends ArrayObject {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 		parent::__construct();
 	}
 
@@ -135,7 +135,7 @@ class F3_FLOW3_MVC_Controller_Arguments extends ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgument($name, $dataType = 'text') {
-		$argument = $this->componentManager->getComponent('F3_FLOW3_MVC_Controller_Argument', $name, $dataType);
+		$argument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', $name, $dataType);
 		$this->addArgument($argument);
 		return $argument;
 	}

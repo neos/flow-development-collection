@@ -36,6 +36,11 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory;
+
+	/**
 	 * @var F3_FLOW3_Utility_Environment
 	 */
 	protected $environment;
@@ -43,12 +48,15 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component manager
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3_FLOW3_Utility_Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $environment) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $environment) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->environment = $environment;
 	}
 
@@ -61,7 +69,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->componentManager->getComponent('F3_FLOW3_MVC_CLI_Request');
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) return $request;
 
 		$commandLineArguments = $this->environment->getCommandLineArguments();

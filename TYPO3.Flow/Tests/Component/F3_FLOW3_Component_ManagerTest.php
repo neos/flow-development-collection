@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Testcase for the default component manager
+ * Testcase for the Component Manager
  *
  * @package FLOW3
  * @subpackage Tests
@@ -58,90 +58,13 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
-	 * Checks if getComponent() returns the expected class type
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentReturnsCorrectClassType() {
-		$testComponentInstance = $this->componentManager->getComponent('F3_TestPackage_BasicClass');
-		$this->assertTrue($testComponentInstance instanceof F3_TestPackage_BasicClass, 'Component instance is no instance of our basic test class!');
-	}
-
-	/**
-	 * Checks if getComponent() fails on non-existing components
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentFailsOnNonExistentComponent() {
-		try {
-			$this->componentManager->getComponent('F3_TestPackage_ThisClassDoesNotExist');
-		} catch (F3_FLOW3_Component_Exception_UnknownComponent $exception) {
-			return;
-		}
-		$this->fail('getComponent() did not throw an exception although it has been asked for a non-existent component.');
-	}
-
-	/**
-	 * Checks if getComponent() delivers a unique instance of the component with the default configuration
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentReturnsUniqueInstanceByDefault() {
-		$firstInstance = $this->componentManager->getComponent('F3_TestPackage_BasicClass');
-		$secondInstance = $this->componentManager->getComponent('F3_TestPackage_BasicClass');
-		$this->assertSame($secondInstance, $firstInstance, 'getComponent() did not return a truly unique instance when asked for a non-configured component.');
-	}
-
-	/**
-	 * Checks if getComponent() delivers a prototype of a component which is configured as a prototype
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentReturnsPrototypeInstanceIfConfigured() {
-		$firstInstance = $this->componentManager->getComponent('F3_TestPackage_PrototypeClass');
-		$secondInstance = $this->componentManager->getComponent('F3_TestPackage_PrototypeClass');
-		$this->assertNotSame($secondInstance, $firstInstance, 'getComponent() did not return a fresh prototype instance when asked for a component configured as prototype.');
-	}
-
-	/**
-	 * Checks if getComponent() delivers the correct class if the class name is different from the component name
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentReturnsCorrectClassIfDifferentFromComponentName() {
-		$component = $this->componentManager->getComponent('F3_TestPackage_ClassToBeReplaced');
-		$this->assertTrue($component instanceof F3_TestPackage_ReplacingClass, 'getComponent() did not return a the replacing class.');
-	}
-
-	/**
-	 * Checks if getComponent() passes arguments to the constructor of a component class
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function getComponentPassesArgumentsToComponentClassConstructor() {
-		$component = $this->componentManager->getComponent('F3_TestPackage_ClassWithOptionalConstructorArguments', 'test1', 'test2', 'test3');
-		$checkSucceeded = (
-			$component->argument1 == 'test1' &&
-			$component->argument2 == 'test2' &&
-			$component->argument3 == 'test3'
-		);
-		$this->assertTrue($checkSucceeded, 'getComponent() did not instantiate the component with the specified constructor parameters.');
-	}
-
-	/**
 	 * Checks if registerComponent() can register valid and unspectactular classes
 	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterNormalClasses() {
-		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$reflectionService = $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service');
 		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertEquals($componentManager->isComponentRegistered('F3_TestPackage_BasicClass'), FALSE, 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$componentManager->registerComponent('F3_TestPackage_BasicClass');
@@ -156,7 +79,7 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterClassesInSubDirectories() {
-		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$reflectionService = $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service');
 		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_BasicClass'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_SubDirectory_ClassInSubDirectory'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
@@ -169,7 +92,7 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentRejectsAbstractClasses() {
-		$reflectionService = $this->componentManager->getComponent('F3_FLOW3_Reflection_Service');
+		$reflectionService = $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service');
 		$componentManager = new F3_FLOW3_Component_Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3_TestPackage_AbstractClass'), 'isComponentRegistered() did not return FALSE although the abstract class is not yet registered.');
 		try {
@@ -252,7 +175,7 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentTypeBasicallyWorks() {
-		$implementation = $this->componentManager->getComponent('F3_TestPackage_SomeInterface');
+		$implementation = $this->componentFactory->getComponent('F3_TestPackage_SomeInterface');
 		$this->assertType('F3_TestPackage_SomeImplementation', $implementation, 'The component of component type ...SomeInterface is not implemented by ...SomeImplementation!');
 	}
 
@@ -265,30 +188,9 @@ class F3_FLOW3_Component_ManagerTest extends F3_Testing_BaseTestCase {
 	public function setComponentClassNameWorksAsExpected() {
 		$componentName = 'F3_TestPackage_BasicClass';
 		$this->componentManager->setComponentClassName($componentName, 'F3_TestPackage_ReplacingClass');
-		$component = $this->componentManager->getComponent($componentName);
+		$component = $this->componentFactory->getComponent($componentName);
 
 		$this->assertEquals('F3_TestPackage_ReplacingClass', get_class($component), 'The component was not of the expected class.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function constructorArgumentsPassedToGetComponentAreNotAddedToRealComponentConfiguration() {
-		$componentName = 'F3_TestPackage_ClassWithOptionalConstructorArguments';
-		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);
-		$componentConfiguration->setConstructorArguments(array());
-
-		$this->componentManager->setComponentConfiguration($componentConfiguration);
-
-		$component1 = $this->componentManager->getComponent($componentName, 'theFirstArgument');
-		$this->assertEquals('theFirstArgument', $component1->argument1, 'The constructor argument has not been set.');
-
-		$component2 = $this->componentManager->getComponent($componentName);
-
-		$this->assertEquals('', $component2->argument1, 'The constructor argument1 is still not empty although no argument was passed to getComponent().');
-		$this->assertEquals('', $component2->argument2, 'The constructor argument2 is still not empty although no argument was passed to getComponent().');
-		$this->assertEquals('', $component2->argument3, 'The constructor argument3 is still not empty although no argument was passed to getComponent().');
 	}
 
 	/**

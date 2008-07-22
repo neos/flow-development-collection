@@ -46,9 +46,9 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	protected $componentObjectCache;
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectBuilderInterface Holds an instance of the Component Object Builder
+	 * @var F3_FLOW3_Component_FactoryInterface A Reference to the component factory
 	 */
-	protected $componentObjectBuilder;
+	protected $componentFactory;
 
 	/**
 	 * @var array An array of all registered components. The case sensitive component name is the key, a lower-cased variant is the value.
@@ -70,9 +70,12 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	public function __construct(F3_FLOW3_Reflection_Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 		$this->componentObjectCache = new F3_FLOW3_Component_TransientObjectCache();
-		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this);
-
 		$this->registerComponent('F3_FLOW3_Component_ManagerInterface', __CLASS__, $this);
+
+		$this->componentFactory = new F3_FLOW3_Component_Factory();
+		$this->componentFactory->injectComponentManager($this);
+		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
+		$this->registerComponent('F3_FLOW3_Component_FactoryInterface', 'F3_FLOW3_Component_Factory', $this->componentFactory);
 	}
 
 	/**
@@ -106,47 +109,15 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		return $this->context;
 	}
 
+
 	/**
-	 * Returns an instance of the component specified by $componentName.
-	 * Always ask this method for class instances instead of using the "new"
-	 * operator!
+	 * Returns a reference to the component factory used by the component manager.
 	 *
-	 * Note: If neccessary (while using legacy classes for example), you may
-	 *       pass additional parameters which are then used as parameters passed
-	 *       to the constructor of the component class. However, you whould only
-	 *       use this feature if your parameters are truly dynamic. Otherwise just
-	 *       configure them in your Components.php file.
-	 *
-	 * @param  string $componentName: The unique identifier (name) of the component to return an instance of
-	 * @return object The component instance
+	 * @return F3_FLOW3_Component_FactoryInterface
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException if $componentName is not a string
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if a component with the given name does not exist
 	 */
-	public function getComponent($componentName) {
-		if (!is_string($componentName)) throw new InvalidArgumentException('The component name must be of type string, ' . gettype($componentName) . ' given.', 1181908191);
-		if (!$this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
-
-		$componentConfiguration = $this->componentConfigurations[$componentName];
-		$arguments = array_slice(func_get_args(), 1);
-		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
-		switch ($componentConfiguration->getScope()) {
-			case 'prototype' :
-				$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
-				break;
-			case 'singleton' :
-				if ($this->componentObjectCache->componentObjectExists($componentName)) {
-					$componentObject = $this->componentObjectCache->getComponentObject($componentName);
-				} else {
-					$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
-					$this->componentObjectCache->putComponentObject($componentName, $componentObject);
-				}
-				break;
-			default :
-				throw new F3_FLOW3_Component_Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
-		}
-
-		return $componentObject;
+	public function getComponentFactory() {
+		return $this->componentFactory;
 	}
 
 	/**
@@ -359,23 +330,6 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	}
 
 	/**
-	 * Returns straight-value constructor arguments for a component by creating appropriate
-	 * F3_FLOW3_Component_ConfigurationArgument objects.
-	 *
-	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of F3_FLOW3_Component_ConfigurationArgument which can be passed to the object builder
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see getComponent()
-	 */
-	protected function getOverridingConstructorArguments(array $arguments) {
-		$constructorArguments = array();
-		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new F3_FLOW3_Component_ConfigurationArgument($index + 1, $value, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-		}
-		return $constructorArguments;
-	}
-
-	/**
 	 * Controls cloning of the component manager. Cloning should only be used within unit tests.
 	 *
 	 * @return void
@@ -383,8 +337,10 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 */
 	public function __clone() {
 		$this->componentObjectCache = clone $this->componentObjectCache;
-		$this->componentObjectBuilder = clone $this->componentObjectBuilder;
-		$this->componentObjectCache->putComponentObject('F3_FLOW3_Component_ManagerInterface', $this);
+
+		$this->componentFactory = clone $this->componentFactory;
+		$this->componentFactory->injectComponentManager($this);
+		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
 	}
 }
 

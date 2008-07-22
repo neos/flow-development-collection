@@ -49,10 +49,10 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$configuration = $this->componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 		$router = $this->getMock('F3_FLOW3_MVC_Web_Routing_Router', array(), array(), '', FALSE);
-		$this->requestBuilder = new F3_FLOW3_MVC_Web_RequestBuilder($this->componentManager, $this->environment, $router);
+		$this->requestBuilder = new F3_FLOW3_MVC_Web_RequestBuilder($this->componentFactory, $this->environment, $router);
 	}
 
 	/**

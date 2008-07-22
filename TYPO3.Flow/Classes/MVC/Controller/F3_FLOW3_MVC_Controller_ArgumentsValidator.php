@@ -32,7 +32,7 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_ObjectValidatorInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface The component manager
+	 * @var F3_FLOW3_Component_FactoryInterface The component factory
 	 */
 	protected $componentManger;
 
@@ -45,11 +45,11 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * Constructor
 	 *
 	 * @param F3_FLOW3_MVC_Controller_Arguments The registered arguments with the specified property editors
-	 * @param F3_FLOW3_Component_ManagerInterface The component manager
+	 * @param F3_FLOW3_Component_FactoryInterface The component factory
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_MVC_Controller_Arguments $registeredArguments, F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3_FLOW3_MVC_Controller_Arguments $registeredArguments, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
 		$this->registeredArguments = $registeredArguments;
 	}
 
@@ -97,7 +97,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
 		$isValid &= $object[$propertyName]->getDatatypeValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
 
-		if (!$isValid) $errors[$propertyName] = $this->componentManager->getComponent('F3_FLOW3_Validation_Error');
+		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3_FLOW3_Validation_Error');
 		return $isValid;
 	}
 
@@ -116,7 +116,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 		if ($this->registeredArguments[$propertyName]->getValidator() != NULL) $isValid &= $this->registeredArguments[$propertyName]->getValidator()->isValidProperty($propertyValue->getValue(), $errors);
 		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $errors);
 
-		if (!$isValid) $errors[$propertyName] = $this->componentManager->getComponent('F3_FLOW3_Validation_Error');
+		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3_FLOW3_Validation_Error');
 		return $isValid;
 	}
 }

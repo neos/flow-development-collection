@@ -15,22 +15,31 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * Testcase for the MVC Template View
- * 
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:$
  */
-class F3_FLOW3_MVC_View_TemplateTest extends F3_Testing_BaseTestCase {
+
+/**
+ * Contract for a Component Factory
+ *
+ * @package FLOW3
+ * @subpackage Component
+ * @version $Id:$
+ * @author Robert Lemke <robert@typo3.org>
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+interface F3_FLOW3_Component_FactoryInterface {
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @test
+	 * Returns an instance of the component specified by $componentName.
+	 *
+	 * @param string $componentName The name of the component to return an instance of
+	 * @return object The component instance
+	 * @throws InvalidArgumentException if $componentName is not a string
+	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if a component with the given name does not exist
 	 */
-	public function scopeIsPrototype() {
-		$instance1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Template');
-		$instance2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Template');
-		$this->assertNotSame($instance1, $instance2, 'The template view is not a prototype.');
-	}
+	public function getComponent($componentName);
+
 }
 ?>

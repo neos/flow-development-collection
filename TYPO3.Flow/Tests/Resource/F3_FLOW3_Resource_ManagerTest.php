@@ -39,7 +39,7 @@ class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setUp() {
 		$mockClassLoader = $this->getMock('F3_FLOW3_Resource_ClassLoader', array(), array(), '', FALSE);
-		$this->manager = new F3_FLOW3_Resource_Manager($mockClassLoader, $this->componentManager);
+		$this->manager = new F3_FLOW3_Resource_Manager($mockClassLoader, $this->componentFactory);
 	}
 
 	/**

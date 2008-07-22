@@ -36,6 +36,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function xy() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

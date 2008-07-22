@@ -31,6 +31,11 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
 	/**
+	 * @var F3_FLOW3_Component_ManagerInterface
+	 */
+	protected $componentManager;
+
+	/**
 	 * @var string Method name of the default action. Set it to the name of another action to define an alternative method as the default action.
 	 */
 	protected $defaultActionMethodName = 'defaultAction';
@@ -44,6 +49,17 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 * @var F3_FLOW3_MVC_View_AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
 	 */
 	protected $view = NULL;
+
+	/**
+	 * Injects the component manager
+	 *
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
+	}
 
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
@@ -91,11 +107,11 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 		if (is_array($explodedControllerName)) {
 			$possibleViewName = 'F3_' . $explodedControllerName[1] . '_View_' . $explodedControllerName[3] . '_' . F3_PHP6_Functions::ucfirst($this->request->getActionName());
 			if ($this->componentManager->isComponentRegistered($possibleViewName)) {
-				$this->view = $this->componentManager->getComponent($possibleViewName);
+				$this->view = $this->componentFactory->getComponent($possibleViewName);
 				return;
 			}
 		}
-		$this->view = $this->componentManager->getComponent('F3_FLOW3_MVC_View_Empty');
+		$this->view = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Empty');
 	}
 
 	/**

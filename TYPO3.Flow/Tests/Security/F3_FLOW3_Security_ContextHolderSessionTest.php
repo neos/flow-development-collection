@@ -36,6 +36,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function xy() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

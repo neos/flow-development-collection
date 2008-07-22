@@ -37,6 +37,11 @@ class F3_FLOW3_MVC_Dispatcher {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the component factory
+	 */
+	protected $componentFactory;
+
+	/**
 	 * @var F3_FLOW3_Security_ContextHolderInterface A reference to the security contextholder
 	 */
 	protected $securityContextHolder;
@@ -55,24 +60,42 @@ class F3_FLOW3_MVC_Dispatcher {
 	 * Constructs the global dispatcher
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 	}
 
+	/**
+	 * Injects the security context holder
+	 *
+	 * @param F3_FLOW3_Security_ContextHolderInterface $securityContextHolder
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function injectSecurityContextHolder(F3_FLOW3_Security_ContextHolderInterface $securityContextHolder) {
 		$this->securityContextHolder = $securityContextHolder;
 	}
 
+	/**
+	 * Injects the authorization firewall
+	 *
+	 * @param F3_FLOW3_Security_Authorization_FirewallInterface $firewall
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function injectFirewall(F3_FLOW3_Security_Authorization_FirewallInterface $firewall) {
 		$this->firewall = $firewall;
 	}
 
 	/**
-	 * Enter description here...
+	 * Injects the configuration manager
 	 *
 	 * @param F3_FLOW3_Configuration_Manager $configurationManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(F3_FLOW3_Configuration_Manager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -94,7 +117,7 @@ class F3_FLOW3_MVC_Dispatcher {
 		$controllerName = $request->getControllerName();
 		if (!$this->componentManager->isComponentRegistered($controllerName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerName . '". The controller "' . $controllerName . '" is not a registered component.', 1202921618);
 
-		$controller = $this->componentManager->getComponent($controllerName);
+		$controller = $this->componentFactory->getComponent($controllerName);
 		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerName . '". The controller must be a valid request handling controller.', 1202921619);
 
 		list(, $controllerPackageKey) = explode('_', $controllerName);

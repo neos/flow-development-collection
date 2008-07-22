@@ -45,8 +45,8 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->route1 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
-		$this->route2 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
+		$this->route1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
+		$this->route2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
 	}
 
 	/**

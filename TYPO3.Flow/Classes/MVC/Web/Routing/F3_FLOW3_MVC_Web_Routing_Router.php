@@ -37,15 +37,20 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface $componentFactory
+	 */
+	protected $componentFactory;
+
+	/**
 	 * @var F3_FLOW3_Utility_Environment
 	 */
 	protected $utilityEnvironment;
-	
+
 	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
 	 */
 	protected $configuration;
-	
+
 	/**
 	 * Array of routes to match against
 	 * @var array
@@ -64,12 +69,13 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	 */
 	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_Configuration_Manager $configurationManager) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentManager->getComponentFactory();
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_ROUTES);
-		
+
 		if (isset($this->configuration->routes)) {
 			foreach ($this->configuration->routes as $routeName => $routeConfiguration) {
-				$route = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_RouteInterface');
+				$route = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_RouteInterface');
 				$route->setUrlPattern($routeConfiguration->urlPattern);
 				$route->setDefaults($routeConfiguration->defaults);
 				$this->routes[$routeName] = $route;
@@ -125,7 +131,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 		if ($controllerName == '') {
 			$controllerName = 'Default';
 		}
-		
+
 		$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $controllerName);
 		if ($controllerName === FALSE) return;
 		$request->setControllerName($controllerName);

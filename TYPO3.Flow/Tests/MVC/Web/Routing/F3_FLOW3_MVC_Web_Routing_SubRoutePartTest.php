@@ -45,10 +45,10 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->routePart1 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
-		$this->routePart2 = $this->componentManager->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
+		$this->routePart1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
+		$this->routePart2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -63,13 +63,13 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 	 */
 	public function subRoutePartDoesNotMatchIfUrlSegmentIsEmptyOrNullAndNoDefaultValueIsSet() {
 		$this->routePart1->setName('foo');
-		
+
 		$urlSegments = array();
 		$this->assertFalse($this->routePart1->match($urlSegments), 'sub route part should not match if urlSegments array is empty and no default value is set.');
-		
+
 		$urlSegments = array(NULL, 'foo');
 		$this->assertFalse($this->routePart1->match($urlSegments), 'sub route part should never match if urlSegment is NULL.');
-		
+
 		$urlSegments = array('', 'foo');
 		$this->assertFalse($this->routePart1->match($urlSegments), 'sub route part should never match if current urlSegment is empty and no default value is set.');
 	}
@@ -84,7 +84,7 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 
 		$urlSegments = array();
 		$this->assertTrue($this->routePart1->match($urlSegments), 'sub route part should match if urlSegments array is empty and a default value is set.');
-		
+
 		$urlSegments = array('', 'foo');
 		$this->assertTrue($this->routePart1->match($urlSegments), 'sub route part should match if current urlSegment is empty and a default value is set.');
 	}
@@ -96,7 +96,7 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 	public function subRoutePartDoesNotMatchIfNameIsNotSet() {
 		$urlSegments = array('foo', 'bar');
 		$this->routePart1->setDefaultValue('foo');
-		
+
 		$this->assertFalse($this->routePart1->match($urlSegments), 'sub route part should not match if name is not set.');
 	}
 
@@ -114,7 +114,7 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 		$expectedValue = array('foo' => 'bar');
 		$this->assertEquals($expectedValue, $this->routePart1->getValue(), 'value of sub route part should match default value if urlSegments array is empty');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -136,10 +136,10 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch () {
 		$this->routePart1->setName('foo');
-		
+
 		$urlSegments = array('foo', 'bar');
 		$this->routePart1->match($urlSegments);
-		
+
 		$urlSegments = array('', 'foo');
 		$this->routePart1->match($urlSegments);
 		$this->assertNull($this->routePart1->getValue(), 'sub route part value should be NULL after unsuccessful match.');
@@ -151,11 +151,11 @@ class F3_FLOW3_MVC_Web_Routing_SubRoutePartTest extends F3_Testing_BaseTestCase 
 	 */
 	public function urlSegmentsAreEmptyAfterSuccessfulMatch () {
 		$this->routePart1->setName('bar');
-		
+
 		$urlSegments = array('bar', 'foo', 'test');
-		
+
 		$this->routePart1->match($urlSegments);
-		
+
 		$this->assertSame(array(), $urlSegments, 'sub route part should empty urlSegments array on successful match.');
 	}
 }

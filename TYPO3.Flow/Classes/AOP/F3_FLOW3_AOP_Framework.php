@@ -36,6 +36,11 @@ class F3_FLOW3_AOP_Framework {
 	protected $componentManager;
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface A reference to the component factory
+	 */
+	protected $componentFactory;
+
+	/**
 	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
 	 */
 	protected $configuration;
@@ -84,13 +89,15 @@ class F3_FLOW3_AOP_Framework {
 	 * Constructor
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager: An instance of the component manager
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory: An instance of the component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 		$this->registerFrameworkComponents();
-		$this->configuration = $componentManager->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$this->configuration = $componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
 	}
 
 	/**
@@ -302,31 +309,31 @@ class F3_FLOW3_AOP_Framework {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'around' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AroundAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
+							$advice = $this->componentFactory->getComponent('F3_FLOW3_AOP_AroundAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->componentFactory->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_BeforeAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
+							$advice = $this->componentFactory->getComponent('F3_FLOW3_AOP_BeforeAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->componentFactory->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterReturningAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
+							$advice = $this->componentFactory->getComponent('F3_FLOW3_AOP_AfterReturningAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->componentFactory->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
-							$advice = $this->componentManager->getComponent('F3_FLOW3_AOP_AfterThrowingAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentManager->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
+							$advice = $this->componentFactory->getComponent('F3_FLOW3_AOP_AfterThrowingAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->componentFactory->getComponent('F3_FLOW3_AOP_Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'pointcut' :
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
 						break;
 					}
@@ -341,9 +348,9 @@ class F3_FLOW3_AOP_Framework {
 						case 'introduce' :
 							$splittedTagValue = explode(',', $tagValue);
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new F3_FLOW3_AOP_Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
-							$pointcut = $this->componentManager->getComponent('F3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
+							$pointcut = $this->componentFactory->getComponent('F3_FLOW3_AOP_Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
 							$interface = new F3_FLOW3_Reflection_Class(trim($splittedTagValue[0]));
-							$introduction = $this->componentManager->getComponent('F3_FLOW3_AOP_Introduction', $aspectClassName, $interface, $pointcut);
+							$introduction = $this->componentFactory->getComponent('F3_FLOW3_AOP_Introduction', $aspectClassName, $interface, $pointcut);
 							$aspectContainer->addIntroduction($introduction);
 						break;
 					}

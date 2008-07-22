@@ -31,9 +31,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_RequestHandlerResolver {
 
 	/**
-	 * @var F3_FLOW3_ComponentManagerInterface Reference to the component manager
+	 * @var F3_FLOW3_ComponentFactoryInterface Reference to the component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Configuration_Container FLOW3 configuration
@@ -43,14 +43,14 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	/**
 	 * Constructs the Request Handler Resolver
 	 *
-	 * @param  F3_FLOW3_ComponentManagerInterface $componentManager: A reference to the component manager
+	 * @param F3_FLOW3_Configuration_Container $configuration The FLOW3 configuration
+	 * @param F3_FLOW3_ComponentFactoryInterface $componentFactory A reference to the component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
-		$configurationManager = $componentManager->getComponent('F3_FLOW3_Configuration_Manager');
-		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+	public function __construct(F3_FLOW3_Configuration_Container $configuration, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->configuration = $configuration;
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -63,9 +63,10 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	 */
 	public function resolveRequestHandler() {
 		$availableRequestHandlerClassNames = $this->configuration->mvc->availableRequestHandlers;
+
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
-			$requestHandler = $this->componentManager->getComponent($requestHandlerClassName);
+			$requestHandler = $this->componentFactory->getComponent($requestHandlerClassName);
 			if ($requestHandler->canHandleRequest()) {
 				$priority = $requestHandler->getPriority();
 				if (isset($suitableRequestHandlers[$priority])) throw new LogicException('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);

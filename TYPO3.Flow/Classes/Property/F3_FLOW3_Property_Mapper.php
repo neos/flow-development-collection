@@ -34,7 +34,7 @@ declare(ENCODING = 'utf-8');
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper = $componentManager->getComponent('F3_FLOW3_Property_Mapper', $target);
+ * $mapper = $componentFactory->getComponent('F3_FLOW3_Property_Mapper', $target);
  * $mapper->map($source);
  *
  * Now the target object equals the source object.
@@ -49,9 +49,9 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Property_Mapper {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface The componet manager
+	 * @var F3_FLOW3_Component_FactoryInterface The component factory
 	 */
-	protected $componentManager;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_Validation_ValidatorResolver The validator resolver
@@ -106,13 +106,13 @@ class F3_FLOW3_Property_Mapper {
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface :$componentManager A component manager implementation
+	 * @param F3_FLOW3_Component_FactoryInterface :$componentFactory A component factory implementation
 	 * @param F3_FLOW3_Property_MappingResults :$mappingResults A mapping results object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Property_MappingResults $mappingResults) {
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Property_MappingResults $mappingResults) {
 		$this->mappingResults = $mappingResults;
-		$this->componentManager = $componentManager;
+		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -466,7 +466,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorsObject() {
-		return $this->componentManager->getComponent('F3_FLOW3_Validation_Errors');
+		return $this->componentFactory->getComponent('F3_FLOW3_Validation_Errors');
 	}
 
 	/**
@@ -478,7 +478,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorObject($message, $code) {
-		return $this->componentManager->getComponent('F3_FLOW3_Validation_Error', $message, $code);
+		return $this->componentFactory->getComponent('F3_FLOW3_Validation_Error', $message, $code);
 	}
 
 	/**
@@ -490,7 +490,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingErrorObject($message, $code) {
-		return $this->componentManager->getComponent('F3_FLOW3_Property_MappingError', $message, $code);
+		return $this->componentFactory->getComponent('F3_FLOW3_Property_MappingError', $message, $code);
 	}
 
 	/**
@@ -502,7 +502,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingWarningObject($message, $code) {
-		return $this->componentManager->getComponent('F3_FLOW3_Property_MappingWarning', $message, $code);
+		return $this->componentFactory->getComponent('F3_FLOW3_Property_MappingWarning', $message, $code);
 	}
 
 	/**
