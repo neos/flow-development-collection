@@ -110,7 +110,7 @@ class F3_FLOW3_MVC_Controller_Argument {
 		$this->componentFactory = $componentFactory;
 		$this->name = $name;
 		$this->setDataType($dataType);
-		if ($dataType != '') $this->datatypeValidator = 'F3_FLOW3_Validation_Validator_' . $dataType;
+		if ($dataType != '') $this->datatypeValidator = $this->componentFactory->getComponent('F3_FLOW3_Validation_Validator_' . $dataType);
 	}
 
 	/**

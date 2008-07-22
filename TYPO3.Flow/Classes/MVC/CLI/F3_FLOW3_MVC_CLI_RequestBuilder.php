@@ -111,9 +111,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 
 		return $convertedName;
 	}
-public function getE() {
-	return $this->environment;
-}
+
 	/**
 	 * Returns the value of the first argument of the given input array. Shifts the parsed argument off the array.
 	 *

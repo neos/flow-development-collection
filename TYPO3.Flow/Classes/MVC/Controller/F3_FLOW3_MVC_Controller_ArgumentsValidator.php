@@ -34,7 +34,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	/**
 	 * @var F3_FLOW3_Component_FactoryInterface The component factory
 	 */
-	protected $componentManger;
+	protected $componentFactory;
 
 	/**
 	 * @var F3_FLOW3_MVC_Controller_Arguments The registered arguments with the specified property validators
@@ -75,8 +75,9 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function validate($object, F3_FLOW3_Validation_Errors &$errors) {
-		$isValid = TRUE;
+		if (!$object instanceof F3_FLOW3_MVC_Controller_Arguments) throw new F3_FLOW3_Validation_Exception_InvalidSubject('The specified object cannot be validated by this validator.', 1216720829);
 
+		$isValid = TRUE;
 		foreach ($object as $argument) {
 			$isValid &= $this->validateProperty($object, $argument->getName(), $errors);
 		}
@@ -93,9 +94,12 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function validateProperty($object, $propertyName, F3_FLOW3_Validation_Errors &$errors) {
+		if (!$object instanceof F3_FLOW3_MVC_Controller_Arguments) throw new F3_FLOW3_Validation_Exception_InvalidSubject('The specified object cannot be validated by this validator.', 1216720830);
+
 		$isValid = TRUE;
 		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
-		$isValid &= $object[$propertyName]->getDatatypeValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
+		$datatypeValidator = $object[$propertyName]->getDatatypeValidator();
+		$isValid &= $datatypeValidator->isValidProperty($object[$propertyName]->getValue(), $errors);
 
 		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3_FLOW3_Validation_Error');
 		return $isValid;

@@ -134,7 +134,7 @@ class F3_FLOW3_MVC_Controller_Arguments extends ArrayObject {
 	 * @return F3_FLOW3_MVC_Controller_Argument The new argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addNewArgument($name, $dataType = 'text') {
+	public function addNewArgument($name, $dataType = 'Text') {
 		$argument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', $name, $dataType);
 		$this->addArgument($argument);
 		return $argument;
