@@ -70,7 +70,12 @@ class F3_FLOW3_Utility_Environment {
 		#$_GET = $componentFactory->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 		#$_POST = $componentFactory->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 
-		$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
+		try {
+			$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
+		} catch (F3_FLOW3_Utility_Exception $exception) {
+			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
+			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
+		}
 	}
 
 	/**
