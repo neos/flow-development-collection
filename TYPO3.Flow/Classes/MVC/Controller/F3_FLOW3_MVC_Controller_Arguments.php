@@ -117,10 +117,12 @@ class F3_FLOW3_MVC_Controller_Arguments extends ArrayObject {
 	 *
 	 * @param mixed $offset Offset
 	 * @return F3_FLOW3_MVC_Controller_Argument The requested argument object
+	 * @throws F3_FLOW3_MVC_Exception_NoSuchArgument if the argument does not exist
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
+		if ($translatedOffset === '') throw new F3_FLOW3_MVC_Exception_NoSuchArgument('The argument "' . $offset . '" does not exist.', 1216909923);
 		return parent::offsetGet($translatedOffset);
 	}
 
