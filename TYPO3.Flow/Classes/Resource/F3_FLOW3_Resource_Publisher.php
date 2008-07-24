@@ -154,7 +154,7 @@ class F3_FLOW3_Resource_Publisher {
 
 			F3_FLOW3_Utility_Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
 			if ($metadata['mimeType'] == 'text/html') {
-				$HTML = F3_FLOW3_Resource_Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
+				$HTML = F3_FLOW3_Resource_Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {
 				copy($file, $destinationPath . $relativeFile);
@@ -183,7 +183,6 @@ class F3_FLOW3_Resource_Publisher {
 			'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
 			'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
 		);
-
 		return $metadata;
 	}
 
