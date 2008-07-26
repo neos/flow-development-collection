@@ -159,7 +159,8 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
 			if ($filename{0} != '.') {
-				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, ($packagesDirectoryIterator->getPathName() . '/'));
+				$packagePath = F3_FLOW3_Utility_Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
+				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, $packagePath);
 			}
 			$packagesDirectoryIterator->next();
 		}
