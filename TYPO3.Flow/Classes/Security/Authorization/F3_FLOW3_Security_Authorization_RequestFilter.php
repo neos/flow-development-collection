@@ -29,20 +29,52 @@ declare(ENCODING = 'utf-8');
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_Security_Authorization_RequestFilter {
 
-//TODO: This has to be configured/set by configuration
 	/**
-	 * @var F3_FLOW3_Security_RequestPattern The request pattern this filter should match
+	 * @var F3_FLOW3_Security_RequestPatternInterface The request pattern this filter should match
 	 */
 	protected $pattern = NULL;
 
-//TODO: this has to be set by configuration
 	/**
 	 * @var F3_FLOW3_Security_Authorization_InterceptorInterface
 	 */
 	protected $securityInterceptor = NULL;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param F3_FLOW3_Security_RequestPatternInterface $pattern The pattern this filter matches
+	 * @param F3_FLOW3_Security_Authorization_InterceptorInterface $securityInterceptor The interceptor called on pattern match
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct(F3_FLOW3_Security_RequestPatternInterface $pattern, F3_FLOW3_Security_Authorization_InterceptorInterface $securityInterceptor) {
+		$this->pattern = $pattern;
+		$this->securityInterceptor = $securityInterceptor;
+	}
+
+	/**
+	 * Returns the set request pattern
+	 *
+	 * @return F3_FLOW3_Security_RequestPatternInterface The set request pattern
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getRequestPattern() {
+		return $this->pattern;
+	}
+
+	/**
+	 * Returns the set security interceptor
+	 *
+	 * @return F3_FLOW3_Security_Authorization_InterceptorInterface The set security interceptor
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getSecurityInterceptor() {
+		return $this->securityInterceptor;
+	}
 
 	/**
 	 * Tries to match the given request against this filter and calls the set security interceptor on success.
@@ -52,7 +84,11 @@ class F3_FLOW3_Security_Authorization_RequestFilter {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function filterRequest(F3_FLOW3_MVC_Request $request) {
-		//$securityInterceptor->invoke();
+		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {
+			$this->securityInterceptor->invoke();
+			return TRUE;
+		}
+		return FALSE;
 	}
 }
 

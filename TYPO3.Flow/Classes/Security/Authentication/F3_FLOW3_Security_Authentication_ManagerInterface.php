@@ -35,6 +35,15 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_Security_Authentication_ManagerInterface {
 
 	/**
+	 * Returns the tokens this manager is responsible for.
+	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
+	 *
+	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface An array of tokens this manager is responsible for
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getTokens();
+
+	/**
 	 * Authenticates the given token. (Have a look at the F3_FLOW3_Security_Authentication_TokenManager for an implementation example)
 	 *
 	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated

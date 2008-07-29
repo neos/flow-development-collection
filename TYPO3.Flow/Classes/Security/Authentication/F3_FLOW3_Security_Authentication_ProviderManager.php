@@ -32,21 +32,83 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Security_Authentication_ManagerInterface {
 
-//TODO: this has to be set/filled by configuration
+	/**
+	 * @var F3_FLOW3_Component_FactoryInterface The component factory
+	 */
+	protected $componentFactory;
+
+	/**
+	 * @var F3_FLOW3_Security_Authentication_ProviderResolver The provider resolver
+	 */
+	protected $providerResolver;
+
+	/**
+	 * @var F3_FLOW3_Security_RequestPatternResolver The request pattern resolver
+	 */
+	protected $requestPatternResolver;
+
 	/**
 	 * @var array Array of F3_FLOW3_Security_Authentication_ProviderInterface objects
 	 */
 	protected $providers = array();
 
 	/**
+	 * @var array Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 */
+	protected $tokens = array();
+
+	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_ContextHolderInterface $securityContextHolder The global security context holder
+	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
+	 * @param F3_FLOW3_Component_Factory $componentFactory The component factory
+	 * @param F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver The provider resolver
+	 * @param F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Security_ContextHolderInterface $securityContextHolder) {
+	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
+								F3_FLOW3_Component_FactoryInterface $componentFactory,
+								F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver,
+								F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver) {
 
+		$this->componentFactory = $componentFactory;
+		$this->providerResolver = $providerResolver;
+		$this->requestPatternResolver = $requestPatternResolver;
+
+		$this->buildProvidersAndTokensFromConfiguration($configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3));
+	}
+
+	/**
+	 * Sets the providers
+	 *
+	 * @param array Array of providers (F3_FLOW3_Security_Authentication_ProviderInterface)
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setProviders($providers) {
+		$this->providers = $providers;
+	}
+
+	/**
+	 * Returns the configured providers
+	 *
+	 * @return array Array of configured providers
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getProviders() {
+		return $this->providers;
+	}
+
+	/**
+	 * Returns clean tokens this manager is responsible for.
+	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
+	 *
+	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface An array of tokens this manager is responsible for
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getTokens() {
+		return $this->tokens;
 	}
 
 	/**
@@ -59,7 +121,36 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		//foreach providers: if($provider->canAuthenticate()) $provider->authenticate();
+		foreach($this->providers as $provider) {
+			if($provider->canAuthenticate($authenticationToken)) {
+				$provider->authenticate($authenticationToken);
+				break;
+			}
+		}
+	}
+
+	/**
+	 * Builds the provider and token objects based on the given configuration
+	 *
+	 * @param F3_FLOW3_Configuration_Container $configuration The provider configuration
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo resolve and set authentication entry point and user details service in the tokens
+	 */
+	protected function buildProvidersAndTokensFromConfiguration(F3_FLOW3_Configuration_Container $configuration) {
+		foreach($configuration->security->authentication->providers as $provider) {
+			$providerInstance = $this->componentFactory->getComponent($this->providerResolver->resolveProviderClass($provider['provider']));
+			$this->providers[] = $providerInstance;
+
+			$tokenInstance = $this->componentFactory->getComponent($providerInstance->getTokenClassname());
+			$this->tokens[] = $tokenInstance;
+
+			if($provider['patternType'] != '') {
+				$requestPattern = $this->componentFactory->getComponent($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
+				$requestPattern->setPattern($provider['patternValue']);
+				$tokenInstance->setRequestPattern($requestPattern);
+			}
+		}
 	}
 }
 

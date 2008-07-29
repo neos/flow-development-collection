@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -22,24 +21,48 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The ACL UserDetailsService. It mainly calculates the current roles for the set request patterns from the given authentication token.
+ * Contract for a request pattern.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
-class F3_FLOW3_Security_ACL_UserDetailsService implements F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
+interface F3_FLOW3_Security_RequestPatternInterface {
 
 	/**
-	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface object for the given authentication token.
+	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
+	 * @param F3_FLOW3_MVC_Request $request The request that should be matched
+	 * @return boolean TRUE if this pattern can match
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function loadUserDetails(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		//Uses the credentials in the token to figure out which user should be loaded
-	}
+	public function canMatch(F3_FLOW3_MVC_Request $request);
+
+	/**
+	 * Returns the set pattern
+	 *
+	 * @return string The set pattern
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPattern();
+
+	/**
+	 * Sets the pattern (match) configuration
+	 *
+	 * @param object $pattern The pattern (match) configuration
+	 * @return void
+	 */
+	public function setPattern($pattern);
+
+	/**
+	 * Matches a F3_FLOW3_MVC_Request against its set pattern rules
+	 *
+	 * @param F3_FLOW3_MVC_Request $request The request that should be matched
+	 * @return boolean TRUE if the pattern matched, FALSE otherwise
+	 */
+	public function matchRequest(F3_FLOW3_MVC_Request $request);
 }
 
 ?>

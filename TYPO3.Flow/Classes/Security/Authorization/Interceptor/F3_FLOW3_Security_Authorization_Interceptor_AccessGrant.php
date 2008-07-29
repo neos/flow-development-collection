@@ -1,4 +1,5 @@
 <?php
+
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -16,27 +17,29 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Testcase for authentication provider manager
+ * This security interceptor always grants access.
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Security_Authorization_Interceptor_AccessGrant implements F3_FLOW3_Security_Authorization_InterceptorInterface {
 
 	/**
-	 * @test
-	 * @category unit
+	 * Invokes nothing, always returns TRUE.
+	 *
+	 * @return boolean Always returns TRUE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function xy() {
-		$this->markTestIncomplete();
+	public function invoke() {
+		return TRUE;
 	}
 }
+
 ?>

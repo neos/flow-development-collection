@@ -17,30 +17,30 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_ValidatorResolverTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id:$
  */
 
 /**
- * Testcase for the validator resolver
+ * Testcase for the security interceptor resolver
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_ValidatorResolverTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_ValidatorResolverTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Security_Authentication_ProviderResolverTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorThrowsExceptionIfNoValidatorIsAvailable() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
+	public function resolveProviderClassThrowsAnExceptionIfNoProviderIsAvailable() {
+		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
 
 		try {
-			$validatorResolver->resolveValidator('NotExistantClass');
+			$providerResolver->resolveProviderClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Validation_Exception_NoValidatorFound $exception) {
+		} catch (F3_FLOW3_Security_Exception_NoAuthenticationProviderFound $exception) {
 
 		}
 	}
@@ -49,27 +49,22 @@ class F3_FLOW3_Validation_ValidatorResolverTest extends F3_Testing_BaseTestCase 
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorReturnsTheCorrectValidator() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
-		$validator = $validatorResolver->resolveValidator('F3_TestPackage_BasicClass');
+	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
+		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
+		$providerClass = $providerResolver->resolveProviderClass('UsernamePassword');
 
-		if (!($validator instanceof F3_TestPackage_BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
+		$this->assertEquals('F3_FLOW3_Security_Authentication_Provider_UsernamePassword', $providerClass, 'The wrong classname has been resolved');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorThrowsExceptionIfAvailableValidatorDoesNotImplementTheValidatorInterface() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
+	public function resolveProviderReturnsTheCorrectProviderForACompleteClassname() {
+		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
+		$providerClass = $providerResolver->resolveProviderClass('F3_TestPackage_TestAuthenticationProvider');
 
-		try {
-			$validatorResolver->resolveValidator('F3_TestPackage_SomeTest');
-			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Validation_Exception_NoValidatorFound $exception) {
-
-		}
+		$this->assertEquals('F3_TestPackage_TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');
 	}
 }
-
 ?>

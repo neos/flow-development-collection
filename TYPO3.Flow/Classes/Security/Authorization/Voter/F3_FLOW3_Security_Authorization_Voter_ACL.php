@@ -22,35 +22,30 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * An access decision voter, that always grants access for specific objects.
+ * An access decision voter, that asks the FLOW3 ACLService for a decision.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_AccessDenyVoter implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
-
-//TODO: This has to be set by configuration
-	/**
-	 * @var array Array of classnames this voter should support
-	 */
-	protected $supportedClasses = array();
+class F3_FLOW3_Security_Authorization_Voter_ACL implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
 
 	/**
-	 * Votes to deny access, if the given object is one of the supported types
+	 * This is the default ACL voter, it votes for the ACCESS privilege
 	 *
 	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
 	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer VOTE_DENY
+	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
 	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
-
+		//ask the current token if for the roles the user currently has
+		//search for an ACCESS privilege, that isGrant(), any of the user's roles has for this joinpoint (ask the policyservice to return the privileges for each role)
 	}
 
 	/**
-	 * Returns TRUE if the given classname is contained in $this->supportedClasses
+	 *
 	 *
 	 * @param string $className The classname that should be checked
 	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname

@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -32,30 +31,53 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_ContextHolderInterface {#
 
 	/**
+	 * @var F3_FLOW3_Component_FactoryInterface
+	 */
+	protected $componentFactory = NULL;
+
+	/**
+	 * @var F3_FLOW3_Security_Authentication_ManagerInterface
+	 */
+	protected $authenticationManager = NULL;
+
+	/**
+	 * @var F3_FLOW3_Session_Interface The user session
+	 */
+	protected $session = NULL;
+
+	/**
 	 * Contstructor.
 	 *
 	 * @param F3_FLOW3_Session_Interface $session An implementaion of a session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Session_Interface $session) {}
+	public function __construct(F3_FLOW3_Session_Interface $session) {
+		$this->session = $session;
+		$this->session->start();
+	}
 
 	/**
 	 * Stores the current security context to the session.
 	 *
-	 * @param F3_FLOW3_Security_ContextInterface $securityContext The current security context
+	 * @param F3_FLOW3_Security_Context $securityContext The current security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setContext(F3_FLOW3_Security_Context $securityContext) {}
+	public function setContext(F3_FLOW3_Security_Context $securityContext) {
+		$this->session->storeContents($securityContext, 'F3_FLOW3_Security_ContextHolderSession');
+	}
 
 	/**
-	 * Returns the current F3_FLOW3_Security_Context
+	 * Returns the current F3_FLOW3_Security_Context. A new one is created if there was none in the session.
 	 *
-	 * @return F3_FLOW3_Security_ContextInterface The current security context
+	 * @return F3_FLOW3_Security_Context The current security context
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getContext() {
+		$context = $this->session->getContentsByKey('F3_FLOW3_Security_ContextHolderSession');
 
+		if($context instanceof F3_FLOW3_Security_Context) return $context;
+		return $this->componentFactory->getComponent('F3_FLOW3_Security_Context');
 	}
 
 	/**
@@ -66,9 +88,17 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeContext(F3_FLOW3_MVC_Request $request) {
-		//The AuthenticationManager has to be instanciated here, to set the authentication tokens.
-		//Check tokens against the session
-		//$this->context->setRequest($request);
+		$context = $this->getContext();
+		$context->setRequest($request);
+
+		$managerTokens = $this->authenticationManager->getTokens();
+		$sessionTokens = $context->getAuthenticationTokens();
+		$mergedTokens = $this->mergeTokens($managerTokens, $sessionTokens);
+
+		$this->updateTokenCredentials($mergedTokens);
+		$context->setAuthenticationTokens($mergedTokens);
+
+		$this->setContext($context);
 	}
 
 	/**
@@ -77,7 +107,89 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function clearContext() {}
+	public function clearContext() {
+		$this->setContext(NULL);
+	}
+
+	/**
+	 * Inject the component manager
+	 *
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory The component factory
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Inject the authentication manager
+	 *
+	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $componentManager The authentication manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectAuthenticationManager(F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager) {
+		$this->authenticationManager = $authenticationManager;
+	}
+
+	/**
+	 * Merges the session and manager tokens. All manager tokens types will be in the result array
+	 * If a specific type is found in the session this token replaces the one I(of the same type)
+	 * given by the manager.
+	 *
+	 * @params array Array of tokens provided by the authentication manager
+	 * @params array Array of tokens resotored from the session
+	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	private function mergeTokens($managerTokens, $sessionTokens) {
+		$resultTokens = array();
+
+		if(!is_array($managerTokens)) return $resultTokens;
+
+		foreach($managerTokens as $managerToken) {
+			$noCorrespondingSessionTokenFound = TRUE;
+
+			if(!is_array($sessionTokens)) continue;
+
+			foreach($sessionTokens as $sessionToken) {
+				$managerTokenClass = get_class($managerToken);
+
+				if($sessionToken instanceof $managerTokenClass) {
+					$resultTokens[] = $sessionToken;
+					$noCorrespondingSessionTokenFound = FALSE;
+				}
+			}
+
+			if($noCorrespondingSessionTokenFound) $resultTokens[] = $managerToken;
+		}
+
+		return $resultTokens;
+	}
+
+	/**
+	 * Updates the token credentials for all tokens in the given array
+	 *
+	 * @param array Array of authentication tokens the credentials should be updated for
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	private function updateTokenCredentials(array $tokens) {
+		foreach($tokens as $token) {
+			$token->updateCredentials();
+		}
+	}
+
+	/**
+	 * Destructor, closes the session.
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __destruct() {
+		$this->session->close();
+	}
 }
 
 ?>

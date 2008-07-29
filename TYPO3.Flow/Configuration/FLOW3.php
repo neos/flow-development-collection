@@ -169,4 +169,61 @@ $c->persistence->enable = FALSE;
  */
 $c->persistence->backend = '';
 
+/**
+ * If set to TRUE, the firewall will reject any request that is not
+ * explicitly allowed by a configured request filter.
+ *
+ * @var boolean
+ */
+$c->security->firewall->rejectAll = FALSE;
+
+/**
+ * The filter configuration for the firewall. Here is an example configuration array:
+ *
+ * $c->security->firewall->filters = array(
+ * 		array(
+ * 			'patternType' => 'URL',
+ * 			'patternValue' => '/some/url/.*',
+ * 			'interceptor' => 'AccessGrant'
+ * 		),
+ * 		array(
+ * 			'patternType' => 'URL',
+ * 			'patternValue' => '/some/url/blocked.*',
+ * 			'interceptor' => 'AccessDeny'
+ * 		)
+ * );
+ *
+ * If the objects are in the namespace "F3_FLOW3_Security" it is enough to specify
+ * the last name of the classname, e.g. AccessGrant
+ *
+ * @var array
+ */
+$c->security->firewall->filters = array();
+
+/**
+ * Array of authentication providers that should be used for authentication.
+ * If you set a request pattern the provider will only be called if the pattern
+ * matches the current request. If the objects are in the namespace
+ * "F3_FLOW3_Security" it is enough to specify the last name of the classname,
+ * e.g. UsernamePassword
+ * Note: Authentication will be performed in the given order of the providers.
+ * So make sure, that the primary authentication method is the first array entry.
+ *
+ * @var array
+ */
+$c->security->authentication->providers = array(
+	array(
+		'provider' => 'UsernamePassword',
+		'patternType' => '',
+		'patternVaue' => ''
+	)
+);
+
+/**
+ * If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
+ * can be authenticated.
+ *
+ * @var boolean
+ */
+$c->security->authentication->authenticateAllTokens = FALSE;
 ?>

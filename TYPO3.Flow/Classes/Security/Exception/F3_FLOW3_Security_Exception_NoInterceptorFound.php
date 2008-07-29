@@ -1,4 +1,5 @@
 <?php
+
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -16,27 +17,19 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Testcase for the filter firewall
+ * A "NoInterceptorFound" Exception
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_BaseTestCase {
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function xy() {
-		$this->markTestIncomplete();
-	}
+class F3_FLOW3_Security_Exception_NoInterceptorFound extends F3_FLOW3_Security_Exception {
 }
+
 ?>

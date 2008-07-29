@@ -22,40 +22,41 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * This security interceptor always grants access.
+ * An access decision voter, that always grants access for specific objects.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_AccessGrantInterceptor implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+class F3_FLOW3_Security_Authorization_Voter_AccessGrant implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
+
+//TODO: This has to be set by configuration
+	/**
+	 * @var array Array of classnames this voter should support
+	 */
+	protected $supportedClasses = array();
 
 	/**
-	 * Constructor.
+	 * Votes to grant access, if the given object is one of the supported types
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3_Log_LoggerInterface $logger A logger to log security relevant actions
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @return integer One of: VOTE_GRANT
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function __construct(
-					F3_FLOW3_Security_Context $securityContext,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
-					F3_Log_LoggerInterface $logger
-					) {
+	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 
 	}
 
 	/**
-	 * Invokes nothing, always returns TRUE.
+	 * Returns TRUE if the given classname is contained in $this->supportedClasses
 	 *
-	 * @return boolean Always returns TRUE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @param string $className The classname that should be checked
+	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
 	 */
-	public function invoke() {
-		return TRUE;
+	public function supports($className) {
+
 	}
 }
 

@@ -22,14 +22,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A mock authentication provider that authenticates every F3_FLOW3_Security_Authentication_TokenInterface.
+ * An authentication provider that authenticates F3_FLOW3_Security_Authentication_Token_UsernamePassword tokens.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security_Authentication_ProviderInterface {
+class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_FLOW3_Security_Authentication_ProviderInterface {
 
 	/**
 	 * @var F3_FLOW3_Security_Authentication_EntryPointInterface The entry point for this provider
@@ -44,7 +44,18 @@ class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate($className) {
-		return TRUE;
+		if($className == 'F3_FLOW3_Security_Authentication_Token_UsernamePassword') return TRUE;
+		return FALSE;
+	}
+
+	/**
+	 * Returns the classname of the token this provider is responsible for.
+	 *
+	 * @return string The classname of the token this provider is responsible for
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getTokenClassname() {
+		return 'F3_FLOW3_Security_Authentication_Token_UsernamePassword';
 	}
 
 	/**
@@ -55,7 +66,10 @@ class F3_FLOW3_Security_Authentication_MockProvider implements F3_FLOW3_Security
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+		if(!($authenticationToken instanceof F3_FLOW3_Security_Authentication_Token_UsernamePassword)) throw new F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
+		$credentials = $authenticationToken->getCredentials();
+		if($credentials['username'] === 'FLOW3' && $credentials['password'] === 'verysecurepassword') $authenticationToken->setAuthenticationStatus(TRUE);
 	}
 }
 

@@ -33,12 +33,13 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_Security_Authorization_FirewallInterface {
 
 	/**
-	 * Analyzes a request against the configured firewall rules
+	 * Analyzes a request against the configured firewall rules and blocks
+	 * any illegal request.
 	 *
 	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
 	 * @return void
 	 */
-	public function analyzeRequest(F3_FLOW3_MVC_Request $request);
+	public function blockIllegalRequests(F3_FLOW3_MVC_Request $request);
 }
 
 ?>

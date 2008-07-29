@@ -43,6 +43,14 @@ interface F3_FLOW3_Security_Authentication_ProviderInterface {
 	public function canAuthenticate($className);
 
 	/**
+	 * Returns the classname of the token this provider is responsible for.
+	 *
+	 * @return string The classname of the token this provider is responsible for
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getTokenClassname();
+
+	/**
 	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
 	 *
 	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated

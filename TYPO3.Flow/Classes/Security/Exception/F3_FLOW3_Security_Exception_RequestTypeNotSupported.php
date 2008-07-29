@@ -22,42 +22,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * This security interceptor always denys access.
+ * A "RequestTypeNotSupported" Exception
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_AccessDenyInterceptor implements F3_FLOW3_Security_Authorization_InterceptorInterface {
-
-	/**
-	 * Constructor.
-	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3_Log_LoggerInterface $logger A logger to log security relevant actions
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct(
-					F3_FLOW3_Security_Context $securityContext,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
-					F3_Log_LoggerInterface $logger
-					) {
-
-	}
-
-	/**
-	 * Invokes nothing, always throws an AccessDenied Exception.
-	 *
-	 * @return boolean Always returns FALSE
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function invoke() {
-
-	}
+class F3_FLOW3_Security_Exception_RequestTypeNotSupported extends F3_FLOW3_Security_Exception {
 }
 
 ?>

@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for a simple session.
+ * A simple session based on PHP session functions.
  *
  * @package FLOW3
  * @subpackage Session
@@ -30,6 +30,11 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
+
+	/**
+	 * @var boolean TRUE if session_start() has been called
+	 */
+	protected $sessionStartCalled = FALSE;
 
 	/**
 	 * Constructor.
@@ -59,7 +64,10 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function start() {
-		if(session_id() == '' || !isset($_SESSION)) session_start();
+		if((session_id() == '' || !isset($_SESSION)) && !$this->sessionStartCalled) {
+			@session_start();
+			$this->sessionStartCalled = TRUE;
+		}
 	}
 
 	/**
@@ -73,7 +81,7 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 */
 	public function getContentsByKey($key) {
 		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotInitialized();
-		if(!isset($_SESSION[$key])) throw new F3_FLOW3_Session_Exception_NotExistingKey();
+		if(!isset($_SESSION[$key])) return NULL;
 
 		return $_SESSION[$key];
 	}

@@ -38,7 +38,7 @@ interface F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
 	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
 	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
 	 */
-	public function loadUserDetials(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
+	public function loadUserDetails(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
 }
 
 ?>

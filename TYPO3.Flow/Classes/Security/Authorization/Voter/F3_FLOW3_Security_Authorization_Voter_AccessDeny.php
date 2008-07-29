@@ -22,23 +22,41 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The ACL UserDetailsService. It mainly calculates the current roles for the set request patterns from the given authentication token.
+ * An access decision voter, that always grants access for specific objects.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ACL_UserDetailsService implements F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
+class F3_FLOW3_Security_Authorization_Voter_AccessDeny implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
+
+//TODO: This has to be set by configuration
+	/**
+	 * @var array Array of classnames this voter should support
+	 */
+	protected $supportedClasses = array();
 
 	/**
-	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface object for the given authentication token.
+	 * Votes to deny access, if the given object is one of the supported types
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
+	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @return integer VOTE_DENY
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
 	 */
-	public function loadUserDetails(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		//Uses the credentials in the token to figure out which user should be loaded
+	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+
+	}
+
+	/**
+	 * Returns TRUE if the given classname is contained in $this->supportedClasses
+	 *
+	 * @param string $className The classname that should be checked
+	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
+	 */
+	public function supports($className) {
+
 	}
 }
 

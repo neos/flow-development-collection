@@ -105,14 +105,11 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function anExceptionIsThrownIfANotExistingKeyIsRequested() {
+	public function nullIsReturnedIfANotExistingKeyIsRequested() {
 		$session = new F3_FLOW3_Session_PHP();
 		$session->start();
 
-		try {
-			$session->getContentsByKey('someNotExistingKey');
-			$this->fail('No exception has been thrown, but the given key has not been set');
-		} catch (F3_FLOW3_Session_Exception_NotExistingKey $e) {}
+		$this->assertEquals(NULL, $session->getContentsByKey('someNotExistingKey'), 'The session did not return NULL while requesting a non existing key');
 	}
 
 	/**

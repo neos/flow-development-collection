@@ -41,6 +41,11 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	protected $utilityEnvironment;
 
 	/**
+	 * @var F3_FLOW3_MVC_Dispatcher The dispatcher
+	 */
+	protected $dispatcher = NULL;
+
+	/**
 	 * Constructs the CLI Request Handler
 	 *
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
@@ -54,6 +59,17 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	}
 
 	/**
+	 * Injects the dispatcher.
+	 *
+	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The dispatcher
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectDispatcher(F3_FLOW3_MVC_Dispatcher $dispatcher) {
+		$this->dispatcher = $dispatcher;
+	}
+
+	/**
 	 * Handles the request
 	 *
 	 * @return void
@@ -64,8 +80,7 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
 		$request->lock();
 
-		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
-		$dispatcher->dispatch($request, $response);
+		$this->dispatcher->dispatch($request, $response);
 
 		$response->send();
 	}

@@ -42,7 +42,7 @@ class F3_FLOW3_Validation_Validator_Alphanumeric implements F3_FLOW3_Validation_
 	 */
 	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
 
-		return (boolean)preg_match('/^[A-Z,a-z,0-9]*$/', $propertyValue);
+		return (boolean)preg_match('/^[A-Za-z0-9]*$/', $propertyValue);
 	}
 }
 

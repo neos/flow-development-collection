@@ -33,20 +33,6 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_Security_Authorization_InterceptorInterface {
 
 	/**
-	 * Constructor.
-	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3_Log_LoggerInterface $logger A logger to log security relevant actions
-	 * @return void
-	 */
-	public function __construct(
-					F3_FLOW3_Security_Context $securityContext,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
-					F3_Log_LoggerInterface $logger
-					);
-
-	/**
 	 * Invokes the security interception (e.g. calls a F3_FLOW3_Security_Ahtorization_AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed

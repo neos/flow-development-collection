@@ -45,6 +45,11 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 			// Inject the mock environment into Builder and Handler:
 		$this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->componentFactory, $this->environment);
 		$this->requestHandler = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentFactory, $this->environment);
+
+		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
+		$dispatcher->injectSecurityContextHolder($this->getMock('F3_FLOW3_Security_ContextHolderInterface'));
+		$dispatcher->injectFirewall($this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface'));
+		$this->requestHandler->injectDispatcher($dispatcher);
 	}
 
 	/**

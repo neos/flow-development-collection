@@ -124,7 +124,7 @@ class F3_FLOW3_MVC_Dispatcher {
 		$controller->setSettings($this->configurationManager->getConfiguration($controllerPackageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS));
 
 		$this->securityContextHolder->initializeContext($request);
-		$this->firewall->analyzeRequest($request);
+		$this->firewall->blockIllegalRequests($request);
 
 		$controller->processRequest($request, $response);
 	}

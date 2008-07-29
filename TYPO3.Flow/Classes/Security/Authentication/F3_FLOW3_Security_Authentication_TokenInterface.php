@@ -32,21 +32,6 @@ declare(ENCODING = 'utf-8');
  */
 interface F3_FLOW3_Security_Authentication_TokenInterface {
 
-//TODO: all parameters should be configured through configuration
-	/**
-	 * Constructor.
-	 *
-	 * @param F3_FLOW3_Security_Authentication_UserDetailsServiceInterface A user details service
-	 * @param F3_FLOW3_Security_RequestPattern $requestPattern This patterns defines the specific requests, this token is only valid for
-	 * @param F3_FLOW3_Security_Authentication_EntryPointInterface $authenticationEntryPoint If set the authentication manager automatically calls the entry point when authenticating this token
-	 * @return void
-	 */
-	public function __construct(
-			F3_FLOW3_Security_Authentication_UserDetailsServiceInterface $userDetailsService = NULL,
-			F3_FLOW3_Security_RequestPattern $requestPattern = NULL,
-			F3_FLOW3_Security_Authentication_EntryPointInterface $authenticationEntryPoint = NULL
-			);
-
 	/**
 	 * Returns TRUE if this token is currently authenticated
 	 *
@@ -62,23 +47,30 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	public function hasRequestPattern();
 
 	/**
-	 * Returns the set F3_FLOW3_Security_RequestPattern, NULL if none was set
+	 * Sets a F3_FLOW3_Security_RequestPattern
 	 *
-	 * @return F3_FLOW3_Security_RequestPattern The set request pattern
+	 * @param F3_FLOW3_Security_RequestPattern $requestPattern The set request pattern
+	 * @return void
+	 * @see hasRequestPattern()
+	 */
+	public function setRequestPattern(F3_FLOW3_Security_RequestPatternInterface $requestPattern);
+
+	/**
+	 * Returns the set F3_FLOW3_Security_RequestPatternInterface, NULL if none was set
+	 *
+	 * @return F3_FLOW3_Security_RequestPatternInterface The set request pattern
 	 * @see hasRequestPattern()
 	 */
 	public function getRequestPattern();
 
-//TODO: this method should be called while initialzing the security context
 	/**
-	 * Sets the authentication credentials, the authentication manager needs to authenticate this token.
-	 * This could be a username/password from a login controller. It also could be empty if no special
-	 * credentials are needed for authentication (e.g. HTTP Basic authentication).
+	 * Updates the authentication credentials, the authentication manager needs to authenticate this token.
+	 * This could be a username/password from a login controller.
+	 * This method is called while initializing the security context.
 	 *
-	 * @param object $credentials The needed credentials to authenticate this token
 	 * @return void
 	 */
-	public function setCredentials($credentials);
+	public function updateCredentials();
 
 	/**
 	 * Returns the credentials of this token.

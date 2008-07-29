@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -17,29 +16,40 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Tests
  * @version $Id:$
  */
 
 /**
- * The ACL UserDetailsService. It mainly calculates the current roles for the set request patterns from the given authentication token.
+ * Testcase for username/password authentication token
  *
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Tests
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ACL_UserDetailsService implements F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
+class F3_FLOW3_Security_Authentication_Token_UsernamePasswordTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface object for the given authentication token.
-	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function loadUserDetails(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		//Uses the credentials in the token to figure out which user should be loaded
+	public function credentialsAreSetCorrectlyFromPOSTArguments() {
+		$mockEnvironment = $this->getMock('F3_FLOW3_Utility_Environment', array(), array(), '', FALSE);
+
+		$POSTArguments = array(
+			'F3_FLOW3_Security_Authentication_Token_UsernamePassword::username' => 'FLOW3',
+			'F3_FLOW3_Security_Authentication_Token_UsernamePassword::password' => 'verysecurepassword'
+		);
+
+		$mockEnvironment->expects($this->once())->method('getPOSTArguments')->will($this->returnValue($POSTArguments));
+
+		$token = new F3_FLOW3_Security_Authentication_Token_UsernamePassword($mockEnvironment);
+		$token->updateCredentials();
+
+		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');
+		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
 	}
 }
-
 ?>

@@ -22,41 +22,26 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * An access decision voter, that always grants access for specific objects.
+ * This security interceptor always denys access.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_AccessGrantVoter implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
-
-//TODO: This has to be set by configuration
-	/**
-	 * @var array Array of classnames this voter should support
-	 */
-	protected $supportedClasses = array();
+class F3_FLOW3_Security_Authorization_Interceptor_AccessDeny implements F3_FLOW3_Security_Authorization_InterceptorInterface {
 
 	/**
-	 * Votes to grant access, if the given object is one of the supported types
+	 * Invokes nothing, always throws an AccessDenied Exception.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return integer One of: VOTE_GRANT
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @return boolean Always returns FALSE
+	 * @throws F3_FLOW3_Security_Exception_AccessDenied
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function invoke() {
+		throw new F3_FLOW3_Security_Exception_AccessDenied('You are not allowed to perform this action.', 1216919280);
 
-	}
-
-	/**
-	 * Returns TRUE if the given classname is contained in $this->supportedClasses
-	 *
-	 * @param string $className The classname that should be checked
-	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
-	 */
-	public function supports($className) {
-
+		return FALSE;
 	}
 }
 

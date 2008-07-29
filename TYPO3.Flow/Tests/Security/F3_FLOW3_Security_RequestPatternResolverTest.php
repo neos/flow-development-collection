@@ -17,30 +17,30 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_ValidatorResolverTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id:$
  */
 
 /**
- * Testcase for the validator resolver
+ * Testcase for the request pattern resolver
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_ValidatorResolverTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_ValidatorResolverTest extends F3_Testing_BaseTestCase {
+class F3_FLOW3_Security_RequestPatternResolverTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorThrowsExceptionIfNoValidatorIsAvailable() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
+	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
+		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
 
 		try {
-			$validatorResolver->resolveValidator('NotExistantClass');
+			$requestPatternResolver->resolveRequestPatternClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Validation_Exception_NoValidatorFound $exception) {
+		} catch (F3_FLOW3_Security_Exception_NoRequestPatternFound $exception) {
 
 		}
 	}
@@ -49,27 +49,22 @@ class F3_FLOW3_Validation_ValidatorResolverTest extends F3_Testing_BaseTestCase 
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorReturnsTheCorrectValidator() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
-		$validator = $validatorResolver->resolveValidator('F3_TestPackage_BasicClass');
+	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
+		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
+		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('URL');
 
-		if (!($validator instanceof F3_TestPackage_BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
+		$this->assertEquals('F3_FLOW3_Security_RequestPattern_URL', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveValidatorThrowsExceptionIfAvailableValidatorDoesNotImplementTheValidatorInterface() {
-		$validatorResolver = $this->componentFactory->getComponent('F3_FLOW3_Validation_ValidatorResolver');
+	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassname() {
+		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
+		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3_TestPackage_TestRequestPattern');
 
-		try {
-			$validatorResolver->resolveValidator('F3_TestPackage_SomeTest');
-			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Validation_Exception_NoValidatorFound $exception) {
-
-		}
+		$this->assertEquals('F3_TestPackage_TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 }
-
 ?>

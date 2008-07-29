@@ -31,28 +31,97 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Security_Authorization_FirewallInterface {
 
-//TODO: This array hast to be configured/filled by configuration
+	/**
+	 * @var F3_FLOW3_Component_Factory The component factory
+	 */
+	protected $componentFactory = NULL;
+
+	/**
+	 * @var F3_FLOW3_Security_RequestPatternResolver The request pattern resolver
+	 */
+	protected $requestPatternResolver = NULL;
+
+	/**
+	 * @var F3_FLOW3_Security_Authorization_InterceptorResolver The interceptor resolver
+	 */
+	protected $interceptorResolver = NULL;
+
 	/**
 	 * @var array Array of F3_FLOW3_Security_RequestFilter objects
 	 */
 	protected $filters = array();
 
-//TODO: This has to be set by configuration
 	/**
 	 * @var boolean If set to TRUE the firewall will reject any request except the ones explicitly whitelisted by a F3_FLOW3_Security_Authorization_AccessGrantInterceptor
 	 */
 	protected $rejectAll = FALSE;
 
 	/**
-	 * Analyzes a request by passing it to the registered RequestFilters
+	 * Constructor.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
+	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
+	 * @param F3_FLOW3_Component_Factory $componentFactory The component factory
+	 * @param F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function analyzeRequest(F3_FLOW3_MVC_Request $request) {
-		//foreach filters: filter->filterRequest($request)
-		//If no filter matched and $rejectAll == TRUE -> access denied
+	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
+								F3_FLOW3_Component_FactoryInterface $componentFactory,
+								F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver,
+								F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver) {
+
+		$this->componentFactory = $componentFactory;
+		$this->requestPatternResolver = $requestPatternResolver;
+		$this->interceptorResolver = $interceptorResolver;
+		$configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+
+		$this->rejectAll = $configuration->security->firewall->rejectAll;
+		$this->buildFiltersFromConfiguration($configuration->security->firewall->filters);
+	}
+
+	/**
+	 * Returns the configure filters.
+	 *
+	 * @return array Array of configured filters.
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getFilters() {
+		return $this->filters;
+	}
+
+	/**
+	 * Analyzes a request against the configured firewall rules and blocks
+	 * any illegal request.
+	 *
+	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
+	 * @return void
+	 */
+	public function blockIllegalRequests(F3_FLOW3_MVC_Request $request) {
+		$filterMatched = FALSE;
+
+		foreach($this->filters as $filter) {
+			if($filter->filterRequest($request)) $filterMatched = TRUE;
+		}
+
+		if($this->rejectAll && !$filterMatched) throw new F3_FLOW3_Security_Exception_AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
+	}
+
+	/**
+	 * Sets the internal filters based on the given configuration.
+	 *
+	 * @param array $filterConfiguration The filter configuration
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildFiltersFromConfiguration($filterConfiguration) {
+		foreach($filterConfiguration as $filter) {
+			$requestPattern = $this->componentFactory->getComponent($this->requestPatternResolver->resolveRequestPatternClass($filter['patternType']));
+			$requestPattern->setPattern($filter['patternValue']);
+			$interceptor = $this->componentFactory->getComponent($this->interceptorResolver->resolveInterceptorClass($filter['interceptor']));
+
+			$this->filters[] = $this->componentFactory->getComponent('F3_FLOW3_Security_Authorization_RequestFilter', $requestPattern, $interceptor);
+		}
 	}
 }
 

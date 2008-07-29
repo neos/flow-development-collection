@@ -29,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_Security_Context {
 
-//TODO: This must be confiugred/filled by configuration. The order of the tokens is important, because this is the order they are tried to authenticate.
 	/**
 	 * @var array Array of configured tokens (might have request patterns)
 	 */
@@ -43,16 +43,27 @@ class F3_FLOW3_Security_Context {
 	 */
 	protected $authenticateAllTokens = FALSE;
 
-//TODO: Prevent duplicate entries
 	/**
-	 * Adds a new authentication token to the context, usually called by an authenticaton manager
+	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be added
+	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addAuthenticationToken(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager) {
+		$configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$this->authenticateAllTokens = $configuration->security->authentication->authenticateAllTokens;
+	}
 
+	/**
+	 * Sets the authentication tokens in the context, usually called by the security context holder
+	 *
+	 * @param array $authenticationTokens Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAuthenticationTokens(array $tokens) {
+		$this->tokens = $tokens;
 	}
 
 	/**
@@ -63,7 +74,7 @@ class F3_FLOW3_Security_Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setRequest(F3_FLOW3_MVC_Request $request) {
-		//$this->request = $request;
+		$this->request = $request;
 	}
 
 	/**
@@ -77,13 +88,30 @@ class F3_FLOW3_Security_Context {
 	}
 
 	/**
-	 * Returns all F3_FLOW3_Security_Authentication_Tokens of the security context which are active for the current request
+	 * Returns all F3_FLOW3_Security_Authentication_Tokens of the security context which are
+	 * active for the current request. If a token has a request pattern that cannot match
+	 * against the current request it is determined as not active.
 	 *
 	 * @return array Array of set F3_FLOW3_Authentication_Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo cache tokens active for the current request
 	 */
 	public function getAuthenticationTokens() {
-		//cache tokens active for the current request in an extra array
+		$activeTokens = array();
+
+		foreach($this->tokens as $token) {
+			if($token->hasRequestPattern()) {
+
+				$requestPattern = $token->getRequestPattern();
+				if($requestPattern->canMatch($this->request) && $requestPattern->matchRequest($this->request)) {
+					$activeTokens[] = $token;
+				}
+			} else {
+				$activeTokens[] = $token;
+			}
+		}
+
+		return $activeTokens;
 	}
 }
 

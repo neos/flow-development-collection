@@ -115,5 +115,53 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$dispatcher->dispatch($request, $response);
 		$this->assertSame($settings, $controller->getSettings());
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theDispatcherInitializesTheSecurityContextWithTheGivenRequest() {
+		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
+		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
+		$settings = new F3_FLOW3_Configuration_Container();
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
+		$dispatcher->injectSecurityContextHolder($securityContextHolder);
+		$dispatcher->injectFirewall($firewall);
+		$dispatcher->injectConfigurationManager($configurationManager);
+
+		$securityContextHolder->expects($this->once())->method('initializeContext')->with($request);
+
+		$dispatcher->dispatch($request, $response);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theDispatcherCallsTheFirewallWithTheGivenRequest() {
+		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
+		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
+		$settings = new F3_FLOW3_Configuration_Container();
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
+		$dispatcher->injectSecurityContextHolder($securityContextHolder);
+		$dispatcher->injectFirewall($firewall);
+		$dispatcher->injectConfigurationManager($configurationManager);
+
+		$firewall->expects($this->once())->method('blockIllegalRequests')->with($request);
+
+		$dispatcher->dispatch($request, $response);
+	}
 }
 ?>

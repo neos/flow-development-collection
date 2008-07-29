@@ -34,7 +34,17 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_RequireAuthenticationInterceptor implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+class F3_FLOW3_Security_Authorization_Interceptor_RequireAuthentication implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+
+	/**
+	 * @var F3_FLOW3_Security_Context The security context
+	 */
+	protected $securityContext = NULL;
+
+	/**
+	 * @var F3_FLOW3_Security_Authentication_ManagerInterface The authentication manager
+	 */
+	protected $authenticationManager = NULL;
 
 	/**
 	 * Constructor.
@@ -46,11 +56,11 @@ class F3_FLOW3_Security_Authorization_RequireAuthenticationInterceptor implement
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3_FLOW3_Security_Context $securityContext,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager,
-					F3_Log_LoggerInterface $logger
+					F3_FLOW3_Security_ContextHolderInterface $securityContextHolder,
+					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager
 					) {
-
+		$this->securityContext = $securityContextHolder->getContext();
+		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
@@ -60,7 +70,9 @@ class F3_FLOW3_Security_Authorization_RequireAuthenticationInterceptor implement
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-
+		foreach($this->securityContext->getAuthenticationTokens() as $token) {
+			$this->authenticationManager->authenticate($token);
+		}
 	}
 }
 
