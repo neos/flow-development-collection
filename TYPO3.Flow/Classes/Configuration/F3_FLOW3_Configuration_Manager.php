@@ -49,11 +49,18 @@ class F3_FLOW3_Configuration_Manager {
 	protected $context;
 
 	/**
-	 * Storage of all settings, loaded by loadSettings()
+	 * Storage for the settings, loaded by loadGlobalSettings()
 	 *
 	 * @var F3_FLOW3_Configuration_Container
 	 */
 	protected $settings;
+
+	/**
+	 * Storage of the raw routing configuration
+	 *
+	 * @var F3_FLOW3_Configuration_Container
+	 */
+	protected $routes;
 
 	/**
 	 * The configuration source used for loading the raw configuration
@@ -72,6 +79,7 @@ class F3_FLOW3_Configuration_Manager {
 		$this->context = $context;
 		$this->configurationSource = $configurationSource;
 		$this->settings = new F3_FLOW3_Configuration_Container;
+		$this->routes = new F3_FLOW3_Configuration_Container;
 	}
 
 	/**
@@ -103,12 +111,33 @@ class F3_FLOW3_Configuration_Manager {
 	 * @see getSettings()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadSettings(array $packageKeys) {
+	public function loadGlobalSettings(array $packageKeys) {
 		foreach ($packageKeys as $packageKey) {
 			$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings.php'));
 		}
 		$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings.php'));
 		$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings.php'));
+	}
+
+	/**
+	 * Loads the routing settings defined in the specified packages and merges them with
+	 * those potentially existing in the global configuration folders.
+	 *
+	 * The result is stored in the configuration manager's routes registry
+	 * and can be retrieved with the getSpecialConfiguration() method. However note
+	 * that this is only the raw information which will be further processed by the
+	 * Web Request Builder.
+	 *
+	 * @param array $packageKeys
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function loadRoutesSettings(array $packageKeys) {
+		foreach ($packageKeys as $packageKey) {
+			$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes.php'));
+		}
+		$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes.php'));
+		$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes.php'));
 	}
 
 	/**
@@ -144,9 +173,10 @@ class F3_FLOW3_Configuration_Manager {
 	 */
 	public function getSpecialConfiguration($configurationType, $packageKey= 'FLOW3') {
 		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_ROUTES :
+				return $this->routes;
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_COMPONENTS :
-			case self::CONFIGURATION_TYPE_ROUTES :
 				break;
 			default:
 				throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);

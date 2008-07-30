@@ -82,7 +82,7 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadSettingsLoadsSettingsOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
+	public function loadGlobalSettingsLoadsSettingsOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
 		$someSettings = new F3_FLOW3_Configuration_Container();
 		$mockConfigurationSource = $this->getMock('F3_FLOW3_Configuration_SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
@@ -90,25 +90,40 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
 		$manager = new F3_FLOW3_Configuration_Manager('Testing', $mockConfigurationSource);
-		$manager->loadSettings($packageKeys);
+		$manager->loadGlobalSettings($packageKeys);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadSettingsMergesAllLoadedSettingsWhichThenCanBeRetrievedWithGetSettings() {
+	public function loadGlobalSettingsMergesAllLoadedSettingsWhichThenCanBeRetrievedWithGetSettings() {
 		$mockConfigurationSource = $this->getMock('F3_FLOW3_Configuration_SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
 		$manager = new F3_FLOW3_Configuration_Manager('Testing', $mockConfigurationSource);
-		$manager->loadSettings($packageKeys);
+		$manager->loadGlobalSettings($packageKeys);
 
 		$actualSettings = $manager->getSettings('PackageA');
 		$this->assertEquals('A', $actualSettings->foo);
 		$this->assertEquals('C', $actualSettings->bar);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function loadRoutesSettingsLoadsRoutesOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
+		$someSettings = new F3_FLOW3_Configuration_Container();
+		$mockConfigurationSource = $this->getMock('F3_FLOW3_Configuration_SourceInterface', array('load'));
+		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
+
+		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
+
+		$manager = new F3_FLOW3_Configuration_Manager('Testing', $mockConfigurationSource);
+		$manager->loadRoutesSettings($packageKeys);
 	}
 
 	/**
@@ -164,7 +179,7 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue($expectedSettings));
 
 		$manager = new F3_FLOW3_Configuration_Manager('Testing', $mockConfigurationSource);
-		$manager->loadSettings(array('TestPackage'));
+		$manager->loadGlobalSettings(array('TestPackage'));
 
 		$actualSettings = $manager->getSettings('TestPackage');
 		$this->assertEquals($expectedSettings->TestPackage, $actualSettings);
@@ -174,7 +189,6 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @expectedException F3_FLOW3_Configuration_Exception_InvalidConfigurationType
 	 * @author Robert Lemke <robert@typo3.org>
-	 *
 	 */
 	public function getSpecialConfigurationOnlySupportsSpecialConfigurationTypes() {
 		$mockConfigurationSource = $this->getMock('F3_FLOW3_Configuration_SourceInterface', array('load'));
@@ -182,6 +196,5 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 		$manager = new F3_FLOW3_Configuration_Manager('Testing', $mockConfigurationSource);
 		$manager->getSpecialConfiguration(F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 	}
-
 }
 ?>

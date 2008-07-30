@@ -193,7 +193,7 @@ final class F3_FLOW3 {
 	}
 
 	/**
-	 * Initializes the configuration
+	 * Initializes the configuration manager and the FLOW3 settings
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -258,7 +258,8 @@ final class F3_FLOW3 {
 	}
 
 	/**
-	 * Initializes the package system and loads the package configuration.
+	 * Initializes the package system and loads the package configuration and settings
+	 * provided by the packages.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -277,7 +278,8 @@ final class F3_FLOW3 {
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 
-		$this->configurationManager->loadSettings(array_keys($activePackages));
+		$this->configurationManager->loadGlobalSettings(array_keys($activePackages));
+		$this->configurationManager->loadRoutesSettings(array_keys($activePackages));
 
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
 	}
