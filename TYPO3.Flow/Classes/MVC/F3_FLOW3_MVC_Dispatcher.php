@@ -121,7 +121,7 @@ class F3_FLOW3_MVC_Dispatcher {
 		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerName . '". The controller must be a valid request handling controller.', 1202921619);
 
 		list(, $controllerPackageKey) = explode('_', $controllerName);
-		$controller->setSettings($this->configurationManager->getConfiguration($controllerPackageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_SETTINGS));
+		$controller->setSettings($this->configurationManager->getSettings($controllerPackageKey));
 
 		$this->securityContextHolder->initializeContext($request);
 		$this->firewall->blockIllegalRequests($request);

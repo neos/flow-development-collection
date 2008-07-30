@@ -21,47 +21,22 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for a Route
+ * Testcase for the MVC Web Router
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
- * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_MVC_Web_Routing_RouteInterface {
+class F3_FLOW3_MVC_Web_Routing_RouterTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Sets default values for a Route.
-	 * 
-	 * @param array $defaults
-	 * @return void
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setDefaults($defaults);
-
-	/**
-	 * Sets the URL pattern for this Route.
-	 * e.g. "static/[dynamic]/[[subRoute]]"
-	 * 
-	 * @param string $urlPattern
-	 * @return void
-	 */
-	public function setUrlPattern($urlPattern);
-
-	/**
-	 * Returns an array with the Route values.
-	 * 
-	 * @return array
-	 */
-	public function getValues();
-
-	/**
-	 * Checks whether a rout corresponds to the given $requestPath
-	 * 
-	 * @param string $requestPath
-	 * @return boolean
-	 */
-	public function match($requestPath);
+	public function someTest() {
+		$this->markTestIncomplete();
+	}
 
 }
 ?>

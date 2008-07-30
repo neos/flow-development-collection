@@ -37,8 +37,8 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 	 */
 	public function configuredProvidersAndTokensAreBuiltCorrectly() {
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->authentication->providers = array(
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->authentication->providers = array(
 			array(
 				'provider' => 'UsernamePassword',
 				'patternType' => '',
@@ -51,7 +51,7 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 			)
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$providerManager = new F3_FLOW3_Security_Authentication_ProviderManager($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager), new F3_FLOW3_Security_RequestPatternResolver($this->componentManager));
 		$providers = $providerManager->getProviders();
@@ -86,10 +86,10 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 		$mockProvider2->expects($this->once())->method('authenticate')->with($mockToken2);
 
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->authentication->providers = array();
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->authentication->providers = array();
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$providerManager = new F3_FLOW3_Security_Authentication_ProviderManager($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager), new F3_FLOW3_Security_RequestPatternResolver($this->componentManager));
 		$providerManager->setProviders(array($mockProvider1, $mockProvider2));

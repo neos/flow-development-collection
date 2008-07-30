@@ -47,7 +47,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 		$this->requestBuilder = new F3_FLOW3_MVC_CLI_RequestBuilder($this->componentManager, $this->componentFactory, $this->environment);
 	}

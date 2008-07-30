@@ -21,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Standard Route
+ * Implementation of a standard route
  *
  * @package FLOW3
  * @subpackage MVC
@@ -30,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Routing_Route implements F3_FLOW3_MVC_Web_Routing_RouteInterface {
+class F3_FLOW3_MVC_Web_Routing_Route {
 
 	/**
 	 * Default values
@@ -46,11 +46,11 @@ class F3_FLOW3_MVC_Web_Routing_Route implements F3_FLOW3_MVC_Web_Routing_RouteIn
 	protected $urlPattern;
 
 	/**
-	 * route values.
+	 * Contains the routing results (indexed by "package", "controller" and "action") after a successful call of matches()
 	 *
 	 * @var array
 	 */
-	protected $values = array();
+	protected $matchResults = array();
 
 	/**
 	 * Indicates whether this route is parsed.
@@ -73,39 +73,6 @@ class F3_FLOW3_MVC_Web_Routing_Route implements F3_FLOW3_MVC_Web_Routing_RouteIn
 	protected $componentFactory;
 
 	/**
-	 * Sets default values for this Route.
-	 * This array is merged with the actual values when match() is called.
-	 *
-	 * @param array $defaults
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setDefaults($defaults) {
-		$this->defaults = $defaults;
-	}
-
-	/**
-	 * Sets the URL pattern for this Route
-	 *
-	 * @param string $urlPattern
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setUrlPattern($urlPattern) {
-		$this->urlPattern = trim($urlPattern, '/ ');
-	}
-
-	/**
-	 * Returns an array with the Route values.
-	 *
-	 * @return array
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function getValues() {
-		return $this->values;
-	}
-
-	/**
 	 * Constructor
 	 *
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
@@ -117,16 +84,50 @@ class F3_FLOW3_MVC_Web_Routing_Route implements F3_FLOW3_MVC_Web_Routing_RouteIn
 	}
 
 	/**
+	 * Sets default values for this Route.
+	 * This array is merged with the actual matchResults when match() is called.
+	 *
+	 * @param array $defaults
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setDefaults($defaults) {
+		$this->defaults = $defaults;
+	}
+
+	/**
+	 * Sets the URL pattern this route should match with
+	 *
+	 * @param string $urlPattern
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setUrlPattern($urlPattern) {
+		$this->urlPattern = trim($urlPattern, '/ ');
+		$this->isParsed = FALSE;
+	}
+
+	/**
+	 * Returns an array with the Route match results.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMatchResults() {
+		return $this->matchResults;
+	}
+
+	/**
 	 * Checks whether $requestPath corresponds to this Route.
-	 * If all Rout parts match successfully TRUE is returned and $this->values contains
-	 * an array combining Route default values and calculated values from the individual Route parts.
+	 * If all Route parts match successfully TRUE is returned and $this->matchResults contains
+	 * an array combining Route default values and calculated matchResults from the individual Route parts.
 	 *
 	 * @param string $requestPath
 	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function match($requestPath) {
-		$this->values = NULL;
+	public function matches($requestPath) {
+		$this->matchResults = NULL;
 		if ($requestPath === NULL) {
 			return FALSE;
 		}
@@ -140,19 +141,19 @@ class F3_FLOW3_MVC_Web_Routing_Route implements F3_FLOW3_MVC_Web_Routing_RouteIn
 			$this->parse();
 		}
 
-		$values = array();
+		$matchResults = array();
 		foreach ($this->routeParts as $routePart) {
 			if (!$routePart->match($requestPathSegments)) {
 				return FALSE;
 			}
 			if ($routePart->getValue() !== NULL) {
-				$values[$routePart->getName()] = $routePart->getValue();
+				$matchResults[$routePart->getName()] = $routePart->getValue();
 			}
 		}
 		if (count($requestPathSegments) > 1) {
 			return FALSE;
 		}
-		$this->values = array_merge($this->defaults, $values);
+		$this->matchResults = array_merge($this->defaults, $matchResults);
 		return TRUE;
 	}
 

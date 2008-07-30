@@ -65,21 +65,26 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	 * @param F3_FLOW3_Configuration_Manager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_Configuration_Manager $configurationManager) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment) {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentManager->getComponentFactory();
 		$this->utilityEnvironment = $utilityEnvironment;
-		$this->configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_ROUTES);
+	}
 
-		if (isset($this->configuration->routes)) {
-			foreach ($this->configuration->routes as $routeName => $routeConfiguration) {
-				$route = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_RouteInterface');
-				$route->setUrlPattern($routeConfiguration->urlPattern);
-				$route->setDefaults($routeConfiguration->defaults);
-				$this->routes[$routeName] = $route;
-			}
+	/**
+	 * Sets the routes configuration.
+	 *
+	 * @param F3_FLOW3_Configuration_Container $configuration The routes configuration
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setRoutesConfiguration(F3_FLOW3_Configuration_Container $routesConfiguration) {
+		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
+			$route = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
+			$route->setUrlPattern($routeConfiguration->urlPattern);
+			$route->setDefaults($routeConfiguration->defaults);
+			$this->routes[$routeName] = $route;
 		}
 	}
 
@@ -87,7 +92,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request
+	 * @param F3_FLOW3_MVC_Web_Request $request The web request to be analyzed. Will be modified by the router.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -101,10 +106,10 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 
 		/** Find the matching route */
 		foreach (array_reverse($this->routes) as $route) {
-			if ($route->match($requestPath)) {
-				$values = $route->getValues();
-				$this->setControllerName($values['package'], $values['controller'], $request);
-				$this->setActionName($values['action'], $request);
+			if ($route->matches($requestPath)) {
+				$matchResults = $route->getMatchResults();
+				$this->setControllerName($matchResults['package'], $matchResults['controller'], $request);
+				$this->setActionName($matchResults['action'], $request);
 				break;
 			}
 		}
@@ -118,9 +123,10 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	}
 
 	/**
-	 * Determines and sets the controller name for the given web request
+	 * Sets the controller name for the given web request
 	 *
-	 * @param array $requestPathSegments An array of the request path segements
+	 * @param string $packageName Name of the package which contains the controller
+	 * @param string $controllerName Name of the controller
 	 * @param F3_FLOW3_MVC_Web_Request $request The web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -140,7 +146,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	/**
 	 * Determines and sets the action name for the given web request
 	 *
-	 * @param array $requestPathSegments An array of the request path segements
+	 * @param string $actionName Name of the action
 	 * @param F3_FLOW3_MVC_Web_Request $request The web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -150,7 +156,6 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 		if ($actionName == '') {
 			$actionName = 'Default';
 		}
-
 		$request->setActionName($actionName);
 	}
 }

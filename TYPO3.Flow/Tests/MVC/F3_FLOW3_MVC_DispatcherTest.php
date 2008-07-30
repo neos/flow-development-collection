@@ -41,8 +41,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
 		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
 		$settings = new F3_FLOW3_Configuration_Container();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
@@ -70,8 +70,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
 		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
 		$settings = new F3_FLOW3_Configuration_Container();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
@@ -97,8 +97,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
 		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
 		$settings = new F3_FLOW3_Configuration_Container();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
@@ -124,8 +124,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
 		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
 		$settings = new F3_FLOW3_Configuration_Container();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
@@ -148,8 +148,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$securityContextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
 		$firewall = $this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface');
 		$settings = new F3_FLOW3_Configuration_Container();
-		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($settings));
+		$configurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');

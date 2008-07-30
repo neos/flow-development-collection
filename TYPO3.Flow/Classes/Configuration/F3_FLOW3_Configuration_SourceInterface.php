@@ -34,10 +34,10 @@ interface F3_FLOW3_Configuration_SourceInterface {
 	 * Loads the specified configuration file and returns its content in a
 	 * configuration container
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to load
+	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
 	 * @return F3_FLOW3_Configuration_Container
 	 * @throws F3_FLOW3_Configuration_Exception_NoSuchFile if the specified file does not exist
 	 */
-	static public function load($pathAndFilename);
+	public function load($pathAndFilename);
 }
 ?>

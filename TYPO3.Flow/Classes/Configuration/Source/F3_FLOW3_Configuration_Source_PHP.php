@@ -38,7 +38,7 @@ class F3_FLOW3_Configuration_Source_PHP implements F3_FLOW3_Configuration_Source
 	 * @return F3_FLOW3_Configuration_Container
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function load($pathAndFilename) {
+	public function load($pathAndFilename) {
 		$c = new F3_FLOW3_Configuration_Container();
 		if (file_exists($pathAndFilename)) {
 			require ($pathAndFilename);

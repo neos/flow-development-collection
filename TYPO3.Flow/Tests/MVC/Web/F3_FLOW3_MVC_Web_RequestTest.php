@@ -46,7 +46,7 @@ class F3_FLOW3_MVC_Web_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';

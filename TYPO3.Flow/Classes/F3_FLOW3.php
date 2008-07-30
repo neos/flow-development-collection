@@ -122,10 +122,10 @@ final class F3_FLOW3 {
 	);
 
 	/**
-	 * The FLOW3 base configuration  (for this class)
+	 * The settings for the FLOW3 package
 	 * @var F3_FLOW3_Configuration_Container
 	 */
-	protected $configuration;
+	protected $settings;
 
 	/**
 	 * Some interfaces (component types) which need to be defined before the reflection
@@ -203,8 +203,11 @@ final class F3_FLOW3 {
 	public function initializeConfiguration() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CONFIGURATION) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1214489744);
 
-		$this->configurationManager = new F3_FLOW3_Configuration_Manager($this->context);
-		$this->configuration = $this->configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configurationSource = new F3_FLOW3_Configuration_Source_PHP();
+		$this->configurationManager = new F3_FLOW3_Configuration_Manager($this->context, $configurationSource);
+		$this->configurationManager->loadFLOW3Settings();
+		$this->settings = $this->configurationManager->getSettings('FLOW3');
+
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_CONFIGURATION;
 	}
 
@@ -223,10 +226,10 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
 		$errorHandler = new F3_FLOW3_Error_ErrorHandler();
-		$errorHandler->setExceptionalErrors($this->configuration->errorHandler->exceptionalErrors);
-		new $this->configuration->exceptionHandler->className;
+		$errorHandler->setExceptionalErrors($this->settings->errorHandler->exceptionalErrors);
+		new $this->settings->exceptionHandler->className;
 
-		$environment = new F3_FLOW3_Utility_Environment($this->configuration->utility->environment);
+		$environment = new F3_FLOW3_Utility_Environment($this->settings->utility->environment);
 
 		$this->reflectionService = new F3_FLOW3_Reflection_Service();
 		foreach ($this->predefinedInterfaceImplementations as $interfaceName => $classNames) {
@@ -270,9 +273,12 @@ final class F3_FLOW3 {
 		$packageManager->initialize();
 		$activePackages = $packageManager->getActivePackages();
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES);
+			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
+
+		$this->configurationManager->loadSettings(array_keys($activePackages));
+
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
 	}
 
@@ -289,8 +295,8 @@ final class F3_FLOW3 {
 
 		$componentConfigurations = NULL;
 
-		if ($this->configuration->component->configurationCache->enable === TRUE) {
-			$componentConfigurationsCache = $this->cacheFactory->create('FLOW3_Component_Configurations', 'F3_FLOW3_Cache_VariableCache', $this->configuration->component->configurationCache->backend, $this->configuration->component->configurationCache->backendOptions);
+		if ($this->settings->component->configurationCache->enable === TRUE) {
+			$componentConfigurationsCache = $this->cacheFactory->create('FLOW3_Component_Configurations', 'F3_FLOW3_Cache_VariableCache', $this->settings->component->configurationCache->backend, $this->settings->component->configurationCache->backendOptions);
 			if ($componentConfigurationsCache->has('baseComponentConfigurations')) {
 				$componentConfigurations = $componentConfigurationsCache->load('baseComponentConfigurations');
 			}
@@ -300,7 +306,7 @@ final class F3_FLOW3 {
 			$packageManager = $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface');
 			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
-			if ($this->configuration->component->configurationCache->enable) {
+			if ($this->settings->component->configurationCache->enable) {
 				$componentConfigurationsCache->save('baseComponentConfigurations', $componentConfigurations);
 			}
 		}
@@ -318,7 +324,7 @@ final class F3_FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeAOP() {
-		if ($this->configuration->aop->enable === TRUE) {
+		if ($this->settings->aop->enable === TRUE) {
 
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 
@@ -337,7 +343,7 @@ final class F3_FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePersistence() {
-		if ($this->configuration->persistence->enable === TRUE) {
+		if ($this->settings->persistence->enable === TRUE) {
 			$persistenceManager = $this->componentFactory->getComponent('F3_FLOW3_Persistence_Manager');
 			$persistenceManager->initialize();
 		}
@@ -363,9 +369,9 @@ final class F3_FLOW3 {
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
 		$resourcePublisher = $this->componentFactory->getComponent('F3_FLOW3_Resource_Publisher');
-		$resourcePublisher->initializeMirrorDirectory($this->configuration->resource->cache->publicPath . $requestType . '/');
+		$resourcePublisher->initializeMirrorDirectory($this->settings->resource->cache->publicPath . $requestType . '/');
 		$resourcePublisher->setMetadataCache($metadataCache);
-		$resourcePublisher->setCacheStrategy($this->configuration->resource->cache->strategy);
+		$resourcePublisher->setCacheStrategy($this->settings->resource->cache->strategy);
 
 		$activePackages = $packageManager->getActivePackages();
 		foreach (array_keys($activePackages) as $packageKey) {
@@ -384,11 +390,11 @@ final class F3_FLOW3 {
 		if ($this->initializationLevel == self::INITIALIZATION_LEVEL_CONSTRUCT) $this->initialize();
 		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_RESOURCES) throw new F3_FLOW3_Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
 
-		$requestHandlerResolver = $this->componentFactory->getComponent('F3_FLOW3_MVC_RequestHandlerResolver', $this->configuration);
+		$requestHandlerResolver = $this->componentFactory->getComponent('F3_FLOW3_MVC_RequestHandlerResolver', $this->settings);
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
-		if ($this->configuration->persistence->enable === TRUE) {
+		if ($this->settings->persistence->enable === TRUE) {
 			$this->componentFactory->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
 		}
 	}
@@ -457,8 +463,8 @@ final class F3_FLOW3 {
 			}
 		}
 
-		if ($this->configuration->reflection->cache->enable === TRUE) {
-			$reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3_FLOW3_Cache_VariableCache', $this->configuration->reflection->cache->backend, $this->configuration->reflection->cache->backendOptions);
+		if ($this->settings->reflection->cache->enable === TRUE) {
+			$reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3_FLOW3_Cache_VariableCache', $this->settings->reflection->cache->backend, $this->settings->reflection->cache->backendOptions);
 			if ($reflectionCache->has('reflectionServiceData')) {
 				$this->reflectionService->import($reflectionCache->load('reflectionServiceData'));
 			}
@@ -466,7 +472,7 @@ final class F3_FLOW3 {
 
 		if (!$this->reflectionService->isInitialized()) {
 			$this->reflectionService->initialize($availableClassNames);
-			if ($this->configuration->reflection->cache->enable === TRUE) {
+			if ($this->settings->reflection->cache->enable === TRUE) {
 				$reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
 			}
 		}
@@ -493,7 +499,7 @@ final class F3_FLOW3 {
 
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
 		foreach ($packages as $packageKey => $package) {
-			$rawComponentConfigurations = $this->configurationManager->getConfiguration($packageKey, F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_COMPONENTS);
+			$rawComponentConfigurations = $this->configurationManager->getSpecialConfiguration(F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_COMPONENTS, $packageKey);
 			foreach ($rawComponentConfigurations as $componentName => $rawComponentConfiguration) {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
 					throw new F3_FLOW3_Component_Exception_InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '".', 1184926175);

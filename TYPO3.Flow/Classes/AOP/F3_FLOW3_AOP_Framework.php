@@ -97,7 +97,7 @@ class F3_FLOW3_AOP_Framework {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentFactory;
 		$this->registerFrameworkComponents();
-		$this->configuration = $componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$this->configuration = $componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
 	}
 
 	/**

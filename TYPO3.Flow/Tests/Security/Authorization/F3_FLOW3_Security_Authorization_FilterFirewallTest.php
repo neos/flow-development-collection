@@ -37,9 +37,9 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->firewall->rejectAll = FALSE;
-		$configuration->security->firewall->filters = array(
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->firewall->rejectAll = FALSE;
+		$settings->security->firewall->filters = array(
 			array(
 				'patternType' => 'URL',
 				'patternValue' => '/some/url/.*',
@@ -52,7 +52,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 			)
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$firewall = new F3_FLOW3_Security_Authorization_FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_RequestPatternResolver($this->componentManager), new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager));
 		$filters = $firewall->getFilters();
@@ -76,9 +76,9 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 	public function configuredFiltersAreCalledAndTheirInterceptorsInvoked() {
 		$mockRequest = $this->getMock('F3_FLOW3_MVC_Web_Request');
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->firewall->rejectAll = FALSE;
-		$configuration->security->firewall->filters = array(
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->firewall->rejectAll = FALSE;
+		$settings->security->firewall->filters = array(
 			array(
 				'patternType' => 'F3_TestPackage_TestRequestPattern',
 				'patternValue' => '.*',
@@ -86,7 +86,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 			),
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$firewall = new F3_FLOW3_Security_Authorization_FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_RequestPatternResolver($this->componentManager), new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager));
 
@@ -106,9 +106,9 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
 		$mockRequest = $this->getMock('F3_FLOW3_MVC_Request');
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->firewall->rejectAll = TRUE;
-		$configuration->security->firewall->filters = array(
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->firewall->rejectAll = TRUE;
+		$settings->security->firewall->filters = array(
 			array(
 				'patternType' => 'URL',
 				'patternValue' => '/some/url/.*',
@@ -116,7 +116,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewallTest extends F3_Testing_Base
 			),
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$firewall = new F3_FLOW3_Security_Authorization_FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_RequestPatternResolver($this->componentManager), new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager));
 

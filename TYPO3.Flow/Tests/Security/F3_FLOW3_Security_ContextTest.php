@@ -37,8 +37,8 @@ class F3_FLOW3_Security_ContextTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getAuthenticationTokensReturnsOnlyTokensActiveForThisRequest() {
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$mockConfigurationManager->expects($this->any())->method('getConfiguration')->will($this->returnValue($configuration));
+		$settings = new F3_FLOW3_Configuration_Container();
+		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 		$request = $this->getMock('F3_FLOW3_MVC_Request');
 
 		$matchingRequestPattern = $this->getMock('F3_FLOW3_Security_RequestPatternInterface', array(), array(), 'matchingRequestPattern');
@@ -83,10 +83,10 @@ class F3_FLOW3_Security_ContextTest extends F3_Testing_BaseTestCase {
 	 */
 	public function authenticateAllTokensIsSetCorrectlyFromConfiguration() {
 		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$configuration = new F3_FLOW3_Configuration_Container();
-		$configuration->security->authentication->authenticateAllTokens = TRUE;
+		$settings = new F3_FLOW3_Configuration_Container();
+		$settings->security->authentication->authenticateAllTokens = TRUE;
 
-		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($configuration));
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 		$securityContext = new F3_FLOW3_Security_Context($mockConfigurationManager);
 
 		$this->assertTrue($securityContext->authenticateAllTokens());

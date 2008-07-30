@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @subpackage MVC
  * @version $Id:F3_FLOW3_MVC_Web_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
 class F3_FLOW3_MVC_Web_RequestBuilder {
 
@@ -42,22 +41,58 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	protected $utilityEnvironment;
 
 	/**
+	 * @var F3_FLOW3_Configuration_Manager
+	 */
+	protected $configurationManager;
+
+	/**
 	 * @var F3_FLOW3_MVC_Web_RouterInterface
 	 */
 	protected $router;
 
 	/**
-	 * Constructs the Web Request Builder
+	 * Constructs this Web Request Builder
 	 *
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
-	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
-	 * @param F3_FLOW3_MVC_Web_RouterInterface $router A router which routes the web request to a controller and action
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment, F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
-		$this->utilityEnvironment = $utilityEnvironment;
+	}
+
+	/**
+	 * Injects the server environment
+	 *
+	 * @param F3_FLOW3_Utility_Environment $environment The environment
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
+	 * Injects the configuration manager
+	 *
+	 * @param F3_FLOW3_Configuration_Manager $configurationManager A reference to the configuration manager
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationManager(F3_FLOW3_Configuration_Manager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Injects a router for routing the web request
+	 *
+	 * @param F3_FLOW3_MVC_Web_Routing_RouterInterface $router A router which routes the web request to a controller and action
+	 * @return void
+	 * @required
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectRouter(F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {
 		$this->router = $router;
 	}
 
@@ -69,9 +104,13 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 */
 	public function build() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$request->injectEnvironment($this->utilityEnvironment);
-		$request->setRequestURI($this->utilityEnvironment->getRequestURI());
+		$request->injectEnvironment($this->environment);
+		$request->setRequestURI($this->environment->getRequestURI());
+
+		$routesConfiguration = $this->configurationManager->getSpecialConfiguration(F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_ROUTES);
+		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
+
 		return $request;
 	}
 }

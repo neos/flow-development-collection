@@ -67,14 +67,14 @@ class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Securit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
-								F3_FLOW3_Component_FactoryInterface $componentFactory,
-								F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver,
-								F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver) {
+			F3_FLOW3_Component_FactoryInterface $componentFactory,
+			F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver,
+			F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver) {
 
 		$this->componentFactory = $componentFactory;
 		$this->requestPatternResolver = $requestPatternResolver;
 		$this->interceptorResolver = $interceptorResolver;
-		$configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $configurationManager->getSettings('FLOW3');
 
 		$this->rejectAll = $configuration->security->firewall->rejectAll;
 		$this->buildFiltersFromConfiguration($configuration->security->firewall->filters);
@@ -96,6 +96,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Securit
 	 *
 	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
 	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequests(F3_FLOW3_MVC_Request $request) {
 		$filterMatched = FALSE;

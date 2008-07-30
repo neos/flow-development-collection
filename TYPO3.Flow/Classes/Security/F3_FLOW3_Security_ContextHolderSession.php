@@ -186,9 +186,13 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo Implement proper handling of uninitialized sessions
 	 */
 	public function __destruct() {
-		$this->session->close();
+		try {
+			$this->session->close();
+		} catch (Exception $exception) {
+		}
 	}
 }
 

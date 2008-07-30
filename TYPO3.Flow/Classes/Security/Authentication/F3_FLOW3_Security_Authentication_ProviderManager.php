@@ -68,15 +68,15 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
-								F3_FLOW3_Component_FactoryInterface $componentFactory,
-								F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver,
-								F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver) {
+			F3_FLOW3_Component_FactoryInterface $componentFactory,
+			F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver,
+			F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver) {
 
 		$this->componentFactory = $componentFactory;
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
 
-		$this->buildProvidersAndTokensFromConfiguration($configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3));
+		$this->buildProvidersAndTokensFromConfiguration($configurationManager->getSettings('FLOW3'));
 	}
 
 	/**

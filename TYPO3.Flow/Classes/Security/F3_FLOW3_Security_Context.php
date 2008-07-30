@@ -51,7 +51,7 @@ class F3_FLOW3_Security_Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager) {
-		$configuration = $configurationManager->getConfiguration('FLOW3', F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_FLOW3);
+		$configuration = $configurationManager->getSettings('FLOW3');
 		$this->authenticateAllTokens = $configuration->security->authentication->authenticateAllTokens;
 	}
 
