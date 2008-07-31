@@ -422,10 +422,6 @@ final class F3_FLOW3 {
 	 * @internal RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
 	protected function checkEnvironment() {
-		if (extension_loaded('eAccelerator')) {
-			eaccelerator_caching(FALSE);
-			eaccelerator_clear();
-		}
 		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
 			die ('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 		}
