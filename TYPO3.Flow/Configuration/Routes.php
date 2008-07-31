@@ -14,12 +14,12 @@ declare(ENCODING="utf-8");
  * Default route to map the first three URL segments to package, controller and action
  */
 $c->default
-	->setUrlPattern('[package]/[controller]/[action]')
+	->setUrlPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
-			'package' => 'Default',
-			'controller' => 'Default',
-			'action' => 'Default',
+			'@package' => 'Default',
+			'@controller' => 'Default',
+			'@action' => 'Default',
 		)
 	);
 

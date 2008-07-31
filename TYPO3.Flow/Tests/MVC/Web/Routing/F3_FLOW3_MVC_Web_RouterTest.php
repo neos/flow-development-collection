@@ -34,8 +34,29 @@ class F3_FLOW3_MVC_Web_Routing_RouterTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function someTest() {
-		$this->markTestIncomplete();
+	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
+		$routesConfiguration = new F3_FLOW3_Configuration_Container();
+		$routesConfiguration->route1->urlPattern = 'number1';
+		$routesConfiguration->route2->urlPattern = 'number2';
+		$routesConfiguration->route3->urlPattern = 'number3';
+
+		$route1 = $this->getMock('F3_FLOW3_MVC_Web_Routing_Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
+		$route1->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number1'));
+
+		$route2 = $this->getMock('F3_FLOW3_MVC_Web_Routing_Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
+		$route2->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number2'));
+
+		$route3 = $this->getMock('F3_FLOW3_MVC_Web_Routing_Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
+		$route3->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number3'));
+
+		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockEnvironment = $this->getMock('F3_FLOW3_Utility_Environment', array(), array(), '', FALSE);
+
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_FactoryInterface', array('getComponent'));
+		$mockComponentFactory->expects($this->exactly(3))->method('getComponent')->will($this->onConsecutiveCalls($route1, $route2, $route3));
+
+		$route = new F3_FLOW3_MVC_Web_Routing_Router($mockComponentManager, $mockComponentFactory, $mockEnvironment);
+		$route->setRoutesConfiguration($routesConfiguration);
 	}
 
 }

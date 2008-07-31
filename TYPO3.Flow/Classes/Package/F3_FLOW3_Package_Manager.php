@@ -155,10 +155,13 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 */
 	protected function scanAvailablePackages() {
 		$availablePackagesArr = array();
+
+		$availablePackagesArr['FLOW3'] = new F3_FLOW3_Package_Package('FLOW3', FLOW3_PATH_PACKAGES . '/FLOW3/');
+
 		$packagesDirectoryIterator = new DirectoryIterator(FLOW3_PATH_PACKAGES);
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
-			if ($filename{0} != '.') {
+			if ($filename{0} != '.' && $filename != 'FLOW3') {
 				$packagePath = F3_FLOW3_Utility_Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
 				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, $packagePath);
 			}

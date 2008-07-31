@@ -66,9 +66,9 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Utility_Environment $utilityEnvironment) {
+	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment) {
 		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentManager->getComponentFactory();
+		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 	}
 
@@ -104,15 +104,34 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			$requestPath = strstr($requestPath, '/');
 		}
 
-		/** Find the matching route */
-		foreach (array_reverse($this->routes) as $route) {
+		$packageName = 'Default';
+		$controllerName = 'Default';
+
+		foreach (array_reverse($this->routes) as $routeName => $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
-				$this->setControllerName($matchResults['package'], $matchResults['controller'], $request);
-				$this->setActionName($matchResults['action'], $request);
+				foreach ($matchResults as $argumentName => $argumentValue) {
+					if ($argumentName{0} == '@') {
+						switch ($argumentName) {
+							case '@package' :
+								$packageName = $argumentValue;
+							break;
+							case '@controller' :
+								$controllerName = $argumentValue;
+							break;
+							case '@action' :
+								$request->setActionName($argumentValue);
+							break;
+						}
+					} else {
+						$request->setArgument($argumentName, $argumentValue);
+					}
+				}
 				break;
 			}
 		}
+
+		$this->setControllerName($packageName, $controllerName, $request);
 
 		foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
 			$request->setArgument($argumentName, $argumentValue);
@@ -120,6 +139,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 		foreach ($requestURI->getArguments() as $argumentName => $argumentValue) {
 			$request->setArgument($argumentName, $argumentValue);
 		}
+
 	}
 
 	/**
@@ -141,22 +161,6 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 		$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $controllerName);
 		if ($controllerName === FALSE) return;
 		$request->setControllerName($controllerName);
-	}
-
-	/**
-	 * Determines and sets the action name for the given web request
-	 *
-	 * @param string $actionName Name of the action
-	 * @param F3_FLOW3_MVC_Web_Request $request The web request
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function setActionName($actionName, F3_FLOW3_MVC_Web_Request $request) {
-		if ($actionName == '') {
-			$actionName = 'Default';
-		}
-		$request->setActionName($actionName);
 	}
 }
 ?>
