@@ -991,29 +991,5 @@ class F3_MyPackage_IntroductionAspect {
         </mediaobject>
       </figure>
     </section>
-
-    <section>
-      <title>Programmatic declarations</title>
-
-      <para></para>
-    </section>
-  </section>
-
-  <section>
-    <title>Further resources</title>
-
-    <para></para>
-
-    <section>
-      <title>Other AOP frameworks</title>
-
-      <para></para>
-    </section>
-
-    <section>
-      <title>Books and articles</title>
-
-      <para></para>
-    </section>
   </section>
 </section>

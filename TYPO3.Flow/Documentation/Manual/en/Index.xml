@@ -42,7 +42,7 @@
 
     <xi:include href="ComponentFramework.xml"/>
 
-    <xi:include href="ConfigurationManager.xml"/>
+    <xi:include href="ConfigurationFramework.xml"/>
 
     <xi:include href="ResourceManager.xml"/>
 

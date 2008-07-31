@@ -60,7 +60,7 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Configuration Manager</emphasis> reads and
+        <para>The <emphasis>Configuration Framework</emphasis> reads and
         cascades various kinds of configuration from different sources and
         provides access to it.</para>
       </listitem>
@@ -136,58 +136,6 @@
       <para>A strong coffee helps most people over even the longest
       documentation.</para>
     </tip>
-  </section>
-
-  <section>
-    <title>Is FLOW3 for me?</title>
-
-    <para>- to be written -</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>clean and intuitive architecture</para>
-      </listitem>
-
-      <listitem>
-        <para>human readable code</para>
-      </listitem>
-
-      <listitem>
-        <para>specifically supports modern programming paradigms</para>
-      </listitem>
-
-      <listitem>
-        <para>designed for large and complex applications</para>
-      </listitem>
-
-      <listitem>
-        <para>fast results, comparable to rails</para>
-      </listitem>
-
-      <listitem>
-        <para>hides database - only objects / content repository</para>
-      </listitem>
-
-      <listitem>
-        <para>package based - package repository with large community</para>
-      </listitem>
-
-      <listitem>
-        <para>backed by the T3A</para>
-      </listitem>
-
-      <listitem>
-        <para>enterprise the PHP way</para>
-      </listitem>
-
-      <listitem>
-        <para>kickstarter</para>
-      </listitem>
-
-      <listitem>
-        <para>...</para>
-      </listitem>
-    </itemizedlist>
   </section>
 
   <section>

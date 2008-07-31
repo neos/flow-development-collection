@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+         xmlns:ns52="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns5="http://www.w3.org/1999/xlink"
+         xmlns:ns4="http://www.w3.org/2000/svg"
+         xmlns:ns3="http://www.w3.org/1999/xhtml"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Configuration Framework</title>
+
+  <para>Configuration is an important aspect of versatile applications. FLOW3
+  provides you with configuration mechanisms which have a small footprint and
+  are convenient to use and powerful at the same time. Hub for all
+  configuration is the configuration manager which handles alls configuration
+  tasks like reading configuration, configuration cascading, and (later) also
+  writing configuration.</para>
+
+  <section>
+    <title>Configuration Files</title>
+
+    <para>FLOW3 distinguishes between different types of configuration. The
+    most important type of configuration are the settings, however other
+    configuration types exist for special purposes.</para>
+
+    <para>The preferred configuration format is PHP and the configuration
+    options of each type are defined in their own dedicated file: </para>
+
+    <variablelist>
+      <varlistentry>
+        <term><filename>Settings.php</filename></term>
+
+        <listitem>
+          <para>Contains user-level settings, i.e. configuration options the
+          users or administrators are meant to change. Settings usually
+          control the visible behaviour of the application.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>FLOW3.php</filename></term>
+
+        <listitem>
+          <para>Contains settings for FLOW3 itself. </para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Routes.php</filename></term>
+
+        <listitem>
+          <para>Contains routes configuration. This routing information is
+          parsed and used by the MVC Web Routing mechanism. Refer to the MVC
+          section for more information.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Components.php</filename></term>
+
+        <listitem>
+          <para>Contains component configuration, ie. options which configure
+          components and the combination of those on a lower level. See the
+          Component Manager section for more information.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Packages.php</filename></term>
+
+        <listitem>
+          <para>Contains package configuration, ie. options which define
+          certain specialities of the package such as custom autoloaders or
+          special resources.</para>
+        </listitem>
+      </varlistentry>
+    </variablelist>
+
+    <section>
+      <title>File Locations</title>
+
+      <para>There are several locations where configuration files may be
+      placed. All of them are scanned by the configuration manager during
+      initialization and cascaded into a single configuration tree. The
+      following locations exist (listed in the order they are loaded):</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><filename>/Packages/<replaceable>PackageName</replaceable>/Configuration/</filename></term>
+
+          <listitem>
+            <para>The <filename>Configuration</filename> directory of each
+            package is scanned first. Only at this stage new configuration
+            options can be introduced (by just defining a default value).
+            After all configuration files form these directories have been
+            parsed, the resulting configuration containers are protected
+            against further introduction of new options.</para>
+
+            <para>Note that <filename>FLOW3.php</filename> files are only
+            allowed in the <package>FLOW3</package> package and are ignored in
+            any other package configuration dir. </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><filename>/Configuration/</filename></term>
+
+          <listitem>
+            <para>Configuration in the global
+            <filename>Configuration</filename> directory override the default
+            settings which were defined in the package's configuration
+            directories. To safe users from typos, options which are
+            introduced on this level will result in an error message.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><filename>/Configuration/<replaceable>ApplicationContext</replaceable>/</filename></term>
+
+          <listitem>
+            <para>There may exist a subdirectory for each application context
+            (see FLOW3 Bootstrap section). This configuration is only loaded
+            if FLOW3 runs in the respective application context. Like in the
+            global <filename>Configuration</filename> directory, no new
+            configuration options can be introduced at this point - only their
+            values can be changed.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para></para>
+    </section>
+
+    <section>
+      <title>Defining Configuration</title>
+
+      <para>Although configuration files are plain PHP, they should follow
+      FLOW3's conventions for configuration files.</para>
+
+      <para>As mentioned above, it is only possible to declare new
+      configuration options in the package-level configuration files. All
+      options are properties of a special configuration container object which
+      is automagically provided in a variable named
+      <varname>$c</varname>.</para>
+
+      <example>
+        <title>Example for a package-level Settings.php</title>
+
+        <para><programlisting><literal>&lt;?php
+declare(ENCODING="utf-8");
+
+/*                                                                        *
+ * Settings Configuration for the TYPO3CR Package                         *
+ *                                                                        */
+
+/**
+ * @package TYPO3CR
+ * @version $Id: Components.php 888 2008-05-30 16:00:05Z k-fish $
+ */
+
+/**
+ * The storage backend to use for TYPO3CR.
+ *
+ * @var F3_TYPO3CR_Storage_BackendInterface
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3_TYPO3CR_Storage_Backend_PDO';
+
+/**
+ * Options which are passed to the storage backend used by TYPO3CR
+ *
+ * @var array
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
+  'dataSourceName' =&gt; 'sqlite:/tmp/TYPO3CR.db',
+  'username' =&gt; NULL,
+  'password' =&gt; NULL
+);
+
+?&gt;</literal></programlisting></para>
+      </example>
+
+      <para>As you can see, you can introduce new configuration options by
+      just assigning a value to them using PHP's object / member variable
+      syntax. </para>
+
+      <para>Technically the <varname>$c</varname> variable is an instance of
+      <classname>F3_FLOW3_Configuration_Container</classname> which
+      automatically creates sub containers as soon as you try to access a
+      not-yet-existing property. Taking the above example,
+      <varname>$c</varname>, <varname>$c-&gt;TYPO3CR</varname> and
+      <varname>$c-&gt;TYPO3CR-&gt;storage</varname> are all Configuration
+      Container objects which were created on the fly.
+      <property>backend</property> is just a property (member variable) of
+      <varname>$c-&gt;TYPO3CR-&gt;storage</varname> and contains a value of
+      the type <type>string</type>.</para>
+
+      <note>
+        <para>Please note that the first level of your option tree must always
+        contain the key of the package you're referring to
+        (<package>TYPO3CR</package> in the above example). While it
+        technically is possible to define and modify settings of other package
+        in your own package, it's certainly something you should do only if
+        really necessary.</para>
+      </note>
+
+      <para>There are two alternatives to the above object-driven syntax and
+      all the three of them may be mixed as you like.</para>
+
+      <para>Instead of the object / property way, you can equally use an array
+      syntax:</para>
+
+      <example>
+        <title>Settings declaration using the object and the array
+        syntax</title>
+
+        <para><programlisting><literal>/**
+ * The storage backend to use for TYPO3CR.
+ *
+ * @var F3_TYPO3CR_Storage_BackendInterface
+ */
+$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3_TYPO3CR_Storage_Backend_PDO';</literal></programlisting></para>
+      </example>
+
+      <para>Finally you may even call virtual setter methods in order to get a
+      more readable configuration file when setting many options on the same
+      container:</para>
+
+      <example>
+        <title>Settings declaration with the object syntax and virtual
+        setters</title>
+
+        <para><programlisting><literal>   // Traditional object / property syntax:
+
+$c-&gt;Demo-&gt;administrator-&gt;name = 'John Doe';
+$c-&gt;Demo-&gt;administrator-&gt;email = 'johndoe@typo3.org';
+$c-&gt;Demo-&gt;administrator-&gt;country = 'DE';
+
+   // The same with the virtual setters syntax:
+
+$c-&gt;Demo-&gt;administrator-&gt;
+   setName('JohnDoe')-&gt;
+   setEmail('johndoe@typo3.org')-&gt;
+   setCountry('DE');
+
+?&gt;</literal></programlisting></para>
+      </example>
+    </section>
+
+    <section>
+      <title>Special configuration options for
+      <filename>Packages.php</filename></title>
+
+      <para>In <filename>Packages.php</filename> you can use two special
+      options influencing the class autoloader of FLOW3's resource
+      manager.</para>
+
+      <caution>
+        <para>This is certainly a temporary solution which will surely change
+        as soon as the resource manager and the package manager become more
+        mature.</para>
+      </caution>
+
+      <variablelist>
+        <varlistentry>
+          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;specialClassNameAndPaths</term>
+
+          <listitem>
+            <para>This can be used to register classes outside the
+            include_path and not covered by the FLOW3 class autloader.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;includePaths</term>
+
+          <listitem>
+            <para>This can be used to add paths to the PHP
+            include_path.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The values for those options may contain markers which are
+      replaced before the value is used:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term>%PATH_PACKAGE%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package folder.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>%PATH_PACKAGE_CLASSES%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package's
+            <filename>Classes</filename> folder.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>%PATH_PACKAGE_RESOURCES%</term>
+
+          <listitem>
+            <para>Will be replaced by the path to the package's
+            <filename>Resources</filename> folder.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <example>
+        <title>Example for using specialClassNameAndPaths</title>
+
+        <programlisting><literal>&lt;?php
+declare(ENCODING="utf-8");
+
+/*                                                                        *
+ * Packages configuration of the Smarty package                           *
+ *                                                                        */
+
+/**
+ * @package Smarty
+ * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
+ */
+
+$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%/PHP/Smarty/Smarty.class.php';
+
+?&gt;</literal></programlisting>
+      </example>
+    </section>
+  </section>
+
+  <section>
+    <title>Using Configuration</title>
+
+    <para>There are certain situations in which FLOW3 will automatically
+    provide you with the right configuration - the MVC's Action Controller is
+    such a case. However, in most other cases you will have to retrieve the
+    configuration yourself. The Configuration Manager comes up with a very
+    simple API providing you access to the already parsed and cascaded
+    configuration.</para>
+
+    <section>
+      <title>Working with Settings</title>
+
+      <para>What you usually want to work with are settings. The following
+      example demonstrates how to let FLOW3 inject an instance of the
+      configuration manager into your class, use it to retrieve the settings
+      for your package and output some option value:</para>
+
+      <example>
+        <title>Retrieving settings</title>
+
+        <programlisting>class F3_Demo_SomeClass {
+
+   protected $configurationManager;
+
+   public function injectConfigurationManager(F3_FLOW3_Configuration_Manager $configurationManager) {
+      $this-&gt;configurationManager = $configurationManager;
+   }
+
+   public function theMethod() {
+      $mySettings = $this-&gt;configurationManager-&gt;getSettings('Demo');
+      echo ($mySettings-&gt;administrator-&gt;name);
+      echo ($mySettings-&gt;administrator-&gt;email);
+   }
+}</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Working with other configuration</title>
+
+      <para>Although seldomly necessary, it is also possible to retrieve
+      options of the more special configuration types. The configuration
+      manager provides a method called
+      <methodname>getSpecialConfiguration()</methodname> for this purpose. The
+      result this method returns depends on the actual configuration type you
+      are requesting.</para>
+
+      <para>Bottomline is that you should be highly aware of what you're doing
+      when working with these special options. Usually there are much better
+      ways to get the desired information (eg. ask the Component Manager for
+      component configuration). </para>
+    </section>
+  </section>
+</section>
