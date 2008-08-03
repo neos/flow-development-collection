@@ -42,6 +42,11 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	protected $mockRequestURI;
 
 	/**
+	 * @var F3_FLOW3_Utility_Environment
+	 */
+	protected $mockEnvironment;
+
+	/**
 	 * @var F3_FLOW3_MVC_Web_Routing_RouterInterface
 	 */
 	protected $mockRouter;
@@ -64,10 +69,10 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockRequestURI = $this->getMock('F3_FLOW3_Property_DataType_URI', array(), array(), '', FALSE);
-		$mockEnvironment = $this->getMock('F3_FLOW3_Utility_Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
+		$this->mockEnvironment = $this->getMock('F3_FLOW3_Utility_Environment', array(), array(), '', FALSE);
+		$this->mockEnvironment->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
 
-		$this->mockRequest = $this->getMock('F3_FLOW3_MVC_Web_Request', array('injectEnvironment', 'setRequestURI'), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('F3_FLOW3_MVC_Web_Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
 
 		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_FactoryInterface');
 		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($this->mockRequest));
@@ -78,7 +83,7 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->mockRouter = $this->getMock('F3_FLOW3_MVC_Web_Routing_RouterInterface', array('route', 'setRoutesConfiguration'));
 
 		$this->builder = new F3_FLOW3_MVC_Web_RequestBuilder($mockComponentFactory);
-		$this->builder->injectEnvironment($mockEnvironment);
+		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);
 	}
@@ -106,6 +111,16 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function buildInvokesTheRouteMethodOfTheRouter() {
 		$this->mockRouter->expects($this->once())->method('route');
+		$this->builder->build();
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildDetectsTheRequestMethodAndSetsItInTheRequestObject() {
+		$this->mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('GET'));
+		$this->mockRequest->expects($this->once())->method('setMethod')->with($this->equalTo('GET'));
 		$this->builder->build();
 	}
 }

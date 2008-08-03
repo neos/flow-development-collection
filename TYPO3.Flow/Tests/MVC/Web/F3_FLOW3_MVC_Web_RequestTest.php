@@ -129,5 +129,29 @@ class F3_FLOW3_MVC_Web_RequestTest extends F3_Testing_BaseTestCase {
 
 		$this->assertEquals($expectedBaseURI, $request->getBaseURI(), 'The returned baseURI is not as expected.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theRequestMethodCanBeSetAndRetrieved() {
+		$request = new F3_FLOW3_MVC_Web_Request();
+
+		$request->setMethod(F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET);
+		$this->assertEquals(F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET, $request->getMethod());
+
+		$request->setMethod(F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST);
+		$this->assertEquals(F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST, $request->getMethod());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3_FLOW3_MVC_Exception_InvalidRequestMethod
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidRequestMethodsAreRejected() {
+		$request = new F3_FLOW3_MVC_Web_Request();
+		$request->setMethod('SOMETHING');
+	}
 }
 ?>

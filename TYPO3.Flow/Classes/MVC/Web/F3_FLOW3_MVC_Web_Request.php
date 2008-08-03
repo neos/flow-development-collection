@@ -60,6 +60,35 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	}
 
 	/**
+	 * Sets the request method
+	 *
+	 * @param string $method Name of the request method - one of the F3_FLOW3_Utility_Environment::REQUEST_METHOD_* constants
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked
+	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestMethod if the request method is not supported
+	 */
+	public function setMethod($method) {
+		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181134253);
+		if (array_search($method, array(
+				F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET,
+				F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST,
+				F3_FLOW3_Utility_Environment::REQUEST_METHOD_UNKNOWN
+			)) === FALSE) throw new F3_FLOW3_MVC_Exception_InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
+		$this->method = $method;
+	}
+
+	/**
+	 * Returns the name of the request method
+	 *
+	 * @returnstring Name of the request method - one of the F3_FLOW3_Utility_Environment::REQUEST_METHOD_* constants
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMethod() {
+		return $this->method;
+	}
+
+	/**
 	 * Sets the request URI
 	 *
 	 * @param F3_FLOW3_Property_DataType_URI $requestURI URI of this web request

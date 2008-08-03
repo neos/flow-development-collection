@@ -92,7 +92,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function simpleStaticRouteMatchesCorrectly() {
+	public function aSimpleStaticRouteConsistsOfThePathSegmentsSeparatedByTheForwardSlash() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('foo/bar');
 
@@ -104,7 +104,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function simpleDynamicRouteMatchesCorrectly() {
+	public function dynamicRoutesAreEnclosedInSquareBrackets() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('foo/[bar]');
 
@@ -117,7 +117,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function complexDynamicRouteMatchesCorrectly() {
+	public function staticAndDynamicRoutesCanBeMixedInAnyOrder() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/foo/[key2]/bar');
 
@@ -130,7 +130,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function simpleSubRouteMatchesCorrectly() {
+	public function subRoutesAreEnclosedInDoubleSquareBrackets() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('foo/bar/[[parameters]]');
 

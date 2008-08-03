@@ -38,7 +38,7 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	/**
 	 * @var F3_FLOW3_Utility_Environment
 	 */
-	protected $utilityEnvironment;
+	protected $environment;
 
 	/**
 	 * @var F3_FLOW3_Configuration_Manager
@@ -106,6 +106,7 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$request->injectEnvironment($this->environment);
 		$request->setRequestURI($this->environment->getRequestURI());
+		$request->setMethod($this->environment->getRequestMethod());
 
 		$routesConfiguration = $this->configurationManager->getSpecialConfiguration(F3_FLOW3_Configuration_Manager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);

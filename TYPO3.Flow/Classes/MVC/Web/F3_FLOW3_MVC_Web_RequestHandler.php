@@ -88,15 +88,19 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	}
 
 	/**
-	 * This request handler can handle any GET or POST request.
+	 * This request handler can handle any web request.
 	 *
 	 * @return boolean If the request is a web request, TRUE otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
 		switch ($this->utilityEnvironment->getRequestMethod()) {
-			case 'GET' :
-			case 'POST' :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_PUT :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_DELETE :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_OPTIONS :
+			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_HEAD :
 				return TRUE;
 		}
 		return FALSE;

@@ -35,6 +35,14 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Utility_Environment {
 
+	const REQUEST_METHOD_UNKNOWN = NULL;
+	const REQUEST_METHOD_GET = 'GET';
+	const REQUEST_METHOD_POST = 'POST';
+	const REQUEST_METHOD_HEAD = 'HEAD';
+	const REQUEST_METHOD_OPTIONS = 'OPTIONS';
+	const REQUEST_METHOD_PUT = 'PUT';
+	const REQUEST_METHOD_DELETE = 'DELETE';
+
 	/**
 	 * @var array A local copy of the _SERVER super global.
 	 */
@@ -213,7 +221,17 @@ class F3_FLOW3_Utility_Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestMethod() {
-		return isset($this->SERVER['REQUEST_METHOD']) ? $this->SERVER['REQUEST_METHOD'] : NULL;
+		if (!isset($this->SERVER['REQUEST_METHOD'])) return self::REQUEST_METHOD_UNKNOWN;
+
+		switch ($this->SERVER['REQUEST_METHOD']) {
+			case 'GET' : return self::REQUEST_METHOD_GET;
+			case 'POST' : return self::REQUEST_METHOD_POST;
+			case 'PUT' : return self::REQUEST_METHOD_PUT;
+			case 'DELETE' : return self::REQUEST_METHOD_DELETE;
+			case 'HEAD' : return self::REQUEST_METHOD_HEAD;
+			case 'OPTIONS' : return self::REQUEST_METHOD_OPTIONS;
+		}
+		return self::REQUEST_METHOD_UNKNOWN;
 	}
 
 	/**

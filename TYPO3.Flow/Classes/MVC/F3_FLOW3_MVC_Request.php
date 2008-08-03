@@ -66,29 +66,6 @@ class F3_FLOW3_MVC_Request {
 	}
 
 	/**
-	 * Sets the name of the request method
-	 *
-	 * @param string $method Name of the request method
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked
-	 */
-	public function setMethod($method) {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181134253);
-		$this->method = $method;
-	}
-
-	/**
-	 * Returns the name of the request method
-	 *
-	 * @return string Name of the request method
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getMethod() {
-		return $this->method;
-	}
-
-	/**
 	 * Sets the value of the specified argument
 	 *
 	 * @param string $argumentName Name of the argument to set
