@@ -43,6 +43,34 @@ class F3_FLOW3_Utility_Files {
 	}
 
 	/**
+	 * Properly glues together filepaths / filenames by replacing
+	 * backslashes and double slashes of the specified paths.
+	 * Note: trailing slashes will be removed, leading slashes won't.
+	 * Usage: concatenatePaths(array('dir1/dir2', 'dir3', 'file'))
+	 *
+	 * @param array $paths the file paths to be combined. Last array element may
+	 * include the filename.
+	 * @return string concatenated path without trailing slash.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see getUnixStylePath()
+	 */
+	public static function concatenatePaths(array $paths) {
+		$resultingPath = '';
+		foreach($paths as $index => $path) {
+			$path = self::getUnixStylePath($path);
+			if ($index == 0) {
+				$path = rtrim($path, '/');
+			} else {
+				$path = trim($path, '/');
+			}
+			if (strlen($path) > 0) {
+				$resultingPath.= $path . '/';
+			}
+		}
+		return rtrim($resultingPath, '/');
+	} 
+
+	/**
 	 * Returns all filenames from the specified directory. Filters hidden files and
 	 * directories.
 	 *

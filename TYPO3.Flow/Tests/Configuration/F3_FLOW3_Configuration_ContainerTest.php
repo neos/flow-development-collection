@@ -249,5 +249,98 @@ class F3_FLOW3_Configuration_ContainerTest extends F3_Testing_BaseTestCase {
 
 		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function callingNonExistingMethodResultsInException() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		try {
+			$configuration->nonExistingMethod();
+			$this->fail('No exception was thrown.');
+		} catch (F3_FLOW3_Configuration_Exception $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function passingNoArgumentToMagicSetterResultsInException() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		try {
+			$configuration->setOption();
+			$this->fail('No exception was thrown.');
+		} catch (F3_FLOW3_Configuration_Exception $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function passingTwoArgumentToMagicSetterResultsInException() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		try {
+			$configuration->setOption('argument1', 'argument2');
+			$this->fail('No exception was thrown.');
+		} catch (F3_FLOW3_Configuration_Exception $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function simpleOptionCanBeAddedThroughMagicSetter() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration->setNewOption('testValue');
+		$this->assertEquals('testValue', $configuration->newOption);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function cascadedOptionCanBeCreatedOnTheFlyThroughMagicSetter() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration->parentOption->setChildOption('the child');
+		$this->assertEquals('the child', $configuration->parentOption->childOption);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function cascadedOptionCanBeCreatedOnTheFlyOnThirdLevelThroughMagicSetter() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration->parentOption->childOption->setGrandChildOption('the grand child');
+		$this->assertEquals('the grand child', $configuration->parentOption->childOption->grandChildOption);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function magicSetterReturnsItself() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$this->assertSame($configuration, $configuration->setNewOption('testValue'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function optionsCanBeAddedThroughChainingSyntax() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration
+			->setOption1('value1')
+			->setOption2('value2')
+			->setOption3('value3');
+		$this->assertEquals('value1', $configuration->option1);
+		$this->assertEquals('value2', $configuration->option2);
+		$this->assertEquals('value3', $configuration->option3);
+	}
 }
 ?>
