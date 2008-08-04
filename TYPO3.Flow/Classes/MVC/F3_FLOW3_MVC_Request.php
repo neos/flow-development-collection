@@ -32,12 +32,7 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Request {
 
 	/**
-	 * @var boolean If this request object is locked for write access or not
-	 */
-	protected $locked = FALSE;
-
-	/**
-	 * @var string Contains the name of the request method
+	 * @var string Contains the request method
 	 */
 	protected $method;
 
@@ -47,14 +42,24 @@ class F3_FLOW3_MVC_Request {
 	protected $arguments;
 
 	/**
+	 * @var string Package key of the controller which is supposed to handle this request.
+	 */
+	protected $controllerPackageKey = 'FLOW3_MVC';
+
+	/**
 	 * @var string Component name of the controller which is supposed to handle this request.
 	 */
-	protected $controllerName = 'F3_FLOW3_MVC_Controller_DefaultController';
+	protected $controllerName = 'Default';
 
 	/**
 	 * @var string Name of the action the controller is supposed to take.
 	 */
-	protected $actionName = 'default';
+	protected $controllerActionName = 'default';
+
+	/**
+	 * @var boolean If this request has been changed and needs to be dispatched again
+	 */
+	protected $dispatched = FALSE;
 
 	/**
 	 * Constructs this request
@@ -66,16 +71,114 @@ class F3_FLOW3_MVC_Request {
 	}
 
 	/**
+	 * Sets the dispatched flag
+	 *
+	 * @param boolean $flag If this request has been dispatched
+	 * @return void
+	 */
+	public function setDispatched($flag) {
+		$this->dispatched = $flag ? TRUE : FALSE;
+	}
+
+	/**
+	 * If this request has been dispatched and addressed by the responsible
+	 * controller and the response is ready to be sent.
+	 *
+	 * The dispatcher will try to dispatch the request again if it has not been
+	 * addressed yet.
+	 */
+	public function isDispatched() {
+		return $this->dispatched;
+	}
+
+	/**
+	 * Returns the component name of the controller defined by the package key and
+	 * controller name
+	 *
+	 * @return string The controller's Component Name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerComponentName() {
+		return 'F3_' . $this->controllerPackageKey . '_Controller_' . $this->controllerName;
+	}
+
+	/**
+	 * Sets the package key of the controller.
+	 *
+	 * @param string $packageKey The package key. Specifying subpackages is allowed in the form of "Package_SubPackage_SubSubPackage"
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerPackageKey($packageKey) {
+		$this->controllerPackageKey = $packageKey;
+	}
+
+	/**
+	 * Returns the package key of the specified controller.
+	 *
+	 * @return string The package key
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerPackageKey() {
+		return $this->controllerPackageKey;
+	}
+
+	/**
+	 * Sets the name of the controller which is supposed to handle the request.
+	 * Note: This is not the component name of the controller!
+	 *
+	 * @param string $controllerName Name of the controller
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerName($controllerName) {
+		if (!is_string($controllerName)) throw new F3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+		if (strpos($controllerName, '_') !== FALSE) throw new F3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must not contain underscores.', 1217846412);
+		$this->controllerName = $controllerName;
+	}
+
+	/**
+	 * Returns the component name of the controller supposed to handle this request, if one
+	 * was set already (if not, the name of the default controller is returned)
+	 *
+	 * @return string Component name of the controller
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerName() {
+		return $this->controllerName;
+	}
+
+	/**
+	 * Sets the name of the action contained in this request
+	 *
+	 * @param string $actionName: Name of the action to execute by the controller
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerActionName($actionName) {
+		if (!is_string($actionName)) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+		$this->controllerActionName = $actionName;
+	}
+
+	/**
+	 * Returns the name of the action the controller is supposed to execute.
+	 *
+	 * @return string Action name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerActionName() {
+		return $this->controllerActionName;
+	}
+
+	/**
 	 * Sets the value of the specified argument
 	 *
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked
 	 */
 	public function setArgument($argumentName, $value) {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181134254);
 		if (!is_string($argumentName) || F3_PHP6_Functions::strlen($argumentName) == 0) throw new F3_FLOW3_MVC_Exception_InvalidArgumentName('Invalid argument name.', 1210858767);
 		$this->arguments[$argumentName] = $value;
 	}
@@ -87,10 +190,8 @@ class F3_FLOW3_MVC_Request {
 	 * @param ArrayObject $arguments An ArrayObject of argument names and their values
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked
 	 */
 	public function setArguments(ArrayObject $arguments) {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181134255);
 		$this->arguments = $arguments;
 	}
 
@@ -126,69 +227,6 @@ class F3_FLOW3_MVC_Request {
 	 */
 	public function hasArgument($argumentName) {
 		return isset($this->arguments[$argumentName]);
-	}
-
-	/**
-	 * Sets the component name of the controller which is supposed to handle the request.
-	 *
-	 * @param string $controllerName Component name of the controller
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked.
-	 */
-	public function setControllerName($controllerName) {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1183444614);
-		if (!is_string($controllerName)) throw new F3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
-		$this->controllerName = $controllerName;
-	}
-
-	/**
-	 * Returns the component name of the controller supposed to handle this request, if one
-	 * was set already (if not, the name of the default controller is returned)
-	 *
-	 * @return string Component name of the controller
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getControllerName() {
-		return $this->controllerName;
-	}
-
-	/**
-	 * Sets the name of the action contained in this request
-	 *
-	 * @param string $actionName: Name of the action to execute by the controller
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked.
-	 */
-	public function setActionName($actionName) {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1186648993);
-		if (!is_string($actionName)) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		$this->actionName = $actionName;
-	}
-
-	/**
-	 * Returns the name of the action the controller is supposed to execute.
-	 *
-	 * @return string Action name
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getActionName() {
-		return $this->actionName;
-	}
-
-
-	/**
-	 * Locks this request object so no properties can be changed from
-	 * outside anymore.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked if this request object is already locked.
-	 */
-	public function lock() {
-		if ($this->locked) throw new F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked('This request object is locked for write access.', 1181135201);
-		$this->locked = TRUE;
 	}
 }
 ?>

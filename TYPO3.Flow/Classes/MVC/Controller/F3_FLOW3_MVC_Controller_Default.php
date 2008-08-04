@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_DefaultController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3_FLOW3_MVC_Controller_Default.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_DefaultController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3_FLOW3_MVC_Controller_Default.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_DefaultController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
+class F3_FLOW3_MVC_Controller_Default extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
 	/**
 	 * Processes a generic request and returns a response
@@ -39,6 +39,7 @@ class F3_FLOW3_MVC_Controller_DefaultController extends F3_FLOW3_MVC_Controller_
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
+		$request->setDispatched(TRUE);
 		switch (get_class($request)) {
 			case 'F3_FLOW3_MVC_Web_Request' :
 				$this->processWebRequest($request, $response);

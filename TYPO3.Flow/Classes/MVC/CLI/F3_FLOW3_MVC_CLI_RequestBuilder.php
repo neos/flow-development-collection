@@ -73,14 +73,10 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 		if ($this->environment->getCommandLineArgumentCount() < 2) return $request;
 
 		$commandLineArguments = $this->environment->getCommandLineArguments();
-		$controllerNamePrefix = 'F3_' . $commandLineArguments[1] . '_Controller_' ;
 
-		$controllerName = $controllerNamePrefix . (isset($commandLineArguments[2]) ? $commandLineArguments[2] : 'Default');
-		$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerName);
-		if ($controllerName !== FALSE) {
-			$request->setControllerName($controllerName);
-			if (isset($commandLineArguments[3])) $request->setActionName($commandLineArguments[3]);
-		}
+		if (isset($commandLineArguments[1])) $request->setControllerPackageKey($commandLineArguments[1]);
+		if (isset($commandLineArguments[2])) $request->setControllerName($commandLineArguments[2]);
+		if (isset($commandLineArguments[3])) $request->setControllerActionName($commandLineArguments[3]);
 
 		$remainingArguments = array_slice($commandLineArguments, 4);
 

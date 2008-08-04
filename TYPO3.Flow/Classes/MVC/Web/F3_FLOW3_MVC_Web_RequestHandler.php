@@ -80,8 +80,6 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	public function handleRequest() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_RequestBuilder')->build();
 		$this->requestProcessorChainManager->processRequest($request);
-		$request->lock();
-			# TODO intercepting filter chain should be invoked here.
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();

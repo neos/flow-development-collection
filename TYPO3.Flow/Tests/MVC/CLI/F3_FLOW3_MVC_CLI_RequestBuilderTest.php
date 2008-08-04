@@ -63,7 +63,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_FLOW3_MVC_Controller_DefaultController', $request->getControllerName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
+		$this->assertEquals('F3_FLOW3_MVC_Controller_Default', $request->getControllerComponentName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
 	}
 
 	/**
@@ -78,7 +78,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
 	}
 
 	/**
@@ -94,7 +94,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][2] = 'Default';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
 	}
 
 	/**
@@ -111,8 +111,8 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
-		$this->assertEquals('list', $request->getActionName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
+		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
+		$this->assertEquals('list', $request->getControllerActionName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
 	}
 
 	/**

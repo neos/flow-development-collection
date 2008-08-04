@@ -15,9 +15,16 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the MVC CLI Request Handler class
  *
  * @package FLOW3
+ * @subpackage MVC
  * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -42,7 +49,6 @@ class F3_FLOW3_MVC_CLI_RequestHandlerTest extends F3_Testing_BaseTestCase {
 		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
 		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
 
-			// Inject the mock environment into Builder and Handler:
 		$this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder', $this->componentManager, $this->componentFactory, $this->environment);
 		$this->requestHandler = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestHandler', $this->componentFactory, $this->environment);
 	}

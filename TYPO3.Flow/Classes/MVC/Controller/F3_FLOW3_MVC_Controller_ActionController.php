@@ -83,9 +83,9 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 * @throws F3_FLOW3_MVC_Exception_NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 */
 	protected function callActionMethod() {
-		$actionMethodName = ($this->request->getActionName() == 'default') ? $this->defaultActionMethodName : $this->request->getActionName() . 'Action';
+		$actionMethodName = ($this->request->getControllerActionName() == 'default') ? $this->defaultActionMethodName : $this->request->getControllerActionName() . 'Action';
 
-		if (!method_exists($this, $actionMethodName)) throw new F3_FLOW3_MVC_Exception_NoSuchAction('An action "' . $this->request->getActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+		if (!method_exists($this, $actionMethodName)) throw new F3_FLOW3_MVC_Exception_NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
 		if ($this->initalizeView) $this->initializeView();
 		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
@@ -103,13 +103,10 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$explodedControllerName = explode('_', $this->request->getControllerName());
-		if (is_array($explodedControllerName)) {
-			$possibleViewName = 'F3_' . $explodedControllerName[1] . '_View_' . $explodedControllerName[3] . '_' . F3_PHP6_Functions::ucfirst($this->request->getActionName());
-			if ($this->componentManager->isComponentRegistered($possibleViewName)) {
-				$this->view = $this->componentFactory->getComponent($possibleViewName);
-				return;
-			}
+		$possibleViewName = 'F3_' . $this->request->getControllerPackageKey() . '_View_' . $this->request->getControllerName() . '_' . F3_PHP6_Functions::ucfirst($this->request->getControllerActionName());
+		if ($this->componentManager->isComponentRegistered($possibleViewName)) {
+			$this->view = $this->componentFactory->getComponent($possibleViewName);
+			return;
 		}
 		$this->view = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Empty');
 	}

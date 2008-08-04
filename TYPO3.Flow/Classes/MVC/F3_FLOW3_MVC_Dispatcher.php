@@ -110,23 +110,26 @@ class F3_FLOW3_MVC_Dispatcher {
 	 * @throws F3_FLOW3_MVC_Exception_NoSuchController, F3_FLOW3_MVC_Exception_InvalidController
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo dispatch until $request->isHandled()
-	 * @todo implement forwards
 	 */
 	public function dispatch(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
-		$controllerName = $request->getControllerName();
-		if (!$this->componentManager->isComponentRegistered($controllerName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerName . '". The controller "' . $controllerName . '" is not a registered component.', 1202921618);
+		$dispatchLoopCount = 0;
+		while (!$request->isDispatched()) {
+			$dispatchLoopCount ++;
+			if ($dispatchLoopCount > 99) throw new F3_FLOW3_MVC_Exception_InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
 
-		$controller = $this->componentFactory->getComponent($controllerName);
-		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerName . '". The controller must be a valid request handling controller.', 1202921619);
+			$controllerComponentName = $request->getControllerComponentName();
+			if (!$this->componentManager->isComponentRegistered($controllerComponentName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerComponentName . '". The controller "' . $controllerComponentName . '" is not a registered component.', 1202921618);
 
-		list(, $controllerPackageKey) = explode('_', $controllerName);
-		$controller->setSettings($this->configurationManager->getSettings($controllerPackageKey));
+			$controller = $this->componentFactory->getComponent($controllerComponentName);
+			if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerComponentName . '". The controller must be a valid request handling controller.', 1202921619);
 
-		$this->securityContextHolder->initializeContext($request);
-		$this->firewall->blockIllegalRequests($request);
+			$controller->setSettings($this->configurationManager->getSettings($request->getControllerPackageKey()));
 
-		$controller->processRequest($request, $response);
+			$this->securityContextHolder->initializeContext($request);
+			$this->firewall->blockIllegalRequests($request);
+
+			$controller->processRequest($request, $response);
+		}
 	}
 }
 ?>

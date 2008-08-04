@@ -17,7 +17,7 @@ $c->default
 	->setUrlPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
-			'@package' => 'Default',
+			'@package' => 'FLOW3_MVC',
 			'@controller' => 'Default',
 			'@action' => 'Default',
 		)

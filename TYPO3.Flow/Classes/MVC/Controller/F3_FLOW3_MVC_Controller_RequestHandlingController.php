@@ -46,6 +46,11 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	protected $arguments;
 
 	/**
+	 * @var F3_FLOW3_MVC_Property_Mapper A property mapper for mapping the arguments
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * @var F3_FLOW3_Property_MappingResults Mapping results of the arguments mapping process
 	 */
 	protected $argumentMappingResults;
@@ -68,37 +73,16 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	}
 
 	/**
-	 * Returns the arguments which are defined for this controller.
+	 * Injects a property mapper
 	 *
-	 * Use this information if you want to know about what arguments are supported and / or
-	 * required by this controller or if you'd like to know about further information about
-	 * each argument.
-	 *
-	 * @return F3_FLOW3_MVC_Controller_Arguments Supported arguments of this controller
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getArguments() {
-		return $this->arguments;
-	}
-
-	/**
-	 * Processes a general request. The result can be returned by altering the given response.
-	 *
-	 * @param F3_FLOW3_MVC_Request $request The request object
-	 * @param F3_FLOW3_MVC_Response $response The response, modified by this handler
+	 * @param F3_FLOW3_Property_Mapper $propertyMapper
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_UnsupportedRequestType if the controller doesn't support the current request type
+	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
-		if (!$this->canProcessRequest($request)) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '"' , 1187701131);
-
-		$this->request = $request;
-		$this->response = $response;
-
-		$this->mapRequestArgumentsToLocalArguments();
+	public function injectPropertyMapper(F3_FLOW3_Property_Mapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
 	}
-
 
 	/**
 	 * Checks if the current request type is supported by the controller.
@@ -119,27 +103,73 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	}
 
 	/**
+	 * Processes a general request. The result can be returned by altering the given response.
+	 *
+	 * @param F3_FLOW3_MVC_Request $request The request object
+	 * @param F3_FLOW3_MVC_Response $response The response, modified by this handler
+	 * @return void
+	 * @throws F3_FLOW3_MVC_Exception_UnsupportedRequestType if the controller doesn't support the current request type
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
+		if (!$this->canProcessRequest($request)) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '"' , 1187701131);
+
+		$this->request = $request;
+		$this->request->setDispatched(TRUE);
+		$this->response = $response;
+
+		$this->mapRequestArgumentsToLocalArguments();
+	}
+
+	/**
+	 * Forwards the request to another controller.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forward($actionName, $controllerName = NULL, $packageKey = NULL, F3_FLOW3_MVC_Controller_Arguments $arguments = NULL) {
+		$this->request->setDispatched(FALSE);
+		$this->request->setControllerActionName($actionName);
+		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
+		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
+		if ($arguments !== NULL) $this->request->setArguments($arguments);
+	}
+
+	/**
+	 * Returns the arguments which are defined for this controller.
+	 *
+	 * Use this information if you want to know about what arguments are supported and / or
+	 * required by this controller or if you'd like to know about further information about
+	 * each argument.
+	 *
+	 * @return F3_FLOW3_MVC_Controller_Arguments Supported arguments of this controller
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getArguments() {
+		return $this->arguments;
+	}
+
+	/**
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function mapRequestArgumentsToLocalArguments() {
-		$argumentsMapper = $this->componentFactory->getComponent('F3_FLOW3_Property_Mapper');
-		$argumentsMapper->setTarget($this->arguments);
+		$this->propertyMapper->setTarget($this->arguments);
 
 		foreach ($this->arguments as $argument) {
 
-			if ($argument->getFilter() != NULL) $argumentsMapper->registerFilter($argument->getFilter());
-			if ($argument->getPropertyEditor() != NULL) $argumentsMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
+			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter());
+			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
 		}
 
 		$argumentsValidator = $this->createNewArgumentsValidator($this->arguments);
-		$argumentsMapper->registerValidator($argumentsValidator);
-		$argumentsMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
-		$argumentsMapper->map(new ArrayObject($this->request->getArguments()));
+		$this->propertyMapper->registerValidator($argumentsValidator);
+		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
+		$this->propertyMapper->map(new ArrayObject($this->request->getArguments()));
 
-		$this->argumentMappingResults = $argumentsMapper->getMappingResults();
+		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
 		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
 			$this->arguments[$propertyName]->setValidity(FALSE);
 		}

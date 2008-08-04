@@ -14,14 +14,21 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once(dirname(__FILE__) . '/../../Fixtures/F3_FLOW3_Fixture_MVC_MockRequestHandlingController.php');
+/**
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+require_once(dirname(__FILE__) . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling.php');
 
 /**
  * Testcase for the MVC Request Handling Controller
  *
- * @package		FLOW3
- * @version 	$Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_BaseTestCase {
 
@@ -32,7 +39,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 	public function onlySupportedRequestTypesAreAccepted() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
-		$controller = new F3_FLOW3_Fixture_MVC_MockRequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller = new F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
 		$controller->supportedRequestTypes = array('F3_Something_Request');
 
 		try {
@@ -48,8 +55,65 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentsReturnsAnArgumentsObject() {
-		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_RequestHandlingController');
+		$mockArguments = $this->getMock('F3_FLOW3_MVC_Controller_Arguments', array(), array(), '', FALSE);
+		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_FactoryInterface', array('getComponent'));
+		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($mockArguments));
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($mockComponentFactory, $mockPackageManager);
 		$this->assertType('F3_FLOW3_MVC_Controller_Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$this->assertFalse($request->isDispatched());
+		$controller->processRequest($request, $response);
+		$this->assertTrue($request->isDispatched());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardResetsTheDispatchedFlagOfTheRequest() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$controller->processRequest($request, $response);
+		$this->assertTrue($request->isDispatched());
+		$controller->forward('default');
+		$this->assertFalse($request->isDispatched());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardSetsTheSpecifiedControllerActionAndArgumentsInToTheRequest() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$controller->processRequest($request, $response);
+		$controller->forward('some', 'Alternative', 'TestPackage');
+
+		$this->assertEquals('some', $request->getControllerActionName());
+		$this->assertEquals('Alternative', $request->getControllerName());
+		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
 	}
 }
 ?>

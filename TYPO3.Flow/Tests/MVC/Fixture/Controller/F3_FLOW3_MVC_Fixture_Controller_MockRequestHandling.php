@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Fixture_MVC_MockRequestHandlingController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
+class F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling extends F3_FLOW3_MVC_Controller_RequestHandlingController {
 
 	/**
 	 * @var F3_FLOW3_MVC_Controller_Arguments Arguments passed to the controller

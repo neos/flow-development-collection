@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,7 +25,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
@@ -73,8 +73,18 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 */
 	public function theControllerNameCanBeSetAndRetrieved() {
 		$request = new F3_FLOW3_MVC_Request();
-		$request->setControllerName('F3_FLOW3_Some_Controller');
-		$this->assertEquals('F3_FLOW3_Some_Controller', $request->getControllerName());
+		$request->setControllerName('Some');
+		$this->assertEquals('Some', $request->getControllerName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setControllerPackageKey('TestPackage');
+		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
 	}
 
 	/**
@@ -83,25 +93,20 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
 		$request = new F3_FLOW3_MVC_Request();
-		$request->setActionName('theAction');
-		$this->assertEquals('theAction', $request->getActionName());
+		$request->setControllerActionName('theAction');
+		$this->assertEquals('theAction', $request->getControllerActionName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theRequestObjectCanBeLockedAgainstChanges() {
+	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
 		$request = new F3_FLOW3_MVC_Request();
+		$this->assertFalse($request->isDispatched());
 
-		$request->setActionName('someAction');
-		$request->lock();
-		try {
-			$request->setActionName('anotherAction');
-			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked $exception) {
-
-		}
+		$request->setDispatched(TRUE);
+		$this->assertTrue($request->isDispatched());
 	}
 }
 

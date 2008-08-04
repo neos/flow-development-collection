@@ -15,24 +15,19 @@ declare(ENCODING = 'utf-8');
  *                                                                        */
 
 /**
- * A mock ActionController
- *
- * @package    FLOW3
- * @subpackage Tests
- * @version    $Id$
- * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
  */
-class F3_FLOW3_Fixture_MVC_MockActionController extends F3_FLOW3_MVC_Controller_ActionController {
 
-	/**
-	 * This action returns a string
-	 *
-	 * @return string A string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function returnSomeStringAction() {
-		return 'Mock Action Controller Return String';
-	}
+/**
+ * An "Infinite Loop" exception
+ *
+ * @package FLOW3
+ * @subpackage MVC
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class F3_FLOW3_MVC_Exception_InfiniteLoop extends F3_FLOW3_MVC_Exception {
 }
-
 ?>

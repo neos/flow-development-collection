@@ -104,9 +104,6 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			$requestPath = strstr($requestPath, '/');
 		}
 
-		$packageName = 'Default';
-		$controllerName = 'Default';
-
 		foreach (array_reverse($this->routes) as $routeName => $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
@@ -114,13 +111,13 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 					if ($argumentName{0} == '@') {
 						switch ($argumentName) {
 							case '@package' :
-								$packageName = $argumentValue;
+								$request->setControllerPackageKey($argumentValue);
 							break;
 							case '@controller' :
-								$controllerName = $argumentValue;
+								$request->setControllerName($argumentValue);
 							break;
 							case '@action' :
-								$request->setActionName($argumentValue);
+								$request->setControllerActionName($argumentValue);
 							break;
 						}
 					} else {
@@ -131,8 +128,6 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			}
 		}
 
-		$this->setControllerName($packageName, $controllerName, $request);
-
 		foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
 			$request->setArgument($argumentName, $argumentValue);
 		}
@@ -140,27 +135,6 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			$request->setArgument($argumentName, $argumentValue);
 		}
 
-	}
-
-	/**
-	 * Sets the controller name for the given web request
-	 *
-	 * @param string $packageName Name of the package which contains the controller
-	 * @param string $controllerName Name of the controller
-	 * @param F3_FLOW3_MVC_Web_Request $request The web request
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function setControllerName($packageName, $controllerName, F3_FLOW3_MVC_Web_Request $request) {
-		$controllerNamePrefix = 'F3_' . $packageName . '_Controller_';
-		if ($controllerName == '') {
-			$controllerName = 'Default';
-		}
-
-		$controllerName = $this->componentManager->getCaseSensitiveComponentName($controllerNamePrefix . $controllerName);
-		if ($controllerName === FALSE) return;
-		$request->setControllerName($controllerName);
 	}
 }
 ?>

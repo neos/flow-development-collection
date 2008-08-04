@@ -78,7 +78,6 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	public function handleRequest() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder')->build();
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
-		$request->lock();
 
 		$this->dispatcher->dispatch($request, $response);
 

@@ -42,8 +42,8 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 		$dispatcher->injectFirewall($this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface'));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$request->setControllerName('F3_TestPackage_Controller_Default');
-		$request->lock();
+		$request->setControllerPackageKey('TestPackage');
+		$request->setControllerName('Default');
 
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
@@ -63,8 +63,8 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 		$dispatcher->injectFirewall($this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface'));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
-		$request->setControllerName('F3_TestPackage_Controller_Default');
-		$request->lock();
+		$request->setControllerPackageKey('TestPackage');
+		$request->setControllerName('Default');
 
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
 
