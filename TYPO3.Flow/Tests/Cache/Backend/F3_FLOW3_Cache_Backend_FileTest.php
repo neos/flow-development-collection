@@ -70,11 +70,10 @@ class F3_FLOW3_Cache_Backend_FileTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheDirectoryThrowsExceptionOnNonWritableDirectory() {
-		if (DIRECTORY_SEPARATOR == '/') {
-			$directoryName = '/sbin';
-		} else {
-			$directoryName = 'c:\\Windows';
+		if (DIRECTORY_SEPARATOR == '\\') {
+			$this->markTestSkipped('test not reliable in Windows environment');
 		}
+		$directoryName = '/sbin';
 		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_File', $this->componentManager->getContext());
 		try {
 			$backend->setCacheDirectory($directoryName);

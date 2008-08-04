@@ -38,7 +38,7 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
 		$environment = new F3_FLOW3_Utility_Environment($configuration->utility->environment);
 		$path = $environment->getPathToTemporaryDirectory();
-		$this->assertEquals(DIRECTORY_SEPARATOR, substr($path, -1, 1), 'The temporary path did not end with slash (as in DIRECTORY_SEPARATOR).');
+		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
 	}
 
 	/**
