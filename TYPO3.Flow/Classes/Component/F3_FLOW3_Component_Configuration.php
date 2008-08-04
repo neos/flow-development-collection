@@ -91,8 +91,8 @@ class F3_FLOW3_Component_Configuration {
 		$backtrace = debug_backtrace();
 		if (isset($backtrace[1]['object'])) {
 			$this->configurationSourceHint = get_class($backtrace[1]['object']);
-		} else {
-			$this->configurationSourceHint = get_class($backtrace[1]['class']);
+		} elseif (isset($backtrace[1]['class'])) {
+			$this->configurationSourceHint = $backtrace[1]['class'];
 		}
 
 		$this->componentName = $componentName;

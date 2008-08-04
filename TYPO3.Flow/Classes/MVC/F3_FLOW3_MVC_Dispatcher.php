@@ -107,7 +107,6 @@ class F3_FLOW3_MVC_Dispatcher {
 	 * @param F3_FLOW3_MVC_RequestInterface $request The request to dispatch
 	 * @param F3_FLOW3_MVC_ResponseInterface $response The response, to be modified by the controller
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_NoSuchController, F3_FLOW3_MVC_Exception_InvalidController
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -117,19 +116,31 @@ class F3_FLOW3_MVC_Dispatcher {
 			$dispatchLoopCount ++;
 			if ($dispatchLoopCount > 99) throw new F3_FLOW3_MVC_Exception_InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
 
-			$controllerComponentName = $request->getControllerComponentName();
-			if (!$this->componentManager->isComponentRegistered($controllerComponentName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerComponentName . '". The controller "' . $controllerComponentName . '" is not a registered component.', 1202921618);
-
-			$controller = $this->componentFactory->getComponent($controllerComponentName);
-			if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerComponentName . '". The controller must be a valid request handling controller.', 1202921619);
-
-			$controller->setSettings($this->configurationManager->getSettings($request->getControllerPackageKey()));
-
 			$this->securityContextHolder->initializeContext($request);
 			$this->firewall->blockIllegalRequests($request);
 
+			$controller = $this->getPreparedController($request);
 			$controller->processRequest($request, $response);
 		}
+	}
+
+	/**
+	 * Resolves, prepares and returns the controller which is specified in the request object.
+	 *
+	 * @param F3_FLOW3_MVC_Request $request The current request
+	 * @return F3_FLOW3_MVC_Controller_RequestHandlingController The controller
+	 * @throws F3_FLOW3_MVC_Exception_NoSuchController, F3_FLOW3_MVC_Exception_InvalidController
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getPreparedController(F3_FLOW3_MVC_Request $request) {
+		$controllerComponentName = $request->getControllerComponentName();
+		if (!$this->componentManager->isComponentRegistered($controllerComponentName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerComponentName . '". The controller "' . $controllerComponentName . '" is not a registered component.', 1202921618);
+
+		$controller = $this->componentFactory->getComponent($controllerComponentName);
+		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerComponentName . '". The controller must be a valid request handling controller.', 1202921619);
+
+		$controller->setSettings($this->configurationManager->getSettings($request->getControllerPackageKey()));
+		return $controller;
 	}
 }
 ?>

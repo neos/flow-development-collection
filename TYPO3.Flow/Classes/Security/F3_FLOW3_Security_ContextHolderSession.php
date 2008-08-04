@@ -46,7 +46,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	protected $session = NULL;
 
 	/**
-	 * Contstructor.
+	 * Constructor.
 	 *
 	 * @param F3_FLOW3_Session_Interface $session An implementaion of a session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -54,6 +54,28 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	public function __construct(F3_FLOW3_Session_Interface $session) {
 		$this->session = $session;
 		$this->session->start();
+	}
+
+	/**
+	 * Inject the component factory
+	 *
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory The component factory
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Inject the authentication manager
+	 *
+	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $componentManager The authentication manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectAuthenticationManager(F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager) {
+		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
@@ -112,28 +134,6 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	}
 
 	/**
-	 * Inject the component manager
-	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory The component factory
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
-	}
-
-	/**
-	 * Inject the authentication manager
-	 *
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $componentManager The authentication manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectAuthenticationManager(F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager) {
-		$this->authenticationManager = $authenticationManager;
-	}
-
-	/**
 	 * Merges the session and manager tokens. All manager tokens types will be in the result array
 	 * If a specific type is found in the session this token replaces the one I(of the same type)
 	 * given by the manager.
@@ -143,7 +143,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	private function mergeTokens($managerTokens, $sessionTokens) {
+	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();
 
 		if(!is_array($managerTokens)) return $resultTokens;
@@ -175,7 +175,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	private function updateTokenCredentials(array $tokens) {
+	protected function updateTokenCredentials(array $tokens) {
 		foreach($tokens as $token) {
 			$token->updateCredentials();
 		}

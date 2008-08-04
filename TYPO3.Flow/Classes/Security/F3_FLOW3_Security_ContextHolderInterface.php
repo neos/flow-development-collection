@@ -34,7 +34,8 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_Security_ContextHolderInterface {
 
 	/**
-	 * Sets the current security context. Dependig on the strategy the context may be stored in a session.
+	 * Sets the current security context. Depending on the strategy the context may for example be stored
+	 * in a session.
 	 *
 	 * @param F3_FLOW3_Security_ContextInterface $securityContext The current security context
 	 * @return void
@@ -49,8 +50,9 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	public function getContext();
 
 	/**
-	 * Initializes the security context for the given request. Depending on the strategy the context may be loaded from a session.
-	 * The AuthenticationManager has to be instanciated here, to set the authentication tokens.
+	 * Initializes the security context for the given request. Depending on the strategy the context might be
+	 * loaded from a session. The AuthenticationManager has to be instanciated here, to set the authentication
+	 * tokens.
 	 *
 	 * @param F3_FLOW3_MVC_Request $request The request the context should be initialized for
 	 * @return void
