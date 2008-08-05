@@ -86,6 +86,20 @@ class F3_FLOW3_Configuration_ContainerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function lockingTheContainerAlsoLocksAllSubContainers() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration->subConfiguration->subSubConfiguration;
+		$configuration->otherOption = array('x' => 'y');
+
+		$configuration->lock();
+		$this->assertTrue($configuration->subConfiguration->isLocked(), 'sub configuration is not locked');
+		$this->assertTrue($configuration->subConfiguration->subSubConfiguration->isLocked(), 'sub sub configuration is not locked');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function gettingOptionsFromLockedContainerIsAllowed() {
 		$configuration = new F3_FLOW3_Configuration_Container();
 		$configuration->someOption = 'some value';

@@ -84,6 +84,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			$route = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
 			$route->setUrlPattern($routeConfiguration->urlPattern);
 			$route->setDefaults($routeConfiguration->defaults);
+			if (isset($routeConfiguration->controllerComponentNamePattern)) $route->setControllerComponentNamePattern($routeConfiguration->controllerComponentNamePattern);
 			$this->routes[$routeName] = $route;
 		}
 	}
@@ -127,6 +128,8 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 						$request->setArgument($argumentName, $argumentValue);
 					}
 				}
+				$pattern = $route->getControllerComponentNamePattern();
+				if ($pattern !== NULL) $request->setControllerComponentNamePattern($pattern);
 				break;
 			}
 		}

@@ -21,14 +21,15 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A "Request Already Locked" exception
+ * An "Invalid Package Key" exception
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Exception_RequestObjectAlreadyLocked extends F3_FLOW3_MVC_Exception {
+class F3_FLOW3_MVC_Exception_InvalidPackageKey extends F3_FLOW3_MVC_Exception {
 
 }
+
 ?>

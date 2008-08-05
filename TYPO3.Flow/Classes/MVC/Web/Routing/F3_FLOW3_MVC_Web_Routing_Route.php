@@ -46,6 +46,11 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	protected $urlPattern;
 
 	/**
+	 * @var string
+	 */
+	protected $controllerComponentNamePattern = NULL;
+
+	/**
 	 * Contains the routing results (indexed by "package", "controller" and "action") after a successful call of matches()
 	 *
 	 * @var array
@@ -108,9 +113,34 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	}
 
 	/**
+	 * Set a custom controller component name pattern which will be
+	 * passed to the web request.
+	 *
+	 * @param string $pattern A pattern which may contain placeholders
+	 * @return void
+	 * @see F3_FLOW3_MVC_Web_Request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerComponentNamePattern($pattern) {
+		$this->controllerComponentNamePattern = $pattern;
+	}
+
+	/**
+	 * Returns the custom controller component name pattern.
+	 *
+	 * @return string Teh pattern or NULL if none was defined
+	 * @see F3_FLOW3_MVC_Web_Request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerComponentNamePattern() {
+		return $this->controllerComponentNamePattern;
+	}
+
+	/**
 	 * Returns an array with the Route match results.
 	 *
-	 * @return array
+	 * @return array An array of route parts and their values for further handling by the Router
+	 * @see F3_FLOW3_MVC_Web_Routing_Router
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMatchResults() {

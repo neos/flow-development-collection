@@ -53,7 +53,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 
 		if (!class_exists('F3_FLOW3_MVC_Fixture_Controller_Invalid')) $this->getMock('stdclass', array(), array(), 'F3_FLOW3_MVC_Fixture_Controller_Invalid');
 		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_Invalid');
-		$request->setControllerPackageKey('FLOW3_MVC_Fixture');
+		$request->setControllerPackageKey('FLOW3');
+		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
 		$request->setControllerName('Invalid');
 
 		try {
@@ -84,7 +85,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 
 		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
 		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
-		$request->setControllerPackageKey('FLOW3_MVC_Fixture');
+		$request->setControllerPackageKey('FLOW3');
+		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
 		$request->setControllerName('MockRequestHandling');
 
 		$dispatcher->dispatch($request, $response);
@@ -112,7 +114,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 
 		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
 		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
-		$request->setControllerPackageKey('FLOW3_MVC_Fixture');
+		$request->setControllerPackageKey('FLOW3');
+		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
 		$request->setControllerName('MockRequestHandling');
 
 		$dispatcher->dispatch($request, $response);
@@ -131,6 +134,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request->setControllerPackageKey('FLOW3');
+		$request->setControllerComponentNamePattern('F3_@package_MVC_Controller_@controller');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
 		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);
@@ -156,6 +161,8 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$request->setControllerPackageKey('FLOW3');
+		$request->setControllerComponentNamePattern('F3_@package_MVC_Controller_@controller');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
 		$dispatcher = new F3_FLOW3_MVC_Dispatcher($this->componentManager, $this->componentFactory);

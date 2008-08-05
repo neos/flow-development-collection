@@ -34,6 +34,30 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function theDefaultPatternForBuildingTheControllerComponentNameIsPackageKeyControllerControllerName() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setControllerPackageKey('TestPackage');
+		$request->setControllerName('Foo');
+		$this->assertEquals('F3_TestPackage_Controller_Foo', $request->getControllerComponentName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function thePatternForBuildingTheControllerComponentNameCanBeCustomized() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setControllerPackageKey('TestPackage');
+		$request->setControllerName('Foo');
+		$request->setControllerComponentNamePattern('F3_@package_Bar_Baz_@controller');
+
+		$this->assertEquals('F3_TestPackage_Bar_Baz_Foo', $request->getControllerComponentName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
 		$request = new F3_FLOW3_MVC_Request();
 		$request->setArgument('someArgumentName', 'theValue');
@@ -86,6 +110,17 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 		$request->setControllerPackageKey('TestPackage');
 		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
 	}
+
+	/**
+	 * @test
+	 * @expectedException F3_FLOW3_MVC_Exception_InvalidPackageKey
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidPackageKeysAreRejected() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setControllerPackageKey('Some_Invalid_Key');
+	}
+
 
 	/**
 	 * @test

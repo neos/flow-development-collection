@@ -10,6 +10,18 @@ declare(ENCODING="utf-8");
  * Please refer to the FLOW3 manual for possible configuration options.   *
  *                                                                        */
 
+$c->fallback
+	->setUrlPattern('[dummy]')
+	->setControllerComponentNamePattern('F3_@package_MVC_Controller_@controller')
+	->setDefaults(
+		array(
+			'dummy' => 'foo',
+			'@package' => 'FLOW3',
+			'@controller' => 'Default',
+			'@action' => 'Default',
+		)
+	);
+
 /**
  * Default route to map the first three URL segments to package, controller and action
  */
@@ -17,9 +29,8 @@ $c->default
 	->setUrlPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
-			'@package' => 'FLOW3_MVC',
 			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@action' => 'default'
 		)
 	);
 

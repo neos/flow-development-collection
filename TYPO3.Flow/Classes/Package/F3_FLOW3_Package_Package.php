@@ -30,6 +30,8 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 
+	const PATTERN_MATCH_PACKAGEKEY = '/^[A-Z][A-Za-z0-9]+$/';
+
 	const DIRECTORY_CLASSES = 'Classes/';
 	const DIRECTORY_CONFIGURATION = 'Configuration/';
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
@@ -62,12 +64,14 @@ class F3_FLOW3_Package_Package implements F3_FLOW3_Package_PackageInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param  string $packageKey: Key of this package
-	 * @param  string $packagePath: Absolute path to the package's main directory
+	 * @param string $packageKey Key of this package
+	 * @param string $packagePath Absolute path to the package's main directory
+	 * @throws F3_FLOW3_Package_Exception_InvalidPackageKey if an invalid package key was passed
 	 * @throws F3_FLOW3_Package_Exception_InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($packageKey, $packagePath) {
+		if (!preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new F3_FLOW3_Package_Exception_InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
 		if (!@is_dir($packagePath)) throw new F3_FLOW3_Package_Exception_InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
 		if (substr($packagePath, -1, 1) != '/') throw new F3_FLOW3_Package_Exception_InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
 

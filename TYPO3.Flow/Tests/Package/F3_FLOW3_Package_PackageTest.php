@@ -31,37 +31,35 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Package_PackageTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Checks if the constructor throws exceptions
-	 *
 	 * @test
+	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackagePath
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
 		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		try {
-			$package = new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $mockPackageManager);
-		} catch (Exception $exception) {
-			$this->assertEquals(1166631889, $exception->getCode(), 'The constructor throwed an exception but with an unexpected error code (' . $exception->getCode() . ')');
-			return;
-		}
-		$this->fail('The constructor did not throw an exception although the package path did not exist.');
+		new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $mockPackageManager);
 	}
 
 	/**
 	 * Checks if the constructor throws exceptions
 	 *
 	 * @test
+	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackagePath
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsInvalidPathException() {
 		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		try {
-			$package = new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $mockPackageManager);
-		} catch (Exception $exception) {
-			$this->assertEquals(1166633720, $exception->getCode(), 'The constructor throwed an exception but with an unexpected error code (' . $exception->getCode() . ')');
-			return;
-		}
-		$this->fail('The constructor did not throw an exception although the package path did not end with a slash.');
+		new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $mockPackageManager);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackageKey
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function constructRejectsInvalidPackageKeys() {
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
+		new F3_FLOW3_Package_Package('Invalid_Package_Key', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
 	}
 
 	/**

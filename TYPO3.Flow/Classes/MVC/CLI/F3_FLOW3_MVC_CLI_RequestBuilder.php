@@ -70,7 +70,10 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	 */
 	public function build() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
-		if ($this->environment->getCommandLineArgumentCount() < 2) return $request;
+		if ($this->environment->getCommandLineArgumentCount() < 2) {
+			$request->setControllerComponentNamePattern('F3_FLOW3_MVC_Controller_Default');
+			return $request;
+		}
 
 		$commandLineArguments = $this->environment->getCommandLineArguments();
 

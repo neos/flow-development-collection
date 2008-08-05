@@ -64,6 +64,16 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theControllerComponentNamePatternCanBeSetAndRetrieved() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setControllerComponentNamePattern('XY3_@package_@controller');
+		$this->assertEquals('XY3_@package_@controller', $route->getControllerComponentNamePattern());
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchUrlPatternIfItIsNullOrEmpty() {

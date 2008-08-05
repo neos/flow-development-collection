@@ -57,6 +57,11 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 */
 	public function lock() {
 		$this->locked = TRUE;
+		foreach ($this->options as $option) {
+			if ($option instanceof F3_FLOW3_Configuration_Container) {
+				$option->lock();
+			}
+		}
 	}
 
 	/**

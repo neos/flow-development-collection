@@ -33,10 +33,12 @@ class F3_FLOW3_MVC_Request {
 
 	const PATTERN_MATCH_FORMAT = '/^[a-z]{1,5}$/';
 
+	protected $controllerComponentNamePattern = 'F3_@package_Controller_@controller';
+
 	/**
 	 * @var string Package key of the controller which is supposed to handle this request.
 	 */
-	protected $controllerPackageKey = 'FLOW3_MVC';
+	protected $controllerPackageKey = 'FLOW3';
 
 	/**
 	 * @var string Component name of the controller which is supposed to handle this request.
@@ -101,17 +103,35 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentName() {
-		return 'F3_' . $this->controllerPackageKey . '_Controller_' . $this->controllerName;
+		$componentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
+		$componentName = str_replace('@controller', $this->controllerName, $componentName);
+		return $componentName;
+	}
+
+	/**
+	 * Sets the pattern for building the controller component name.
+	 *
+	 * The pattern may contain the placeholders "@package" and "@controller" which will be substituted
+	 * by the real package key and controller name.
+	 *
+	 * @param string $pattern The pattern
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setControllerComponentNamePattern($pattern) {
+		$this->controllerComponentNamePattern = $pattern;
 	}
 
 	/**
 	 * Sets the package key of the controller.
 	 *
-	 * @param string $packageKey The package key. Specifying subpackages is allowed in the form of "Package_SubPackage_SubSubPackage"
+	 * @param string $packageKey The package key.
 	 * @return void
+	 * @throws F3_FLOW3_MVC_Exception_InvalidPackageKey if the package key is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerPackageKey($packageKey) {
+		if (!preg_match(F3_FLOW3_Package_Package::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new F3_FLOW3_MVC_Exception_InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
 		$this->controllerPackageKey = $packageKey;
 	}
 
