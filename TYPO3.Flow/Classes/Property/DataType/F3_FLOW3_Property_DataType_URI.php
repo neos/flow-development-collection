@@ -88,7 +88,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Constructs the URI object from a string
 	 *
-	 * @param  string				String representation of the URI
+	 * @param string String representation of the URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -113,7 +113,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the URI's scheme / protocol
 	 *
-	 * @return string				URI scheme / protocol
+	 * @return string URI scheme / protocol
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScheme() {
@@ -123,7 +123,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the URI's scheme / protocol
 	 *
-	 * @param  string				$scheme: The scheme. Allowed values are "http" and "https"
+	 * @param  string $scheme The scheme. Allowed values are "http" and "https"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -138,7 +138,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the username of a login
 	 *
-	 * @return string				User name of the login
+	 * @return string User name of the login
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getUsername() {
@@ -148,7 +148,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the URI's username
 	 *
-	 * @param  string				$username: User name of the login
+	 * @param string $username User name of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -163,7 +163,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the password of a login
 	 *
-	 * @return string				Password of the login
+	 * @return string Password of the login
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPassword() {
@@ -173,7 +173,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the URI's password
 	 *
-	 * @param  string				$password: Password of the login
+	 * @param string $password Password of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -188,7 +188,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the host(s) of the URI
 	 *
-	 * @return string				The hostname(s)
+	 * @return string The hostname(s)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHost() {
@@ -198,7 +198,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the host(s) of the URI
 	 *
-	 * @param  string				$host: The hostname(s)
+	 * @param string $host The hostname(s)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -213,7 +213,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the port of the URI
 	 *
-	 * @return integer				Port
+	 * @return integer Port
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPort() {
@@ -223,7 +223,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the port in the URI
 	 *
-	 * @param  string				$port: The port number
+	 * @param string $port The port number
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -238,7 +238,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the URI path
 	 *
-	 * @return string				URI path
+	 * @return string URI path
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPath() {
@@ -248,7 +248,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the path of the URI
 	 *
-	 * @param  string				$path: The path
+	 * @param string $path The path
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -263,7 +263,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the URI's query part
 	 *
-	 * @return string				The query part
+	 * @return string The query part
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getQuery() {
@@ -273,7 +273,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the URI's query part. Updates (= overwrites) the arguments accordingly!
 	 *
-	 * @param  string				$query: The query string.
+	 * @param string $query The query string.
 	 * @return void
 	 */
 	public function setQuery($query) {
@@ -284,7 +284,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the arguments from the URI's query part
 	 *
-	 * @return array				Associative array of arguments and values of the URI's query part
+	 * @return array Associative array of arguments and values of the URI's query part
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
@@ -294,7 +294,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns the fragment / anchor, if any
 	 *
-	 * @return string				The fragment
+	 * @return string The fragment
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFragment() {
@@ -304,7 +304,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Sets the fragment in the URI
 	 *
-	 * @param  string				$fragment: The fragment (aka "anchor")
+	 * @param string $fragment The fragment (aka "anchor")
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -319,7 +319,7 @@ class F3_FLOW3_Property_DataType_URI {
 	/**
 	 * Returns a string representation of this URI
 	 *
-	 * @return string				This URI as a string
+	 * @return string This URI as a string
 	 * @author Robert Lemke	<robert@typo3.org>
 	 */
 	public function __toString() {

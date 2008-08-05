@@ -101,6 +101,26 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function theRepresentationFormatCanBeSetAndRetrieved() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setFormat('html');
+		$this->assertEquals('html', $request->getFormat());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3_FLOW3_MVC_Exception_InvalidFormat
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidFormatsAreRejected() {
+		$request = new F3_FLOW3_MVC_Request();
+		$request->setFormat('.xml');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
 		$request = new F3_FLOW3_MVC_Request();
 		$this->assertFalse($request->isDispatched());

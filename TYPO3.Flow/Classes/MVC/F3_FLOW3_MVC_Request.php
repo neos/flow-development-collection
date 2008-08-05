@@ -31,15 +31,7 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_MVC_Request {
 
-	/**
-	 * @var string Contains the request method
-	 */
-	protected $method;
-
-	/**
-	 * @var ArrayObject The arguments for this request
-	 */
-	protected $arguments;
+	const PATTERN_MATCH_FORMAT = '/^[a-z]{1,5}$/';
 
 	/**
 	 * @var string Package key of the controller which is supposed to handle this request.
@@ -55,6 +47,16 @@ class F3_FLOW3_MVC_Request {
 	 * @var string Name of the action the controller is supposed to take.
 	 */
 	protected $controllerActionName = 'default';
+
+	/**
+	 * @var ArrayObject The arguments for this request
+	 */
+	protected $arguments;
+
+	/**
+	 * @var string The requested representation format
+	 */
+	protected $format = 'txt';
 
 	/**
 	 * @var boolean If this request has been changed and needs to be dispatched again
@@ -203,6 +205,28 @@ class F3_FLOW3_MVC_Request {
 	 */
 	public function getArguments() {
 		return $this->arguments;
+	}
+
+	/**
+	 * Sets the requested representation format
+	 *
+	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFormat($format) {
+		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new F3_FLOW3_MVC_Exception_InvalidFormat();
+		$this->format = $format;
+	}
+
+	/**
+	 * Returns the requested representation format
+	 *
+	 * @return string The desired format, something like "html", "xml", "png", "json" or the like.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getFormat() {
+		return $this->format;
 	}
 
 	/**

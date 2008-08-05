@@ -19,7 +19,7 @@ declare(ENCODING="utf-8");
  *
  * @var F3_FLOW3_Error_DevelopmentExceptionHandlerInterface
  */
-$c->exceptionHandler->className = 'F3_FLOW3_Error_DebugExceptionHandler';
+$c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
 
 /**
  * Defines which errors should result in an exception thrown - all other error

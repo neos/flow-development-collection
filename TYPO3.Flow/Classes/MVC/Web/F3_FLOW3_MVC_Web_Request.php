@@ -33,6 +33,16 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 
 	/**
+	 * @var string The requested representation format
+	 */
+	protected $format = 'html';
+
+	/**
+	 * @var string Contains the request method
+	 */
+	protected $method;
+
+	/**
 	 * @var F3_FLOW3_Utility_Environment
 	 */
 	protected $environment;
@@ -46,11 +56,6 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	 * @var F3_FLOW3_Property_DataType_URI The base URI for this request - ie. the host and path leading to the index.php
 	 */
 	protected $baseURI;
-
-	/**
-	 * @var boolean If this request has been responded
-	 */
-	protected $responded;
 
 	/**
 	 * Injects the environment

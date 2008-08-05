@@ -136,14 +136,19 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		}
 		$requestPath = trim($requestPath, '/ ');
 		$requestPathSegments = explode('/', $requestPath);
-
+		$requestPathSegmentParts = array();
+		foreach ($requestPathSegments as $requestPathSegment) {
+			foreach (explode('.', $requestPathSegment) as $requestPathSegmentPart) {
+				$requestPathSegmentParts[] = $requestPathSegmentPart;
+			}
+		}
 		if (!$this->isParsed) {
 			$this->parse();
 		}
 
 		$matchResults = array();
 		foreach ($this->routeParts as $routePart) {
-			if (!$routePart->match($requestPathSegments)) {
+			if (!$routePart->match($requestPathSegmentParts)) {
 				return FALSE;
 			}
 			if ($routePart->getValue() !== NULL) {
@@ -158,7 +163,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	}
 
 	/**
-	 * Iterates through all segments in $this->urlPattern and creates appropriate Rout part instances.
+	 * Iterates through all segments in $this->urlPattern and creates appropriate route part instances.
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -170,8 +175,10 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		$this->routeParts = array();
 		$urlPatternSegments = explode('/', $this->urlPattern);
 		foreach ($urlPatternSegments as $urlPatternSegment) {
-			$routePart = $this->createRoutePartInstance($urlPatternSegment);
-			$this->routeParts[] = $routePart;
+			foreach (explode('.', $urlPatternSegment) as $urlPatternSegmentPart) {
+				$routePart = $this->createRoutePartInstance($urlPatternSegmentPart);
+				$this->routeParts[] = $routePart;
+			}
 		}
 	}
 
@@ -181,29 +188,29 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 * if the segment starts and ends with one bracket "[segment]" it's considered to be a dynamic Route part
 	 * otherwise a static Route part instance is returned
 	 *
-	 * @param string $urlPatternSegment one segment of the URL pattern including brackets.
+	 * @param string $urlPatternSegmentPart one segment of the URL pattern including brackets.
 	 * @return F3_FLOW3_MVC_Web_Routing_AbstractRoutePart corresponding Route part instance
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createRoutePartInstance($urlPatternSegment) {
+	protected function createRoutePartInstance($urlPatternSegmentPart) {
 		$routePart = NULL;
-		if (F3_PHP6_Functions::substr($urlPatternSegment, 0, 2) == '[[' && F3_PHP6_Functions::substr($urlPatternSegment, -2) == ']]') {
+		if (F3_PHP6_Functions::substr($urlPatternSegmentPart, 0, 2) == '[[' && F3_PHP6_Functions::substr($urlPatternSegmentPart, -2) == ']]') {
 			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
-			$routePartName = F3_PHP6_Functions::substr($urlPatternSegment, 2, -2);
+			$routePartName = F3_PHP6_Functions::substr($urlPatternSegmentPart, 2, -2);
 			$routePart->setName($routePartName);
 			if (isset($this->defaults[$routePartName])) {
 				$routePart->setDefaultValue($this->defaults[$routePartName]);
 			}
-		} else if (F3_PHP6_Functions::substr($urlPatternSegment, 0, 1) == '[' && F3_PHP6_Functions::substr($urlPatternSegment, -1) == ']') {
+		} else if (F3_PHP6_Functions::substr($urlPatternSegmentPart, 0, 1) == '[' && F3_PHP6_Functions::substr($urlPatternSegmentPart, -1) == ']') {
 			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
-			$routePartName = F3_PHP6_Functions::substr($urlPatternSegment, 1, -1);
+			$routePartName = F3_PHP6_Functions::substr($urlPatternSegmentPart, 1, -1);
 			$routePart->setName($routePartName);
 			if (isset($this->defaults[$routePartName])) {
 				$routePart->setDefaultValue($this->defaults[$routePartName]);
 			}
 		} else {
 			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
-			$routePart->setName($urlPatternSegment);
+			$routePart->setName($urlPatternSegmentPart);
 		}
 		return $routePart;
 	}

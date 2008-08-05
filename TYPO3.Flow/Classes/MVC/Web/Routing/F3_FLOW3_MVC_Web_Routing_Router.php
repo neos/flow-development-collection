@@ -119,6 +119,9 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 							case '@action' :
 								$request->setControllerActionName($argumentValue);
 							break;
+							case '@format' :
+								$request->setFormat($argumentValue);
+							break;
 						}
 					} else {
 						$request->setArgument($argumentName, $argumentValue);
