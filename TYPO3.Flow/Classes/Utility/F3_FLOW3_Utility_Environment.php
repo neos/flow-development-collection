@@ -54,7 +54,7 @@ class F3_FLOW3_Utility_Environment {
 	protected $POST;
 
 	/**
-	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name() for possible values.
+	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values.
 	 */
 	protected $SAPIName;
 
@@ -73,7 +73,7 @@ class F3_FLOW3_Utility_Environment {
 	public function __construct(F3_FLOW3_Configuration_Container $configuration) {
 		$this->SERVER = $_SERVER;
 		$this->POST = $_POST;
-		$this->SAPIName = php_sapi_name();
+		$this->SAPIName = PHP_SAPI;
 		#$_SERVER = $componentFactory->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
 		#$_GET = $componentFactory->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 		#$_POST = $componentFactory->getComponent('F3_FLOW3_Utility_SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
@@ -262,7 +262,7 @@ class F3_FLOW3_Utility_Environment {
 	 * Common SAPIS are "apache", "isapi", "cli", "cgi" etc.
 	 *
 	 * @return string A lower case string identifying the SAPI used
-	 * @see php_sapi_name()
+	 * @see php_sapi_name()/PHP_SAPI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSAPIName() {

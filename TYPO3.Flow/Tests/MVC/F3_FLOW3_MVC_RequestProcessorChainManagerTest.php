@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
-require_once(dirname(__FILE__) . '/Fixture/F3_FLOW3_MVC_Fixture_MockRequestProcessor.php');
+require_once(__DIR__ . '/Fixture/F3_FLOW3_MVC_Fixture_MockRequestProcessor.php');
 
 /**
  * Testcase for the MVC Request Processor Chain Manager

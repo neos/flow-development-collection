@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
-require_once(dirname(__FILE__) . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockAction.php');
+require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockAction.php');
 
 /**
  * Testcase for the MVC Action Controller

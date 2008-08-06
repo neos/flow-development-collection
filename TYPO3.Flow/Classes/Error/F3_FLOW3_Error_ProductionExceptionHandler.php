@@ -47,7 +47,7 @@ class F3_FLOW3_Error_ProductionExceptionHandler implements F3_FLOW3_Error_Except
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleException(Exception $exception) {
-		switch (php_sapi_name()) {
+		switch (PHP_SAPI) {
 			case 'cli' :
 				$this->echoExceptionCLI($exception);
 				break;

@@ -22,9 +22,9 @@ declare(ENCODING = 'utf-8');
 /**
  * Utility_Files is needed before the autoloader is active
  */
-require_once(dirname(__FILE__) . '/Utility/F3_FLOW3_Utility_Files.php');
+require_once(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
 
-define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(dirname(__FILE__) . '/'));
+define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(__DIR__ . '/'));
 define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
 define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
 
@@ -42,7 +42,7 @@ final class F3_FLOW3 {
 	 */
 	const VERSION = '0.2.0';
 
-	const MINIMUM_PHP_VERSION = '5.2.0';
+	const MINIMUM_PHP_VERSION = '5.3.0alpha1';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
@@ -185,7 +185,7 @@ final class F3_FLOW3 {
 	public function initializeClassLoader() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
 
-		require_once(dirname(__FILE__) . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
+		require_once(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
 		$this->classLoader = new F3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 
@@ -422,13 +422,13 @@ final class F3_FLOW3 {
 	 * @internal RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
 	protected function checkEnvironment() {
-		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
-			die ('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+		if (version_compare(PHP_VERSION, self::MINIMUM_PHP_VERSION, '<')) {
+			die ('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 		}
-		if (version_compare(phpversion(), self::MAXIMUM_PHP_VERSION, '>')) {
-			die ('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
+			die ('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 		}
-		if (version_compare(phpversion(), '6.0.0', '<') && !(extension_loaded('iconv') || extension_loaded('mbstring'))) {
+		if (version_compare(PHP_VERSION, '6.0.0', '<') && !(extension_loaded('iconv') || extension_loaded('mbstring'))) {
 			die ('FLOW3 requires the PHP extension "mbstring" or "iconv" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
 

@@ -49,7 +49,7 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleException(Exception $exception) {
-		switch (php_sapi_name()) {
+		switch (PHP_SAPI) {
 			case 'cli' :
 				$this->echoExceptionCLI($exception);
 				break;

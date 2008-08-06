@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
-require_once(dirname(__FILE__) . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling.php');
+require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling.php');
 
 /**
  * Testcase for the MVC Request Handling Controller

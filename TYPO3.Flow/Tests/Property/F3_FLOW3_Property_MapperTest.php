@@ -14,7 +14,7 @@ declare(ENCODING = 'utf-8');
  * Public License for more details.                                       *
  *                                                                        */
 
-require_once (dirname(__FILE__) . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSetters.php');
+require_once (__DIR__ . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSetters.php');
 
 /**
  * Testcase for the Property Mapper

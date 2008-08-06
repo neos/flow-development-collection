@@ -42,7 +42,7 @@ class F3_FLOW3_Utility_MockEnvironment extends F3_FLOW3_Utility_Environment {
 	public $POST;
 
 	/**
-	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name() for possible values.
+	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values.
 	 */
 	public $SAPIName;
 

@@ -77,7 +77,7 @@ class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTest
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeComponentSetsCurrentPackage() {
-		$package = new F3_FLOW3_Package_Package('FLOW3', dirname(__FILE__) . '/../../');
+		$package = new F3_FLOW3_Package_Package('FLOW3', __DIR__ . '/../../');
 		$packageKey = uniqid('Test');
 		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array('getPackage'), array(), '', FALSE);
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
