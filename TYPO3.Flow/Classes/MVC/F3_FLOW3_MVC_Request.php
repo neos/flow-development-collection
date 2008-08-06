@@ -235,7 +235,7 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFormat($format) {
-		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new F3_FLOW3_MVC_Exception_InvalidFormat();
+		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new F3_FLOW3_MVC_Exception_InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);
 		$this->format = $format;
 	}
 
