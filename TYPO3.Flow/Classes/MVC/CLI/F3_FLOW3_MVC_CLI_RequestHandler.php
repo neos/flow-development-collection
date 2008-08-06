@@ -49,38 +49,34 @@ class F3_FLOW3_MVC_CLI_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 * Constructs the CLI Request Handler
 	 *
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
-	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment Reference to the environment utility component
+	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
+	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The request dispatcher
+	 * @param F3_FLOW3_MVC_RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment) {
+	public function __construct(
+			F3_FLOW3_Component_FactoryInterface $componentFactory,
+			F3_FLOW3_Utility_Environment $utilityEnvironment,
+			F3_FLOW3_MVC_Dispatcher $dispatcher,
+			F3_FLOW3_MVC_RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
-	}
-
-	/**
-	 * Injects the dispatcher.
-	 *
-	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The dispatcher
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectDispatcher(F3_FLOW3_MVC_Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
+		$this->requestProcessorChainManager = $requestProcessorChainManager;
 	}
 
 	/**
 	 * Handles the request
 	 *
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_RequestBuilder')->build();
+		$this->requestProcessorChainManager->processRequest($request);
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
-
 		$this->dispatcher->dispatch($request, $response);
-
 		$response->send();
 	}
 

@@ -21,14 +21,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A "F3_FLOW3_Session_Exception_SessionNotInitialized" Exception
+ * A "F3_FLOW3_Session_Exception_SessionNotStarted" Exception
  *
  * @package
  * @subpackage
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Session_Exception_SessionNotInitialized extends F3_FLOW3_Session_Exception {
+class F3_FLOW3_Session_Exception_SessionNotStarted extends F3_FLOW3_Session_Exception {
 }
 
 ?>

@@ -53,7 +53,7 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 		$session = new F3_FLOW3_Session_PHP();
 		$session->start();
 
-		$this->assertTrue($session->getSessionID() != '', 'No session ID has been created on startSession()');
+		$this->assertTrue($session->getID() != '', 'No session ID has been created on startSession()');
 	}
 
 	/**
@@ -65,9 +65,9 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 		$session = new F3_FLOW3_Session_PHP();
 
 		try {
-			$session->getContentsByKey('someKey');
+			$session->getData('someKey');
 			$this->fail('No exception has been thrown, but session has not been initialized');
-		} catch (F3_FLOW3_Session_Exception_SessionNotInitialized $e) {}
+		} catch (F3_FLOW3_Session_Exception_SessionNotStarted $e) {}
 	}
 
 	/**
@@ -91,13 +91,13 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function storeContentsThrowsAnExceptionIfTheSessionIsNotInitialized() {
+	public function putDataThrowsAnExceptionIfTheSessionIsNotInitialized() {
 		$session = new F3_FLOW3_Session_PHP();
 
 		try {
-			$session->storeContents('some data', 'someKey');
+			$session->putData('someKey', 'some data');
 			$this->fail('No exception has been thrown, but session has not been initialized');
-		} catch (F3_FLOW3_Session_Exception_SessionNotInitialized $e) {}
+		} catch (F3_FLOW3_Session_Exception_SessionNotStarted $e) {}
 	}
 
 	/**
@@ -109,7 +109,7 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 		$session = new F3_FLOW3_Session_PHP();
 		$session->start();
 
-		$this->assertEquals(NULL, $session->getContentsByKey('someNotExistingKey'), 'The session did not return NULL while requesting a non existing key');
+		$this->assertEquals(NULL, $session->getData('someNotExistingKey'), 'The session did not return NULL while requesting a non existing key');
 	}
 
 	/**
@@ -121,13 +121,13 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 		$session = new F3_FLOW3_Session_PHP();
 
 		$session->start();
-		$session->storeContents('some nice data', 'someKey');
+		$session->putData('someKey', 'some nice data');
 		$session->close();
 
 		$restoredSession = new F3_FLOW3_Session_PHP();
 		$restoredSession->start();
 
-		$this->assertEquals('some nice data', $restoredSession->getContentsByKey('someKey'), 'The session data was not restored correctly');
+		$this->assertEquals('some nice data', $restoredSession->getData('someKey'), 'The session data was not restored correctly');
 	}
 
 	/**
@@ -143,13 +143,13 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 
 		$session = new F3_FLOW3_Session_PHP();
 		$session->start();
-		$session->storeContents($secondNestedObject, 'nestedObjects');
+		$session->putData('nestedObjects', $secondNestedObject);
 		$session->close();
 
 		$restoredSession = new F3_FLOW3_Session_PHP();
 		$restoredSession->start();
 
-		$this->assertEquals($secondNestedObject, $restoredSession->getContentsByKey('nestedObjects'), 'The object structure has not been saved and restored correctly from the session');
+		$this->assertEquals($secondNestedObject, $restoredSession->getData('nestedObjects'), 'The object structure has not been saved and restored correctly from the session');
 	}
 
 	/**
@@ -161,7 +161,7 @@ class F3_FLOW3_Session_PHPTest extends F3_Testing_BaseTestCase {
 	public function tearDown() {
 		$session = new F3_FLOW3_Session_PHP();
 		$session->start();
-		$session->destroySession();
+		$session->destroy();
 		ini_set('session.use_cookies', $this->sessionUseCookie);
 		ini_set('session.cache_limiter', $this->sessionCacheLimiter);
 	}

@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -22,22 +21,48 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * Contract for a simple session.
+ * Implementation of a transient session.
+ *
+ * This session behaves like any other session except that it only stores the
+ * data during one request.
  *
  * @package FLOW3
  * @subpackage Session
  * @version $Id:$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Session_Interface {
+class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 
 	/**
-	 * Starts the session, if is has not been already started
+	 * The session Id
+	 *
+	 * @var string
+	 */
+	protected $sessionId;
+
+	/**
+	 * If this session has been started
+	 *
+	 * @var boolean
+	 */
+	protected $started = FALSE;
+
+	/**
+	 * The session data
+	 *
+	 * @var array
+	 */
+	protected $data = array();
+
+	/**
+	 * Starts the session, if it has not been already started
 	 *
 	 * @return void
 	 */
-	public function start();
+	public function start() {
+		$this->sessionId = uniqid();
+		$this->started = TRUE;
+	}
 
 	/**
 	 * Returns the current session ID.
@@ -45,17 +70,22 @@ interface F3_FLOW3_Session_Interface {
 	 * @return string The current session ID
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 */
-	public function getID();
+	public function getID() {
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034659);
+		return $this->sessionId;
+	}
 
 	/**
-	 * Returns the contents (array) associated with the given key.
+	 * Returns the data associated with the given key.
 	 *
 	 * @param string $key An identifier for the content stored in the session.
-	 * @return array The contents associated with the given key
+	 * @return mixed The data associated with the given key or NULL
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
-	 * @throws F3_FLOW3_Session_Exception_NotExistingKey
 	 */
-	public function getData($key);
+	public function getData($key) {
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034660);
+		return (key_exists($key, $this->data)) ? $this->data[$key] : NULL;
+	}
 
 	/**
 	 * Stores the given data under the given key in the session
@@ -65,15 +95,21 @@ interface F3_FLOW3_Session_Interface {
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 */
-	public function putData($key, $data);
+	public function putData($key, $data) {
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034661);
+		$this->data[$key] = $data;
+	}
 
 	/**
-	 * Explicitly writes (persists) and closes the session
+	 * Closes the session
 	 *
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 */
-	public function close();
+	public function close() {
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034662);
+		$this->started = FALSE;
+	}
 
 	/**
 	 * Explicitly destroys all session data
@@ -81,7 +117,10 @@ interface F3_FLOW3_Session_Interface {
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 */
-	public function destroy();
+	public function destroy() {
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034663);
+		$this->data = array();
+	}
 
 }
 

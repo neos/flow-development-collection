@@ -39,7 +39,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$mockSession = $this->getMock('F3_FLOW3_Session_Interface');
 		$mockContext = $this->getMock('F3_FLOW3_Security_Context', array(), array(), '', FALSE);
 
-		$mockSession->expects($this->once())->method('storeContents')->with($this->equalTo($mockContext), $this->equalTo('F3_FLOW3_Security_ContextHolderSession'));
+		$mockSession->expects($this->once())->method('putData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'), $this->equalTo($mockContext));
 
 		$securityContextHolder = new F3_FLOW3_Security_ContextHolderSession($mockSession);
 		$securityContextHolder->setContext($mockContext);
@@ -54,7 +54,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$mockSession = $this->getMock('F3_FLOW3_Session_Interface');
 		$mockContext = $this->getMock('F3_FLOW3_Security_Context', array(), array(), '', FALSE);
 
-		$mockSession->expects($this->once())->method('getContentsByKey')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
 
 		$securityContextHolder = new F3_FLOW3_Security_ContextHolderSession($mockSession);
 		$this->assertEquals($mockContext, $securityContextHolder->getContext());
@@ -68,7 +68,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 	public function getContextReturnsANewContextInstanceIfThereIsNoneInTheSession() {
 		$mockSession = $this->getMock('F3_FLOW3_Session_Interface');
 
-		$mockSession->expects($this->once())->method('getContentsByKey')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue(NULL));
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue(NULL));
 
 		$securityContextHolder = new F3_FLOW3_Security_ContextHolderSession($mockSession);
 		$securityContextHolder->injectComponentFactory($this->componentFactory);
@@ -86,7 +86,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$mockRequest = $this->getMock('F3_FLOW3_MVC_Request');
 
 		$mockContext->expects($this->once())->method('setRequest')->with($mockRequest);
-		$mockSession->expects($this->once())->method('getContentsByKey')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
 
 		$securityContextHolder = new F3_FLOW3_Security_ContextHolderSession($mockSession);
 		$securityContextHolder->injectComponentFactory($this->componentFactory);
@@ -136,7 +136,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$mergedTokens = array($token1Clone, $token2Clone, $token3);
 
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue($tokensFromTheManager));
-		$mockSession->expects($this->once())->method('getContentsByKey')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue($tokensFromTheSession));
 		$mockContext->expects($this->once())->method('setAuthenticationTokens')->with($this->identicalTo($mergedTokens));
 
@@ -165,7 +165,7 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$mockToken1->expects($this->once())->method('updateCredentials');
 		$mockToken2->expects($this->once())->method('updateCredentials');
 		$mockToken3->expects($this->once())->method('updateCredentials');
-		$mockSession->expects($this->once())->method('getContentsByKey')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3_FLOW3_Security_ContextHolderSession'))->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
@@ -174,19 +174,6 @@ class F3_FLOW3_Security_ContextHolderSessionTest extends F3_Testing_BaseTestCase
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
 
 		$securityContextHolder->initializeContext($mockRequest);
-	}
-
-/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function sessionIsClosedOnDestroyingTheContext() {
-		$mockSession = $this->getMock('F3_FLOW3_Session_Interface');
-		$mockSession->expects($this->once())->method('close');
-
-		$securityContextHolder = new F3_FLOW3_Security_ContextHolderSession($mockSession);
-		unset($securityContextHolder);
 	}
 }
 ?>

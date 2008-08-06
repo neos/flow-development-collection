@@ -17,7 +17,7 @@ declare(ENCODING="utf-8");
 /**
  * Defines the global, last-resort exception handler.
  *
- * @var F3_FLOW3_Error_DevelopmentExceptionHandlerInterface
+ * @var F3_FLOW3_Error_ExceptionHandlerInterface
  */
 $c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
 
@@ -153,6 +153,14 @@ $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
  * @var string
  */
 $c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
+
+/**
+ * Defines the backend which is used for storing the session data.
+ * If no session functionality is needed / wanted, just use the "Transient" session.
+ *
+ * @var F3_FLOW3_Session_Interface
+ */
+$c->session->backend->className = (PHP_SAPI == 'cli') ? 'F3_FLOW3_Session_Transient' : 'F3_FLOW3_Session_PHP';
 
 /**
  * Whether to enable FLOW3's persistence manager or not.

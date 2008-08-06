@@ -47,17 +47,6 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	}
 
 	/**
-	 * Returns the current session ID.
-	 *
-	 * @return string The current session ID
-	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getSessionID() {
-		return session_id();
-	}
-
-	/**
 	 * Starts the session, if is has not been already started
 	 *
 	 * @return void
@@ -71,16 +60,26 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	}
 
 	/**
+	 * Returns the current session ID.
+	 *
+	 * @return string The current session ID
+	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getID() {
+		return session_id();
+	}
+
+	/**
 	 * Returns the contents (array) associated with the given key.
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
-	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
-	 * @throws F3_FLOW3_Session_Exception_NotExistingKey
+	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getContentsByKey($key) {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotInitialized();
+	public function getData($key) {
+		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
 		if(!isset($_SESSION[$key])) return NULL;
 
 		return $_SESSION[$key];
@@ -92,11 +91,11 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @param object $data The data to be stored
 	 * @param string $key The key under whicht the data should be stored
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function storeContents($data, $key) {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotInitialized();
+	public function putData($key, $data) {
+		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
 
 		$_SESSION[$key] = $data;
 	}
@@ -105,11 +104,11 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function close() {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotInitialized();
+		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
 		session_write_close();
 		unset($_SESSION);
 	}
@@ -118,10 +117,10 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotInitialized
+	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 */
-	public function destroySession() {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotInitialized();
+	public function destroy() {
+		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
 
 		unset($_SESSION);
 		session_destroy();

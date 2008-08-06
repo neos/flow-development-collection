@@ -48,12 +48,11 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Session_Interface $session An implementaion of a session
+	 * @param F3_FLOW3_Session_Interface $session An readily initialized session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3_FLOW3_Session_Interface $session) {
 		$this->session = $session;
-		$this->session->start();
 	}
 
 	/**
@@ -86,7 +85,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setContext(F3_FLOW3_Security_Context $securityContext) {
-		$this->session->storeContents($securityContext, 'F3_FLOW3_Security_ContextHolderSession');
+		$this->session->putData('F3_FLOW3_Security_ContextHolderSession', $securityContext);
 	}
 
 	/**
@@ -96,9 +95,9 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getContext() {
-		$context = $this->session->getContentsByKey('F3_FLOW3_Security_ContextHolderSession');
+		$context = $this->session->getData('F3_FLOW3_Security_ContextHolderSession');
 
-		if($context instanceof F3_FLOW3_Security_Context) return $context;
+		if ($context instanceof F3_FLOW3_Security_Context) return $context;
 		return $this->componentFactory->getComponent('F3_FLOW3_Security_Context');
 	}
 
@@ -178,20 +177,6 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	protected function updateTokenCredentials(array $tokens) {
 		foreach($tokens as $token) {
 			$token->updateCredentials();
-		}
-	}
-
-	/**
-	 * Destructor, closes the session.
-	 *
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo Implement proper handling of uninitialized sessions
-	 */
-	public function __destruct() {
-		try {
-			$this->session->close();
-		} catch (Exception $exception) {
 		}
 	}
 }

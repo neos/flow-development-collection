@@ -119,6 +119,7 @@ final class F3_FLOW3 {
 		'F3_FLOW3_Component.*',
 		'F3_FLOW3_Package.*',
 		'F3_FLOW3_Reflection.*',
+		'F3_FLOW3_Session.*'
 	);
 
 	/**
@@ -170,6 +171,7 @@ final class F3_FLOW3 {
 		$this->initializePackages();
 		$this->initializeComponents();
 		$this->initializeAOP();
+		$this->initializeSession();
 		$this->initializePersistence();
 		$this->initializeResources();
 	}
@@ -253,6 +255,8 @@ final class F3_FLOW3 {
 		$this->componentManager->registerComponent('F3_FLOW3_Cache_VariableCache');
 		$this->componentManager->registerComponent('F3_FLOW3_Reflection_Service', NULL, $this->reflectionService);
 		$this->componentManager->registerComponent('F3_FLOW3_Resource_Manager', 'F3_FLOW3_Resource_Manager', new F3_FLOW3_Resource_Manager($this->classLoader, $this->componentFactory));
+
+		$this->componentManager->registerComponent('F3_FLOW3_Session_Interface', $this->settings->session->backend->className);
 
 		$this->cacheFactory = $this->componentFactory->getComponent('F3_FLOW3_Cache_Factory');
 
@@ -340,6 +344,17 @@ final class F3_FLOW3 {
 	}
 
 	/**
+	 * Initializes the session
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeSession() {
+		$session = $this->componentFactory->getComponent('F3_FLOW3_Session_Interface');
+		$session->start();
+	}
+
+	/**
 	 * Initializes the persistence framework
 	 *
 	 * @return void
@@ -353,7 +368,6 @@ final class F3_FLOW3 {
 		}
 
 	}
-
 	/**
 	 * Publishes the public resources of all found packages
 	 *
@@ -436,7 +450,7 @@ final class F3_FLOW3 {
 
 		if (!extension_loaded('Reflection')) throw new F3_FLOW3_Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
 		$method = new ReflectionMethod(__CLASS__, 'checkEnvironment');
-		if ($method->getDocComment() === FALSE) throw new F3_FLOW3_Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+		if ($method->getDocComment() == '') throw new F3_FLOW3_Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
 
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');

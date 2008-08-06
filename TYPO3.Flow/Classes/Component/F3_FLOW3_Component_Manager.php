@@ -180,7 +180,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 			$componentConfiguration->setClassName($className);
 
 			$useReflectionService = $this->reflectionService->isInitialized();
-			if (!$useReflectionService)	$class = new F3_FLOW3_Reflection_Class($className);
+			if (!$useReflectionService) $class = new F3_FLOW3_Reflection_Class($className);
 
 			if ($useReflectionService) {
 				if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
