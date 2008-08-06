@@ -186,7 +186,7 @@ class F3_FLOW3_Persistence_Manager {
 			}
 		}
 		foreach ($referencePropertyNames as $propertyName) {
-			$subReferenceObject = $referenceObject->F3_FLOW3_Component_PropertyBackdoor_getProperty($propertyName);
+			$subReferenceObject = $referenceObject->AOPProxyGetProperty($propertyName);
 			$this->traverseAndInspectReferenceObjects($subReferenceObject, $newObjects, $dirtyObjects, $allObjects);
 		}
 	}

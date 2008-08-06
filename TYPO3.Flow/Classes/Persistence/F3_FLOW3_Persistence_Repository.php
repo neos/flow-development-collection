@@ -38,6 +38,23 @@ class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_Repository
 	protected $objects = array();
 
 	/**
+	 * @var F3_FLOW3_Persistence_QueryFactoryInterface
+	 */
+	protected $queryFactory;
+
+	/**
+	 * Injects a QueryFactory instance
+	 *
+	 * @param F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @required
+	 */
+	public function injectQueryFactory(F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory) {
+		$this->queryFactory = $queryFactory;
+	}
+
+	/**
 	 * Adds an object to this repository
 	 *
 	 * @param object $object The object to add
