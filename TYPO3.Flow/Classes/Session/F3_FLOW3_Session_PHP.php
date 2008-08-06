@@ -32,9 +32,18 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 
 	/**
-	 * @var boolean TRUE if session_start() has been called
+	 * The session Id
+	 *
+	 * @var string
 	 */
-	protected $sessionStartCalled = FALSE;
+	protected $sessionId;
+
+	/**
+	 * If this session has been started
+	 *
+	 * @var boolean
+	 */
+	protected $started = FALSE;
 
 	/**
 	 * Constructor.
@@ -53,9 +62,10 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function start() {
-		if((session_id() == '' || !isset($_SESSION)) && !$this->sessionStartCalled) {
-			@session_start();
-			$this->sessionStartCalled = TRUE;
+		if($this->started === FALSE) {
+			session_start();
+			$this->sessionId = session_id();
+			$this->started = TRUE;
 		}
 	}
 
@@ -64,39 +74,37 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 *
 	 * @return string The current session ID
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getID() {
-		return session_id();
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043307);
+		return $this->sessionId;
 	}
 
 	/**
-	 * Returns the contents (array) associated with the given key.
+	 * Returns the data associated with the given key.
 	 *
 	 * @param string $key An identifier for the content stored in the session.
-	 * @return array The contents associated with the given key
+	 * @return mixed The contents associated with the given key
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getData($key) {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
-		if(!isset($_SESSION[$key])) return NULL;
-
-		return $_SESSION[$key];
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043308);
+		return (key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
 	}
 
 	/**
 	 * Stores the given data under the given key in the session
 	 *
-	 * @param object $data The data to be stored
-	 * @param string $key The key under whicht the data should be stored
+	 * @param string $key The key under which the data should be stored
+	 * @param mixed $data The data to be stored
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function putData($key, $data) {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
-
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043309);
 		$_SESSION[$key] = $data;
 	}
 
@@ -108,7 +116,7 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function close() {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043310);
 		session_write_close();
 		unset($_SESSION);
 	}
@@ -118,12 +126,12 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 *
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function destroy() {
-		if(session_id() == '' || !isset($_SESSION)) throw new F3_FLOW3_Session_Exception_SessionNotStarted();
-
-		unset($_SESSION);
+		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043311);
 		session_destroy();
+		unset($_SESSION);
 	}
 }
 

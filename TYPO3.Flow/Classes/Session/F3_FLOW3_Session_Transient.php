@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
@@ -58,6 +58,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * Starts the session, if it has not been already started
 	 *
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function start() {
 		$this->sessionId = uniqid();
@@ -69,6 +70,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 *
 	 * @return string The current session ID
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getID() {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034659);
@@ -81,6 +83,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The data associated with the given key or NULL
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getData($key) {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034660);
@@ -94,6 +97,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * @param string $key The key under which the data should be stored
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putData($key, $data) {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034661);
@@ -105,6 +109,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 *
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function close() {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034662);
@@ -116,6 +121,7 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 *
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function destroy() {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034663);

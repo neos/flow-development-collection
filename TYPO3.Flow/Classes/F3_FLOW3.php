@@ -415,6 +415,9 @@ final class F3_FLOW3 {
 		if ($this->settings->persistence->enable === TRUE) {
 			$this->componentFactory->getComponent('F3_FLOW3_Persistence_Manager')->persistAll();
 		}
+
+		$session = $this->componentFactory->getComponent('F3_FLOW3_Session_Interface');
+		$session->close();
 	}
 
 	/**
