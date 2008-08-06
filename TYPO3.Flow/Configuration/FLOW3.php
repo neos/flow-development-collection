@@ -162,14 +162,6 @@ $c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAG
 $c->persistence->enable = FALSE;
 
 /**
- * Define the backend used for object persistence. Specify the
- * name of a component implementing the F3_FLOW3_Persistence_BackendInterface.
- *
- * @var F3_FLOW3_Persistence_BackendInterface
- */
-$c->persistence->backend = '';
-
-/**
  * If set to TRUE, the firewall will reject any request that is not
  * explicitly allowed by a configured request filter.
  *
