@@ -79,6 +79,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		$this->componentFactory->injectComponentObjectBuilder($componentObjectBuilder);
 		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
 		$this->registerComponent('F3_FLOW3_Component_FactoryInterface', 'F3_FLOW3_Component_Factory', $this->componentFactory);
+		$this->registerComponent('F3_FLOW3_Component_ObjectBuilder', 'F3_FLOW3_Component_ObjectBuilder', $componentObjectBuilder);
 	}
 
 	/**
