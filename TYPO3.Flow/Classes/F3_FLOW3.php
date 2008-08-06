@@ -22,7 +22,7 @@ declare(ENCODING = 'utf-8');
 /**
  * Utility_Files is needed before the autoloader is active
  */
-require_once(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
+require(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
 
 define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(__DIR__ . '/'));
 define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
@@ -185,7 +185,9 @@ final class F3_FLOW3 {
 	public function initializeClassLoader() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
 
-		require_once(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
+		if(!class_exists('F3_FLOW3_Resource_ClassLoader')) {
+			require(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
+		}
 		$this->classLoader = new F3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 

@@ -23,8 +23,8 @@ declare(ENCODING = 'utf-8');
 /**
  * PackageInterface and Package are needed before the autoloader is active
  */
-require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
-require_once(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
+require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
+require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
 
 /**
  * Class Loader implementation which loads .php files found in the classes
@@ -77,7 +77,7 @@ class F3_FLOW3_Resource_ClassLoader {
 				$classFilePathAndName .= $className . '.php';
 			}
 		}
-		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require_once ($classFilePathAndName);
+		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);
 	}
 
 	/**
