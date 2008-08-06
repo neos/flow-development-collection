@@ -431,6 +431,11 @@ final class F3_FLOW3 {
 		if (version_compare(phpversion(), '6.0.0', '<') && !(extension_loaded('iconv') || extension_loaded('mbstring'))) {
 			die ('FLOW3 requires the PHP extension "mbstring" or "iconv" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
+
+		if (!extension_loaded('Reflection')) throw new F3_FLOW3_Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
+		$method = new ReflectionMethod(__CLASS__, 'checkEnvironment');
+		if ($method->getDocComment() === FALSE) throw new F3_FLOW3_Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');
 		ini_set('unicode.stream_encoding', 'utf-8');
