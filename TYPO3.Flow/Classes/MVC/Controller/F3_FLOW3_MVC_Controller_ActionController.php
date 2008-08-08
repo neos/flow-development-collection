@@ -103,7 +103,11 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$possibleViewName = 'F3_' . $this->request->getControllerPackageKey() . '_View_' . $this->request->getControllerName() . '_' . F3_PHP6_Functions::ucfirst($this->request->getControllerActionName());
+		$possibleViewName = str_replace('Controller', 'View', $this->request->getControllerComponentNamePattern());
+		$possibleViewName = str_replace('@package', $this->request->getControllerPackageKey(), $possibleViewName);
+		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
+		$possibleViewName .= '_'  . F3_PHP6_Functions::ucfirst($this->request->getControllerActionName());
+
 		if ($this->componentManager->isComponentRegistered($possibleViewName)) {
 			$this->view = $this->componentFactory->getComponent($possibleViewName);
 			return;
