@@ -123,6 +123,16 @@ class F3_FLOW3_MVC_Request {
 	}
 
 	/**
+	 * Returns the pattern for building the controller component name.
+	 *
+	 * @return string $pattern The pattern
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getControllerComponentNamePattern() {
+		return $this->controllerComponentNamePattern;
+	}
+
+	/**
 	 * Sets the package key of the controller.
 	 *
 	 * @param string $packageKey The package key.
