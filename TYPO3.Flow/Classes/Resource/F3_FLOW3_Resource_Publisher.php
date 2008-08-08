@@ -176,13 +176,24 @@ class F3_FLOW3_Resource_Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function extractResourceMetadata(F3_FLOW3_Property_DataType_URI $URI) {
-		$metadata = array(
-			'URI' => $URI,
-			'path' => $this->publicResourcePath . $URI->getHost() . dirname($URI->getPath()),
-			'name' => basename($URI->getPath()),
-			'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
-			'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
-		);
+		$explodedPath = explode('/',dirname($URI->getPath()));
+		if ($explodedPath[1] == 'Public') {
+			$metadata = array(
+				'URI' => $URI,
+				'path' => $this->publicResourcePath . $URI->getHost() . dirname($URI->getPath()),
+				'name' => basename($URI->getPath()),
+				'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
+				'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
+			);
+		} else {
+			$metadata = array(
+				'URI' => $URI,
+				'path' => FLOW3_PATH_PACKAGES . $URI->getHost() . '/Resources' . dirname($URI->getPath()),
+				'name' => basename($URI->getPath()),
+				'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
+				'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
+			);
+		}
 		return $metadata;
 	}
 
