@@ -61,6 +61,13 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	protected $matchResults = array();
 
 	/**
+	 * Contains associative array of custom route part handler classnames (key: route part name, value: route part handler classname)
+	 *
+	 * @var array
+	 */
+	protected $routePartHandlers = array();
+
+	/**
 	 * Indicates whether this route is parsed.
 	 * For better performance, routes are only parsed if needed.
 	 *
@@ -137,6 +144,18 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 */
 	public function getControllerComponentNamePattern() {
 		return $this->controllerComponentNamePattern;
+	}
+
+	/**
+	 * By default all dynamic route parts are resolved by F3_FLOW3_MVC_Web_Routing_DynamicRoutePart.
+	 * But you can specify different classes to handle particular route parts.
+	 * Note: route part handler must inherit from F3_FLOW3_MVC_Web_Routing_DynamicRoutePart.
+	 * Usage: setRoutePartHandlers(array('@controller' => 'F3_Package_Subpackage_MyRoutePartHandler'));
+	 *
+	 * @param array $routePartHandlers route part handler classnames
+	 */
+	public function setRoutePartHandlers(array $routePartHandlers) {
+		$this->routePartHandlers = $routePartHandlers;
 	}
 
 	/**
@@ -242,7 +261,14 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 			$routePart = NULL;
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
-					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+					if (isset($this->routePartHandlers[$routePartName])) {
+						$routePart = $this->componentFactory->getComponent($this->routePartHandlers[$routePartName]);
+						if (!$routePart instanceof F3_FLOW3_MVC_Web_Routing_DynamicRoutePart) {
+							throw new F3_FLOW3_MVC_Exception_InvalidRoutePartHandler('routePart handlers must inherit from "F3_FLOW3_MVC_Web_Routing_DynamicRoutePart"', 1218480972);
+						}
+					} else {
+						$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+					}
 					$routePart->setSplitString($splitString);
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);

@@ -20,6 +20,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
+require_once(__DIR__ . '/../../Fixture/Web/Routing/F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler.php');
+
 /**
  * Testcase for the MVC Web Routing Route Class
  *
@@ -212,6 +214,62 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 			$this->fail('matches() did not throw an exception although the specified urlPattern contains successive dynamic route parts which is not possible.');
 		} catch (F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts $exception) {
 		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function settingNonExistingRoutePartHandlerThrowsException() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]/[key2]');
+		$route->setRoutePartHandlers(
+			array(
+				'key1' => 'Non_Existing_RoutePartHandler',
+			)
+		);
+		try {
+			$route->matches('foo/bar');
+			$this->fail('matches() did not throw an exception although the specified routePart handler class is inexistent.');
+		} catch (F3_FLOW3_Component_Exception_UnknownComponent $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function settingInvalidRoutePartHandlerThrowsException() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]/[key2]');
+		$route->setRoutePartHandlers(
+			array(
+				'key1' => 'F3_FLOW3_MVC_Web_Routing_StaticRoutePart',
+			)
+		);
+		try {
+			$route->matches('foo/bar');
+			$this->fail('matches() did not throw an exception although the specified routePart handler is invalid.');
+		} catch (F3_FLOW3_MVC_Exception_InvalidRoutePartHandler $exception) {
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function registeredRoutePartHandlerIsInvoked() {
+		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler');
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]/[key2]');
+		$route->setRoutePartHandlers(
+			array(
+				'key1' => 'F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler',
+			)
+		);
+		$route->matches('foo/bar');
+
+		$this->assertEquals(array('key1' => 'invoked', 'key2' => 'bar'), $route->getMatchResults());
 	}
 }
 ?>
