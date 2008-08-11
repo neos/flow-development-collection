@@ -35,7 +35,18 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultPatternForBuildingTheControllerComponentNameIsPackageKeyControllerControllerName() {
+		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+			->with($this->equalTo('f3_testpackage_controller_foo'))
+			->will($this->returnValue('F3_TestPackage_Controller_Foo'));
+
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->will($this->returnValue('TestPackage'));
+
 		$request = new F3_FLOW3_MVC_Request();
+		$request->injectComponentManager($mockComponentManager);
+		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
 		$this->assertEquals('F3_TestPackage_Controller_Foo', $request->getControllerComponentName());
@@ -46,10 +57,46 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePatternForBuildingTheControllerComponentNameCanBeCustomized() {
+		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+			->with($this->equalTo('f3_testpackage_bar_baz_foo'))
+			->will($this->returnValue('F3_TestPackage_Bar_Baz_Foo'));
+
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->will($this->returnValue('TestPackage'));
+
 		$request = new F3_FLOW3_MVC_Request();
+		$request->injectComponentManager($mockComponentManager);
+		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
 		$request->setControllerComponentNamePattern('F3_@package_Bar_Baz_@controller');
+
+		$this->assertEquals('F3_TestPackage_Bar_Baz_Foo', $request->getControllerComponentName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function lowerCasePackageKeysAndComponentNamesAreConvertedToTheRealComponentName() {
+		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+			->with($this->equalTo('f3_testpackage_bar_baz_foo'))
+			->will($this->returnValue('F3_TestPackage_Bar_Baz_Foo'));
+
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->with($this->equalTo('testpackage'))
+			->will($this->returnValue('TestPackage'));
+
+		$request = new F3_FLOW3_MVC_Request();
+		$request->injectComponentManager($mockComponentManager);
+		$request->injectPackageManager($mockPackageManager);
+		$request->setControllerPackageKey('testpackage');
+		$request->setControllerName('foo');
+		$request->setControllerComponentNamePattern('f3_@package_bar_baz_@controller');
 
 		$this->assertEquals('F3_TestPackage_Bar_Baz_Foo', $request->getControllerComponentName());
 	}
@@ -106,7 +153,12 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->will($this->returnValue('TestPackage'));
+
 		$request = new F3_FLOW3_MVC_Request();
+		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
 	}
@@ -117,7 +169,12 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
+		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->will($this->returnValue(FALSE));
+
 		$request = new F3_FLOW3_MVC_Request();
+		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('Some_Invalid_Key');
 	}
 

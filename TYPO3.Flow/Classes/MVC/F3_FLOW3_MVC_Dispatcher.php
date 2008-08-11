@@ -134,8 +134,6 @@ class F3_FLOW3_MVC_Dispatcher {
 	 */
 	protected function getPreparedController(F3_FLOW3_MVC_Request $request) {
 		$controllerComponentName = $request->getControllerComponentName();
-		if (!$this->componentManager->isComponentRegistered($controllerComponentName)) throw new F3_FLOW3_MVC_Exception_NoSuchController('Invalid controller "' . $controllerComponentName . '". The controller "' . $controllerComponentName . '" is not a registered component.', 1202921618);
-
 		$controller = $this->componentFactory->getComponent($controllerComponentName);
 		if (!$controller instanceof F3_FLOW3_MVC_Controller_RequestHandlingController) throw new F3_FLOW3_MVC_Exception_InvalidController('Invalid controller "' . $controllerComponentName . '". The controller must be a valid request handling controller.', 1202921619);
 

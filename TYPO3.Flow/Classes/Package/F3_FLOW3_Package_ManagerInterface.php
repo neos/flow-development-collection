@@ -76,6 +76,15 @@ interface F3_FLOW3_Package_ManagerInterface {
 	public function getActivePackages();
 
 	/**
+	 * Returns the upper camel cased version of the given package key or FALSE
+	 * if no such package is available.
+	 *
+	 * @param string $lowerCasedPackageKey The package key to convert
+	 * @return mixed The upper camel cased package key or FALSE if no such package exists
+	 */
+	public function getCaseSensitivePackageKey($unknownCasedPackageKey);
+
+	/**
 	 * Returns the absolute path to the root directory of a package.
 	 *
 	 * @param string $packageKey: Name of the package to return the path of

@@ -31,8 +31,21 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_MVC_Request {
 
-	const PATTERN_MATCH_FORMAT = '/^[a-z]{1,5}$/';
+	const PATTERN_MATCH_FORMAT = '/^[a-z0-9]{1,5}$/';
 
+	/**
+	 * @var F3_FLOW3_Component_ManagerInterface
+	 */
+	protected $componentManager;
+
+	/**
+	 * @var F3_FLOW3_Package_ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * @var string Pattern after which the controller component name is built
+	 */
 	protected $controllerComponentNamePattern = 'F3_@package_Controller_@controller';
 
 	/**
@@ -75,6 +88,28 @@ class F3_FLOW3_MVC_Request {
 	}
 
 	/**
+	 * Injects the component manager
+	 *
+	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
+	}
+
+	/**
+	 * Injects the package
+	 *
+	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the package manager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPackageManager(F3_FLOW3_Package_ManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * Sets the dispatched flag
 	 *
 	 * @param boolean $flag If this request has been dispatched
@@ -90,6 +125,9 @@ class F3_FLOW3_MVC_Request {
 	 *
 	 * The dispatcher will try to dispatch the request again if it has not been
 	 * addressed yet.
+	 *
+	 * @return boolean TRUE if this request has been disptached sucessfully
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isDispatched() {
 		return $this->dispatched;
@@ -103,8 +141,11 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentName() {
-		$componentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
-		$componentName = str_replace('@controller', $this->controllerName, $componentName);
+		$lowercaseComponentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
+		$lowercaseComponentName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseComponentName));
+		$componentName = $this->componentManager->getCaseSensitiveComponentName($lowercaseComponentName);
+		if ($componentName === FALSE) $componentName = 'F3_FLOW3_MVC_Controller_Default';
+
 		return $componentName;
 	}
 
@@ -141,8 +182,9 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerPackageKey($packageKey) {
-		if (!preg_match(F3_FLOW3_Package_Package::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new F3_FLOW3_MVC_Exception_InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
-		$this->controllerPackageKey = $packageKey;
+		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
+		if ($upperCamelCasedPackageKey === FALSE) throw new F3_FLOW3_MVC_Exception_InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
+		$this->controllerPackageKey = $upperCamelCasedPackageKey;
 	}
 
 	/**
@@ -181,14 +223,18 @@ class F3_FLOW3_MVC_Request {
 	}
 
 	/**
-	 * Sets the name of the action contained in this request
+	 * Sets the name of the action contained in this request.
+	 *
+	 * Note that the action name must start with a lower case letter.
 	 *
 	 * @param string $actionName: Name of the action to execute by the controller
 	 * @return void
+	 * @throws F3_FLOW3_MVC_Exception_InvalidActionName if the action name is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+		if ($actionName{0} !== F3_PHP6_Functions::strtolower($actionName{0})) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must start with a lower case letter, "' . gettype($actionName) . '" does not match this criteria.', 1218473352);
 		$this->controllerActionName = $actionName;
 	}
 

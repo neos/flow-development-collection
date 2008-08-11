@@ -105,7 +105,7 @@ class F3_FLOW3_Package_ManagerTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals($expectedPackagePath, $actualPackagePath, 'getPackagePath() did not return the correct path for package "TestPackage".');
 
 		try {
-			$returnedPackagePath = $this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
+			$this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
 		} catch (Exception $exception) {
 			$this->assertEquals(1166543253, $exception->getCode(), 'getPackagePath() throwed an exception but with an unexpected error code.');
 			return;
@@ -125,12 +125,22 @@ class F3_FLOW3_Package_ManagerTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals($expectedPackageClassesPath, $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
 
 		try {
-			$returnedPackageClassesPath = $this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
+			$this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
 		} catch (Exception $exception) {
 			$this->assertEquals(1167574237, $exception->getCode(), 'getPackageClassesPath() throwed an exception but with an unexpected error code.');
 			return;
 		}
 		$this->fail('getPackageClassesPath() did not throw an exception while asking for the path to a non existent package.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
+		$packageManager = new F3_FLOW3_Package_Manager();
+		$packageManager->initialize();
+		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
 	}
 }
 ?>

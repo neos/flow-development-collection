@@ -18,7 +18,7 @@ $c->fallback
 			'dummy' => 'foo',
 			'@package' => 'FLOW3',
 			'@controller' => 'Default',
-			'@action' => 'Default',
+			'@action' => 'default',
 		)
 	);
 

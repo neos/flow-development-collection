@@ -37,6 +37,11 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	protected $packages = array();
 
 	/**
+	 * @var array A translation table between lower cased and upper camel cased package keys
+	 */
+	protected $packageKeys = array();
+
+	/**
 	 * @var array List of active packages - not used yet!
 	 */
 	protected $arrayOfActivePackages = array();
@@ -64,6 +69,9 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 */
 	public function initialize() {
 		$this->packages = $this->scanAvailablePackages();
+		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
+			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
+		}
 	}
 
 	/**
@@ -115,6 +123,20 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 */
 	public function getActivePackages() {
 		return $this->packages;
+	}
+
+	/**
+	 * Returns the upper camel cased version of the given package key or FALSE
+	 * if no such package is available.
+	 *
+	 * @param string $lowerCasedPackageKey The package key to convert
+	 * @return mixed The upper camel cased package key or FALSE if no such package exists
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getCaseSensitivePackageKey($unknownCasedPackageKey) {
+		$lowerCasedPackageKey = strtolower($unknownCasedPackageKey);
+		if (!array_key_exists($lowerCasedPackageKey, $this->packageKeys)) return FALSE;
+		return $this->packageKeys[$lowerCasedPackageKey];
 	}
 
 	/**

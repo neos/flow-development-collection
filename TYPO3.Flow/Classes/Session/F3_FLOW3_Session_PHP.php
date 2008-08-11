@@ -101,10 +101,11 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @param mixed $data The data to be stored
 	 * @return void
 	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putData($key, $data) {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043309);
+		if (is_resource($data)) throw new F3_FLOW3_Session_Exception_DataNotSerializeable('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
 		$_SESSION[$key] = $data;
 	}
 
@@ -117,7 +118,11 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 */
 	public function close() {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043310);
-		session_write_close();
+		try {
+			session_write_close();
+		} catch (Exception $exception) {
+			throw new F3_FLOW3_Session_Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
+		}
 		unset($_SESSION);
 	}
 
@@ -130,7 +135,11 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 */
 	public function destroy() {
 		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218043311);
-		session_destroy();
+		try {
+			session_destroy();
+		} catch (Exception $exception) {
+			throw new F3_FLOW3_Session_Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
+		}
 		unset($_SESSION);
 	}
 }
