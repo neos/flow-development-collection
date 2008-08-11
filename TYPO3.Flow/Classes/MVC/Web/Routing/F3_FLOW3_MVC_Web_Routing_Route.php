@@ -32,6 +32,9 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_MVC_Web_Routing_Route {
 
+	const ROUTEPART_TYPE_STATIC = 'static';
+	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
+
 	/**
 	 * Default values
 	 *
@@ -66,11 +69,11 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Array of F3_FLOW3_MVC_Web_Routing_AbstractRoutePart objects
+	 * Twodimensional Array. Each element contains one or more F3_FLOW3_MVC_Web_Routing_AbstractRoutePart object(s)
 	 *
 	 * @var array
 	 */
-	protected $routeParts = array();
+	protected $urlPatternSegments = array();
 
 	/**
 	 * @var F3_FLOW3_Component_FactoryInterface
@@ -172,12 +175,14 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		}
 
 		$matchResults = array();
-		foreach ($this->routeParts as $routePart) {
-			if (!$routePart->match($requestPathSegments)) {
-				return FALSE;
-			}
-			if ($routePart->getValue() !== NULL) {
-				$matchResults[$routePart->getName()] = $routePart->getValue();
+		foreach ($this->urlPatternSegments as $urlPatternSegment) {
+			foreach($urlPatternSegment as $routePart) {
+				if (!$routePart->match($requestPathSegments)) {
+					return FALSE;
+				}
+				if ($routePart->getValue() !== NULL) {
+					$matchResults[$routePart->getName()] = $routePart->getValue();
+				}
 			}
 		}
 		if (count($requestPathSegments) > 1) {
@@ -197,44 +202,62 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		if ($this->isParsed) {
 			return;
 		}
-		$this->routeParts = array();
+		$this->urlPatternSegments = array();
 		$urlPatternSegments = explode('/', $this->urlPattern);
 		foreach ($urlPatternSegments as $urlPatternSegment) {
-			$this->routeParts[] = $this->createRoutePartInstance($urlPatternSegment);
+			$this->urlPatternSegments[] = $this->createRoutePartsFromUrlPatternSegment($urlPatternSegment);
 		}
 	}
 
 	/**
-	 * Creates corresponding Route part instance for a given $urlPatternSegment.
-	 * if the segment starts and ends with two brackets "[[segment]]" it's considered to be a SubRoute part
-	 * if the segment starts and ends with one bracket "[segment]" it's considered to be a dynamic Route part
-	 * otherwise a static Route part instance is returned
+	 * Creates corresponding Route part instances for a given $urlPatternSegment.
+	 * The segment must contain at least one route part.
+	 * A route part can by dynamic or static. dynamic route parts are wrapped in square brackets.
+	 * One segment can contain more than one dynamic route part, but they have to be separated by static route parts.
 	 *
 	 * @param string $urlPatternSegment one segment of the URL pattern including brackets.
 	 * @return F3_FLOW3_MVC_Web_Routing_AbstractRoutePart corresponding Route part instance
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createRoutePartInstance($urlPatternSegment) {
-		$routePart = NULL;
-		if (F3_PHP6_Functions::substr($urlPatternSegment, 0, 2) == '[[' && F3_PHP6_Functions::substr($urlPatternSegment, -2) == ']]') {
-			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_SubRoutePart');
-			$routePartName = F3_PHP6_Functions::substr($urlPatternSegment, 2, -2);
-			$routePart->setName($routePartName);
-			if (isset($this->defaults[$routePartName])) {
-				$routePart->setDefaultValue($this->defaults[$routePartName]);
+	protected function createRoutePartsFromUrlPatternSegment($urlPatternSegment) {
+		$routeParts = array();
+		$pattern = '/(\[?)(@?[^\]\[]+)\]?/';
+		$matches = array();
+		preg_match_all($pattern, $urlPatternSegment, $matches, PREG_SET_ORDER);
+
+		$lastRoutePartType = NULL;
+		foreach($matches as $index => $match) {
+			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
+			$routePartName = $match[2];
+			$splitString = '';
+			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
+				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
+					throw new F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts('two succesive dynamic route parts are not allowed!', 1218446975);
+				}
+				if (($index + 1) < count($matches)) {
+					$splitString = $matches[$index + 1][2];
+				}
 			}
-		} else if (F3_PHP6_Functions::substr($urlPatternSegment, 0, 1) == '[' && F3_PHP6_Functions::substr($urlPatternSegment, -1) == ']') {
-			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
-			$routePartName = F3_PHP6_Functions::substr($urlPatternSegment, 1, -1);
-			$routePart->setName($routePartName);
-			if (isset($this->defaults[$routePartName])) {
-				$routePart->setDefaultValue($this->defaults[$routePartName]);
+
+			$routePart = NULL;
+			switch ($routePartType) {
+				case self::ROUTEPART_TYPE_DYNAMIC:
+					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+					$routePart->setSplitString($splitString);
+					if (isset($this->defaults[$routePartName])) {
+						$routePart->setDefaultValue($this->defaults[$routePartName]);
+					}
+					break;
+				default:
+					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
 			}
-		} else {
-			$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
-			$routePart->setName($urlPatternSegment);
+			$routePart->setName($routePartName);
+			
+			$routeParts[] = $routePart;
+			$lastRoutePartType = $routePartType;
 		}
-		return $routePart;
+		
+		return $routeParts;
 	}
 }
 ?>

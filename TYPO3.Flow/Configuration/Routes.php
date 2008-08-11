@@ -30,7 +30,21 @@ $c->default
 	->setDefaults(
 		array(
 			'@controller' => 'Default',
-			'@action' => 'default'
+			'@action' => 'default',
+			'@format' => 'html'
+		)
+	);
+
+/**
+ * Default route to map the first three URL segments to package, controller and action including optional format-suffix
+ */
+$c->defaultWithFormat
+	->setUrlPattern('[@package]/[@controller]/[@action].[@format]')
+	->setDefaults(
+		array(
+			'@controller' => 'Default',
+			'@action' => 'default',
+			'@format' => 'html'
 		)
 	);
 

@@ -32,9 +32,28 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
 
 	/**
+	 * @var string if not empty, match() will check existence of $splitString in current URL segment.
+	 */
+	protected $splitString;
+
+	/**
+	 * Sets split string.
+	 * if not empty, match() will check existence of $splitString in current URL segment.
+	 * If URL segment does not contain $splitString, route part won't match.
+	 * Otherwise all characters before $splitString are removed from URL segment.
+	 *
+	 * @param string $splitString
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setSplitString($splitString) {
+		$this->splitString = $splitString;
+	}
+
+	/**
 	 * Checks whether this dynamic Route part correspond to the given $urlSegments.
-	 * This method sets $this->value to the first element of $urlSegments and shortens
-	 * $urlSegments array by one element.
+	 * On successful match this method sets $this->value to the corresponding urlPart
+	 * and shortens $urlSegments respectively.
 	 * If first element of $urlSegments is empty, $this->value is set to $this->defaultValue (if existent).
 	 *
 	 * @param array $urlSegments An array with one element per request URL segment.
@@ -48,19 +67,28 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 			return FALSE;
 		}
 
-		if (empty($this->defaultValue)) {
-			if (count($urlSegments) < 1 || empty($urlSegments[0])) {
+		$valueToMatch = isset($urlSegments[0]) ? $urlSegments[0] : NULL;
+		if (F3_PHP6_Functions::strlen($this->splitString) > 0 && F3_PHP6_Functions::strlen($valueToMatch)) {
+			$splitStringPosition = F3_PHP6_Functions::strpos($valueToMatch, $this->splitString);
+			if ($splitStringPosition === FALSE) {
 				return FALSE;
 			}
+			$valueToMatch = F3_PHP6_Functions::substr($valueToMatch, 0, $splitStringPosition);
 		}
 
-		if (!isset($urlSegments[0]) || empty($urlSegments[0])) {
+		if (!F3_PHP6_Functions::strlen($valueToMatch)) {
+			if (empty($this->defaultValue)) {
+				return FALSE;
+			}
 			$this->value = $this->defaultValue;
 			return TRUE;
 		}
 
-		$this->value = $urlSegments[0];
-		array_shift($urlSegments);
+		$this->value = $valueToMatch;
+		$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
+		if (F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
+			array_shift($urlSegments);
+		}
 
 		return TRUE;
 	}

@@ -140,13 +140,59 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function subRoutesAreEnclosedInDoubleSquareBrackets() {
+	public function settingUrlPatternResetsRoute() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
-		$route->setUrlPattern('foo/bar/[[parameters]]');
+		$route->setUrlPattern('[key1]/foo/[key2]/bar');
 
-		$this->assertFalse($route->matches('bar/foo/key1/value1/key2/value2'), '"foo/bar/[[parameters]]"-Route should not match "bar/foo/key1/value1/key2/value2"-request.');
-		$this->assertTrue($route->matches('foo/bar/key1/value1/key2/value2'), '"foo/bar/[[parameters]]"-Route should match "foo/bar/key1/value1/key2/value2"-request.');
-		$this->assertSame(array('parameters' => array('key1' => 'value1', 'key2' => 'value2')), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
+		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"[key1]/foo/[key2]/bar"-Route should match "value1/foo/value2/bar"-request.');
+		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		
+		$route->setUrlPattern('foo/[key3]/foo');
+
+		$this->assertFalse($route->matches('foo/value3/bar'), '"foo/[key3]/foo"-Route should not match "foo/value3/bar"-request.');
+		$this->assertTrue($route->matches('foo/value3/foo'), '"foo/[key3]/foo"-Route should match "foo/value3/foo"-request.');
+		$this->assertSame(array('key3' => 'value3'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function urlPatternSegmentCanContainTwoDynamicRouteParts() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('user/[firstName]-[lastName]');
+		
+		$this->assertFalse($route->matches('user/johndoe'), '"user/[firstName]-[lastName]"-Route should not match "user/johndoe"-request.');
+		$this->assertTrue($route->matches('user/john-doe'), '"user/[firstName]-[lastName]"-Route should match "user/john-doe"-request.');
+		$this->assertSame(array('firstName' => 'john', 'lastName' => 'doe'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function urlPatternSegmentsCanContainMultipleDynamicRouteParts() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		
+		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should not match "value1-value2/value3.value4value5"-request.');
+		$this->assertTrue($route->matches('value1-value2/value3.value4.value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should match "value1-value2/value3.value4.value5"-request.');
+		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function processingUrlPatternWithSuccessiveDynamicRoutepartsThrowsException() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1][key2]');
+		try {
+			$route->matches('value1value2');
+			$this->fail('matches() did not throw an exception although the specified urlPattern contains successive dynamic route parts which is not possible.');
+		} catch (F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts $exception) {
+		}
 	}
 }
 ?>

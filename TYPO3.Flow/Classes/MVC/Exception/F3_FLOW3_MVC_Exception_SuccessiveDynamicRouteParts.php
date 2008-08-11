@@ -21,41 +21,15 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * static route part
+ * An "Successive Dynamic RoutePart" exception
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
+class F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts extends F3_FLOW3_MVC_Exception {
 
-	/**
-	 * Checks whether this static Route part correspond to the given $urlSegments.
-	 * This is TRUE if the first element of $urlSegments is not empty and is equal to the Route part name
-	 *
-	 * @param array $urlSegments An array with one element per request URL segment.
-	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function match(array &$urlSegments) {
-		if ($this->name === NULL || $this->name === '') {
-			return FALSE;
-		}
-		if (count($urlSegments) < 1) {
-			return FALSE;
-		}
-		$valueToMatch = substr($urlSegments[0], 0, strlen($this->name));
-		if ($valueToMatch != $this->name) {
-			return FALSE;
-		}
-		$urlSegments[0] = substr($urlSegments[0], strlen($this->name));
-		if (strlen($urlSegments[0]) == 0) {
-			array_shift($urlSegments);
-		}
-
-		return TRUE;
-	}
 }
+
 ?>
