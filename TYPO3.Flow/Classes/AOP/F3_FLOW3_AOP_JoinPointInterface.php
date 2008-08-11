@@ -95,7 +95,7 @@ interface F3_FLOW3_AOP_JoinPointInterface {
 	 *
 	 * @return F3_FLOW3_AOP_AdviceChainInterface The advice chain
 	 */
-	public function getAdvicechain();
+	public function getAdviceChain();
 
 	/**
 	 * Returns the exception which has been thrown in the target method.

@@ -657,7 +657,7 @@ class F3_TestPackage_PointcutTestingAspect {
     *
     * @before class(F3_News_.*-&gt;.*())
     */
-   public function myBeforeAdvice(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function myBeforeAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
    }</programlisting></para>
         </example></para>
     </section>
@@ -678,7 +678,7 @@ class F3_TestPackage_PointcutTestingAspect {
     *
     * @afterreturning method(public F3_News_FeedAgregator-&gt;[import|update].*()) || F3_MyPackage_MyAspect-&gt;someOtherPointcut
     */
-   public function myAfterReturningAdvice(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function myAfterReturningAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -698,7 +698,7 @@ class F3_TestPackage_PointcutTestingAspect {
     *
     * @afterthrowing within(F3_News_ImportantLayer)
     */
-   public function myAfterThrowingAdvice(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function myAfterThrowingAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -719,7 +719,7 @@ class F3_TestPackage_PointcutTestingAspect {
     *
     * @after F3_MyPackage_MyAspect-&gt;justAPointcut
     */
-   public function myAfterAdvice(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function myAfterAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -743,7 +743,7 @@ class F3_TestPackage_PointcutTestingAspect {
     *
     * @around F3_MyPackage_MyAspect-&gt;justAPointcut
     */
-   public function myAroundAdvice(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function myAroundAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -764,7 +764,7 @@ class F3_TestPackage_PointcutTestingAspect {
 
       <para>As you have seen in the previous section, advice methods always
       expect an argument of the type
-      <interfacename>F3_FLOW3_AOPJoinPointInterface</interfacename>. This join
+      <interfacename>F3_FLOW3_AOP_JoinPointInterface</interfacename>. This join
       point object contains all important information about the current join
       point. Methods like <methodname>getClassName()</methodname> or
       <methodname>getMethodArguments()</methodname> let the advice method
@@ -830,11 +830,11 @@ class F3_MyPackage_LoggingAspect {
    /**
     * Before advice, logs all access to methods of our package
     *
-    * @param  F3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
     * @return void
     * @before method(F3_MyPackage_.*-&gt;.*())
     */
-   public function logMethodExecution(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function logMethodExecution(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
       $logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . $joinPoint-&gt;getClassName() . ' has been called.';
       $this-&gt;logger-&gt;log($logMessage, 'F3_MyPackage_LoggingAspect');
    }
@@ -876,11 +876,11 @@ class F3_MyPackage_LastNameRejectionAspect {
    /**
     * Around advice, rejects the lastname "Sarkosh"
     *
-    * @param  F3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
     * @return mixed Result of the target method
     * @around F3_MyPackage_LastNameRejectionAspect-&gt;guestbookSubmissionPointcut
     */
-   public function rejectLastName(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function rejectLastName(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
       if ($joinPoint-&gt;getMethodArgument('lastName') == 'Sarkosh') {
          throw new Exception('Sarkosh is not a valid lastname - should be Skårhøj!');
       }
@@ -952,11 +952,11 @@ class F3_MyPackage_IntroductionAspect {
    /**
     * Around advice, implements the new method "newMethod" of the "NewInterface" interface
     *
-    * @param  F3_FLOW3_AOPJoinPointInterface $joinPoint: The current join point
+    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
     * @return void
     * @around method(F3_MyPackage_OldClass-&gt;newMethod())
     */
-   public function newMethod(F3_FLOW3_AOPJoinPointInterface $joinPoint) {
+   public function newMethod(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
          // We call the advice chain, in case any other advice is declared for this method,
          // but we don't care about the result.
       $someResult = $joinPoint-&gt;getAdviceChain-&gt;proceed($joinPoint);

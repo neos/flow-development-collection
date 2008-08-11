@@ -161,7 +161,7 @@ class F3_FLOW3_AOP_JoinPoint implements F3_FLOW3_AOP_JoinPointInterface {
 	 * @return F3_FLOW3_AOP_AdviceChainInterface The advice chain
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAdvicechain() {
+	public function getAdviceChain() {
 		return $this->adviceChain;
 	}
 
