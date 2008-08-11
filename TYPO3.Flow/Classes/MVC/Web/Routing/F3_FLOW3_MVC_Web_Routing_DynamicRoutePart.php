@@ -81,12 +81,13 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 				return FALSE;
 			}
 			$this->value = $this->defaultValue;
-			return TRUE;
+		} else {
+			$this->value = $valueToMatch;
+			if (F3_PHP6_Functions::strlen($valueToMatch)) {
+				$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
+			}
 		}
-
-		$this->value = $valueToMatch;
-		$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
-		if (F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
+		if (F3_PHP6_Functions::strlen($this->splitString) == 0 && isset($urlSegments[0]) && F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
 			array_shift($urlSegments);
 		}
 

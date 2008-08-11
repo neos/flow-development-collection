@@ -49,17 +49,17 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 		$route->setUrlPattern('SomePackage');
 
 		$defaults = array(
-			'package' => 'SomePackage',
-			'controller' => 'SomeController',
-			'action' => 'someAction'
+			'@package' => 'SomePackage',
+			'@controller' => 'SomeController',
+			'@action' => 'someAction'
 		);
 
 		$route->setDefaults($defaults);
 		$route->matches('SomePackage');
 		$matchResults = $route->getMatchResults();
 
-		$this->assertEquals($defaults['controller'], $matchResults['controller']);
-		$this->assertEquals($defaults['action'], $matchResults['action']);
+		$this->assertEquals($defaults['@controller'], $matchResults['@controller']);
+		$this->assertEquals($defaults['@action'], $matchResults['@action']);
 	}
 
 	/**
@@ -179,6 +179,25 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should not match "value1-value2/value3.value4value5"-request.');
 		$this->assertTrue($route->matches('value1-value2/value3.value4.value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should match "value1-value2/value3.value4.value5"-request.');
 		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function defaultValuesAreSetForUrlPatternSegmentsWithMultipleRouteParts() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$defaults = array(
+			'key1' => 'defaultValue1',
+			'key2' => 'defaultValue2',
+			'key3' => 'defaultValue3',
+			'key4' => 'defaultValue4'
+		);
+		$route->setDefaults($defaults);
+		$route->matches('foo-/.bar.xml');
+
+		$this->assertSame(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**

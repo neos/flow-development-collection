@@ -250,6 +250,9 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 					break;
 				default:
 					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
+					if (($index + 1) == count($matches)) {
+						$routePart->setLastRoutePartInSegment(TRUE);
+					}
 			}
 			$routePart->setName($routePartName);
 			

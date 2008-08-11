@@ -32,6 +32,23 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
 
 	/**
+	 * @var boolean specifies whether this route part is the last in the current url segment
+	 */
+	protected $lastRoutePartInSegment = FALSE;
+
+	/**
+	 * After a successful match, first urlSegment is cut off. But only if this route part
+	 * is the last inside the current url segment
+	 *
+	 * @param boolean $lastRoutePartInSegment TRUE if this is the last route part in the current url segment
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setLastRoutePartInSegment($lastRoutePartInSegment) {
+		$this->lastRoutePartInSegment = $lastRoutePartInSegment;
+	}
+
+	/**
 	 * Checks whether this static Route part correspond to the given $urlSegments.
 	 * This is TRUE if the first element of $urlSegments is not empty and is equal to the Route part name
 	 *
@@ -46,12 +63,12 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 		if (count($urlSegments) < 1) {
 			return FALSE;
 		}
-		$valueToMatch = substr($urlSegments[0], 0, strlen($this->name));
+		$valueToMatch = F3_PHP6_Functions::substr($urlSegments[0], 0, F3_PHP6_Functions::strlen($this->name));
 		if ($valueToMatch != $this->name) {
 			return FALSE;
 		}
-		$urlSegments[0] = substr($urlSegments[0], strlen($this->name));
-		if (strlen($urlSegments[0]) == 0) {
+		$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
+		if ($this->lastRoutePartInSegment && F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
 			array_shift($urlSegments);
 		}
 

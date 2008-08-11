@@ -110,7 +110,7 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePartTest extends F3_Testing_BaseTestCa
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function valueIsNullAfterUnsuccessfulMatch () {
+	public function valueIsNullAfterUnsuccessfulMatch() {
 		$this->routePart1->setName('foo');
 
 		$urlSegments = array('foo', 'bar');
@@ -125,7 +125,7 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePartTest extends F3_Testing_BaseTestCa
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function urlSegmentsAreNotChangedAfterUnsuccessfulMatch () {
+	public function urlSegmentsAreNotChangedAfterUnsuccessfulMatch() {
 		$this->routePart1->setName('bar');
 
 		$urlSegments = array('foo', 'bar');
@@ -140,14 +140,28 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePartTest extends F3_Testing_BaseTestCa
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function urlSegmentsAreShortenedByOneSegmentAfterSuccessfulMatch () {
+	public function urlSegmentsAreShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsLastInSegment() {
 		$this->routePart1->setName('bar');
-
+		$this->routePart1->setLastRoutePartInSegment(TRUE);
 		$urlSegments = array('bar', 'foo', 'test');
 
 		$this->routePart1->match($urlSegments);
 
 		$this->assertSame(array('foo', 'test'), $urlSegments, 'static route part should shorten urlSegments array by one entry on successful match');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function urlSegmentsAreNotShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsNotLastInSegment() {
+		$this->routePart1->setName('bar');
+		$this->routePart1->setLastRoutePartInSegment(FALSE);
+		$urlSegments = array('bar', 'foo', 'test');
+
+		$this->routePart1->match($urlSegments);
+
+		$this->assertSame(array('', 'foo', 'test'), $urlSegments, 'static route part should shorten urlSegments array by one entry on successful match');
 	}
 }
 ?>
