@@ -44,6 +44,11 @@ class F3_FLOW3_Security_Context {
 	protected $authenticateAllTokens = FALSE;
 
 	/**
+	 * @var F3_FLOW3_MVC_Request
+	 */
+	protected $request;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
@@ -112,6 +117,16 @@ class F3_FLOW3_Security_Context {
 		}
 
 		return $activeTokens;
+	}
+
+	/**
+	 * Prepare this object for serialization
+	 *
+	 * @return array Names of the instance variables to serialize
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __sleep() {
+		return (array('tokens', 'authenticateAllTokens'));
 	}
 }
 
