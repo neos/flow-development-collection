@@ -35,9 +35,17 @@ class F3_FLOW3_Resource_ClassLoaderTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function classesFromSubdirectoriesAreLoaded() {
+	public function classesFromSubDirectoriesAreLoaded() {
 		$dummyObject = new F3_TestPackage_SubDirectory_ClassInSubDirectory;
 		$this->assertTrue(class_exists('F3_TestPackage_SubDirectory_ClassInSubDirectory'), 'The class in a subdirectory has not been loaded by the package autoloader.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
+		$this->assertTrue(class_exists('F3_TestPackage_SubDirectory_1_2_3_4_5_6_7_8_9_10_TheClass', TRUE), 'The class in a very deep sub directory has not been loaded by the package autoloader.');
 	}
 }
 ?>

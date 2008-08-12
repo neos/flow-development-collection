@@ -142,7 +142,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 		}
 		if (!class_exists($className, TRUE)) throw new F3_FLOW3_Component_Exception_UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
 		$useReflectionService = $this->reflectionService->isInitialized();
-		if (!$useReflectionService)	$class = new F3_FLOW3_Reflection_Class($className);
+		if (!$useReflectionService) $class = new F3_FLOW3_Reflection_Class($className);
 
 		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
 		if ($classIsAbstract) throw new F3_FLOW3_Component_Exception_InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);

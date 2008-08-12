@@ -20,9 +20,6 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  */
 
-/**
- * PackageInterface and Package are needed before the autoloader is active
- */
 require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
 require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
 
@@ -50,7 +47,7 @@ class F3_FLOW3_Resource_ClassLoader {
 	/**
 	 * Constructs the class loader
 	 *
-	 * @param  string $packagesDirectory: Absolute path of the Packages/ directory.
+	 * @param string $packagesDirectory Absolute path of the Packages/ directory.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -62,9 +59,9 @@ class F3_FLOW3_Resource_ClassLoader {
 	 * Loads php files containing classes or interfaces found in the classes directory of
 	 * a package and specifically registered classes.
 	 *
-	 * @param   string $className: Name of the class/interface to load
-	 * @return  void
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @param string $className Name of the class/interface to load
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadClass($className) {
 		if (isset($this->specialClassNamesAndPaths[$className])) {
@@ -84,11 +81,11 @@ class F3_FLOW3_Resource_ClassLoader {
 	 * Explicitly sets a file path and name which holds the implementation of
 	 * the given class.
 	 *
-	 * @param  string $className: Name of the class to register
-	 * @param  string $classFilePathAndName: Absolute path and file name of the file holding the class implementation
+	 * @param string $className Name of the class to register
+	 * @param string $classFilePathAndName Absolute path and file name of the file holding the class implementation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    F3_FLOW3_Resource_Manager
+	 * @see F3_FLOW3_Resource_Manager
 	 */
 	public function setSpecialClassNameAndPath($className, $path) {
 		$this->specialClassNamesAndPaths[$className] = $path;
