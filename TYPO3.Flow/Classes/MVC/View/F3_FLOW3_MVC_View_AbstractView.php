@@ -46,6 +46,11 @@ abstract class F3_FLOW3_MVC_View_AbstractView {
 	protected $resourceManager;
 
 	/**
+	 * @var F3_FLOW3_MVC_Request
+	 */
+	protected $request;
+
+	/**
 	 * Constructs the view.
 	 *
 	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the Component Factory
@@ -59,6 +64,17 @@ abstract class F3_FLOW3_MVC_View_AbstractView {
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
 		$this->initializeView();
+	}
+
+	/**
+	 * Sets the current request
+	 *
+	 * @param F3_FLOW3_MVC_Request $request
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setRequest(F3_FLOW3_MVC_Request $request) {
+		$this->request = $request;
 	}
 
 	/**

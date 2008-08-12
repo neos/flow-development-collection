@@ -109,18 +109,15 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 		$possibleViewName .= '_'  . F3_PHP6_Functions::ucfirst($this->request->getControllerActionName());
 
 		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName . F3_PHP6_Functions::ucfirst($this->request->getFormat()));
-		if ($viewComponentName !== FALSE) {
-			$this->view = $this->componentFactory->getComponent($viewComponentName);
-			return;
+		if ($viewComponentName === FALSE) {
+			$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName);
+		}
+		if ($viewComponentName === FALSE) {
+			$viewComponentName = 'F3_FLOW3_MVC_View_Empty';
 		}
 
-		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName);
-		if ($viewComponentName !== FALSE) {
-			$this->view = $this->componentFactory->getComponent($viewComponentName);
-			return;
-		}
-
-		$this->view = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Empty');
+		$this->view = $this->componentFactory->getComponent($viewComponentName);
+		$this->view->setRequest($this->request);
 	}
 
 	/**
