@@ -153,6 +153,8 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 * Usage: setRoutePartHandlers(array('@controller' => 'F3_Package_Subpackage_MyRoutePartHandler'));
 	 *
 	 * @param array $routePartHandlers route part handler classnames
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRoutePartHandlers(array $routePartHandlers) {
 		$this->routePartHandlers = $routePartHandlers;
