@@ -234,7 +234,7 @@ class F3_FLOW3_MVC_Request {
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		if ($actionName{0} !== F3_PHP6_Functions::strtolower($actionName{0})) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must start with a lower case letter, "' . gettype($actionName) . '" does not match this criteria.', 1218473352);
+		if ($actionName{0} !== F3_PHP6_Functions::strtolower($actionName{0})) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		$this->controllerActionName = $actionName;
 	}
 
