@@ -108,6 +108,17 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePartTest extends F3_Testing_BaseTestCa
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function staticRoutePartDoesNotMatchIfNameIsEqualToTheBeginningOfTheFirstUrlSegmentButTheSegmentIsLonger() {
+		$this->routePart1->setName('foo');
+		$urlSegments = array('foos', 'bar');
+
+		$this->assertFALSE($this->routePart1->match($urlSegments));
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {

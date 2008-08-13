@@ -105,6 +105,12 @@ class F3_FLOW3_Configuration_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadGlobalSettings(array $packageKeys) {
+		sort ($packageKeys);
+		$index = array_search('FLOW3', $packageKeys);
+		if ($index !== FALSE) {
+			unset ($packageKeys[$index]);
+			array_unshift($packageKeys, 'FLOW3');
+		}
 		foreach ($packageKeys as $packageKey) {
 			$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings.php'));
 		}
@@ -126,6 +132,12 @@ class F3_FLOW3_Configuration_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadRoutesSettings(array $packageKeys) {
+		sort ($packageKeys);
+		$index = array_search('FLOW3', $packageKeys);
+		if ($index !== FALSE) {
+			unset ($packageKeys[$index]);
+			array_unshift($packageKeys, 'FLOW3');
+		}
 		foreach ($packageKeys as $packageKey) {
 			$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes.php'));
 		}

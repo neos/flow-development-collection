@@ -122,7 +122,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 
 		$this->assertFalse($route->matches('bar/someValue'), '"foo/[bar]"-Route should not match "bar/someValue"-request.');
 		$this->assertTrue($route->matches('foo/someValue'), '"foo/[bar]"-Route should match "foo/someValue"-request.');
-		$this->assertSame(array('bar' => 'someValue'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('bar' => 'someValue'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
@@ -135,7 +135,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 
 		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
 		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"[key1]/foo/[key2]/bar"-Route should match "value1/foo/value2/bar"-request.');
-		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
@@ -148,13 +148,13 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 
 		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
 		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"[key1]/foo/[key2]/bar"-Route should match "value1/foo/value2/bar"-request.');
-		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
-		
+		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+
 		$route->setUrlPattern('foo/[key3]/foo');
 
 		$this->assertFalse($route->matches('foo/value3/bar'), '"foo/[key3]/foo"-Route should not match "foo/value3/bar"-request.');
 		$this->assertTrue($route->matches('foo/value3/foo'), '"foo/[key3]/foo"-Route should match "foo/value3/foo"-request.');
-		$this->assertSame(array('key3' => 'value3'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('key3' => 'value3'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
@@ -164,10 +164,10 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	public function urlPatternSegmentCanContainTwoDynamicRouteParts() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('user/[firstName]-[lastName]');
-		
+
 		$this->assertFalse($route->matches('user/johndoe'), '"user/[firstName]-[lastName]"-Route should not match "user/johndoe"-request.');
 		$this->assertTrue($route->matches('user/john-doe'), '"user/[firstName]-[lastName]"-Route should match "user/john-doe"-request.');
-		$this->assertSame(array('firstName' => 'john', 'lastName' => 'doe'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('firstName' => 'john', 'lastName' => 'doe'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
@@ -177,10 +177,10 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	public function urlPatternSegmentsCanContainMultipleDynamicRouteParts() {
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
-		
+
 		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should not match "value1-value2/value3.value4value5"-request.');
 		$this->assertTrue($route->matches('value1-value2/value3.value4.value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should match "value1-value2/value3.value4.value5"-request.');
-		$this->assertSame(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
@@ -199,7 +199,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 		$route->setDefaults($defaults);
 		$route->matches('foo-/.bar.xml');
 
-		$this->assertSame(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertEquals(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**

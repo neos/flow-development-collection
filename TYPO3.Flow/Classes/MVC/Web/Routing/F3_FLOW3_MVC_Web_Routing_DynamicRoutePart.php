@@ -38,9 +38,10 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 
 	/**
 	 * Sets split string.
-	 * if not empty, match() will check existence of $splitString in current URL segment.
-	 * If URL segment does not contain $splitString, route part won't match.
-	 * Otherwise all characters before $splitString are removed from URL segment.
+	 *
+	 * If not empty, match() will check the existence of $splitString in the current URL segment.
+	 * If the URL segment does not contain $splitString, the route part won't match.
+	 * Otherwise all characters before $splitString are removed from the URL segment.
 	 *
 	 * @param string $splitString
 	 * @return void
@@ -51,10 +52,12 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 	}
 
 	/**
-	 * Checks whether this dynamic Route part correspond to the given $urlSegments.
+	 * Checks whether this dynamic route part corresponds to the given $urlSegments.
+	 *
 	 * On successful match this method sets $this->value to the corresponding urlPart
 	 * and shortens $urlSegments respectively.
-	 * If first element of $urlSegments is empty, $this->value is set to $this->defaultValue (if existent).
+	 * If the first element of $urlSegments is empty, $this->value is set to $this->defaultValue
+	 * (if it exists).
 	 *
 	 * @param array $urlSegments An array with one element per request URL segment.
 	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.

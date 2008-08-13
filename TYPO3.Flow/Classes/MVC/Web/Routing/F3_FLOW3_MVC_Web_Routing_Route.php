@@ -247,7 +247,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		preg_match_all($pattern, $urlPatternSegment, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
-		foreach($matches as $index => $match) {
+		foreach($matches as $matchIndex => $match) {
 			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
 			$routePartName = $match[2];
 			$splitString = '';
@@ -255,8 +255,8 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 					throw new F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts('two succesive dynamic route parts are not allowed!', 1218446975);
 				}
-				if (($index + 1) < count($matches)) {
-					$splitString = $matches[$index + 1][2];
+				if (($matchIndex + 1) < count($matches)) {
+					$splitString = $matches[$matchIndex + 1][2];
 				}
 			}
 
@@ -276,18 +276,18 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
-				default:
+				case self::ROUTEPART_TYPE_STATIC:
 					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
-					if (($index + 1) == count($matches)) {
+					if (($matchIndex + 1) == count($matches)) {
 						$routePart->setLastRoutePartInSegment(TRUE);
 					}
 			}
 			$routePart->setName($routePartName);
-			
+
 			$routeParts[] = $routePart;
 			$lastRoutePartType = $routePartType;
 		}
-		
+
 		return $routeParts;
 	}
 }
