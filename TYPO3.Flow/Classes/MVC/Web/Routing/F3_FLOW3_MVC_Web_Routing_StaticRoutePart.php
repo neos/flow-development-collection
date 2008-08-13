@@ -68,7 +68,10 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 			return FALSE;
 		}
 		$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
-		if ($this->lastRoutePartInSegment && F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
+		if ($this->lastRoutePartInSegment) {
+			if (F3_PHP6_Functions::strlen($urlSegments[0]) != 0) {
+				return FALSE;
+			}
 			array_shift($urlSegments);
 		}
 
