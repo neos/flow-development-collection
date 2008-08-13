@@ -68,7 +68,7 @@ class F3_FLOW3_Utility_Files {
 			}
 		}
 		return rtrim($resultingPath, '/');
-	} 
+	}
 
 	/**
 	 * Returns all filenames from the specified directory. Filters hidden files and
@@ -106,13 +106,13 @@ class F3_FLOW3_Utility_Files {
 		if (!is_dir($path)) throw new F3_FLOW3_Utility_Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new RecursiveDirectoryIterator($path);
-		foreach (new RecursiveIteratorIterator($directoryIterator) as $filename) {
-			if (@unlink($filename) === FALSE) {
+		foreach ($fileIterator = new RecursiveIteratorIterator($directoryIterator) as $filename) {
+			if (!$fileIterator->isDot() && @unlink($filename) === FALSE) {
 				throw new F3_FLOW3_Utility_Exception('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $subDirectoryName) {
-			self::removeDirectoryRecursively($subDirectoryName);
+			if (!$directoryIterator->isDot()) self::removeDirectoryRecursively($subDirectoryName);
 		}
 	}
 
