@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_AbstractConstructorInterceptorBuilder {
+class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for an empty constructor (ie. a constructor without advice)
@@ -41,7 +41,6 @@ class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abstr
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$constructor = $targetClass->getConstructor();
-		$methodsAndAdvicesArrayCode = self::buildMethodsAndAdvicesArrayCode($interceptedMethods);
 		$callParentCode = ($constructor === NULL) ? '' : 'parent::' . $constructor->getName() . '(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 		$parametersDocumentation = '';
 		$parametersCode = ($constructor === NULL) ? '' : self::buildMethodParametersCode($constructor, TRUE, $parametersDocumentation);
@@ -54,10 +53,10 @@ class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abstr
 	 */
 	public function ' . $methodName . '(' . $parametersCode . (F3_PHP6_Functions::strlen($parametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
 		$this->componentFactory = $AOPProxyComponentFactory;
-		' . $methodsAndAdvicesArrayCode . '
+		$this->AOPProxyDeclareMethodsAndAdvices();
 		' . $callParentCode . '
 	}
-		';
+';
 		return $constructorCode;
 	}
 }

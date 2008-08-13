@@ -35,9 +35,9 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 	/**
 	 * Builds PHP code for an empty method
 	 *
-	 * @param string $methodName: Name of the method to build an interceptor for
-	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName Name of the method to build an interceptor for
+	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+	 * @param F3_FLOW3_Reflection_Class $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -48,20 +48,28 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;
 
 		$methodParametersDocumentation = '';
-		$methodParametersCode = self::buildMethodParametersCode($method, TRUE, $methodParametersDocumentation);
+		$methodParametersCode = ($method !== NULL) ? self::buildMethodParametersCode($method, TRUE, $methodParametersDocumentation) : '';
 
 		$staticKeyword = ($method !== NULL && $method->isStatic()) ? 'static ' : '';
+		$declaringClassName = ($declaringClass !== NULL) ? $declaringClass->getName() : '[AOP proxy internals]';
 
 		$emptyInterceptorCode = '
 	/**
 	 * Placeholder for the method ' . $methodName . '() declared in
-	 * ' . $declaringClass->getName() . '.
+	 * ' . $declaringClassName. '.
 	 * ' . $methodParametersDocumentation . '
 	 * @return void
 	 */
-	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
+	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {';
+		if ($methodName == '__wakeup') {
+			$emptyInterceptorCode .= self::buildWakeupCode();
+			if ($targetClass->hasMethod('__wakeup')) {
+				$emptyInterceptorCode .= "\n\t\tparent::__wakeup();\n";
+			}
+		}
+		$emptyInterceptorCode .= '
 	}
-		';
+';
 		return $emptyInterceptorCode;
 	}
 

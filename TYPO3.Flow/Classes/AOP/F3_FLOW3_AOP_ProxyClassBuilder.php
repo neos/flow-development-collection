@@ -55,6 +55,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) return FALSE;
 
 		self::addConstructorToInterceptedMethods($interceptedMethods, $targetClass);
+		self::addWakeupToInterceptedMethods($interceptedMethods, $targetClass);
 
 		$targetClassName = $targetClass->getName();
 		$proxyClassName = self::renderProxyClassName($targetClassName, $context);
@@ -65,6 +66,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			'PROXY_CLASS_NAME' => $proxyClassName,
 			'TARGET_CLASS_NAME' => $targetClassName,
 			'INTRODUCED_INTERFACES' => self::buildIntroducedInterfacesCode($introducedInterfaces),
+			'METHODS_AND_ADVICES_ARRAY_CODE' => self::buildMethodsAndAdvicesArrayCode($interceptedMethods),
 			'METHODS_INTERCEPTOR_CODE' => self::buildMethodsInterceptorCode($interceptedMethods, $targetClass)
 		);
 
@@ -89,6 +91,44 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			$introducedInterfacesCode = implode(', ', $introducedInterfaces) . ', ';
 		}
 		return $introducedInterfacesCode;
+	}
+
+	/**
+	 * Creates code for an array of target methods and their advices.
+	 *
+	 * Example:
+	 *
+	 *	$this->targetMethodsAndGroupedAdvices = array(
+	 *		'getSomeProperty' => array(
+	 *			'F3_FLOW3_AOP_AroundAdvice' => array(
+	 *				$this->componentFactory->getComponent('F3_FLOW3_AOP_AroundAdvice', 'F3_TestPackage_GetSomeChinesePropertyAspect', 'aroundFourtyTwoToChinese'),
+	 *			),
+	 *		),
+	 *	);
+	 *
+	 *
+	 * @param array $methodsAndGroupedAdvices An array of method names and grouped advice objects
+	 * @return string PHP code for the content of an array of target method names and advice objects
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see buildProxyClass()
+	 */
+	static protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
+		if (count($methodsAndGroupedAdvices) < 1) return '';
+
+		$methodsAndAdvicesArrayCode = "\n\t\t\$this->targetMethodsAndGroupedAdvices = array(\n";
+		foreach ($methodsAndGroupedAdvices as $methodName => $advicesAndDeclaringClass) {
+			$methodsAndAdvicesArrayCode .= "\t\t\t'" . $methodName . "' => array(\n";
+			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
+				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
+				foreach ($advices as $advice) {
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->componentFactory->getComponent('" . get_class($advice) . "', '" . $advice->getAspectComponentName() . "', '" . $advice->getAdviceMethodName() . "', \$this->componentFactory),\n";
+				}
+				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
+			}
+			$methodsAndAdvicesArrayCode .= "\t\t\t),\n";
+		}
+		$methodsAndAdvicesArrayCode .= "\t\t);\n";
+		return  $methodsAndAdvicesArrayCode;
 	}
 
 	/**
@@ -194,6 +234,25 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			$interceptedMethods[$constructorName]['groupedAdvices'] = array();
 			$interceptedMethods[$constructorName]['declaringClass'] = $declaringClass;
 			$interceptedMethods[$constructorName]['isConstructor'] = TRUE;
+		}
+	}
+
+	/**
+	 * Asserts that __wakeup exists, even if there is none in the original class
+	 * and even though no advice exists for it. If __wakeup had to be added,
+	 * it will be added to the intercepted methods array.
+	 *
+	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
+	 * @param F3_FLOW3_Reflection_Class $targetClass Class the pointcut should match with
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static protected function addWakeupToInterceptedMethods(array &$interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
+		$declaringClass = ($targetClass->hasMethod('__wakeup')) ? $targetClass->getMethod('__wakeup')->getDeclaringClass() : NULL;
+		if (!isset($interceptedMethods['__wakeup'])) {
+			$interceptedMethods['__wakeup']['groupedAdvices'] = array();
+			$interceptedMethods['__wakeup']['declaringClass'] = $declaringClass;
+			$interceptedMethods['__wakeup']['isConstructor'] = FALSE;
 		}
 	}
 

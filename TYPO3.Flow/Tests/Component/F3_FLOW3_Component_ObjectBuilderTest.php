@@ -342,26 +342,6 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reconstituteComponentObjectSetsTheSpecifiedPropertiesInTheTargetObjectRegardlessIfTheyArePublicOrProtected() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
-
-		$properties = array(
-			'firstProperty' => 'firstValue',
-			'secondProperty' => 1928,
-			'publicProperty' => 'I am public'
-		);
-
-		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, $properties);
-
-		$this->assertEquals($properties['firstProperty'], $object->AOPProxyGetProperty('firstProperty'));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function reconstituteComponentObjectRejectsComponentTypesWhichAreNotPersistable() {
 		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
 		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));

@@ -69,7 +69,7 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	 * that F3_FLOW3_Reflection_Method objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @return F3_FLOW3_Reflection_Method Method reflection object of the constructor method
+	 * @return F3_FLOW3_Reflection_Method Method reflection object of the named method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($name) {
@@ -186,7 +186,7 @@ class F3_FLOW3_Reflection_Class extends ReflectionClass {
 	}
 
 	/**
-	 * Returns an instance of the doc comment parser and 
+	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
 	 * @return F3_FLOW3_Reflection_DocCommentParser

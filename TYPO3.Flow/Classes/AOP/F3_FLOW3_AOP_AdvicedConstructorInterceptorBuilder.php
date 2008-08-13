@@ -28,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_AbstractConstructorInterceptorBuilder {
+class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for a constructor with advice
@@ -41,7 +41,6 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$constructor = $targetClass->getConstructor();
-		$methodsAndAdvicesArrayCode = self::buildMethodsAndAdvicesArrayCode($interceptedMethods);
 		$callParentCode = ($constructor === NULL) ? 'return;' : 'parent::' . $constructor->getName() . '(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 
 		$interceptionCode = '
@@ -54,23 +53,23 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 			' . self::buildAdvicesCode($interceptedMethods[$methodName]['groupedAdvices'], $methodName, $targetClass) . '
 			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
-		';
+';
 		$methodParametersDocumentation = '';
 		$methodParametersCode = self::buildMethodParametersCode($constructor, TRUE, $methodParametersDocumentation);
 		$constructorCode = '
 	/**
 	 * Interceptor for the constructor ' . $methodName . '().
 	 * ' . $methodParametersDocumentation . '
-	 * @return mixed			Result of the advice chain or the original method
+	 * @return mixed Result of the advice chain or the original method
 	 */
 	public function ' . $methodName . '(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
 		$this->componentFactory = $AOPProxyComponentFactory;
 		$result = NULL;
-		' . $methodsAndAdvicesArrayCode . '
+		$this->AOPProxyDeclareMethodsAndAdvices();
 		' . $interceptionCode . '
 		return $result;
 	}
-		';
+';
 		return $constructorCode;
 	}
 

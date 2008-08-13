@@ -33,9 +33,9 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 	/**
 	 * Builds interception PHP code for an adviced method
 	 *
-	 * @param string $methodName: Name of the method to build an interceptor for
-	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName Name of the method to build an interceptor for
+	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+	 * @param F3_FLOW3_Reflection_Class $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -58,37 +58,48 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 	/**
 	 * Interceptor for the method ' . $methodName . '().
 	 * ' . $methodParametersDocumentation . '
-	 * @return mixed			Result of the advice chain or the original method
+	 * @return mixed Result of the advice chain or the original method
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
-		';
+';
 		if ($method !== NULL) {
 			$methodInterceptorCode .= '
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
-				';
+';
 
 			if ($declaringClass->isInterface()) {
 				$methodInterceptorCode .= '
 			$result = NULL;
-					';
+';
 			} else {
 				$methodInterceptorCode .= '
 			$result = parent::' . $methodName . '(' . self::buildMethodParametersCode($method, FALSE) . ');
-					';
+';
 			}
 			$methodInterceptorCode .= '
-		} else {
+		} else {';
+			if ($methodName == '__wakeup') {
+				$methodInterceptorCode .= self::buildWakeupCode();
+			}
+			$methodInterceptorCode .= '
 			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringClass->getMethod($methodName)) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . $advicesCode . '
 			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);
 		}
 		return $result;
-				';
+';
+		} else {
+			if ($methodName == '__wakeup') {
+				$methodInterceptorCode .= self::buildWakeupCode();
+				if ($targetClass->hasMethod('__wakeup')) {
+					$methodInterceptorCode .= "\n\t\tparent::__wakeup();\n";
+				}
+			}
 		}
 		$methodInterceptorCode .= '
 	}
-			';
+';
 		return $methodInterceptorCode;
 	}
 }

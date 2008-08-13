@@ -34,9 +34,9 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	/**
 	 * Builds method interception PHP code
 	 *
-	 * @param string $methodName: Name of the method to build an interceptor for
-	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName Name of the method to build an interceptor for
+	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+	 * @param F3_FLOW3_Reflection_Class $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -47,7 +47,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * used in a method interceptor in the proxy class
 	 *
 	 * @param F3_FLOW3_Reflection_Method $method The method to create the parameters code for
-	 * @param boolean $addTypeAndDefaultValue: Adds the type and default value for each parameters (if any)
+	 * @param boolean $addTypeAndDefaultValue Adds the type and default value for each parameters (if any)
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -122,9 +122,9 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	/**
 	 * Builds the advice interception code, to be used in a method interceptor.
 	 *
-	 * @param array $groupedAdvices: The advices grouped by advice type
-	 * @param string $methodName: Name of the method the advice applies to
-	 * @param F3_FLOW3_Reflection_Class $targetClass: Reflection of the target class
+	 * @param array $groupedAdvices The advices grouped by advice type
+	 * @param string $methodName Name of the method the advice applies to
+	 * @param F3_FLOW3_Reflection_Class $targetClass Reflection of the target class
 	 * @return string PHP code to be used in the method interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -142,7 +142,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
-			';
+';
 		}
 
 		if (isset ($groupedAdvices['F3_FLOW3_AOP_AroundAdvice'])) {
@@ -156,7 +156,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 			$advicesCode .= '
 			$joinPoint = new F3_FLOW3_AOP_JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments);
 			$result = $this->AOPProxyInvokeJoinPoint($joinPoint);
-				';
+';
 		}
 
 		if (isset ($groupedAdvices['F3_FLOW3_AOP_AfterReturningAdvice'])) {
@@ -166,7 +166,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
-			';
+';
 		}
 
 		if (isset ($groupedAdvices['F3_FLOW3_AOP_AfterThrowingAdvice'])) {
@@ -178,7 +178,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 				$advice->invoke($joinPoint);
 			}
 		}
-			';
+';
 		}
 		return $advicesCode;
 	}
@@ -187,7 +187,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * Returns the constructor name of the given class. If no constructor exists,
 	 * the name "__construct" will be returned.
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to return the constructor name for
+	 * @param F3_FLOW3_Reflection_Class $class The class to return the constructor name for
 	 * @return string Name of the constructor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -196,6 +196,24 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 		$constructorName = ($constructor !== NULL) ? $constructor->getName() : '__construct';
 		return $constructorName;
 	}
+
+	/**
+	 * Builds code for the __wakeup() method to fetch a component factory, set
+	 * up AOP internals and collect properties after reconstitution.
+	 *
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static protected function buildWakeupCode() {
+		$wakeupCode = '
+		$this->componentFactory = $GLOBALS[\'reconstituteComponentObject\'][\'componentFactory\'];
+		$this->AOPProxyDeclareMethodsAndAdvices();
+		foreach ($GLOBALS[\'reconstituteComponentObject\'][\'properties\'] as $property => $value) {
+			$this->$property = $value;
+		}';
+		return $wakeupCode;
+	}
+
 }
 
 ?>

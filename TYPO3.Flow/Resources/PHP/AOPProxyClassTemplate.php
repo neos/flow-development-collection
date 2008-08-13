@@ -27,6 +27,16 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 ###METHODS_INTERCEPTOR_CODE###
 
 	/**
+	 * Declares methods and advices
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function AOPProxyDeclareMethodsAndAdvices() {
+###METHODS_AND_ADVICES_ARRAY_CODE###
+	}
+
+	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
 	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point

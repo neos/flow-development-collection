@@ -133,12 +133,11 @@ class F3_FLOW3_Component_ObjectBuilder {
 		$className = $componentConfiguration->getClassName();
 		if (!in_array('F3_FLOW3_AOP_ProxyInterface', class_implements($className))) throw new F3_FLOW3_Component_Exception_CannotReconstituteObject('Cannot reconstitute the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1216738485);
 
-		$serializedProperties = '';
-		foreach ($properties as $propertyName => $propertyValue) {
-			$serializedProperties .= 's:' . (strlen($propertyName) + 3) . ':"' . chr(0) . '*' . chr(0) . $propertyName . '";' . serialize($propertyValue);
-		}
-		$serializedObject = 'O:' . strlen($className) . ':"' . $className . '":' . count($properties) . ':{' . $serializedProperties . '};';
-		$componentObject = unserialize($serializedObject);
+			// those objects will be fetched from within the __wakeup() method of the object...
+		$GLOBALS['reconstituteComponentObject']['componentFactory'] = $this->componentFactory;
+		$GLOBALS['reconstituteComponentObject']['properties'] = $properties;
+		$componentObject = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
+		unset($GLOBALS['reconstituteComponentObject']);
 
 		unset ($this->componentsBeingBuilt[$componentName]);
 		return $componentObject;
