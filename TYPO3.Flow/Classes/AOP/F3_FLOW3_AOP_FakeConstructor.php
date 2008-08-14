@@ -16,19 +16,24 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @subpackage Reflection
+ * @subpackage AOP
  * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
- * Extended version of the ReflectionMethod
+ * A ReflectionMethod specifically for faking a __construct method
  *
  * @package FLOW3
- * @subpackage Reflection
+ * @subpackage AOP
  * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_Method extends ReflectionMethod {
+class F3_FLOW3_AOP_FakeConstructor extends F3_FLOW3_Reflection_Method {
+
+	/**
+	 * @var string
+	 */
+	protected $className;
 
 	/**
 	 * @var F3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
@@ -38,23 +43,33 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	/**
 	 * The constructor, initializes the reflection class
 	 *
-	 * @param  string $className Name of the method's class
-	 * @param  string $methodName Name of the method to reflect
+	 * @param string $className Name of the method's class
+	 * @param string $methodName ignored
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($className, $methodName) {
-		parent::__construct($className, $methodName);
+	public function __construct($className) {
+		$this->className = $className;
+	}
+
+	/**
+	 * Returns the name, '__construct'
+	 *
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getName() {
+		return '__construct';
 	}
 
 	/**
 	 * Returns the declaring class
 	 *
 	 * @return F3_FLOW3_Reflection_Class The declaring class
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
+		return new F3_FLOW3_Reflection_Class($this->className);
 	}
 
 	/**
@@ -62,48 +77,54 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	 * that F3_FLOW3_Reflection_Parameter objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
-	 * @return array of F3_FLOW3_Reflection_Parameter Parameter reflection objects of the parameters of this method
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getParameters() {
-		$extendedParameters = array();
-		foreach (parent::getParameters() as $parameter) {
-			$extendedParameters[] = new F3_FLOW3_Reflection_Parameter(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
-		}
-		return $extendedParameters;
+		return array();
 	}
 
 	/**
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
-	 * @param string $tag Tag name to check for
-	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
+	 * @param string $tag ignored
+	 * @return boolean FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isTaggedWith($tag) {
-		$result = $this->getDocCommentParser()->isTaggedWith($tag);
-		return $result;
+		return FALSE;
 	}
 
 	/**
 	 * Returns an array of tags and their values
 	 *
-	 * @return array Tags and values
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTagsValues() {
-		return $this->getDocCommentParser()->getTagsValues();
+		return array();
 	}
 
 	/**
 	 * Returns the values of the specified tag
 	 *
-	 * @param string $tag Tag name to check for
-	 * @return array Values of the given tag
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $tag ignored
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getTagValues($tag) {
-		return $this->getDocCommentParser()->getTagValues($tag);
+		return array();
+	}
+
+	/**
+	 * Whether the method is final
+	 *
+	 * @return boolean FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isFinal() {
+		return FALSE;
 	}
 
 	/**
@@ -112,11 +133,12 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	 *
 	 * @return F3_FLOW3_Reflection_DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
 			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
-			$this->docCommentParser->parseDocComment($this->getDocComment());
+			$this->docCommentParser->parseDocComment('');
 		}
 		return $this->docCommentParser;
 	}

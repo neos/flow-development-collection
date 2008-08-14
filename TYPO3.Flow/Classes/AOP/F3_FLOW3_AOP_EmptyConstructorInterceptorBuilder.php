@@ -38,10 +38,11 @@ class F3_FLOW3_AOP_EmptyConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abstr
 	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$constructor = $targetClass->getConstructor();
-		$callParentCode = ($constructor === NULL) ? '' : 'parent::' . $constructor->getName() . '(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
+		$callParentCode = ($constructor === NULL) ? '' : 'parent::__construct(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 		$parametersDocumentation = '';
 		$parametersCode = ($constructor === NULL) ? '' : self::buildMethodParametersCode($constructor, TRUE, $parametersDocumentation);
 

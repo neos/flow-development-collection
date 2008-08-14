@@ -40,9 +40,10 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 	 * @param F3_FLOW3_Reflection_Class $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
-		if ($methodName === self::getConstructorName($targetClass)) throw new RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);
+		if ($methodName === '__construct') throw new RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);
 
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
 		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;

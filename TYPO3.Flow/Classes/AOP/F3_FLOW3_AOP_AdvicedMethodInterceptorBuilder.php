@@ -40,7 +40,7 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
-		if ($methodName === self::getConstructorName($targetClass)) throw new F3_FLOW3_AOP_Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
+		if ($methodName === '__construct') throw new F3_FLOW3_AOP_Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];

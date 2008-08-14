@@ -40,17 +40,18 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	 * @param string $context The current application context
 	 * @return mixed An array containing the proxy class name and its source code if a proxy class has been built, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function buildProxyClass(F3_FLOW3_Reflection_Class $targetClass, array $aspectContainers, $context) {
 		$introductions = self::getMatchingIntroductions($aspectContainers, $targetClass);
 		$introducedInterfaces = self::getInterfaceNamesFromIntroductions($introductions);
 
-		$methodsFromTargetClass = $targetClass->getMethods();
+		$methodsFromTargetClass = self::getMethodsFromTargetClass($targetClass);
 		$methodsFromIntroducedInterfaces = self::getIntroducedMethodsFromIntroductions($introductions, $targetClass);
 
 		$interceptedMethods = array();
 		self::addAdvicedMethodsToInterceptedMethods($interceptedMethods, $targetClass, $aspectContainers, ($methodsFromTargetClass + $methodsFromIntroducedInterfaces));
-		self::addIntroducedMethodsToInterceptedMethods($interceptedMethods, $targetClass, $methodsFromIntroducedInterfaces);
+		self::addIntroducedMethodsToInterceptedMethods($interceptedMethods, $methodsFromIntroducedInterfaces);
 
 		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) return FALSE;
 
@@ -75,6 +76,23 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
 		}
 		return array('proxyClassName' => $proxyClassName, 'proxyClassCode' => $proxyCode, 'advicedMethodsInformation' => $advicedMethodsInformation);
+	}
+
+	/**
+	 * Returns the methods of the target class. If the target class has not constructor,
+	 * a F3_FLOW3_AOP_FakeConstructor is added. This allows to advise on constructors,
+	 * even if they don't exist.
+	 *
+	 * @param F3_FLOW3_Reflection_Class $targetClass
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static protected function getMethodsFromTargetClass(F3_FLOW3_Reflection_Class $targetClass) {
+		$methods = $targetClass->getMethods();
+		if (!$targetClass->hasMethod('__construct')) {
+			$methods[] = new F3_FLOW3_AOP_FakeConstructor($targetClass->getName());
+		}
+		return $methods;
 	}
 
 	/**
@@ -150,8 +168,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 
 		foreach ($interceptedMethods as $methodName => $methodMetaInformation) {
 			$hasAdvices = (count($methodMetaInformation['groupedAdvices']) > 0);
-			$isConstructor = $methodMetaInformation['isConstructor'];
-			$builderClassName = 'F3_FLOW3_AOP_' . ($hasAdvices ? 'Adviced' : 'Empty') . ($isConstructor ? 'Constructor' : 'Method') . 'InterceptorBuilder';
+			$builderClassName = 'F3_FLOW3_AOP_' . ($hasAdvices ? 'Adviced' : 'Empty') . ($methodName === '__construct' ? 'Constructor' : 'Method') . 'InterceptorBuilder';
 
 			$methodsInterceptorCode .= call_user_func_array(array($builderClassName, 'build'), array($methodName, $interceptedMethods, $targetClass));
 		}
@@ -165,14 +182,12 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
 	 * @param F3_FLOW3_Reflection_Class $targetClass Class the pointcut should match with
 	 * @param array $aspectContainers All aspects to take into consideration
-	 * @param array $methods: An array of methods which are matched against the pointcut
+	 * @param array $methods An array of methods which are matched against the pointcut
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, F3_FLOW3_Reflection_Class $targetClass, $aspectContainers, $methods) {
+	static protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, F3_FLOW3_Reflection_Class $targetClass, array $aspectContainers, array $methods) {
 		$pointcutQueryIdentifier = 0;
-		$constructor = $targetClass->getConstructor();
-		$constructorName = ($constructor instanceof F3_FLOW3_Reflection_Method) ? $constructor->getName() : '__construct';
 
 		foreach ($aspectContainers as $aspectContainer) {
 			foreach ($aspectContainer->getAdvisors() as $advisor) {
@@ -183,7 +198,6 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 						$methodName = $method->getName();
 						$interceptedMethods[$methodName]['groupedAdvices'][get_class($advice)][] = $advice;
 						$interceptedMethods[$methodName]['declaringClass'] = $method->getDeclaringClass();
-						$interceptedMethods[$methodName]['isConstructor'] = ($methodName === $constructorName);
 					}
 					$pointcutQueryIdentifier ++;
 				}
@@ -196,44 +210,37 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	 * intercepted methods array if they didn't exist already.
 	 *
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
-	 * @param F3_FLOW3_Reflection_Class $targetClass Class the pointcut should match with
 	 * @param array $methodsFromIntroducedInterfaces An array of F3_FLOW3_Reflection_Method from introduced interfaces
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, F3_FLOW3_Reflection_Class $targetClass, array $methodsFromIntroducedInterfaces) {
-		$constructor = $targetClass->getConstructor();
-		$constructorName = ($constructor instanceof F3_FLOW3_Reflection_Method) ? $constructor->getName() : '__construct';
-
+	static protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces) {
 		foreach ($methodsFromIntroducedInterfaces as $method) {
 			$methodName = $method->getName();
 			if (!isset($interceptedMethods[$methodName]) && $method->getDeclaringClass()->isInterface()) {
 				$interceptedMethods[$methodName]['groupedAdvices'] = array();
 				$interceptedMethods[$methodName]['declaringClass'] = $method->getDeclaringClass();
-				$interceptedMethods[$methodName]['isConstructor'] = ($methodName === $constructorName);
 			}
 		}
 	}
 
 	/**
-	 * Asserts that a constructor exists, even if there is none in the original class
-	 * and even though no advice exists for it. If a constructor had to be added,
-	 * it will be added to the intercepted methods array.
+	 * Asserts that a constructor exists, even though no advice exists for it.
+	 * If a constructor had to be added, it will be added to the intercepted
+	 * methods array.
 	 *
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
 	 * @param F3_FLOW3_Reflection_Class $targetClass Class the pointcut should match with
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static protected function addConstructorToInterceptedMethods(array &$interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
-		$constructor = $targetClass->getConstructor();
-		$constructorName = ($constructor instanceof F3_FLOW3_Reflection_Method) ? $constructor->getName() : '__construct';
-
-		$declaringClass = ($constructor instanceof F3_FLOW3_Reflection_Method) ? $constructor->getDeclaringClass() : NULL;
-		if (!isset($interceptedMethods[$constructorName])) {
-			$interceptedMethods[$constructorName]['groupedAdvices'] = array();
-			$interceptedMethods[$constructorName]['declaringClass'] = $declaringClass;
-			$interceptedMethods[$constructorName]['isConstructor'] = TRUE;
+		if (!isset($interceptedMethods['__construct'])) {
+			$constructor = $targetClass->getConstructor();
+			$declaringClass = ($constructor instanceof F3_FLOW3_Reflection_Method) ? $constructor->getDeclaringClass() : NULL;
+			$interceptedMethods['__construct']['groupedAdvices'] = array();
+			$interceptedMethods['__construct']['declaringClass'] = $declaringClass;
 		}
 	}
 
@@ -252,7 +259,6 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 		if (!isset($interceptedMethods['__wakeup'])) {
 			$interceptedMethods['__wakeup']['groupedAdvices'] = array();
 			$interceptedMethods['__wakeup']['declaringClass'] = $declaringClass;
-			$interceptedMethods['__wakeup']['isConstructor'] = FALSE;
 		}
 	}
 

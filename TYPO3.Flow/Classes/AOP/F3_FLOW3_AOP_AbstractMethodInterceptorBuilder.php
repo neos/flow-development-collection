@@ -51,7 +51,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function buildMethodParametersCode(F3_FLOW3_Reflection_Method $method, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
+	static public function buildMethodParametersCode(F3_FLOW3_Reflection_Method $method = NULL, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
 		$parametersCode = '';
 		$parameterTypeName = '';
 		$defaultValue = '';
@@ -61,7 +61,6 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 		if ($method->getNumberOfParameters() > 0) {
 			$parameterCount = 0;
 			foreach ($method->getParameters() as $parameter) {
-				$parameterName = $parameter->getName();
 				if ($addTypeAndDefaultValue) {
 					try {
 						if ($parameter->isArray()) {
@@ -105,7 +104,7 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function buildMethodArgumentsArrayCode(F3_FLOW3_Reflection_Method $method) {
+	static protected function buildMethodArgumentsArrayCode(F3_FLOW3_Reflection_Method $method = NULL) {
 		if ($method === NULL) return '';
 		$argumentsArrayCode = '';
 		if ($method->getNumberOfParameters() > 0) {
@@ -181,20 +180,6 @@ abstract class F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
 ';
 		}
 		return $advicesCode;
-	}
-
-	/**
-	 * Returns the constructor name of the given class. If no constructor exists,
-	 * the name "__construct" will be returned.
-	 *
-	 * @param F3_FLOW3_Reflection_Class $class The class to return the constructor name for
-	 * @return string Name of the constructor
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	static protected function getConstructorName(F3_FLOW3_Reflection_Class $class) {
-		$constructor = $class->getConstructor();
-		$constructorName = ($constructor !== NULL) ? $constructor->getName() : '__construct';
-		return $constructorName;
 	}
 
 	/**

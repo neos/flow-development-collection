@@ -38,31 +38,32 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
 		$constructor = $targetClass->getConstructor();
-		$callParentCode = ($constructor === NULL) ? 'return;' : 'parent::' . $constructor->getName() . '(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
+		$callParentCode = ($constructor === NULL) ? 'return;' : 'parent::__construct(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 
 		$interceptionCode = '
-		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
+		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
 			' . $callParentCode . '
 		} else {
 			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($constructor) . '	\'AOPProxyComponentFactory\' => $AOPProxyComponentFactory
 			);
-			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
-			' . self::buildAdvicesCode($interceptedMethods[$methodName]['groupedAdvices'], $methodName, $targetClass) . '
-			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);
+			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
+			' . self::buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClass) . '
+			unset ($this->methodIsInAdviceMode[\'__construct\']);
 		}
 ';
 		$methodParametersDocumentation = '';
 		$methodParametersCode = self::buildMethodParametersCode($constructor, TRUE, $methodParametersDocumentation);
 		$constructorCode = '
 	/**
-	 * Interceptor for the constructor ' . $methodName . '().
+	 * Interceptor for the constructor __construct().
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function ' . $methodName . '(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
+	public function __construct(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
 		$this->componentFactory = $AOPProxyComponentFactory;
 		$result = NULL;
 		$this->AOPProxyDeclareMethodsAndAdvices();

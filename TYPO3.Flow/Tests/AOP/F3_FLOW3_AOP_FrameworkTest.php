@@ -87,6 +87,18 @@ class F3_FLOW3_AOP_FrameworkTest extends F3_Testing_BaseTestCase {
 	}
 
 	/**
+	 * Checks if an after returning advice works even on constructors for classes not having a constructor.
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function afterReturningAdviceOnConstructorWorksEvenIfTargetClassHasNoConstructor() {
+		$aspect = $this->componentFactory->getComponent('F3_TestPackage_AfterNonExistingConstructorAspect');
+		$target = $this->componentFactory->getComponent('F3_TestPackage_BasicClass');
+		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the constructor advice.');
+	}
+
+	/**
 	 * Checks if an after throwing advice basically works.
 	 *
 	 * @test
