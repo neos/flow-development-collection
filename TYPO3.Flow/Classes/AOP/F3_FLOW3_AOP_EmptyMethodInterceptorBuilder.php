@@ -46,7 +46,7 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 		if ($methodName === '__construct') throw new RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);
 
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
-		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;
+		$method = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
 
 		$methodParametersDocumentation = '';
 		$methodParametersCode = ($method !== NULL) ? self::buildMethodParametersCode($method, TRUE, $methodParametersDocumentation) : '';

@@ -28,12 +28,17 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_FakeConstructor extends F3_FLOW3_Reflection_Method {
+class F3_FLOW3_AOP_FakeMethod extends F3_FLOW3_Reflection_Method {
 
 	/**
 	 * @var string
 	 */
 	protected $className;
+
+	/**
+	 * @var string
+	 */
+	protected $methodName;
 
 	/**
 	 * @var F3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
@@ -44,12 +49,13 @@ class F3_FLOW3_AOP_FakeConstructor extends F3_FLOW3_Reflection_Method {
 	 * The constructor, initializes the reflection class
 	 *
 	 * @param string $className Name of the method's class
-	 * @param string $methodName ignored
+	 * @param string $methodName name of the method
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct($className) {
+	public function __construct($className, $methodName) {
 		$this->className = $className;
+		$this->methodName = $methodName;
 	}
 
 	/**
@@ -59,7 +65,7 @@ class F3_FLOW3_AOP_FakeConstructor extends F3_FLOW3_Reflection_Method {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getName() {
-		return '__construct';
+		return $this->methodName;
 	}
 
 	/**
@@ -124,6 +130,16 @@ class F3_FLOW3_AOP_FakeConstructor extends F3_FLOW3_Reflection_Method {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isFinal() {
+		return FALSE;
+	}
+
+	/**
+	 * Whether the method is abstract
+	 *
+	 * @return boolean FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isAbstract() {
 		return FALSE;
 	}
 

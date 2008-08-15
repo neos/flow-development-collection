@@ -44,7 +44,7 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
-		$method = ($declaringClass !== NULL) ? $declaringClass->getMethod($methodName) : NULL;
+		$method = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
 
 		$methodInterceptorCode = '';
 		$advicesCode = self::buildAdvicesCode($groupedAdvices, $methodName, $targetClass);
@@ -62,12 +62,12 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
 ';
-		if ($method !== NULL) {
+		if ($method !== NULL || $methodName === '__wakeup') {
 			$methodInterceptorCode .= '
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ';
 
-			if ($declaringClass->isInterface()) {
+			if ($declaringClass->isInterface() || $method === NULL) {
 				$methodInterceptorCode .= '
 			$result = NULL;
 ';
@@ -81,8 +81,9 @@ class F3_FLOW3_AOP_AdvicedMethodInterceptorBuilder extends F3_FLOW3_AOP_Abstract
 			if ($methodName == '__wakeup') {
 				$methodInterceptorCode .= self::buildWakeupCode();
 			}
+			$declaringMethod = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
 			$methodInterceptorCode .= '
-			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringClass->getMethod($methodName)) . ');
+			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringMethod) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . $advicesCode . '
 			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);

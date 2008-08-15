@@ -138,6 +138,17 @@ class F3_FLOW3_Persistence_Manager {
 	}
 
 	/**
+	 * Returns the class schema for the given class
+	 *
+	 * @param string $className
+	 * @return F3_FLOW3_Persistence_ClassSchema
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getClassSchema($className) {
+		return $this->classSchemata[$className];
+	}
+
+	/**
 	 * Commits changes of the current persistence session into the backend
 	 *
 	 * @return void
@@ -155,7 +166,7 @@ class F3_FLOW3_Persistence_Manager {
 		}
 
 		$this->backend->setNewObjects($newObjects);
-#		$this->backend->setUpdatedObjects($dirtyObjects);
+		$this->backend->setUpdatedObjects($dirtyObjects);
 #		$this->backend->setDeletedObjects($deletedObjects);
 		$this->backend->commit();
 	}
@@ -169,6 +180,7 @@ class F3_FLOW3_Persistence_Manager {
 	 * @param array $allObjects Pass an empty array - will contain all objects which were found in the aggregate
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function traverseAndInspectReferenceObjects(array $referenceObjects, array &$newObjects, array &$dirtyObjects, array &$allObjects) {
 		if (count($referenceObjects) == 0 || !$referenceObjects[0] instanceof F3_FLOW3_AOP_ProxyInterface) return;
@@ -181,8 +193,8 @@ class F3_FLOW3_Persistence_Manager {
 			$allObjects[$objectHash] = $referenceObject;
 			if ($this->session->isNew($referenceObject)) {
 				$newObjects[$objectHash] = $referenceObject;
-			} elseif (FALSE && $this->session->isDirty($referenceObject)) {
-#				$dirtyObjects[$objectHash] = $referenceObject;
+			} elseif ($referenceObject->isDirty()) {
+				$dirtyObjects[$objectHash] = $referenceObject;
 			}
 		}
 		foreach ($referencePropertyNames as $propertyName) {

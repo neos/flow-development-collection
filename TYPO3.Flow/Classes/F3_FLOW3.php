@@ -260,6 +260,13 @@ final class F3_FLOW3 {
 
 		$this->cacheFactory = $this->componentFactory->getComponent('F3_FLOW3_Cache_Factory');
 
+		if ($this->settings->reflection->cache->enable === TRUE) {
+			$this->reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3_FLOW3_Cache_VariableCache', $this->settings->reflection->cache->backend, $this->settings->reflection->cache->backendOptions);
+			if ($this->reflectionCache->has('reflectionServiceData')) {
+				$this->reflectionService->import($this->reflectionCache->load('reflectionServiceData'));
+			}
+		}
+
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
 	}
 
@@ -485,17 +492,10 @@ final class F3_FLOW3 {
 			}
 		}
 
-		if ($this->settings->reflection->cache->enable === TRUE) {
-			$reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3_FLOW3_Cache_VariableCache', $this->settings->reflection->cache->backend, $this->settings->reflection->cache->backendOptions);
-			if ($reflectionCache->has('reflectionServiceData')) {
-				$this->reflectionService->import($reflectionCache->load('reflectionServiceData'));
-			}
-		}
-
 		if (!$this->reflectionService->isInitialized()) {
 			$this->reflectionService->initialize($availableClassNames);
 			if ($this->settings->reflection->cache->enable === TRUE) {
-				$reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
+				$this->reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
 			}
 		}
 

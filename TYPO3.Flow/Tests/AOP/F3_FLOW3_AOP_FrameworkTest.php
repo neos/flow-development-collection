@@ -94,8 +94,23 @@ class F3_FLOW3_AOP_FrameworkTest extends F3_Testing_BaseTestCase {
 	 */
 	public function afterReturningAdviceOnConstructorWorksEvenIfTargetClassHasNoConstructor() {
 		$aspect = $this->componentFactory->getComponent('F3_TestPackage_AfterNonExistingConstructorAspect');
-		$target = $this->componentFactory->getComponent('F3_TestPackage_BasicClass');
+		$this->componentFactory->getComponent('F3_TestPackage_BasicClass');
 		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the constructor advice.');
+	}
+
+	/**
+	 * Checks if an after returning advice on __wakeup works even on classes not having __wakeup.
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function afterReturningAdviceOnWakeupWorksEvenIfTargetClassHasNoWakeup() {
+		$aspect = $this->componentFactory->getComponent('F3_TestPackage_AfterNonExistingWakeupAspect');
+		$target = $this->componentFactory->getComponent('F3_TestPackage_EmptyClass');
+		$GLOBALS['reconstituteComponentObject']['componentFactory'] = $this->componentFactory;
+		$target = unserialize(serialize($target));
+		unset($GLOBALS['reconstituteComponentObject']);
+		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the wakeup advice.');
 	}
 
 	/**

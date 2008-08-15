@@ -90,7 +90,10 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 	static protected function getMethodsFromTargetClass(F3_FLOW3_Reflection_Class $targetClass) {
 		$methods = $targetClass->getMethods();
 		if (!$targetClass->hasMethod('__construct')) {
-			$methods[] = new F3_FLOW3_AOP_FakeConstructor($targetClass->getName());
+			$methods[] = new F3_FLOW3_AOP_FakeMethod($targetClass->getName(), '__construct');
+		}
+		if (!$targetClass->hasMethod('__wakeup')) {
+			$methods[] = new F3_FLOW3_AOP_FakeMethod($targetClass->getName(), '__wakeup');
 		}
 		return $methods;
 	}
