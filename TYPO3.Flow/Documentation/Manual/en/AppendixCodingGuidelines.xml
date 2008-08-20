@@ -21,7 +21,7 @@
   <para>These guidelines try to cover both, the technical standards as well as
   giving incentives for a common development style. These guidelines must be
   followed by everyone who creates code for the FLOW3 core. Because TYPO3 is
-  based on UNKNOW3, it follows the same principles - therefore, whenever we
+  based on FLOW3, it follows the same principles - therefore, whenever we
   mention FLOW3 in the following sections, we equally refer to TYPO3. We hope
   that you feel encouraged to follow these guidelines as well when creating
   your own packages and FLOW3 based applications.</para>
@@ -106,7 +106,7 @@ declare(ENCODING = 'utf-8');
 /*                                                                         *
  * This script is part of the TYPO3 project - inspiring people to share!   *
  *                                                                         *
- * TYPO3 and UNKWON3 are free software; you can redistribute them and/or   *
+ * TYPO3 and FLOW3 are free software; you can redistribute them and/or   *
  * modify them under the terms of the GNU General Public License version 2 *
  * as published by the Free Software Foundation.                           *
  *                                                                         *
@@ -128,6 +128,10 @@ declare(ENCODING = 'utf-8');
         <listitem>
           <para>Lines end with a newline a.k.a <code>chr(10)</code> - UNIX
           style</para>
+        </listitem>
+
+        <listitem>
+          <para>Files must be encoded in UTF-8</para>
         </listitem>
       </itemizedlist>
     </section>
@@ -665,7 +669,7 @@ $message = "Hey $name, you look $look today!";
       <section>
         <title>Arrays</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
@@ -683,7 +687,7 @@ $message = "Hey $name, you look $look today!";
       <section>
         <title>Functions and methods</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
@@ -1163,7 +1167,7 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
     <section>
       <title>Cross platform issues</title>
 
-      <para/>
+      <para></para>
     </section>
   </section>
 </section>
