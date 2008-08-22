@@ -195,10 +195,10 @@ class F3_FLOW3_Persistence_Manager {
 			} elseif ($referenceObject->isDirty()) {
 				$dirtyObjects[$objectHash] = $referenceObject;
 			}
-		}
-		foreach ($referencePropertyNames as $propertyName) {
-			$subReferenceObject = $referenceObject->AOPProxyGetProperty($propertyName);
-			$this->traverseAndInspectReferenceObjects($subReferenceObject, $newObjects, $dirtyObjects, $allObjects);
+			foreach ($referencePropertyNames as $propertyName) {
+				$subReferenceObject = $referenceObject->AOPProxyGetProperty($propertyName);
+				$this->traverseAndInspectReferenceObjects($subReferenceObject, $newObjects, $dirtyObjects, $allObjects);
+			}
 		}
 	}
 }
