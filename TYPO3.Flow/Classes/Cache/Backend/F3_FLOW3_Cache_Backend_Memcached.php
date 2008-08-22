@@ -67,7 +67,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		if (!extension_loaded('memcache')) throw new F3_FLOW3_Cache_Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
 		parent::__construct($context, $options);
 	}
-	
+
 	/**
 	 * Injects the environment utility
 	 *
@@ -199,19 +199,14 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * the tag.
 	 *
 	 * @param string $tag The tag to search for, the "*" wildcard is supported
-	 * @return array An array of F3_FLOW3_Cache_Entry with all matching entries. An empty array if no entries matched
+	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo implement wildcard support
 	 */
 	public function findEntriesByTag($tag) {
 		if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
 
-		$entries = array();
-		$identifiers = $this->findIdentifiersTaggedWith($tag);
-		foreach($identifiers as $identifier) {
-			$entries[] = $this->load($identifier);
-		}
-
-		return $entries;
+		return $this->findIdentifiersTaggedWith($tag);
 	}
 
 	/**

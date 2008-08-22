@@ -198,12 +198,10 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
 			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag1');
-			$this->assertArrayHasKey(0, $retrieved, 'Could not retrieve expected data by tag.');
-			$this->assertEquals($data, $retrieved[0], 'Could not retrieve expected data by tag.');
+			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 
 			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
-			$this->assertArrayHasKey(0, $retrieved, 'Could not retrieve expected data by tag.');
-			$this->assertEquals($data, $retrieved[0], 'Could not retrieve expected data by tag.');
+			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 		} catch (F3_FLOW3_Cache_Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
