@@ -65,7 +65,6 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 *
 	 * @param F3_FLOW3_Utility_Environment $environment The environment
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {
@@ -77,7 +76,6 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 *
 	 * @param F3_FLOW3_Configuration_Manager $configurationManager A reference to the configuration manager
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(F3_FLOW3_Configuration_Manager $configurationManager) {
@@ -89,7 +87,6 @@ class F3_FLOW3_MVC_Web_RequestBuilder {
 	 *
 	 * @param F3_FLOW3_MVC_Web_Routing_RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectRouter(F3_FLOW3_MVC_Web_Routing_RouterInterface $router) {

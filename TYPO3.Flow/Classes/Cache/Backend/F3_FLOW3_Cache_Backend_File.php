@@ -46,7 +46,6 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param F3_FLOW3_Utility_Environment $environment
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {

@@ -53,7 +53,6 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	 *
 	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
@@ -76,7 +75,6 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	 *
 	 * @param F3_FLOW3_Component_ObjectCacheInterface $componentObjectCache
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectComponentObjectCache(F3_FLOW3_Component_ObjectCacheInterface $componentObjectCache) {

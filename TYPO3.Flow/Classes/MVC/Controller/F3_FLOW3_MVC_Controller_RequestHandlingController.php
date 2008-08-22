@@ -77,7 +77,6 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 *
 	 * @param F3_FLOW3_Property_Mapper $propertyMapper
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPropertyMapper(F3_FLOW3_Property_Mapper $propertyMapper) {

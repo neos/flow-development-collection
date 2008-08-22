@@ -116,7 +116,6 @@ class F3_FLOW3_AOP_Framework {
 	 *
 	 * @param F3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectPointcutExpressionParser(F3_FLOW3_AOP_PointcutExpressionParser $pointcutExpressionParser) {
@@ -128,7 +127,6 @@ class F3_FLOW3_AOP_Framework {
 	 *
 	 * @param F3_FLOW3_Cache_Factory $cacheFactory
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectCacheFactory(F3_FLOW3_Cache_Factory $cacheFactory) {

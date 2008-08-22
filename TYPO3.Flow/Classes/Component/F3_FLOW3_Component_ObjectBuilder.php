@@ -216,7 +216,7 @@ class F3_FLOW3_Component_ObjectBuilder {
 				}
 				if ($dependencyClass === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
-					if ($method->isTaggedWith('required')) {
+					if (!$method->isTaggedWith('optional')) {
 						throw new F3_FLOW3_Component_Exception_CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() . '. Original message: ' . $exception->getMessage(), 1203413346);
 					}
 					continue;

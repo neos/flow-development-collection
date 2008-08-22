@@ -62,7 +62,6 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	 *
 	 * @param F3_FLOW3_Utility_Environment $environment
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {

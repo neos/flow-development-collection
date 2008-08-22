@@ -83,7 +83,6 @@ class F3_FLOW3_Persistence_Manager {
 	 *
 	 * @param F3_FLOW3_Persistence_Session $session The persistence session
 	 * @return void
-	 * @required
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectSession(F3_FLOW3_Persistence_Session $session) {
