@@ -547,22 +547,30 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       required. If a dependency can't be solved by autowiring or by
       configuration, FLOW3's object builder will throw an exception.</para>
 
-      <para>However, <emphasis>autowired setter-injected
-      dependencies</emphasis> are, by default, optional. If a dependency can't
-      be solved, it just won't be injected and it is the developer's
-      responsability to test for the availability of the desired object. There
-      is a way though to declare a setter-injected dependency as required
-      without the need to configure the dependency in a
-      <filename>Components.php</filename> file. FLOW3 uses the @required
-      annotation for this purpose:</para>
+      <para>Also <emphasis>autowired setter-injected dependencies</emphasis>
+      are, by default, required. There is a way to declare a setter-injected
+      dependency as optional without the need to configure the dependency in a
+      <filename>Components.php</filename> file. If an optional dependency
+      can't be solved, it just won't be injected and it is the developer's
+      responsability to test for the availability of the desired object. FLOW3
+      uses the @optional annotation for this purpose:</para>
 
       <example>
-        <title>Marking a setter-injected dependency as required</title>
+        <title>Marking a setter-injected dependency as optional</title>
 
         <programlisting language="php">public class F3_Authentication_LDAPAuthentication {
 
+   /**
+    * @var F3_Log_LoggerInterface
+    */
    protected $someLogger;
 
+   /**
+    * Show-off-method
+    *
+    * @param mixed $credentials
+    * @return void
+    */
    public function authenticate($credentials) {
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
@@ -570,10 +578,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
    /**
     * Injects a logger
     *
-    * @param    F3_Log_LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
-    * @return   void
-    * @author   Robert Lemke &lt;robert@typo3.org&gt;
-    * @required
+    * @param F3_Log_LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
+    * @return void
+    * @author Robert Lemke &lt;robert@typo3.org&gt;
+    * @optional
     */
    public function injectSomeLogger(F3_Log_LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
@@ -581,9 +589,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
 }</programlisting>
       </example>
 
-      <para>Due to the @required annotation, the injection of a logger is now
-      required. If the component object builder can't autowire a logger for
-      this injection method, it will now throw an exception.</para>
+      <para>Due to the @optional annotation, the injection of a logger is now
+      no longer required. If the component object builder can't autowire a
+      logger for this injection method, it will now no longer throw an
+      exception.</para>
     </section>
 
     <section>
@@ -982,16 +991,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=Jo
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   /**
-    * @required
-    */
    public function injectLogger(F3_Log_LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
-   /**
-    * @required
-    */
    public function injectLDAPServer(F3_LDAP_LDAPServerInterface $LDAPServer) {
       $this-&gt;LDAPServer = $LDAPServer;
    }
