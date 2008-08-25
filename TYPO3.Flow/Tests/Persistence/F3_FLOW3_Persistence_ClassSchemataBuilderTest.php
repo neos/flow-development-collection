@@ -127,6 +127,15 @@ class F3_FLOW3_Persistence_ClassSchemataBuilderTest extends F3_Testing_BaseTestC
 		$builtClassSchema = array_pop($this->builder->build(array('F3_FLOW3_Tests_Persistence_Fixture_Entity1')));
 		$this->assertEquals($builtClassSchema->getClassName(), 'F3_FLOW3_Tests_Persistence_Fixture_Entity1');
 	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function identifierPropertyIsDetectedFromAnnotation() {
+		$builtClassSchema = array_pop($this->builder->build(array('F3_FLOW3_Tests_Persistence_Fixture_Entity1')));
+		$this->assertEquals($builtClassSchema->getIdentifierProperty(), 'someIdentifier');
+	}
 }
 
 ?>

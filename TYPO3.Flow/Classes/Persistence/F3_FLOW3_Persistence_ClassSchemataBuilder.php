@@ -67,18 +67,20 @@ class F3_FLOW3_Persistence_ClassSchemataBuilder {
 				$modelType = F3_FLOW3_Persistence_ClassSchema::MODELTYPE_REPOSITORY;
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
 				$modelType = F3_FLOW3_Persistence_ClassSchema::MODELTYPE_VALUEOBJECT;
+			} else {
+				continue;
 			}
 
-			if ($modelType !== NULL) {
-				$classSchema = new F3_FLOW3_Persistence_ClassSchema($className);
-				$classSchema->setModelType($modelType);
-				foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
-					if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
-						$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
-					}
+			$classSchema = new F3_FLOW3_Persistence_ClassSchema($className);
+			$classSchema->setModelType($modelType);
+			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'identifier')) {
+					$classSchema->setIdentifierProperty($propertyName);
+				} elseif (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
+					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
 				}
-				$classSchemata[$className] = $classSchema;
 			}
+			$classSchemata[$className] = $classSchema;
 		}
 		return $classSchemata;
 	}

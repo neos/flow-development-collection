@@ -49,6 +49,13 @@ class F3_FLOW3_Persistence_ClassSchema {
 	protected $modelType = self::MODELTYPE_ENTITY;
 
 	/**
+	 * The name of the property holding the identifier of an entity, if any.
+	 *
+	 * @var string
+	 */
+	protected $identifierProperty;
+
+	/**
 	 * Properties of the class which need to be persisted
 	 *
 	 * @var array
@@ -128,6 +135,27 @@ class F3_FLOW3_Persistence_ClassSchema {
 	 */
 	public function hasProperty($propertyName) {
 		return key_exists($propertyName, $this->properties);
+	}
+
+	/**
+	 * Sets the property marked as identifier of an object with @identifier
+	 *
+	 * @param string $name
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setIdentifierProperty($name) {
+		$this->identifierProperty = $name;
+	}
+
+	/**
+	 * Gets the name of the property marked as identifier of an object
+	 *
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentifierProperty() {
+		return $this->identifierProperty;
 	}
 
 }

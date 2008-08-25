@@ -32,6 +32,14 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_Tests_Persistence_Fixture_Entity1 {
 
 	/**
+	 * An identifier property
+	 *
+	 * @var string
+	 * @identifier
+	 */
+	protected $someIdentifier;
+
+	/**
 	 * Just a normal string
 	 *
 	 * @var string
