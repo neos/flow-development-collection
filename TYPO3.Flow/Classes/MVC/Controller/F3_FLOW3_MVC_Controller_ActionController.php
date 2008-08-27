@@ -41,9 +41,9 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	protected $defaultActionMethodName = 'defaultAction';
 
 	/**
-	 * @var boolean If initalizeView() should be called on an action invocation.
+	 * @var boolean If initializeView() should be called on an action invocation.
 	 */
-	protected $initalizeView = TRUE;
+	protected $initializeView = TRUE;
 
 	/**
 	 * @var F3_FLOW3_MVC_View_AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
@@ -87,7 +87,7 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 
 		if (!method_exists($this, $actionMethodName)) throw new F3_FLOW3_MVC_Exception_NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
-		if ($this->initalizeView) $this->initializeView();
+		if ($this->initializeView) $this->initializeView();
 		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
 		if (is_string($actionResult) && F3_PHP6_Functions::strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
