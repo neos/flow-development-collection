@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -31,9 +30,9 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Channel_HTTPSInterceptor implements F3_FLOW3_Security_Authorization_InterceptorInterface {
 
-//TODO: this has to be set by configuration
 	/**
 	 * @var boolean If set to TRUE, the HTTPS protocol will be einforced.
+	 * @todo this has to be set by configuration
 	 */
 	protected $useSSL = FALSE;
 

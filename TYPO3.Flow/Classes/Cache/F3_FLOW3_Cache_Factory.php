@@ -81,7 +81,7 @@ class F3_FLOW3_Cache_Factory {
 	public function create($cacheIdentifier, $cacheComponentName, $backendComponentName, array $backendOptions = array()) {
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentFactory->getComponent($backendComponentName, $context, $backendOptions);
-		if (!$backend instanceof F3_FLOW3_Cache_AbstractBackend) throw new F3_FLOW3_Cache_Exception_InvalidBackend('"' .$backendComponentName . '" is not a valid cache backend component.', 1216304301);
+		if (!$backend instanceof F3_FLOW3_Cache_AbstractBackend) throw new F3_FLOW3_Cache_Exception_InvalidBackend('"' . $backendComponentName . '" is not a valid cache backend component.', 1216304301);
 		$cache = $this->componentFactory->getComponent($cacheComponentName, $cacheIdentifier, $backend);
 		if (!$cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception_InvalidCache('"' . $cacheComponentName . '" is not a valid cache component.', 1216304300);
 

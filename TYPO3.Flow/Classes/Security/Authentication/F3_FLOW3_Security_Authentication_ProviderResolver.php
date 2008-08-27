@@ -58,12 +58,12 @@ class F3_FLOW3_Security_Authentication_ProviderResolver {
 		$resolvedClassName = '';
 
 		$nameIsClassName = $this->componentManager->getCaseSensitiveComponentName($name);
-		if($nameIsClassName) $resolvedClassName = $nameIsClassName;
+		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
 		$extendedNameIsClassName = $this->componentManager->getCaseSensitiveComponentName('F3_FLOW3_Security_Authentication_Provider_' . $name);
-		if($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
+		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
-		if($resolvedClassName != '') return $resolvedClassName;
+		if ($resolvedClassName != '') return $resolvedClassName;
 
 		throw new F3_FLOW3_Security_Exception_NoAuthenticationProviderFound('An authentication provider with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}

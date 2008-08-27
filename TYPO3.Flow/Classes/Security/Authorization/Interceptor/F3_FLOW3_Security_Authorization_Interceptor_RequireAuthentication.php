@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -70,7 +69,7 @@ class F3_FLOW3_Security_Authorization_Interceptor_RequireAuthentication implemen
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		foreach($this->securityContext->getAuthenticationTokens() as $token) {
+		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			$this->authenticationManager->authenticate($token);
 		}
 	}

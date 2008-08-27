@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -52,7 +51,7 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct() {
-		if(ini_get('session.auto_start') != 0) throw new F3_FLOW3_Session_Exception_SessionAutostartIsEnabled();
+		if (ini_get('session.auto_start') != 0) throw new F3_FLOW3_Session_Exception_SessionAutostartIsEnabled('PHP\'s session.auto_start must be disabled.', 1219848292);
 	}
 
 	/**
@@ -62,7 +61,7 @@ class F3_FLOW3_Session_PHP implements F3_FLOW3_Session_Interface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function start() {
-		if($this->started === FALSE) {
+		if ($this->started === FALSE) {
 			session_start();
 			$this->sessionId = session_id();
 			$this->started = TRUE;

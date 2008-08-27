@@ -31,7 +31,6 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authorization_AfterInvocationProcessorManager implements F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface {
 
-//TODO: processors must also be configurable
 	/**
 	 * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
 	 * It resolves any available AfterInvocationProcessor for the given return object and invokes them.
@@ -43,6 +42,7 @@ class F3_FLOW3_Security_Authorization_AfterInvocationProcessorManager implements
 	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @todo processors must also be configurable
 	 */
 	public function process(F3_FLOW3_Security_Context $securityContext, object $object, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
 

@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -31,9 +30,9 @@ declare(ENCODING = 'utf-8');
  */
 class F3_FLOW3_Security_Authorization_Voter_AccessDeny implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
 
-//TODO: This has to be set by configuration
 	/**
 	 * @var array Array of classnames this voter should support
+	 * @todo This has to be set by configuration
 	 */
 	protected $supportedClasses = array();
 

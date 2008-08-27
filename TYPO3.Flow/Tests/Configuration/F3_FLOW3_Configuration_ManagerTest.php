@@ -147,9 +147,9 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 		$settingsC->PackageA->bar = 'C';
 
 		switch ($filenameAndPath) {
-			case FLOW3_PATH_PACKAGES .'PackageA/Configuration/Settings.php' : return $settingsA;
-			case FLOW3_PATH_PACKAGES .'PackageB/Configuration/Settings.php' : return $settingsB;
-			case FLOW3_PATH_PACKAGES .'PackageC/Configuration/Settings.php' : return $settingsC;
+			case FLOW3_PATH_PACKAGES . 'PackageA/Configuration/Settings.php' : return $settingsA;
+			case FLOW3_PATH_PACKAGES . 'PackageB/Configuration/Settings.php' : return $settingsB;
+			case FLOW3_PATH_PACKAGES . 'PackageC/Configuration/Settings.php' : return $settingsC;
 			case FLOW3_PATH_CONFIGURATION . 'Settings.php' : return new F3_FLOW3_Configuration_Container();
 			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings.php' : return new F3_FLOW3_Configuration_Container();
 		}

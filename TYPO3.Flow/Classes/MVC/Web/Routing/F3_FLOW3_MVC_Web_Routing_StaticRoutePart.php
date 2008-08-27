@@ -78,4 +78,5 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 		return TRUE;
 	}
 }
+
 ?>

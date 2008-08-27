@@ -57,7 +57,7 @@ class F3_FLOW3_AOP_EmptyMethodInterceptorBuilder extends F3_FLOW3_AOP_AbstractMe
 		$emptyInterceptorCode = '
 	/**
 	 * Placeholder for the method ' . $methodName . '() declared in
-	 * ' . $declaringClassName. '.
+	 * ' . $declaringClassName . '.
 	 * ' . $methodParametersDocumentation . '
 	 * @return void
 	 */

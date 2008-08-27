@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -50,7 +49,6 @@ class F3_FLOW3_Security_ACL_UserDetails implements F3_FLOW3_Security_Authenticat
 
 	}
 
-//TODO: This should be filled by configuration
 	/**
 	 * Adds a new role to this user, they role is only active if the given request pattern matches. If no pattern is given, the role will always be active.
 	 *
@@ -58,6 +56,7 @@ class F3_FLOW3_Security_ACL_UserDetails implements F3_FLOW3_Security_Authenticat
 	 * @param F3_FLOW3_Security_RequestPattern $requestPattern A request pattern for which the role should be active
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo: This should be filled by configuration
 	 */
 	public function addRole(F3_FLOW3_Security_ACL_Role $role, F3_FLOW3_Security_RequestPattern $requestPattern = NULL) {
 

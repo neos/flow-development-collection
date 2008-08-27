@@ -56,7 +56,7 @@ class F3_FLOW3_Utility_Files {
 	 */
 	public static function concatenatePaths(array $paths) {
 		$resultingPath = '';
-		foreach($paths as $index => $path) {
+		foreach ($paths as $index => $path) {
 			$path = self::getUnixStylePath($path);
 			if ($index == 0) {
 				$path = rtrim($path, '/');

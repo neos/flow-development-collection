@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -44,7 +43,7 @@ class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_F
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate($className) {
-		if($className == 'F3_FLOW3_Security_Authentication_Token_UsernamePassword') return TRUE;
+		if ($className == 'F3_FLOW3_Security_Authentication_Token_UsernamePassword') return TRUE;
 		return FALSE;
 	}
 
@@ -66,10 +65,10 @@ class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_F
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		if(!($authenticationToken instanceof F3_FLOW3_Security_Authentication_Token_UsernamePassword)) throw new F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
+		if (!($authenticationToken instanceof F3_FLOW3_Security_Authentication_Token_UsernamePassword)) throw new F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
-		if($credentials['username'] === 'FLOW3' && $credentials['password'] === 'verysecurepassword') $authenticationToken->setAuthenticationStatus(TRUE);
+		if ($credentials['username'] === 'FLOW3' && $credentials['password'] === 'verysecurepassword') $authenticationToken->setAuthenticationStatus(TRUE);
 	}
 }
 

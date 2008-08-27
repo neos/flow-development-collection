@@ -197,7 +197,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 
 		$matchResults = array();
 		foreach ($this->urlPatternSegments as $urlPatternSegment) {
-			foreach($urlPatternSegment as $routePart) {
+			foreach ($urlPatternSegment as $routePart) {
 				if (!$routePart->match($requestPathSegments)) {
 					return FALSE;
 				}
@@ -247,7 +247,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		preg_match_all($pattern, $urlPatternSegment, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
-		foreach($matches as $matchIndex => $match) {
+		foreach ($matches as $matchIndex => $match) {
 			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
 			$routePartName = $match[2];
 			$splitString = '';
@@ -291,4 +291,5 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 		return $routeParts;
 	}
 }
+
 ?>

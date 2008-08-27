@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -22,7 +21,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A "AccessDenied" Exception
+ * An "AccessDenied" Exception
  *
  * @package FLOW3
  * @subpackage Security

@@ -156,6 +156,7 @@ class F3_FLOW3_Persistence_Manager {
 	public function persistAll() {
 		$newObjects = array();
 		$dirtyObjects = array();
+		$deletedObjects = array();
 		$allObjects = array();
 
 		$repositoryClassNames = $this->reflectionService->getClassNamesByTag('repository');
@@ -166,7 +167,7 @@ class F3_FLOW3_Persistence_Manager {
 
 		$this->backend->setNewObjects($newObjects);
 		$this->backend->setUpdatedObjects($dirtyObjects);
-#		$this->backend->setDeletedObjects($deletedObjects);
+		$this->backend->setDeletedObjects($deletedObjects);
 		$this->backend->commit();
 	}
 
@@ -187,7 +188,7 @@ class F3_FLOW3_Persistence_Manager {
 		$referenceClassName = $referenceObjects[0]->AOPProxyGetProxyTargetClassName();
 		$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
 
-		foreach($referenceObjects as $referenceObject) {
+		foreach ($referenceObjects as $referenceObject) {
 			$objectHash = spl_object_hash($referenceObject);
 			$allObjects[$objectHash] = $referenceObject;
 			if ($this->session->isNew($referenceObject)) {

@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -121,8 +120,8 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		foreach($this->providers as $provider) {
-			if($provider->canAuthenticate($authenticationToken)) {
+		foreach ($this->providers as $provider) {
+			if ($provider->canAuthenticate($authenticationToken)) {
 				$provider->authenticate($authenticationToken);
 				break;
 			}
@@ -138,14 +137,14 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(F3_FLOW3_Configuration_Container $configuration) {
-		foreach($configuration->security->authentication->providers as $provider) {
+		foreach ($configuration->security->authentication->providers as $provider) {
 			$providerInstance = $this->componentFactory->getComponent($this->providerResolver->resolveProviderClass($provider['provider']));
 			$this->providers[] = $providerInstance;
 
 			$tokenInstance = $this->componentFactory->getComponent($providerInstance->getTokenClassname());
 			$this->tokens[] = $tokenInstance;
 
-			if($provider['patternType'] != '') {
+			if ($provider['patternType'] != '') {
 				$requestPattern = $this->componentFactory->getComponent($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
 				$requestPattern->setPattern($provider['patternValue']);
 				$tokenInstance->setRequestPattern($requestPattern);

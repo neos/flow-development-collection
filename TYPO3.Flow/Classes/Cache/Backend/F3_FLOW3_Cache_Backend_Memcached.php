@@ -137,7 +137,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
-		foreach($tags as $tag) {
+		foreach ($tags as $tag) {
 			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
 		}
 
@@ -232,7 +232,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersTaggedWith($tag);
-		foreach($identifiers as $identifier) {
+		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
 		}
 	}
@@ -265,7 +265,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function addTagsToTagIndex(array $tags) {
-		if(count($tags)) {
+		if (count($tags)) {
 			$this->setTagIndex(array_merge($tags, $this->getTagIndex()));
 		}
 	}
@@ -278,7 +278,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function removeTagsFromTagIndex(array $tags) {
-		if(count($tags)) {
+		if (count($tags)) {
 			$this->setTagIndex(array_diff($this->getTagIndex(), $tags));
 		}
 	}
@@ -291,7 +291,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
-		foreach($tags as $tag) {
+		foreach ($tags as $tag) {
 			$identifiers = $this->findIdentifiersTaggedWith($tag);
 			$identifiers[] = $entryIdentifier;
 			$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
@@ -307,12 +307,12 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 		$tags = $this->getTagIndex();
-		foreach($tags as $tag) {
+		foreach ($tags as $tag) {
 			$identifiers = $this->findIdentifiersTaggedWith($tag);
-			if(array_search($entryIdentifier, $identifiers) !== FALSE) {
+			if (array_search($entryIdentifier, $identifiers) !== FALSE) {
 				unset($identifiers[array_search($entryIdentifier, $identifiers)]);
 			}
-			if(count($identifiers)) {
+			if (count($identifiers)) {
 				$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
 			} else {
 				$this->removeTagsFromTagIndex(array($tag));
@@ -330,7 +330,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 */
 	public function findIdentifiersTaggedWith($tag) {
 		$identifiers = $this->memcache->get($this->identifierPrefix . '_tag_' . $tag);
-		if($identifiers !== FALSE) {
+		if ($identifiers !== FALSE) {
 			return (array) $identifiers;
 		} else {
 			return array();

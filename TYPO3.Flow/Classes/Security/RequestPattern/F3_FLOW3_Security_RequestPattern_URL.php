@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -46,7 +45,7 @@ class F3_FLOW3_Security_RequestPattern_URL implements F3_FLOW3_Security_RequestP
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatch(F3_FLOW3_MVC_Request $request) {
-		if($request instanceof F3_FLOW3_MVC_Web_Request) return TRUE;
+		if ($request instanceof F3_FLOW3_MVC_Web_Request) return TRUE;
 		return FALSE;
 	}
 
@@ -80,7 +79,7 @@ class F3_FLOW3_Security_RequestPattern_URL implements F3_FLOW3_Security_RequestP
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function matchRequest(F3_FLOW3_MVC_Request $request) {
-		if(!($request instanceof F3_FLOW3_MVC_Web_Request)) throw new F3_FLOW3_Security_Exception_RequestTypeNotSupported('The given request type is not supported.', 1216903641);
+		if (!($request instanceof F3_FLOW3_MVC_Web_Request)) throw new F3_FLOW3_Security_Exception_RequestTypeNotSupported('The given request type is not supported.', 1216903641);
 
 		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->URLPattern) . '$/', $request->getRequestURI()->getPath());
 	}

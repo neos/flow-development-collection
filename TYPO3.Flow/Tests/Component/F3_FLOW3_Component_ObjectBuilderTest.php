@@ -407,7 +407,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
-		throw new PHPUnit_Framework_IncompleteTestError('Not yet implemented');
+		$this->markTestIncomplete('Not yet implemented');
 	}
 }
 ?>

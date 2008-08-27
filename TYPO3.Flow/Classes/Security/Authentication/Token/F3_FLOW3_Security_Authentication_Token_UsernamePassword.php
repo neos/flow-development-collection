@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -29,10 +28,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
+ * @todo here we also need a user details service and an authentication entry point
  */
 class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW3_Security_Authentication_TokenInterface {
 
-//TODO: here we also need a user details service and an authentication entry point
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment The current environment
@@ -82,7 +81,7 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPattern() {
-		if($this->requestPattern != NULL) return TRUE;
+		if ($this->requestPattern != NULL) return TRUE;
 		return FALSE;
 	}
 
@@ -118,8 +117,8 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	public function updateCredentials() {
 		$POSTArguments = $this->environment->getPOSTArguments();
 
-		if(isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'];
-		if(isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'];
+		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'];
+		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'];
 	}
 
 	/**

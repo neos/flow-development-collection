@@ -145,23 +145,23 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();
 
-		if(!is_array($managerTokens)) return $resultTokens;
+		if (!is_array($managerTokens)) return $resultTokens;
 
-		foreach($managerTokens as $managerToken) {
+		foreach ($managerTokens as $managerToken) {
 			$noCorrespondingSessionTokenFound = TRUE;
 
-			if(!is_array($sessionTokens)) continue;
+			if (!is_array($sessionTokens)) continue;
 
-			foreach($sessionTokens as $sessionToken) {
+			foreach ($sessionTokens as $sessionToken) {
 				$managerTokenClass = get_class($managerToken);
 
-				if($sessionToken instanceof $managerTokenClass) {
+				if ($sessionToken instanceof $managerTokenClass) {
 					$resultTokens[] = $sessionToken;
 					$noCorrespondingSessionTokenFound = FALSE;
 				}
 			}
 
-			if($noCorrespondingSessionTokenFound) $resultTokens[] = $managerToken;
+			if ($noCorrespondingSessionTokenFound) $resultTokens[] = $managerToken;
 		}
 
 		return $resultTokens;
@@ -175,7 +175,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function updateTokenCredentials(array $tokens) {
-		foreach($tokens as $token) {
+		foreach ($tokens as $token) {
 			$token->updateCredentials();
 		}
 	}

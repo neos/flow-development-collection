@@ -1,5 +1,4 @@
 <?php
-
 declare(ENCODING = 'utf-8');
 
 /*                                                                        *
@@ -104,11 +103,11 @@ class F3_FLOW3_Security_Context {
 	public function getAuthenticationTokens() {
 		$activeTokens = array();
 
-		foreach($this->tokens as $token) {
-			if($token->hasRequestPattern()) {
+		foreach ($this->tokens as $token) {
+			if ($token->hasRequestPattern()) {
 
 				$requestPattern = $token->getRequestPattern();
-				if($requestPattern->canMatch($this->request) && $requestPattern->matchRequest($this->request)) {
+				if ($requestPattern->canMatch($this->request) && $requestPattern->matchRequest($this->request)) {
 					$activeTokens[] = $token;
 				}
 			} else {

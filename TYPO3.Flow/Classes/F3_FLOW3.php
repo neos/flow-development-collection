@@ -187,7 +187,7 @@ final class F3_FLOW3 {
 	public function initializeClassLoader() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3_FLOW3_Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
 
-		if(!class_exists('F3_FLOW3_Resource_ClassLoader')) {
+		if (!class_exists('F3_FLOW3_Resource_ClassLoader')) {
 			require(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
 		}
 		$this->classLoader = new F3_FLOW3_Resource_ClassLoader(FLOW3_PATH_PACKAGES);
