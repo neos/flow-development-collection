@@ -205,5 +205,91 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 		$urlSegments = array('foo_-_bar', 'bar');
 		$this->assertTrue($this->routePart1->match($urlSegments), 'dynamic route part with a splitString of "_-_" should match urlParts separated by "_-_"');
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartDoesNotResolveIfNameIsNotSet() {
+		$routeValues = array('foo' => 'bar');
+
+		$this->assertFalse($this->routePart1->resolve($routeValues), 'dynamic route part should not resolve if name is not set.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartResolvesSimpleValueArray() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('foo' => 'bar');
+		
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals('bar', $this->routePart1->getValue(), 'dynamic route part should resolve if an element with the same name exists in $routeValues.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartResolvesEmptyArrayIfDefaultValueIsSet() {
+		$this->routePart1->setName('foo');
+		$this->routePart1->setDefaultValue('defaultValue');
+		$routeValues = array();
+		
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals('defaultValue', $this->routePart1->getValue(), 'dynamic route part should resolve if a default value is set.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('differentString' => 'bar');
+
+		$this->assertFalse($this->routePart1->resolve($routeValues), 'dynamic route part should not resolve if no element with the same name exists in $routeValues and no default value is set.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveUnsetsCurrentRouteValueOnSuccessfulResolve() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('foo' => 'bar', 'differentString' => 'value2');
+
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals(array('differentString' => 'value2'), $routeValues, 'dynamic route part should unset matching element from $routeValues on successful resolve.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolveDoesNotChangeRouteValuesOnUnsuccessfulResolve() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('differentString' => 'bar');
+
+		$this->assertFalse($this->routePart1->resolve($routeValues));
+		$this->assertEquals(array('differentString' => 'bar'), $routeValues, 'dynamic route part should not change $routeValues on unsuccessful resolve.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routePartValueIsNullAfterUnsuccessfulResolve() {
+		$this->routePart1->setName('foo');
+		$this->routePart1->setDefaultValue('defaultValue');
+		$routeValues = array();
+		
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		
+		$this->routePart1->setDefaultValue(NULL);
+		$this->assertFalse($this->routePart1->resolve($routeValues));
+		$this->assertNull($this->routePart1->getValue(), 'dynamic route part value should be NULL when call to resolve() was not successful.');
+	}
 }
 ?>

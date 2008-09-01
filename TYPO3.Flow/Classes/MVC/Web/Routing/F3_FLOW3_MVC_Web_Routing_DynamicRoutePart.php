@@ -96,5 +96,33 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 
 		return TRUE;
 	}
+
+	/**
+	 * Checks whether $routeValues contains elements which correspond to this dynamic route part.
+	 * If a corresponding element is found in $routeValues, this element is removed from the array.
+	 *
+	 * @param array $routeValues
+	 * @return boolean
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolve(array &$routeValues) {
+		$this->value = NULL;
+
+		if ($this->name === NULL || $this->name === '') {
+			return FALSE;
+		}
+		if (!isset($routeValues[$this->name])) {
+			if (!isset($this->defaultValue)) {
+				return FALSE;
+			}
+			$this->value = $this->defaultValue;
+			return TRUE;
+		}
+
+		$this->value = $routeValues[$this->name];
+		unset($routeValues[$this->name]);
+
+		return TRUE;
+	}
 }
 ?>

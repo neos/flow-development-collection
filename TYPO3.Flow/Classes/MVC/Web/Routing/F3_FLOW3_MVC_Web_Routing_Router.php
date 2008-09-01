@@ -105,7 +105,7 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 			$requestPath = strstr($requestPath, '/');
 		}
 
-		foreach (array_reverse($this->routes) as $routeName => $route) {
+		foreach (array_reverse($this->routes) as $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
 				foreach ($matchResults as $argumentName => $argumentValue) {
@@ -140,7 +140,24 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 		foreach ($requestURI->getArguments() as $argumentName => $argumentValue) {
 			$request->setArgument($argumentName, $argumentValue);
 		}
+	}
 
+	/**
+	 * Builds the corresponding url (excluding protocol and host) by iterating through all configured routes
+	 * and calling their respective resolves()-method.
+	 * If no matching route is found, an empty string is returned.
+	 *
+	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
+	 * @return string
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolve(array $routeValues) {
+		foreach (array_reverse($this->routes) as $route) {
+			if ($route->resolves($routeValues)) {
+				return $route->getMatchingURL();
+			}
+		}
+		return '';
 	}
 }
 ?>

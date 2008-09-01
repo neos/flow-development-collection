@@ -31,8 +31,13 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler extends F3_FLOW3_MVC_Web_Routing_DynamicRoutePart {
 
 	public function match(array &$urlSegments) {
-		$this->value = 'invoked';
+		$this->value = '_match_invoked_';
 		array_shift($urlSegments);
+		return TRUE;
+	}
+
+	public function resolve(array &$routeValues) {
+		$this->value = '_resolve_invoked_';
 		return TRUE;
 	}
 }

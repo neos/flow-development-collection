@@ -77,6 +77,17 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 
 		return TRUE;
 	}
+
+	/**
+	 * Sets the route part value to the route part name and returns TRUE.
+	 *
+	 * @param array $routeValues not used but needed to implement F3_FLOW3_MVC_Web_Routing_AbstractRoutePart
+	 * @return boolean always TRUE
+	 */
+	public function resolve(array &$routeValues) {
+		$this->value = $this->name;
+		return TRUE;
+	}
 }
 
 ?>

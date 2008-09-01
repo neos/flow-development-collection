@@ -61,6 +61,13 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	protected $matchResults = array();
 
 	/**
+	 * Contains the matching url (excluding protocol and host) after a successful call of resolves()
+	 *
+	 * @var string
+	 */
+	protected $matchingURL;
+
+	/**
 	 * Contains associative array of custom route part handler classnames (key: route part name, value: route part handler classname)
 	 *
 	 * @var array
@@ -172,6 +179,16 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	}
 
 	/**
+	 * Returns the url which corresponds to this Route.
+	 *
+	 * @return string A string containing the corresponding url (excluding protocol and host)
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getMatchingURL() {
+		return $this->matchingURL;
+	}
+
+	/**
 	 * Checks whether $requestPath corresponds to this Route.
 	 * If all Route parts match successfully TRUE is returned and $this->matchResults contains
 	 * an array combining Route default values and calculated matchResults from the individual Route parts.
@@ -210,6 +227,41 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 			return FALSE;
 		}
 		$this->matchResults = array_merge($this->defaults, $matchResults);
+		return TRUE;
+	}
+
+	/**
+	 * Checks whether $routeValues can be resolved to a corresponding url.
+	 * If all Route parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURL contains
+	 * the generated url (excluding protocol and host).
+	 *
+	 * @param array $routeValues An array containing key/value pairs to be resolved to url segments
+	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function resolves(array $routeValues) {
+		$this->matchingURL = NULL;
+		if ($this->urlPattern === NULL || $this->urlPattern == '') {
+			return FALSE;
+		}
+		if (!$this->isParsed) {
+			$this->parse();
+		}
+
+		$url = '';
+		foreach ($this->urlPatternSegments as $urlPatternSegment) {
+			foreach ($urlPatternSegment as $routePart) {
+				if (!$routePart->resolve($routeValues)) {
+					return FALSE;
+				}
+				$url.= F3_PHP6_Functions::strtolower($routePart->getValue());
+			}
+			$url.= '/';
+		}
+		if (count($routeValues) > 0) {
+			return FALSE;
+		}
+		$this->matchingURL = rtrim($url, '/');
 		return TRUE;
 	}
 

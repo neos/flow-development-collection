@@ -94,7 +94,7 @@ abstract class F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
 	}
 
 	/**
-	 * Checks whether this Route part correspond to the given $urlSegments.
+	 * Checks whether this Route part corresponds to the given $urlSegments.
 	 * This method does not only check if the Route part matches. It can also
 	 * shorten the $urlSegments-Array by one or more elements when matching is successful.
 	 * This is why $urlSegments has to be passed by reference.
@@ -104,5 +104,18 @@ abstract class F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public abstract function match(array &$urlSegments);
+
+	/**
+	 * Checks whether this Route part corresponds to the given $routeValues.
+	 * This method does not only check if the Route part matches. It also
+	 * removes resolved elements from $routeValues-Array.
+	 * This is why $routeValues has to be passed by reference.
+	 *
+	 * @param array $routeValues An array with key/value pairs to be resolved by dynamic route parts.
+	 * @return boolean TRUE if route part can resolve one or more $routeValues elements, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public abstract function resolve(array &$routeValues);
+
 }
 ?>

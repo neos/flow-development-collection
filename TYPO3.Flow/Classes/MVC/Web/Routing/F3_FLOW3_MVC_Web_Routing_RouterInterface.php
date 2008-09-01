@@ -31,7 +31,7 @@ declare(ENCODING = 'utf-8');
 interface F3_FLOW3_MVC_Web_Routing_RouterInterface {
 
 	/**
-	 * Walks through all configured routes and calls their respective match-method.
+	 * Walks through all configured routes and calls their respective matches-method.
 	 * When a corresponding route is found, package, controller, action and possible parameters
 	 * are set on the $request object
 	 *
@@ -39,5 +39,14 @@ interface F3_FLOW3_MVC_Web_Routing_RouterInterface {
 	 * @return boolean
 	 */
 	public function route(F3_FLOW3_MVC_Web_Request $request);
+
+	/**
+	 * Walks through all configured routes and calls their respective resolves-method.
+	 * When a matching route is found, the corresponding url path is returned.
+	 *
+	 * @param array $routeValues
+	 * @return string url path
+	 */
+	public function resolve(array $routeValues);
 }
 ?>

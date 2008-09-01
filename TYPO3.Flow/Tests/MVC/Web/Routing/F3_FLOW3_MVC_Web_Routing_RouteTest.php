@@ -258,7 +258,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function registeredRoutePartHandlerIsInvoked() {
+	public function registeredRoutePartHandlerIsInvokedWhenCallingMatch() {
 		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler');
 		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/[key2]');
@@ -269,7 +269,69 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 		);
 		$route->matches('foo/bar');
 
-		$this->assertEquals(array('key1' => 'invoked', 'key2' => 'bar'), $route->getMatchResults());
+		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $route->getMatchResults());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchingRouteIsProperlyResolved() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$route->setDefaults(array('@format' => 'xml'));
+		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
+		
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('value1-value2/value3.value4.xml', $route->getMatchingURL());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCantBeResolvedRouteContainsLessValuesThanAreSpecified() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$route->setDefaults(array('@format' => 'xml'));
+		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
+		
+		$this->assertFalse($route->resolves($routeValues));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]');
+		$routeValues = array('key1' => 'value1');
+		
+		$this->assertTrue($route->resolves($routeValues));
+		
+		$routeValues = array('differentKey' => 'value1');
+		$this->assertFalse($route->resolves($routeValues));
+		$this->assertNull($route->getMatchingURL());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function registeredRoutePartHandlerIsInvokedWhenCallingResolve() {
+		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler');
+		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route->setUrlPattern('[key1]/[key2]');
+		$route->setRoutePartHandlers(
+			array(
+				'key1' => 'F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler',
+			)
+		);
+		$routeValues = array('key2' => 'value2');
+		$route->resolves($routeValues);
+
+		$this->assertEquals('_resolve_invoked_/value2', $route->getMatchingURL());
 	}
 }
 ?>

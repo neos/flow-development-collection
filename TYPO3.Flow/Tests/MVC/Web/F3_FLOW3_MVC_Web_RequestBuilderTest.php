@@ -80,7 +80,7 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSpecialConfiguration'), array(), '', FALSE);
 		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(new F3_FLOW3_Configuration_Container()));
 
-		$this->mockRouter = $this->getMock('F3_FLOW3_MVC_Web_Routing_RouterInterface', array('route', 'setRoutesConfiguration'));
+		$this->mockRouter = $this->getMock('F3_FLOW3_MVC_Web_Routing_RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 
 		$this->builder = new F3_FLOW3_MVC_Web_RequestBuilder($mockComponentFactory);
 		$this->builder->injectEnvironment($this->mockEnvironment);

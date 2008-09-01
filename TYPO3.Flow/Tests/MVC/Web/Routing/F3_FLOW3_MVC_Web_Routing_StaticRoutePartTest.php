@@ -175,5 +175,41 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePartTest extends F3_Testing_BaseTestCa
 
 		$this->assertSame(array('', 'foo', 'test'), $urlSegments, 'static route part should shorten urlSegments array by one entry on successful match');
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function staticRoutePartCanResolveEmptyArray() {
+		$this->routePart1->setName('foo');
+		$routeValues = array();
+		
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals('foo', $this->routePart1->getValue(), 'static route part should resolve empty routeValues-array');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function staticRoutePartCanResolveNonEmptyArray() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
+
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals('foo', $this->routePart1->getValue(), 'static route part should resolve non-empty routeValues-array');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function callingResolveDoesNotChangeRouteValues() {
+		$this->routePart1->setName('foo');
+		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
+
+		$this->assertTrue($this->routePart1->resolve($routeValues));
+		$this->assertEquals(array('@controller' => 'foo', '@action' => 'bar'), $routeValues, 'when resolve() is called on static route part, specified routeValues-array should never be changed');
+	}
 }
 ?>
