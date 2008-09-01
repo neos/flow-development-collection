@@ -108,6 +108,7 @@ class F3_FLOW3_AOP_FrameworkTest extends F3_Testing_BaseTestCase {
 		$aspect = $this->componentFactory->getComponent('F3_TestPackage_AfterNonExistingWakeupAspect');
 		$target = $this->componentFactory->getComponent('F3_TestPackage_EmptyClass');
 		$GLOBALS['reconstituteComponentObject']['componentFactory'] = $this->componentFactory;
+		$GLOBALS['reconstituteComponentObject']['properties'] = array();
 		$target = unserialize(serialize($target));
 		unset($GLOBALS['reconstituteComponentObject']);
 		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the wakeup advice.');
