@@ -48,6 +48,7 @@ class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_Repository
 	 * @param F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @required
 	 */
 	public function injectQueryFactory(F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -84,6 +85,20 @@ class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_Repository
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findAll() {
+		$type = str_replace('Repository', '', get_class($this));
+		return $this->queryFactory->create($type)->execute();
+	}
+
+	/**
+	 * Returns all objects of this repository
+	 *
+	 * This is a service method for the persistence manager to get all loaded objects from the
+	 * repository without running a query.
+	 *
+	 * @return array An array of the objects
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjects() {
 		return array_values($this->objects);
 	}
 }

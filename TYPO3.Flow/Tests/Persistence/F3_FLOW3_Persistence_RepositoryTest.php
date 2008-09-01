@@ -45,7 +45,7 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new stdClass();
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3_FLOW3_Persistence_Repository;
 		$repository->add($someObject);
 		$this->assertAttributeSame(array(spl_object_hash($someObject) => $someObject), 'objects', $repository);
 	}
@@ -59,7 +59,7 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 		$object2 = new stdClass();
 		$object3 = new stdClass();
 
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3_FLOW3_Persistence_Repository;
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);
@@ -77,7 +77,7 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 		$object2 = new ArrayObject(array('val' => '2'));
 		$object3 = new ArrayObject(array('val' => '3'));
 
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3_FLOW3_Persistence_Repository;
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);
@@ -87,19 +87,6 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 
 		$repository->remove($object2);
 		$this->assertAttributeSame(array(spl_object_hash($object1) => $object1, spl_object_hash($object3) => $object3), 'objects', $repository);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function findAllReturnsAllPreviouslyAddedObjects() {
-		$objects = array(new stdClass(), new stdClass(), new stdClass());
-		$repository = new F3_FLOW3_Persistence_Repository();
-		foreach ($objects as $object) {
-			$repository->add($object);
-		}
-		$this->assertSame($objects, $repository->findAll());
 	}
 }
 

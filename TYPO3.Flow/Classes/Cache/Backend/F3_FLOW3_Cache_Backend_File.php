@@ -122,7 +122,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 		$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		$entryIdentifierHash = sha1($entryIdentifier);
-		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash {1} . '/';
+		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/';
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($cacheEntryPath)) {
@@ -240,7 +240,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return;
 
-		foreach ($filesFound as $filename) {
+		foreach($filesFound as $filename) {
 			list(,$entryIdentifier) = explode('_', basename($filename));
 			$this->remove($entryIdentifier);
 		}

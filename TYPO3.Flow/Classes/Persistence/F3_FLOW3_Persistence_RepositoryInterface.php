@@ -52,6 +52,6 @@ interface F3_FLOW3_Persistence_RepositoryInterface {
 	 *
 	 * @return array An array of objects
 	 */
-	public function findAll();
+	public function getObjects();
 }
 ?>
