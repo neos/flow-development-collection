@@ -240,7 +240,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return;
 
-		foreach($filesFound as $filename) {
+		foreach ($filesFound as $filename) {
 			list(,$entryIdentifier) = explode('_', basename($filename));
 			$this->remove($entryIdentifier);
 		}
