@@ -19,6 +19,13 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
+if (version_compare(phpversion(), F3_FLOW3::MINIMUM_PHP_VERSION, '<')) {
+	die ('FLOW3 requires PHP version ' . F3_FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+}
+if (version_compare(PHP_VERSION, F3_FLOW3::MAXIMUM_PHP_VERSION, '>')) {
+	die ('FLOW3 requires PHP version ' . F3_FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+}
+
 /**
  * Utility_Files is needed before the autoloader is active
  */
@@ -448,12 +455,6 @@ final class F3_FLOW3 {
 	 * @internal RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
 	protected function checkEnvironment() {
-		if (version_compare(PHP_VERSION, self::MINIMUM_PHP_VERSION, '<')) {
-			die ('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
-		}
-		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
-			die ('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
-		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
 			die ('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
