@@ -34,6 +34,7 @@ require(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
 define('FLOW3_PATH_FLOW3', F3_FLOW3_Utility_Files::getUnixStylePath(__DIR__ . '/'));
 define('FLOW3_PATH_PACKAGES', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
 define('FLOW3_PATH_CONFIGURATION', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
+define('FLOW3_PATH_DATA', F3_FLOW3_Utility_Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Data/') . '/'));
 
 /**
  * General purpose central core hyper FLOW3 class

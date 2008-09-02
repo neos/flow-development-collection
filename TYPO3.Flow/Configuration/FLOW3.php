@@ -38,7 +38,7 @@ $c->errorHandler->exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR);
  *
  * @var string
  */
-$c->utility->environment->temporaryDirectoryBase = sys_get_temp_dir();
+$c->utility->environment->temporaryDirectoryBase = FLOW3_PATH_DATA . 'Temporary/';
 
 /**
  * Enable or disable caching of the component configurations. If caching is
