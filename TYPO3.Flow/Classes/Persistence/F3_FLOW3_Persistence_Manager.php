@@ -161,7 +161,7 @@ class F3_FLOW3_Persistence_Manager {
 
 		$repositoryClassNames = $this->reflectionService->getClassNamesByTag('repository');
 		foreach ($repositoryClassNames as $repositoryClassName) {
-			$aggregateRootObjects = $this->componentFactory->getComponent($repositoryClassName)->findAll();
+			$aggregateRootObjects = $this->componentFactory->getComponent($repositoryClassName)->getObjects();
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
 		}
 

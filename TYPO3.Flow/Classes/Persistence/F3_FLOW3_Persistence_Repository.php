@@ -89,7 +89,7 @@ class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_Repository
 	}
 
 	/**
-	 * Returns all objects of this repository
+	 * Returns all loaded objects of this repository
 	 *
 	 * This is a service method for the persistence manager to get all loaded objects from the
 	 * repository without running a query.
