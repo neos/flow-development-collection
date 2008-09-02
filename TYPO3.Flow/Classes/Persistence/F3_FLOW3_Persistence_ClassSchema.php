@@ -34,6 +34,8 @@ class F3_FLOW3_Persistence_ClassSchema {
 	const MODELTYPE_ENTITY = 2;
 	const MODELTYPE_VALUEOBJECT = 3;
 
+	const ALLOWED_TYPES_PATTERN = '/^(integer|float|boolean|string|array|DateTime|F3_[a-zA-Z0-9_]+)/';
+
 	/**
 	 * Name of the class this schema is referring to
 	 *
@@ -86,12 +88,18 @@ class F3_FLOW3_Persistence_ClassSchema {
 	 * Sets (defines) a specific property and its type.
 	 *
 	 * @param string $name Name of the property
-	 * @param string $type Type of the property (ie. one of "integer", "float", "boolean", "string", "array" or some class type
+	 * @param string $type Type of the property (ie. one of "integer", "float", "boolean", "string", "array", "DateTime" or some class type (F3_*)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setProperty($name, $type) {
-		$this->properties[$name] = $type;
+		$matches = array();
+		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
+			$this->properties[$name] = $matches[1];
+		} else {
+			throw new F3_FLOW3_Persistence_Exception_InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
+		}
 	}
 
 	/**
