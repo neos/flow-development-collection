@@ -121,14 +121,40 @@ class F3_FLOW3_MVC_Web_Response extends F3_FLOW3_MVC_Response {
 	}
 
 	/**
+	 * Sets the specified HTTP header
+	 *
+	 * @param string $name Name of the header, for example "Location", "Content-Description" etc.
+	 * @param mixed $value The value of the given header
+	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
+		if (strtoupper(substr($name, 0, 4)) == 'HTTP') throw new InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
+		if ($replaceExistingHeader === TRUE || !key_exists($name, $this->headers)) {
+			$this->headers[$name] = array($value);
+		} else {
+			$this->headers[$name][] = $value;
+		}
+	}
+
+	/**
 	 * Returns the HTTP headers - including the status header - of this web response
 	 *
 	 * @return string The HTTP headers
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getHeaders() {
+		$preparedHeaders = array();
 		$statusHeader = 'HTTP/1.1 ' . $this->statusCode . ' ' . $this->statusMessage;
-		return array_merge(array($statusHeader), $this->headers);
+
+		$preparedHeaders[] = $statusHeader;
+		foreach ($this->headers as $name => $values) {
+			foreach ($values as $value) {
+				$preparedHeaders[] = $name . ': ' . $value;
+			}
+		}
+		return $preparedHeaders;
 	}
 
 	/**

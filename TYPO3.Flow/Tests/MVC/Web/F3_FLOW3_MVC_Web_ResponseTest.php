@@ -49,6 +49,58 @@ class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
 		$this->assertEquals(array('HTTP/1.1 400 Really Bad Request'), $response->getHeaders());
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function additionalHeadersCanBeSetAndRetrieved() {
+		$response = new F3_FLOW3_MVC_Web_Response();
+		$response->setStatus(123, 'Custom Status');
+		$response->setHeader('MyHeader', 'MyValue');
+		$response->setHeader('OtherHeader', 'OtherValue');
 
+		$expectedHeaders = array(
+			'HTTP/1.1 123 Custom Status',
+			'MyHeader: MyValue',
+			'OtherHeader: OtherValue'
+		);
+
+		$this->assertEquals($expectedHeaders, $response->getHeaders());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function byDefaultHeadersOfTheSameNameAreReplaced() {
+		$response = new F3_FLOW3_MVC_Web_Response();
+		$response->setHeader('MyHeader', 'MyValue');
+		$response->setHeader('MyHeader', 'OtherValue');
+
+		$expectedHeaders = array(
+			'HTTP/1.1 200 OK',
+			'MyHeader: OtherValue'
+		);
+
+		$this->assertEquals($expectedHeaders, $response->getHeaders());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function multipleHeadersOfTheSameNameMayBeDefined() {
+		$response = new F3_FLOW3_MVC_Web_Response();
+		$response->setHeader('MyHeader', 'MyValue', FALSE);
+		$response->setHeader('MyHeader', 'OtherValue', FALSE);
+
+		$expectedHeaders = array(
+			'HTTP/1.1 200 OK',
+			'MyHeader: MyValue',
+			'MyHeader: OtherValue'
+		);
+
+		$this->assertEquals($expectedHeaders, $response->getHeaders());
+	}
 }
 ?>

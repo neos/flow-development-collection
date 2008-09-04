@@ -124,6 +124,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * Forwards the request to another controller.
 	 *
 	 * @return void
+	 * @throws F3_FLOW3_MVC_Exception_StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forward($actionName, $controllerName = NULL, $packageKey = NULL, F3_FLOW3_MVC_Controller_Arguments $arguments = NULL) {
@@ -132,6 +133,29 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
 		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
 		if ($arguments !== NULL) $this->request->setArguments($arguments);
+		throw new F3_FLOW3_MVC_Exception_StopAction();
+	}
+
+	/**
+	 * Redirects the web request to another uri.
+	 *
+	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 *
+	 * @param mixed $uri Either a string representation of a URI or a F3_FLOW3_Property_DataType_URI object
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+	 * @throws F3_FLOW3_MVC_Exception_UnsupportedRequestType If the request is not a web request
+	 * @throws F3_FLOW3_MVC_Exception_StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function redirect($uri, $delay = 0, $statusCode = 303) {
+		if (!$this->request instanceof F3_FLOW3_MVC_Web_Request) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
+
+		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
+		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
+		$this->response->setStatus($statusCode);
+		$this->response->setHeader('Location', (string)$uri);
+		throw new F3_FLOW3_MVC_Exception_StopAction();
 	}
 
 	/**

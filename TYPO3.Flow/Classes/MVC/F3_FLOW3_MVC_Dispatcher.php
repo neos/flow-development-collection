@@ -120,7 +120,10 @@ class F3_FLOW3_MVC_Dispatcher {
 			$this->firewall->blockIllegalRequests($request);
 
 			$controller = $this->getPreparedController($request);
-			$controller->processRequest($request, $response);
+			try {
+				$controller->processRequest($request, $response);
+			} catch (F3_FLOW3_MVC_Exception_StopAction $ignoredException) {
+			}
 		}
 	}
 

@@ -82,6 +82,22 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 
 	/**
 	 * @test
+	 * @expectedException F3_FLOW3_MVC_Exception_StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardThrowsAStopActionException() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$controller->processRequest($request, $response);
+		$controller->forward('default');
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardResetsTheDispatchedFlagOfTheRequest() {
@@ -93,7 +109,10 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 
 		$controller->processRequest($request, $response);
 		$this->assertTrue($request->isDispatched());
-		$controller->forward('default');
+		try {
+			$controller->forward('default');
+		} catch(F3_FLOW3_MVC_Exception_StopAction $exception) {
+		}
 		$this->assertFalse($request->isDispatched());
 	}
 
@@ -109,11 +128,30 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
 
 		$controller->processRequest($request, $response);
-		$controller->forward('some', 'Alternative', 'TestPackage');
+		try {
+			$controller->forward('some', 'Alternative', 'TestPackage');
+		} catch(F3_FLOW3_MVC_Exception_StopAction $exception) {
+		}
 
 		$this->assertEquals('some', $request->getControllerActionName());
 		$this->assertEquals('Alternative', $request->getControllerName());
 		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3_FLOW3_MVC_Exception_StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function redirectThrowsAStopActionException() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$controller->processRequest($request, $response);
+		$controller->redirect('http://typo3.org');
 	}
 }
 ?>
