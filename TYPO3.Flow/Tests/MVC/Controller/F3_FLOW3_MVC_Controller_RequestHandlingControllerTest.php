@@ -153,5 +153,30 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 		$controller->processRequest($request, $response);
 		$controller->redirect('http://typo3.org');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
+		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
+		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+
+		$controller = new F3_FLOW3_MVC_Controller_RequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+
+		$controller->processRequest($request, $response);
+		try {
+			$controller->throwStatus(404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
+			$this->fail('The exception was not thrown.');
+		} catch (F3_FLOW3_MVC_Exception_StopAction $exception) {
+		}
+
+		$expectedHeaders = array(
+			'HTTP/1.1 404 File Really Not Found',
+		);
+		$this->assertEquals($expectedHeaders, $response->getHeaders());
+		$this->assertEquals('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>', $response->getContent());
+	}
 }
 ?>

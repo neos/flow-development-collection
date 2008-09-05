@@ -159,6 +159,26 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	}
 
 	/**
+	 * Sends the specified HTTP status immediately.
+	 *
+	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 *
+	 * @param integer $statusCode The HTTP status code
+	 * @param string $statusMessage A custom HTTP status message
+	 * @param string $content Body content which further explains the status
+	 * @throws F3_FLOW3_MVC_Exception_UnsupportedRequestType If the request is not a web request
+	 * @throws F3_FLOW3_MVC_Exception_StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function throwStatus($statusCode, $statusMessage = NULL, $content = '') {
+		if (!$this->request instanceof F3_FLOW3_MVC_Web_Request) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType('throwStatus() only supports web requests.', 1220539739);
+
+		$this->response->setStatus($statusCode, $statusMessage);
+		$this->response->setContent($content);
+		throw new F3_FLOW3_MVC_Exception_StopAction();
+	}
+
+	/**
 	 * Returns the arguments which are defined for this controller.
 	 *
 	 * Use this information if you want to know about what arguments are supported and / or
