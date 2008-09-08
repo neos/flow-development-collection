@@ -34,7 +34,7 @@ class F3_FLOW3_Persistence_ClassSchema {
 	const MODELTYPE_ENTITY = 2;
 	const MODELTYPE_VALUEOBJECT = 3;
 
-	const ALLOWED_TYPES_PATTERN = '/^(integer|float|boolean|string|array|DateTime|F3_[a-zA-Z0-9_]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^(integer|int|float|boolean|string|array|DateTime|F3_[a-zA-Z0-9_]+)/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -96,7 +96,7 @@ class F3_FLOW3_Persistence_ClassSchema {
 	public function setProperty($name, $type) {
 		$matches = array();
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$this->properties[$name] = $matches[1];
+			$this->properties[$name] = ($matches[1] == 'int') ? 'integer' : $matches[1];
 		} else {
 			throw new F3_FLOW3_Persistence_Exception_InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
