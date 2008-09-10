@@ -277,7 +277,7 @@ class F3_FLOW3_Property_Mapper {
 
 		$this->validateTarget();
 
-		if ($this->onlyWriteOnNoErrors && $this->mappingResults->hasErrors) $this->target = $this->originalTarget;
+		if ($this->onlyWriteOnNoErrors && $this->mappingResults->hasErrors()) $this->target = $this->originalTarget;
 	}
 
 	/**
