@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
-require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling.php');
+require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController.php');
 
 /**
  * Testcase for the MVC Request Handling Controller
@@ -39,7 +39,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingControllerTest extends F3_Testing_B
 	public function onlySupportedRequestTypesAreAccepted() {
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
-		$controller = new F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$controller = new F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
 		$controller->supportedRequestTypes = array('F3_Something_Request');
 
 		try {

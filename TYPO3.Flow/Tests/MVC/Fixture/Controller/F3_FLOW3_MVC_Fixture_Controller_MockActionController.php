@@ -17,18 +17,28 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_PresentationController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  */
 
 /**
- * A presentation controller ("presenter")
+ * A mock ActionController
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_PresentationController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_PresentationController extends F3_FLOW3_MVC_Controller_AbstractController {
+class F3_FLOW3_MVC_Fixture_Controller_MockActionController extends F3_FLOW3_MVC_Controller_ActionController {
 
+	/**
+	 * This action returns a string
+	 *
+	 * @return string A string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function returnSomeStringAction() {
+		return 'Mock Action Controller Return String';
+	}
 }
+
 ?>

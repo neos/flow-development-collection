@@ -40,7 +40,7 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * @var string Contains the request method
 	 */
-	protected $method;
+	protected $method = F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET;
 
 	/**
 	 * @var F3_FLOW3_Utility_Environment

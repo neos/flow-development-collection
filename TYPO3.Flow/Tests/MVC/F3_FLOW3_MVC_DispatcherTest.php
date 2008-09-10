@@ -20,8 +20,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  */
 
-require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling.php');
-require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockExceptionThrowing.php');
+require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController.php');
+require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockExceptionThrowingController.php');
 
 /**
  * Testcase for the MVC Dispatcher
@@ -89,10 +89,10 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$request->injectComponentManager($this->componentManager);
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockExceptionThrowing');
+		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockExceptionThrowingController');
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
-		$request->setControllerName('MockExceptionThrowing');
+		$request->setControllerName('MockExceptionThrowingController');
 
 		$request->setControllerActionName('stopAction');
 		$this->dispatcher->dispatch($request, $response);
@@ -101,7 +101,7 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$request->setControllerActionName('throwGeneralException');
 		try {
 			$this->dispatcher->dispatch($request, $response);
-			$this->fail('The exception thrown by the second action was catched somewhere.');
+			$this->fail('The exception thrown by the second action was catched somewhere or the action was not called.');
 		} catch (F3_FLOW3_MVC_Exception $exception) {
 		}
 	}
@@ -115,11 +115,11 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$request->injectComponentManager($this->componentManager);
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
-		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
+		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController');
+		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController');
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
-		$request->setControllerName('MockRequestHandling');
+		$request->setControllerName('MockRequestHandlingController');
 
 		$this->dispatcher->dispatch($request, $response);
 		$this->assertTrue($controller->requestHasBeenProcessed, 'It seems like the controller has not been called by the dispatcher.');
@@ -140,11 +140,11 @@ class F3_FLOW3_MVC_DispatcherTest extends F3_Testing_BaseTestCase {
 		$request->injectComponentManager($this->componentManager);
 		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
 
-		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
-		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandling');
+		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController');
+		$controller = $this->componentFactory->getComponent('F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController');
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerComponentNamePattern('F3_@package_MVC_Fixture_Controller_@controller');
-		$request->setControllerName('MockRequestHandling');
+		$request->setControllerName('MockRequestHandlingController');
 
 		$this->dispatcher->dispatch($request, $response);
 		$this->assertSame($settings, $controller->getSettings());

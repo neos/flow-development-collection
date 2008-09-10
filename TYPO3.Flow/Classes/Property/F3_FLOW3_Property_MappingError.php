@@ -27,6 +27,7 @@ declare(ENCODING = 'utf-8');
  * @subpackage Property
  * @version $Id: F3_FLOW3_Property_MappingError.php 681 2008-04-02 14:00:27Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class F3_FLOW3_Property_MappingError extends F3_FLOW3_Error_Error {
 

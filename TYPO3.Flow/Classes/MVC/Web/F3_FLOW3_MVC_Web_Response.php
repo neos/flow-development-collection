@@ -106,7 +106,7 @@ class F3_FLOW3_MVC_Web_Response extends F3_FLOW3_MVC_Response {
 	/**
 	 * Sets the HTTP status code and (optionally) a customized message.
 	 *
-	 * @param string $code The status code
+	 * @param integer $code The status code
 	 * @param string $message If specified, this message is sent instead of the standard message
 	 * @return void
 	 * @throws InvalidArgumentException if the specified status code is not valid
@@ -118,6 +118,16 @@ class F3_FLOW3_MVC_Web_Response extends F3_FLOW3_MVC_Response {
 
 		$this->statusCode = $code;
 		$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
+	}
+
+	/**
+	 * Returns status code and status message.
+	 *
+	 * @return string The status code and status message, eg. "404 Not Found"
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getStatus() {
+		return $this->statusCode . ' ' . $this->statusMessage;
 	}
 
 	/**

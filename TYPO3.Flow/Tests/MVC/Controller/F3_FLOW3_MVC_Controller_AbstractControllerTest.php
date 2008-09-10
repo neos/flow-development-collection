@@ -31,48 +31,6 @@ declare(ENCODING = 'utf-8');
 class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTestCase {
 
 	/**
-	 * Checks if the TestPackage controller handles a web request
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function processRequestCanProcessWebRequest() {
-		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
-		$dispatcher->injectSecurityContextHolder($this->getMock('F3_FLOW3_Security_ContextHolderInterface'));
-		$dispatcher->injectFirewall($this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface'));
-
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Default');
-
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
-
-		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('TestPackage Default Controller - Web Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
-	}
-
-	/**
-	 * Checks if the TestPackage controller handles a CLI request
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function processRequestCanProcessCLIRequest() {
-		$dispatcher = $this->componentFactory->getComponent('F3_FLOW3_MVC_Dispatcher');
-		$dispatcher->injectSecurityContextHolder($this->getMock('F3_FLOW3_Security_ContextHolderInterface'));
-		$dispatcher->injectFirewall($this->getMock('F3_FLOW3_Security_Authorization_FirewallInterface'));
-
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Default');
-
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Response');
-
-		$dispatcher->dispatch($request, $response);
-		$this->assertEquals('TestPackage Default Controller - CLI Request.', (string)$response->getContent(), 'The response returned by the TestPackage controller was not as expected.');
-	}
-
-	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

@@ -27,7 +27,6 @@ declare(ENCODING = 'utf-8');
  * @subpackage Property
  * @version $Id:F3_FLOW3_Property_MappingResults.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
  * @scope prototype
  */
 class F3_FLOW3_Property_MappingResults {

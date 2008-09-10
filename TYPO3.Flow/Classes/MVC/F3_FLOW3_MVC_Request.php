@@ -138,13 +138,14 @@ class F3_FLOW3_MVC_Request {
 	 * controller name
 	 *
 	 * @return string The controller's Component Name
+	 * @throws F3_FLOW3_MVC_Exception_NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentName() {
 		$lowercaseComponentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
 		$lowercaseComponentName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseComponentName));
 		$componentName = $this->componentManager->getCaseSensitiveComponentName($lowercaseComponentName);
-		if ($componentName === FALSE) $componentName = 'F3_FLOW3_MVC_Controller_Default';
+		if ($componentName === FALSE) throw new F3_FLOW3_MVC_Exception_NoSuchController('The controller component "' . $lowercaseComponentName . '" does not exist.', 1220884009);
 
 		return $componentName;
 	}

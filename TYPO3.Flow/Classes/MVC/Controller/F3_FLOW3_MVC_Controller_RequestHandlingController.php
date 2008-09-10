@@ -117,6 +117,7 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
+		$this->initializeArguments();
 		$this->mapRequestArgumentsToLocalArguments();
 	}
 
@@ -170,10 +171,11 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 * @throws F3_FLOW3_MVC_Exception_StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function throwStatus($statusCode, $statusMessage = NULL, $content = '') {
+	public function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
 		if (!$this->request instanceof F3_FLOW3_MVC_Web_Request) throw new F3_FLOW3_MVC_Exception_UnsupportedRequestType('throwStatus() only supports web requests.', 1220539739);
 
 		$this->response->setStatus($statusCode, $statusMessage);
+		if ($content === NULL) $content = $this->response->getStatus();
 		$this->response->setContent($content);
 		throw new F3_FLOW3_MVC_Exception_StopAction();
 	}
@@ -193,6 +195,18 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	}
 
 	/**
+	 * Initializes (registers / defines) arguments of this controller.
+	 *
+	 * Override this method to add arguments which can later be accessed
+	 * by the action methods.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeArguments() {
+	}
+
+	/**
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
@@ -200,32 +214,22 @@ class F3_FLOW3_MVC_Controller_RequestHandlingController extends F3_FLOW3_MVC_Con
 	 */
 	protected function mapRequestArgumentsToLocalArguments() {
 		$this->propertyMapper->setTarget($this->arguments);
-
 		foreach ($this->arguments as $argument) {
-
 			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter());
 			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
 		}
 
-		$argumentsValidator = $this->createNewArgumentsValidator($this->arguments);
+		$argumentsValidator = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_ArgumentsValidator', $this->arguments);
 		$this->propertyMapper->registerValidator($argumentsValidator);
 		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
 		$this->propertyMapper->map(new ArrayObject($this->request->getArguments()));
 
 		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
+		$this->propertyMapper->map(new ArrayObject($this->request->getArguments()));
+
 		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
 			$this->arguments[$propertyName]->setValidity(FALSE);
 		}
-	}
-
-	/**
-	 * Factory method to create a arguments validator
-	 *
-	 * @return F3_FLOW3_MVC_Controller_ArgumentsValidator An argument validator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function createNewArgumentsValidator() {
-		return $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_ArgumentsValidator', $this->arguments);
 	}
 }
 

@@ -20,7 +20,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
-require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockAction.php');
+require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockActionController.php');
 
 /**
  * Testcase for the MVC Action Controller
@@ -36,7 +36,7 @@ class F3_FLOW3_MVC_Controller_ActionControllerTest extends F3_Testing_BaseTestCa
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsReturnedByActionMethodAreAppendedToResponseObject() {
-		$mockController = new F3_FLOW3_MVC_Fixture_Controller_MockAction($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$mockController = new F3_FLOW3_MVC_Fixture_Controller_MockActionController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
 		$mockController->injectComponentManager($this->componentManager);
 		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
 		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');

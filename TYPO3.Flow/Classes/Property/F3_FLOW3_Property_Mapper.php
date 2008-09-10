@@ -43,7 +43,6 @@ declare(ENCODING = 'utf-8');
  * @subpackage Property
  * @version $Id:F3_FLOW3_Property_Mapper.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- *
  * @scope prototype
  */
 class F3_FLOW3_Property_Mapper {
@@ -106,12 +105,10 @@ class F3_FLOW3_Property_Mapper {
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface :$componentFactory A component factory implementation
-	 * @param F3_FLOW3_Property_MappingResults :$mappingResults A mapping results object
+	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A component factory implementation
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Property_MappingResults $mappingResults) {
-		$this->mappingResults = $mappingResults;
+	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -146,7 +143,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setOnlyWriteOnNoErrors($onlyWriteOnNoErrors) {
-		$this->$onlyWriteOnNoErrors = $onlyWriteOnNoErrors;
+		$this->onlyWriteOnNoErrors = $onlyWriteOnNoErrors;
 	}
 
 	/**
@@ -157,7 +154,7 @@ class F3_FLOW3_Property_Mapper {
 	 * @see setMappingMode
 	 */
 	public function getOnlyWriteOnNoErrors() {
-		return $this->$onlyWriteOnNoErrors;
+		return $this->onlyWriteOnNoErrors;
 	}
 
 	/**
@@ -254,10 +251,10 @@ class F3_FLOW3_Property_Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function map(ArrayObject $properties) {
+		$this->mappingResults = $this->createNewMappingResults();
+
 		if (!is_object($this->target)) throw new F3_FLOW3_Property_Exception_InvalidTargetObject('No target object has been defined yet.', 1187978014);
-
 		if ($this->onlyWriteOnNoErrors) $this->originalTarget = clone $this->target;
-
 		if ($this->validator === NULL) $this->resolveValidator();
 
 		foreach ($properties as $propertyName => $propertyValue) {
@@ -457,6 +454,16 @@ class F3_FLOW3_Property_Mapper {
 				}
 			}
 		}
+	}
+
+	/**
+	 * This is a factory method to get a fresh mapping results object
+	 *
+	 * @return F3_FLOW3_Property_MappingResults A Mapping Results object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function createNewMappingResults() {
+		return $this->componentFactory->getComponent('F3_FLOW3_Property_MappingResults');
 	}
 
 	/**
