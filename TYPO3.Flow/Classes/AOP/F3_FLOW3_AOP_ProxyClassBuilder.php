@@ -71,7 +71,7 @@ class F3_FLOW3_AOP_ProxyClassBuilder {
 			'METHODS_INTERCEPTOR_CODE' => self::buildMethodsInterceptorCode($interceptedMethods, $targetClass)
 		);
 
-		$proxyCode = file_get_contents(FLOW3_PATH_PACKAGES . 'FLOW3/Resources/PHP/AOPProxyClassTemplate.php');
+		$proxyCode = file_get_contents(FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Private/AOP/AOPProxyClassTemplate.php');
 		foreach ($proxyClassTokens as $token => $value) {
 			$proxyCode = str_replace('###' . $token . '###', $value, $proxyCode);
 		}
