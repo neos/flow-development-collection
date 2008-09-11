@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE ldml SYSTEM "http://www.unicode.org/cldr/dtd/1.6/ldml.dtd">
+<ldml>
+	<identity>
+		<version number="$Revision: 1.4 $"/>
+		<generation date="$Date: 2008/06/12 17:39:03 $"/>
+		<language type="fil" /> 
+	</identity>
+		<collations>
+			<collation type="standard" draft="unconfirmed" alt="proposed">
+				<rules>
+					<reset>N</reset>
+                    <p>ñ</p>
+                    <t>Ñ</t>
+                    <p>ng</p>
+                    <t>Ng</t>
+                    <t>NG</t>
+				</rules>
+			</collation  >
+		</collations>
+</ldml>
