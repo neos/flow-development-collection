@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Locale
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -33,9 +33,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Locale
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @see http://www.unicode.org/reports/tr35/
+ * @scope prototype
  */
 class F3_FLOW3_Locale_Locale {
 

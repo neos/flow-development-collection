@@ -34,6 +34,17 @@ class F3_FLOW3_Locale_LocaleTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function aLocaleIsPrototype() {
+		$locale1 = $this->componentFactory->getComponent('F3_FLOW3_Locale_Locale', 'de_DE');
+		$locale2 = $this->componentFactory->getComponent('F3_FLOW3_Locale_Locale', 'de_DE');
+
+		$this->assertNotSame($locale1, $locale2);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers() {
 		try {
 			new F3_FLOW3_Locale_Locale('');
