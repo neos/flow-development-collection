@@ -179,6 +179,7 @@ final class F3_FLOW3 {
 		$this->initializePackages();
 		$this->initializeComponents();
 		$this->initializeAOP();
+		$this->initializeLocale();
 		$this->initializeSession();
 		$this->initializePersistence();
 		$this->initializeResources();
@@ -356,6 +357,17 @@ final class F3_FLOW3 {
 
 			$this->componentManager->setComponentConfigurations($componentConfigurations);
 		}
+	}
+
+	/**
+	 * Initializes the Locale service
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see intialize()
+	 */
+	public function initializeLocale() {
+		$this->componentFactory->getComponent('F3_FLOW3_Locale_Service', $this->settings)->initialize();
 	}
 
 	/**

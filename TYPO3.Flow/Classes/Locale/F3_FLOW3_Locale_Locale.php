@@ -91,6 +91,7 @@ class F3_FLOW3_Locale_Locale {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($localeIdentifier) {
+		if (!is_string($localeIdentifier)) throw new InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
 		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new F3_FLOW3_Locale_Exception_InvalidLocaleIdentifier('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
