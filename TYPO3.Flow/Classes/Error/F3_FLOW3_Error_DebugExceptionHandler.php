@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHandlerInterface {
+class DebugExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
@@ -44,11 +45,11 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 	/**
 	 * Displays the given exception
 	 *
-	 * @param Exception $exception: The exception object
+	 * @param ::Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function handleException(Exception $exception) {
+	public function handleException(::Exception $exception) {
 		switch (PHP_SAPI) {
 			case 'cli' :
 				$this->echoExceptionCLI($exception);
@@ -61,11 +62,11 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
-	 * @param  Exception $exception: The exception object
+	 * @param  ::Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function echoExceptionWeb(Exception $exception) {
+	protected function echoExceptionWeb(::Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
 		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
 
@@ -122,11 +123,11 @@ class F3_FLOW3_Error_DebugExceptionHandler implements F3_FLOW3_Error_ExceptionHa
 	/**
 	 * Formats and echoes the exception for the command line
 	 *
-	 * @param Exception $exception: The exception object
+	 * @param ::Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function echoExceptionCLI(Exception $exception) {
+	protected function echoExceptionCLI(::Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
 		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
 

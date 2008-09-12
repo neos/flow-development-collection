@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,25 +30,25 @@ declare(ENCODING = 'utf-8');
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_RouterInterface {
+class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the Component Manager
+	 * @var F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the Component Manager
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @var F3::FLOW3::Component::FactoryInterface $componentFactory
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container The FLOW3 configuration
+	 * @var F3::FLOW3::Configuration::Container The FLOW3 configuration
 	 */
 	protected $configuration;
 
@@ -60,13 +61,13 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
-	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
-	 * @param F3_FLOW3_Configuration_Manager $configurationManager A reference to the configuration manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $utilityEnvironment) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Utility::Environment $utilityEnvironment) {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
@@ -75,13 +76,13 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	/**
 	 * Sets the routes configuration.
 	 *
-	 * @param F3_FLOW3_Configuration_Container $configuration The routes configuration
+	 * @param F3::FLOW3::Configuration::Container $configuration The routes configuration
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setRoutesConfiguration(F3_FLOW3_Configuration_Container $routesConfiguration) {
+	public function setRoutesConfiguration(F3::FLOW3::Configuration::Container $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
-			$route = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
+			$route = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::Route');
 			$route->setUrlPattern($routeConfiguration->urlPattern);
 			$route->setDefaults($routeConfiguration->defaults);
 			if (isset($routeConfiguration->controllerComponentNamePattern)) $route->setControllerComponentNamePattern($routeConfiguration->controllerComponentNamePattern);
@@ -93,15 +94,15 @@ class F3_FLOW3_MVC_Web_Routing_Router implements F3_FLOW3_MVC_Web_Routing_Router
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request The web request to be analyzed. Will be modified by the router.
+	 * @param F3::FLOW3::MVC::Web::Request $request The web request to be analyzed. Will be modified by the router.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function route(F3_FLOW3_MVC_Web_Request $request) {
+	public function route(F3::FLOW3::MVC::Web::Request $request) {
 		$requestURI = $request->getRequestURI();
-		$requestPath = F3_PHP6_Functions::substr($requestURI->getPath(), F3_PHP6_Functions::strlen((string)$request->getBaseURI()->getPath()));
-		if (F3_PHP6_Functions::substr($requestPath, 0, 9) == 'index.php' || F3_PHP6_Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
+		$requestPath = F3::PHP6::Functions::substr($requestURI->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
+		if (F3::PHP6::Functions::substr($requestPath, 0, 9) == 'index.php' || F3::PHP6::Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}
 

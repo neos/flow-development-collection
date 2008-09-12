@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,55 +30,55 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface {
+class Factory implements F3::FLOW3::Component::FactoryInterface {
 
 	/**
 	 * A reference to the component manager
 	 *
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectCacheInterface Holds an instance of the Component Object Cache
+	 * @var F3::FLOW3::Component::ObjectCacheInterface Holds an instance of the Component Object Cache
 	 */
 	protected $componentObjectCache;
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectBuilder Holds an instance of the Component Object Builder
+	 * @var F3::FLOW3::Component::ObjectBuilder Holds an instance of the Component Object Builder
 	 */
 	protected $componentObjectBuilder;
 
 	/**
 	 * Injects the component manager
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
 	/**
 	 * Injects the component object builder
 	 *
-	 * @param F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder
+	 * @param F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentObjectBuilder(F3_FLOW3_Component_ObjectBuilder $componentObjectBuilder) {
+	public function injectComponentObjectBuilder(F3::FLOW3::Component::ObjectBuilder $componentObjectBuilder) {
 		$this->componentObjectBuilder = $componentObjectBuilder;
 	}
 
 	/**
 	 * Injects the component object cache
 	 *
-	 * @param F3_FLOW3_Component_ObjectCacheInterface $componentObjectCache
+	 * @param F3::FLOW3::Component::ObjectCacheInterface $componentObjectCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentObjectCache(F3_FLOW3_Component_ObjectCacheInterface $componentObjectCache) {
+	public function injectComponentObjectCache(F3::FLOW3::Component::ObjectCacheInterface $componentObjectCache) {
 		$this->componentObjectCache = $componentObjectCache;
 	}
 
@@ -101,10 +102,10 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 	 * @param string $componentName The name of the component to return an instance of
 	 * @return object The component instance
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if a component with the given name does not exist
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
 	 */
 	public function getComponent($componentName) {
-		if (!$this->componentManager->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
+		if (!$this->componentManager->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);
 		$arguments = array_slice(func_get_args(), 1);
@@ -122,7 +123,7 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 				}
 				break;
 			default :
-				throw new F3_FLOW3_Component_Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
+				throw new F3::FLOW3::Component::Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
 		}
 
 		return $componentObject;
@@ -130,17 +131,17 @@ class F3_FLOW3_Component_Factory implements F3_FLOW3_Component_FactoryInterface 
 
 	/**
 	 * Returns straight-value constructor arguments for a component by creating appropriate
-	 * F3_FLOW3_Component_ConfigurationArgument objects.
+	 * F3::FLOW3::Component::ConfigurationArgument objects.
 	 *
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of F3_FLOW3_Component_ConfigurationArgument which can be passed to the object builder
+	 * @return array An array of F3::FLOW3::Component::ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see getComponent()
 	 */
 	protected function getOverridingConstructorArguments(array $arguments) {
 		$constructorArguments = array();
 		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new F3_FLOW3_Component_ConfigurationArgument($index + 1, $value, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+			$constructorArguments[$index + 1] = new F3::FLOW3::Component::ConfigurationArgument($index + 1, $value, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
 		return $constructorArguments;
 	}

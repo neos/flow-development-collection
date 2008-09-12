@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_RepositoryInterface {
+class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 
 	/**
 	 * Objects of this repository
@@ -38,18 +39,18 @@ class F3_FLOW3_Persistence_Repository implements F3_FLOW3_Persistence_Repository
 	protected $objects = array();
 
 	/**
-	 * @var F3_FLOW3_Persistence_QueryFactoryInterface
+	 * @var F3::FLOW3::Persistence::QueryFactoryInterface
 	 */
 	protected $queryFactory;
 
 	/**
 	 * Injects a QueryFactory instance
 	 *
-	 * @param F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory
+	 * @param F3::FLOW3::Persistence::QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectQueryFactory(F3_FLOW3_Persistence_QueryFactoryInterface $queryFactory) {
+	public function injectQueryFactory(F3::FLOW3::Persistence::QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
 	}
 

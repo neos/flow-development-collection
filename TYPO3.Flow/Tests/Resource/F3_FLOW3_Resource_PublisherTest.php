@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,17 +18,17 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the resource publisher
  *
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
+class PublisherTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @var string
@@ -35,7 +36,7 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	protected $publicResourcePath;
 
 	/**
-	 * @var F3_FLOW3_Resource_Publisher
+	 * @var F3::FLOW3::Resource::Publisher
 	 */
 	protected $publisher;
 
@@ -43,12 +44,12 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->componentFactory->getComponent('F3_FLOW3_Utility_Environment');
+		$environment = $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
 		$this->publicResourcePath = $environment->getPathToTemporaryDirectory() . uniqid() . '/';
 
-		$metadataCache = $this->getMock('F3_FLOW3_Cache_VariableCache', array(), array(), '', FALSE);
+		$metadataCache = $this->getMock('F3::FLOW3::Cache::VariableCache', array(), array(), '', FALSE);
 
-		$this->publisher = new F3_FLOW3_Resource_Publisher();
+		$this->publisher = new F3::FLOW3::Resource::Publisher();
 		$this->publisher->injectComponentFactory($this->componentFactory);
 		$this->publisher->initializeMirrorDirectory($this->publicResourcePath);
 		$this->publisher->setMetadataCache($metadataCache);
@@ -67,7 +68,7 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canExtractResourceMetadataForURI() {
-		$URI = new F3_FLOW3_Property_DataType_URI('file://TestPackage/Public/TestTemplate.html');
+		$URI = new F3::FLOW3::Property::DataType::URI('file://TestPackage/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
 			'path' => $this->publicResourcePath . 'TestPackage/Public',
@@ -87,7 +88,7 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	 * @todo Due to no metadata caching the check for subsequent calls is somewhat bogus. Needs to be fixed.
 	 */
 	public function canGetMetadataForURI() {
-		$URI = new F3_FLOW3_Property_DataType_URI('file://TestPackage/Public/TestTemplate.html');
+		$URI = new F3::FLOW3::Property::DataType::URI('file://TestPackage/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
 			'path' => $this->publicResourcePath . 'TestPackage/Public',
@@ -117,7 +118,7 @@ class F3_FLOW3_Resource_PublisherTest extends F3_Testing_BaseTestCase {
 	 */
 	public function tearDown() {
 		if (is_dir($this->publicResourcePath)) {
-			F3_FLOW3_Utility_Files::removeDirectoryRecursively($this->publicResourcePath);
+			F3::FLOW3::Utility::Files::removeDirectoryRecursively($this->publicResourcePath);
 		}
 	}
 

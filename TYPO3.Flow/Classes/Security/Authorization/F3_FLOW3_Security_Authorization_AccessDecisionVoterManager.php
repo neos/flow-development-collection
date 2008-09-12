@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,11 +29,11 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_AccessDecisionVoterManager implements F3_FLOW3_Security_Authorization_AccessDecisionManagerInterface {
+class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface {
 
 //TODO: This has to be filled by configuration and is extended by automatic resolving jointpoint voters in the decide method
 	/**
-	 * @var array Array of F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface objects
+	 * @var array Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
 	 */
 	protected $accessDecisionVoters = array();
 
@@ -44,15 +45,15 @@ class F3_FLOW3_Security_Authorization_AccessDecisionVoterManager implements F3_F
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context.
-	 * It iterates over all available F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface objects.
+	 * It iterates over all available F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
-	public function decide(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		//TODO: resolve voters that could vote on the given method parameters (if $object is a joinpoint)
 		//return values of the voters: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	}

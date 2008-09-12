@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,17 +18,17 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the component class loader
  *
  * @package    FLOW3
- * @version    $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version    $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_ClassLoaderTest extends F3_Testing_BaseTestCase {
+class ClassLoaderTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks if the package autoloader loads classes from subdirectories.
@@ -36,8 +37,8 @@ class F3_FLOW3_Resource_ClassLoaderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromSubDirectoriesAreLoaded() {
-		$dummyObject = new F3_TestPackage_SubDirectory_ClassInSubDirectory;
-		$this->assertTrue(class_exists('F3_TestPackage_SubDirectory_ClassInSubDirectory'), 'The class in a subdirectory has not been loaded by the package autoloader.');
+		$dummyObject = new F3::TestPackage::SubDirectory::ClassInSubDirectory;
+		$this->assertTrue(class_exists('F3::TestPackage::SubDirectory::ClassInSubDirectory'), 'The class in a subdirectory has not been loaded by the package autoloader.');
 	}
 
 	/**
@@ -45,7 +46,7 @@ class F3_FLOW3_Resource_ClassLoaderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
-		$this->assertTrue(class_exists('F3_TestPackage_SubDirectory_1_2_3_4_5_6_7_8_9_10_TheClass', TRUE), 'The class in a very deep sub directory has not been loaded by the package autoloader.');
+		$this->assertTrue(class_exists('F3::TestPackage::SubDirectory::A::B::C::D::E::F::G::H::I::J::TheClass', TRUE), 'The class in a very deep sub directory has not been loaded by the package autoloader.');
 	}
 }
 ?>

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
+class MethodTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @var mixed
@@ -41,8 +42,8 @@ class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
-		$this->assertType('F3_FLOW3_Reflection_Class', $method->getDeclaringClass());
+		$method = new F3::FLOW3::Reflection::Method(__CLASS__, __FUNCTION__);
+		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $method->getDeclaringClass());
 	}
 
 	/**
@@ -50,9 +51,9 @@ class F3_FLOW3_Reflection_MethodTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new F3_FLOW3_Reflection_Method(__CLASS__, __FUNCTION__);
+		$method = new F3::FLOW3::Reflection::Method(__CLASS__, __FUNCTION__);
 		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3_FLOW3_Reflection_Parameter', $parameter);
+			$this->assertType('F3::FLOW3::Reflection::Parameter', $parameter);
 			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
 		}
 	}

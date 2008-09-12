@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,21 +29,21 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_RequestPatternResolver {
+class RequestPatternResolver {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface The component manager
+	 * @var F3::FLOW3::Component::ManagerInterface The component manager
 	 */
 	protected $componentManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
@@ -51,7 +52,7 @@ class F3_FLOW3_Security_RequestPatternResolver {
 	 *
 	 * @param string $name The (short) name of the pattern
 	 * @return string The class name of the request pattern, NULL if no class was found.
-	 * @throws F3_FLOW3_Security_Exception_NoRequestPatternFound
+	 * @throws F3::FLOW3::Security::Exception::NoRequestPatternFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClass($name) {
@@ -60,12 +61,12 @@ class F3_FLOW3_Security_RequestPatternResolver {
 		$nameIsClassName = $this->componentManager->getCaseSensitiveComponentName($name);
 		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
-		$extendedNameIsClassName = $this->componentManager->getCaseSensitiveComponentName('F3_FLOW3_Security_RequestPattern_' . $name);
+		$extendedNameIsClassName = $this->componentManager->getCaseSensitiveComponentName('F3::FLOW3::Security::RequestPattern::' . $name);
 		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
 		if ($resolvedClassName != '') return $resolvedClassName;
 
-		throw new F3_FLOW3_Security_Exception_NoRequestPatternFound('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new F3::FLOW3::Security::Exception::NoRequestPatternFound('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

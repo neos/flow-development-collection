@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,19 +29,19 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_ProviderResolverTest extends F3_Testing_BaseTestCase {
+class ProviderResolverTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderClassThrowsAnExceptionIfNoProviderIsAvailable() {
-		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
 
 		try {
 			$providerResolver->resolveProviderClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Security_Exception_NoAuthenticationProviderFound $exception) {
+		} catch (F3::FLOW3::Security::Exception::NoAuthenticationProviderFound $exception) {
 
 		}
 	}
@@ -50,10 +51,10 @@ class F3_FLOW3_Security_Authentication_ProviderResolverTest extends F3_Testing_B
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
-		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
 		$providerClass = $providerResolver->resolveProviderClass('UsernamePassword');
 
-		$this->assertEquals('F3_FLOW3_Security_Authentication_Provider_UsernamePassword', $providerClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::FLOW3::Security::Authentication::Provider::UsernamePassword', $providerClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -61,10 +62,10 @@ class F3_FLOW3_Security_Authentication_ProviderResolverTest extends F3_Testing_B
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForACompleteClassname() {
-		$providerResolver = new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager);
-		$providerClass = $providerResolver->resolveProviderClass('F3_TestPackage_TestAuthenticationProvider');
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
+		$providerClass = $providerResolver->resolveProviderClass('F3::TestPackage::TestAuthenticationProvider');
 
-		$this->assertEquals('F3_TestPackage_TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::TestPackage::TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

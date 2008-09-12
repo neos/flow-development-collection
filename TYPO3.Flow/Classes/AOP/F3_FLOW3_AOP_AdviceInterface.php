@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,30 +27,30 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AdviceInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::AdviceInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @see F3_FLOW3_AOP_InterceptorInterface
+ * @see F3::FLOW3::AOP::InterceptorInterface
  */
-interface F3_FLOW3_AOP_AdviceInterface {
+interface AdviceInterface {
 
 	/**
 	 * Constructor
 	 *
 	 * @param  string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  F3_FLOW3_Component_ManagerInterface $componentManager: A reference to the component factory
+	 * @param  F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component factory
 	 * @return void
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3_FLOW3_Component_FactoryInterface $componentFactory);
+	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::FactoryInterface $componentFactory);
 
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param  F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Optionally the result of the advice method
 	 */
-	public function invoke(F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns the aspect's component name which has been passed to the constructor

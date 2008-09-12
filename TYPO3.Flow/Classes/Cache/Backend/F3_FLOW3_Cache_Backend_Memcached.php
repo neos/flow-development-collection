@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache::Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
+class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 
 	/**
 	 * @var Memcache
@@ -52,7 +53,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	protected $identifierPrefix;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $environment;
 
@@ -64,18 +65,18 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($context, $options = array()) {
-		if (!extension_loaded('memcache')) throw new F3_FLOW3_Cache_Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
+		if (!extension_loaded('memcache')) throw new F3::FLOW3::Cache::Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
 		parent::__construct($context, $options);
 	}
 
 	/**
 	 * Injects the environment utility
 	 *
-	 * @param F3_FLOW3_Utility_Environment $environment
+	 * @param F3::FLOW3::Utility::Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {
+	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -101,7 +102,7 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		$this->memcache = new Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 
-		if (!count($this->servers)) throw new F3_FLOW3_Cache_Exception('No servers were given to Memcache', 1213115903);
+		if (!count($this->servers)) throw new F3::FLOW3::Cache::Exception('No servers were given to Memcache', 1213115903);
 		foreach ($this->servers as $serverConf) {
 			$conf = explode(':',$serverConf, 2);
 			$this->memcache->addServer($conf[0], $conf[1]);
@@ -127,16 +128,16 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws F3_FLOW3_Cache_Exception if no cache frontend has been set.
+	 * @throws F3::FLOW3::Cache::Exception if no cache frontend has been set.
 	 * @throws InvalidArgumentException if the identifier is not valid
-	 * @throws F3_FLOW3_Cache_Exception_InvalidData if $data is not a string
+	 * @throws F3::FLOW3::Cache::Exception::InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function save($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
-		if (!$this->cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1207149215);
-		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		if (!$this->cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		if (!is_string($data)) throw new F3::FLOW3::Cache::Exception::InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 		foreach ($tags as $tag) {
 			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
 		}
@@ -145,11 +146,11 @@ class F3_FLOW3_Cache_Backend_Memcached extends F3_FLOW3_Cache_AbstractBackend {
 		try {
 			$this->remove($entryIdentifier);
 			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
-			if (!$success) throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server.', 1207165277);
+			if (!$success) throw new F3::FLOW3::Cache::Exception('Memcache was unable to connect to any server.', 1207165277);
 			$this->addTagsToTagIndex($tags);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
-		} catch(F3_FLOW3_Error_Exception $exception) {
-			throw new F3_FLOW3_Cache_Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
+		} catch(F3::FLOW3::Error::Exception $exception) {
+			throw new F3::FLOW3::Cache::Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
 		}
 	}
 

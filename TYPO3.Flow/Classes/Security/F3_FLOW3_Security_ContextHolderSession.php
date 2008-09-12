@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,87 +29,87 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_ContextHolderInterface {#
+class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterface {#
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory = NULL;
 
 	/**
-	 * @var F3_FLOW3_Security_Authentication_ManagerInterface
+	 * @var F3::FLOW3::Security::Authentication::ManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
-	 * @var F3_FLOW3_Session_Interface The user session
+	 * @var F3::FLOW3::Session::SessionInterface The user session
 	 */
 	protected $session = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Session_Interface $session An readily initialized session
+	 * @param F3::FLOW3::Session::SessionInterface $session An readily initialized session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Session_Interface $session) {
+	public function __construct(F3::FLOW3::Session::SessionInterface $session) {
 		$this->session = $session;
 	}
 
 	/**
 	 * Inject the component factory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory The component factory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $componentManager The authentication manager
+	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $componentManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAuthenticationManager(F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
 	 * Stores the current security context to the session.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
+	 * @param F3::FLOW3::Security::Context $securityContext The current security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setContext(F3_FLOW3_Security_Context $securityContext) {
-		$this->session->putData('F3_FLOW3_Security_ContextHolderSession', $securityContext);
+	public function setContext(F3::FLOW3::Security::Context $securityContext) {
+		$this->session->putData('F3::FLOW3::Security::ContextHolderSession', $securityContext);
 	}
 
 	/**
-	 * Returns the current F3_FLOW3_Security_Context. A new one is created if there was none in the session.
+	 * Returns the current F3::FLOW3::Security::Context. A new one is created if there was none in the session.
 	 *
-	 * @return F3_FLOW3_Security_Context The current security context
+	 * @return F3::FLOW3::Security::Context The current security context
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getContext() {
-		$context = $this->session->getData('F3_FLOW3_Security_ContextHolderSession');
+		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
 
-		if ($context instanceof F3_FLOW3_Security_Context) return $context;
-		return $this->componentFactory->getComponent('F3_FLOW3_Security_Context');
+		if ($context instanceof F3::FLOW3::Security::Context) return $context;
+		return $this->componentFactory->getComponent('F3::FLOW3::Security::Context');
 	}
 
 	/**
 	 * Initializes the security context for the given request. It is loaded from the session.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request the context should be initialized for
+	 * @param F3::FLOW3::MVC::Request $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function initializeContext(F3_FLOW3_MVC_Request $request) {
+	public function initializeContext(F3::FLOW3::MVC::Request $request) {
 		$context = $this->getContext();
 		$context->setRequest($request);
 
@@ -139,7 +140,7 @@ class F3_FLOW3_Security_ContextHolderSession implements F3_FLOW3_Security_Contex
 	 *
 	 * @params array Array of tokens provided by the authentication manager
 	 * @params array Array of tokens resotored from the session
-	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {

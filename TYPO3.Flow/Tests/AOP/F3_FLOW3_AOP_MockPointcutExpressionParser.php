@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_MockPointcutExpressionParser extends F3_FLOW3_AOP_PointcutExpressionParser {
+class MockPointcutExpressionParser extends F3::FLOW3::AOP::PointcutExpressionParser {
 
 	/**
 	 * Factory method for creating custom filter instances

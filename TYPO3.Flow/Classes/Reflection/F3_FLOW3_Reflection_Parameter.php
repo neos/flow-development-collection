@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_Parameter extends ReflectionParameter {
+class Parameter extends ReflectionParameter {
 
 	/**
 	 * The constructor, initializes the reflection parameter
@@ -45,22 +46,22 @@ class F3_FLOW3_Reflection_Parameter extends ReflectionParameter {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return F3_FLOW3_Reflection_Class The declaring class
+	 * @return F3::FLOW3::Reflection::ReflectionClass The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
+		return new F3::FLOW3::Reflection::ReflectionClass(parent::getDeclaringClass()->getName());
 	}
 
 	/**
 	 * Returns the parameter class
 	 *
-	 * @return F3_FLOW3_Reflection_Class The parameter class
+	 * @return F3::FLOW3::Reflection::ReflectionClass The parameter class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClass() {
 		$class = parent::getClass();
-		return (is_object($class)) ? new F3_FLOW3_Reflection_Class(parent::getClass()->getName()) : NULL;
+		return (is_object($class)) ? new F3::FLOW3::Reflection::ReflectionClass(parent::getClass()->getName()) : NULL;
 	}
 
 }

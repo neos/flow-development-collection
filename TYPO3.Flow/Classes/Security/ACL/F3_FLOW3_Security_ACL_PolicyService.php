@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,52 +30,52 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ACL_PolicyService implements F3_FLOW3_AOP_PointcutFilterInterface {
+class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager) {
+	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager) {
 		//Load the policy
 	}
 
 	/**
 	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method The method to check the name of
+	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class to check the name of
+	 * @param F3::FLOW3::Reflection::Method $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
 		//if there is a match, lay the configured roles and privileges for this method interception in a cache
 	}
 
 	/**
 	 * Returns the configured roles for the given joinpoint
 	 *
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
-	 * @return array Array of F3_FLOW3_Security_ACL_Role objects
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @return array Array of F3::FLOW3::Security::ACL::Role objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRoles(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function getRoles(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 
 	}
 
 	/**
 	 * Returns the privileges a specific role has for the given joinpoint
 	 *
-	 * @param F3_FLOW3_Security_ACL_Role $role The role for which the privileges should be returned
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param F3::FLOW3::Security::ACL::Role $role The role for which the privileges should be returned
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @param string $type Return only a special privilege e.g. ACCESS
-	 * @return array Array of F3_FLOW3_Security_ACL_Privilege objects
+	 * @return array Array of F3::FLOW3::Security::ACL::Privilege objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivileges(F3_FLOW3_Security_ACL_Role $role, F3_FLOW3_AOP_JoinPointInterface $joinPoint, $type = '') {
+	public function getPrivileges(F3::FLOW3::Security::ACL::Role $role, F3::FLOW3::AOP::JoinPointInterface $joinPoint, $type = '') {
 		//if the role is a composite role we walk up in the tree and the first PRIVILEGE_GRANT or PRIVILEGE_DENY found will be added to the returned privileges
 	}
 }

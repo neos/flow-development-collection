@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Tests::AOP::Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @something
  * @other
  */
-class F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething {
+class ClassTaggedWithSomething {
 
 	/**
 	 * Some method

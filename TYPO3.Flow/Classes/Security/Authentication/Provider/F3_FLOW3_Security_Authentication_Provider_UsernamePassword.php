@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication::Provider;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,17 +22,17 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * An authentication provider that authenticates F3_FLOW3_Security_Authentication_Token_UsernamePassword tokens.
+ * An authentication provider that authenticates F3::FLOW3::Security::Authentication::Token::UsernamePassword tokens.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_FLOW3_Security_Authentication_ProviderInterface {
+class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderInterface {
 
 	/**
-	 * @var F3_FLOW3_Security_Authentication_EntryPointInterface The entry point for this provider
+	 * @var F3::FLOW3::Security::Authentication::EntryPointInterface The entry point for this provider
 	 */
 	protected $entryPoint = NULL;
 
@@ -43,7 +44,7 @@ class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_F
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate($className) {
-		if ($className == 'F3_FLOW3_Security_Authentication_Token_UsernamePassword') return TRUE;
+		if ($className == 'F3::FLOW3::Security::Authentication::Token::UsernamePassword') return TRUE;
 		return FALSE;
 	}
 
@@ -54,18 +55,18 @@ class F3_FLOW3_Security_Authentication_Provider_UsernamePassword implements F3_F
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassname() {
-		return 'F3_FLOW3_Security_Authentication_Token_UsernamePassword';
+		return 'F3::FLOW3::Security::Authentication::Token::UsernamePassword';
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof F3_FLOW3_Security_Authentication_Token_UsernamePassword)) throw new F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword)) throw new F3::FLOW3::Security::Exception::UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
 		if ($credentials['username'] === 'FLOW3' && $credentials['password'] === 'verysecurepassword') $authenticationToken->setAuthenticationStatus(TRUE);

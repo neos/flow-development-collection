@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::Request.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,12 +26,12 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::Request.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
+class Request extends F3::FLOW3::MVC::Request {
 
 	/**
 	 * @var string The requested representation format
@@ -40,59 +41,59 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * @var string Contains the request method
 	 */
-	protected $method = F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET;
+	protected $method = F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $environment;
 
 	/**
-	 * @var F3_FLOW3_Property_DataType_URI The request URI
+	 * @var F3::FLOW3::Property::DataType::URI The request URI
 	 */
 	protected $requestURI;
 
 	/**
-	 * @var F3_FLOW3_Property_DataType_URI The base URI for this request - ie. the host and path leading to the index.php
+	 * @var F3::FLOW3::Property::DataType::URI The base URI for this request - ie. the host and path leading to the index.php
 	 */
 	protected $baseURI;
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param F3_FLOW3_Utility_Environment $environment
+	 * @param F3::FLOW3::Utility::Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {
+	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
 		$this->environment = $environment;
 	}
 
 	/**
 	 * Sets the request method
 	 *
-	 * @param string $method Name of the request method - one of the F3_FLOW3_Utility_Environment::REQUEST_METHOD_* constants
+	 * @param string $method Name of the request method - one of the F3::FLOW3::Utility::Environment::REQUEST_METHOD_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_InvalidRequestMethod if the request method is not supported
+	 * @throws F3::FLOW3::MVC::Exception::InvalidRequestMethod if the request method is not supported
 	 */
 	public function setMethod($method) {
 		if (array_search($method, array(
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_DELETE,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_PUT,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_HEAD,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_OPTIONS,
-				F3_FLOW3_Utility_Environment::REQUEST_METHOD_UNKNOWN
-			)) === FALSE) throw new F3_FLOW3_MVC_Exception_InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_HEAD,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_OPTIONS,
+				F3::FLOW3::Utility::Environment::REQUEST_METHOD_UNKNOWN
+			)) === FALSE) throw new F3::FLOW3::MVC::Exception::InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
 		$this->method = $method;
 	}
 
 	/**
 	 * Returns the name of the request method
 	 *
-	 * @return string Name of the request method - one of the F3_FLOW3_Utility_Environment::REQUEST_METHOD_* constants
+	 * @return string Name of the request method - one of the F3::FLOW3::Utility::Environment::REQUEST_METHOD_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod() {
@@ -102,11 +103,11 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Sets the request URI
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI $requestURI URI of this web request
+	 * @param F3::FLOW3::Property::DataType::URI $requestURI URI of this web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRequestURI(F3_FLOW3_Property_DataType_URI $requestURI) {
+	public function setRequestURI(F3::FLOW3::Property::DataType::URI $requestURI) {
 		$this->requestURI = clone $requestURI;
 		$this->baseURI = $this->detectBaseURI($requestURI);
 	}
@@ -114,7 +115,7 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return F3_FLOW3_Property_DataType_URI URI of this web request
+	 * @return F3::FLOW3::Property::DataType::URI URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestURI() {
@@ -124,18 +125,18 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Sets the base URI for this request.
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI $baseURI New base URI
+	 * @param F3::FLOW3::Property::DataType::URI $baseURI New base URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setBaseURI(F3_FLOW3_Property_DataType_URI $baseURI) {
+	public function setBaseURI(F3::FLOW3::Property::DataType::URI $baseURI) {
 		$this->baseURI = clone $baseURI;
 	}
 
 	/**
 	 * Returns the base URI
 	 *
-	 * @return F3_FLOW3_Property_DataType_URI Base URI of this web request
+	 * @return F3::FLOW3::Property::DataType::URI Base URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBaseURI() {
@@ -145,11 +146,11 @@ class F3_FLOW3_MVC_Web_Request extends F3_FLOW3_MVC_Request {
 	/**
 	 * Tries to detect the base URI of this request and returns it.
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI $requestURI URI of this web request
-	 * @return F3_FLOW3_Property_DataType_URI The detected base URI
+	 * @param F3::FLOW3::Property::DataType::URI $requestURI URI of this web request
+	 * @return F3::FLOW3::Property::DataType::URI The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function detectBaseURI(F3_FLOW3_Property_DataType_URI $requestURI) {
+	protected function detectBaseURI(F3::FLOW3::Property::DataType::URI $requestURI) {
 		$baseURI = clone $requestURI;
 		$baseURI->setQuery(NULL);
 		$baseURI->setFragment(NULL);

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,21 +31,21 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_ContextHolderInterface {
+interface ContextHolderInterface {
 
 	/**
 	 * Sets the current security context. Depending on the strategy the context may for example be stored
 	 * in a session.
 	 *
-	 * @param F3_FLOW3_Security_ContextInterface $securityContext The current security context
+	 * @param F3::FLOW3::Security::ContextInterface $securityContext The current security context
 	 * @return void
 	 */
-	public function setContext(F3_FLOW3_Security_Context $securityContext);
+	public function setContext(F3::FLOW3::Security::Context $securityContext);
 
 	/**
 	 * Returns the current security context.
 	 *
-	 * @return F3_FLOW3_Security_ContextInterface The current security context
+	 * @return F3::FLOW3::Security::ContextInterface The current security context
 	 */
 	public function getContext();
 
@@ -53,10 +54,10 @@ interface F3_FLOW3_Security_ContextHolderInterface {
 	 * loaded from a session. The AuthenticationManager has to be instanciated here, to set the authentication
 	 * tokens.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request the context should be initialized for
+	 * @param F3::FLOW3::MVC::Request $request The request the context should be initialized for
 	 * @return void
 	 */
-	public function initializeContext(F3_FLOW3_MVC_Request $request);
+	public function initializeContext(F3::FLOW3::MVC::Request $request);
 
 	/**
 	 * Clears the current security context.

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Tests::AOP::Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Tests_AOP_Fixture_CustomFilter implements F3_FLOW3_AOP_PointcutFilterInterface {
+class CustomFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 	/**
 	 * Matches always
@@ -36,7 +37,7 @@ class F3_FLOW3_Tests_AOP_Fixture_CustomFilter implements F3_FLOW3_AOP_PointcutFi
 	 * @return TRUE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
 		return TRUE;
 	}
 

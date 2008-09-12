@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Component_ObjectCacheInterface {
+interface ObjectCacheInterface {
 
 	/**
 	 * Returns a component object from the cache. If an instance of the required

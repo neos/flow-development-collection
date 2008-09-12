@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,21 +29,21 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Property_EditorInterface {
+interface EditorInterface {
 
 	/**
 	 * Sets the property which is going to be edited.
 	 *
 	 * @param  object $property: The property
 	 * @return void
-	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the value of this property object type can't be edited by this editor
+	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the value of this property object type can't be edited by this editor
 	 */
 	public function setProperty($property);
 
 	/**
 	 * Get the edited property.
 	 * @return object The edited property
-	 * @throws F3_FLOW3_Property_Exception_InvalidProperty if no property has been set yet
+	 * @throws F3::FLOW3::Property::Exception::InvalidProperty if no property has been set yet
 	 */
 	public function getProperty();
 
@@ -51,7 +52,7 @@ interface F3_FLOW3_Property_EditorInterface {
 	 *
 	 * @param  string $text: Text, used for setting the value of this property object
 	 * @return void
-	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the value of this property object type can't be set via text
+	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the value of this property object type can't be set via text
 	 */
 	public function setAsString($string);
 
@@ -59,7 +60,7 @@ interface F3_FLOW3_Property_EditorInterface {
 	 * Returns a text representation of the property
 	 *
 	 * @return string This property object as text
-	 * @throws F3_FLOW3_Property_Exception_InvalidProperty if no property has been set yet
+	 * @throws F3::FLOW3::Property::Exception::InvalidProperty if no property has been set yet
 	 */
 	public function getAsString();
 
@@ -69,7 +70,7 @@ interface F3_FLOW3_Property_EditorInterface {
 	 * @param string The format the property currently has.
 	 * @param object The property to be set.
 	 * @return void
-	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the property editor does not support the given format
+	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the property editor does not support the given format
 	 */
 	public function setAs($format, $property);
 
@@ -78,7 +79,7 @@ interface F3_FLOW3_Property_EditorInterface {
 	 *
 	 * @param string The format in which the property should be returned.
 	 * @return object The property in the given format.
-	 * @throws F3_FLOW3_Property_Exception_InvalidFormat if the property editor does not support the given format
+	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the property editor does not support the given format
 	 */
 	public function getAs($format);
 
@@ -93,7 +94,7 @@ interface F3_FLOW3_Property_EditorInterface {
 	 * Alias of getAsString()
 	 *
 	 * @return string String value
-	 * @throws F3_FLOW3_Property_Exception_InvalidProperty if no property has been set yet
+	 * @throws F3::FLOW3::Property::Exception::InvalidProperty if no property has been set yet
 	 * @see getAsText()
 	 */
 	public function __toString();

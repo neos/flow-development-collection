@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @author Robert Lemke <robert@typo3.org>
  */
-interface F3_FLOW3_Configuration_SourceInterface {
+interface SourceInterface {
 
 	/**
 	 * Loads the specified configuration file and returns its content in a
 	 * configuration container
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
-	 * @return F3_FLOW3_Configuration_Container
-	 * @throws F3_FLOW3_Configuration_Exception_NoSuchFile if the specified file does not exist
+	 * @return F3::FLOW3::Configuration::Container
+	 * @throws F3::FLOW3::Configuration::Exception::NoSuchFile if the specified file does not exist
 	 */
 	public function load($pathAndFilename);
 }

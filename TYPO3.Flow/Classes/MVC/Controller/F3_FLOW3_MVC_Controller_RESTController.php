@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-
+namespace F3::FLOW3::MVC::Controller;
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -17,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,18 +25,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_RESTController extends F3_FLOW3_MVC_Controller_ActionController {
+class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Request The current request
+	 * @var F3::FLOW3::MVC::Web::Request The current request
 	 */
 	protected $request;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Response The response which will be returned by this action controller
+	 * @var F3::FLOW3::MVC::Web::Response The response which will be returned by this action controller
 	 */
 	protected $response;
 
@@ -45,12 +45,12 @@ class F3_FLOW3_MVC_Controller_RESTController extends F3_FLOW3_MVC_Controller_Act
 	 *
 	 * Note that this REST controller only supports web requests!
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request The request object
-	 * @param F3_FLOW3_MVC_Web_Response $response The response, modified by this handler
+	 * @param F3::FLOW3::MVC::Web::Request $request The request object
+	 * @param F3::FLOW3::MVC::Web::Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Web_Request $request, F3_FLOW3_MVC_Web_Response $response) {
+	public function processRequest(F3::FLOW3::MVC::Web::Request $request, F3::FLOW3::MVC::Web::Response $response) {
 		parent::processRequest($request, $response);
 	}
 
@@ -60,7 +60,8 @@ class F3_FLOW3_MVC_Controller_RESTController extends F3_FLOW3_MVC_Controller_Act
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @todo as soon as argument validation works as expected throw 400 on invalid identifier
 	 */
 	protected function callActionMethod() {
 #		if ($this->arguments['identifier']->isValid() === FALSE) $this->throwStatus(400);
@@ -68,16 +69,16 @@ class F3_FLOW3_MVC_Controller_RESTController extends F3_FLOW3_MVC_Controller_Act
 		if ($this->request->getControllerActionName() == 'default') {
 			$actionName = 'default';
 			switch ($this->request->getMethod()) {
-				case F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET :
+				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET :
 					$actionName = ($this->arguments['identifier']->getValue() === NULL) ? 'list' : 'show';
 				break;
-				case F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST :
+				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST :
 					$actionName = 'create';
 				break;
-				case F3_FLOW3_Utility_Environment::REQUEST_METHOD_PUT :
+				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT :
 					$actionName = 'update';
 				break;
-				case F3_FLOW3_Utility_Environment::REQUEST_METHOD_DELETE :
+				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE :
 					$actionName = 'delete';
 				break;
 			}

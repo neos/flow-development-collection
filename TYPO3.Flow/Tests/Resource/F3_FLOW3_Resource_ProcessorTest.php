@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,17 +18,17 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the resource processor
  *
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
+class ProcessorTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -39,7 +40,7 @@ class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
 <html>
 	<head>
 		<style type="text/css">
-			.F3_WidgetLibrary_Widgets_FloatingWindow {
+			.F3::WidgetLibrary::Widgets::FloatingWindow {
 				background-image: url(DefaultView_FloatingWindow.png);
 			}
 		</style>
@@ -53,7 +54,7 @@ class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
 <html>
 	<head>
 		<style type="text/css">
-			.F3_WidgetLibrary_Widgets_FloatingWindow {
+			.F3::WidgetLibrary::Widgets::FloatingWindow {
 				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
 			}
 		</style>
@@ -62,7 +63,7 @@ class F3_FLOW3_Resource_ProcessorTest extends F3_Testing_BaseTestCase {
 		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
 	</body>
 </html>';
-		$processor = $this->componentFactory->getComponent('F3_FLOW3_Resource_Processor');
+		$processor = $this->componentFactory->getComponent('F3::FLOW3::Resource::Processor');
 		$processedHTML = $processor->adjustRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}

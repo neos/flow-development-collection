@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,22 +26,22 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::AdvicedConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_AbstractMethodInterceptorBuilder {
+class AdvicedConstructorInterceptorBuilder extends F3::FLOW3::AOP::AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for a constructor with advice
 	 *
 	 * @param string $methodName: Name of the method to build an interceptor for
 	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3_FLOW3_Reflection_Class $targetClass: A reflection of the target class to build the interceptor for
+	 * @param F3::FLOW3::Reflection::ReflectionClass $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, F3_FLOW3_Reflection_Class $targetClass) {
+	static public function build($methodName, array $interceptedMethods, F3::FLOW3::Reflection::ReflectionClass $targetClass) {
 		$constructor = $targetClass->getConstructor();
 		$callParentCode = ($constructor === NULL) ? 'return;' : 'parent::__construct(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 
@@ -63,7 +64,7 @@ class F3_FLOW3_AOP_AdvicedConstructorInterceptorBuilder extends F3_FLOW3_AOP_Abs
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(' . $methodParametersCode . (F3_PHP6_Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3_FLOW3_Component_FactoryInterface $AOPProxyComponentFactory) {
+	public function __construct(' . $methodParametersCode . (F3::PHP6::Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3::FLOW3::Component::FactoryInterface $AOPProxyComponentFactory) {
 		$this->componentFactory = $AOPProxyComponentFactory;
 		$result = NULL;
 		$this->AOPProxyDeclareMethodsAndAdvices();

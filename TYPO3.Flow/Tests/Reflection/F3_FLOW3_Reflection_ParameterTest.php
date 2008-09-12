@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_ParameterTest extends F3_Testing_BaseTestCase {
+class ParameterTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3_FLOW3_Reflection_Parameter(array(__CLASS__, 'fixtureMethod'), 'arg2');
-		$this->assertType('F3_FLOW3_Reflection_Class', $parameter->getDeclaringClass());
+		$parameter = new F3::FLOW3::Reflection::Parameter(array(__CLASS__, 'fixtureMethod'), 'arg2');
+		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $parameter->getDeclaringClass());
 	}
 
 	/**
@@ -44,14 +45,14 @@ class F3_FLOW3_Reflection_ParameterTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3_FLOW3_Reflection_Parameter(array(__CLASS__, 'fixtureMethod'), 'arg1');
-		$this->assertType('F3_FLOW3_Reflection_Class', $parameter->getClass());
+		$parameter = new F3::FLOW3::Reflection::Parameter(array(__CLASS__, 'fixtureMethod'), 'arg1');
+		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $parameter->getClass());
 	}
 
 	/**
 	 * Just a fixture method
 	 */
-	protected function fixtureMethod(ArrayObject $arg1, $arg2 = NULL) {
+	protected function fixtureMethod(::ArrayObject $arg1, $arg2 = NULL) {
 	}
 }
 ?>

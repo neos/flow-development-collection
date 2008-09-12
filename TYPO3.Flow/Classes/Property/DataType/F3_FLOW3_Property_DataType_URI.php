@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property::DataType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Property::DataType::URI.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,12 +26,12 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3_FLOW3_Property_DataType_URI.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Property::DataType::URI.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
-class F3_FLOW3_Property_DataType_URI {
+class URI {
 
 	const PATTERN_MATCH_SCHEME = '/^[a-zA-Z][a-zA-Z0-9\+\-\.]*$/';
 	const PATTERN_MATCH_USERNAME = '/^(?:[a-zA-Z0-9_~!&\',;=\.\-\$\(\)\*\+]|(?:%[0-9a-fA-F]{2}))*$/';
@@ -129,7 +130,7 @@ class F3_FLOW3_Property_DataType_URI {
 	 */
 	public function setScheme($scheme) {
 		if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) === 1) {
-			$this->scheme = F3_PHP6_Functions::strtolower($scheme);
+			$this->scheme = F3::PHP6::Functions::strtolower($scheme);
 		} else {
 			throw new InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
 		}

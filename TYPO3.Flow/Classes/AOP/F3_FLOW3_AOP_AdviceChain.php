@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,13 +27,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AdviceChain.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::AdviceChain.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_AdviceChain {
+class AdviceChain {
 
 	/**
-	 * @var array An array of F3_FLOW3_AOP_Advice objects which form the advice chain
+	 * @var array An array of F3::FLOW3::AOP::Advice objects which form the advice chain
 	 */
 	protected $advices;
 
@@ -44,12 +45,12 @@ class F3_FLOW3_AOP_AdviceChain {
 	/**
 	 * Initializes the advice chain
 	 *
-	 * @param array $advices An array of F3_FLOW3_AOP_AdviceInterface compatible objects which form the chain of advices
-	 * @param F3_FLOW3_AOP_ProxyInterface $proxy A reference to the proxy object using the advice chain
+	 * @param array $advices An array of F3::FLOW3::AOP::AdviceInterface compatible objects which form the chain of advices
+	 * @param F3::FLOW3::AOP::ProxyInterface $proxy A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(&$advices, F3_FLOW3_AOP_ProxyInterface &$proxy) {
+	public function __construct(&$advices, F3::FLOW3::AOP::ProxyInterface &$proxy) {
 		$this->advices = $advices;
 		$this->proxy = $proxy;
 	}
@@ -60,11 +61,11 @@ class F3_FLOW3_AOP_AdviceChain {
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.
 	 *
-	 * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point (ie. the context)
+	 * @param  F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point (ie. the context)
 	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function &proceed(F3_FLOW3_AOP_JoinPointInterface &$joinPoint) {
+	public function &proceed(F3::FLOW3::AOP::JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,19 +29,19 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_InterceptorResolverTest extends F3_Testing_BaseTestCase {
+class InterceptorResolverTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable() {
-		$interceptorResolver = new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager);
+		$interceptorResolver = new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager);
 
 		try {
 			$interceptorResolver->resolveInterceptorClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Security_Exception_NoInterceptorFound $exception) {
+		} catch (F3::FLOW3::Security::Exception::NoInterceptorFound $exception) {
 
 		}
 	}
@@ -50,10 +51,10 @@ class F3_FLOW3_Security_Authorization_InterceptorResolverTest extends F3_Testing
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForAShortName() {
-		$interceptorResolver = new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager);
+		$interceptorResolver = new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager);
 		$interceptorClass = $interceptorResolver->resolveInterceptorClass('AccessDeny');
 
-		$this->assertEquals('F3_FLOW3_Security_Authorization_Interceptor_AccessDeny', $interceptorClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::FLOW3::Security::Authorization::Interceptor::AccessDeny', $interceptorClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -61,10 +62,10 @@ class F3_FLOW3_Security_Authorization_InterceptorResolverTest extends F3_Testing
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassname() {
-		$interceptorResolver = new F3_FLOW3_Security_Authorization_InterceptorResolver($this->componentManager);
-		$interceptorClass = $interceptorResolver->resolveInterceptorClass('F3_TestPackage_TestSecurityInterceptor');
+		$interceptorResolver = new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager);
+		$interceptorClass = $interceptorResolver->resolveInterceptorClass('F3::TestPackage::TestSecurityInterceptor');
 
-		$this->assertEquals('F3_TestPackage_TestSecurityInterceptor', $interceptorClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::TestPackage::TestSecurityInterceptor', $interceptorClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

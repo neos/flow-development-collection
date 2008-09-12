@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +19,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,10 +27,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3Test extends F3_Testing_BaseTestCase {
+class FLOW3Test extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Checks the method getComponentManager() and the magic getter
@@ -38,11 +39,11 @@ class F3_FLOW3Test extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentManagerReturnsComponentManager() {
-		$FLOW3 = new F3_FLOW3;
+		$FLOW3 = new F3::FLOW3;
 		$FLOW3->initializeClassLoader();
 		$FLOW3->initializeConfiguration();
 		$FLOW3->initializeFLOW3();
-		$this->assertTrue($FLOW3->getComponentManager() instanceof F3_FLOW3_Component_ManagerInterface, 'getComponentManager did not deliver an object implementing F3_FLOW3_Component_ManagerInterface!');
+		$this->assertTrue($FLOW3->getComponentManager() instanceof F3::FLOW3::Component::ManagerInterface, 'getComponentManager did not deliver an object implementing F3::FLOW3::Component::ManagerInterface!');
 	}
 }
 ?>

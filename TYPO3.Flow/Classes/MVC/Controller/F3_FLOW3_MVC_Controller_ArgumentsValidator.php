@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ArgumentsValidator.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ArgumentsValidator.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,30 +26,30 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ArgumentsValidator.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ArgumentsValidator.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_ObjectValidatorInterface {
+class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface The component factory
+	 * @var F3::FLOW3::Component::FactoryInterface The component factory
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_MVC_Controller_Arguments The registered arguments with the specified property validators
+	 * @var F3::FLOW3::MVC::Controller::Arguments The registered arguments with the specified property validators
 	 */
 	protected $registeredArguments;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_MVC_Controller_Arguments The registered arguments with the specified property editors
-	 * @param F3_FLOW3_Component_FactoryInterface The component factory
+	 * @param F3::FLOW3::MVC::Controller::Arguments The registered arguments with the specified property editors
+	 * @param F3::FLOW3::Component::FactoryInterface The component factory
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_MVC_Controller_Arguments $registeredArguments, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::MVC::Controller::Arguments $registeredArguments, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 		$this->registeredArguments = $registeredArguments;
 	}
@@ -61,7 +62,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * @return boolean TRUE if this validator can validate the class type or FALSE if it can't
 	 */
 	public function canValidate($className) {
-		return ($className === 'F3_FLOW3_MVC_Controller_Arguments');
+		return ($className === 'F3::FLOW3::MVC::Controller::Arguments');
 	}
 
 	/**
@@ -70,12 +71,12 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * least one error occurred, the result is FALSE.
 	 *
 	 * @param object $object: The object which is supposed to be validated.
-	 * @param F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @param F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if validation succeeded completely, FALSE if at least one error occurred.
-	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function validate($object, F3_FLOW3_Validation_Errors &$errors) {
-		if (!$object instanceof F3_FLOW3_MVC_Controller_Arguments) throw new F3_FLOW3_Validation_Exception_InvalidSubject('The specified object cannot be validated by this validator.', 1216720829);
+	public function validate($object, F3::FLOW3::Validation::Errors &$errors) {
+		if (!$object instanceof F3::FLOW3::MVC::Controller::Arguments) throw new F3::FLOW3::Validation::Exception::InvalidSubject('The specified object cannot be validated by this validator.', 1216720829);
 
 		$isValid = TRUE;
 		foreach ($object as $argument) {
@@ -89,19 +90,19 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 *
 	 * @param object $object: The object of which the property should be validated
 	 * @param string $propertyName: The name of the property that should be validated
-	 * @param F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @param F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if the property could be validated, FALSE if an error occured
-	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function validateProperty($object, $propertyName, F3_FLOW3_Validation_Errors &$errors) {
-		if (!$object instanceof F3_FLOW3_MVC_Controller_Arguments) throw new F3_FLOW3_Validation_Exception_InvalidSubject('The specified object cannot be validated by this validator.', 1216720830);
+	public function validateProperty($object, $propertyName, F3::FLOW3::Validation::Errors &$errors) {
+		if (!$object instanceof F3::FLOW3::MVC::Controller::Arguments) throw new F3::FLOW3::Validation::Exception::InvalidSubject('The specified object cannot be validated by this validator.', 1216720830);
 
 		$isValid = TRUE;
 		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
 		$datatypeValidator = $object[$propertyName]->getDatatypeValidator();
 		$isValid &= $datatypeValidator->isValidProperty($object[$propertyName]->getValue(), $errors);
 
-		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3_FLOW3_Validation_Error');
+		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3::FLOW3::Validation::Error');
 		return $isValid;
 	}
 
@@ -113,14 +114,14 @@ class F3_FLOW3_MVC_Controller_ArgumentsValidator implements F3_FLOW3_Validation_
 	 * @param string $propertyName: The name of the property for wich the value should be validated
 	 * @param object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
-	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function isValidProperty($className, $propertyName, $propertyValue, F3_FLOW3_Validation_Errors &$errors) {
+	public function isValidProperty($className, $propertyName, $propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 		$isValid = TRUE;
 		if ($this->registeredArguments[$propertyName]->getValidator() != NULL) $isValid &= $this->registeredArguments[$propertyName]->getValidator()->isValidProperty($propertyValue->getValue(), $errors);
 		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $errors);
 
-		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3_FLOW3_Validation_Error');
+		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3::FLOW3::Validation::Error');
 		return $isValid;
 	}
 }

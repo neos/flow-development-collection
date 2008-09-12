@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_Service {
+class Service {
 
 	/**
 	 * If this service has been initialized
@@ -157,15 +158,15 @@ class F3_FLOW3_Reflection_Service {
 		$this->availableClassNames = array_unique($availableClassNames);
 
 		foreach ($this->availableClassNames as $className) {
-			$class = new F3_FLOW3_Reflection_Class($className);
+			$class = new F3::FLOW3::Reflection::ReflectionClass($className);
 			if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
 			if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
 		}
 
 		foreach ($this->availableClassNames as $className) {
-			$class = new F3_FLOW3_Reflection_Class($className);
+			$class = new F3::FLOW3::Reflection::ReflectionClass($className);
 			$constructor = $class->getConstructor();
-			if ($constructor instanceof ReflectionMethod) {
+			if ($constructor instanceof ::ReflectionMethod) {
 				$this->classConstructorMethodNames[$className] = $constructor->getName();
 			}
 			foreach ($class->getInterfaces() as $interface) {
@@ -278,7 +279,7 @@ class F3_FLOW3_Reflection_Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return mixed Either the class name of the default implementation for the component type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownInterface if the specified interface does not exist.
+	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the specified interface does not exist.
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		$classNamesFound = key_exists($interfaceName, $this->interfaceImplementations) ? $this->interfaceImplementations[$interfaceName] : array();
@@ -292,7 +293,7 @@ class F3_FLOW3_Reflection_Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return array An array of class names of the default implementation for the component type
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownInterface if the given interface does not exist
+	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the given interface does not exist
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		return key_exists($interfaceName, $this->interfaceImplementations) ? $this->interfaceImplementations[$interfaceName] : array();

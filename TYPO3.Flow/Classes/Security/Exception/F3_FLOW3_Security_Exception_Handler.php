@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,16 +29,16 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Exception_Handler {
+class Handler {
 
 	/**
 	 * Handles an exception. If possible it calls an AuthenticationEntryPoint to start authentication.
 	 *
-	 * @param F3_FLOW3_Security_Exception $securityException The exception to be handled
+	 * @param F3::FLOW3::Security::Exception $securityException The exception to be handled
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function handleException(F3_FLOW3_Security_Exception $securityException) {
+	public function handleException(F3::FLOW3::Security::Exception $securityException) {
 
 	}
 }

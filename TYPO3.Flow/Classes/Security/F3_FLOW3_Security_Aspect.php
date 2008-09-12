@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,12 +30,12 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @aaspect
  */
-class F3_FLOW3_Security_Aspect {
+class Aspect {
 
 	/**
 	 * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
 	 *
-	 * @aaround callback(F3_FLOW3_Security_ACL_PolicyService)
+	 * @aaround callback(F3::FLOW3::Security::ACL::PolicyService)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

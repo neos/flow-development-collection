@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Error
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Error_ExceptionHandlerInterface {
+interface ExceptionHandlerInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
@@ -38,10 +39,10 @@ interface F3_FLOW3_Error_ExceptionHandlerInterface {
 	/**
 	 * Handles the given exception
 	 *
-	 * @param Exception $exception: The exception object
+	 * @param ::Exception $exception: The exception object
 	 * @return void
 	 */
-	public function handleException(Exception $exception);
+	public function handleException(::Exception $exception);
 
 }
 ?>

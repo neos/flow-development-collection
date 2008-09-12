@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Routing_Route {
+class Route {
 
 	const ROUTEPART_TYPE_STATIC = 'static';
 	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
@@ -83,25 +84,25 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Twodimensional Array. Each element contains one or more F3_FLOW3_MVC_Web_Routing_AbstractRoutePart object(s)
+	 * Twodimensional Array. Each element contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
 	 *
 	 * @var array
 	 */
 	protected $urlPatternSegments = array();
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -135,7 +136,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 *
 	 * @param string $pattern A pattern which may contain placeholders
 	 * @return void
-	 * @see F3_FLOW3_MVC_Web_Request
+	 * @see F3::FLOW3::MVC::Web::Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerComponentNamePattern($pattern) {
@@ -146,7 +147,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 * Returns the custom controller component name pattern.
 	 *
 	 * @return string Teh pattern or NULL if none was defined
-	 * @see F3_FLOW3_MVC_Web_Request
+	 * @see F3::FLOW3::MVC::Web::Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentNamePattern() {
@@ -154,10 +155,10 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	}
 
 	/**
-	 * By default all dynamic route parts are resolved by F3_FLOW3_MVC_Web_Routing_DynamicRoutePart.
+	 * By default all dynamic route parts are resolved by F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
 	 * But you can specify different classes to handle particular route parts.
-	 * Note: route part handler must inherit from F3_FLOW3_MVC_Web_Routing_DynamicRoutePart.
-	 * Usage: setRoutePartHandlers(array('@controller' => 'F3_Package_Subpackage_MyRoutePartHandler'));
+	 * Note: route part handler must inherit from F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
+	 * Usage: setRoutePartHandlers(array('@controller' => 'F3::Package::Subpackage::MyRoutePartHandler'));
 	 *
 	 * @param array $routePartHandlers route part handler classnames
 	 * @return void
@@ -171,7 +172,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 * Returns an array with the Route match results.
 	 *
 	 * @return array An array of route parts and their values for further handling by the Router
-	 * @see F3_FLOW3_MVC_Web_Routing_Router
+	 * @see F3::FLOW3::MVC::Web::Routing::Router
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMatchResults() {
@@ -254,7 +255,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 				if (!$routePart->resolve($routeValues)) {
 					return FALSE;
 				}
-				$url.= F3_PHP6_Functions::strtolower($routePart->getValue());
+				$url.= F3::PHP6::Functions::strtolower($routePart->getValue());
 			}
 			$url.= '/';
 		}
@@ -289,7 +290,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 	 * One segment can contain more than one dynamic route part, but they have to be separated by static route parts.
 	 *
 	 * @param string $urlPatternSegment one segment of the URL pattern including brackets.
-	 * @return F3_FLOW3_MVC_Web_Routing_AbstractRoutePart corresponding Route part instance
+	 * @return F3::FLOW3::MVC::Web::Routing::AbstractRoutePart corresponding Route part instance
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function createRoutePartsFromUrlPatternSegment($urlPatternSegment) {
@@ -305,7 +306,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 			$splitString = '';
 			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
-					throw new F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts('two succesive dynamic route parts are not allowed!', 1218446975);
+					throw new F3::FLOW3::MVC::Exception::SuccessiveDynamicRouteParts('two succesive dynamic route parts are not allowed!', 1218446975);
 				}
 				if (($matchIndex + 1) < count($matches)) {
 					$splitString = $matches[$matchIndex + 1][2];
@@ -317,11 +318,11 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 				case self::ROUTEPART_TYPE_DYNAMIC:
 					if (isset($this->routePartHandlers[$routePartName])) {
 						$routePart = $this->componentFactory->getComponent($this->routePartHandlers[$routePartName]);
-						if (!$routePart instanceof F3_FLOW3_MVC_Web_Routing_DynamicRoutePart) {
-							throw new F3_FLOW3_MVC_Exception_InvalidRoutePartHandler('routePart handlers must inherit from "F3_FLOW3_MVC_Web_Routing_DynamicRoutePart"', 1218480972);
+						if (!$routePart instanceof F3::FLOW3::MVC::Web::Routing::DynamicRoutePart) {
+							throw new F3::FLOW3::MVC::Exception::InvalidRoutePartHandler('routePart handlers must inherit from "F3::FLOW3::MVC::Web::Routing::DynamicRoutePart"', 1218480972);
 						}
 					} else {
-						$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+						$routePart = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
 					}
 					$routePart->setSplitString($splitString);
 					if (isset($this->defaults[$routePartName])) {
@@ -329,7 +330,7 @@ class F3_FLOW3_MVC_Web_Routing_Route {
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_StaticRoutePart');
+					$routePart = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
 					if (($matchIndex + 1) == count($matches)) {
 						$routePart->setLastRoutePartInSegment(TRUE);
 					}

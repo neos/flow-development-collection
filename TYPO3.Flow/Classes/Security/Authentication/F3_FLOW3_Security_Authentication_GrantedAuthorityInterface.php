@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authentication_GrantedAuthorityInterface {
+interface GrantedAuthorityInterface {
 
 	/**
 	 * Returns the granted authority in a string representation, if this is possible. Otherwise NULL is returned,

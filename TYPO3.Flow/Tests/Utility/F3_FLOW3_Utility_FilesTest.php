@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
+class FilesTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -36,7 +37,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithoutSlashes() {
 		$path = 'foobar';
-		$this->assertEquals('foobar', F3_FLOW3_Utility_Files::getUnixStylePath($path));
+		$this->assertEquals('foobar', F3::FLOW3::Utility::Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -45,7 +46,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardSlashes() {
 		$path = 'foo/bar/test/';
-		$this->assertEquals('foo/bar/test/', F3_FLOW3_Utility_Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', F3::FLOW3::Utility::Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -54,7 +55,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithBackwardSlashes() {
 		$path = 'foo\\bar\\test\\';
-		$this->assertEquals('foo/bar/test/', F3_FLOW3_Utility_Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', F3::FLOW3::Utility::Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -63,7 +64,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getUnixStylePathWorksForPathWithForwardAndBackwardSlashes() {
 		$path = 'foo/bar\\test/';
-		$this->assertEquals('foo/bar/test/', F3_FLOW3_Utility_Files::getUnixStylePath($path));
+		$this->assertEquals('foo/bar/test/', F3::FLOW3::Utility::Files::getUnixStylePath($path));
 	}
 
 	/**
@@ -71,7 +72,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPath() {
-		$this->assertEquals('', F3_FLOW3_Utility_Files::concatenatePaths(array()));
+		$this->assertEquals('', F3::FLOW3::Utility::Files::concatenatePaths(array()));
 	}
 
 	/**
@@ -79,7 +80,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForOnePath() {
-		$this->assertEquals('foo', F3_FLOW3_Utility_Files::concatenatePaths(array('foo')));
+		$this->assertEquals('foo', F3::FLOW3::Utility::Files::concatenatePaths(array('foo')));
 	}
 
 	/**
@@ -87,7 +88,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForTwoPath() {
-		$this->assertEquals('foo/bar', F3_FLOW3_Utility_Files::concatenatePaths(array('foo', 'bar')));
+		$this->assertEquals('foo/bar', F3::FLOW3::Utility::Files::concatenatePaths(array('foo', 'bar')));
 	}
 
 	/**
@@ -95,7 +96,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingSlash() {
-		$this->assertEquals('/foo/bar', F3_FLOW3_Utility_Files::concatenatePaths(array('/foo', 'bar')));
+		$this->assertEquals('/foo/bar', F3::FLOW3::Utility::Files::concatenatePaths(array('/foo', 'bar')));
 	}
 
 	/**
@@ -103,7 +104,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithTrailingSlash() {
-		$this->assertEquals('foo/bar', F3_FLOW3_Utility_Files::concatenatePaths(array('foo', 'bar/')));
+		$this->assertEquals('foo/bar', F3::FLOW3::Utility::Files::concatenatePaths(array('foo', 'bar/')));
 	}
 
 	/**
@@ -111,7 +112,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForPathsWithLeadingAndTrailingSlash() {
-		$this->assertEquals('/foo/bar/bar/foo', F3_FLOW3_Utility_Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
+		$this->assertEquals('/foo/bar/bar/foo', F3::FLOW3::Utility::Files::concatenatePaths(array('/foo/bar/', '/bar/foo/')));
 	}
 
 	/**
@@ -119,7 +120,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForBrokenPaths() {
-		$this->assertEquals('/foo/bar/bar', F3_FLOW3_Utility_Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
+		$this->assertEquals('/foo/bar/bar', F3::FLOW3::Utility::Files::concatenatePaths(array('\\foo/bar\\', '\\bar')));
 	}
 
 	/**
@@ -127,7 +128,7 @@ class F3_FLOW3_Utility_FilesTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function concatenatePathsWorksForEmptyPathArrayElements() {
-		$this->assertEquals('foo/bar', F3_FLOW3_Utility_Files::concatenatePaths(array('foo', '', 'bar')));
+		$this->assertEquals('foo/bar', F3::FLOW3::Utility::Files::concatenatePaths(array('foo', '', 'bar')));
 	}
 }
 ?>

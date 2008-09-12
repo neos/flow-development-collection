@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: F3_FLOW3_Validation_Validator_Chain.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::Chain.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: F3_FLOW3_Validation_Validator_Chain.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::Chain.php 688 2008-04-03 09:35:36Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Validation_ObjectValidatorInterface {
+class ObjectValidatorChain implements F3::FLOW3::Validation::ObjectValidatorInterface {
 
 	/**
 	 * @var array
@@ -59,10 +60,10 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * least one error occurred, the result is FALSE.
 	 *
 	 * @param  object $object: The object which is supposed to be validated.
-	 * @param  F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @param  F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if validation succeeded completely, FALSE if at least one error occurred.
 	 */
-	public function validate($object, F3_FLOW3_Validation_Errors &$errors) {
+	public function validate($object, F3::FLOW3::Validation::Errors &$errors) {
 		$objectIsValid = TRUE;
 
 		foreach ($this->validators as $validator) {
@@ -78,10 +79,10 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 *
 	 * @param  object $object: The object of which the property should be validated
 	 * @param  string $propertyName: The name of the property that should be validated
-	 * @param  F3_FLOW3_Validation_Errors $errors: Here any occured validation error is stored
+	 * @param  F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if the property could be validated, FALSE if an error occured
 	 */
-	public function validateProperty($object, $propertyName, F3_FLOW3_Validation_Errors &$errors) {
+	public function validateProperty($object, $propertyName, F3::FLOW3::Validation::Errors &$errors) {
 		$propertyIsValid = TRUE;
 
 		foreach ($this->validators as $validator) {
@@ -100,7 +101,7 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
 	 */
-	public function isValidProperty($className, $propertyName, $propertyValue, F3_FLOW3_Validation_Errors &$errors) {
+	public function isValidProperty($className, $propertyName, $propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 		$propertyIsValid = TRUE;
 
 		foreach ($this->validators as $validator) {
@@ -113,11 +114,11 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 *
-	 * @param F3_FLOW3_Validation_ValidatorInterface The validator that should be added
+	 * @param F3::FLOW3::Validation::ValidatorInterface The validator that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addValidator(F3_FLOW3_Validation_ObjectValidatorInterface $validator) {
+	public function addValidator(F3::FLOW3::Validation::ObjectValidatorInterface $validator) {
 		$this->validators[] = $validator;
 		return count($this->validators) - 1;
 	}
@@ -126,12 +127,12 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * Returns the validator with the given index of the chain.
 	 *
 	 * @param  integer The index of the validator that should be returned
-	 * @return F3_FLOW3_Validation_ValidatorInterface The requested validator
-	 * @throws F3_FLOW3_Validation_Exception_InvalidChainIndex
+	 * @return F3::FLOW3::Validation::ValidatorInterface The requested validator
+	 * @throws F3::FLOW3::Validation::Exception::InvalidChainIndex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValidator($index) {
-		if (!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207215864);
+		if (!isset($this->validators[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207215864);
 		return $this->validators[$index];
 	}
 
@@ -142,7 +143,7 @@ class F3_FLOW3_Validation_Validator_ObjectValidatorChain implements F3_FLOW3_Val
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeValidator($index) {
-		if (!isset($this->validators[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207020177);
+		if (!isset($this->validators[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207020177);
 		unset($this->validators[$index]);
 	}
 }

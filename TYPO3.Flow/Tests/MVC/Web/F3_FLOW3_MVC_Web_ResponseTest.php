@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,17 +26,17 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
+class ResponseTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultStatusHeaderIs200OK() {
-		$response = new F3_FLOW3_MVC_Web_Response();
+		$response = new F3::FLOW3::MVC::Web::Response();
 		$this->assertEquals(array('HTTP/1.1 200 OK'), $response->getHeaders());
 	}
 
@@ -44,7 +45,7 @@ class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function itIsPossibleToSetTheHTTPStatusCodeAndMessage() {
-		$response = new F3_FLOW3_MVC_Web_Response();
+		$response = new F3::FLOW3::MVC::Web::Response();
 		$response->setStatus(400, 'Really Bad Request');
 		$this->assertEquals(array('HTTP/1.1 400 Really Bad Request'), $response->getHeaders());
 	}
@@ -54,7 +55,7 @@ class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function additionalHeadersCanBeSetAndRetrieved() {
-		$response = new F3_FLOW3_MVC_Web_Response();
+		$response = new F3::FLOW3::MVC::Web::Response();
 		$response->setStatus(123, 'Custom Status');
 		$response->setHeader('MyHeader', 'MyValue');
 		$response->setHeader('OtherHeader', 'OtherValue');
@@ -73,7 +74,7 @@ class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function byDefaultHeadersOfTheSameNameAreReplaced() {
-		$response = new F3_FLOW3_MVC_Web_Response();
+		$response = new F3::FLOW3::MVC::Web::Response();
 		$response->setHeader('MyHeader', 'MyValue');
 		$response->setHeader('MyHeader', 'OtherValue');
 
@@ -90,7 +91,7 @@ class F3_FLOW3_MVC_Web_ResponseTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleHeadersOfTheSameNameMayBeDefined() {
-		$response = new F3_FLOW3_MVC_Web_Response();
+		$response = new F3::FLOW3::MVC::Web::Response();
 		$response->setHeader('MyHeader', 'MyValue', FALSE);
 		$response->setHeader('MyHeader', 'OtherValue', FALSE);
 

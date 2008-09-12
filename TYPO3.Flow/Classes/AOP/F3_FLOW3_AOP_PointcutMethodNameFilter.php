@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_PointcutMethodNameFilter implements F3_FLOW3_AOP_PointcutFilterInterface {
+class PointcutMethodNameFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected|private)/';
 
@@ -60,16 +61,16 @@ class F3_FLOW3_AOP_PointcutMethodNameFilter implements F3_FLOW3_AOP_PointcutFilt
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class The class - won't be checked here
-	 * @param F3_FLOW3_Reflection_Method $method The method to check the name of
+	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class - won't be checked here
+	 * @param F3::FLOW3::Reflection::Method $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the method name matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $method->getName());
 		if ($matchResult === FALSE) {
-			throw new F3_FLOW3_AOP_Exception('Error in regular expression', 1168876915);
+			throw new F3::FLOW3::AOP::Exception('Error in regular expression', 1168876915);
 		}
 		$methodNameMatches = ($matchResult === 1);
 		switch ($this->methodVisibility) {

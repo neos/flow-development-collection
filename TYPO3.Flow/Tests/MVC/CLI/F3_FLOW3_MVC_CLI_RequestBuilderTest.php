@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,18 +27,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
+class RequestBuilderTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_MVC_CLI_RequestBuilder
+	 * @var F3::FLOW3::MVC::CLI::RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var F3_FLOW3_Utility_MockEnvironment
+	 * @var F3::FLOW3::Utility::MockEnvironment
 	 */
 	protected $environment;
 
@@ -47,9 +48,9 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$this->environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
-		$this->requestBuilder = new F3_FLOW3_MVC_CLI_RequestBuilder($this->componentManager, $this->componentFactory, $this->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$this->environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
+		$this->requestBuilder = new F3::FLOW3::MVC::CLI::RequestBuilder($this->componentManager, $this->componentFactory, $this->environment);
 	}
 
 	/**
@@ -63,7 +64,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_FLOW3_MVC_Controller_Default', $request->getControllerComponentName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
+		$this->assertEquals('F3::FLOW3::MVC::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
 	}
 
 	/**
@@ -78,7 +79,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
 	}
 
 	/**
@@ -91,10 +92,10 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 3;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
 	}
 
 	/**
@@ -107,11 +108,11 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 4;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3_TestPackage_Controller_Default', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
 		$this->assertEquals('list', $request->getControllerActionName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
 	}
 
@@ -125,7 +126,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=value2';
@@ -147,7 +148,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 12;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=';
 		$this->environment->SERVER['argv'][5] = 'value';
@@ -179,7 +180,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 10;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '-d';
 		$this->environment->SERVER['argv'][5] = 'valued';
@@ -206,7 +207,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilderTest extends F3_Testing_BaseTestCase {
 		$this->environment->SERVER['argc'] = 27;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'DefaultController';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=';

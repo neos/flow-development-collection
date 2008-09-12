@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,13 +26,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
+class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
@@ -46,30 +47,30 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	protected $initializeView = TRUE;
 
 	/**
-	 * @var F3_FLOW3_MVC_View_AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
+	 * @var F3::FLOW3::MVC::View::AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
 	 */
 	protected $view = NULL;
 
 	/**
 	 * Injects the component manager
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request object
-	 * @param F3_FLOW3_MVC_Response $response The response, modified by this handler
+	 * @param F3::FLOW3::MVC::Request $request The request object
+	 * @param F3::FLOW3::MVC::Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
+	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
 		parent::processRequest($request, $response);
 		$this->callActionMethod();
 	}
@@ -80,16 +81,16 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 */
 	protected function callActionMethod() {
 		$actionMethodName = ($this->request->getControllerActionName() == 'default') ? $this->defaultActionMethodName : $this->request->getControllerActionName() . 'Action';
 
-		if (!method_exists($this, $actionMethodName)) throw new F3_FLOW3_MVC_Exception_NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+		if (!method_exists($this, $actionMethodName)) throw new F3::FLOW3::MVC::Exception::NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
 		if ($this->initializeView) $this->initializeView();
 		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
-		if (is_string($actionResult) && F3_PHP6_Functions::strlen($actionResult) > 0) {
+		if (is_string($actionResult) && F3::PHP6::Functions::strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}
 	}
@@ -106,14 +107,14 @@ class F3_FLOW3_MVC_Controller_ActionController extends F3_FLOW3_MVC_Controller_R
 		$possibleViewName = str_replace('Controller', 'View', $this->request->getControllerComponentNamePattern());
 		$possibleViewName = str_replace('@package', $this->request->getControllerPackageKey(), $possibleViewName);
 		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
-		$possibleViewName .= '_'  . F3_PHP6_Functions::ucfirst($this->request->getControllerActionName());
+		$possibleViewName .= '::'  . F3::PHP6::Functions::ucfirst($this->request->getControllerActionName());
 
-		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName . F3_PHP6_Functions::ucfirst($this->request->getFormat()));
+		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName . F3::PHP6::Functions::ucfirst($this->request->getFormat()));
 		if ($viewComponentName === FALSE) {
 			$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName);
 		}
 		if ($viewComponentName === FALSE) {
-			$viewComponentName = 'F3_FLOW3_MVC_View_Empty';
+			$viewComponentName = 'F3::FLOW3::MVC::View::EmptyView';
 		}
 
 		$this->view = $this->componentFactory->getComponent($viewComponentName);

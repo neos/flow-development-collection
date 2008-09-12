@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Tests::Reflection::Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @sometag1
  */
-class F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1 {
+class TaggedClass1 {
 
 }
 ?>

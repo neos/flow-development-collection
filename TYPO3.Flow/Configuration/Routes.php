@@ -17,7 +17,7 @@ $c->fallback
 		array(
 			'dummy' => 'foo',
 			'@package' => 'FLOW3',
-			'@controller' => 'Default',
+			'@controller' => 'DefaultController',
 			'@action' => 'default',
 		)
 	);
@@ -29,7 +29,7 @@ $c->default
 	->setUrlPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
-			'@controller' => 'Default',
+			'@controller' => 'DefaultController',
 			'@action' => 'default',
 			'@format' => 'html'
 		)
@@ -42,7 +42,7 @@ $c->defaultWithFormat
 	->setUrlPattern('[@package]/[@controller]/[@action].[@format]')
 	->setDefaults(
 		array(
-			'@controller' => 'Default',
+			'@controller' => 'DefaultController',
 			'@action' => 'default',
 			'@format' => 'html'
 		)

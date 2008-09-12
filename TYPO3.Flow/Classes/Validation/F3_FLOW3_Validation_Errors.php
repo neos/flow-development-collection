@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id:F3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Validation::Errors.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,10 +27,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id:F3_FLOW3_Validation_Errors.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Validation::Errors.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Errors extends ArrayObject {
+class Errors extends ::ArrayObject {
 
 }
 

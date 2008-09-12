@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Error_ErrorHandler {
+class ErrorHandler {
 
 	/**
 	 * @var array
@@ -63,7 +64,7 @@ class F3_FLOW3_Error_ErrorHandler {
 	 * @param string $errorFile: Name of the file the error occurred in
 	 * @param integer $errorLine: Line number where the error occurred
 	 * @return void
-	 * @throws F3_FLOW3_Error_Exception with the data passed to this method
+	 * @throws F3::FLOW3::Error::Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
@@ -83,7 +84,7 @@ class F3_FLOW3_Error_ErrorHandler {
 			E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
 		);
 		if (in_array($errorLevel, $this->exceptionalErrors)) {
-			throw new F3_FLOW3_Error_Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			throw new F3::FLOW3::Error::Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 		}
 	}
 }

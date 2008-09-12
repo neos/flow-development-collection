@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,31 +27,31 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AdvisorInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::AdvisorInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_AdvisorInterface {
+interface AdvisorInterface {
 
 	/**
 	 * Initializes the advisor with an advice and a pointcut
 	 *
-	 * @param  F3_FLOW3_AOP_AdviceInterface $advice: The advice to weave in
-	 * @param  F3_FLOW3_AOP_PointcutInterface $pointcut: The pointcut where the advice should be inserted
+	 * @param  F3::FLOW3::AOP::AdviceInterface $advice: The advice to weave in
+	 * @param  F3::FLOW3::AOP::PointcutInterface $pointcut: The pointcut where the advice should be inserted
 	 */
-	public function __construct(F3_FLOW3_AOP_AdviceInterface $advice, F3_FLOW3_AOP_PointcutInterface $pointcut);
+	public function __construct(F3::FLOW3::AOP::AdviceInterface $advice, F3::FLOW3::AOP::PointcutInterface $pointcut);
 
 	/**
 	 * Returns the advisor's advice
 	 *
-	 * @return F3_FLOW3_AOP_AdviceInterface The advice
+	 * @return F3::FLOW3::AOP::AdviceInterface The advice
 	 */
 	public function getAdvice();
 
 	/**
 	 * Returns the advisor's pointcut
 	 *
-	 * @return F3_FLOW3_AOP_Pointcut The pointcut
+	 * @return F3::FLOW3::AOP::Pointcut The pointcut
 	 */
 	public function getPointcut();
 

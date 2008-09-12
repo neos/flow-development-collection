@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Request.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,28 +26,28 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Request.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Request {
+class Request {
 
 	const PATTERN_MATCH_FORMAT = '/^[a-z0-9]{1,5}$/';
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Package_ManagerInterface
+	 * @var F3::FLOW3::Package::ManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * @var string Pattern after which the controller component name is built
 	 */
-	protected $controllerComponentNamePattern = 'F3_@package_Controller_@controller';
+	protected $controllerComponentNamePattern = 'F3::@package::Controller::@controller';
 
 	/**
 	 * @var string Package key of the controller which is supposed to handle this request.
@@ -56,7 +57,7 @@ class F3_FLOW3_MVC_Request {
 	/**
 	 * @var string Component name of the controller which is supposed to handle this request.
 	 */
-	protected $controllerName = 'Default';
+	protected $controllerName = 'DefaultController';
 
 	/**
 	 * @var string Name of the action the controller is supposed to take.
@@ -64,7 +65,7 @@ class F3_FLOW3_MVC_Request {
 	protected $controllerActionName = 'default';
 
 	/**
-	 * @var ArrayObject The arguments for this request
+	 * @var ::ArrayObject The arguments for this request
 	 */
 	protected $arguments;
 
@@ -84,28 +85,28 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		$this->arguments = new ArrayObject;
+		$this->arguments = new ::ArrayObject;
 	}
 
 	/**
 	 * Injects the component manager
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentManager(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
 	/**
 	 * Injects the package
 	 *
-	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the package manager
+	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the package manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPackageManager(F3_FLOW3_Package_ManagerInterface $packageManager) {
+	public function injectPackageManager(F3::FLOW3::Package::ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
 
@@ -138,14 +139,14 @@ class F3_FLOW3_MVC_Request {
 	 * controller name
 	 *
 	 * @return string The controller's Component Name
-	 * @throws F3_FLOW3_MVC_Exception_NoSuchController if the controller does not exist
+	 * @throws F3::FLOW3::MVC:Exception::NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentName() {
 		$lowercaseComponentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
 		$lowercaseComponentName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseComponentName));
 		$componentName = $this->componentManager->getCaseSensitiveComponentName($lowercaseComponentName);
-		if ($componentName === FALSE) throw new F3_FLOW3_MVC_Exception_NoSuchController('The controller component "' . $lowercaseComponentName . '" does not exist.', 1220884009);
+		if ($componentName === FALSE) throw new F3::FLOW3::MVC::Exception::NoSuchController('The controller component "' . $lowercaseComponentName . '" does not exist.', 1220884009);
 
 		return $componentName;
 	}
@@ -179,12 +180,12 @@ class F3_FLOW3_MVC_Request {
 	 *
 	 * @param string $packageKey The package key.
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_InvalidPackageKey if the package key is not valid
+	 * @throws F3::FLOW3::MVC::Exception::InvalidPackageKey if the package key is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerPackageKey($packageKey) {
 		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
-		if ($upperCamelCasedPackageKey === FALSE) throw new F3_FLOW3_MVC_Exception_InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
+		if ($upperCamelCasedPackageKey === FALSE) throw new F3::FLOW3::MVC::Exception::InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
 		$this->controllerPackageKey = $upperCamelCasedPackageKey;
 	}
 
@@ -207,8 +208,8 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerName($controllerName) {
-		if (!is_string($controllerName)) throw new F3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
-		if (strpos($controllerName, '_') !== FALSE) throw new F3_FLOW3_MVC_Exception_InvalidControllerName('The controller name must not contain underscores.', 1217846412);
+		if (!is_string($controllerName)) throw new F3::FLOW3::MVC::Exception::InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
+		if (strpos($controllerName, '_') !== FALSE) throw new F3::FLOW3::MVC::Exception::InvalidControllerName('The controller name must not contain underscores.', 1217846412);
 		$this->controllerName = $controllerName;
 	}
 
@@ -230,12 +231,12 @@ class F3_FLOW3_MVC_Request {
 	 *
 	 * @param string $actionName: Name of the action to execute by the controller
 	 * @return void
-	 * @throws F3_FLOW3_MVC_Exception_InvalidActionName if the action name is not valid
+	 * @throws F3::FLOW3::MVC::Exception::InvalidActionName if the action name is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerActionName($actionName) {
-		if (!is_string($actionName)) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		if ($actionName{0} !== F3_PHP6_Functions::strtolower($actionName{0})) throw new F3_FLOW3_MVC_Exception_InvalidActionName('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+		if (!is_string($actionName)) throw new F3::FLOW3::MVC::Exception::InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
+		if ($actionName{0} !== F3::PHP6::Functions::strtolower($actionName{0})) throw new F3::FLOW3::MVC::Exception::InvalidActionName('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		$this->controllerActionName = $actionName;
 	}
 
@@ -258,7 +259,7 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || F3_PHP6_Functions::strlen($argumentName) == 0) throw new F3_FLOW3_MVC_Exception_InvalidArgumentName('Invalid argument name.', 1210858767);
+		if (!is_string($argumentName) || F3::PHP6::Functions::strlen($argumentName) == 0) throw new F3::FLOW3::MVC::Exception::InvalidArgumentName('Invalid argument name.', 1210858767);
 		$this->arguments[$argumentName] = $value;
 	}
 
@@ -266,18 +267,18 @@ class F3_FLOW3_MVC_Request {
 	 * Sets the whole arguments ArrayObject and therefore replaces any arguments
 	 * which existed before.
 	 *
-	 * @param ArrayObject $arguments An ArrayObject of argument names and their values
+	 * @param ::ArrayObject $arguments An ArrayObject of argument names and their values
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setArguments(ArrayObject $arguments) {
+	public function setArguments(::ArrayObject $arguments) {
 		$this->arguments = $arguments;
 	}
 
 	/**
 	 * Returns an ArrayObject of arguments and their values
 	 *
-	 * @return ArrayObject ArrayObject of arguments and their values (which may be arguments and values as well)
+	 * @return ::ArrayObject ArrayObject of arguments and their values (which may be arguments and values as well)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
@@ -292,7 +293,7 @@ class F3_FLOW3_MVC_Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFormat($format) {
-		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new F3_FLOW3_MVC_Exception_InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);
+		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new F3::FLOW3::MVC::Exception::InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);
 		$this->format = $format;
 	}
 
@@ -312,10 +313,10 @@ class F3_FLOW3_MVC_Request {
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception_NoSuchArgument if such an argument does not exist
+	 * @throws F3::FLOW3::MVC::Exception::NoSuchArgument if such an argument does not exist
 	 */
 	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new F3_FLOW3_MVC_Exception_NoSuchArgument('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+		if (!isset($this->arguments[$argumentName])) throw new F3::FLOW3::MVC::Exception::NoSuchArgument('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
 		return $this->arguments[$argumentName];
 	}
 

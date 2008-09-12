@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,20 +26,20 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_MVC_Web_Routing_RouterInterface {
+interface RouterInterface {
 
 	/**
 	 * Walks through all configured routes and calls their respective matches-method.
 	 * When a corresponding route is found, package, controller, action and possible parameters
 	 * are set on the $request object
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request
+	 * @param F3::FLOW3::MVC::Web::Request $request
 	 * @return boolean
 	 */
-	public function route(F3_FLOW3_MVC_Web_Request $request);
+	public function route(F3::FLOW3::MVC::Web::Request $request);
 
 	/**
 	 * Walks through all configured routes and calls their respective resolves-method.

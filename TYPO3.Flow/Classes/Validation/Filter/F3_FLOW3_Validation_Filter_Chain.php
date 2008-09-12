@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Filter;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id:F3_FLOW3_Validation_Filter_Chain.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Validation::Filter::Chain.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id:F3_FLOW3_Validation_Filter_Chain.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Validation::Filter::Chain.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInterface {
+class Chain implements F3::FLOW3::Validation::FilterInterface {
 
 	/**
 	 * @var array
@@ -40,7 +41,7 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	 *
 	 * @param object The subject that should be filtered
 	 */
-	public function filter($subject, F3_FLOW3_Validation_Errors &$errors) {
+	public function filter($subject, F3::FLOW3::Validation::Errors &$errors) {
 		foreach ($this->filters as $filter) {
 			$filter->filter($subject, $errors);
 		}
@@ -49,11 +50,11 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	/**
 	 * Adds a new filter to the chain. Returns the index of the chain entry.
 	 *
-	 * @param F3_FLOW3_Validation_FilterInterface The filter that should be added
+	 * @param F3::FLOW3::Validation::FilterInterface The filter that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addFilter(F3_FLOW3_Validation_FilterInterface $filter) {
+	public function addFilter(F3::FLOW3::Validation::FilterInterface $filter) {
 		$this->filters[] = $filter;
 		return count($this->filters) - 1;
 	}
@@ -62,12 +63,12 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	 * Returns the filter with the given index of the chain.
 	 *
 	 * @param  integer The index of the filter that should be returned
-	 * @return F3_FLOW3_Validation_FilterInterface The requested filter
-	 * @throws F3_FLOW3_Validation_Exception_InvalidChainIndex
+	 * @return F3::FLOW3::Validation::FilterInterface The requested filter
+	 * @throws F3::FLOW3::Validation::Exception::InvalidChainIndex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getFilter($index) {
-		if (!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207215864);
+		if (!isset($this->filters[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207215864);
 		return $this->filters[$index];
 	}
 
@@ -78,7 +79,7 @@ class F3_FLOW3_Validation_Filter_Chain implements F3_FLOW3_Validation_FilterInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeFilter($index) {
-		if (!isset($this->filters[$index])) throw new F3_FLOW3_Validation_Exception_InvalidChainIndex('Invalid chain index.', 1207020177);
+		if (!isset($this->filters[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207020177);
 		unset($this->filters[$index]);
 	}
 }

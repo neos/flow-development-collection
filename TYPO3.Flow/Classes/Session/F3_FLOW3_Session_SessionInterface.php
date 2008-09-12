@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Session;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Session_Interface {
+interface SessionInterface {
 
 	/**
 	 * Starts the session, if is has not been already started
@@ -42,7 +43,7 @@ interface F3_FLOW3_Session_Interface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 */
 	public function getID();
 
@@ -51,8 +52,8 @@ interface F3_FLOW3_Session_Interface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
-	 * @throws F3_FLOW3_Session_Exception_NotExistingKey
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::NotExistingKey
 	 */
 	public function getData($key);
 
@@ -62,7 +63,7 @@ interface F3_FLOW3_Session_Interface {
 	 * @param object $data The data to be stored
 	 * @param string $key The key under which the data should be stored
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 */
 	public function putData($key, $data);
 
@@ -70,7 +71,7 @@ interface F3_FLOW3_Session_Interface {
 	 * Explicitly writes (persists) and closes the session
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 */
 	public function close();
 
@@ -78,7 +79,7 @@ interface F3_FLOW3_Session_Interface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 */
 	public function destroy();
 

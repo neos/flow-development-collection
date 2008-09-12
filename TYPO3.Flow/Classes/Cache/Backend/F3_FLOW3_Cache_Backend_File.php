@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache::Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
+class File extends F3::FLOW3::Cache::AbstractBackend {
 
 	/**
 	 * @var string Directory where the files are stored
@@ -37,18 +38,18 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	protected $cacheDirectory = '';
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $environment;
 
 	/**
 	 * Injects the environment utility
 	 *
-	 * @param F3_FLOW3_Utility_Environment $environment
+	 * @param F3::FLOW3::Utility::Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(F3_FLOW3_Utility_Environment $environment) {
+	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -61,7 +62,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
 		try {
 			$this->setCacheDirectory($cacheDirectory);
-		} catch(F3_FLOW3_Cache_Exception $exception) {
+		} catch(F3::FLOW3::Cache::Exception $exception) {
 		}
 	}
 
@@ -70,7 +71,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 *
 	 * @param string $cacheDirectory: The directory
 	 * @return void
-	 * @throws F3_FLOW3_Cache_Exception if the directory does not exist, is not writable or could not be created.
+	 * @throws F3::FLOW3::Cache::Exception if the directory does not exist, is not writable or could not be created.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCacheDirectory($cacheDirectory) {
@@ -78,14 +79,14 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 			$cacheDirectory .= '/';
 		}
 		if (!is_writable($cacheDirectory)) {
-			F3_FLOW3_Utility_Files::createDirectoryRecursively($cacheDirectory);
+			F3::FLOW3::Utility::Files::createDirectoryRecursively($cacheDirectory);
 		}
-		if (!is_dir($cacheDirectory)) throw new F3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
-		if (!is_writable($cacheDirectory)) throw new F3_FLOW3_Cache_Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
+		if (!is_dir($cacheDirectory)) throw new F3::FLOW3::Cache::Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
+		if (!is_writable($cacheDirectory)) throw new F3::FLOW3::Cache::Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
 		$tagsDirectory = $cacheDirectory . $this->context . '/Tags/';
 		if (!is_writable($tagsDirectory)) {
-			F3_FLOW3_Utility_Files::createDirectoryRecursively($tagsDirectory);
+			F3::FLOW3::Utility::Files::createDirectoryRecursively($tagsDirectory);
 		}
 		$this->cacheDirectory = $cacheDirectory;
 	}
@@ -108,15 +109,15 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws F3_FLOW3_Cache_Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
+	 * @throws F3::FLOW3::Cache::Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function save($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('No cache frontend has been set yet via setCache().', 1204111375);
-		if (!is_string($data)) throw new F3_FLOW3_Cache_Exception_InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
+		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('No cache frontend has been set yet via setCache().', 1204111375);
+		if (!is_string($data)) throw new F3::FLOW3::Cache::Exception::InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		foreach ($tags as $tag) {
-			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1213105438);
+			if (!self::isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1213105438);
 		}
 
 		if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
@@ -127,17 +128,17 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 
 		if (!is_writable($cacheEntryPath)) {
 			try {
-				F3_FLOW3_Utility_Files::createDirectoryRecursively($cacheEntryPath);
+				F3::FLOW3::Utility::Files::createDirectoryRecursively($cacheEntryPath);
 			} catch(Exception $exception) {
 			}
-			if (!is_writable($cacheEntryPath)) throw new F3_FLOW3_Cache_Exception('The cache directory "' . $cacheEntryPath . '" could not be created.', 1204026250);
+			if (!is_writable($cacheEntryPath)) throw new F3::FLOW3::Cache::Exception('The cache directory "' . $cacheEntryPath . '" could not be created.', 1204026250);
 		}
 
 		$this->remove($entryIdentifier);
 
 		$temporaryFilename = $filename . '.' . uniqid() . '.temp';
 		$result = file_put_contents($cacheEntryPath . $temporaryFilename, $data);
-		if ($result === FALSE) throw new F3_FLOW3_Cache_Exception('The temporary cache file "' . $temporaryFilename . '" could not be written.', 1204026251);
+		if ($result === FALSE) throw new F3::FLOW3::Cache::Exception('The temporary cache file "' . $temporaryFilename . '" could not be written.', 1204026251);
 		for ($i=0; $i<5; $i++) {
 			$result = rename($cacheEntryPath . $temporaryFilename, $cacheEntryPath . $filename);
 			if ($result === TRUE) break;
@@ -212,7 +213,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findEntriesByTag($tag) {
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . $tag . '/*';
 		$filesFound = glob($pattern);
@@ -233,7 +234,7 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flush() {
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
 		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/*';
@@ -280,10 +281,10 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param string $identifier: The cache entry identifier
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Cache_Exception if no frontend has been set
+	 * @throws F3::FLOW3::Cache::Exception if no frontend has been set
 	 */
 	protected function findCacheFilesByEntry($entryIdentifier) {
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/????-??-?????;??;???_' . $entryIdentifier;
 		$filesFound = glob($pattern);
@@ -298,10 +299,10 @@ class F3_FLOW3_Cache_Backend_File extends F3_FLOW3_Cache_AbstractBackend {
 	 * @param string $identifier: The cache entry identifier to find tag files for
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Cache_Exception if no frontend has been set
+	 * @throws F3::FLOW3::Cache::Exception if no frontend has been set
 	 */
 	protected function findTagFilesByEntry($entryIdentifier) {
-		if (!is_object($this->cache)) throw new F3_FLOW3_Cache_Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . '*/' . $this->cache->getIdentifier() . '_' . $entryIdentifier;
 		$filesFound = glob($pattern);

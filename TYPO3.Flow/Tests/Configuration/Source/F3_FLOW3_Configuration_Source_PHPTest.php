@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Configuration::Source;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Configuration_Source_PHPTest extends F3_Testing_BaseTestCase {
+class PHPTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function returnsEmptyContainerOnNonExistingFile() {
-		$configuration = F3_FLOW3_Configuration_Source_PHP::load('/ThisFileDoesNotExist.php');
-		$this->assertEquals(new F3_FLOW3_Configuration_Container(), $configuration, 'No empty container was returned.');
+		$configuration = F3::FLOW3::Configuration::Source::PHP::load('/ThisFileDoesNotExist.php');
+		$this->assertEquals(new F3::FLOW3::Configuration::Container(), $configuration, 'No empty container was returned.');
 	}
 
 	/**
@@ -45,7 +46,7 @@ class F3_FLOW3_Configuration_Source_PHPTest extends F3_Testing_BaseTestCase {
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheContainer() {
 		$pathAndFilename = __DIR__ . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile.php';
-		$configuration = F3_FLOW3_Configuration_Source_PHP::load($pathAndFilename);
+		$configuration = F3::FLOW3::Configuration::Source::PHP::load($pathAndFilename);
 		$this->assertTrue($configuration->configurationFileHasBeenLoaded, 'The option has not been set by the fixture.');
 	}
 }

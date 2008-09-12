@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,17 +30,17 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authorization_AccessDecisionManagerInterface {
+interface AccessDecisionManagerInterface {
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
-	public function decide(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns TRUE if this access decision manager can decide on objects with the given classname

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,28 +29,28 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
+class RequestTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultPatternForBuildingTheControllerComponentNameIsPackageKeyControllerControllerName() {
-		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
 		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
-			->with($this->equalTo('f3_testpackage_controller_foo'))
-			->will($this->returnValue('F3_TestPackage_Controller_Foo'));
+			->with($this->equalTo('f3::testpackage::controller::foo'))
+			->will($this->returnValue('F3::TestPackage::Controller::Foo'));
 
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->injectComponentManager($mockComponentManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
-		$this->assertEquals('F3_TestPackage_Controller_Foo', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Controller::Foo', $request->getControllerComponentName());
 	}
 
 	/**
@@ -57,23 +58,23 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePatternForBuildingTheControllerComponentNameCanBeCustomized() {
-		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
 		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
-			->with($this->equalTo('f3_testpackage_bar_baz_foo'))
-			->will($this->returnValue('F3_TestPackage_Bar_Baz_Foo'));
+			->with($this->equalTo('f3::testpackage::bar::baz::foo'))
+			->will($this->returnValue('F3::TestPackage::Bar::Baz::Foo'));
 
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->injectComponentManager($mockComponentManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
-		$request->setControllerComponentNamePattern('F3_@package_Bar_Baz_@controller');
+		$request->setControllerComponentNamePattern('F3::@package::Bar::Baz::@controller');
 
-		$this->assertEquals('F3_TestPackage_Bar_Baz_Foo', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerComponentName());
 	}
 
 	/**
@@ -81,24 +82,24 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function lowerCasePackageKeysAndComponentNamesAreConvertedToTheRealComponentName() {
-		$mockComponentManager = $this->getMock('F3_FLOW3_Component_ManagerInterface');
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
 		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
-			->with($this->equalTo('f3_testpackage_bar_baz_foo'))
-			->will($this->returnValue('F3_TestPackage_Bar_Baz_Foo'));
+			->with($this->equalTo('f3::testpackage::bar::baz::foo'))
+			->will($this->returnValue('F3::TestPackage::Bar::Baz::Foo'));
 
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->with($this->equalTo('testpackage'))
 			->will($this->returnValue('TestPackage'));
 
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->injectComponentManager($mockComponentManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('testpackage');
 		$request->setControllerName('foo');
-		$request->setControllerComponentNamePattern('f3_@package_bar_baz_@controller');
+		$request->setControllerComponentNamePattern('f3::@package::bar::baz::@controller');
 
-		$this->assertEquals('F3_TestPackage_Bar_Baz_Foo', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerComponentName());
 	}
 
 	/**
@@ -106,7 +107,7 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setArgument('someArgumentName', 'theValue');
 		$this->assertEquals('theValue', $request->getArgument('someArgumentName'));
 	}
@@ -116,12 +117,12 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {
-		$arguments = new ArrayObject(array(
+		$arguments = new ::ArrayObject(array(
 			'firstArgument' => 'firstValue',
 			'dænishÅrgument' => 'görman välju',
 			'3a' => '3v'
 		));
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setArguments($arguments);
 		$this->assertEquals($arguments, $request->getArguments());
 	}
@@ -131,7 +132,7 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasArgumentTellsIfAnArgumentExists() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setArgument('existingArgument', 'theValue');
 
 		$this->assertTrue($request->hasArgument('existingArgument'));
@@ -143,7 +144,7 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerNameCanBeSetAndRetrieved() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setControllerName('Some');
 		$this->assertEquals('Some', $request->getControllerName());
 	}
@@ -153,11 +154,11 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function thePackageKeyOfTheControllerCanBeSetAndRetrieved() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue('TestPackage'));
 
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
@@ -165,15 +166,15 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3_FLOW3_MVC_Exception_InvalidPackageKey
+	 * @expectedException F3::FLOW3::MVC::Exception::InvalidPackageKey
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_ManagerInterface');
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
 			->will($this->returnValue(FALSE));
 
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('Some_Invalid_Key');
 	}
@@ -184,7 +185,7 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theActionNameCanBeSetAndRetrieved() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setControllerActionName('theAction');
 		$this->assertEquals('theAction', $request->getControllerActionName());
 	}
@@ -194,18 +195,18 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRepresentationFormatCanBeSetAndRetrieved() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setFormat('html');
 		$this->assertEquals('html', $request->getFormat());
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3_FLOW3_MVC_Exception_InvalidFormat
+	 * @expectedException F3::FLOW3::MVC::Exception::InvalidFormat
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidFormatsAreRejected() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$request->setFormat('.xml');
 	}
 
@@ -214,7 +215,7 @@ class F3_FLOW3_MVC_RequestTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
-		$request = new F3_FLOW3_MVC_Request();
+		$request = new F3::FLOW3::MVC::Request();
 		$this->assertFalse($request->isDispatched());
 
 		$request->setDispatched(TRUE);

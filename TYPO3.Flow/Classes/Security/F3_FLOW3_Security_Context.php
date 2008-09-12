@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +31,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Security_Context {
+class Context {
 
 	/**
 	 * @var array Array of configured tokens (might have request patterns)
@@ -43,18 +44,18 @@ class F3_FLOW3_Security_Context {
 	protected $authenticateAllTokens = FALSE;
 
 	/**
-	 * @var F3_FLOW3_MVC_Request
+	 * @var F3::FLOW3::MVC::Request
 	 */
 	protected $request;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager) {
+	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager) {
 		$configuration = $configurationManager->getSettings('FLOW3');
 		$this->authenticateAllTokens = $configuration->security->authentication->authenticateAllTokens;
 	}
@@ -62,7 +63,7 @@ class F3_FLOW3_Security_Context {
 	/**
 	 * Sets the authentication tokens in the context, usually called by the security context holder
 	 *
-	 * @param array $authenticationTokens Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 * @param array $authenticationTokens Array of F3::FLOW3::Security::Authentication::TokenInterface objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -73,11 +74,11 @@ class F3_FLOW3_Security_Context {
 	/**
 	 * Sets the request the context is used for.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The current request
+	 * @param F3::FLOW3::MVC::Request $request The current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setRequest(F3_FLOW3_MVC_Request $request) {
+	public function setRequest(F3::FLOW3::MVC::Request $request) {
 		$this->request = $request;
 	}
 
@@ -92,11 +93,11 @@ class F3_FLOW3_Security_Context {
 	}
 
 	/**
-	 * Returns all F3_FLOW3_Security_Authentication_Tokens of the security context which are
+	 * Returns all F3::FLOW3::Security::Authentication::Tokens of the security context which are
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set F3_FLOW3_Authentication_Token objects
+	 * @return array Array of set F3::FLOW3::Authentication::Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo cache tokens active for the current request
 	 */

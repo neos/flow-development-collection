@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ACL_Role implements F3_FLOW3_Security_Authentication_GrantedAuthorityInterface {
+class Role implements F3::FLOW3::Security::Authentication::GrantedAuthorityInterface {
 
 	/**
 	 * @var array Array of child roles
@@ -36,18 +37,18 @@ class F3_FLOW3_Security_ACL_Role implements F3_FLOW3_Security_Authentication_Gra
 	protected $children = array();
 
 	/**
-	 * @var F3_FLOW3_Security_ACL_Role A reference to the parent role
+	 * @var F3::FLOW3::Security::ACL::Role A reference to the parent role
 	 */
 	protected $parent = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_ACL_Role $parent The parent role
+	 * @param F3::FLOW3::Security::ACL::Role $parent The parent role
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Security_ACL_Role $parent = NULL) {
+	public function __construct(F3::FLOW3::Security::ACL::Role $parent = NULL) {
 
 	}
 
@@ -64,18 +65,18 @@ class F3_FLOW3_Security_ACL_Role implements F3_FLOW3_Security_Authentication_Gra
 	/**
 	 * Adds a new child role to this role.
 	 *
-	 * @param F3_FLOW3_Security_ACL_Role $role A new child role for this role
+	 * @param F3::FLOW3::Security::ACL::Role $role A new child role for this role
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addChild(F3_FLOW3_Security_ACL_Role $role) {
+	public function addChild(F3::FLOW3::Security::ACL::Role $role) {
 
 	}
 
 	/**
 	 * Returns an array of all child roles of this role.
 	 *
-	 * @return array Array of F3_FLOW3_Security_ACL_Role objects, beeing the children of this role
+	 * @return array Array of F3::FLOW3::Security::ACL::Role objects, beeing the children of this role
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getChildren() {
@@ -85,7 +86,7 @@ class F3_FLOW3_Security_ACL_Role implements F3_FLOW3_Security_Authentication_Gra
 	/**
 	 * Returns the parent role of this role, NULL if there is none.
 	 *
-	 * @return F3_FLOW3_Security_ACL_Role The parent role of this one, NULL if there is none
+	 * @return F3::FLOW3::Security::ACL::Role The parent role of this one, NULL if there is none
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getParent() {

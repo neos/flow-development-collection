@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_ACL_UserDetailsService implements F3_FLOW3_Security_Authentication_UserDetailsServiceInterface {
+class UserDetailsService implements F3::FLOW3::Security::Authentication::UserDetailsServiceInterface {
 
 	/**
-	 * Returns the F3_FLOW3_Security_Authentication_UserDetailsInterface object for the given authentication token.
+	 * Returns the F3::FLOW3::Security::Authentication::UserDetailsInterface object for the given authentication token.
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The authentication token to get the user details for
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface The user details for the given token
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The authentication token to get the user details for
+	 * @return F3::FLOW3::Security::Authentication::UserDetailsInterface The user details for the given token
 	 */
-	public function loadUserDetails(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function loadUserDetails(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken) {
 		//Uses the credentials in the token to figure out which user should be loaded
 	}
 }

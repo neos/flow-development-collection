@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_Validator_AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_Validator_AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::AlphanumericTest.php 688 2008-04-03 09:35:36Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_AlphanumericTest extends F3_Testing_BaseTestCase {
+class AlphanumericTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
-		$alphanumericValidator = new F3_FLOW3_Validation_Validator_Alphanumeric();
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$alphanumericValidator = new F3::FLOW3::Validation::Validator::Alphanumeric();
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($alphanumericValidator->isValidProperty('12ssDF34daweidf', $validationErrors));
 	}
@@ -46,8 +47,8 @@ class F3_FLOW3_Validation_Validator_AlphanumericTest extends F3_Testing_BaseTest
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
-		$alphanumericValidator = new F3_FLOW3_Validation_Validator_Alphanumeric();
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$alphanumericValidator = new F3::FLOW3::Validation::Validator::Alphanumeric();
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors));
 	}

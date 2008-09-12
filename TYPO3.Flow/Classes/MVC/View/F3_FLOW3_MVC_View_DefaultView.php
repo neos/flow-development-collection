@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::View;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::View::Default.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,23 +26,23 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_View_Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::View::Default.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_View_Default extends F3_FLOW3_MVC_View_AbstractView {
+class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
 
 	/**
-	 * @var F3_FLOW3_MVC_Request
+	 * @var F3::FLOW3::MVC::Request
 	 */
 	protected $request;
 
 	/**
 	 * Sets the request
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request
+	 * @param F3::FLOW3::MVC::Request $request The request
 	 * @return void
 	 */
-	public function setRequest(F3_FLOW3_MVC_Request $request) {
+	public function setRequest(F3::FLOW3::MVC::Request $request) {
 		$this->request = $request;
 	}
 
@@ -50,10 +51,10 @@ class F3_FLOW3_MVC_View_Default extends F3_FLOW3_MVC_View_AbstractView {
 	 *
 	 * @return string The rendered view
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws F3_FLOW3_MVC_Exception if no request has been set
+	 * @throws F3::FLOW3::MVC::Exception if no request has been set
 	 */
 	public function render() {
-		if (!is_object($this->request)) throw new F3_FLOW3_MVC_Exception('Can\'t render view without request object.', 1192450280);
+		if (!is_object($this->request)) throw new F3::FLOW3::MVC::Exception('Can\'t render view without request object.', 1192450280);
 		return $this->resourceManager->getResource('file://FLOW3/Public/MVC/DefaultView_Template.html')->getContent();
 	}
 }

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization::Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_Interceptor_RequireAuthenticationTest extends F3_Testing_BaseTestCase {
+class RequireAuthenticationTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -36,19 +37,19 @@ class F3_FLOW3_Security_Authorization_Interceptor_RequireAuthenticationTest exte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function allTokensFromTheContextAreGivenToTheAuthenticationManagerForAuthentication() {
-		$contextHolder = $this->getMock('F3_FLOW3_Security_ContextHolderInterface');
-		$context = $this->getMock('F3_FLOW3_Security_Context', array(), array(), '', FALSE);
-		$authenticationManager = $this->getMock('F3_FLOW3_Security_Authentication_ManagerInterface');
+		$contextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface');
+		$context = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$authenticationManager = $this->getMock('F3::FLOW3::Security::Authentication::ManagerInterface');
 
-		$token1 = $this->getMock('F3_FLOW3_Security_Authentication_TokenInterface', array(), array(), 'tokenToAuthenticate1');
-		$token2 = $this->getMock('F3_FLOW3_Security_Authentication_TokenInterface', array(), array(), 'tokenToAuthenticate2');
+		$token1 = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface', array(), array(), 'tokenToAuthenticate1');
+		$token2 = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface', array(), array(), 'tokenToAuthenticate2');
 
 		$contextHolder->expects($this->once())->method('getContext')->will($this->returnValue($context));
 		$context->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 		$authenticationManager->expects($this->at(0))->method('authenticate')->with($token1);
 		$authenticationManager->expects($this->at(1))->method('authenticate')->with($token2);
 
-		$interceptor = new F3_FLOW3_Security_Authorization_Interceptor_RequireAuthentication($contextHolder, $authenticationManager);
+		$interceptor = new F3::FLOW3::Security::Authorization::Interceptor::RequireAuthentication($contextHolder, $authenticationManager);
 		$interceptor->invoke();
 	}
 }

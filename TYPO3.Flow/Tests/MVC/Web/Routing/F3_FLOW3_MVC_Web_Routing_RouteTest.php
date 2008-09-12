@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,15 +31,15 @@ require_once(__DIR__ . '/../../Fixture/Web/Routing/F3_FLOW3_MVC_Fixture_Web_Rout
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
+class RouteTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeIsPrototype() {
-		$route1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
-		$route2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_Route');
+		$route1 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::Route');
+		$route2 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::Route');
 		$this->assertNotSame($route1, $route2, 'Obviously route is not prototype!');
 	}
 
@@ -47,7 +48,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDefaultsAllowsToSetTheDefaultPackageControllerAndActionName() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('SomePackage');
 
 		$defaults = array(
@@ -69,7 +70,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theControllerComponentNamePatternCanBeSetAndRetrieved() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setControllerComponentNamePattern('XY3_@package_@controller');
 		$this->assertEquals('XY3_@package_@controller', $route->getControllerComponentNamePattern());
 	}
@@ -79,7 +80,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchUrlPatternIfItIsNullOrEmpty() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$requestPath = 'foo/bar';
 
 		$this->assertFalse($route->matches($requestPath), 'Route should not match if no urlPattern is set.');
@@ -93,7 +94,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeDoesNotMatchIfRequestPathIsNullOrEmpty() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[foo]/[bar]');
 
 		$this->assertFalse($route->matches(NULL), 'Route should not match if requestPath is NULL.');
@@ -105,7 +106,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function aSimpleStaticRouteConsistsOfThePathSegmentsSeparatedByTheForwardSlash() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('foo/bar');
 
 		$this->assertFalse($route->matches('bar/foo'), '"foo/bar"-Route should not match "bar/foo"-request.');
@@ -117,7 +118,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dynamicRoutesAreEnclosedInSquareBrackets() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('foo/[bar]');
 
 		$this->assertFalse($route->matches('bar/someValue'), '"foo/[bar]"-Route should not match "bar/someValue"-request.');
@@ -130,7 +131,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticAndDynamicRoutesCanBeMixedInAnyOrder() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/foo/[key2]/bar');
 
 		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
@@ -143,7 +144,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingUrlPatternResetsRoute() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/foo/[key2]/bar');
 
 		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
@@ -162,7 +163,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function urlPatternSegmentCanContainTwoDynamicRouteParts() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('user/[firstName]-[lastName]');
 
 		$this->assertFalse($route->matches('user/johndoe'), '"user/[firstName]-[lastName]"-Route should not match "user/johndoe"-request.');
@@ -175,7 +176,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function urlPatternSegmentsCanContainMultipleDynamicRouteParts() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
 
 		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should not match "value1-value2/value3.value4value5"-request.');
@@ -188,7 +189,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function defaultValuesAreSetForUrlPatternSegmentsWithMultipleRouteParts() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
 		$defaults = array(
 			'key1' => 'defaultValue1',
@@ -207,12 +208,12 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function processingUrlPatternWithSuccessiveDynamicRoutepartsThrowsException() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1][key2]');
 		try {
 			$route->matches('value1value2');
 			$this->fail('matches() did not throw an exception although the specified urlPattern contains successive dynamic route parts which is not possible.');
-		} catch (F3_FLOW3_MVC_Exception_SuccessiveDynamicRouteParts $exception) {
+		} catch (F3::FLOW3::MVC::Exception::SuccessiveDynamicRouteParts $exception) {
 		}
 	}
 
@@ -221,7 +222,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingNonExistingRoutePartHandlerThrowsException() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/[key2]');
 		$route->setRoutePartHandlers(
 			array(
@@ -231,7 +232,7 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 		try {
 			$route->matches('foo/bar');
 			$this->fail('matches() did not throw an exception although the specified routePart handler class is inexistent.');
-		} catch (F3_FLOW3_Component_Exception_UnknownComponent $exception) {
+		} catch (F3::FLOW3::Component::Exception::UnknownComponent $exception) {
 		}
 	}
 
@@ -240,17 +241,17 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingInvalidRoutePartHandlerThrowsException() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/[key2]');
 		$route->setRoutePartHandlers(
 			array(
-				'key1' => 'F3_FLOW3_MVC_Web_Routing_StaticRoutePart',
+				'key1' => 'F3::FLOW3::MVC::Web::Routing::StaticRoutePart',
 			)
 		);
 		try {
 			$route->matches('foo/bar');
 			$this->fail('matches() did not throw an exception although the specified routePart handler is invalid.');
-		} catch (F3_FLOW3_MVC_Exception_InvalidRoutePartHandler $exception) {
+		} catch (F3::FLOW3::MVC::Exception::InvalidRoutePartHandler $exception) {
 		}
 	}
 
@@ -259,12 +260,12 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registeredRoutePartHandlerIsInvokedWhenCallingMatch() {
-		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler');
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$this->componentManager->registerComponent('F3::FLOW3::MVC::Fixture::Web::Routing::MockRoutePartHandler');
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/[key2]');
 		$route->setRoutePartHandlers(
 			array(
-				'key1' => 'F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler',
+				'key1' => 'F3::FLOW3::MVC::Fixture::Web::Routing::MockRoutePartHandler',
 			)
 		);
 		$route->matches('foo/bar');
@@ -277,11 +278,11 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchingRouteIsProperlyResolved() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
 		$route->setDefaults(array('@format' => 'xml'));
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
-		
+
 		$this->assertTrue($route->resolves($routeValues));
 		$this->assertEquals('value1-value2/value3.value4.xml', $route->getMatchingURL());
 	}
@@ -291,11 +292,11 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routeCantBeResolvedRouteContainsLessValuesThanAreSpecified() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]-[key2]/[key3].[key4].[@format]');
 		$route->setDefaults(array('@format' => 'xml'));
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
-		
+
 		$this->assertFalse($route->resolves($routeValues));
 	}
 
@@ -304,12 +305,12 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]');
 		$routeValues = array('key1' => 'value1');
-		
+
 		$this->assertTrue($route->resolves($routeValues));
-		
+
 		$routeValues = array('differentKey' => 'value1');
 		$this->assertFalse($route->resolves($routeValues));
 		$this->assertNull($route->getMatchingURL());
@@ -320,12 +321,12 @@ class F3_FLOW3_MVC_Web_Routing_RouteTest extends F3_Testing_BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function registeredRoutePartHandlerIsInvokedWhenCallingResolve() {
-		$this->componentManager->registerComponent('F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler');
-		$route = new F3_FLOW3_MVC_Web_Routing_Route($this->componentFactory);
+		$this->componentManager->registerComponent('F3::FLOW3::MVC::Fixture::Web::Routing::MockRoutePartHandler');
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUrlPattern('[key1]/[key2]');
 		$route->setRoutePartHandlers(
 			array(
-				'key1' => 'F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler',
+				'key1' => 'F3::FLOW3::MVC::Fixture::Web::Routing::MockRoutePartHandler',
 			)
 		);
 		$routeValues = array('key2' => 'value2');

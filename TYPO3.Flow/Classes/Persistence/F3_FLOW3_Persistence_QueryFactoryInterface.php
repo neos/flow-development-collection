@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,13 +29,13 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Persistence_QueryFactoryInterface {
+interface QueryFactoryInterface {
 
 	/**
 	 * Creates a query object working on the given class name
 	 *
 	 * @param string $className
-	 * @return F3_FLOW_Persistence_QueryInterface
+	 * @return F3::FLOW::Persistence::QueryInterface
 	 */
 	public function create($className);
 

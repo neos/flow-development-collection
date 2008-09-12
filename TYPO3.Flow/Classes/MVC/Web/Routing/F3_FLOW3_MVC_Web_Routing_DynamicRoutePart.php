@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
+class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 
 	/**
 	 * @var string if not empty, match() will check existence of $splitString in current URL segment.
@@ -71,26 +72,26 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePart extends F3_FLOW3_MVC_Web_Routing
 		}
 
 		$valueToMatch = isset($urlSegments[0]) ? $urlSegments[0] : NULL;
-		if (F3_PHP6_Functions::strlen($this->splitString) > 0 && F3_PHP6_Functions::strlen($valueToMatch)) {
-			$splitStringPosition = F3_PHP6_Functions::strpos($valueToMatch, $this->splitString);
+		if (F3::PHP6::Functions::strlen($this->splitString) > 0 && F3::PHP6::Functions::strlen($valueToMatch)) {
+			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $this->splitString);
 			if ($splitStringPosition === FALSE) {
 				return FALSE;
 			}
-			$valueToMatch = F3_PHP6_Functions::substr($valueToMatch, 0, $splitStringPosition);
+			$valueToMatch = F3::PHP6::Functions::substr($valueToMatch, 0, $splitStringPosition);
 		}
 
-		if (!F3_PHP6_Functions::strlen($valueToMatch)) {
+		if (!F3::PHP6::Functions::strlen($valueToMatch)) {
 			if (empty($this->defaultValue)) {
 				return FALSE;
 			}
 			$this->value = $this->defaultValue;
 		} else {
 			$this->value = $valueToMatch;
-			if (F3_PHP6_Functions::strlen($valueToMatch)) {
-				$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
+			if (F3::PHP6::Functions::strlen($valueToMatch)) {
+				$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
 			}
 		}
-		if (F3_PHP6_Functions::strlen($this->splitString) == 0 && isset($urlSegments[0]) && F3_PHP6_Functions::strlen($urlSegments[0]) == 0) {
+		if (F3::PHP6::Functions::strlen($this->splitString) == 0 && isset($urlSegments[0]) && F3::PHP6::Functions::strlen($urlSegments[0]) == 0) {
 			array_shift($urlSegments);
 		}
 

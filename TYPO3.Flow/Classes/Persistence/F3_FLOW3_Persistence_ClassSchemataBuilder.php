@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,22 +29,22 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_ClassSchemataBuilder {
+class ClassSchemataBuilder {
 
 	/**
 	 * The reflection service
 	 *
-	 * @var F3_FLOW3_Reflection_Service
+	 * @var F3::FLOW3::Reflection::Service
 	 */
 	protected $reflectionService;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Reflection_Service $reflectionService The reflection service
+	 * @param F3::FLOW3::Reflection::Service $reflectionService The reflection service
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Reflection_Service $reflectionService) {
+	public function __construct(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
@@ -51,27 +52,27 @@ class F3_FLOW3_Persistence_ClassSchemataBuilder {
 	 * Builds class schemata from the specified classes
 	 *
 	 * @param array $classNames Names of the classes to build schemata from
-	 * @return array of F3_FLOW3_Persistence_ClassSchema
+	 * @return array of F3::FLOW3::Persistence::ClassSchema
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Persistence_Exception_InvalidClass if one of the specified classes does not exist
+	 * @throws F3::FLOW3::Persistence::Exception::InvalidClass if one of the specified classes does not exist
 	 */
 	public function build(array $classNames) {
 		$classSchemata = array();
 		foreach ($classNames as $className) {
-			if (!class_exists($className)) throw new F3_FLOW3_Persistence_Exception_InvalidClass('Unknown class "' . $className . '".', 1214495364);
+			if (!class_exists($className)) throw new F3::FLOW3::Persistence::Exception::InvalidClass('Unknown class "' . $className . '".', 1214495364);
 
 			$modelType = NULL;
 			if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
-				$modelType = F3_FLOW3_Persistence_ClassSchema::MODELTYPE_ENTITY;
+				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_ENTITY;
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'repository')) {
-				$modelType = F3_FLOW3_Persistence_ClassSchema::MODELTYPE_REPOSITORY;
+				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_REPOSITORY;
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
-				$modelType = F3_FLOW3_Persistence_ClassSchema::MODELTYPE_VALUEOBJECT;
+				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_VALUEOBJECT;
 			} else {
 				continue;
 			}
 
-			$classSchema = new F3_FLOW3_Persistence_ClassSchema($className);
+			$classSchema = new F3::FLOW3::Persistence::ClassSchema($className);
 			$classSchema->setModelType($modelType);
 			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'identifier')) {

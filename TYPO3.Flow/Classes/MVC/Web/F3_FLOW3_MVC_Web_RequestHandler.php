@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,46 +26,46 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Web_RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Web::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInterface {
+class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface Reference to the component factory
+	 * @var F3::FLOW3::Component::FactoryInterface Reference to the component factory
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment Reference to the environment utility component
+	 * @var F3::FLOW3::Utility::Environment Reference to the environment utility component
 	 */
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3_FLOW3_MVC_Dispatcher
+	 * @var F3::FLOW3::MVC::Dispatcher
 	 */
 	protected $dispatcher;
 
 	/**
-	 * @var F3_FLOW3_MVC_RequestProcessorChainManager
+	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
 	 */
 	protected $requestProcessorChainManager;
 
 	/**
 	 * Constructs the Web Request Handler
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
-	 * @param F3_FLOW3_Utility_Environment $utilityEnvironment A reference to the environment
-	 * @param F3_FLOW3_MVC_Dispatcher $dispatcher The request dispatcher
-	 * @param F3_FLOW3_MVC_RequestProcessorChainManager A reference to the request processor chain manager
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
+	 * @param F3::FLOW3::MVC::Dispatcher $dispatcher The request dispatcher
+	 * @param F3::FLOW3::MVC::RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			F3_FLOW3_Component_FactoryInterface $componentFactory,
-			F3_FLOW3_Utility_Environment $utilityEnvironment,
-			F3_FLOW3_MVC_Dispatcher $dispatcher,
-			F3_FLOW3_MVC_RequestProcessorChainManager $requestProcessorChainManager) {
+			F3::FLOW3::Component::FactoryInterface $componentFactory,
+			F3::FLOW3::Utility::Environment $utilityEnvironment,
+			F3::FLOW3::MVC::Dispatcher $dispatcher,
+			F3::FLOW3::MVC::RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
@@ -78,9 +79,9 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_RequestBuilder')->build();
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::RequestBuilder')->build();
 		$this->requestProcessorChainManager->processRequest($request);
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}
@@ -93,12 +94,12 @@ class F3_FLOW3_MVC_Web_RequestHandler implements F3_FLOW3_MVC_RequestHandlerInte
 	 */
 	public function canHandleRequest() {
 		switch ($this->utilityEnvironment->getRequestMethod()) {
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_GET :
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_POST :
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_PUT :
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_DELETE :
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_OPTIONS :
-			case F3_FLOW3_Utility_Environment::REQUEST_METHOD_HEAD :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_OPTIONS :
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_HEAD :
 				return TRUE;
 		}
 		return FALSE;

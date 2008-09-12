@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Configuration_Manager {
+class Manager {
 
 	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
 	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
@@ -44,21 +45,21 @@ class F3_FLOW3_Configuration_Manager {
 	/**
 	 * Storage for the settings, loaded by loadGlobalSettings()
 	 *
-	 * @var F3_FLOW3_Configuration_Container
+	 * @var F3::FLOW3::Configuration::Container
 	 */
 	protected $settings;
 
 	/**
 	 * Storage of the raw routing configuration
 	 *
-	 * @var F3_FLOW3_Configuration_Container
+	 * @var F3::FLOW3::Configuration::Container
 	 */
 	protected $routes;
 
 	/**
 	 * The configuration source used for loading the raw configuration
 	 *
-	 * @var F3_FLOW3_Configuration_SourceInterface
+	 * @var F3::FLOW3::Configuration::SourceInterface
 	 */
 	protected $configurationSource;
 
@@ -66,13 +67,13 @@ class F3_FLOW3_Configuration_Manager {
 	 * Constructs the configuration manager
 	 *
 	 * @param string $context The application context to fetch configuration for.
-	 * @param F3_FLOW3_Configuration_SourceInterface $configurationSource The configuration source
+	 * @param F3::FLOW3::Configuration::SourceInterface $configurationSource The configuration source
 	 */
-	public function __construct($context, F3_FLOW3_Configuration_SourceInterface $configurationSource) {
+	public function __construct($context, F3::FLOW3::Configuration::SourceInterface $configurationSource) {
 		$this->context = $context;
 		$this->configurationSource = $configurationSource;
-		$this->settings = new F3_FLOW3_Configuration_Container;
-		$this->routes = new F3_FLOW3_Configuration_Container;
+		$this->settings = new F3::FLOW3::Configuration::Container;
+		$this->routes = new F3::FLOW3::Configuration::Container;
 	}
 
 	/**
@@ -80,14 +81,14 @@ class F3_FLOW3_Configuration_Manager {
 	 * package.
 	 *
 	 * @param string $packageKey Key of the package to return the settings for
-	 * @return F3_FLOW3_Configuration_Container The settings of the specified package
+	 * @return F3::FLOW3::Configuration::Container The settings of the specified package
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettings($packageKey) {
 		if ($this->settings->offsetExists($packageKey)) {
 			$settingsContainer = $this->settings->$packageKey;
 		} else {
-			$settingsContainer = new F3_FLOW3_Configuration_Container();
+			$settingsContainer = new F3::FLOW3::Configuration::Container();
 		}
 		$settingsContainer->lock();
 		return $settingsContainer;
@@ -176,8 +177,8 @@ class F3_FLOW3_Configuration_Manager {
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param string $packageKey Key of the package the configuration is for
-	 * @return F3_FLOW3_Configuration_Container The configuration
-	 * @throws F3_FLOW3_Configuration_Exception_InvalidConfigurationType on invalid configuration types
+	 * @return F3::FLOW3::Configuration::Container The configuration
+	 * @throws F3::FLOW3::Configuration::Exception::InvalidConfigurationType on invalid configuration types
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -189,7 +190,7 @@ class F3_FLOW3_Configuration_Manager {
 			case self::CONFIGURATION_TYPE_COMPONENTS :
 				break;
 			default:
-				throw new F3_FLOW3_Configuration_Exception_InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
+				throw new F3::FLOW3::Configuration::Exception::InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 
 		$configuration = $this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType . '.php');

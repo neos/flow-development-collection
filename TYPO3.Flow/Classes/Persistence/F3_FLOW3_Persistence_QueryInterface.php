@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Persistence_QueryInterface {
+interface QueryInterface {
 
 	/**
 	 * Executes the query against the backend and returns the result
@@ -41,7 +42,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 * The constraint used to limit the result set
 	 *
 	 * @param mixed $constraint Some constraint, depending on the backend
-	 * @return F3_FLOW3_Persistence_QueryInterface
+	 * @return F3::FLOW3::Persistence::QueryInterface
 	 */
 	public function matching($constraint);
 
@@ -50,7 +51,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function equals($property, $operand);
 
@@ -59,7 +60,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function like($property, $operand);
 
@@ -68,7 +69,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function lessThan($property, $operand);
 
@@ -77,7 +78,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function lessThanOrEqual($property, $operand);
 
@@ -86,7 +87,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function greaterThan($property, $operand);
 
@@ -95,7 +96,7 @@ interface F3_FLOW3_Persistence_QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return F3_FLOW3_Persistence_OperatorInterface
+	 * @return F3::FLOW3::Persistence::OperatorInterface
 	 */
 	public function greaterThanOrEqual($property, $operand);
 

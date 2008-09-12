@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Resource_TextResource extends F3_FLOW3_Resource_AbstractResource {
+class TextResource extends F3::FLOW3::Resource::AbstractResource {
 
 	/**
 	 * Returns the content of this resource.

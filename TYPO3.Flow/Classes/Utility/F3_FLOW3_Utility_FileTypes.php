@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3_FLOW3_Utility_Files.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Utility::Files.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -27,10 +28,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3_FLOW3_Utility_Files.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Utility::Files.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Utility_FileTypes {
+class FileTypes {
 
 	/**
 	 * A map of file extensions to mime types

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,19 +26,19 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class F3_FLOW3_Resource_Publisher {
+class Publisher {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container The FLOW3 base configuration
+	 * @var F3::FLOW3::Configuration::Container The FLOW3 base configuration
 	 */
 	protected $configuration;
 
@@ -47,21 +48,21 @@ class F3_FLOW3_Resource_Publisher {
 	protected $publicResourcePath = NULL;
 
 	/**
-	 * @var F3_FLOW3_Cache_VariableCache The cache used for storing metadata about resources
+	 * @var F3::FLOW3::Cache::VariableCache The cache used for storing metadata about resources
 	 */
 	protected $resourceMetadataCache;
 
 	/**
-	 * @var integer One of the CACHE_STRATEGY constants defined in F3_FLOW3_Resource_Manager
+	 * @var integer One of the CACHE_STRATEGY constants defined in F3::FLOW3::Resource::Manager
 	 */
-	protected $cacheStrategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_NONE;
+	protected $cacheStrategy = F3::FLOW3::Resource::Manager::CACHE_STRATEGY_NONE;
 
 	/**
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -75,27 +76,27 @@ class F3_FLOW3_Resource_Publisher {
 	public function initializeMirrorDirectory($path) {
 		$this->publicResourcePath = $path;
 		if (!is_writable($this->publicResourcePath)) {
-			F3_FLOW3_Utility_Files::createDirectoryRecursively($this->publicResourcePath);
+			F3::FLOW3::Utility::Files::createDirectoryRecursively($this->publicResourcePath);
 		}
-		if (!is_dir($this->publicResourcePath)) throw new F3_FLOW3_Resource_Exception_FileDoesNotExist('The directory "' . $this->publicResourcePath . '" does not exist.', 1207124538);
-		if (!is_writable($this->publicResourcePath)) throw new F3_FLOW3_Resource_Exception('The directory "' . $this->publicResourcePath . '" is not writable.', 1207124546);
+		if (!is_dir($this->publicResourcePath)) throw new F3::FLOW3::Resource::Exception::FileDoesNotExist('The directory "' . $this->publicResourcePath . '" does not exist.', 1207124538);
+		if (!is_writable($this->publicResourcePath)) throw new F3::FLOW3::Resource::Exception('The directory "' . $this->publicResourcePath . '" is not writable.', 1207124546);
 	}
 
 	/**
 	 * Sets the cache used for storing meta data about resources
 	 *
-	 * @param F3_FLOW3_Cache_VariableCache $metadataCache
+	 * @param F3::FLOW3::Cache::VariableCache $metadataCache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setMetadataCache(F3_FLOW3_Cache_VariableCache $metadataCache) {
+	public function setMetadataCache(F3::FLOW3::Cache::VariableCache $metadataCache) {
 		$this->resourceMetadataCache = $metadataCache;
 	}
 
 	/**
 	 * Sets the cache strategy to use for resource files
 	 *
-	 * @param integer $strategy One of the CACHE_STRATEGY constants from F3_FLOW3_Resource_Manager
+	 * @param integer $strategy One of the CACHE_STRATEGY constants from F3::FLOW3::Resource::Manager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -106,10 +107,10 @@ class F3_FLOW3_Resource_Publisher {
 	/**
 	 * Returns metadata for the resource identified by URI
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI $URI
+	 * @param F3::FLOW3::Property::DataType::URI $URI
 	 * @return unknown
 	 */
-	public function getMetadata(F3_FLOW3_Property_DataType_URI $URI) {
+	public function getMetadata(F3::FLOW3::Property::DataType::URI $URI) {
 		$metadata = array();
 		$identifier = md5((string)$URI);
 		if ($this->resourceMetadataCache->has($identifier)) {
@@ -129,9 +130,9 @@ class F3_FLOW3_Resource_Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mirrorPublicPackageResources($packageName) {
-		if ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE && $this->resourceMetadataCache->has($packageName . 'IsMirrored')) {
+		if ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE && $this->resourceMetadataCache->has($packageName . 'IsMirrored')) {
 			return;
-		} elseif ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE) {
+		} elseif ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE) {
 			$this->resourceMetadataCache->save($packageName . 'IsMirrored', TRUE);
 		}
 
@@ -139,12 +140,12 @@ class F3_FLOW3_Resource_Publisher {
 		if (!is_dir($sourcePath)) return;
 
 		$destinationPath = $this->publicResourcePath . $packageName . '/Public/';
-		$resourceFilenames = F3_FLOW3_Utility_Files::readDirectoryRecursively($sourcePath);
+		$resourceFilenames = F3::FLOW3::Utility::Files::readDirectoryRecursively($sourcePath);
 
 		foreach ($resourceFilenames as $file) {
 			$relativeFile = str_replace($sourcePath, '', $file);
 			$sourceMTime = filemtime($file);
-			if ($this->cacheStrategy === F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
+			if ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
 				$destMTime = filemtime($destinationPath . $relativeFile);
 				if ($sourceMTime === $destMTime) continue;
 			}
@@ -152,15 +153,15 @@ class F3_FLOW3_Resource_Publisher {
 			$URI = $this->createURI('file://' . $packageName . '/Public/' . $relativeFile);
 			$metadata = $this->extractResourceMetadata($URI);
 
-			F3_FLOW3_Utility_Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
+			F3::FLOW3::Utility::Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
 			if ($metadata['mimeType'] == 'text/html') {
-				$HTML = F3_FLOW3_Resource_Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
+				$HTML = F3::FLOW3::Resource::Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {
 				copy($file, $destinationPath . $relativeFile);
 			}
 			if (!file_exists($destinationPath . $relativeFile)) {
-				throw new F3_FLOW3_Resource_Exception('The resource "' . $relativeFile . '" could not be mirrored.', 1207255453);
+				throw new F3::FLOW3::Resource::Exception('The resource "' . $relativeFile . '" could not be mirrored.', 1207255453);
 			}
 			touch($destinationPath . $relativeFile, $sourceMTime);
 
@@ -171,27 +172,27 @@ class F3_FLOW3_Resource_Publisher {
 	/**
 	 * Fetches and returns metadata for a resource
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI $URI
+	 * @param F3::FLOW3::Property::DataType::URI $URI
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function extractResourceMetadata(F3_FLOW3_Property_DataType_URI $URI) {
+	public function extractResourceMetadata(F3::FLOW3::Property::DataType::URI $URI) {
 		$explodedPath = explode('/',dirname($URI->getPath()));
 		if ($explodedPath[1] == 'Public') {
 			$metadata = array(
 				'URI' => $URI,
 				'path' => $this->publicResourcePath . $URI->getHost() . dirname($URI->getPath()),
 				'name' => basename($URI->getPath()),
-				'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
-				'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
+				'mimeType' => F3::FLOW3::Utility::FileTypes::mimeTypeFromFilename($URI->getPath()),
+				'mediaType' => F3::FLOW3::Utility::FileTypes::mediaTypeFromFilename($URI->getPath()),
 			);
 		} else {
 			$metadata = array(
 				'URI' => $URI,
 				'path' => FLOW3_PATH_PACKAGES . $URI->getHost() . '/Resources' . dirname($URI->getPath()),
 				'name' => basename($URI->getPath()),
-				'mimeType' => F3_FLOW3_Utility_FileTypes::mimeTypeFromFilename($URI->getPath()),
-				'mediaType' => F3_FLOW3_Utility_FileTypes::mediaTypeFromFilename($URI->getPath()),
+				'mimeType' => F3::FLOW3::Utility::FileTypes::mimeTypeFromFilename($URI->getPath()),
+				'mediaType' => F3::FLOW3::Utility::FileTypes::mediaTypeFromFilename($URI->getPath()),
 			);
 		}
 		return $metadata;
@@ -201,11 +202,11 @@ class F3_FLOW3_Resource_Publisher {
 	 * Returns a new URI object
 	 *
 	 * @param string $URIString
-	 * @return F3_FLOW3_Property_DataType_URI
+	 * @return F3::FLOW3::Property::DataType::URI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function createURI($URIString) {
-		return new F3_FLOW3_Property_DataType_URI($URIString);
+		return new F3::FLOW3::Property::DataType::URI($URIString);
 	}
 }
 

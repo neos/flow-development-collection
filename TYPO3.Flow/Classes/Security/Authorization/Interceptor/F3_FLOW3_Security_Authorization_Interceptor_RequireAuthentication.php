@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization::Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -33,30 +34,30 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_Interceptor_RequireAuthentication implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+class RequireAuthentication implements F3::FLOW3::Security::Authorization::InterceptorInterface {
 
 	/**
-	 * @var F3_FLOW3_Security_Context The security context
+	 * @var F3::FLOW3::Security::Context The security context
 	 */
 	protected $securityContext = NULL;
 
 	/**
-	 * @var F3_FLOW3_Security_Authentication_ManagerInterface The authentication manager
+	 * @var F3::FLOW3::Security::Authentication::ManagerInterface The authentication manager
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3_Log_LoggerInterface $logger A logger to log security relevant actions
+	 * @param F3::FLOW3::Security::Context $securityContext The current security context
+	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
+	 * @param F3::Log::LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3_FLOW3_Security_ContextHolderInterface $securityContextHolder,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager
+					F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
+					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager
 					) {
 		$this->securityContext = $securityContextHolder->getContext();
 		$this->authenticationManager = $authenticationManager;

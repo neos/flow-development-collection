@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,23 +26,23 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_AbstractControllerTest extends F3_Testing_BaseTestCase {
+class AbstractControllerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeComponentSetsCurrentPackage() {
-		$package = new F3_FLOW3_Package_Package('FLOW3', __DIR__ . '/../../');
+		$package = new F3::FLOW3::Package::Package('FLOW3', __DIR__ . '/../../');
 		$packageKey = uniqid('Test');
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array('getPackage'), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::Manager', array('getPackage'), array(), '', FALSE);
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
 
-		$controller = $this->getMock('F3_FLOW3_MVC_Controller_AbstractController', array(), array($this->componentFactory, $mockPackageManager), 'F3_' . $packageKey . '_Controller', TRUE);
-		$controllerReflection = new F3_FLOW3_Reflection_Class('F3_FLOW3_MVC_Controller_AbstractController');
+		$controller = $this->getMock('F3::FLOW3::MVC::Controller::AbstractController', array(), array($this->componentFactory, $mockPackageManager), 'F3::' . $packageKey . '::Controller', TRUE);
+		$controllerReflection = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::MVC::Controller::AbstractController');
 		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
 		$packagePropertyReflection = $controllerReflection->getProperty('package');
 

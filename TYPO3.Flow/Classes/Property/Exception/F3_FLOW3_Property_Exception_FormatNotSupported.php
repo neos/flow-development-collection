@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3_FLOW3_Property_Exception_FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id: F3::FLOW3::Property::Exception::FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3_FLOW3_Property_Exception_FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id: F3::FLOW3::Property::Exception::FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Property_Exception_FormatNotSupported extends F3_FLOW3_Property_Exception {
+class FormatNotSupported extends F3::FLOW3::Property::Exception {
 
 }
 ?>

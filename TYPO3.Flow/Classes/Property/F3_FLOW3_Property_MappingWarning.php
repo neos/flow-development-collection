@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3_FLOW3_Property_MappingWarning.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id: F3::FLOW3::Property::MappingWarning.php 681 2008-04-02 14:00:27Z andi $
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3_FLOW3_Property_MappingWarning.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id: F3::FLOW3::Property::MappingWarning.php 681 2008-04-02 14:00:27Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Property_MappingWarning extends F3_FLOW3_Error_Warning {
+class MappingWarning extends F3::FLOW3::Error::Warning {
 
 	/**
 	 * @var string The default (english) error message.

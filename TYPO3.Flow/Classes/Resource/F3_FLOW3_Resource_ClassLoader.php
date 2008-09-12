@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  */
 
 require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
@@ -29,13 +30,13 @@ require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3_FLOW3_Component_ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_ClassLoader {
+class ClassLoader {
 
 	/**
-	 * @var array Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the F3_Package_Component scheme.
+	 * @var array Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the F3::Package::Component scheme.
 	 */
 	protected $specialClassNamesAndPaths = array();
 
@@ -67,11 +68,11 @@ class F3_FLOW3_Resource_ClassLoader {
 		if (isset($this->specialClassNamesAndPaths[$className])) {
 			$classFilePathAndName = $this->specialClassNamesAndPaths[$className];
 		} else {
-			$classNameParts = explode('_', $className);
+			$classNameParts = explode('::', $className);
 			if (is_array($classNameParts) && $classNameParts[0] == 'F3') {
-				$classFilePathAndName = $this->packagesDirectory . $classNameParts[1] . '/' . F3_FLOW3_Package_Package::DIRECTORY_CLASSES;
+				$classFilePathAndName = $this->packagesDirectory . $classNameParts[1] . '/' . F3::FLOW3::Package::Package::DIRECTORY_CLASSES;
 				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-				$classFilePathAndName .= $className . '.php';
+				$classFilePathAndName .= str_replace('::', '_', $className) . '.php';
 			}
 		}
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);
@@ -85,7 +86,7 @@ class F3_FLOW3_Resource_ClassLoader {
 	 * @param string $classFilePathAndName Absolute path and file name of the file holding the class implementation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see F3_FLOW3_Resource_Manager
+	 * @see F3::FLOW3::Resource::Manager
 	 */
 	public function setSpecialClassNameAndPath($className, $path) {
 		$this->specialClassNamesAndPaths[$className] = $path;

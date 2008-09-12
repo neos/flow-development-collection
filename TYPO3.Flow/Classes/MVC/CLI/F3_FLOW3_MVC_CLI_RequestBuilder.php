@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_CLI_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::CLI::RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,36 +26,36 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_CLI_RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::CLI::RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_CLI_RequestBuilder {
+class RequestBuilder {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $environment;
 
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
-	 * @param F3_FLOW3_Utility_Environment $environment The environment
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Utility::Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Utility_Environment $environment) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Utility::Environment $environment) {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentFactory;
 		$this->environment = $environment;
@@ -63,15 +64,15 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	/**
 	 * Builds a CLI request object from the raw command call
 	 *
-	 * @return F3_FLOW3_MVC_CLI_Request The CLI request as an object
+	 * @return F3::FLOW3::MVC::CLI::Request The CLI request as an object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_CLI_Request');
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::CLI::Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
-			$request->setControllerComponentNamePattern('F3_FLOW3_MVC_Controller_Default');
+			$request->setControllerComponentNamePattern('F3::FLOW3::MVC::Controller::DefaultController');
 			return $request;
 		}
 
@@ -86,7 +87,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 		while (count($remainingArguments) > 0) {
 			$argumentName = $this->convertCurrentCommandLineArgumentToRequestArgumentName($remainingArguments);
 			$argumentValue = $this->getValueOfCurrentCommandLineArgument($remainingArguments);
-			if (F3_PHP6_Functions::strlen($argumentName) > 0) {
+			if (F3::PHP6::Functions::strlen($argumentName) > 0) {
 				$request->setArgument($argumentName, $argumentValue);
 			}
 		}
@@ -95,7 +96,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 	}
 
 	/**
-	 * Converts the first element of the input array to an argument name for a F3_FLOW3_MVC_Request object.
+	 * Converts the first element of the input array to an argument name for a F3::FLOW3::MVC::Request object.
 	 *
 	 * @param array array of the remaining command line arguments
 	 * @return string converted argument name
@@ -106,7 +107,7 @@ class F3_FLOW3_MVC_CLI_RequestBuilder {
 		$convertedName = '';
 
 		foreach (explode('-', $argumentName[0]) as $part)
-			$convertedName .= ($convertedName !== '' ? F3_PHP6_Functions::ucfirst($part) : $part);
+			$convertedName .= ($convertedName !== '' ? F3::PHP6::Functions::ucfirst($part) : $part);
 
 		return $convertedName;
 	}

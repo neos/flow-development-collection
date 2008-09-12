@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Package_Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Package::Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,41 +26,41 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Package_Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Package::Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Package_PackageTest extends F3_Testing_BaseTestCase {
+class PackageTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackagePath
+	 * @expectedException F3::FLOW3::Package::Exception::InvalidPackagePath
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $mockPackageManager);
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::Manager', array(), array(), '', FALSE);
+		new F3::FLOW3::Package::Package('TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $mockPackageManager);
 	}
 
 	/**
 	 * Checks if the constructor throws exceptions
 	 *
 	 * @test
-	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackagePath
+	 * @expectedException F3::FLOW3::Package::Exception::InvalidPackagePath
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function constructThrowsInvalidPathException() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $mockPackageManager);
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::Manager', array(), array(), '', FALSE);
+		new F3::FLOW3::Package::Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $mockPackageManager);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3_FLOW3_Package_Exception_InvalidPackageKey
+	 * @expectedException F3::FLOW3::Package::Exception::InvalidPackageKey
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructRejectsInvalidPackageKeys() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		new F3_FLOW3_Package_Package('Invalid_Package_Key', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::Manager', array(), array(), '', FALSE);
+		new F3::FLOW3::Package::Package('Invalid_Package_Key', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
 	}
 
 	/**
@@ -69,14 +70,14 @@ class F3_FLOW3_Package_PackageTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassFilesWorks() {
-		$mockPackageManager = $this->getMock('F3_FLOW3_Package_Manager', array(), array(), '', FALSE);
-		$package = new F3_FLOW3_Package_Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
+		$mockPackageManager = $this->getMock('F3::FLOW3::Package::Manager', array(), array(), '', FALSE);
+		$package = new F3::FLOW3::Package::Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
 		$classFiles = $package->getClassFiles();
 
-		$this->assertTrue(key_exists('F3_TestPackage_BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
-		$this->assertTrue(key_exists('F3_TestPackage_SubDirectory_ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
-		$this->assertTrue($classFiles['F3_TestPackage_BasicClass'] == 'F3_TestPackage_BasicClass.php', 'Class files array contains wrong path for BasicClass!');
-		$this->assertTrue($classFiles['F3_TestPackage_SubDirectory_ClassInSubDirectory'] == 'SubDirectory/F3_TestPackage_SubDirectory_ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
+		$this->assertTrue(key_exists('F3::TestPackage::BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
+		$this->assertTrue(key_exists('F3::TestPackage::SubDirectory::ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
+		$this->assertTrue($classFiles['F3::TestPackage::BasicClass'] == 'F3_TestPackage_BasicClass.php', 'Class files array contains wrong path for BasicClass!');
+		$this->assertTrue($classFiles['F3::TestPackage::SubDirectory::ClassInSubDirectory'] == 'SubDirectory/F3_TestPackage_SubDirectory_ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
 	}
 }
 ?>

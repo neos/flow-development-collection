@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization::Voter;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,17 +29,17 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_Voter_ACL implements F3_FLOW3_Security_Authorization_AccessDecisionVoterInterface {
+class ACL implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface {
 
 	/**
 	 * This is the default ACL voter, it votes for the ACCESS privilege
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current securit context
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws F3_FLOW3_Security_Exception_AccessDenied If access is not granted
+	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
-	public function vote(F3_FLOW3_Security_Context $securityContext, F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function vote(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		//ask the current token if for the roles the user currently has
 		//search for an ACCESS privilege, that isGrant(), any of the user's roles has for this joinpoint (ask the policyservice to return the privileges for each role)
 	}

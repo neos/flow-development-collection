@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Session;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Session_TransientTest extends F3_Testing_BaseTestCase {
+class TransientTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theTransientSessionImplementsTheSessionInterface() {
-		$session = new F3_FLOW3_Session_Transient();
-		$this->assertType('F3_FLOW3_Session_Interface', $session);
+		$session = new F3::FLOW3::Session::Transient();
+		$this->assertType('F3::FLOW3::Session::SessionInterface', $session);
 	}
 
 	/**
@@ -44,18 +45,18 @@ class F3_FLOW3_Session_TransientTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSessionIdIsGeneratedOnStartingTheSession() {
-		$session = new F3_FLOW3_Session_Transient();
+		$session = new F3::FLOW3::Session::Transient();
 		$session->start();
 		$this->assertTrue(strlen($session->getID()) == 13);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @expectedException F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException() {
-		$session = new F3_FLOW3_Session_Transient();
+		$session = new F3::FLOW3::Session::Transient();
 		$session->getID();
 	}
 
@@ -64,7 +65,7 @@ class F3_FLOW3_Session_TransientTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsCanBeStoredByCallingPutData() {
-		$session = new F3_FLOW3_Session_Transient();
+		$session = new F3::FLOW3::Session::Transient();
 		$session->start();
 		$session->putData('theKey', 'some data');
 		$this->assertEquals('some data', $session->getData('theKey'));
@@ -75,7 +76,7 @@ class F3_FLOW3_Session_TransientTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allSessionDataCanBeFlushedByCallingDestroy() {
-		$session = new F3_FLOW3_Session_Transient();
+		$session = new F3::FLOW3::Session::Transient();
 		$session->start();
 		$session->putData('theKey', 'some data');
 		$session->destroy();

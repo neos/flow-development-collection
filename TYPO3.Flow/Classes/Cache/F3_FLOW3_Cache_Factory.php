@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,41 +28,41 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Cache_Factory {
+class Factory {
 
 	/**
 	 * A reference to the component manager
 	 *
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
 	 * A reference to the component factory
 	 *
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
 	 * A reference to the cache manager
 	 *
-	 * @var F3_FLOW3_Cache_Manager
+	 * @var F3::FLOW3::Cache::Manager
 	 */
 	protected $cacheManager;
 
 	/**
 	 * Constructs this cache factory
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager A reference to the component manager
-	 * @param F3_FLOW3_Component_ManagerInterface $componentFactory A reference to the component factory
-	 * 	 * @param F3_FLOW3_Cache_Manager $cacheManager A reference to the cache manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentFactory A reference to the component factory
+	 * 	 * @param F3::FLOW3::Cache::Manager $cacheManager A reference to the cache manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager, F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Cache_Manager $cacheManager) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Cache::Manager $cacheManager) {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentFactory;
 		$this->cacheManager = $cacheManager;
@@ -75,15 +76,15 @@ class F3_FLOW3_Cache_Factory {
 	 * @param string $cacheComponentName Component name of the cache frontend
 	 * @param string $backendComponentName Component name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
-	 * @return F3_FLOW3_Cache_AbstractCache The created cache frontend
+	 * @return F3::FLOW3::Cache::AbstractCache The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function create($cacheIdentifier, $cacheComponentName, $backendComponentName, array $backendOptions = array()) {
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentFactory->getComponent($backendComponentName, $context, $backendOptions);
-		if (!$backend instanceof F3_FLOW3_Cache_AbstractBackend) throw new F3_FLOW3_Cache_Exception_InvalidBackend('"' . $backendComponentName . '" is not a valid cache backend component.', 1216304301);
+		if (!$backend instanceof F3::FLOW3::Cache::AbstractBackend) throw new F3::FLOW3::Cache::Exception::InvalidBackend('"' . $backendComponentName . '" is not a valid cache backend component.', 1216304301);
 		$cache = $this->componentFactory->getComponent($cacheComponentName, $cacheIdentifier, $backend);
-		if (!$cache instanceof F3_FLOW3_Cache_AbstractCache) throw new F3_FLOW3_Cache_Exception_InvalidCache('"' . $cacheComponentName . '" is not a valid cache component.', 1216304300);
+		if (!$cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception::InvalidCache('"' . $cacheComponentName . '" is not a valid cache component.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);
 		return $cache;

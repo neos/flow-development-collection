@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Fixture::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler extends F3_FLOW3_MVC_Web_Routing_DynamicRoutePart {
+class MockRoutePartHandler extends F3::FLOW3::MVC::Web::Routing::DynamicRoutePart {
 
 	public function match(array &$urlSegments) {
 		$this->value = '_match_invoked_';

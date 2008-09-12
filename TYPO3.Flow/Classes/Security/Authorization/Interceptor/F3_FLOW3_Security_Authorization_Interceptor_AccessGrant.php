@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization::Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_Interceptor_AccessGrant implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+class AccessGrant implements F3::FLOW3::Security::Authorization::InterceptorInterface {
 
 	/**
 	 * Invokes nothing, always returns TRUE.

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::Configuration.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,11 +27,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::Configuration.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Component_Configuration {
+class Configuration {
 
 	const AUTOWIRING_MODE_OFF = 0;
 	const AUTOWIRING_MODE_ON = 1;
@@ -199,13 +200,13 @@ class F3_FLOW3_Component_Configuration {
 	/**
 	 * Setter function for injection properties
 	 *
-	 * @param  array $properties: Array of F3_FLOW3_Component_ConfigurationProperty
+	 * @param  array $properties: Array of F3::FLOW3::Component::ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperties(array $properties) {
 		foreach ($properties as $name => $value) {
-			if (!$value instanceof F3_FLOW3_Component_ConfigurationProperty) throw new RuntimeException('Properties must be of type F3_FLOW3ComponentConfigurationProperty', 1167935337);
+			if (!$value instanceof F3::FLOW3::Component::ConfigurationProperty) throw new RuntimeException('Properties must be of type F3::FLOW3ComponentConfigurationProperty', 1167935337);
 		}
 		$this->properties = $properties;
 	}
@@ -213,7 +214,7 @@ class F3_FLOW3_Component_Configuration {
 	/**
 	 * Returns the currently set injection properties of the component
 	 *
-	 * @return array Array of F3_FLOW3_Component_ConfigurationProperty
+	 * @return array Array of F3::FLOW3::Component::ConfigurationProperty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
@@ -223,11 +224,11 @@ class F3_FLOW3_Component_Configuration {
 	/**
 	 * Setter function for a single injection property
 	 *
-	 * @param  array	$property: A F3_FLOW3_Component_ConfigurationProperty
+	 * @param  array	$property: A F3::FLOW3::Component::ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setProperty(F3_FLOW3_Component_ConfigurationProperty $property) {
+	public function setProperty(F3::FLOW3::Component::ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
 	}
 
@@ -235,7 +236,7 @@ class F3_FLOW3_Component_Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param  array	$constructorArguments: Array of F3_FLOW3_Component_ConfigurationArgument
+	 * @param  array	$constructorArguments: Array of F3::FLOW3::Component::ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -244,7 +245,7 @@ class F3_FLOW3_Component_Configuration {
 			$this->constructorArguments = array();
 		} else {
 			foreach ($constructorArguments as $constructorArgument) {
-				if (!$constructorArgument instanceof F3_FLOW3_Component_ConfigurationArgument) throw new RuntimeException('Properties must be of type F3_FLOW3ComponentConfigurationProperty', 1168004160);
+				if (!$constructorArgument instanceof F3::FLOW3::Component::ConfigurationArgument) throw new RuntimeException('Properties must be of type F3::FLOW3ComponentConfigurationProperty', 1168004160);
 				$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
 			}
 		}
@@ -253,18 +254,18 @@ class F3_FLOW3_Component_Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param  array	$constructorArgument: A F3_FLOW3_Component_ConfigurationArgument
+	 * @param  array	$constructorArgument: A F3::FLOW3::Component::ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setConstructorArgument(F3_FLOW3_Component_ConfigurationArgument $constructorArgument) {
+	public function setConstructorArgument(F3::FLOW3::Component::ConfigurationArgument $constructorArgument) {
 		$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
 	}
 
 	/**
 	 * Returns a sorted array of constructor arguments indexed by position (starting with "1")
 	 *
-	 * @return array	A sorted array of F3_FLOW3_Component_ConfigurationArgument objects with the argument position as index
+	 * @return array	A sorted array of F3::FLOW3::Component::ConfigurationArgument objects with the argument position as index
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructorArguments() {

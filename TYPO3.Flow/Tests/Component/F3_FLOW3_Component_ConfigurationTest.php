@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,13 +20,13 @@ declare(ENCODING = 'utf-8');
  * Testcase for the component configuration class
  *
  * @package     FLOW3
- * @version     $Id:F3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version     $Id:F3::FLOW3::Component::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
+class ConfigurationTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_Component_Configuration
+	 * @var F3::FLOW3::Component::Configuration
 	 */
 	protected $componentConfiguration;
 
@@ -35,7 +36,7 @@ class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentConfiguration = new F3_FLOW3_Component_Configuration('F3_TestPackage_BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/F3_TestPackage_BasicClass.php');
+		$this->componentConfiguration = new F3::FLOW3::Component::Configuration('F3::TestPackage::BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/F3::TestPackage::BasicClass.php');
 	}
 
 	/**
@@ -49,13 +50,13 @@ class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
 			$this->componentConfiguration->setScope('singleton');
 			$this->componentConfiguration->setScope('prototype');
 			$this->componentConfiguration->setScope('session');
-		} catch (Exception $exception) {
+		} catch (::Exception $exception) {
 			$this->fail('setScope throwed an exception although the values were valid.');
 		}
 
 		try {
 			$this->componentConfiguration->setScope(-1);
-		} catch (Exception $exception) {
+		} catch (::Exception $exception) {
 			return;
 		}
 		$this->fail('setScope throwed no exception although the value was invalid.');
@@ -69,12 +70,12 @@ class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
 		$invalidProperties = array (
-			'validProperty' => new F3_FLOW3_Component_ConfigurationProperty('validProperty', 'simple string'),
+			'validProperty' => new F3::FLOW3::Component::ConfigurationProperty('validProperty', 'simple string'),
 			'invalidProperty' => 'foo'
 		);
 		try {
 			$this->componentConfiguration->setProperties($invalidProperties);
-		} catch (Exception $exception) {
+		} catch (::Exception $exception) {
 			$this->assertEquals(1167935337, $exception->getCode(), 'setProperties() throwed an exception but with an unexpected error code.');
 			return;
 		}
@@ -89,12 +90,12 @@ class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
 	 */
 	public function setConstructorArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
-			1 => new F3_FLOW3_Component_ConfigurationArgument(1, 'simple string'),
+			1 => new F3::FLOW3::Component::ConfigurationArgument(1, 'simple string'),
 			2 => 'foo'
 		);
 		try {
 			$this->componentConfiguration->setConstructorArguments($invalidArguments);
-		} catch (Exception $exception) {
+		} catch (::Exception $exception) {
 			$this->assertEquals(1168004160, $exception->getCode(), 'setConstructorArguments() throwed an exception but with an unexpected error code.');
 			return;
 		}
@@ -107,8 +108,8 @@ class F3_FLOW3_Component_ConfigurationTest extends F3_Testing_BaseTestCase {
 	 */
 	public function passingAnEmptyArrayToSetConstructorArgumentsRemovesAllExistingArguments() {
 		$someArguments = array (
-			1 => new F3_FLOW3_Component_ConfigurationArgument(1, 'simple string'),
-			2 => new F3_FLOW3_Component_ConfigurationArgument(2, 'another string')
+			1 => new F3::FLOW3::Component::ConfigurationArgument(1, 'simple string'),
+			2 => new F3::FLOW3::Component::ConfigurationArgument(2, 'another string')
 		);
 		$this->componentConfiguration->setConstructorArguments($someArguments);
 		$this->assertEquals($someArguments, $this->componentConfiguration->getConstructorArguments(), 'The set arguments could not be retrieved again.');

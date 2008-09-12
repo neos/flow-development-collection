@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_SessionTest extends F3_Testing_BaseTestCase {
+class SessionTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function objectRegisteredWithRegisterNewObjectCanBeRetrievedWithGetNewObjects() {
-		$someObject = new ArrayObject();
-		$session = new F3_FLOW3_Persistence_Session();
+		$someObject = new ::ArrayObject();
+		$session = new F3::FLOW3::Persistence::Session();
 		$session->registerNewObject($someObject);
 
 		$this->assertSame($someObject, array_pop($session->getNewObjects()));
@@ -47,10 +48,10 @@ class F3_FLOW3_Persistence_SessionTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isNewReturnsTrueForObjectsRegisteredAsNew() {
-		$newObject = new ArrayObject();
-		$notRegisteredObject = new ArrayObject();
+		$newObject = new ::ArrayObject();
+		$notRegisteredObject = new ::ArrayObject();
 
-		$session = new F3_FLOW3_Persistence_Session();
+		$session = new F3::FLOW3::Persistence::Session();
 		$session->registerNewObject($newObject);
 
 		$this->assertTrue($session->isNew($newObject));

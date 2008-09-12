@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,21 +33,21 @@ declare(ENCODING = 'utf-8');
  *
  * @todo NOTE: This class does not work at the moment!
  */
-class F3_FLOW3_Component_ClassFileManipulator {
+class ClassFileManipulator {
 
 	/**
-	 * @var F3_FLOW3_Component_ManagerInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
 	 * Constructs the class file manipulator
 	 *
-	 * @param F3_FLOW3_Component_ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_ManagerInterface $componentManager) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 	}
 
@@ -77,7 +78,7 @@ class F3_FLOW3_Component_ClassFileManipulator {
 			if (is_array($tokens[$i])) {
 				switch ($tokens[$i][0]) {
 					case T_IMPLEMENTS :
-						#$targetCode .= 'implements F3_FLOW3_Component_ManagerAwareInterface,';
+						#$targetCode .= 'implements F3::FLOW3::Component::ManagerAwareInterface,';
 						break;
 					case T_NEW :
 						$manipulated = $this->replaceNewOperator($tokens, $i, $targetCode);

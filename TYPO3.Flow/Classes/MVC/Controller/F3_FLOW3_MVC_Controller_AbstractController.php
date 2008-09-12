@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_AbstractController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::AbstractController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,13 +26,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_AbstractController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::AbstractController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_FLOW3_MVC_Controller_AbstractController {
+abstract class AbstractController {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
 	 */
 	protected $componentFactory;
 
@@ -41,38 +42,38 @@ abstract class F3_FLOW3_MVC_Controller_AbstractController {
 	protected $packageKey;
 
 	/**
-	 * @var F3_FLOW3_Package_Package The package this controller belongs to
+	 * @var F3::FLOW3::Package::Package The package this controller belongs to
 	 */
 	protected $package;
 
 	/**
 	 * Contains the settings of the current package
 	 *
-	 * @var F3_FLOW3_Configuration_Container
+	 * @var F3::FLOW3::Configuration::Container
 	 */
 	protected $settings;
 
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the Component Factory
-	 * @param F3_FLOW3_Package_ManagerInterface $packageManager A reference to the Package Manager
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
+	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Component_FactoryInterface $componentFactory, F3_FLOW3_Package_ManagerInterface $packageManager) {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager) {
 		$this->componentFactory = $componentFactory;
-		list(, $this->packageKey) = explode('_', get_class($this));
+		list(, $this->packageKey) = explode('::', get_class($this));
 		$this->package = $packageManager->getPackage($this->packageKey);
 	}
 
 	/**
 	 * Sets / injects the settings of the package this controller belongs to.
 	 *
-	 * @param F3_FLOW3_Configuration_Container $settings Settings container of the current package
+	 * @param F3::FLOW3::Configuration::Container $settings Settings container of the current package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSettings(F3_FLOW3_Configuration_Container $settings) {
+	public function setSettings(F3::FLOW3::Configuration::Container $settings) {
 		$this->settings = $settings;
 	}
 

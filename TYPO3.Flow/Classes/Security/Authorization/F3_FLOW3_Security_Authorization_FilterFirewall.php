@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,47 +29,47 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Security_Authorization_FirewallInterface {
+class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_Factory The component factory
+	 * @var F3::FLOW3::Component::Factory The component factory
 	 */
 	protected $componentFactory = NULL;
 
 	/**
-	 * @var F3_FLOW3_Security_RequestPatternResolver The request pattern resolver
+	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
 	 */
 	protected $requestPatternResolver = NULL;
 
 	/**
-	 * @var F3_FLOW3_Security_Authorization_InterceptorResolver The interceptor resolver
+	 * @var F3::FLOW3::Security::Authorization::InterceptorResolver The interceptor resolver
 	 */
 	protected $interceptorResolver = NULL;
 
 	/**
-	 * @var array Array of F3_FLOW3_Security_RequestFilter objects
+	 * @var array Array of F3::FLOW3::Security::RequestFilter objects
 	 */
 	protected $filters = array();
 
 	/**
-	 * @var boolean If set to TRUE the firewall will reject any request except the ones explicitly whitelisted by a F3_FLOW3_Security_Authorization_AccessGrantInterceptor
+	 * @var boolean If set to TRUE the firewall will reject any request except the ones explicitly whitelisted by a F3::FLOW3::Security::Authorization::AccessGrantInterceptor
 	 */
 	protected $rejectAll = FALSE;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
-	 * @param F3_FLOW3_Component_Factory $componentFactory The component factory
-	 * @param F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver The request pattern resolver
-	 * @param F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver The interceptor resolver
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Component::Factory $componentFactory The component factory
+	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
-			F3_FLOW3_Component_FactoryInterface $componentFactory,
-			F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver,
-			F3_FLOW3_Security_Authorization_InterceptorResolver $interceptorResolver) {
+	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
+			F3::FLOW3::Component::FactoryInterface $componentFactory,
+			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver,
+			F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver) {
 
 		$this->componentFactory = $componentFactory;
 		$this->requestPatternResolver = $requestPatternResolver;
@@ -93,18 +94,18 @@ class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Securit
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request to be analyzed
+	 * @param F3::FLOW3::MVC::Request $request The request to be analyzed
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function blockIllegalRequests(F3_FLOW3_MVC_Request $request) {
+	public function blockIllegalRequests(F3::FLOW3::MVC::Request $request) {
 		$filterMatched = FALSE;
 
 		foreach($this->filters as $filter) {
 			if($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
 
-		if($this->rejectAll && !$filterMatched) throw new F3_FLOW3_Security_Exception_AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
+		if($this->rejectAll && !$filterMatched) throw new F3::FLOW3::Security::Exception::AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
 	}
 
 	/**
@@ -120,7 +121,7 @@ class F3_FLOW3_Security_Authorization_FilterFirewall implements F3_FLOW3_Securit
 			$requestPattern->setPattern($filter['patternValue']);
 			$interceptor = $this->componentFactory->getComponent($this->interceptorResolver->resolveInterceptorClass($filter['interceptor']));
 
-			$this->filters[] = $this->componentFactory->getComponent('F3_FLOW3_Security_Authorization_RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->componentFactory->getComponent('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
 		}
 	}
 }

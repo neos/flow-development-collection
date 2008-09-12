@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Locale;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -38,7 +39,7 @@ declare(ENCODING = 'utf-8');
  * @see http://www.unicode.org/reports/tr35/
  * @scope prototype
  */
-class F3_FLOW3_Locale_Locale {
+class Locale {
 
 	/**
 	 * Simplified pattern which maches (most) locale identifiers
@@ -92,7 +93,7 @@ class F3_FLOW3_Locale_Locale {
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
-		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new F3_FLOW3_Locale_Exception_InvalidLocaleIdentifier('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
+		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new F3::FLOW3::Locale::Exception::InvalidLocaleIdentifier('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
 		if (key_exists('script', $matches)) $this->script = ucfirst(strtolower($matches['script']));

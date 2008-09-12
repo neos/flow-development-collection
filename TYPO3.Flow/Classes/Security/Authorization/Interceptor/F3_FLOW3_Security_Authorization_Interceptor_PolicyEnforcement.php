@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authorization::Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -41,35 +42,35 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authorization_Interceptor_PolicyEnforcement implements F3_FLOW3_Security_Authorization_InterceptorInterface {
+class PolicyEnforcement implements F3::FLOW3::Security::Authorization::InterceptorInterface {
 
 	/**
-	 * @var F3_FLOW3_Secuirty_Authentication_ManagerInterface The authentication manager
+	 * @var F3::FLOW3::Secuirty::Authentication::ManagerInterface The authentication manager
 	 */
 	protected $authenticationManagers = NULL;
 
 //TODO: This has to be filled/configured by configuration
 	/**
-	 * @var array Array of F3_FLOW3_Secuirty_Authorization_AccessDecisionManagerInterface objects
+	 * @var array Array of F3::FLOW3::Secuirty::Authorization::AccessDecisionManagerInterface objects
 	 */
 	protected $accessDecisionManagers = array();
 
 	/**
-	 * @var F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface The after invocation manager
+	 * @var F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface The after invocation manager
 	 */
 	protected $afterInvocationManager = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Security_Context $securityContext The current security context
-	 * @param F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager The authentication Manager
+	 * @param F3::FLOW3::Security::Context $securityContext The current security context
+	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3_FLOW3_Security_Context $securityContext,
-					F3_FLOW3_Security_Authentication_ManagerInterface $authenticationManager
+					F3::FLOW3::Security::Context $securityContext,
+					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager
 					) {
 
 	}
@@ -77,11 +78,11 @@ class F3_FLOW3_Security_Authorization_Interceptor_PolicyEnforcement implements F
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param F3_FLOW3_AOP_JoinPoint $joinPoint The current joinpoint
+	 * @param F3::FLOW3::AOP::JoinPoint $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(F3_FLOW3_AOP_JoinPoint $joinPoint) {
+	public function setJoinPoint(F3::FLOW3::AOP::JoinPoint $joinPoint) {
 
 	}
 
@@ -98,11 +99,11 @@ class F3_FLOW3_Security_Authorization_Interceptor_PolicyEnforcement implements F
 	/**
 	 * Injects the after invocation manager
 	 *
-	 * @param F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+	 * @param F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAfterInvocationManager(F3_FLOW3_Security_Authorization_AfterInvocationManagerInterface $afterInvocationManager) {
+	public function injectAfterInvocationManager(F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager) {
 
 	}
 }

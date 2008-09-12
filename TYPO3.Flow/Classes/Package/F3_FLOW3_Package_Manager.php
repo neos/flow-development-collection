@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3_FLOW3_Package_Manager.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Package::Manager.php 203 2007-03-30 13:17:37Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,10 +27,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3_FLOW3_Package_Manager.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Package::Manager.php 203 2007-03-30 13:17:37Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
+class Manager implements F3::FLOW3::Package::ManagerInterface {
 
 	/**
 	 * @var array Array of available packages, indexed by package key
@@ -55,10 +56,10 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 * @var array Array of class names which must not be registered as components automatically. Class names may also be regular expressions.
 	 */
 	protected $componentRegistrationClassBlacklist = array(
-		'F3_FLOW3_AOP_.*',
-		'F3_FLOW3_Component.*',
-		'F3_FLOW3_Package.*',
-		'F3_FLOW3_Reflection.*',
+		'F3::FLOW3::AOP::.*',
+		'F3::FLOW3::Component.*',
+		'F3::FLOW3::Package.*',
+		'F3::FLOW3::Reflection.*',
 	);
 
 	/**
@@ -88,24 +89,24 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	}
 
 	/**
-	 * Returns a F3_FLOW3_Package_PackageInterface object for the specified package.
+	 * Returns a F3::FLOW3::Package::PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @param string $packageKey
-	 * @return F3_FLOW3_Package The requested package object
-	 * @throws F3_FLOW3_Package_Exception_UnknownPackage if the specified package is not known
+	 * @return F3::FLOW3::Package The requested package object
+	 * @throws F3::FLOW3::Package::Exception::UnknownPackage if the specified package is not known
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackage($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new F3_FLOW3_Package_Exception_UnknownPackage('Package "' . $packageKey . '" is not available.', 1166546734);
+		if (!$this->isPackageAvailable($packageKey)) throw new F3::FLOW3::Package::Exception::UnknownPackage('Package "' . $packageKey . '" is not available.', 1166546734);
 		return $this->packages[$packageKey];
 	}
 
 	/**
-	 * Returns an array of F3_FLOW3_Package_Meta objects of all available packages.
+	 * Returns an array of F3::FLOW3::Package::Meta objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return array Array of F3_FLOW3_Package_Meta
+	 * @return array Array of F3::FLOW3::Package::Meta
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAvailablePackages() {
@@ -113,11 +114,11 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	}
 
 	/**
-	 * Returns an array of F3_FLOW3_Package_Meta objects of all active packages.
+	 * Returns an array of F3::FLOW3::Package::Meta objects of all active packages.
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
-	 * @return array Array of F3_FLOW3_Package_Meta
+	 * @return array Array of F3::FLOW3::Package::Meta
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement activation / deactivation of packages
 	 */
@@ -146,11 +147,11 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 *
 	 * @param string $packageKey: Name of the package to return the path of
 	 * @return string Absolute path to the package's root directory
-	 * @throws F3_FLOW3_Package_Exception_UnknownPackage if the specified package is not known
+	 * @throws F3::FLOW3::Package::Exception::UnknownPackage if the specified package is not known
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackagePath($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new F3_FLOW3_Package_Exception_UnknownPackage('Package "' . $packageKey . '" is not available.', 1166543253);
+		if (!$this->isPackageAvailable($packageKey)) throw new F3::FLOW3::Package::Exception::UnknownPackage('Package "' . $packageKey . '" is not available.', 1166543253);
 		return $this->packages[$packageKey]->getPackagePath();
 	}
 
@@ -159,33 +160,33 @@ class F3_FLOW3_Package_Manager implements F3_FLOW3_Package_ManagerInterface {
 	 *
 	 * @param string $packageKey: Name of the package to return the "Classes" path of
 	 * @return string Absolute path to the package's "Classes" directory, with trailing directory separator
-	 * @throws F3_FLOW3_Package_Exception_UnknownPackage if the specified package is not known
+	 * @throws F3::FLOW3::Package::Exception::UnknownPackage if the specified package is not known
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageClassesPath($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new F3_FLOW3_Package_Exception_UnknownPackage('Package "' . $packageKey . '" is not available.', 1167574237);
+		if (!$this->isPackageAvailable($packageKey)) throw new F3::FLOW3::Package::Exception::UnknownPackage('Package "' . $packageKey . '" is not available.', 1167574237);
 		return $this->packages[$packageKey]->getClassesPath();
 	}
 
 	/**
 	 * Scans all directories in the Packages/ directory for available packages.
-	 * For each package a F3_FLOW3_Package_ object is created and returned as
+	 * For each package a F3::FLOW3::Package:: object is created and returned as
 	 * an array.
 	 *
-	 * @return array An array of F3_FLOW3_Package_Package objects for all available packages
+	 * @return array An array of F3::FLOW3::Package::Package objects for all available packages
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
 		$availablePackagesArr = array();
 
-		$availablePackagesArr['FLOW3'] = new F3_FLOW3_Package_Package('FLOW3', FLOW3_PATH_PACKAGES . '/FLOW3/');
+		$availablePackagesArr['FLOW3'] = new F3::FLOW3::Package::Package('FLOW3', FLOW3_PATH_PACKAGES . '/FLOW3/');
 
 		$packagesDirectoryIterator = new DirectoryIterator(FLOW3_PATH_PACKAGES);
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
 			if ($filename{0} != '.' && $filename != 'FLOW3') {
-				$packagePath = F3_FLOW3_Utility_Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
-				$availablePackagesArr[$filename] = new F3_FLOW3_Package_Package($filename, $packagePath);
+				$packagePath = F3::FLOW3::Utility::Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
+				$availablePackagesArr[$filename] = new F3::FLOW3::Package::Package($filename, $packagePath);
 			}
 			$packagesDirectoryIterator->next();
 		}

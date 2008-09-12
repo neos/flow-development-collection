@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,7 +17,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -24,40 +25,40 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
+class RequestBuilderTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * The mocked request
 	 *
-	 * @var F3_FLOW3_MVC_Web_Request
+	 * @var F3::FLOW3::MVC::Web::Request
 	 */
 	protected $mockRequest;
 
 	/**
-	 * @var F3_FLOW3_Property_DataType_URI
+	 * @var F3::FLOW3::Property::DataType::URI
 	 */
 	protected $mockRequestURI;
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment
+	 * @var F3::FLOW3::Utility::Environment
 	 */
 	protected $mockEnvironment;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Routing_RouterInterface
+	 * @var F3::FLOW3::MVC::Web::Routing::RouterInterface
 	 */
 	protected $mockRouter;
 
 	/**
-	 * @var F3_FLOW3_Configuration_Manager
+	 * @var F3::FLOW3::Configuration::Manager
 	 */
 	protected $mockConfigurationManager;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_RequestBuilder
+	 * @var F3::FLOW3::MVC::Web::RequestBuilder
 	 */
 	protected $builder;
 
@@ -68,21 +69,21 @@ class F3_FLOW3_MVC_Web_RequestBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockRequestURI = $this->getMock('F3_FLOW3_Property_DataType_URI', array(), array(), '', FALSE);
-		$this->mockEnvironment = $this->getMock('F3_FLOW3_Utility_Environment', array(), array(), '', FALSE);
+		$this->mockRequestURI = $this->getMock('F3::FLOW3::Property::DataType::URI', array(), array(), '', FALSE);
+		$this->mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);
 		$this->mockEnvironment->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
 
-		$this->mockRequest = $this->getMock('F3_FLOW3_MVC_Web_Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('F3::FLOW3::MVC::Web::Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
 
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_FactoryInterface');
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
 		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($this->mockRequest));
 
-		$this->mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array('getSpecialConfiguration'), array(), '', FALSE);
-		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(new F3_FLOW3_Configuration_Container()));
+		$this->mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSpecialConfiguration'), array(), '', FALSE);
+		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(new F3::FLOW3::Configuration::Container()));
 
-		$this->mockRouter = $this->getMock('F3_FLOW3_MVC_Web_Routing_RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
+		$this->mockRouter = $this->getMock('F3::FLOW3::MVC::Web::Routing::RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 
-		$this->builder = new F3_FLOW3_MVC_Web_RequestBuilder($mockComponentFactory);
+		$this->builder = new F3::FLOW3::MVC::Web::RequestBuilder($mockComponentFactory);
 		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);

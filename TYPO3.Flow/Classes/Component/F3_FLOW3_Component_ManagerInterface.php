@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::Manager.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Component_ManagerInterface {
+interface ManagerInterface {
 
 	/**
 	 * Sets the Component Manager to a specific context. All operations related to components
@@ -57,7 +58,7 @@ interface F3_FLOW3_Component_ManagerInterface {
 	/**
 	 * Returns a reference to the component factory used by the component manager.
 	 *
-	 * @return F3_FLOW3_Component_FactoryInterface
+	 * @return F3::FLOW3::Component::FactoryInterface
 	 */
 	public function getComponentFactory();
 
@@ -104,7 +105,7 @@ interface F3_FLOW3_Component_ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered components.
 	 *
-	 * @return arrray Array of F3_FLOW3_Component_Configuration objects, indexed by component name
+	 * @return arrray Array of F3::FLOW3::Component::Configuration objects, indexed by component name
 	 */
 	public function getComponentConfigurations();
 
@@ -112,7 +113,7 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 * Returns the configuration object of a certain component
 	 *
 	 * @param string $componentName: Name of the component to fetch the configuration for
-	 * @return F3_FLOW3_Component_Configuration The component configuration
+	 * @return F3::FLOW3::Component::Configuration The component configuration
 	 */
 	public function getComponentConfiguration($componentName);
 
@@ -124,7 +125,7 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 *       configured. Trying to configure an unregistered component will
 	 *       result in an exception thrown.
 	 *
-	 * @param array $newComponentConfigurations: Array of $componentName => F3_FLOW3_Component_configuration
+	 * @param array $newComponentConfigurations: Array of $componentName => F3::FLOW3::Component::configuration
 	 * @return void
 	 */
 	public function setComponentConfigurations(array $newComponentConfigurations);
@@ -136,10 +137,10 @@ interface F3_FLOW3_Component_ManagerInterface {
 	 *       configured. Trying to configure an unregistered component will
 	 *       result in an exception thrown.
 	 *
-	 * @param F3_FLOW3_Component_Configuration $newComponentConfiguration: The new component configuration
+	 * @param F3::FLOW3::Component::Configuration $newComponentConfiguration: The new component configuration
 	 * @return void
 	 */
-	public function setComponentConfiguration(F3_FLOW3_Component_Configuration $newComponentConfiguration);
+	public function setComponentConfiguration(F3::FLOW3::Component::Configuration $newComponentConfiguration);
 
 	/**
 	 * Sets the name of the class implementing the specified component.

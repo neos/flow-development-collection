@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache::Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
+class MemcachedTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * Sets up this testcase
@@ -59,13 +60,13 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function saveThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
 			$backend->save($identifier, $data);
 			$this->fail('save() did not throw exception on missing cache frontend');
-		} catch (F3_FLOW3_Cache_Exception $exception) {
+		} catch (F3::FLOW3::Cache::Exception $exception) {
 		}
 	}
 
@@ -93,9 +94,9 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	public function initializeComponentThrowsExceptionIfNoMemcacheServerIsConfigured() {
 		$context = $this->componentManager->getContext();
 		try {
-			$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context);
+			$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context);
 			$this->fail('initializeComponent() did not throw exception on missing configuration of servers');
-		} catch (F3_FLOW3_Cache_Exception  $exception) {
+		} catch (F3::FLOW3::Cache::Exception  $exception) {
 		}
 	}
 
@@ -110,7 +111,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 		try {
 			$backend->save($identifier, $data);
 			$this->fail('save() did not throw exception on missing connection');
-		} catch (F3_FLOW3_Cache_Exception  $exception) {
+		} catch (F3::FLOW3::Cache::Exception  $exception) {
 		}
 	}
 
@@ -126,7 +127,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backend->save($identifier, $data);
 			$inCache = $backend->has($identifier);
 			$this->assertTrue($inCache,'Memcache failed to set and check entry');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -143,7 +144,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backend->save($identifier, $data);
 			$fetchedData = $backend->load($identifier);
 			$this->assertEquals($data,$fetchedData,'Memcache failed to set and retrieve data');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -161,7 +162,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backend->remove($identifier);
 			$inCache = $backend->has($identifier);
 			$this->assertFalse($inCache,'Failed to set and remove data from Memcache');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -180,7 +181,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backend->save($identifier, $otherData);
 			$fetchedData = $backend->load($identifier);
 			$this->assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -202,7 +203,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
 			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -222,7 +223,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 
 			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
 			$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -268,7 +269,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$this->assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
 			$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
 			$this->assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -291,7 +292,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$this->assertFalse($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
 			$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
 			$this->assertFalse($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
-		} catch (F3_FLOW3_Cache_Exception $e) {
+		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -299,18 +300,18 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 	/**
 	 * Creates a cache mock
 	 *
-	 * @return F3_FLOW3_Cache_AbstractCache mock
+	 * @return F3::FLOW3::Cache::AbstractCache mock
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function getMockCache() {
-		return $this->getMock('F3_FLOW3_Cache_AbstractCache', array(), array(), '', FALSE);
+		return $this->getMock('F3::FLOW3::Cache::AbstractCache', array(), array(), '', FALSE);
 	}
 
 	/**
 	 * Sets up the memcached backend used for testing
 	 *
 	 * @param array $backendOptions Options for the memcache backend
-	 * @return F3_FLOW3_Cache_Backend_Memcached
+	 * @return F3::FLOW3::Cache::Backend::Memcached
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -320,7 +321,7 @@ class F3_FLOW3_Cache_Backend_MemcachedTest extends F3_Testing_BaseTestCase {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
 		$context = $this->componentManager->getContext();
-		$backend = $this->componentFactory->getComponent('F3_FLOW3_Cache_Backend_Memcached', $context, $backendOptions);
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$backend->setCache($cache);
 		return $backend;
 	}

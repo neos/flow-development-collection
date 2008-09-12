@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestCase {
+class DynamicRoutePartTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Routing_DynamicRoutePart
+	 * @var F3::FLOW3::MVC::Web::Routing::DynamicRoutePart
 	 */
 	protected $routePart1;
 
 	/**
-	 * @var F3_FLOW3_MVC_Web_Routing_DynamicRoutePart
+	 * @var F3::FLOW3::MVC::Web::Routing::DynamicRoutePart
 	 */
 	protected $routePart2;
 
@@ -45,8 +46,8 @@ class F3_FLOW3_MVC_Web_Routing_DynamicRoutePartTest extends F3_Testing_BaseTestC
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->routePart1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
-		$this->routePart2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Routing_DynamicRoutePart');
+		$this->routePart1 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
+		$this->routePart2 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
 	}
 
 	/**

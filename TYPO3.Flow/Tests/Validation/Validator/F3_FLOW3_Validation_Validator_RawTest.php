@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,21 +29,21 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_RawTest extends F3_Testing_BaseTestCase {
+class RawTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRawValidatorAlwaysReturnsTRUE() {
-		$rawValidator = new F3_FLOW3_Validation_Validator_Raw();
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$rawValidator = new F3::FLOW3::Validation::Validator::Raw();
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($rawValidator->isValidProperty('simple1expression', $validationErrors));
 		$this->assertTrue($rawValidator->isValidProperty('', $validationErrors));
 		$this->assertTrue($rawValidator->isValidProperty(NULL, $validationErrors));
 		$this->assertTrue($rawValidator->isValidProperty(FALSE, $validationErrors));
-		$this->assertTrue($rawValidator->isValidProperty(new ArrayObject(), $validationErrors));
+		$this->assertTrue($rawValidator->isValidProperty(new ::ArrayObject(), $validationErrors));
 	}
 }
 

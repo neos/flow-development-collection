@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence::Aspect;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,23 +30,23 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @aspect
  */
-class F3_FLOW3_Persistence_Aspect_DirtyMonitoring {
+class DirtyMonitoring {
 
 	/**
 	 * The persistence manager
 	 *
-	 * @var F3_FLOW3_Persistence_Manager
+	 * @var F3::FLOW3::Persistence::Manager
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param F3_FLOW3_Persistence_Manager $persistenceManager
+	 * @param F3::FLOW3::Persistence::Manager $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPersistenceManager(F3_FLOW3_Persistence_Manager $persistenceManager) {
+	public function injectPersistenceManager(F3::FLOW3::Persistence::Manager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -58,24 +59,24 @@ class F3_FLOW3_Persistence_Aspect_DirtyMonitoring {
 	/**
 	 * Register an object as new with the FLOW3 persistence manager session
 	 *
-	 * @afterreturning method(.*->__construct()) && F3_FLOW3_Persistence_Aspect_DirtyMonitoring->entityOrValueObject
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint
+	 * @afterreturning method(.*->__construct()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerNewObject(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function registerNewObject(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		$this->persistenceManager->getSession()->registerNewObject($joinPoint->getProxy());
 	}
 
 	/**
 	 * Register an object's clean state after it has been reconstituted from the FLOW3 persistence layer
 	 *
-	 * @afterreturning method(.*->__wakeup()) && F3_FLOW3_Persistence_Aspect_DirtyMonitoring->entityOrValueObject
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint
+	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function memorizeCleanState(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
 		$cleanProperties = array();
 		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
@@ -87,20 +88,20 @@ class F3_FLOW3_Persistence_Aspect_DirtyMonitoring {
 	}
 
 	/**
-	 * @introduce F3_FLOW3_Persistence_Aspect_DirtyMonitoringInterface, F3_FLOW3_Persistence_Aspect_DirtyMonitoring->entityOrValueObject
+	 * @introduce F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface, F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
 	 */
 	public $dirtyMonitoringInterface;
 
 	/**
 	 * Around advice, implements the isDirty() method introduced above
 	 *
-	 * @param F3_FLOW3_AOPJoinPointInterface $joinPoint The current join point
+	 * @param F3::FLOW3::AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
 	 * @around method(.*->isDirty())
-	 * @see F3_FLOW3_Persistence_Aspect_DirtyMonitoringInterface
+	 * @see F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isDirty(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function isDirty(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		$isDirty = FALSE;

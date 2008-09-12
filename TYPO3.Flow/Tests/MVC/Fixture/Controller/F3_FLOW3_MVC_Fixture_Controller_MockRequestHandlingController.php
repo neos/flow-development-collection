@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Fixture::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,17 +29,17 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController extends F3_FLOW3_MVC_Controller_RequestHandlingController {
+class MockRequestHandlingController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
 
 	/**
-	 * @var F3_FLOW3_MVC_Controller_Arguments Arguments passed to the controller
+	 * @var F3::FLOW3::MVC::Controller::Arguments Arguments passed to the controller
 	 */
 	public $arguments;
 
 	/**
 	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
 	 */
-	public $supportedRequestTypes = array('F3_FLOW3_MVC_Request');
+	public $supportedRequestTypes = array('F3::FLOW3::MVC::Request');
 
 	/**
 	 * @var boolean If processRequest() has been called
@@ -48,12 +49,12 @@ class F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController extends F3_F
 	/**
 	 * Doesn't really process the request but sets a flag that this method was called.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request
-	 * @param F3_FLOW3_MVC_Response $response
+	 * @param F3::FLOW3::MVC::Request $request
+	 * @param F3::FLOW3::MVC::Response $response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
+	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
 		parent::processRequest($request, $response);
 		$this->requestHasBeenProcessed = TRUE;
 	}
@@ -61,7 +62,7 @@ class F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController extends F3_F
 	/**
 	 * Returns the package settings which were injected into this controller
 	 *
-	 * @return F3_FLOW3_Configuration_Container
+	 * @return F3::FLOW3::Configuration::Container
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettings() {

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,21 +26,21 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutFilterInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_PointcutFilterInterface {
+interface PointcutFilterInterface {
 
 	/**
 	 * Checks if the specified class and method matches against the filter
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class: The class to check the name of
-	 * @param F3_FLOW3_Reflection_Method $method: The method to check the name of
+	 * @param F3::FLOW3::Reflection::ReflectionClass $class: The class to check the name of
+	 * @param F3::FLOW3::Reflection::Method $method: The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class / method match, otherwise FALSE
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier);
+	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier);
 }
 
 ?>

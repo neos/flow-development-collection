@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_PointcutTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
+class EnvironmentTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsPathWithTrailingSlash() {
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$environment = new F3_FLOW3_Utility_Environment($configuration->utility->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$environment = new F3::FLOW3::Utility::Environment($configuration->utility->environment);
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertEquals('/', substr($path, -1, 1), 'The temporary path did not end with slash.');
 	}
@@ -46,8 +47,8 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectoryReturnsAnExistingPath() {
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$environment = new F3_FLOW3_Utility_Environment($configuration->utility->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$environment = new F3::FLOW3::Utility::Environment($configuration->utility->environment);
 		$path = $environment->getPathToTemporaryDirectory();
 		$this->assertTrue(file_exists($path), 'The temporary path does not exist.');
 	}
@@ -58,8 +59,8 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilename() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
 		$environment->SERVER = array(
 			'SCRIPT_FILENAME' => '/this/is/the/file.php'
 		);
@@ -73,8 +74,8 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getScriptPathAndFilenameReturnsCorrectPathAndFilenameForWindowsStylePath() {
 		$expectedPathAndFilename = '/this/is/the/file.php';
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
 		$environment->SERVER = array(
 			'SCRIPT_FILENAME' => '\\this\\is\\the\\file.php'
 		);
@@ -88,8 +89,8 @@ class F3_FLOW3_Utility_EnvironmentTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getRequestURIReturnsExpectedURI() {
 		$expectedURIString = 'http://flow3.typo3.org/is/the/base/for/typo3?5=0';
-		$configuration = $this->componentFactory->getComponent('F3_FLOW3_Configuration_Manager')->getSettings('FLOW3');
-		$environment = new F3_FLOW3_Utility_MockEnvironment($configuration->utility->environment);
+		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
 		$environment->SERVER = array(
 			'HTTP_HOST' => 'flow3.typo3.org',
 			'QUERY_STRING' => '5=0',

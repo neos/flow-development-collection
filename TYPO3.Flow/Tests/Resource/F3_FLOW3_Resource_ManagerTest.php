@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,20 +18,20 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the resource manager
  *
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
+class ManagerTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_Resource_Manager
+	 * @var F3::FLOW3::Resource::Manager
 	 */
 	protected $manager;
 
@@ -38,8 +39,8 @@ class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$mockClassLoader = $this->getMock('F3_FLOW3_Resource_ClassLoader', array(), array(), '', FALSE);
-		$this->manager = new F3_FLOW3_Resource_Manager($mockClassLoader, $this->componentFactory);
+		$mockClassLoader = $this->getMock('F3::FLOW3::Resource::ClassLoader', array(), array(), '', FALSE);
+		$this->manager = new F3::FLOW3::Resource::Manager($mockClassLoader, $this->componentFactory);
 	}
 
 	/**
@@ -48,7 +49,7 @@ class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getResourceReturnsAResourceImplementation() {
 		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
-		$this->assertType('F3_FLOW3_Resource_ResourceInterface', $resource);
+		$this->assertType('F3::FLOW3::Resource::ResourceInterface', $resource);
 	}
 
 	/**
@@ -57,7 +58,7 @@ class F3_FLOW3_Resource_ManagerTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getResourceReturnsRequestedResource() {
 		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
-		$this->assertType('F3_FLOW3_Resource_HTMLResource', $resource);
+		$this->assertType('F3::FLOW3::Resource::HTMLResource', $resource);
 		$this->assertEquals('TestTemplate.html', $resource->getName());
 		$this->assertEquals('text/html', $resource->getMIMEType());
 	}

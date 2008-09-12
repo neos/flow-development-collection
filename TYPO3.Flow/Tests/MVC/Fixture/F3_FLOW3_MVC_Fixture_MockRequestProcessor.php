@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Fixture::MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,17 +22,17 @@ declare(ENCODING = 'utf-8');
  * @version 	$Id$
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Fixture_MVC_MockRequestProcessor implements F3_FLOW3_MVC_RequestProcessorInterface {
+class MockRequestProcessor implements F3::FLOW3::MVC::RequestProcessorInterface {
 
 	/**
 	 * Processes the request
 	 *
-	 * @param  F3_FLOW3_MVC_Request		$request: The request
+	 * @param  F3::FLOW3::MVC::Request		$request: The request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Request $request) {
-		$request->setArgument('F3_FLOW3_Fixture_MVC_MockRequestProcessor', 'TRUE');		
+	public function processRequest(F3::FLOW3::MVC::Request $request) {
+		$request->setArgument('F3::FLOW3::Fixture::MVC::MockRequestProcessor', 'TRUE');		
 	}
 	
 }

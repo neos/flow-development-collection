@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,18 +28,18 @@ require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething.php');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_PointcutClassTaggedWithFilterTest extends F3_Testing_BaseTestCase {
+class PointcutClassTaggedWithFilterTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesClassWithSimpleTag() {
-		$classTaggedWithFilter = new F3_FLOW3_AOP_PointcutClassTaggedWithFilter('something');
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething');
+		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('something');
+		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}
@@ -48,8 +49,8 @@ class F3_FLOW3_AOP_PointcutClassTaggedWithFilterTest extends F3_Testing_BaseTest
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterMatchesClassWithTagWithWildcard() {
-		$classTaggedWithFilter = new F3_FLOW3_AOP_PointcutClassTaggedWithFilter('some.*');
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething');
+		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('some.*');
+		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}
@@ -59,8 +60,8 @@ class F3_FLOW3_AOP_PointcutClassTaggedWithFilterTest extends F3_Testing_BaseTest
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function filterCorrectlyDoesntMatchClassWithoutSpecifiedTag() {
-		$classTaggedWithFilter = new F3_FLOW3_AOP_PointcutClassTaggedWithFilter('any.*');
-		$class = new F3_FLOW3_Reflection_Class('F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething');
+		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('any.*');
+		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertFALSE($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}

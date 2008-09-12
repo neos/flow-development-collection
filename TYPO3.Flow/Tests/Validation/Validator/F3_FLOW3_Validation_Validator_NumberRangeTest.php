@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_Validator_NumberRangeTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::NumberRangeTest.php 688 2008-04-03 09:35:36Z andi $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Validation_Validator_NumberRangeTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::NumberRangeTest.php 688 2008-04-03 09:35:36Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_NumberRangeTest extends F3_Testing_BaseTestCase {
+class NumberRangeTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
-		$numberRangeValidator = new F3_FLOW3_Validation_Validator_NumberRange(0, 1000);
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(10.5, $validationErrors));
 	}
@@ -46,8 +47,8 @@ class F3_FLOW3_Validation_Validator_NumberRangeTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
-		$numberRangeValidator = new F3_FLOW3_Validation_Validator_NumberRange(0, 1000);
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($numberRangeValidator->isValidProperty(1000.1, $validationErrors));
 	}
@@ -57,8 +58,8 @@ class F3_FLOW3_Validation_Validator_NumberRangeTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = new F3_FLOW3_Validation_Validator_NumberRange(1000, 0);
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(1000, 0);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(100, $validationErrors));
 	}
@@ -68,8 +69,8 @@ class F3_FLOW3_Validation_Validator_NumberRangeTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForAString() {
-		$numberRangeValidator = new F3_FLOW3_Validation_Validator_NumberRange(0, 1000);
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($numberRangeValidator->isValidProperty('not a number', $validationErrors));
 	}

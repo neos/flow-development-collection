@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Session::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,14 +22,14 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * A "F3_FLOW3_Session_Exception_SessionAutostartIsEnabled" Exception
+ * A "F3::FLOW3::Session::Exception::SessionAutostartIsEnabled" Exception
  *
  * @package FLOW3
  * @subpackage Session
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Session_Exception_SessionAutostartIsEnabled extends F3_FLOW3_Session_Exception {
+class SessionAutostartIsEnabled extends F3::FLOW3::Session::Exception {
 }
 
 ?>

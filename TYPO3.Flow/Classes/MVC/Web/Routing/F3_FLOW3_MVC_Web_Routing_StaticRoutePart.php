@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Web::Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_AbstractRoutePart {
+class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 
 	/**
 	 * @var boolean specifies whether this route part is the last in the current url segment
@@ -63,13 +64,13 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 		if (count($urlSegments) < 1) {
 			return FALSE;
 		}
-		$valueToMatch = F3_PHP6_Functions::substr($urlSegments[0], 0, F3_PHP6_Functions::strlen($this->name));
+		$valueToMatch = F3::PHP6::Functions::substr($urlSegments[0], 0, F3::PHP6::Functions::strlen($this->name));
 		if ($valueToMatch != $this->name) {
 			return FALSE;
 		}
-		$urlSegments[0] = F3_PHP6_Functions::substr($urlSegments[0], F3_PHP6_Functions::strlen($valueToMatch));
+		$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
 		if ($this->lastRoutePartInSegment) {
-			if (F3_PHP6_Functions::strlen($urlSegments[0]) != 0) {
+			if (F3::PHP6::Functions::strlen($urlSegments[0]) != 0) {
 				return FALSE;
 			}
 			array_shift($urlSegments);
@@ -81,7 +82,7 @@ class F3_FLOW3_MVC_Web_Routing_StaticRoutePart extends F3_FLOW3_MVC_Web_Routing_
 	/**
 	 * Sets the route part value to the route part name and returns TRUE.
 	 *
-	 * @param array $routeValues not used but needed to implement F3_FLOW3_MVC_Web_Routing_AbstractRoutePart
+	 * @param array $routeValues not used but needed to implement F3::FLOW3::MVC::Web::Routing::AbstractRoutePart
 	 * @return boolean always TRUE
 	 */
 	public function resolve(array &$routeValues) {

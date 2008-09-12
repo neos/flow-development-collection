@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3::FLOW3::Validation::Validator::ChainTest.php 845 2008-05-17 16:04:59Z k-fish $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3::FLOW3::Validation::Validator::ChainTest.php 845 2008-05-17 16:04:59Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
+class ChainTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addingValidatorsToAValidatorChainWorks() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
-		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
+		$validatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 
 		$index = $validatorChain->addValidator($validatorObject);
 
@@ -48,16 +49,16 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function allValidatorsInTheChainAreInvocedCorrectly() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
-		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
+		$validatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 		$validatorObject->expects($this->once())->method('isValidProperty');
-		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$secondValidatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('isValidProperty');
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors());
+		$validatorChain->isValidProperty('some subject', new F3::FLOW3::Validation::Errors());
 	}
 
 	/**
@@ -65,16 +66,16 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function validatorChainReturnsTrueIfAllChainedValidatorsReturnTrue() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
-		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
+		$validatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 		$validatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
-		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$secondValidatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorChain->isValidProperty('some subject', new F3_FLOW3_Validation_Errors()));
+		$this->assertTrue($validatorChain->isValidProperty('some subject', new F3::FLOW3::Validation::Errors()));
 	}
 
 	/**
@@ -82,9 +83,9 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removingAValidatorOfTheValidatorChainWorks() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
-		$validatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
-		$secondValidatorObject = $this->getMock('F3_FLOW3_Validation_ValidatorInterface');
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
+		$validatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
+		$secondValidatorObject = $this->getMock('F3::FLOW3::Validation::ValidatorInterface');
 		$validatorChain->addValidator($validatorObject);
 		$index = $validatorChain->addValidator($secondValidatorObject);
 
@@ -93,7 +94,7 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 		try {
 			$validatorChain->getValidator($index);
 			$this->fail('The validator chain did not remove the validator with the given index.');
-		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
 
 		}
 	}
@@ -103,12 +104,12 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function accessingANotExistingValidatorIndexThrowsException() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
 
 		try {
 			$validatorChain->getValidator(100);
 			$this->fail('The validator chain did throw an error on accessing an invalid validator index.');
-		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
 
 		}
 	}
@@ -118,12 +119,12 @@ class F3_FLOW3_Validation_Validator_ChainTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removingANotExistingValidatorIndexThrowsException() {
-		$validatorChain = new F3_FLOW3_Validation_Validator_Chain();
+		$validatorChain = new F3::FLOW3::Validation::Validator::Chain();
 
 		try {
 			$validatorChain->removeValidator(100);
 			$this->fail('The validator chain did throw an error on removing an invalid validator index.');
-		} catch(F3_FLOW3_Validation_Exception_InvalidChainIndex $exception) {
+		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
 
 		}
 	}

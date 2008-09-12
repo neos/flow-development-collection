@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3::FLOW3::Validation::Validator::NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id:F3::FLOW3::Validation::Validator::NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
+class NumberTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorReturnsTrueForASimpleInteger() {
-		$numberValidator = new F3_FLOW3_Validation_Validator_Number();
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
 	}
@@ -46,8 +47,8 @@ class F3_FLOW3_Validation_Validator_NumberTest extends F3_Testing_BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorReturnsFalseForAString() {
-		$numberValidator = new F3_FLOW3_Validation_Validator_Number();
-		$validationErrors = new F3_FLOW3_Validation_Errors();
+		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
+		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($numberValidator->isValidProperty('not a number', $validationErrors));
 	}

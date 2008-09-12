@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -43,7 +44,7 @@ require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
+class ServiceTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -51,15 +52,15 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsClassNameOfOnlyClassImplementingTheInterface() {
 		$classNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2',
-			'F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1'
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface1',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2',
+			'F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1'
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($classNames);
-		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1');
+		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3::FLOW3::Tests::Reflection::Fixture::DummyInterface1');
 
-		$this->assertEquals('F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1', $className);
+		$this->assertEquals('F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1', $className);
 	}
 
 	/**
@@ -68,13 +69,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsFalseIfNoClassImplementsTheInterface() {
 		$classNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2',
-			'F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1'
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface1',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2',
+			'F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1'
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($classNames);
-		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2');
+		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2');
 
 		$this->assertFalse($className);
 	}
@@ -85,20 +86,20 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getAllImplementationClassNamesForInterfaceReturnsAllNamesOfClassesImplementingTheInterface() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface3',
-			'F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1',
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation1OfDummyInterface3',
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation2OfDummyInterface3'
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface3',
+			'F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1',
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation1OfDummyInterface3',
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation2OfDummyInterface3'
 		);
 
 		$expectedClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation1OfDummyInterface3',
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation2OfDummyInterface3'
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation1OfDummyInterface3',
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation2OfDummyInterface3'
 		);
 
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
-		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3_FLOW3_Tests_Reflection_Fixture_DummyInterface3');
+		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Tests::Reflection::Fixture::DummyInterface3');
 
 		$this->assertEquals($expectedClassNames, $detectedClassNames);
 	}
@@ -109,16 +110,16 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getAllImplementationClassNamesForInterfaceReturnsEmptyArrayIfNoClassImplementsTheInterface() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface3',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2',
-			'F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1',
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation1OfDummyInterface3',
-			'F3_FLOW3_Tests_Reflection_Fixture_Implementation2OfDummyInterface3'
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface3',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2',
+			'F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1',
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation1OfDummyInterface3',
+			'F3::FLOW3::Tests::Reflection::Fixture::Implementation2OfDummyInterface3'
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2');
+		$detectedClassNames = $reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2');
 		$this->assertEquals(array(), $detectedClassNames);
 	}
 
@@ -128,17 +129,17 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getClassNamesByTagReturnsArrayOfClassesTaggedBySpecifiedTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1',
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass2',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass1',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass2',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$detectedClassNames = $reflectionService->getClassNamesByTag('sometag1');
-		$this->assertEquals(array('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1'), $detectedClassNames);
+		$this->assertEquals(array('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass1'), $detectedClassNames);
 
 		$detectedClassNames = $reflectionService->getClassNamesByTag('sometag2');
-		$this->assertEquals(array('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass2'), $detectedClassNames);
+		$this->assertEquals(array('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass2'), $detectedClassNames);
 	}
 
 	/**
@@ -147,13 +148,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getClassTagsValuesReturnsArrayOfTagsAndValuesOfAClass() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass3',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass3',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedTags = array('firsttag' => array(), 'secondtag' => array('1', '2'), 'thirdtag' => array('one, two', 'three, four'));
-		$detectedTags = $reflectionService->getClassTagsValues('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass3');
+		$detectedTags = $reflectionService->getClassTagsValues('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass3');
 		ksort($detectedTags);
 		$this->assertEquals($expectedTags, $detectedTags);
 	}
@@ -164,13 +165,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getClassTagValuesReturnsArrayOfValuesOfASpecificClassTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass3',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass3',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedValues = array('one, two', 'three, four');
-		$detectedValues = $reflectionService->getClassTagValues('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass3', 'thirdtag');
+		$detectedValues = $reflectionService->getClassTagValues('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass3', 'thirdtag');
 		ksort($detectedValues);
 		$this->assertEquals($expectedValues, $detectedValues);
 	}
@@ -181,15 +182,15 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isClassTaggedWithReturnsTrueIfClassIsTaggedWithSpecifiedTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1',
-			'F3_FLOW3_Tests_Reflection_Fixture_TaggedClass2',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass1',
+			'F3::FLOW3::Tests::Reflection::Fixture::TaggedClass2',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$this->assertTrue($reflectionService->isClassTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1', 'sometag1'));
-		$this->assertFalse($reflectionService->isClassTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1', 'sometag2'));
-		$this->assertTrue($reflectionService->isClassTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_TaggedClass2', 'sometag2'));
+		$this->assertTrue($reflectionService->isClassTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass1', 'sometag1'));
+		$this->assertFalse($reflectionService->isClassTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass1', 'sometag2'));
+		$this->assertTrue($reflectionService->isClassTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::TaggedClass2', 'sometag2'));
 	}
 
 	/**
@@ -198,14 +199,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isClassAbstractTellsIfAClassIsAbstract() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyAbstractClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyAbstractClass',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$this->assertTrue($reflectionService->isClassAbstract('F3_FLOW3_Tests_Reflection_Fixture_DummyAbstractClass'));
-		$this->assertFalse($reflectionService->isClassAbstract('F3_FLOW3_Tests_Reflection_Fixture_DummyClass'));
+		$this->assertTrue($reflectionService->isClassAbstract('F3::FLOW3::Tests::Reflection::Fixture::DummyAbstractClass'));
+		$this->assertFalse($reflectionService->isClassAbstract('F3::FLOW3::Tests::Reflection::Fixture::DummyClass'));
 	}
 
 	/**
@@ -214,14 +215,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isClassFinalTellsIfAClassIsFinal() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyFinalClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyFinalClass',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$this->assertTrue($reflectionService->isClassFinal('F3_FLOW3_Tests_Reflection_Fixture_DummyFinalClass'));
-		$this->assertFalse($reflectionService->isClassFinal('F3_FLOW3_Tests_Reflection_Fixture_DummyClass'));
+		$this->assertTrue($reflectionService->isClassFinal('F3::FLOW3::Tests::Reflection::Fixture::DummyFinalClass'));
+		$this->assertFalse($reflectionService->isClassFinal('F3::FLOW3::Tests::Reflection::Fixture::DummyClass'));
 	}
 
 	/**
@@ -230,14 +231,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getClassMethodNamesReturnsNamesOfAllMethodsOfAClass() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithMethods',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedMethodNames = array('firstMethod', 'secondMethod');
-		$detectedMethodNames = $reflectionService->getClassMethodNames('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithMethods');
+		$detectedMethodNames = $reflectionService->getClassMethodNames('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods');
 		$this->assertEquals($expectedMethodNames, $detectedMethodNames);
 	}
 
@@ -247,14 +248,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getClassPropertyNamesReturnsNamesOfAllPropertiesOfAClass() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedPropertyNames = array('firstProperty', 'secondProperty');
-		$detectedPropertyNames = $reflectionService->getClassPropertyNames('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties');
+		$detectedPropertyNames = $reflectionService->getClassPropertyNames('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties');
 		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
 	}
 
@@ -264,13 +265,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getMethodTagsValuesReturnsArrayOfTagsAndValuesOfAMethod() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithMethods',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedTags = array('firsttag' => array(), 'return' => array('void'), 'secondtag' => array('a', 'b'));
-		$detectedTags = $reflectionService->getMethodTagsValues('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithMethods', 'firstMethod');
+		$detectedTags = $reflectionService->getMethodTagsValues('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods', 'firstMethod');
 		ksort($detectedTags);
 		$this->assertEquals($expectedTags, $detectedTags);
 	}
@@ -281,14 +282,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getPropertyNamesByTagReturnsArrayOfPropertiesTaggedBySpecifiedTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClass',
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedPropertyNames = array('firstProperty');
-		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firsttag');
+		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'firsttag');
 		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
 	}
 
@@ -298,13 +299,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getPropertyTagsValuesReturnsArrayOfTagsAndValuesOfAProperty() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedTags = array('firsttag' => array(), 'secondtag' => array('x', 'y'), 'var' => array('mixed'));
-		$detectedTags = $reflectionService->getPropertyTagsValues('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty');
+		$detectedTags = $reflectionService->getPropertyTagsValues('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'firstProperty');
 		ksort($detectedTags);
 		$this->assertEquals($expectedTags, $detectedTags);
 	}
@@ -315,13 +316,13 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function getPropertyTagValuesReturnsArrayOfValuesOfAPropertysTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedValues = array('x', 'y');
-		$detectedValues = $reflectionService->getPropertyTagValues('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'secondtag');
+		$detectedValues = $reflectionService->getPropertyTagValues('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'firstProperty', 'secondtag');
 		ksort($detectedValues);
 		$this->assertEquals($expectedValues, $detectedValues);
 	}
@@ -331,12 +332,12 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theInitializedFlagIsSetToTrueAfterCallingImportOrInitialize() {
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$this->assertFalse($reflectionService->isInitialized());
 		$reflectionService->initialize(array(__CLASS__));
 		$this->assertTrue($reflectionService->isInitialized());
 
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$this->assertFalse($reflectionService->isInitialized());
 		$reflectionService->import(array());
 		$this->assertTrue($reflectionService->isInitialized());
@@ -348,14 +349,14 @@ class F3_FLOW3_Reflection_ServiceTest extends F3_Testing_BaseTestCase {
 	 */
 	public function isPropertyTaggedWithReturnsTrueIfTheSpecifiedClassPropertyIsTaggedWithTheGivenTag() {
 		$availableClassNames = array(
-			'F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
 		);
-		$reflectionService = new F3_FLOW3_Reflection_Service();
+		$reflectionService = new F3::FLOW3::Reflection::Service();
 		$reflectionService->initialize($availableClassNames);
 
-		$this->assertTrue($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'firsttag'));
-		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'firstProperty', 'nothing'));
-		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties', 'noProperty', 'firsttag'));
+		$this->assertTrue($reflectionService->isPropertyTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'firstProperty', 'firsttag'));
+		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'firstProperty', 'nothing'));
+		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'noProperty', 'firsttag'));
 	}
 
 }

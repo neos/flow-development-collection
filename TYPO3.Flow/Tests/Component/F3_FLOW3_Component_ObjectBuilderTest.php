@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,7 +20,7 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -27,13 +28,13 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_Component_ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::ObjectBuilderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
+class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectBuilder
+	 * @var F3::FLOW3::Component::ObjectBuilder
 	 */
 	protected $componentObjectBuilder;
 
@@ -43,7 +44,7 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$this->componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
 	}
 
 	/**
@@ -53,9 +54,9 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createComponentObjectCanDoSimpleExplicitSetterInjection() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertTrue($componentObject->getFirstDependency() instanceof F3_TestPackage_InjectedClass, 'The class F3_TestPackage_Injected class (first dependency) has not been setter-injected although it should have been.');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
+		$this->assertTrue($componentObject->getFirstDependency() instanceof F3::TestPackage::InjectedClass, 'The class F3::TestPackage::Injected class (first dependency) has not been setter-injected although it should have been.');
 	}
 
 	/**
@@ -66,11 +67,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createComponentObjectCanDoSetterInjectionWithStraightValues() {
 		$time = microtime();
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$someConfigurationProperty = new F3_FLOW3_Component_ConfigurationProperty('someProperty', $time, F3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$someConfigurationProperty = new F3::FLOW3::Component::ConfigurationProperty('someProperty', $time, F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
 		$componentConfiguration->setProperty($someConfigurationProperty);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
 		$this->assertEquals($time, $componentObject->getSomeProperty(), 'The straight value has not been setter-injected although it should have been.');
 	}
 
@@ -86,11 +87,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 			199 => 837,
 			'doo' => TRUE
 		);
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$someConfigurationProperty = new F3_FLOW3_Component_ConfigurationProperty('someProperty', $someArray, F3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$someConfigurationProperty = new F3::FLOW3::Component::ConfigurationProperty('someProperty', $someArray, F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
 		$componentConfiguration->setProperty($someConfigurationProperty);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
 		$this->assertEquals($someArray, $componentObject->getSomeProperty(), 'The array has not been setter-injected although it should have been.');
 	}
 
@@ -99,9 +100,9 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createObjectCanDoSetterInjectionViaInjectMethod() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertTrue($componentObject->getSecondDependency() instanceof F3_TestPackage_InjectedClass, 'The class F3_TestPackage_Injected class (second dependency) has not been setter-injected although it should have been.');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
+		$this->assertTrue($componentObject->getSecondDependency() instanceof F3::TestPackage::InjectedClass, 'The class F3::TestPackage::Injected class (second dependency) has not been setter-injected although it should have been.');
 	}
 
 	/**
@@ -109,8 +110,8 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectMethodIsPreferredOverSetMethod() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
 		$this->assertEquals('inject', $componentObject->injectOrSetMethod, 'Setter inject was done via the set* method but inject* should have been preferred!');
 	}
 
@@ -121,16 +122,16 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createComponentObjectCanDoSimpleConstructorInjection() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 
 		$injectionSucceeded = (
-			$componentObject->argument1 instanceof F3_TestPackage_InjectedClass &&
+			$componentObject->argument1 instanceof F3::TestPackage::InjectedClass &&
 			$componentObject->argument2 === 42 &&
 			$componentObject->argument3 === 'Foo Bar Skårhøj'
 		);
 
-		$this->assertTrue($injectionSucceeded, 'The class F3_TestPackage_Injected class has not been (correctly) constructor-injected although it should have been.');
+		$this->assertTrue($injectionSucceeded, 'The class Injected class has not been (correctly) constructor-injected although it should have been.');
 	}
 
 	/**
@@ -143,13 +144,13 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 			// load and modify the configuration a bit:
 			// ClassWithOptionalConstructorArguments depends on InjectedClassWithDependencies which depends on InjectedClass
 		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		$componentConfigurations['F3_TestPackage_ClassWithOptionalConstructorArguments']->setConstructorArgument(new F3_FLOW3_Component_ConfigurationArgument(1, 'F3_TestPackage_InjectedClassWithDependencies', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
+		$componentConfigurations['F3::TestPackage::ClassWithOptionalConstructorArguments']->setConstructorArgument(new F3::FLOW3::Component::ConfigurationArgument(1, 'F3::TestPackage::InjectedClassWithDependencies', F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
 		$this->componentManager->setComponentConfigurations($componentConfigurations);
-		$componentConfiguration = $componentConfigurations['F3_TestPackage_ClassWithOptionalConstructorArguments'];
+		$componentConfiguration = $componentConfigurations['F3::TestPackage::ClassWithOptionalConstructorArguments'];
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 
-		$this->assertTrue($componentObject->argument1->injectedDependency instanceof F3_TestPackage_InjectedClass, 'Constructor injection with multiple dependencies failed.');
+		$this->assertTrue($componentObject->argument1->injectedDependency instanceof F3::TestPackage::InjectedClass, 'Constructor injection with multiple dependencies failed.');
 	}
 
 	/**
@@ -164,11 +165,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 			199 => 837,
 			'doo' => TRUE
 		);
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
-		$configurationArgument = new F3_FLOW3_Component_ConfigurationArgument(1, $someArray, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
+		$configurationArgument = new F3::FLOW3::Component::ConfigurationArgument(1, $someArray, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		$componentConfiguration->setConstructorArgument($configurationArgument);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 		$this->assertEquals($someArray, $componentObject->argument1, 'The array has not been constructor-injected although it should have been.');
 	}
 
@@ -181,14 +182,14 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	public function createComponentObjectCanDoConstructorInjectionWithNumericValues() {
 		$secondValue = 99;
 		$thirdValue = 3.14159265359;
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
 		$configurationArguments = array(
-			new F3_FLOW3_Component_ConfigurationArgument(2, $secondValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			new F3_FLOW3_Component_ConfigurationArgument(3, $thirdValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
+			new F3::FLOW3::Component::ConfigurationArgument(2, $secondValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			new F3::FLOW3::Component::ConfigurationArgument(3, $thirdValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		);
 		$componentConfiguration->setConstructorArguments($configurationArguments);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 		$this->assertEquals($secondValue, $componentObject->argument2, 'The second straight numeric value has not been constructor-injected although it should have been.');
 		$this->assertEquals($thirdValue, $componentObject->argument3, 'The third straight numeric value has not been constructor-injected although it should have been.');
 	}
@@ -201,15 +202,15 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function createComponentObjectCanDoConstructorInjectionWithBooleanValuesAndObjects() {
 		$firstValue = TRUE;
-		$thirdValue = new ArrayObject(array('foo' => 'bar'));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
+		$thirdValue = new ::ArrayObject(array('foo' => 'bar'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
 		$configurationArguments = array(
-			new F3_FLOW3_Component_ConfigurationArgument(1, $firstValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			new F3_FLOW3_Component_ConfigurationArgument(3, $thirdValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
+			new F3::FLOW3::Component::ConfigurationArgument(1, $firstValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			new F3::FLOW3::Component::ConfigurationArgument(3, $thirdValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		);
 		$componentConfiguration->setConstructorArguments($configurationArguments);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 		$this->assertEquals($firstValue, $componentObject->argument1, 'The first value (boolean) has not been constructor-injected although it should have been.');
 		$this->assertEquals($thirdValue, $componentObject->argument3, 'The third argument (an object) has not been constructor-injected although it should have been.');
 	}
@@ -224,14 +225,14 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 		$firstValue = "Hir hier deser d'Sonn am, fu dem Ierd d'Liewen, ze schéinste Kirmesdag hannendrun déi.";
 		$secondValue = 'Oho ha halo\' maksimume, "io fari jeso naŭ plue" om backslash (\\)nea komo triliono postpostmorgaŭ.';
 
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
 		$configurationArguments = array(
-			new F3_FLOW3_Component_ConfigurationArgument(1, $firstValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			new F3_FLOW3_Component_ConfigurationArgument(2, $secondValue, F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			new F3::FLOW3::Component::ConfigurationArgument(1, $firstValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			new F3::FLOW3::Component::ConfigurationArgument(2, $secondValue, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 		);
 		$componentConfiguration->setConstructorArguments($configurationArguments);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 		$this->assertEquals($firstValue, $componentObject->argument1, 'The first value (string with quotes) has not been constructor-injected although it should have been.');
 		$this->assertEquals($secondValue, $componentObject->argument2, 'The second value (string with double quotes and backslashes) has not been constructor-injected although it should have been.');
 	}
@@ -243,16 +244,16 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorInjectionOfComponentManagerWorks() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ClassWithOptionalConstructorArguments');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ClassWithOptionalConstructorArguments');
 		$configurationArguments = array(
-			new F3_FLOW3_Component_ConfigurationArgument(1, 'F3_FLOW3_Component_ManagerInterface', F3_FLOW3_Component_ConfigurationArgument::ARGUMENT_TYPES_REFERENCE),
+			new F3::FLOW3::Component::ConfigurationArgument(1, 'F3::FLOW3::Component::ManagerInterface', F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_REFERENCE),
 		);
 		$componentConfiguration->setConstructorArguments($configurationArguments);
 
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
-		$this->assertType('F3_FLOW3_Component_ManagerInterface', $componentObject->argument1, 'The component manager has not been constructor-injected although it should have been.');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$this->assertType('F3::FLOW3::Component::ManagerInterface', $componentObject->argument1, 'The component manager has not been constructor-injected although it should have been.');
 
-		$secondComponentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_ClassWithOptionalConstructorArguments', $componentConfiguration, array());
+		$secondComponentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::ClassWithOptionalConstructorArguments', $componentConfiguration, array());
 		$this->assertSame($componentObject->argument1, $secondComponentObject->argument1, 'The constructor-injected instance of the component manager was not a singleton!');
 	}
 
@@ -263,11 +264,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setterInjectionOfComponentManagerWorks() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$someConfigurationProperty = new F3_FLOW3_Component_ConfigurationProperty('someProperty', 'F3_FLOW3_Component_ManagerInterface', F3_FLOW3_Component_ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$someConfigurationProperty = new F3::FLOW3::Component::ConfigurationProperty('someProperty', 'F3::FLOW3::Component::ManagerInterface', F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
 		$componentConfiguration->setProperty($someConfigurationProperty);
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertType('F3_FLOW3_Component_ManagerInterface', $componentObject->getSomeProperty(), 'The component manager has not been setter-injected although it should have been.');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
+		$this->assertType('F3::FLOW3::Component::ManagerInterface', $componentObject->getSomeProperty(), 'The component manager has not been setter-injected although it should have been.');
 	}
 
 	/**
@@ -277,9 +278,9 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createComponentObjectCallsLifecycleInitializationMethod() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_BasicClass');
-		$componentObject = $this->componentObjectBuilder->createComponentObject('F3_TestPackage_BasicClass', $componentConfiguration, array());
-		$this->assertTrue($componentObject->hasBeenInitialized(), 'Obviously the lifecycle initialization method of F3_TestPackage_BasicClass has not been called after setter injection!');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::BasicClass');
+		$componentObject = $this->componentObjectBuilder->createComponentObject('F3::TestPackage::BasicClass', $componentConfiguration, array());
+		$this->assertTrue($componentObject->hasBeenInitialized(), 'Obviously the lifecycle initialization method of F3::TestPackage::BasicClass has not been called after setter injection!');
 	}
 
 	/**
@@ -289,9 +290,9 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringWorksForConstructorInjection() {
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_InjectedClassWithDependencies');
-		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
-		$this->assertType('F3_TestPackage_SomeImplementation', $component->argument1, 'Autowiring didn\'t work out for F3_TestPackage_ClassWithSomeImplementationInjected');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::InjectedClassWithDependencies');
+		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$this->assertType('F3::TestPackage::SomeImplementation', $component->argument1, 'Autowiring didn\'t work out for F3::TestPackage::ClassWithSomeImplementationInjected');
 	}
 
 	/**
@@ -300,8 +301,8 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringForConstructorInjectionRespectsAlreadyDefinedArguments() {
-		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
-		$this->assertTrue($component->argument2 instanceof F3_TestPackage_InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
+		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$this->assertTrue($component->argument2 instanceof F3::TestPackage::InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
 	}
 
 	/**
@@ -309,8 +310,8 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringWorksForSetterInjectionViaInjectMethod() {
-		$component = $this->componentFactory->getComponent('F3_TestPackage_ClassWithSomeImplementationInjected');
-		$this->assertTrue($component->optionalSetterArgument instanceof F3_TestPackage_SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
+		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$this->assertTrue($component->optionalSetterArgument instanceof F3::TestPackage::SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
 
 	/**
@@ -319,9 +320,9 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 */
 	public function autoWiringThrowsExceptionForUnmatchedDependenciesOfRequiredSetterInjectedDependencies() {
 		try {
-			$this->componentFactory->getComponent('F3_TestPackage_ClassWithUnmatchedRequiredSetterDependency');
+			$this->componentFactory->getComponent('F3::TestPackage::ClassWithUnmatchedRequiredSetterDependency');
 			$this->fail('The object builder did not throw an exception.');
-		} catch (F3_FLOW3_Component_Exception_CannotBuildObject $exception) {
+		} catch (F3::FLOW3::Component::Exception::CannotBuildObject $exception) {
 		}
 	}
 
@@ -330,12 +331,12 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectReturnsAnObjectOfTheSpecifiedType() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
 
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
-		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
-		$this->assertType('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $object);
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+		$this->assertType('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $object);
 	}
 
 	/**
@@ -343,15 +344,15 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectRejectsComponentTypesWhichAreNotPersistable() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
 
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_NonPersistableClass');
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::NonPersistableClass');
 
 		try {
-			$componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_NonPersistableClass', $componentConfiguration, array());
+			$componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::NonPersistableClass', $componentConfiguration, array());
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Component_Exception_CannotReconstituteObject $exception) {
+		} catch (F3::FLOW3::Component::Exception::CannotReconstituteObject $exception) {
 
 		}
 	}
@@ -361,11 +362,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectTakesPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
-		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
 
 		$this->assertFalse($object->constructorHasBeenCalled);
 	}
@@ -375,11 +376,11 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethod() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
-		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
 
 		$this->assertTrue($object->wakeupHasBeenCalled);
 	}
@@ -389,15 +390,15 @@ class F3_FLOW3_Component_ObjectBuilderTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethodOnlyAfterAllPropertiesHaveBeenRestored() {
-		$mockComponentFactory = $this->getMock('F3_FLOW3_Component_Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3_FLOW3_Reflection_Service'));
-		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3_TestPackage_ReconstitutableClassWithSimpleProperties');
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$properties = array(
 			'wakeupHasBeenCalled' => FALSE
 		);
 
-		$object = $componentObjectBuilder->reconstituteComponentObject('F3_TestPackage_ReconstitutableClassWithSimpleProperties', $componentConfiguration, $properties);
+		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, $properties);
 
 		$this->assertTrue($object->wakeupHasBeenCalled);
 	}

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication::Token;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,11 +31,11 @@ declare(ENCODING = 'utf-8');
  * @scope prototype
  * @todo here we also need a user details service and an authentication entry point
  */
-class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW3_Security_Authentication_TokenInterface {
+class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInterface {
 
 
 	/**
-	 * @var F3_FLOW3_Utility_Environment The current environment
+	 * @var F3::FLOW3::Utility::Environment The current environment
 	 */
 	protected $environment;
 
@@ -49,18 +50,18 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var F3_FLOW3_Security_RequestPatternInterface The set request pattern
+	 * @var F3::FLOW3::Security::RequestPatternInterface The set request pattern
 	 */
 	protected $requestPattern = NULL;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3_FLOW3_Utility_Environment $environment The current environment
+	 * @param F3::FLOW3::Utility::Environment $environment The current environment
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Utility_Environment $environment) {
+	public function __construct(F3::FLOW3::Utility::Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -75,9 +76,9 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	}
 
 	/**
-	 * Returns TRUE if a F3_FLOW3_Security_RequestPattern was set
+	 * Returns TRUE if a F3::FLOW3::Security::RequestPattern was set
 	 *
-	 * @return boolean True if a F3_FLOW3_Security_RequestPatternInterface was set
+	 * @return boolean True if a F3::FLOW3::Security::RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPattern() {
@@ -86,20 +87,20 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	}
 
 	/**
-	 * Sets a F3_FLOW3_Security_RequestPattern
+	 * Sets a F3::FLOW3::Security::RequestPattern
 	 *
-	 * @param F3_FLOW3_Security_RequestPatternInterface $requestPattern A request pattern
+	 * @param F3::FLOW3::Security::RequestPatternInterface $requestPattern A request pattern
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(F3_FLOW3_Security_RequestPatternInterface $requestPattern) {
+	public function setRequestPattern(F3::FLOW3::Security::RequestPatternInterface $requestPattern) {
 		$this->requestPattern = $requestPattern;
 	}
 
 	/**
-	 * Returns the set F3_FLOW3_Security_RequestPatternInterface, NULL if none was set
+	 * Returns the set F3::FLOW3::Security::RequestPatternInterface, NULL if none was set
 	 *
-	 * @return F3_FLOW3_Security_RequestPatternInterface The set request pattern
+	 * @return F3::FLOW3::Security::RequestPatternInterface The set request pattern
 	 * @see hasRequestPattern()
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -117,8 +118,8 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	public function updateCredentials() {
 		$POSTArguments = $this->environment->getPOSTArguments();
 
-		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::username'];
-		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_UsernamePassword::password'];
+		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'];
+		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'];
 	}
 
 	/**
@@ -132,9 +133,9 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	}
 
 	/**
-	 * Might ask a F3_FLOW3_Security_Authentication_UserDetailsServiceInterface.
+	 * Might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
 	 *
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface A user details object
+	 * @return F3::FLOW3::Security::Authentication::UserDetailsInterface A user details object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
@@ -143,10 +144,10 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	}
 
 	/**
-	 * Returns the currently valid granted authorities. It might ask a F3_FLOW3_Security_Authentication_UserDetailsServiceInterface.
+	 * Returns the currently valid granted authorities. It might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
 	 * Note: You have to check isAuthenticated() before you call this method
 	 *
-	 * @return array Array of F3_FLOW3_Security_Authentication_GrantedAuthority objects
+	 * @return array Array of F3::FLOW3::Security::Authentication::GrantedAuthority objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
@@ -155,7 +156,7 @@ class F3_FLOW3_Security_Authentication_Token_UsernamePassword implements F3_FLOW
 	}
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible F3_FLOW3_Security_Authentication_ManagerInterface
+	 * Sets the authentication status. Usually called by the responsible F3::FLOW3::Security::Authentication::ManagerInterface
 	 *
 	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
 	 * @return void

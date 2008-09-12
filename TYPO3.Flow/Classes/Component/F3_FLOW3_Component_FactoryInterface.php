@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Component
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:$
+ * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Component_FactoryInterface {
+interface FactoryInterface {
 
 	/**
 	 * Returns an instance of the component specified by $componentName.
@@ -37,7 +38,7 @@ interface F3_FLOW3_Component_FactoryInterface {
 	 * @param string $componentName The name of the component to return an instance of
 	 * @return object The component instance
 	 * @throws InvalidArgumentException if $componentName is not a string
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if a component with the given name does not exist
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
 	 */
 	public function getComponent($componentName);
 

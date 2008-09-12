@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_PointcutClassFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::PointcutClassFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_PointcutClassTaggedWithFilter implements F3_FLOW3_AOP_PointcutFilterInterface {
+class PointcutClassTaggedWithFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 	/**
 	 * @var string A regular expression to match annotations
@@ -49,17 +50,17 @@ class F3_FLOW3_AOP_PointcutClassTaggedWithFilter implements F3_FLOW3_AOP_Pointcu
 	/**
 	 * Checks if the specified class matches with the class tag filter pattern
 	 *
-	 * @param F3_FLOW3_Reflection_Class $class The class to check against
-	 * @param F3_FLOW3_Reflection_ClassMethod $method The method - not used here
+	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class to check against
+	 * @param F3::FLOW3::Reflection::ReflectionClassMethod $method The method - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3_FLOW3_Reflection_Class $class, F3_FLOW3_Reflection_Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
 		foreach ($class->getTagsValues() as $tag => $values) {
 			$matchResult =  @preg_match('/^' . $this->classTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {
-				throw new F3_FLOW3_AOP_Exception('Error in regular expression "' . $this->classTagFilterExpression . '" in pointcut class tag filter', 1212576034);
+				throw new F3::FLOW3::AOP::Exception('Error in regular expression "' . $this->classTagFilterExpression . '" in pointcut class tag filter', 1212576034);
 			}
 			if ($matchResult === 1) return TRUE;
 		}

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
+class AbstractBackendTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -36,7 +37,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 */
 	public function invalidEntryIdentifiersAreRecognizedAsInvalid() {
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			$this->assertFalse(F3_FLOW3_Cache_AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
+			$this->assertFalse(F3::FLOW3::Cache::AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
 		}
 	}
 
@@ -46,7 +47,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 */
 	public function validEntryIdentifiersAreRecognizedAsValid() {
 		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
-			$this->assertTrue(F3_FLOW3_Cache_AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
+			$this->assertTrue(F3::FLOW3::Cache::AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
 		}
 	}
 
@@ -56,7 +57,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 */
 	public function invalidTagsAreRecognizedAsInvalid() {
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
-			$this->assertFalse(F3_FLOW3_Cache_AbstractBackend::isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
+			$this->assertFalse(F3::FLOW3::Cache::AbstractBackend::isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
 		}
 	}
 
@@ -66,7 +67,7 @@ class F3_FLOW3_Cache_AbstractBackendTest extends F3_Testing_BaseTestCase {
 	 */
 	public function validTagsAreRecognizedAsValid() {
 		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
-			$this->assertTrue(F3_FLOW3_Cache_AbstractBackend::isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
+			$this->assertTrue(F3::FLOW3::Cache::AbstractBackend::isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
 		}
 	}
 

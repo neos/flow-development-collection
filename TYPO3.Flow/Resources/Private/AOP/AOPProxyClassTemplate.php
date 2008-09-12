@@ -1,8 +1,10 @@
+namespace ###PROXY_NAMESPACE###;
+
 /**
  * AOP Proxy for the class "###TARGET_CLASS_NAME###".
  *
 ###CLASS_ANNOTATIONS### */
-class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###F3_FLOW3_AOP_ProxyInterface {
+class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###F3::FLOW3::AOP::ProxyInterface {
 
 	/**
 	 * @var array An array of target method names and their advices grouped by advice type
@@ -20,7 +22,7 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	protected $methodIsInAdviceMode = array();
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface A reference to the component factory
+	 * @var F3::FLOW3::Component::FactoryInterface A reference to the component factory
 	 */
 	protected $componentFactory;
 
@@ -39,11 +41,11 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point
+	 * @param F3::FLOW3::AOP::JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxyInvokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
 			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
@@ -88,7 +90,7 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 	 * Advice chains are only used in combination with Around advices.
 	 *
 	 * @param string $methodName: Method to return the advice chains for
-	 * @return mixed The advice chains  (array of F3_FLOW3_AOP_AdviceChain) or NULL
+	 * @return mixed The advice chains  (array of F3::FLOW3::AOP::AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function AOPProxyGetAdviceChains($methodName) {
@@ -99,8 +101,8 @@ class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRO
 			} else {
 				if (isset($this->targetMethodsAndGroupedAdvices[$methodName])) {
 					$groupedAdvices = $this->targetMethodsAndGroupedAdvices[$methodName];
-					if (isset($groupedAdvices['F3_FLOW3_AOP_AroundAdvice'])) {
-						$this->groupedAdviceChains[$methodName]['F3_FLOW3_AOP_AroundAdvice'] = new F3_FLOW3_AOP_AdviceChain($groupedAdvices['F3_FLOW3_AOP_AroundAdvice'], $this);
+					if (isset($groupedAdvices['F3::FLOW3::AOP::AroundAdvice'])) {
+						$this->groupedAdviceChains[$methodName]['F3::FLOW3::AOP::AroundAdvice'] = new F3::FLOW3::AOP::AdviceChain($groupedAdvices['F3::FLOW3::AOP::AroundAdvice'], $this);
 						$adviceChains = $this->groupedAdviceChains[$methodName];
 					}
 				}

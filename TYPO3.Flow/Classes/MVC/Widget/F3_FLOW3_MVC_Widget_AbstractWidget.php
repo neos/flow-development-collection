@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Widget;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,10 +29,10 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
+abstract class AbstractWidget {
 
 	/**
-	 * @var F3_FLOW3_MVC_Widget_AbstractWidget The parent widget. If it is NULL, this widget is a toplevel widget
+	 * @var F3::FLOW3::MVC::Widget::AbstractWidget The parent widget. If it is NULL, this widget is a toplevel widget
 	 */
 	protected $parent = NULL;
 
@@ -48,14 +49,14 @@ abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 	/**
 	 * Constructs this widget
 	 *
-	 * @param F3_FLOW3_MVC_Widget_AbstractWidget $parent A reference to the parent widget, if any
+	 * @param F3::FLOW3::MVC::Widget::AbstractWidget $parent A reference to the parent widget, if any
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws InvalidArgumentException if parent was of the wrong type
 	 */
 	public function __construct($parent = NULL) {
 		$this->id = uniqid();
 		if (is_object($parent)) {
-			if (!$parent instanceof F3_FLOW3_MVC_Widget_AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_AbstractWidget.', 1186730161);
+			if (!$parent instanceof F3::FLOW3::MVC::Widget::AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3::FLOW3::MVC::Widget::AbstractWidget.', 1186730161);
 			$parent->addChildWidget($this);
 			$this->parent = $parent;
 		}
@@ -69,7 +70,7 @@ abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setParent($parent) {
-		if (!is_object($parent) || !$parent instanceof F3_FLOW3_MVC_Widget_AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3_FLOW3_MVC_Widget_AbstractWidget.', 1186730280);
+		if (!is_object($parent) || !$parent instanceof F3::FLOW3::MVC::Widget::AbstractWidget) throw new InvalidArgumentException('The specified parent was no instance of F3::FLOW3::MVC::Widget::AbstractWidget.', 1186730280);
 		$this->parent = $parent;
 	}
 
@@ -78,7 +79,7 @@ abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 	 * If it is NULL, this widget is considered to be a
 	 * toplevel widget.
 	 *
-	 * @return F3_FLOW3_MVC_Widget_AbstractWidget	Reference to the parent widget or NULL
+	 * @return F3::FLOW3::MVC::Widget::AbstractWidget	Reference to the parent widget or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParent() {
@@ -98,11 +99,11 @@ abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 	/**
 	 * Adds a child to this widget
 	 *
-	 * @param F3_FLOW3_MVC_Widget_AbstractWidget	$childWidget: The child widget to add
+	 * @param F3::FLOW3::MVC::Widget::AbstractWidget	$childWidget: The child widget to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addChildWidget(F3_FLOW3_MVC_Widget_AbstractWidget $childWidget) {
+	public function addChildWidget(F3::FLOW3::MVC::Widget::AbstractWidget $childWidget) {
 		$this->childWidgets[] = $childWidget;
 		$childWidget->setParent($this);
 	}
@@ -110,7 +111,7 @@ abstract class F3_FLOW3_MVC_Widget_AbstractWidget {
 	/**
 	 * Returns an array of all child widgets
 	 *
-	 * @return array An array of F3_FLOW3_MVC_Widget_AbstractWidget objects
+	 * @return array An array of F3::FLOW3::MVC::Widget::AbstractWidget objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getChildWidgets() {

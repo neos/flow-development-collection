@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,7 +28,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAccess {
+class Container implements ::Countable, ::Iterator, ::ArrayAccess {
 
 	/**
 	 * @var array Configuration options and their values
@@ -58,7 +59,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	public function lock() {
 		$this->locked = TRUE;
 		foreach ($this->options as $option) {
-			if ($option instanceof F3_FLOW3_Configuration_Container) {
+			if ($option instanceof F3::FLOW3::Configuration::Container) {
 				$option->lock();
 			}
 		}
@@ -77,15 +78,15 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	/**
 	 * Merges this container with another configuration container
 	 *
-	 * @param F3_FLOW3_Configuration_Container $otherConfiguration The other configuration container
-	 * @return F3_FLOW3_Configuration_Container This container
+	 * @param F3::FLOW3::Configuration::Container $otherConfiguration The other configuration container
+	 * @return F3::FLOW3::Configuration::Container This container
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mergeWith(F3_FLOW3_Configuration_Container $otherConfiguration) {
+	public function mergeWith(F3::FLOW3::Configuration::Container $otherConfiguration) {
 		foreach ($otherConfiguration as $optionName => $newOptionValue) {
-			if ($newOptionValue instanceof F3_FLOW3_Configuration_Container && array_key_exists($optionName, $this->options)) {
+			if ($newOptionValue instanceof F3::FLOW3::Configuration::Container && array_key_exists($optionName, $this->options)) {
 				$existingOptionValue = $this->__get($optionName);
-				if ($existingOptionValue instanceof F3_FLOW3_Configuration_Container) {
+				if ($existingOptionValue instanceof F3::FLOW3::Configuration::Container) {
 					$newOptionValue = $existingOptionValue->mergeWith($newOptionValue);
 				}
 			}
@@ -211,7 +212,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 */
 	public function __get($optionName) {
 		if (!array_key_exists($optionName, $this->options)) {
-			if ($this->locked) throw new F3_FLOW3_Configuration_Exception_NoSuchOption('An option "' . $optionName . '" does not exist in this configuration container.', 1216385011);
+			if ($this->locked) throw new F3::FLOW3::Configuration::Exception::NoSuchOption('An option "' . $optionName . '" does not exist in this configuration container.', 1216385011);
 			$this->__set($optionName, new self());
 		}
 		return $this->options[$optionName];
@@ -223,11 +224,11 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 * @param string $optionName Name of the configuration option to set
 	 * @param mixed $optionValue The option value
 	 * @return void
-	 * @throws F3_FLOW3_Configuration_Exception_ContainerIsLocked if the container is locked
+	 * @throws F3::FLOW3::Configuration::Exception::ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __set($optionName, $optionValue) {
-		if ($this->locked && !key_exists($optionName, $this->options)) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
+		if ($this->locked && !key_exists($optionName, $this->options)) throw new F3::FLOW3::Configuration::Exception::ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
 		$this->options[$optionName] = $optionValue;
 		$this->iteratorCount = count($this->options);
 	}
@@ -248,11 +249,11 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 *
 	 * @param string $optionName Name of the configuration option to unset
 	 * @return void
-	 * @throws F3_FLOW3_Configuration_Exception_ContainerIsLocked if the container is locked
+	 * @throws F3::FLOW3::Configuration::Exception::ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __unset($optionName) {
-		if ($this->locked) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('You tried to unset the configuration option "' . $optionName . '" but the configuration container is locked.', 1206023012);
+		if ($this->locked) throw new F3::FLOW3::Configuration::Exception::ContainerIsLocked('You tried to unset the configuration option "' . $optionName . '" but the configuration container is locked.', 1206023012);
 		unset($this->options[$optionName]);
 		$this->iteratorCount = count($this->options);
 	}
@@ -262,18 +263,18 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 *
 	 * @param string $methodName Name of the called setter method.
 	 * @param array $arguments Method arguments, passed to the configuration option.
-	 * @return F3_FLOW3_Configuration_Container This configuration container object
-	 * @throws F3_FLOW3_Configuration_Exception if $methodName does not start with "set" or number of arguments are empty
+	 * @return F3::FLOW3::Configuration::Container This configuration container object
+	 * @throws F3::FLOW3::Configuration::Exception if $methodName does not start with "set" or number of arguments are empty
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function __call($methodName, $arguments) {
-		if (F3_PHP6_Functions::substr($methodName, 0, 3) != 'set') {
-			throw new F3_FLOW3_Configuration_Exception('Method "' . $methodName . '" does not exist.', 1213444319);
+		if (F3::PHP6::Functions::substr($methodName, 0, 3) != 'set') {
+			throw new F3::FLOW3::Configuration::Exception('Method "' . $methodName . '" does not exist.', 1213444319);
 		}
 		if (count($arguments) != 1) {
-			throw new F3_FLOW3_Configuration_Exception('You have to pass exactly one argument to a configuration option setter.', 1213444809);
+			throw new F3::FLOW3::Configuration::Exception('You have to pass exactly one argument to a configuration option setter.', 1213444809);
 		}
-		$optionName = F3_PHP6_Functions::lcfirst(F3_PHP6_Functions::substr($methodName, 3));
+		$optionName = F3::PHP6::Functions::lcfirst(F3::PHP6::Functions::substr($methodName, 3));
 		$this->__set($optionName, $arguments[0]);
 
 		return $this;

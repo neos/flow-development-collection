@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_BaseTestCase {
+class ProviderManagerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
@@ -36,8 +37,8 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function configuredProvidersAndTokensAreBuiltCorrectly() {
-		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$settings = new F3_FLOW3_Configuration_Container();
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$settings = new F3::FLOW3::Configuration::Container();
 		$settings->security->authentication->providers = array(
 			array(
 				'provider' => 'UsernamePassword',
@@ -45,7 +46,7 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 				'patternValue' => ''
 			),
 			array(
-				'provider' => 'F3_TestPackage_TestAuthenticationProvider',
+				'provider' => 'F3::TestPackage::TestAuthenticationProvider',
 				'patternType' => 'URL',
 				'patternValue' => '/some/url/.*'
 			)
@@ -53,18 +54,18 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3_FLOW3_Security_Authentication_ProviderManager($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager), new F3_FLOW3_Security_RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentFactory, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
 		$providers = $providerManager->getProviders();
 		$tokens = $providerManager->getTokens();
 
-		$this->assertType('F3_FLOW3_Security_Authentication_Provider_UsernamePassword', $providers[0]);
-		$this->assertType('F3_TestPackage_TestAuthenticationProvider', $providers[1]);
+		$this->assertType('F3::FLOW3::Security::Authentication::Provider::UsernamePassword', $providers[0]);
+		$this->assertType('F3::TestPackage::TestAuthenticationProvider', $providers[1]);
 
-		$this->assertType('F3_FLOW3_Security_Authentication_Token_UsernamePassword', $tokens[0]);
-		$this->assertType('F3_TestPackage_TestAuthenticationToken', $tokens[1]);
+		$this->assertType('F3::FLOW3::Security::Authentication::Token::UsernamePassword', $tokens[0]);
+		$this->assertType('F3::TestPackage::TestAuthenticationToken', $tokens[1]);
 
 		$this->assertTrue($tokens[1]->hasRequestPattern());
-		$this->assertType('F3_FLOW3_Security_RequestPattern_URL', $tokens[1]->getRequestPattern());
+		$this->assertType('F3::FLOW3::Security::RequestPattern::URL', $tokens[1]->getRequestPattern());
 		$this->assertEquals('/some/url/.*', $tokens[1]->getRequestPattern()->getPattern());
 	}
 
@@ -74,10 +75,10 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateDelegatesAuthenticationToTheCorrectProvidersInTheCorrectOrder() {
-		$mockProvider1 = $this->getMock('F3_FLOW3_Security_Authentication_ProviderInterface', array(), array(), 'mockAuthenticationProvider1');
-		$mockProvider2 = $this->getMock('F3_FLOW3_Security_Authentication_ProviderInterface', array(), array(), 'mockAuthenticationProvider2');
-		$mockToken1 = $this->getMock('F3_FLOW3_Security_Authentication_TokenInterface', array(), array(), 'mockAuthenticationToken1');
-		$mockToken2 = $this->getMock('F3_FLOW3_Security_Authentication_TokenInterface', array(), array(), 'mockAuthenticationToken2');
+		$mockProvider1 = $this->getMock('F3::FLOW3::Security::Authentication::ProviderInterface', array(), array(), 'mockAuthenticationProvider1');
+		$mockProvider2 = $this->getMock('F3::FLOW3::Security::Authentication::ProviderInterface', array(), array(), 'mockAuthenticationProvider2');
+		$mockToken1 = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface', array(), array(), 'mockAuthenticationToken1');
+		$mockToken2 = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface', array(), array(), 'mockAuthenticationToken2');
 
 		$mockProvider1->expects($this->atLeastOnce())->method('canAuthenticate')->will($this->onConsecutiveCalls(TRUE, FALSE));
 		$mockProvider2->expects($this->atLeastOnce())->method('canAuthenticate')->will($this->returnValue(TRUE));
@@ -85,13 +86,13 @@ class F3_FLOW3_Security_Authentication_ProviderManagerTest extends F3_Testing_Ba
 		$mockProvider1->expects($this->once())->method('authenticate')->with($mockToken1);
 		$mockProvider2->expects($this->once())->method('authenticate')->with($mockToken2);
 
-		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
-		$settings = new F3_FLOW3_Configuration_Container();
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$settings = new F3::FLOW3::Configuration::Container();
 		$settings->security->authentication->providers = array();
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3_FLOW3_Security_Authentication_ProviderManager($mockConfigurationManager, $this->componentFactory, new F3_FLOW3_Security_Authentication_ProviderResolver($this->componentManager), new F3_FLOW3_Security_RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentFactory, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
 		$providerManager->setProviders(array($mockProvider1, $mockProvider2));
 
 		$providerManager->authenticate($mockToken1);

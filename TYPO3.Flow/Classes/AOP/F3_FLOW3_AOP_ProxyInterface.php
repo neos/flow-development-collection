@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,19 +26,19 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_ProxyInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::ProxyInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_ProxyInterface {
+interface ProxyInterface {
 
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param F3_FLOW3_AOP_JoinPointInterface: The join point
+	 * @param F3::FLOW3::AOP::JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint);
+	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns the value of an arbitrary property.

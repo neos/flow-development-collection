@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Component;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Component
- * @version $Id:F3_FLOW3_Component_Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::Manager.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface {
+class Manager implements F3::FLOW3::Component::ManagerInterface {
 
 	/**
 	 * @var string Name of the current context
@@ -36,17 +37,17 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	protected $context = 'Development';
 
 	/**
-	 * @var F3_FLOW3_Reflection_Service
+	 * @var F3::FLOW3::Reflection::Service
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var F3_FLOW3_Component_ObjectCacheInterface Holds an instance of the Component Object Cache
+	 * @var F3::FLOW3::Component::ObjectCacheInterface Holds an instance of the Component Object Cache
 	 */
 	protected $componentObjectCache;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface A Reference to the component factory
+	 * @var F3::FLOW3::Component::FactoryInterface A Reference to the component factory
 	 */
 	protected $componentFactory;
 
@@ -63,23 +64,23 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Constructor. Instantiates the object cache and object builder.
 	 *
-	 * @param F3_FLOW3_Reflection_Service $reflectionService
+	 * @param F3::FLOW3::Reflection::Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Reflection_Service $reflectionService) {
+	public function __construct(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
-		$this->componentObjectCache = new F3_FLOW3_Component_TransientObjectCache();
-		$this->registerComponent('F3_FLOW3_Component_ManagerInterface', __CLASS__, $this);
+		$this->componentObjectCache = new F3::FLOW3::Component::TransientObjectCache();
+		$this->registerComponent('F3::FLOW3::Component::ManagerInterface', __CLASS__, $this);
 
 
-		$this->componentFactory = new F3_FLOW3_Component_Factory();
-		$componentObjectBuilder = new F3_FLOW3_Component_ObjectBuilder($this->componentFactory, $this->reflectionService);
+		$this->componentFactory = new F3::FLOW3::Component::Factory();
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this->componentFactory, $this->reflectionService);
 		$this->componentFactory->injectComponentManager($this);
 		$this->componentFactory->injectComponentObjectBuilder($componentObjectBuilder);
 		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
-		$this->registerComponent('F3_FLOW3_Component_FactoryInterface', 'F3_FLOW3_Component_Factory', $this->componentFactory);
-		$this->registerComponent('F3_FLOW3_Component_ObjectBuilder', 'F3_FLOW3_Component_ObjectBuilder', $componentObjectBuilder);
+		$this->registerComponent('F3::FLOW3::Component::FactoryInterface', 'F3::FLOW3::Component::Factory', $this->componentFactory);
+		$this->registerComponent('F3::FLOW3::Component::ObjectBuilder', 'F3::FLOW3::Component::ObjectBuilder', $componentObjectBuilder);
 	}
 
 	/**
@@ -117,7 +118,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Returns a reference to the component factory used by the component manager.
 	 *
-	 * @return F3_FLOW3_Component_FactoryInterface
+	 * @return F3::FLOW3::Component::FactoryInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentFactory() {
@@ -132,27 +133,27 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @param object $componentObject: If the component has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_ComponentAlreadyRegistered if the component has already been registered
-	 * @throws F3_FLOW3_Component_Exception_InvalidComponentObject if the passed $componentObject is not a valid instance of $className
+	 * @throws F3::FLOW3::Component::Exception::ComponentAlreadyRegistered if the component has already been registered
+	 * @throws F3::FLOW3::Component::Exception::InvalidComponentObject if the passed $componentObject is not a valid instance of $className
 	 */
 	public function registerComponent($componentName, $className = NULL, $componentObject = NULL) {
-		if ($this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_ComponentAlreadyRegistered('The component ' . $componentName . ' is already registered.', 1184160573);
+		if ($this->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::ComponentAlreadyRegistered('The component ' . $componentName . ' is already registered.', 1184160573);
 		if ($className === NULL) {
 			$className = $componentName;
 		}
-		if (!class_exists($className, TRUE)) throw new F3_FLOW3_Component_Exception_UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
+		if (!class_exists($className, TRUE)) throw new F3::FLOW3::Component::Exception::UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
 		$useReflectionService = $this->reflectionService->isInitialized();
-		if (!$useReflectionService) $class = new F3_FLOW3_Reflection_Class($className);
+		if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ReflectionClass($className);
 
 		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
-		if ($classIsAbstract) throw new F3_FLOW3_Component_Exception_InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
+		if ($classIsAbstract) throw new F3::FLOW3::Component::Exception::InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
 
 		if ($componentObject !== NULL) {
-			if (!is_object($componentObject) || !$componentObject instanceof $className) throw new F3_FLOW3_Component_Exception_InvalidComponentObject('The component instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
+			if (!is_object($componentObject) || !$componentObject instanceof $className) throw new F3::FLOW3::Component::Exception::InvalidComponentObject('The component instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
 			$this->componentObjectCache->putComponentObject($componentName, $componentObject);
 		}
 
-		$this->componentConfigurations[$componentName] = new F3_FLOW3_Component_Configuration($componentName, $className);
+		$this->componentConfigurations[$componentName] = new F3::FLOW3::Component::Configuration($componentName, $className);
 
 		if ($useReflectionService) {
 			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -163,7 +164,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 			$scope = trim(implode('', $class->getTagValues('scope')));
 			$this->componentConfigurations[$componentName]->setScope($scope);
 		}
-		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
+		$this->registeredComponents[$componentName] = F3::PHP6::Functions::strtolower($componentName);
 	}
 
 	/**
@@ -175,12 +176,12 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 */
 	public function registerComponentType($componentName) {
 		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($componentName);
-		$componentConfiguration = new F3_FLOW3_Component_Configuration($componentName);
+		$componentConfiguration = new F3::FLOW3::Component::Configuration($componentName);
 		if ($className !== FALSE) {
 			$componentConfiguration->setClassName($className);
 
 			$useReflectionService = $this->reflectionService->isInitialized();
-			if (!$useReflectionService) $class = new F3_FLOW3_Reflection_Class($className);
+			if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ReflectionClass($className);
 
 			if ($useReflectionService) {
 				if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -192,7 +193,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 				$componentConfiguration->setScope($scope);
 			}
 		}
-		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
+		$this->registeredComponents[$componentName] = F3::PHP6::Functions::strtolower($componentName);
 		$this->componentConfigurations[$componentName] = $componentConfiguration;
 	}
 
@@ -202,10 +203,10 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @param string $componentName: The explicit component name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if the specified component has not been registered before
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if the specified component has not been registered before
 	 */
 	public function unregisterComponent($componentName) {
-		if (!$this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1167473433);
+		if (!$this->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Component "' . $componentName . '" is not registered.', 1167473433);
 		if ($this->componentObjectCache->componentObjectExists($componentName)) {
 			$this->componentObjectCache->removeComponentObject($componentName);
 		}
@@ -244,7 +245,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 */
 	public function getCaseSensitiveComponentName($caseInsensitiveComponentName) {
 		if (!is_string($caseInsensitiveComponentName)) throw new InvalidArgumentException('The component name must be of type string, ' . gettype($caseInsensitiveComponentName) . ' given.', 1186655552);
-		return array_search(F3_PHP6_Functions::strtolower($caseInsensitiveComponentName), $this->registeredComponents);
+		return array_search(F3::PHP6::Functions::strtolower($caseInsensitiveComponentName), $this->registeredComponents);
 	}
 
 	/**
@@ -262,7 +263,7 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Returns an array of configuration objects for all registered components.
 	 *
-	 * @return arrray Array of F3_FLOW3_Component_Configuration objects, indexed by component name
+	 * @return arrray Array of F3::FLOW3::Component::Configuration objects, indexed by component name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentConfigurations() {
@@ -273,12 +274,12 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * Returns the configuration object of a certain component
 	 *
 	 * @param string $componentName: Name of the component to fetch the configuration for
-	 * @return F3_FLOW3_Component_Configuration The component configuration
+	 * @return F3::FLOW3::Component::Configuration The component configuration
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent if the specified component has not been registered
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if the specified component has not been registered
 	 */
 	public function getComponentConfiguration($componentName) {
-		if (!$this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Component "' . $componentName . '" is not registered.', 1167993004);
+		if (!$this->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Component "' . $componentName . '" is not registered.', 1167993004);
 		return clone $this->componentConfigurations[$componentName];
 	}
 
@@ -286,13 +287,13 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * Sets the component configurations for all components found in the
 	 * $newComponentConfigurations array.
 	 *
-	 * @param array $newComponentConfigurations: Array of $componentName => F3_FLOW3_Component_configuration
+	 * @param array $newComponentConfigurations: Array of $componentName => F3::FLOW3::Component::configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setComponentConfigurations(array $newComponentConfigurations) {
 		foreach ($newComponentConfigurations as $newComponentConfiguration) {
-			if (!$newComponentConfiguration instanceof F3_FLOW3_Component_Configuration) throw new InvalidArgumentException('The new component configuration must be an instance of F3_FLOW3_Component_Configuration', 1167826954);
+			if (!$newComponentConfiguration instanceof F3::FLOW3::Component::Configuration) throw new InvalidArgumentException('The new component configuration must be an instance of F3::FLOW3::Component::Configuration', 1167826954);
 			$componentName = $newComponentConfiguration->getComponentName();
 			if (!key_exists($componentName, $this->componentConfigurations) || $this->componentConfigurations[$componentName] !== $newComponentConfiguration) {
 				$this->setComponentConfiguration($newComponentConfiguration);
@@ -303,14 +304,14 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	/**
 	 * Sets the component configuration for a specific component.
 	 *
-	 * @param F3_FLOW3_Component_Configuration $newComponentConfiguration: The new component configuration
+	 * @param F3::FLOW3::Component::Configuration $newComponentConfiguration: The new component configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setComponentConfiguration(F3_FLOW3_Component_Configuration $newComponentConfiguration) {
+	public function setComponentConfiguration(F3::FLOW3::Component::Configuration $newComponentConfiguration) {
 		$componentName = $newComponentConfiguration->getComponentName();
 		$this->componentConfigurations[$newComponentConfiguration->getComponentName()] = clone $newComponentConfiguration;
-		$this->registeredComponents[$componentName] = F3_PHP6_Functions::strtolower($componentName);
+		$this->registeredComponents[$componentName] = F3::PHP6::Functions::strtolower($componentName);
 	}
 
 	/**
@@ -322,12 +323,12 @@ class F3_FLOW3_Component_Manager implements F3_FLOW3_Component_ManagerInterface 
 	 * @param string $className: Name of the class to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3_FLOW3_Component_Exception_UnknownComponent on trying to set the class name of an unknown component
-	 * @throws F3_FLOW3_Component_Exception_UnknownClass if the class does not exist
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent on trying to set the class name of an unknown component
+	 * @throws F3::FLOW3::Component::Exception::UnknownClass if the class does not exist
 	 */
 	public function setComponentClassName($componentName, $className) {
-		if (!$this->isComponentRegistered($componentName)) throw new F3_FLOW3_Component_Exception_UnknownComponent('Tried to set class name of non existent component "' . $componentName . '"', 1185524488);
-		if (!class_exists($className)) throw new F3_FLOW3_Component_Exception_UnknownClass('Tried to set the class name of component "' . $componentName . '" but a class "' . $className . '" does not exist.', 1185524499);
+		if (!$this->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Tried to set class name of non existent component "' . $componentName . '"', 1185524488);
+		if (!class_exists($className)) throw new F3::FLOW3::Component::Exception::UnknownClass('Tried to set the class name of component "' . $componentName . '" but a class "' . $className . '" does not exist.', 1185524499);
 		$componentConfiguration = $this->getComponentConfiguration($componentName);
 		$componentConfiguration->setClassName($className);
 		$this->setComponentConfiguration($componentConfiguration);

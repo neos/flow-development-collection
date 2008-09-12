@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_FakeMethod extends F3_FLOW3_Reflection_Method {
+class FakeMethod extends F3::FLOW3::Reflection::Method {
 
 	/**
 	 * @var string
@@ -41,7 +42,7 @@ class F3_FLOW3_AOP_FakeMethod extends F3_FLOW3_Reflection_Method {
 	protected $methodName;
 
 	/**
-	 * @var F3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
+	 * @var F3::FLOW3::Reflection::DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
@@ -71,16 +72,16 @@ class F3_FLOW3_AOP_FakeMethod extends F3_FLOW3_Reflection_Method {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return F3_FLOW3_Reflection_Class The declaring class
+	 * @return F3::FLOW3::Reflection::ReflectionClass The declaring class
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3_FLOW3_Reflection_Class($this->className);
+		return new F3::FLOW3::Reflection::ReflectionClass($this->className);
 	}
 
 	/**
 	 * Replacement for the original getParameters() method which makes sure
-	 * that F3_FLOW3_Reflection_Parameter objects are returned instead of the
+	 * that F3::FLOW3::Reflection::Parameter objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
 	 * @return array
@@ -147,13 +148,13 @@ class F3_FLOW3_AOP_FakeMethod extends F3_FLOW3_Reflection_Method {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return F3_FLOW3_Reflection_DocCommentParser
+	 * @return F3::FLOW3::Reflection::DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
+			$this->docCommentParser = new F3::FLOW3::Reflection::DocCommentParser;
 			$this->docCommentParser->parseDocComment('');
 		}
 		return $this->docCommentParser;

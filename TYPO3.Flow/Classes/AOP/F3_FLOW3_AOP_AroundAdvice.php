@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_AroundAdvice.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::AroundAdvice.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface {
+class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 
 	/**
 	 * @var string Holds the name of the aspect component containing the advice
@@ -41,7 +42,7 @@ class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
 	 */
 	protected $componentFactory;
 
@@ -50,11 +51,11 @@ class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface {
 	 *
 	 * @param string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param string $adviceMethodName: Name of the advice method
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory: A reference to the component factory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory: A reference to the component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->aspectComponentName = $aspectComponentName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->componentFactory = $componentFactory;
@@ -63,11 +64,11 @@ class F3_FLOW3_AOP_AroundAdvice implements F3_FLOW3_AOP_AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invoke(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		$adviceObject = $this->componentFactory->getComponent($this->aspectComponentName);
 		$methodName = $this->adviceMethodName;
 		return $adviceObject->$methodName($joinPoint);

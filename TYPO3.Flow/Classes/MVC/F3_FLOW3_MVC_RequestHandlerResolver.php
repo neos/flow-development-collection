@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,30 +26,30 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::RequestHandlerResolver.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_RequestHandlerResolver {
+class RequestHandlerResolver {
 
 	/**
-	 * @var F3_FLOW3_ComponentFactoryInterface Reference to the component factory
+	 * @var F3::FLOW3::ComponentFactoryInterface Reference to the component factory
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container FLOW3 configuration
+	 * @var F3::FLOW3::Configuration::Container FLOW3 configuration
 	 */
 	protected $configuration;
 
 	/**
 	 * Constructs the Request Handler Resolver
 	 *
-	 * @param F3_FLOW3_Configuration_Container $configuration The FLOW3 configuration
-	 * @param F3_FLOW3_ComponentFactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Configuration::Container $configuration The FLOW3 configuration
+	 * @param F3::FLOW3::ComponentFactoryInterface $componentFactory A reference to the component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Container $configuration, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Configuration::Container $configuration, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->configuration = $configuration;
 		$this->componentFactory = $componentFactory;
 	}
@@ -57,8 +58,8 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 	 * Analyzes the raw request and tries to find a request handler which can handle
 	 * it. If none is found, an exception is thrown.
 	 *
-	 * @return F3_FLOW3_MVC_RequestHandler A request handler
-	 * @throws F3_FLOW3_MVC_Exception
+	 * @return F3::FLOW3::MVC::RequestHandler A request handler
+	 * @throws F3::FLOW3::MVC::Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
@@ -73,7 +74,7 @@ class F3_FLOW3_MVC_RequestHandlerResolver {
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}
-		if (count($suitableRequestHandlers) == 0) throw new F3_FLOW3_MVC_Exception('No suitable request handler found.', 1205414233);
+		if (count($suitableRequestHandlers) == 0) throw new F3::FLOW3::MVC::Exception('No suitable request handler found.', 1205414233);
 		ksort($suitableRequestHandlers);
 		return array_pop($suitableRequestHandlers);
 	}

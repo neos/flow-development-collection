@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authentication_TokenInterface {
+interface TokenInterface {
 
 	/**
 	 * Returns TRUE if this token is currently authenticated
@@ -39,25 +40,25 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	public function isAuthenticated();
 
 	/**
-	 * Returns TRUE if a F3_FLOW3_Security_RequestPattern was set
+	 * Returns TRUE if a F3::FLOW3::Security::RequestPattern was set
 	 *
-	 * @return boolean True if a F3_FLOW3_Security_RequestPattern was set
+	 * @return boolean True if a F3::FLOW3::Security::RequestPattern was set
 	 */
 	public function hasRequestPattern();
 
 	/**
-	 * Sets a F3_FLOW3_Security_RequestPattern
+	 * Sets a F3::FLOW3::Security::RequestPattern
 	 *
-	 * @param F3_FLOW3_Security_RequestPattern $requestPattern The set request pattern
+	 * @param F3::FLOW3::Security::RequestPattern $requestPattern The set request pattern
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(F3_FLOW3_Security_RequestPatternInterface $requestPattern);
+	public function setRequestPattern(F3::FLOW3::Security::RequestPatternInterface $requestPattern);
 
 	/**
-	 * Returns the set F3_FLOW3_Security_RequestPatternInterface, NULL if none was set
+	 * Returns the set F3::FLOW3::Security::RequestPatternInterface, NULL if none was set
 	 *
-	 * @return F3_FLOW3_Security_RequestPatternInterface The set request pattern
+	 * @return F3::FLOW3::Security::RequestPatternInterface The set request pattern
 	 * @see hasRequestPattern()
 	 */
 	public function getRequestPattern();
@@ -79,22 +80,22 @@ interface F3_FLOW3_Security_Authentication_TokenInterface {
 	public function getCredentials();
 
 	/**
-	 * Might ask a F3_FLOW3_Security_Authentication_UserDetailsServiceInterface.
+	 * Might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
 	 *
-	 * @return F3_FLOW3_Security_Authentication_UserDetailsInterface A user details object
+	 * @return F3::FLOW3::Security::Authentication::UserDetailsInterface A user details object
 	 */
 	public function getUserDetails();
 
 	/**
-	 * Returns the currently valid granted authorities. It might ask a F3_FLOW3_Security_Authentication_UserDetailsServiceInterface.
+	 * Returns the currently valid granted authorities. It might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
 	 * Note: You have to check isAuthenticated() before you call this method
 	 *
-	 * @return array Array of F3_FLOW3_Security_Authentication_GrantedAuthority objects
+	 * @return array Array of F3::FLOW3::Security::Authentication::GrantedAuthority objects
 	 */
 	public function getGrantedAuthorities();
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible F3_FLOW3_Security_Authentication_ManagerInterface
+	 * Sets the authentication status. Usually called by the responsible F3::FLOW3::Security::Authentication::ManagerInterface
 	 *
 	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
 	 * @return void

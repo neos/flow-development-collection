@@ -17,9 +17,9 @@ declare(ENCODING="utf-8");
 /**
  * Defines the global, last-resort exception handler.
  *
- * @var F3_FLOW3_Error_ExceptionHandlerInterface
+ * @var F3::FLOW3::Error::ExceptionHandlerInterface
  */
-$c->exceptionHandler->className = 'F3_FLOW3_Error_ProductionExceptionHandler';
+$c->exceptionHandler->className = 'F3::FLOW3::Error::ProductionExceptionHandler';
 
 /**
  * Defines which errors should result in an exception thrown - all other error
@@ -48,9 +48,9 @@ $c->utility->environment->temporaryDirectoryBase = FLOW3_PATH_DATA . 'Temporary/
  * configuration by default if they have no special requirements in terms
  * of the caching backend.
  *
- * @var F3_FLOW3_Cache_BackendInterface
+ * @var F3::FLOW3::Cache::BackendInterface
  */
-$c->cache->defaultCache->backend = 'F3_FLOW3_Cache_Backend_File';
+$c->cache->defaultCache->backend = 'F3::FLOW3::Cache::Backend::File';
 
 /**
  * Defines the default configuration options for the cache backend.
@@ -71,9 +71,9 @@ $c->component->configurationCache->enable = TRUE;
 
 /**
  * Define the backend used for caching component configurations. Specify the
- * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ * name of a component implementing the F3::FLOW3::Cache::BackendInterface.
  *
- * @var F3_FLOW3_Cache_BackendInterface
+ * @var F3::FLOW3::Cache::BackendInterface
  */
 $c->component->configurationCache->backend = $c->cache->defaultCache->backend;
 
@@ -86,11 +86,11 @@ $c->component->configurationCache->backendOptions = $c->cache->defaultCache->bac
 
 /**
  * Defines the available request handlers. Each of them must implement the
- * F3_FLOW3_MVC_RequestHandlerInterface.
+ * F3::FLOW3::MVC::RequestHandlerInterface.
  *
  * @var array
  */
-$c->mvc->availableRequestHandlers = array('F3_FLOW3_MVC_Web_RequestHandler', 'F3_FLOW3_MVC_CLI_RequestHandler');
+$c->mvc->availableRequestHandlers = array('F3::FLOW3::MVC::Web::RequestHandler', 'F3::FLOW3::MVC::CLI::RequestHandler');
 
 /**
  * Enable or disable the whole AOP framework.
@@ -108,9 +108,9 @@ $c->aop->proxyCache->enable = TRUE;
 
 /**
  * Define the backend used for caching AOP proxy classes. Specify the
- * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ * name of a component implementing the F3::FLOW3::Cache::BackendInterface.
  *
- * @var F3_FLOW3_Cache_BackendInterface
+ * @var F3::FLOW3::Cache::BackendInterface
  */
 $c->aop->proxyCache->backend = $c->cache->defaultCache->backend;
 
@@ -130,9 +130,9 @@ $c->reflection->cache->enable = TRUE;
 
 /**
  * Defines the backend used for caching reflection information. Specify the
- * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ * name of a component implementing the F3::FLOW3::Cache::BackendInterface.
  *
- * @var F3_FLOW3_Cache_BackendInterface
+ * @var F3::FLOW3::Cache::BackendInterface
  */
 $c->reflection->cache->backend = $c->cache->defaultCache->backend;
 
@@ -145,9 +145,9 @@ $c->reflection->cache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 /**
  * Define the backend used for caching resource metadata. Specify the
- * name of a component implementing the F3_FLOW3_Cache_BackendInterface.
+ * name of a component implementing the F3::FLOW3::Cache::BackendInterface.
  *
- * @var F3_FLOW3_Cache_BackendInterface
+ * @var F3::FLOW3::Cache::BackendInterface
  */
 $c->resource->cache->backend = $c->cache->defaultCache->backend;
 
@@ -167,20 +167,20 @@ $c->resource->cache->publicPath = FLOW3_PATH_PUBLIC . 'Resources/';
 
 /**
  * The strategy to use when caching files for public resources. Specify one of
- * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE or
- * F3_FLOW3_Resource_Manager::CACHE_STRATEGY_FILE
+ * F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE or
+ * F3::FLOW3::Resource::Manager::CACHE_STRATEGY_FILE
  *
  * @var string
  */
-$c->resource->cache->strategy = F3_FLOW3_Resource_Manager::CACHE_STRATEGY_PACKAGE;
+$c->resource->cache->strategy = F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE;
 
 /**
  * Defines the backend which is used for storing the session data.
  * If no session functionality is needed / wanted, just use the "Transient" session.
  *
- * @var F3_FLOW3_Session_Interface
+ * @var F3::FLOW3::Session::SessionInterface
  */
-$c->session->backend->className = (PHP_SAPI == 'cli') ? 'F3_FLOW3_Session_Transient' : 'F3_FLOW3_Session_PHP';
+$c->session->backend->className = (PHP_SAPI == 'cli') ? 'F3::FLOW3::Session::Transient' : 'F3::FLOW3::Session::PHP';
 
 /**
  * Whether to enable FLOW3's persistence manager or not.
@@ -213,7 +213,7 @@ $c->security->firewall->rejectAll = FALSE;
  * 		)
  * );
  *
- * If the objects are in the namespace "F3_FLOW3_Security" it is enough to specify
+ * If the objects are in the namespace "F3::FLOW3::Security" it is enough to specify
  * the last name of the classname, e.g. AccessGrant
  *
  * @var array
@@ -224,7 +224,7 @@ $c->security->firewall->filters = array();
  * Array of authentication providers that should be used for authentication.
  * If you set a request pattern the provider will only be called if the pattern
  * matches the current request. If the objects are in the namespace
- * "F3_FLOW3_Security" it is enough to specify the last name of the classname,
+ * "F3::FLOW3::Security" it is enough to specify the last name of the classname,
  * e.g. UsernamePassword
  * Note: Authentication will be performed in the given order of the providers.
  * So make sure, that the primary authentication method is the first array entry.
@@ -269,7 +269,7 @@ $c->locale->defaultLocaleIdentifier = 'en_Latn_EN';
  * It is recommended that all components which are in need of some information
  * about the locale use the locale object stored in this setting.
  *
- * @F3_FLOW3_Locale_Locale
+ * @F3::FLOW3::Locale::Locale
  */
 $c->locale->defaultLocale = NULL;
 

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,16 +30,16 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  */
-interface F3_FLOW3_Security_RequestPatternInterface {
+interface RequestPatternInterface {
 
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request that should be matched
+	 * @param F3::FLOW3::MVC::Request $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(F3_FLOW3_MVC_Request $request);
+	public function canMatch(F3::FLOW3::MVC::Request $request);
 
 	/**
 	 * Returns the set pattern
@@ -57,12 +58,12 @@ interface F3_FLOW3_Security_RequestPatternInterface {
 	public function setPattern($pattern);
 
 	/**
-	 * Matches a F3_FLOW3_MVC_Request against its set pattern rules
+	 * Matches a F3::FLOW3::MVC::Request against its set pattern rules
 	 *
-	 * @param F3_FLOW3_MVC_Request $request The request that should be matched
+	 * @param F3::FLOW3::MVC::Request $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
-	public function matchRequest(F3_FLOW3_MVC_Request $request);
+	public function matchRequest(F3::FLOW3::MVC::Request $request);
 }
 
 ?>

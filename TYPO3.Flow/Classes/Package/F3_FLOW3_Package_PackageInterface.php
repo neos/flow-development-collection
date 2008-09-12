@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3_FLOW3_Package_PackageInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Package::PackageInterface.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3_FLOW3_Package_PackageInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Package::PackageInterface.php 203 2007-03-30 13:17:37Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Package_PackageInterface {
+interface PackageInterface {
 
 	/**
 	 * Constructor
@@ -42,7 +43,7 @@ interface F3_FLOW3_Package_PackageInterface {
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return F3_FLOW3_Package_Meta
+	 * @return F3::FLOW3::Package::Meta
 	 */
 	public function getPackageMeta();
 

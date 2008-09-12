@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3_FLOW3_AOP_Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class F3_FLOW3_Cache_AbstractCache {
+abstract class AbstractCache {
 
 	const PATTERN_IDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
 
@@ -39,7 +40,7 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	protected $identifier;
 
 	/**
-	 * @var F3_FLOW3_Cache_AbstractBackend
+	 * @var F3::FLOW3::Cache::AbstractBackend
 	 */
 	protected $backend;
 
@@ -47,11 +48,11 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param F3_FLOW3_Cache_AbstractBackend $backend Backend to be used for this cache
+	 * @param F3::FLOW3::Cache::AbstractBackend $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
 	 */
-	public function __construct($identifier, F3_FLOW3_Cache_AbstractBackend $backend) {
+	public function __construct($identifier, F3::FLOW3::Cache::AbstractBackend $backend) {
 		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
@@ -71,7 +72,7 @@ abstract class F3_FLOW3_Cache_AbstractCache {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return F3_FLOW3_Cache_AbstractBackend The backend used by this cache
+	 * @return F3::FLOW3::Cache::AbstractBackend The backend used by this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBackend() {

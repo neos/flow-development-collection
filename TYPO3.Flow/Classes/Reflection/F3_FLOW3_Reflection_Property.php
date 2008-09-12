@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,13 +26,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_Property extends ReflectionProperty {
+class Property extends ReflectionProperty {
 
 	/**
-	 * @var F3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
+	 * @var F3::FLOW3::Reflection::DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
@@ -84,14 +85,14 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 *
 	 * @param  object $object: Instance of the declaring class to read the value from
 	 * @return mixed Value of the property
-	 * @throws F3_FLOW3_Reflection_Exception
+	 * @throws F3::FLOW3::Reflection::Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo   Maybe support private properties as well
 	 */
 	public function getValue($object) {
-		if (!is_object($object)) throw new F3_FLOW3_Reflection_Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+		if (!is_object($object)) throw new F3::FLOW3::Reflection::Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
 		if ($this->isPublic()) return parent::getValue($object);
-		if ($this->isPrivate()) throw new F3_FLOW3_Reflection_Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
+		if ($this->isPrivate()) throw new F3::FLOW3::Reflection::Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
 
 		$propertyValues = (array)$object;
 		$index = chr(0) . '*' . chr(0) . $this->name;
@@ -104,12 +105,12 @@ class F3_FLOW3_Reflection_Property extends ReflectionProperty {
 	 * Returns an instance of the doc comment parser and 
 	 * runs the parse() method.
 	 *
-	 * @return F3_FLOW3_Reflection_DocCommentParser
+	 * @return F3::FLOW3::Reflection::DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
+			$this->docCommentParser = new F3::FLOW3::Reflection::DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;

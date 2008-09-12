@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,30 +26,30 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3_FLOW3_AOP_JoinPointInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::JoinPointInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_AOP_JoinPointInterface {
+interface JoinPointInterface {
 
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param F3_FLOW3_AOP_ProxyInterface $proxy: Reference to the proxy class instance of the target class
+	 * @param F3::FLOW3::AOP::ProxyInterface $proxy: Reference to the proxy class instance of the target class
 	 * @param string $className: Class name of the target class this join point refers to
 	 * @param string $methodName: Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments: Array of method arguments which have been passed to the target method
-	 * @param F3_FLOW3_AOP_AdviceChainInterface $adviceChain: The advice chain for this join point
+	 * @param F3::FLOW3::AOP::AdviceChainInterface $adviceChain: The advice chain for this join point
 	 * @param mixed $result: The result of the method invocations (only used for After Returning advices)
 	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 */
-	public function __construct(F3_FLOW3_AOP_ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL);
+	public function __construct(F3::FLOW3::AOP::ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL);
 
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return F3_FLOW3_AOP_ProxyInterface
+	 * @return F3::FLOW3::AOP::ProxyInterface
 	 */
 	public function getProxy();
 
@@ -93,7 +94,7 @@ interface F3_FLOW3_AOP_JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return F3_FLOW3_AOP_AdviceChainInterface The advice chain
+	 * @return F3::FLOW3::AOP::AdviceChainInterface The advice chain
 	 */
 	public function getAdviceChain();
 

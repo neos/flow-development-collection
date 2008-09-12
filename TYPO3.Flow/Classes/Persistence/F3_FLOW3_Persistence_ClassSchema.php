@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,13 +29,13 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_ClassSchema {
+class ClassSchema {
 
 	const MODELTYPE_REPOSITORY = 1;
 	const MODELTYPE_ENTITY = 2;
 	const MODELTYPE_VALUEOBJECT = 3;
 
-	const ALLOWED_TYPES_PATTERN = '/^(integer|int|float|boolean|string|array|DateTime|F3_[a-zA-Z0-9_]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^(integer|int|float|boolean|string|array|DateTime|F3::[a-zA-Z0-9:]+)/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -98,7 +99,7 @@ class F3_FLOW3_Persistence_ClassSchema {
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
 			$this->properties[$name] = ($matches[1] == 'int') ? 'integer' : $matches[1];
 		} else {
-			throw new F3_FLOW3_Persistence_Exception_InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
+			throw new F3::FLOW3::Persistence::Exception::InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
 	}
 

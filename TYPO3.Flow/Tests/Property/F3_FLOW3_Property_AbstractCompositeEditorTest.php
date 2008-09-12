@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Property_CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id: F3::FLOW3::Property::CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
  */
 
 /**
@@ -25,18 +26,18 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Property_CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id: F3::FLOW3::Property::CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestCase {
+class AbstractCompositeEditorTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function registeringANewFormatBasicallyWorks() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
-		$compositeEditor->registerNewFormat('someNewFormat', $this->getMock('F3_FLOW3_Property_EditorInterface'));
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$compositeEditor->registerNewFormat('someNewFormat', $this->getMock('F3::FLOW3::Property::EditorInterface'));
 		$compositeEditor->removeFormat('someNewFormat');
 	}
 
@@ -45,12 +46,12 @@ class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removingANotExistingFormatThrowsException() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
 
 		try {
 			$compositeEditor->removeFormat('someNotExistingFormat');
 			$this->fail('No exception has been thrown on removing a not existing format.');
-		} catch (F3_FLOW3_Property_Exception_InvalidFormat $exception) {
+		} catch (F3::FLOW3::Property::Exception::InvalidFormat $exception) {
 
 		}
 	}
@@ -60,8 +61,8 @@ class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function settingThePropertyWithAnExtendedFormatCallsTheCorrectEditor() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
-		$editorWithNewFormat = $this->getMock('F3_FLOW3_Property_EditorInterface');
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$editorWithNewFormat = $this->getMock('F3::FLOW3::Property::EditorInterface');
 		$editorWithNewFormat->expects($this->once())->method('setAs')->with($this->equalTo('newFormat'), $this->equalTo('someProperty'));
 		$compositeEditor->registerNewFormat('newFormat', $editorWithNewFormat);
 
@@ -73,8 +74,8 @@ class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function gettingThePropertyWithAnExtendedFormatReturnsTheCorrectValueFromTheCorrectEditor() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
-		$editorWithNewFormat = $this->getMock('F3_FLOW3_Property_EditorInterface');
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$editorWithNewFormat = $this->getMock('F3::FLOW3::Property::EditorInterface');
 		$editorWithNewFormat->expects($this->once())->method('getAs')->with($this->equalTo('newFormat'))->will($this->returnValue('editedProperty'));
 
 		$compositeEditor->registerNewFormat('newFormat', $editorWithNewFormat);
@@ -87,12 +88,12 @@ class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function settingAPropertyAsAnInvalidFormatThrowsException() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
 
 		try {
 			$compositeEditor->setAs('invalidFormat', 'someProperty');
 			$this->fail('No exception has been thrown on setting an invalid format');
-		} catch(F3_FLOW3_Property_Exception_InvalidFormat $exception) {
+		} catch(F3::FLOW3::Property::Exception::InvalidFormat $exception) {
 
 		}
 	}
@@ -102,12 +103,12 @@ class F3_FLOW3_Property_AbstractCompositeEditorTest extends F3_Testing_BaseTestC
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function gettingAPropertyAsAnInvalidFormatThrowsException() {
-		$compositeEditor = $this->getMock('F3_FLOW3_Property_Editor_AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
+		$compositeEditor = $this->getMock('F3::FLOW3::Property::Editor::AbstractCompositeEditor', array('setProperty', 'getProperty', 'setAsString', 'getAsString', 'getSupportedFormats', '__toString'));
 
 		try {
 			$compositeEditor->getAs('invalidFormat', 'someProperty');
 			$this->fail('No exception has been thrown on getting an invalid format');
-		} catch(F3_FLOW3_Property_Exception_InvalidFormat $exception) {
+		} catch(F3::FLOW3::Property::Exception::InvalidFormat $exception) {
 
 		}
 	}

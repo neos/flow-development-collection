@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,7 +17,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,21 +27,21 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  * Testcase for the MVC Action Controller
  *
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_ActionControllerTest extends F3_Testing_BaseTestCase {
+class ActionControllerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsReturnedByActionMethodAreAppendedToResponseObject() {
-		$mockController = new F3_FLOW3_MVC_Fixture_Controller_MockActionController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$mockController = new F3::FLOW3::MVC::Fixture::Controller::MockActionController($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface'));
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerActionName('returnSomeString');
 		$mockController->processRequest($request, $response);
@@ -52,50 +53,50 @@ class F3_FLOW3_MVC_Controller_ActionControllerTest extends F3_Testing_BaseTestCa
 	 * @test
 	 */
 	public function ifNoViewCouldBeResolvedAnEmptyViewIsProvided() {
-		$mockController = $this->getMock('F3_FLOW3_MVC_Controller_ActionController', array('exoticAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface')), 'F3_FLOW3_MVC_Controller_ActionController' . uniqid());
+		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('exoticAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
 
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Default');
+		$request->setControllerName('DefaultController');
 		$request->setControllerActionName('exotic');
 
 		$mockController->processRequest($request, $response);
-		$viewReflection = new F3_FLOW3_Reflection_Property(get_class($mockController), 'view');
+		$viewReflection = new F3::FLOW3::Reflection::Property(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
-		$this->assertType('F3_FLOW3_MVC_View_AbstractView', $view, 'The view has either not been set or is not of the expected type.');
-		$this->assertTrue(get_class($view) == 'F3_FLOW3_MVC_View_Empty', 'The action controller did not provide an empty view.');
+		$this->assertType('F3::FLOW3::MVC::View::AbstractView', $view, 'The view has either not been set or is not of the expected type.');
+		$this->assertEquals('F3::FLOW3::MVC::View::EmptyView', get_class($view), 'The action controller did not provide an empty view.');
 	}
 
 	/**
-	 * Views following the scheme F3_PackageName_View_ActionName will be set as $this->view
+	 * Views following the scheme F3::PackageName::View::ActionName will be set as $this->view
 	 * automatically.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
 	public function aViewMatchingTheActionNameIsProvidedAutomatically() {
-		$mockController = $this->getMock('F3_FLOW3_MVC_Controller_ActionController', array('thingAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface')), 'F3_FLOW3_MVC_Controller_ActionController' . uniqid());
+		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('thingAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
 
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Some');
 		$request->setControllerActionName('thing');
 
 		$mockController->processRequest($request, $response);
-		$viewReflection = new F3_FLOW3_Reflection_Property(get_class($mockController), 'view');
+		$viewReflection = new F3::FLOW3::Reflection::Property(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
-		$this->assertType('F3_FLOW3_MVC_View_AbstractView', $view, 'The view has either not been set or is not of the expected type.');
-		$this->assertTrue(get_class($view) == 'F3_TestPackage_View_Some_Thing', 'The action controller did not select the "Some" "Thing" view.');
+		$this->assertType('F3::FLOW3::MVC::View::AbstractView', $view, 'The view has either not been set or is not of the expected type.');
+		$this->assertEquals('F3::TestPackage::View::Some::Thing', get_class($view), 'The action controller did not select the "Some" "Thing" view.');
 	}
 }
 ?>

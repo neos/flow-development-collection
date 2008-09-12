@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_UUIDTest extends F3_Testing_BaseTestCase {
+class UUIDTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
-		$errors = new F3_FLOW3_Validation_Errors();
-		$validator = new F3_FLOW3_Validation_Validator_UUID();
+		$errors = new F3::FLOW3::Validation::Errors();
+		$validator = new F3::FLOW3::Validation::Validator::UUID();
 
 		$this->assertTrue($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
 		$this->assertTrue($validator->isValidProperty('533548ca-8914-4a19-9404-ef390a6ce387', $errors));
@@ -47,8 +48,8 @@ class F3_FLOW3_Validation_Validator_UUIDTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
-		$errors = new F3_FLOW3_Validation_Errors();
-		$validator = new F3_FLOW3_Validation_Validator_UUID();
+		$errors = new F3::FLOW3::Validation::Errors();
+		$validator = new F3::FLOW3::Validation::Validator::UUID();
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors));
 	}
 
@@ -57,8 +58,8 @@ class F3_FLOW3_Validation_Validator_UUIDTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
-		$errors = new F3_FLOW3_Validation_Errors();
-		$validator = new F3_FLOW3_Validation_Validator_UUID();
+		$errors = new F3::FLOW3::Validation::Errors();
+		$validator = new F3::FLOW3::Validation::Validator::UUID();
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
 	}
 }

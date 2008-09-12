@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Error
- * @version $Id: F3_FLOW3_Error_Warning.php 726 2008-04-16 15:36:28Z andi $
+ * @version $Id: F3::FLOW3::Error::Warning.php 726 2008-04-16 15:36:28Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Error_Warning {
+class Warning {
 
 	/**
 	 * @var string The default (english) error message.

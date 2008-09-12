@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,15 +29,15 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
+class RepositoryTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function abstractRepositoryImplementsRepositoryInterface() {
-		$repository = new F3_FLOW3_Persistence_Repository;
-		$this->assertTrue($repository instanceof F3_FLOW3_Persistence_RepositoryInterface);
+		$repository = new F3::FLOW3::Persistence::Repository;
+		$this->assertTrue($repository instanceof F3::FLOW3::Persistence::RepositoryInterface);
 	}
 
 	/**
@@ -45,7 +46,7 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new stdClass();
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3::FLOW3::Persistence::Repository();
 		$repository->add($someObject);
 		$this->assertAttributeSame(array(spl_object_hash($someObject) => $someObject), 'objects', $repository);
 	}
@@ -59,7 +60,7 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 		$object2 = new stdClass();
 		$object3 = new stdClass();
 
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3::FLOW3::Persistence::Repository();
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);
@@ -73,11 +74,11 @@ class F3_FLOW3_Persistence_RepositoryTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeRemovesTheRightObjectEvenIfItHasBeenModifiedSinceItsAddition() {
-		$object1 = new ArrayObject(array('val' => '1'));
-		$object2 = new ArrayObject(array('val' => '2'));
-		$object3 = new ArrayObject(array('val' => '3'));
+		$object1 = new ::ArrayObject(array('val' => '1'));
+		$object2 = new ::ArrayObject(array('val' => '2'));
+		$object3 = new ::ArrayObject(array('val' => '3'));
 
-		$repository = new F3_FLOW3_Persistence_Repository();
+		$repository = new F3::FLOW3::Persistence::Repository();
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);

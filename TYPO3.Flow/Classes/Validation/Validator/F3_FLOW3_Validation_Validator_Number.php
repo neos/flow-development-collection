@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +29,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_Number implements F3_FLOW3_Validation_ValidatorInterface {
+class Number implements F3::FLOW3::Validation::ValidatorInterface {
 
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid number.
@@ -37,10 +38,10 @@ class F3_FLOW3_Validation_Validator_Number implements F3_FLOW3_Validation_Valida
 	 *
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
+	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
 		return is_numeric($propertyValue);
 	}

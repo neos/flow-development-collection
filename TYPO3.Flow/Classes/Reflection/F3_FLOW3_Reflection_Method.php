@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,13 +26,13 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_Method extends ReflectionMethod {
+class Method extends ReflectionMethod {
 
 	/**
-	 * @var F3_FLOW3_Reflection_DocCommentParser: An instance of the doc comment parser
+	 * @var F3::FLOW3::Reflection::DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
@@ -50,25 +51,25 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return F3_FLOW3_Reflection_Class The declaring class
+	 * @return F3::FLOW3::Reflection::ReflectionClass The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3_FLOW3_Reflection_Class(parent::getDeclaringClass()->getName());
+		return new F3::FLOW3::Reflection::ReflectionClass(parent::getDeclaringClass()->getName());
 	}
 
 	/**
 	 * Replacement for the original getParameters() method which makes sure
-	 * that F3_FLOW3_Reflection_Parameter objects are returned instead of the
+	 * that F3::FLOW3::Reflection::Parameter objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
-	 * @return array of F3_FLOW3_Reflection_Parameter Parameter reflection objects of the parameters of this method
+	 * @return array of F3::FLOW3::Reflection::Parameter Parameter reflection objects of the parameters of this method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParameters() {
 		$extendedParameters = array();
 		foreach (parent::getParameters() as $parameter) {
-			$extendedParameters[] = new F3_FLOW3_Reflection_Parameter(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
+			$extendedParameters[] = new F3::FLOW3::Reflection::Parameter(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
 		}
 		return $extendedParameters;
 	}
@@ -110,12 +111,12 @@ class F3_FLOW3_Reflection_Method extends ReflectionMethod {
 	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return F3_FLOW3_Reflection_DocCommentParser
+	 * @return F3::FLOW3::Reflection::DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new F3_FLOW3_Reflection_DocCommentParser;
+			$this->docCommentParser = new F3::FLOW3::Reflection::DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;

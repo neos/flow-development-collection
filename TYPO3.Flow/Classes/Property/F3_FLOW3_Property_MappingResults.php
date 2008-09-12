@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3_FLOW3_Property_MappingResults.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Property::MappingResults.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3_FLOW3_Property_MappingResults.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Property::MappingResults.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class F3_FLOW3_Property_MappingResults {
+class MappingResults {
 
 	/**
 	 * @var array An array of the occured errors
@@ -44,18 +45,18 @@ class F3_FLOW3_Property_MappingResults {
 	/**
 	 * Adds an error to the mapping results. This might be for example a validation or mapping error
 	 *
-	 * @param F3_FLOW3_Error_Error The occured error
+	 * @param F3::FLOW3::Error::Error The occured error
 	 * @param string The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addError(F3_FLOW3_Error_Error $error, $propertyName) {
+	public function addError(F3::FLOW3::Error::Error $error, $propertyName) {
 		$this->errors[$propertyName] = $error;
 	}
 
 	/**
 	 * Returns all errors that occured so far
 	 *
-	 * @return array Array of F3_FLOW3_Error_Error objects
+	 * @return array Array of F3::FLOW3::Error::Error objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getErrors() {
@@ -75,18 +76,18 @@ class F3_FLOW3_Property_MappingResults {
 	/**
 	 * Adds a warning to the mapping results. This might be for example a property that could not be mapped but wasn't marked as required.
 	 *
-	 * @param F3_FLOW3_Error_Warning The occured warning
+	 * @param F3::FLOW3::Error::Warning The occured warning
 	 * @param string The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addWarning(F3_FLOW3_Error_Warning $warning, $propertyName) {
+	public function addWarning(F3::FLOW3::Error::Warning $warning, $propertyName) {
 		$this->warnings[$propertyName] = $warning;
 	}
 
 	/**
 	 * Returns all warnings that occured so far
 	 *
-	 * @return array Array of F3_FLOW3_Error_Warning objects
+	 * @return array Array of F3::FLOW3::Error::Warning objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getWarnings() {

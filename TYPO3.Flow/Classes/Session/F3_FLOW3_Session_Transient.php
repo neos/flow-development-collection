@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Session;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,7 +32,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
+class Transient implements F3::FLOW3::Session::SessionInterface {
 
 	/**
 	 * The session Id
@@ -69,11 +70,11 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getID() {
-		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034659);
+		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218034659);
 		return $this->sessionId;
 	}
 
@@ -82,11 +83,11 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The data associated with the given key or NULL
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getData($key) {
-		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034660);
+		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218034660);
 		return (key_exists($key, $this->data)) ? $this->data[$key] : NULL;
 	}
 
@@ -96,11 +97,11 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * @param object $data The data to be stored
 	 * @param string $key The key under which the data should be stored
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putData($key, $data) {
-		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034661);
+		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218034661);
 		$this->data[$key] = $data;
 	}
 
@@ -108,11 +109,11 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * Closes the session
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function close() {
-		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034662);
+		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218034662);
 		$this->started = FALSE;
 	}
 
@@ -120,11 +121,11 @@ class F3_FLOW3_Session_Transient implements F3_FLOW3_Session_Interface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws F3_FLOW3_Session_Exception_SessionNotStarted
+	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function destroy() {
-		if ($this->started !== TRUE) throw new F3_FLOW3_Session_Exception_SessionNotStarted('The session has not been started yet.', 1218034663);
+		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218034663);
 		$this->data = array();
 	}
 

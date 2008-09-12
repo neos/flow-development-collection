@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Locale;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,36 +29,36 @@ declare(ENCODING = 'utf-8');
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Locale_Service {
+class Service {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Configuration_Container
+	 * @var F3::FLOW3::Configuration::Container
 	 */
 	protected $configuration;
 
 	/**
 	 * Constructs this service
 	 *
-	 * @param F3_FLOW3_Configuration_Container $settings The FLOW3 settings
+	 * @param F3::FLOW3::Configuration::Container $settings The FLOW3 settings
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Container $settings) {
+	public function __construct(F3::FLOW3::Configuration::Container $settings) {
 		$this->settings = $settings;
 	}
 
 	/**
 	 * Injects the component factory
 	 *
-	 * @param F3_FLOW3_Component_FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentFactory(F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
 
@@ -68,7 +69,7 @@ class F3_FLOW3_Locale_Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$locale = $this->componentFactory->getComponent('F3_FLOW3_Locale_Locale', $this->settings->locale->defaultLocaleIdentifier);
+		$locale = $this->componentFactory->getComponent('F3::FLOW3::Locale::Locale', $this->settings->locale->defaultLocaleIdentifier);
 		$this->settings->locale->defaultLocale = $locale;
 	}
 

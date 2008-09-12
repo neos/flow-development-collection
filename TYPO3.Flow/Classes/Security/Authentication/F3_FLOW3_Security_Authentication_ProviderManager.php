@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,7 +22,7 @@ declare(ENCODING = 'utf-8');
  */
 
 /**
- * The default authentication manager, which uses different F3_FLOW3_Security_Authentication_Providers
+ * The default authentication manager, which uses different F3::FLOW3::Security::Authentication::Providers
  * to authenticate the tokens stored in the security context.
  *
  * @package FLOW3
@@ -29,47 +30,47 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Security_Authentication_ManagerInterface {
+class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInterface {
 
 	/**
-	 * @var F3_FLOW3_Component_FactoryInterface The component factory
+	 * @var F3::FLOW3::Component::FactoryInterface The component factory
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3_FLOW3_Security_Authentication_ProviderResolver The provider resolver
+	 * @var F3::FLOW3::Security::Authentication::ProviderResolver The provider resolver
 	 */
 	protected $providerResolver;
 
 	/**
-	 * @var F3_FLOW3_Security_RequestPatternResolver The request pattern resolver
+	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
 	 */
 	protected $requestPatternResolver;
 
 	/**
-	 * @var array Array of F3_FLOW3_Security_Authentication_ProviderInterface objects
+	 * @var array Array of F3::FLOW3::Security::Authentication::ProviderInterface objects
 	 */
 	protected $providers = array();
 
 	/**
-	 * @var array Array of F3_FLOW3_Security_Authentication_TokenInterface objects
+	 * @var array Array of F3::FLOW3::Security::Authentication::TokenInterface objects
 	 */
 	protected $tokens = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3_FLOW3_Configuration_Manager $configurationManager The configuration manager
-	 * @param F3_FLOW3_Component_Factory $componentFactory The component factory
-	 * @param F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver The provider resolver
-	 * @param F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Component::Factory $componentFactory The component factory
+	 * @param F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver The provider resolver
+	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3_FLOW3_Configuration_Manager $configurationManager,
-			F3_FLOW3_Component_FactoryInterface $componentFactory,
-			F3_FLOW3_Security_Authentication_ProviderResolver $providerResolver,
-			F3_FLOW3_Security_RequestPatternResolver $requestPatternResolver) {
+	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
+			F3::FLOW3::Component::FactoryInterface $componentFactory,
+			F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver,
+			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver) {
 
 		$this->componentFactory = $componentFactory;
 		$this->providerResolver = $providerResolver;
@@ -81,7 +82,7 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	/**
 	 * Sets the providers
 	 *
-	 * @param array Array of providers (F3_FLOW3_Security_Authentication_ProviderInterface)
+	 * @param array Array of providers (F3::FLOW3::Security::Authentication::ProviderInterface)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -103,7 +104,7 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	 * Returns clean tokens this manager is responsible for.
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
-	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface An array of tokens this manager is responsible for
+	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface An array of tokens this manager is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens() {
@@ -112,14 +113,14 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 
 	/**
 	 * Tries to authenticate the given token with the available authentication providers.
-	 * If authentication fails and a F3_FLOW3_Security_Authentication_EntryPoint is set for the token, the entry point
+	 * If authentication fails and a F3::FLOW3::Security::Authentication::EntryPoint is set for the token, the entry point
 	 * is called.
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
-	 * @return F3_FLOW3_Security_Authentication_TokenInterface The authenticated token, NULL if authentication failed
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
+	 * @return F3::FLOW3::Security::Authentication::TokenInterface The authenticated token, NULL if authentication failed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken) {
+	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken) {
 		foreach ($this->providers as $provider) {
 			if ($provider->canAuthenticate($authenticationToken)) {
 				$provider->authenticate($authenticationToken);
@@ -131,12 +132,12 @@ class F3_FLOW3_Security_Authentication_ProviderManager implements F3_FLOW3_Secur
 	/**
 	 * Builds the provider and token objects based on the given configuration
 	 *
-	 * @param F3_FLOW3_Configuration_Container $configuration The provider configuration
+	 * @param F3::FLOW3::Configuration::Container $configuration The provider configuration
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 */
-	protected function buildProvidersAndTokensFromConfiguration(F3_FLOW3_Configuration_Container $configuration) {
+	protected function buildProvidersAndTokensFromConfiguration(F3::FLOW3::Configuration::Container $configuration) {
 		foreach ($configuration->security->authentication->providers as $provider) {
 			$providerInstance = $this->componentFactory->getComponent($this->providerResolver->resolveProviderClass($provider['provider']));
 			$this->providers[] = $providerInstance;

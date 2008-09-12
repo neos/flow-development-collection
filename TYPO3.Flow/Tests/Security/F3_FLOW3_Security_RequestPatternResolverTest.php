@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,19 +29,19 @@ declare(ENCODING = 'utf-8');
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Security_RequestPatternResolverTest extends F3_Testing_BaseTestCase {
+class RequestPatternResolverTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
-		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
 
 		try {
 			$requestPatternResolver->resolveRequestPatternClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
-		} catch (F3_FLOW3_Security_Exception_NoRequestPatternFound $exception) {
+		} catch (F3::FLOW3::Security::Exception::NoRequestPatternFound $exception) {
 
 		}
 	}
@@ -50,10 +51,10 @@ class F3_FLOW3_Security_RequestPatternResolverTest extends F3_Testing_BaseTestCa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
-		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
 		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('URL');
 
-		$this->assertEquals('F3_FLOW3_Security_RequestPattern_URL', $requestPatternClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::FLOW3::Security::RequestPattern::URL', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -61,10 +62,10 @@ class F3_FLOW3_Security_RequestPatternResolverTest extends F3_Testing_BaseTestCa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassname() {
-		$requestPatternResolver = new F3_FLOW3_Security_RequestPatternResolver($this->componentManager);
-		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3_TestPackage_TestRequestPattern');
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
+		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3::TestPackage::TestRequestPattern');
 
-		$this->assertEquals('F3_TestPackage_TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');
+		$this->assertEquals('F3::TestPackage::TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

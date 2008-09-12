@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Utility::Arrays.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,11 +26,11 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3_FLOW3_Utility_Arrays.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Utility::Arrays.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @internal (robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */
-class F3_FLOW3_Utility_Arrays {
+class Arrays {
 
 	/**
 	 * Explodes a $string delimited by $delimeter and passes each item in the array through intval().

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +30,7 @@ declare(ENCODING = 'utf-8');
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope singleton
  */
-class F3_FLOW3_Resource_Manager {
+class Manager {
 
 	/**
 	 * Constants reflecting the file caching strategies
@@ -39,12 +40,12 @@ class F3_FLOW3_Resource_Manager {
 	const CACHE_STRATEGY_FILE = 3;
 
 	/**
-	 * @var F3_FLOW3_Resource_ClassLoader Instance of the class loader
+	 * @var F3::FLOW3::Resource::ClassLoader Instance of the class loader
 	 */
 	protected $classLoader;
 
 	/**
-	 * @var F3_FLOW3_Component_Factory
+	 * @var F3::FLOW3::Component::Factory
 	 */
 	protected $componentFactory;
 
@@ -60,7 +61,7 @@ class F3_FLOW3_Resource_Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3_FLOW3_Resource_ClassLoader $classLoader, F3_FLOW3_Component_FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Resource::ClassLoader $classLoader, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->classLoader = $classLoader;
 		$this->componentFactory = $componentFactory;
 	}
@@ -73,25 +74,25 @@ class F3_FLOW3_Resource_Manager {
 	 * @param  string $classFilePathAndName: Absolute path and file name of the file holding the class implementation
 	 * @return void
 	 * @throws InvalidArgumentException if $className is not a valid string
-	 * @throws F3_FLOW3_Resource_Exception_FileDoesNotExist if the specified file does not exist
+	 * @throws F3::FLOW3::Resource::Exception::FileDoesNotExist if the specified file does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerClassFile($className, $classFilePathAndName) {
 		if (!is_string($className)) throw new InvalidArgumentException('Class name must be a valid string.', 1187009929);
-		if (!file_exists($classFilePathAndName)) throw new F3_FLOW3_Resource_Exception_FileDoesNotExist('The specified class file does not exist.', 1187009987);
+		if (!file_exists($classFilePathAndName)) throw new F3::FLOW3::Resource::Exception::FileDoesNotExist('The specified class file does not exist.', 1187009987);
 		$this->classLoader->setSpecialClassNameAndPath($className, $classFilePathAndName);
 	}
 
 	/**
 	 * Returns a file resource if found using the supplied URI
 	 *
-	 * @param F3_FLOW3_Property_DataType_URI|string $URI
-	 * @return F3_FLOW3_Resource_ResourceInterface
+	 * @param F3::FLOW3::Property::DataType::URI|string $URI
+	 * @return F3::FLOW3::Resource::ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResource($URI) {
 		if (is_string($URI)) {
-			$URI = $this->componentFactory->getComponent('F3_FLOW3_Property_DataType_URI', $URI);
+			$URI = $this->componentFactory->getComponent('F3::FLOW3::Property::DataType::URI', $URI);
 		}
 		$URIString = (string)$URI;
 
@@ -99,7 +100,7 @@ class F3_FLOW3_Resource_Manager {
 			return $this->loadedResources[$URIString];
 		}
 
-		$metadata = $this->componentFactory->getComponent('F3_FLOW3_Resource_Publisher')->getMetadata($URI);
+		$metadata = $this->componentFactory->getComponent('F3::FLOW3::Resource::Publisher')->getMetadata($URI);
 		$this->loadedResources[$URIString] = $this->instantiateResource($metadata);
 
 		return $this->loadedResources[$URIString];
@@ -109,16 +110,16 @@ class F3_FLOW3_Resource_Manager {
 	 * Instantiates a resource based on the given metadata
 	 *
 	 * @param array $metadata
-	 * @return F3_FLOW3_Resource_ResourceInterface
+	 * @return F3::FLOW3::Resource::ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {
 			case 'text/html':
-				$resource = $this->componentFactory->getComponent('F3_FLOW3_Resource_HTMLResource');
+				$resource = $this->componentFactory->getComponent('F3::FLOW3::Resource::HTMLResource');
 				break;
 			default:
-				throw new F3_FLOW3_Resource_Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);
+				throw new F3::FLOW3::Resource::Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);
 		}
 		$resource->setMetaData($metadata);
 		return $resource;

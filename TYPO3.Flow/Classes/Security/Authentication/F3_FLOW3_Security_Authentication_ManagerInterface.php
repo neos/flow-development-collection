@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Security::Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,7 +23,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * Contract for an authentication manager.
- * Has to add a F3_FLOW3_Security_Authentication_TokenInterface to the securit context
+ * Has to add a F3::FLOW3::Security::Authentication::TokenInterface to the securit context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  *
  * @package FLOW3
@@ -31,24 +32,24 @@ declare(ENCODING = 'utf-8');
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface F3_FLOW3_Security_Authentication_ManagerInterface {
+interface ManagerInterface {
 
 	/**
 	 * Returns the tokens this manager is responsible for.
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
-	 * @return array Array of F3_FLOW3_Security_Authentication_TokenInterface An array of tokens this manager is responsible for
+	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface An array of tokens this manager is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens();
 
 	/**
-	 * Authenticates the given token. (Have a look at the F3_FLOW3_Security_Authentication_TokenManager for an implementation example)
+	 * Authenticates the given token. (Have a look at the F3::FLOW3::Security::Authentication::TokenManager for an implementation example)
 	 *
-	 * @param F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken The token to be authenticated
-	 * @return F3_FLOW3_Security_Authentication_TokenInterface The authenticated token, NULL if authentication failed
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
+	 * @return F3::FLOW3::Security::Authentication::TokenInterface The authenticated token, NULL if authentication failed
 	 */
-	public function authenticate(F3_FLOW3_Security_Authentication_TokenInterface $authenticationToken);
+	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken);
 }
 
 ?>

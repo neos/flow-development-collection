@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-
+namespace F3::FLOW3::MVC::Controller;
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -16,7 +16,7 @@ declare(ENCODING = 'utf-8');
 
 /**
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,13 +26,13 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  * Testcase for the MVC REST Controller
  *
  * @package FLOW3
- * @version $Id:F3_FLOW3_Component_TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_RESTControllerTest extends F3_Testing_BaseTestCase {
+class RESTControllerTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3_FLOW3_MVC_Controller_RESTController
+	 * @var F3::FLOW3::MVC::Controller::RESTController
 	 */
 	protected $mockController;
 
@@ -43,9 +43,9 @@ class F3_FLOW3_MVC_Controller_RESTControllerTest extends F3_Testing_BaseTestCase
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockController = new F3_FLOW3_MVC_Fixture_Controller_MockRESTController($this->componentFactory, $this->componentFactory->getComponent('F3_FLOW3_Package_ManagerInterface'));
+		$this->mockController = new F3::FLOW3::MVC::Fixture::Controller::MockRESTController($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface'));
 		$this->mockController->injectComponentManager($this->componentManager);
-		$this->mockController->injectPropertyMapper($this->componentFactory->getComponent('F3_FLOW3_Property_Mapper'));
+		$this->mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
 	}
 
 	/**
@@ -53,8 +53,8 @@ class F3_FLOW3_MVC_Controller_RESTControllerTest extends F3_Testing_BaseTestCase
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheListActionOnGETRequestsWithoutIdentifier() {
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$this->mockController->processRequest($request, $response);
 		$this->assertEquals('list action called', $response->getContent());
@@ -65,8 +65,8 @@ class F3_FLOW3_MVC_Controller_RESTControllerTest extends F3_Testing_BaseTestCase
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheShowActionOnGETRequestsWithIdentifier() {
-		$request = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Request');
-		$response = $this->componentFactory->getComponent('F3_FLOW3_MVC_Web_Response');
+		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setArgument('identifier', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
 

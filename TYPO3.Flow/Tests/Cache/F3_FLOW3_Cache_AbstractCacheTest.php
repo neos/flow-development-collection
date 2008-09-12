@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,19 +26,19 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3_FLOW3_AOP_FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Cache_AbstractCacheTest extends F3_Testing_BaseTestCase {
+class AbstractCacheTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorAcceptsValidIdentifiers() {
-		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
+		$mockBackend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
 		foreach (array('x', 'someValue', '123fivesixseveneight', 'ab_cd%', rawurlencode('package://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
-			$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
+			$abstractCache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
 		}
 	}
 
@@ -46,10 +47,10 @@ class F3_FLOW3_Cache_AbstractCacheTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorRejectsInvalidIdentifiers() {
-		$mockBackend = $this->getMock('F3_FLOW3_Cache_AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
+		$mockBackend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array(), '', FALSE);
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $identifier) {
 			try {
-				$abstractCache = $this->getMock('F3_FLOW3_Cache_AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
+				$abstractCache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('__construct', 'load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag'), array($identifier, $mockBackend));
 				$this->fail('Identifier "' . $identifier . '" was not rejected.');
 			} catch (InvalidArgumentException $exception) {
 			}

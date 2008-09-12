@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::DefaultController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,22 +27,22 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3_FLOW3_MVC_Controller_Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::MVC::Controller::DefaultController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_Default extends F3_FLOW3_MVC_Controller_RequestHandlingController {
+class DefaultController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
 
 	/**
 	 * Processes a generic request and returns a response
 	 *
-	 * @param F3_FLOW3_MVC_Request $request: The request
-	 * @param F3_FLOW3_MVC_Response $response: The response
+	 * @param F3::FLOW3::MVC::Request $request: The request
+	 * @param F3::FLOW3::MVC::Response $response: The response
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3_FLOW3_MVC_Request $request, F3_FLOW3_MVC_Response $response) {
+	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
 		$request->setDispatched(TRUE);
 		switch (get_class($request)) {
-			case 'F3_FLOW3_MVC_Web_Request' :
+			case 'F3::FLOW3::MVC::Web::Request' :
 				$this->processWebRequest($request, $response);
 				break;
 			default :
@@ -58,12 +59,12 @@ class F3_FLOW3_MVC_Controller_Default extends F3_FLOW3_MVC_Controller_RequestHan
 	/**
 	 * Processes a web request and returns a response
 	 *
-	 * @param F3_FLOW3_MVC_Web_Request $request: The request
-	 * @param F3_FLOW3_MVC_Web_Response $response: The response
+	 * @param F3::FLOW3::MVC::Web::Request $request: The request
+	 * @param F3::FLOW3::MVC::Web::Response $response: The response
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function processWebRequest(F3_FLOW3_MVC_Web_Request $request, F3_FLOW3_MVC_Web_Response $response) {
-		$view = $this->componentFactory->getComponent('F3_FLOW3_MVC_View_Default');
+	protected function processWebRequest(F3::FLOW3::MVC::Web::Request $request, F3::FLOW3::MVC::Web::Response $response) {
+		$view = $this->componentFactory->getComponent('F3::FLOW3::MVC::View::DefaultView');
 		$view->setRequest($request);
 		$response->setContent($view->render());
 	}

@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::MVC::Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,18 +19,18 @@ declare(ENCODING = 'utf-8');
  * Testcase for the MVC Controller Arguments
  *
  * @package		FLOW3
- * @version 	$Id:F3_FLOW3_MVC_Controller_ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
+ * @version 	$Id:F3::FLOW3::MVC::Controller::ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
+class ArgumentsTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function argumentsObjectIsOfScopePrototype() {
-		$arguments1 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
-		$arguments2 = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments1 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
+		$arguments2 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$this->assertNotSame($arguments1, $arguments2, 'The arguments object is not of scope prototype!');
 	}
 
@@ -38,8 +39,8 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingAnArgumentManuallyWorks() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
-		$newArgument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'argumentName1234');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
+		$newArgument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'argumentName1234');
 
 		$arguments->addArgument($newArgument);
 		$this->assertSame($newArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
@@ -50,12 +51,12 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingAnArgumentReplacesArgumentWithSameName() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 
-		$firstArgument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'argumentName1234');
+		$firstArgument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'argumentName1234');
 		$arguments->addArgument($firstArgument);
 
-		$secondArgument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'argumentName1234');
+		$secondArgument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'argumentName1234');
 		$arguments->addArgument($secondArgument);
 
 		$this->assertSame($secondArgument, $arguments->getArgument('argumentName1234'), 'The added and retrieved argument is not the same.');
@@ -66,9 +67,9 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentProvidesFluentInterface() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$newArgument = $arguments->addNewArgument('someArgument');
-		$this->assertType('F3_FLOW3_MVC_Controller_Argument', $newArgument, 'addNewArgument() did not return an argument object.');
+		$this->assertType('F3::FLOW3::MVC::Controller::Argument', $newArgument, 'addNewArgument() did not return an argument object.');
 	}
 
 	/**
@@ -76,8 +77,8 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingArgumentThroughArrayAccessWorks() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
-		$argument = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Argument', 'argumentName1234');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'argumentName1234');
 		$arguments[] = $argument;
 		$this->assertTrue($arguments->hasArgument('argumentName1234'), 'Added argument does not exist.');
 		$this->assertSame($argument, $arguments->getArgument('argumentName1234'), 'Added and retrieved arguments are not the same.');
@@ -88,7 +89,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function retrievingArgumentThroughArrayAccessWorks() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$newArgument = $arguments->addNewArgument('someArgument');
 		$this->assertSame($newArgument, $arguments['someArgument'], 'Argument retrieved by array access is not the one we added.');
 	}
@@ -98,11 +99,11 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentWithNonExistingArgumentNameThrowsException() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		try {
 			$arguments->getArgument('someArgument');
 			$this->fail('getArgument() did not throw an exception although the specified argument does not exist.');
-		} catch (F3_FLOW3_MVC_Exception_NoSuchArgument $exception) {
+		} catch (F3::FLOW3::MVC::Exception::NoSuchArgument $exception) {
 		}
 	}
 
@@ -111,7 +112,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function issetReturnsCorrectResult() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$this->assertFalse(isset($arguments['someArgument']), 'isset() did not return FALSE.');
 		$arguments->addNewArgument('someArgument');
 		$this->assertTrue(isset($arguments['someArgument']), 'isset() did not return TRUE.');
@@ -122,7 +123,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentNamesReturnsNamesOfAddedArguments() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$arguments->addNewArgument('first');
 		$arguments->addNewArgument('second');
 		$arguments->addNewArgument('third');
@@ -136,7 +137,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentShortNamesReturnsShortNamesOfAddedArguments() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 		$argument = $arguments->addNewArgument('first')->setShortName('a');
 		$arguments->addNewArgument('second')->setShortName('b');
 		$arguments->addNewArgument('third')->setShortName('c');
@@ -150,10 +151,10 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentCreatesAndAddsNewArgument() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 
 		$addedArgument = $arguments->addNewArgument('dummyName');
-		$this->assertType('F3_FLOW3_MVC_Controller_Argument', $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
+		$this->assertType('F3::FLOW3::MVC::Controller::Argument', $addedArgument, 'addNewArgument() either did not add a new argument or did not return it.');
 
 		$retrievedArgument = $arguments['dummyName'];
 		$this->assertSame($addedArgument, $retrievedArgument, 'The added and the retrieved argument are not the same.');
@@ -166,7 +167,7 @@ class F3_FLOW3_MVC_Controller_ArgumentsTest extends F3_Testing_BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgumentAssumesTextDataTypeByDefault() {
-		$arguments = $this->componentFactory->getComponent('F3_FLOW3_MVC_Controller_Arguments');
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
 
 		$addedArgument = $arguments->addNewArgument('dummyName');
 		$this->assertEquals('Text', $addedArgument->getDataType(), 'addNewArgument() did not create an argument of type "Text" by default.');

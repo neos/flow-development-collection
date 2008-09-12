@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Validation::Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: F3_FLOW3_Validation_Validator_Float.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::Float.php 681 2008-04-02 14:00:27Z andi $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: F3_FLOW3_Validation_Validator_Float.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id: F3::FLOW3::Validation::Validator::Float.php 681 2008-04-02 14:00:27Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Validation_Validator_Float implements F3_FLOW3_Validation_ValidatorInterface {
+class Float implements F3::FLOW3::Validation::ValidatorInterface {
 
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid float.
@@ -37,10 +38,10 @@ class F3_FLOW3_Validation_Validator_Float implements F3_FLOW3_Validation_Validat
 	 *
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws F3_FLOW3_Validation_Exception_InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValidProperty($propertyValue, F3_FLOW3_Validation_Errors &$errors) {
+	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
 		return is_float($propertyValue);
 	}

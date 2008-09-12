@@ -1,5 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
+namespace F3::FLOW3::Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,7 +18,7 @@ declare(ENCODING = 'utf-8');
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Class.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::ReflectionClass.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -25,10 +26,10 @@ declare(ENCODING = 'utf-8');
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3_FLOW3_Reflection_Class.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::ReflectionClass.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_Reflection_ClassFactory {
+class ReflectionClassFactory {
 
 	/**
 	 * The cached class reflections
@@ -39,40 +40,40 @@ class F3_FLOW3_Reflection_ClassFactory {
 
 	/**
 	 * Fills the reflection cache with the specified class reflections.
-	 * 
-	 * @param array $reflections An array of F3_FLOW3_Reflection_Class
+	 *
+	 * @param array $reflections An array of F3::FLOW3::Reflection::ReflectionClass
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setReflections(array $reflections) {
 		$this->reflections = array();
 		foreach ($reflections as $reflection) {
-			if (!$reflection instanceof F3_FLOW3_Reflection_Class) throw new InvalidArgumentException('The specified reflection is not a F3_FLOW3_Reflection_Class', 1213627749);
+			if (!$reflection instanceof F3::FLOW3::Reflection::ReflectionClass) throw new InvalidArgumentException('The specified reflection is not a F3::FLOW3::Reflection::ReflectionClass', 1213627749);
 			$this->reflections[$reflection->getName()] = $reflection;
 		}
 	}
 
 	/**
 	 * Returns all cached reflections
-	 * 
-	 * @return array An array of F3_FLOW3_Reflection_Class
+	 *
+	 * @return array An array of F3::FLOW3::Reflection::ReflectionClass
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getReflections() {
 		return $this->reflections;
 	}
-	
+
 	/**
 	 * Returns a new or - if available - cached reflection of the specified class
 	 *
-	 * @return F3_FLOW3_Reflection_Class
+	 * @return F3::FLOW3::Reflection::ReflectionClass
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reflect($className) {
 		if (key_exists($className, $this->reflections)) {
-			return $this->reflections[$className];		
+			return $this->reflections[$className];
 		} else {
-			$this->reflections[$className] = new F3_FLOW3_Reflection_Class($className);
+			$this->reflections[$className] = new F3::FLOW3::Reflection::ReflectionClass($className);
 			return $this->reflections[$className];
 		}
 	}
