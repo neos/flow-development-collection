@@ -40,6 +40,27 @@ $c->errorHandler->exceptionalErrors = array(E_ERROR, E_RECOVERABLE_ERROR);
  */
 $c->utility->environment->temporaryDirectoryBase = FLOW3_PATH_DATA . 'Temporary/';
 
+
+/**
+ * Defines the default cache backend for FLOW3.
+ *
+ * It is suggested that all other sub packages and packages refer to this
+ * configuration by default if they have no special requirements in terms
+ * of the caching backend.
+ *
+ * @var F3_FLOW3_Cache_BackendInterface
+ */
+$c->cache->defaultCache->backend = 'F3_FLOW3_Cache_Backend_File';
+
+/**
+ * Defines the default configuration options for the cache backend.
+ *
+ * See also the description of $c->cache->defaultCache->backend
+ *
+ * @var array
+ */
+$c->cache->defaultCache->backendOptions = array();
+
 /**
  * Enable or disable caching of the component configurations. If caching is
  * enabled, a cache backend must be properly configured.
@@ -54,15 +75,14 @@ $c->component->configurationCache->enable = TRUE;
  *
  * @var F3_FLOW3_Cache_BackendInterface
  */
-$c->component->configurationCache->backend = 'F3_FLOW3_Cache_Backend_File';
+$c->component->configurationCache->backend = $c->cache->defaultCache->backend;
 
 /**
  * Options which are passed the backend of the component configuration cache.
  *
  * @var array
  */
-$c->component->configurationCache->backendOptions = array();
-
+$c->component->configurationCache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 /**
  * Defines the available request handlers. Each of them must implement the
@@ -92,14 +112,14 @@ $c->aop->proxyCache->enable = TRUE;
  *
  * @var F3_FLOW3_Cache_BackendInterface
  */
-$c->aop->proxyCache->backend = 'F3_FLOW3_Cache_Backend_File';
+$c->aop->proxyCache->backend = $c->cache->defaultCache->backend;
 
 /**
  * Options which are passed the backend of the AOP proxy cache.
  *
  * @var array
  */
-$c->aop->proxyCache->backendOptions = array();
+$c->aop->proxyCache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 
 /**
@@ -114,14 +134,14 @@ $c->reflection->cache->enable = TRUE;
  *
  * @var F3_FLOW3_Cache_BackendInterface
  */
-$c->reflection->cache->backend = 'F3_FLOW3_Cache_Backend_File';
+$c->reflection->cache->backend = $c->cache->defaultCache->backend;
 
 /**
  * Options which are passed the backend of the reflection cache
  *
  * @var array
  */
-$c->reflection->cache->backendOptions = array();
+$c->reflection->cache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 /**
  * Define the backend used for caching resource metadata. Specify the
@@ -129,14 +149,14 @@ $c->reflection->cache->backendOptions = array();
  *
  * @var F3_FLOW3_Cache_BackendInterface
  */
-$c->resource->cache->backend = 'F3_FLOW3_Cache_Backend_File';
+$c->resource->cache->backend = $c->cache->defaultCache->backend;
 
 /**
  * Options which are passed the backend of the resource metadata cache.
  *
  * @var array
  */
-$c->resource->cache->backendOptions = array();
+$c->resource->cache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 /**
  * The path for the public resources mirror
@@ -226,4 +246,5 @@ $c->security->authentication->providers = array(
  * @var boolean
  */
 $c->security->authentication->authenticateAllTokens = FALSE;
+
 ?>
