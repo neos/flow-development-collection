@@ -22,7 +22,7 @@
     configuration types exist for special purposes.</para>
 
     <para>The preferred configuration format is PHP and the configuration
-    options of each type are defined in their own dedicated file: </para>
+    options of each type are defined in their own dedicated file:</para>
 
     <variablelist>
       <varlistentry>
@@ -39,7 +39,7 @@
         <term><filename>FLOW3.php</filename></term>
 
         <listitem>
-          <para>Contains settings for FLOW3 itself. </para>
+          <para>Contains settings for FLOW3 itself.</para>
         </listitem>
       </varlistentry>
 
@@ -96,7 +96,7 @@
 
             <para>Note that <filename>FLOW3.php</filename> files are only
             allowed in the <package>FLOW3</package> package and are ignored in
-            any other package configuration dir. </para>
+            any other package configuration dir.</para>
           </listitem>
         </varlistentry>
 
@@ -125,15 +125,17 @@
           </listitem>
         </varlistentry>
       </variablelist>
-
-      <para></para>
     </section>
+  </section>
+
+  <section>
+    <title>Defining Configuration</title>
+
+    <para>Although configuration files are plain PHP, they should follow
+    FLOW3's conventions for configuration files.</para>
 
     <section>
-      <title>Defining Configuration</title>
-
-      <para>Although configuration files are plain PHP, they should follow
-      FLOW3's conventions for configuration files.</para>
+      <title>Configuration Format</title>
 
       <para>As mentioned above, it is only possible to declare new
       configuration options in the package-level configuration files. All
@@ -179,7 +181,7 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
 
       <para>As you can see, you can introduce new configuration options by
       just assigning a value to them using PHP's object / member variable
-      syntax. </para>
+      syntax.</para>
 
       <para>Technically the <varname>$c</varname> variable is an instance of
       <classname>F3_FLOW3_Configuration_Container</classname> which
@@ -332,7 +334,7 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
   </section>
 
   <section>
-    <title>Using Configuration</title>
+    <title>Accessing Configuration</title>
 
     <para>There are certain situations in which FLOW3 will automatically
     provide you with the right configuration - the MVC's Action Controller is
@@ -382,7 +384,7 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
       <para>Bottomline is that you should be highly aware of what you're doing
       when working with these special options. Usually there are much better
       ways to get the desired information (eg. ask the Component Manager for
-      component configuration). </para>
+      component configuration).</para>
     </section>
   </section>
 </section>

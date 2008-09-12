@@ -101,7 +101,8 @@
 
       <listitem>
         <para>The <emphasis>Reflection</emphasis> API complements PHP's
-        built-in reflection support by advanced annotation handling.</para>
+        built-in reflection support by advanced annotation handling and a
+        cached reflection service.</para>
       </listitem>
 
       <listitem>
@@ -113,6 +114,17 @@
       <listitem>
         <para>The <emphasis>Security</emphasis> Framework enforces security
         policies and provides an API for managing those.</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Session</emphasis> Framework takes care of session
+        handling and storing session information in different backends</para>
+      </listitem>
+
+      <listitem>
+        <para>The <emphasis>Locale</emphasis> service manages languages and
+        other regional settings and makes them accessible to other packages
+        and FLOW3 sub packages.</para>
       </listitem>
 
       <listitem>

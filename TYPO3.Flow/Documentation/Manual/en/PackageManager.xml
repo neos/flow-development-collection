@@ -107,7 +107,18 @@
 
                 <listitem>
                   <para>Contains static resources the package needs, such as
-                  library code, template files, graphics, ...</para>
+                  library code, template files, graphics, ... In general,
+                  there is a distinction between public and private resources.
+                  While public resources will be mirrored into FLOW3's
+                  <filename>Public </filename>directory by the Resource
+                  Manager (and therefore become accessible from the web) all
+                  resources in the <filename>Private</filename> directory
+                  remain protected.</para>
+
+                  <para>Although it is up to the package author to name the
+                  directories, we suggest the following conventions for
+                  directories below <filename>Private</filename> and
+                  <filename>Public</filename>:</para>
 
                   <variablelist>
                     <varlistentry>
@@ -166,9 +177,9 @@
                 <term><filename>Tests</filename></term>
 
                 <listitem>
-                  <para>Holds the unit tests for the package. Testcases will
+                  <para>Holds the unit tests for the package. Test cases will
                   be recognized by the <package>Testing</package> package if
-                  they follow the require naming convention.</para>
+                  they follow the required naming convention.</para>
                 </listitem>
               </varlistentry>
             </variablelist>
@@ -180,7 +191,7 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     classname as well as the file name. An example for a valid class name is
-    be <classname>F3_MyPackage_Controller_Default</classname> while the file
+    <classname>F3_MyPackage_Controller_Default</classname> while the file
     containing this class would be named
     "<filename>F3_MyPackage_Controller_Default.php"</filename>.</para>
 
@@ -200,12 +211,6 @@
     to register at <link ns6:href="http://typo3.org">forge.typo3.org</link>
     prior to use. But even if you develop a package for private use only, it's
     clever to register a package key for it.</para>
-
-    <note>
-      <para>At the time of this writing the package key registration has not
-      yet been implemented and you therefore can't register package keys. Just
-      get in touch with the TYPO3 Forge team in case you need one.</para>
-    </note>
   </section>
 
   <section>
@@ -327,5 +332,11 @@
 
       </programlisting>
     </example>
+
+    <note>
+      <para>If you are working with Eclipse, you might want to install the
+      <link ns6:href="http://dev3.org">DEV3 Plugin</link> which - among other
+      tools - provides you with a convenient Package.xml editor</para>
+    </note>
   </section>
 </section>
