@@ -12,7 +12,7 @@ declare(ENCODING="utf-8");
 
 $c->fallback
 	->setUrlPattern('[dummy]')
-	->setControllerComponentNamePattern('F3_@package_MVC_Controller_@controller')
+	->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controller')
 	->setDefaults(
 		array(
 			'dummy' => 'foo',
