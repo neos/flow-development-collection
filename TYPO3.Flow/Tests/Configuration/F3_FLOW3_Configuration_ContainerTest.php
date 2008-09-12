@@ -111,14 +111,27 @@ class F3_FLOW3_Configuration_ContainerTest extends F3_Testing_BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function settingOptionsOnLockedContainerResultsInException() {
+	public function introducingNewOptionsOnLockedContainerResultsInException() {
 		$configuration = new F3_FLOW3_Configuration_Container();
 		$configuration->lock();
 		try {
-			$configuration->someOption = 'some value';
+			$configuration->someNewOption = 'some value';
 			$this->fail('No exception was thrown.');
 		} catch (F3_FLOW3_Configuration_Exception_ContainerIsLocked $exception) {
 		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function modifyingExistingOptionsOnLockedContainerIsAllowed() {
+		$configuration = new F3_FLOW3_Configuration_Container();
+		$configuration->existingOption = 'old';
+		$configuration->lock();
+		$configuration->existingOption = 'new';
+
+		$this->assertEquals('new', $configuration->existingOption);
 	}
 
 	/**

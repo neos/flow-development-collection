@@ -56,6 +56,8 @@ class F3_FLOW3_Configuration_ManagerTest extends F3_Testing_BaseTestCase {
 		$baseSettings = new F3_FLOW3_Configuration_Container();
 		$baseSettings->lastLoaded = 'baseSettings';
 		$baseSettings->baseSettings = TRUE;
+		$baseSettings->globalSettings = FALSE;
+		$baseSettings->contextSettings = FALSE;
 
 		$globalSettings = new F3_FLOW3_Configuration_Container();
 		$globalSettings->lastLoaded = 'globalSettings';

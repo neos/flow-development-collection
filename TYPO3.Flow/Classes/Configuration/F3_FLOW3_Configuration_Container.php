@@ -227,7 +227,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __set($optionName, $optionValue) {
-		if ($this->locked) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('The configuration container is locked against write access.', 1206023011);
+		if ($this->locked && !key_exists($optionName, $this->options)) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
 		$this->options[$optionName] = $optionValue;
 		$this->iteratorCount = count($this->options);
 	}
@@ -252,7 +252,7 @@ class F3_FLOW3_Configuration_Container implements Countable, Iterator, ArrayAcce
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __unset($optionName) {
-		if ($this->locked) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('The configuration container is locked against write access.', 1206023012);
+		if ($this->locked) throw new F3_FLOW3_Configuration_Exception_ContainerIsLocked('You tried to unset the configuration option "' . $optionName . '" but the configuration container is locked.', 1206023012);
 		unset($this->options[$optionName]);
 		$this->iteratorCount = count($this->options);
 	}

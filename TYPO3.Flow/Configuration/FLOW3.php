@@ -247,4 +247,30 @@ $c->security->authentication->providers = array(
  */
 $c->security->authentication->authenticateAllTokens = FALSE;
 
+/**
+ * The default locale identifier.
+ *
+ * @var string
+ */
+$c->locale->defaultLocaleIdentifier = 'en_Latn_EN';
+
+/**
+ * The default locale.
+ *
+ * This configuration option is automatically filled by FLOW3's locale
+ * framework with a locale object considered to be the default locale
+ * of the application.
+ *
+ * The locale object will usually reflect the setting made in
+ * $c->locale->defaultLocaleIdentifier. However, depending on the application,
+ * it might be overriden by the application's user settings or auto detection
+ * mechanisms.
+ *
+ * It is recommended that all components which are in need of some information
+ * about the locale use the locale object stored in this setting.
+ *
+ * @F3_FLOW3_Locale_Locale
+ */
+$c->locale->defaultLocale = NULL;
+
 ?>

@@ -76,6 +76,24 @@ class F3_FLOW3_Configuration_Manager {
 	}
 
 	/**
+	 * Returns a configuration container with the settings defined for the specified
+	 * package.
+	 *
+	 * @param string $packageKey Key of the package to return the settings for
+	 * @return F3_FLOW3_Configuration_Container The settings of the specified package
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSettings($packageKey) {
+		if ($this->settings->offsetExists($packageKey)) {
+			$settingsContainer = $this->settings->$packageKey;
+		} else {
+			$settingsContainer = new F3_FLOW3_Configuration_Container();
+		}
+		$settingsContainer->lock();
+		return $settingsContainer;
+	}
+
+	/**
 	 * Loads the FLOW3 core settings defined in the FLOW3 package and the global
 	 * configuration directories.
 	 *
@@ -84,10 +102,12 @@ class F3_FLOW3_Configuration_Manager {
 	 * needed way earlier in the bootstrap than the package's settings.
 	 *
 	 * @return void
+	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadFLOW3Settings() {
 		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3.php'));
+		$this->settings->FLOW3->lock();
 		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3.php'));
 		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3.php'));
 	}
@@ -102,6 +122,7 @@ class F3_FLOW3_Configuration_Manager {
 	 * @param array $packageKeys
 	 * @return void
 	 * @see getSettings()
+	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadGlobalSettings(array $packageKeys) {
@@ -129,6 +150,7 @@ class F3_FLOW3_Configuration_Manager {
 	 *
 	 * @param array $packageKeys
 	 * @return void
+	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadRoutesSettings(array $packageKeys) {
@@ -146,24 +168,6 @@ class F3_FLOW3_Configuration_Manager {
 	}
 
 	/**
-	 * Returns a configuration container with the settings defined for the specified
-	 * package.
-	 *
-	 * @param string $packageKey Key of the package to return the settings for
-	 * @return F3_FLOW3_Configuration_Container The settings of the specified package
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getSettings($packageKey) {
-		if ($this->settings->offsetExists($packageKey)) {
-			$settingsContainer = $this->settings->$packageKey;
-		} else {
-			$settingsContainer = new F3_FLOW3_Configuration_Container();
-		}
-		$settingsContainer->lock();
-		return $settingsContainer;
-	}
-
-	/**
 	 * Loads and returns the specified raw configuration. The actual configuration will be
 	 * merged from different sources in a defined order.
 	 *
@@ -174,6 +178,7 @@ class F3_FLOW3_Configuration_Manager {
 	 * @param string $packageKey Key of the package the configuration is for
 	 * @return F3_FLOW3_Configuration_Container The configuration
 	 * @throws F3_FLOW3_Configuration_Exception_InvalidConfigurationType on invalid configuration types
+	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSpecialConfiguration($configurationType, $packageKey= 'FLOW3') {
