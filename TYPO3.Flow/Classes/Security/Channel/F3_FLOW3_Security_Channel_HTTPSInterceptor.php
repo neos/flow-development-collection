@@ -42,14 +42,14 @@ class HTTPSInterceptor implements F3::FLOW3::Security::Authorization::Intercepto
 	 *
 	 * @param F3::FLOW3::Security::Context $securityContext The current security context
 	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3::Log::LoggerInterface $logger A logger to log security relevant actions
+	 * @param F3::FLOW3::Log::LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
 					F3::FLOW3::Security::Context $securityContext,
 					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager,
-					F3::Log::LoggerInterface $logger
+					F3::FLOW3::Log::LoggerInterface $logger
 					) {
 
 	}

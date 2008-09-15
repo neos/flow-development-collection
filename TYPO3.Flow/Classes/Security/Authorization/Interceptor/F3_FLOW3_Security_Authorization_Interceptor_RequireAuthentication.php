@@ -51,7 +51,6 @@ class RequireAuthentication implements F3::FLOW3::Security::Authorization::Inter
 	 *
 	 * @param F3::FLOW3::Security::Context $securityContext The current security context
 	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3::Log::LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
