@@ -191,7 +191,7 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     classname as well as the file name. An example for a valid class name is
-    <classname>F3_MyPackage_Controller_Default</classname> while the file
+    <classname>F3::MyPackage::Controller::Default</classname> while the file
     containing this class would be named
     "<filename>F3_MyPackage_Controller_Default.php"</filename>.</para>
 
@@ -242,10 +242,14 @@
   <section>
     <title>Creating a New Package</title>
 
-    <para>For the time being just create the package folder and subdirectories
-    manually and copy &amp; adapt a <filename>Package.xml</filename> file from
-    one of the other packages. Apart from that no further steps are
-    necessary.</para>
+    <para>Just create the package folder and subdirectories manually and copy
+    &amp; adapt a <filename>Package.xml</filename> file from one of the other
+    packages. Apart from that no further steps are necessary.</para>
+
+    <para>An alternative is to install <link
+    ns6:href="http://www.dev3.org/">DEV3</link> for Eclipse and use it's
+    wizard to create a package. It provides a nice editor for
+    <filename>Package.xml</filename> files as well.</para>
   </section>
 
   <section>

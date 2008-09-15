@@ -97,11 +97,11 @@
             <para>A join point is a point in the flow of a program. Examples
             are the execution of a method or the throw of an exception. In
             FLOW3, join points are represented by the
-            <classname>F3_FLOW3_AOPJoinPoint</classname> object which contains
-            more information about the circumstances like name of the called
-            method, the passed arguments or type of the exception thrown. A
-            join point is an event which occurs during the program flow, not a
-            definition which defines that point.</para>
+            <classname>F3::FLOW3::AOPJoinPoint</classname> object which
+            contains more information about the circumstances like name of the
+            called method, the passed arguments or type of the exception
+            thrown. A join point is an event which occurs during the program
+            flow, not a definition which defines that point.</para>
           </listitem>
         </varlistentry>
 
@@ -293,9 +293,9 @@
         </footnote>, the proxy classes act as a placeholders for the target
       object. They are true subclasses of the original and override adviced
       methods by implementing a interceptor method. The proxy classes are
-      generated automatically by the AOP framework and cached in their own
-      files. If a class has been adviced by some aspect, the Component Manager
-      will only deliver instances of the proxy class instead of the
+      generated automatically by the AOP framework and cached for further use.
+      If a class has been adviced by some aspect, the Component Manager will
+      only deliver instances of the proxy class instead of the
       original.</para>
 
       <para>The approach of storing generated proxy classes in files provides
@@ -317,20 +317,22 @@
     <example>
       <title>Declaration of an aspect</title>
 
-      <programlisting language="php">/**
+      <programlisting language="php">namespace F3::MySecurityPackage;
+
+/**
  * An aspect implementing security for Foo
  *
  * @package MySecurityPackage
  * @author  John Doe &lt;john@typo3.org&gt;
  * @aspect
  */
-class F3_MySecurityPackage_FooSecurityAspect {
+class FooSecurityAspect {
 
 }</programlisting>
     </example>
 
     <para>As you can see,
-    <classname>F3_MySecurityPackage_FooSecurityAspect</classname> is just a
+    <classname>F3::MySecurityPackage::FooSecurityAspect</classname> is just a
     regular PHP class which may (actually must) contain methods and
     properties. What it makes it an aspect is solely the
     <markup>@aspect</markup> annotation mentioned the class comment. The AOP
@@ -352,7 +354,10 @@ class F3_MySecurityPackage_FooSecurityAspect {
     later section, the <quote>where and when</quote> is defined by a pointcut
     expression in a pointcut declaration.</para>
 
-    <para>A pointcut is represented by a method of an aspect class. It
+    <para>You can either define the pointcut in the advice declaration or set
+    up named pointcuts to help clarify their use.</para>
+
+    <para>A named pointcut is represented by a method of an aspect class. It
     contains two pieces of information: The pointcut name, defined by the
     methodname, and the poincut expression, declared by an annotation. The
     following pointcut will match the execution of methods whose name starts
@@ -360,7 +365,7 @@ class F3_MySecurityPackage_FooSecurityAspect {
     defined:</para>
 
     <example>
-      <title>Declaration of a pointcut</title>
+      <title>Declaration of a named pointcut</title>
 
       <programlisting language="php">   /**
     * A pointcut which matches all methods whose name starts with "delete".
@@ -436,15 +441,15 @@ class F3_MySecurityPackage_FooSecurityAspect {
             <title>method() pointcut designator</title>
 
             <para>Matches all public methods in class
-            <classname>F3_MyPackage_MyComponent</classname>:</para>
+            <classname>F3::MyPackage::MyComponent</classname>:</para>
 
             <para><code>method(public
-            F3_MyPackage_MyComponent-&gt;.*())</code></para>
+            F3::MyPackage::MyComponent-&gt;.*())</code></para>
 
             <para>Matches all delete methods (even protected and private ones)
             in any class of the package <package>MyPackage</package>:</para>
 
-            <para><code>method(F3_MyPackage_.*-&gt;delete.*())</code></para>
+            <para><code>method(F3::MyPackage::.*-&gt;delete.*())</code></para>
           </example><note>
             <para>In other AOP frameworks, incuding
             <trademark>AspectJ</trademark> and <trademark>Spring</trademark>,
@@ -475,9 +480,9 @@ class F3_MySecurityPackage_FooSecurityAspect {
           <title>class() pointcut designator</title>
 
           <para>Matches all methods in class
-          <classname>F3_MyPackage_MyComponent</classname>:</para>
+          <classname>F3::MyPackage::MyComponent</classname>:</para>
 
-          <para><code>class(F3_MyPackage_MyComponent)</code></para>
+          <para><code>class(F3::MyPackage::MyComponent)</code></para>
         </example>
       </section>
 
@@ -501,12 +506,12 @@ class F3_MySecurityPackage_FooSecurityAspect {
           <para>Matches all methods in classes which implement the logger
           interface:</para>
 
-          <para><code>within(F3_Log_LoggerInterface)</code></para>
+          <para><code>within(F3::Log::LoggerInterface)</code></para>
 
           <para>Matches all methods in classes which are part of the Foo
           layer:</para>
 
-          <para><code>within(F3_FLOW3_FooLayerInterface)</code></para>
+          <para><code>within(F3::FLOW3::FooLayerInterface)</code></para>
         </example>
       </section>
 
@@ -541,7 +546,7 @@ class F3_MySecurityPackage_FooSecurityAspect {
         <para>If the built-in filters don't suit your needs you can even
         define your own custom filters. All you need to do is create a class
         implementing the
-        <interfacename>F3_FLOW3_AOP_PointcutFilterInterface</interfacename>
+        <interfacename>F3::FLOW3::AOP::PointcutFilterInterface</interfacename>
         and develop your own logic for the <methodname>matches()</methodname>
         method. The custom filter can then be invoked by using the
         <methodname>filter()</methodname> designator:</para>
@@ -554,7 +559,7 @@ class F3_MySecurityPackage_FooSecurityAspect {
           <para>If the current method matches is determined by the custom
           filter:</para>
 
-          <para><code>filter(F3_MyPackage_MyCustomPointcutFilter)</code></para>
+          <para><code>filter(F3::MyPackage::MyCustomPointcutFilter)</code></para>
         </example>
       </section>
     </section>
@@ -576,32 +581,34 @@ class F3_MySecurityPackage_FooSecurityAspect {
       <example>
         <title>Combining pointcut expressions</title>
 
-        <para><programlisting language="php">/**
+        <para><programlisting language="php">namespace F3::TestPackage;
+
+/**
  * Fixture class for testing poincut definitions
  *
  * @package TestPackage
  * @aspect
  */
-class F3_TestPackage_PointcutTestingAspect {
+class PointcutTestingAspect {
 
    /**
     * Pointcut which includes all method executions in pointcutTestingTargetClasses except those from Target Class number 3.
     *
-    * @pointcut method(F3_TestPackage_PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; !method(F3_TestPackage_PointcutTestingTargetClass3-&gt;.*())
+    * @pointcut method(F3::TestPackage::PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; !method(F3::TestPackage::PointcutTestingTargetClass3-&gt;.*())
     */
    public function pointcutTestingTargetClasses() {}
 
    /**
-    * Pointcut which consists of only the F3_TestPackage_OtherPointcutTestingTargetClass.
+    * Pointcut which consists of only the F3::TestPackage::OtherPointcutTestingTargetClass.
     *
-    * @pointcut method(F3_TestPackage_OtherPointcutTestingTargetClass-&gt;.*())
+    * @pointcut method(F3::TestPackage::OtherPointcutTestingTargetClass-&gt;.*())
     */
    public function otherPointcutTestingTargetClass() {}
 
    /**
     * A combination of both above pointcuts
     *
-    * @pointcut F3_TestPackage_PointcutTestingAspect-&gt;pointcutTestingTargetClasses || F3_TestPackage_PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
+    * @pointcut F3::TestPackage::PointcutTestingAspect-&gt;pointcutTestingTargetClasses || F3::TestPackage::PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
     * @author Robert Lemke &lt;robert@typo3.org&gt;
     */
    public function bothPointcuts() {}
@@ -609,18 +616,17 @@ class F3_TestPackage_PointcutTestingAspect {
    /**
     * A pointcut which matches all classes from the service layer
     *
-    * @pointcut within(F3_FLOW3_ServiceLayerInterface)
+    * @pointcut within(F3::FLOW3::ServiceLayerInterface)
     */
    public function serviceLayerClasses() {}
 
    /**
     * A pointcut which matches any method from the BasicClass and all classes from the service layer
     *
-    * @pointcut method(F3_TestPackage_Basic.*-&gt;.*()) || within(F3_FLOW3_Service.*)
+    * @pointcut method(F3::TestPackage::Basic.*-&gt;.*()) || within(F3::FLOW3::Service.*)
     */
    public function basicClassOrServiceLayerClasses() {}
-}
-</programlisting></para>
+}</programlisting></para>
       </example>
     </section>
   </section>
@@ -655,9 +661,9 @@ class F3_TestPackage_PointcutTestingAspect {
           <para><programlisting language="php">   /**
     * Before advice which is invoked before any method call within the News package
     *
-    * @before class(F3_News_.*-&gt;.*())
+    * @before class(F3::News::.*-&gt;.*())
     */
-   public function myBeforeAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function myBeforeAdvice(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
    }</programlisting></para>
         </example></para>
     </section>
@@ -676,9 +682,9 @@ class F3_TestPackage_PointcutTestingAspect {
         <para><programlisting language="php">   /**
     * After returning advice
     *
-    * @afterreturning method(public F3_News_FeedAgregator-&gt;[import|update].*()) || F3_MyPackage_MyAspect-&gt;someOtherPointcut
+    * @afterreturning method(public F3::News::FeedAgregator-&gt;[import|update].*()) || F3::MyPackage::MyAspect-&gt;someOtherPointcut
     */
-   public function myAfterReturningAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function myAfterReturningAdvice(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -696,9 +702,9 @@ class F3_TestPackage_PointcutTestingAspect {
         <para><programlisting language="php">   /**
     * After throwing advice
     *
-    * @afterthrowing within(F3_News_ImportantLayer)
+    * @afterthrowing within(F3::News::ImportantLayer)
     */
-   public function myAfterThrowingAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function myAfterThrowingAdvice(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -717,9 +723,9 @@ class F3_TestPackage_PointcutTestingAspect {
         <para><programlisting language="php">   /**
     * After advice
     *
-    * @after F3_MyPackage_MyAspect-&gt;justAPointcut
+    * @after F3::MyPackage::MyAspect-&gt;justAPointcut
     */
-   public function myAfterAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function myAfterAdvice(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -741,9 +747,9 @@ class F3_TestPackage_PointcutTestingAspect {
         <para><programlisting language="php">   /**
     * Around advice
     *
-    * @around F3_MyPackage_MyAspect-&gt;justAPointcut
+    * @around F3::MyPackage::MyAspect-&gt;justAPointcut
     */
-   public function myAroundAdvice(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function myAroundAdvice(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
    }</programlisting></para>
       </example>
     </section>
@@ -764,9 +770,9 @@ class F3_TestPackage_PointcutTestingAspect {
 
       <para>As you have seen in the previous section, advice methods always
       expect an argument of the type
-      <interfacename>F3_FLOW3_AOP_JoinPointInterface</interfacename>. This join
-      point object contains all important information about the current join
-      point. Methods like <methodname>getClassName()</methodname> or
+      <interfacename>F3::FLOW3::AOP::JoinPointInterface</interfacename>. This
+      join point object contains all important information about the current
+      join point. Methods like <methodname>getClassName()</methodname> or
       <methodname>getMethodArguments()</methodname> let the advice method
       classify the current context and enable you to implement advices in a
       way that they can be reused in different situations. For a full
@@ -804,39 +810,41 @@ class F3_TestPackage_PointcutTestingAspect {
       <example>
         <title>Simple logging with aspects</title>
 
-        <programlisting language="php">/**
+        <programlisting language="php">namespace F3::MyPackage;
+
+/**
  * A logging aspect
  *
  * @package MyPackage
  * @aspect
  */
-class F3_MyPackage_LoggingAspect {
+class LoggingAspect {
 
    /**
-    * @var F3_Log_LoggerInterface A logger implementation
+    * @var F3::Log::LoggerInterface A logger implementation
    protected $logger;
 
    /**
     * Constructor of this aspect. For logging we need a logger, which we will get
     * injected automatically by the Component Manager
     *
-    * @param  F3_Log_LoggerInterface $logger: An instance of a logger
+    * @param  F3::Log::LoggerInterface $logger: An instance of a logger
     * @return void
     */
-   public function __construct(F3_Log_LoggerInterface $logger) {
+   public function __construct(F3::Log::LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
    /**
     * Before advice, logs all access to methods of our package
     *
-    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
+    * @param  F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point
     * @return void
-    * @before method(F3_MyPackage_.*-&gt;.*())
+    * @before method(F3::MyPackage::.*-&gt;.*())
     */
-   public function logMethodExecution(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function logMethodExecution(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
       $logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . $joinPoint-&gt;getClassName() . ' has been called.';
-      $this-&gt;logger-&gt;log($logMessage, 'F3_MyPackage_LoggingAspect');
+      $this-&gt;logger-&gt;log($logMessage, 'F3::MyPackage::LoggingAspect');
    }
 
 }</programlisting>
@@ -858,29 +866,31 @@ class F3_MyPackage_LoggingAspect {
       <example>
         <title>Implementation of an around advice</title>
 
-        <para><programlisting>/**
+        <para><programlisting>namespace F3::MyPackage;
+
+/**
  * A lastname rejection aspect
  *
  * @package MyPackage
  * @aspect
  */
-class F3_MyPackage_LastNameRejectionAspect {
+class LastNameRejectionAspect {
 
    /**
     * A pointcut which matches all guestbook submission method invocations
     *
-    * @pointcut method(F3_Guestbook_SubmissionHandlingThingy-&gt;submit())
+    * @pointcut method(F3::Guestbook::SubmissionHandlingThingy-&gt;submit())
     */
    public function guestbookSubmissionPointcut() {}
 
    /**
     * Around advice, rejects the lastname "Sarkosh"
     *
-    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
+    * @param  F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point
     * @return mixed Result of the target method
-    * @around F3_MyPackage_LastNameRejectionAspect-&gt;guestbookSubmissionPointcut
+    * @around F3::MyPackage::LastNameRejectionAspect-&gt;guestbookSubmissionPointcut
     */
-   public function rejectLastName(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function rejectLastName(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
       if ($joinPoint-&gt;getMethodArgument('lastName') == 'Sarkosh') {
          throw new Exception('Sarkosh is not a valid lastname - should be Skårhøj!');
       }
@@ -934,29 +944,31 @@ class F3_MyPackage_LastNameRejectionAspect {
       <example>
         <title>Declaring introductions</title>
 
-        <programlisting language="php">/**
+        <programlisting language="php">namespace F3::MyPackage;
+
+/**
  * An aspect for demonstrating introductions
  *
  * @package MyPackage
  * @aspect
  */
-class F3_MyPackage_IntroductionAspect {
+class IntroductionAspect {
 
    /**
-    * Introduces F3_MyPackage_NewInterface to the class F3_MyPackage_OldClass:
+    * Introduces F3::MyPackage::NewInterface to the class F3::MyPackage::OldClass:
     *
-    * @introduce F3_MyPackage_NewInterface, class(F3_MyPackage_OldClass)
+    * @introduce F3::MyPackage::NewInterface, class(F3::MyPackage::OldClass)
     */
    public $newInterface;
 
    /**
     * Around advice, implements the new method "newMethod" of the "NewInterface" interface
     *
-    * @param  F3_FLOW3_AOP_JoinPointInterface $joinPoint: The current join point
+    * @param  F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point
     * @return void
-    * @around method(F3_MyPackage_OldClass-&gt;newMethod())
+    * @around method(F3::MyPackage::OldClass-&gt;newMethod())
     */
-   public function newMethod(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+   public function newMethod(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
          // We call the advice chain, in case any other advice is declared for this method,
          // but we don't care about the result.
       $someResult = $joinPoint-&gt;getAdviceChain-&gt;proceed($joinPoint);

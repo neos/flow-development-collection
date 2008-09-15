@@ -65,10 +65,15 @@
         </listitem>
 
         <listitem>
-          <para>Every file must contain a header stating copyright and
-          licensing information</para>
+          <para>Every file must contain a header stating encoding, namespace,
+          copyright and licensing information</para>
 
           <para><orderedlist>
+              <listitem>
+                <para>Declare your namespace. The namespace must start with
+                "F3"!</para>
+              </listitem>
+
               <listitem>
                 <para>Because it is likely that more than one person will work
                 on a class in the long run, we recommend adding a copyright
@@ -102,6 +107,7 @@
 
             <literallayout>&lt;?php
 declare(ENCODING = 'utf-8');
+namespace F3::Your::Stuff::Here;
 
 /*                                                                         *
  * This script is part of the TYPO3 project - inspiring people to share!   *
@@ -217,18 +223,12 @@ public‧function‧getContext()‧{
         <title>Class names</title>
 
         <para>Only the characters a-z, A-Z and 0-9 are allowed for class names
-        – don't use special characters. The underscore sign "_" is allowed for
-        separating the package name from the sub-package or component name
-        from the sub-component name and so on.</para>
+        – don't use special characters.</para>
 
         <para>All class names are written in
         <classname>UpperCamelCase</classname>, all uppercase names are allowed
         for well established abbreviations. Class names must be nouns, never
         adjectives.</para>
-
-        <para>A class name must start with the prefix "F3_". The name of the
-        package containing the class follows, parts of the package hierarchy
-        are seperated with underscores.</para>
 
         <para>The name of abstract classes should start with the word
         "Abstract".</para>
@@ -240,27 +240,27 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3_FLOW3_Component</classname></para>
+              <para><classname>F3::FLOW3::Component</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_FLOW3_Component_Manager</classname></para>
+              <para><classname>F3::FLOW3::Component::Manager</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_MySubComponent</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::MySubComponent</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_MyHTMLParser</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::MyHTMLParser</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_Foo_Controller_Default</classname></para>
+              <para><classname>F3::Foo::Controller::DefaultController</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_AbstractLogger</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::AbstractLogger</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -274,19 +274,15 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3_Urlwrapper</classname></para>
+              <para><classname>F3::Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>someComponent_classname</classname></para>
+              <para><classname>someComponent::classname</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponentMySubComponent</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>F3_Foo_Controller_DefaultController</classname></para>
+              <para><classname>F3::MyPackage::MyComponentMySubComponent</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -296,38 +292,31 @@ public‧function‧getContext()‧{
         <title>Interface names</title>
 
         <para>Only the characters a-z, A-Z and 0-9 are allowed for interface
-        names – don't use special characters. The underscore sign "_" is
-        allowed for separating the package name from the interface name from
-        the sub-component name and so on.</para>
+        names – don't use special characters.</para>
 
         <para>All interface names are written in
         <classname>UpperCamelCase</classname>, all uppercase names are allowed
         for well established abbreviations. Interface names must be adjectives
-        or nouns and have the Interface suffix.</para>
-
-        <para>An interface name must start with the prefix "F3_". The name of
-        the package containing the interface follows, parts of the package
-        hierarchy are seperated with underscores. A few examples
-        follow:</para>
+        or nouns and have the Interface suffix. A few examples follow:</para>
 
         <example>
           <title>Correct naming of interfaces</title>
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3_FLOW3_Component_Interface</classname></para>
+              <para><classname>F3::FLOW3::Component::ComponentInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_FLOW3_Component_ManagerInterface</classname></para>
+              <para><classname>F3::FLOW3::Component::ManagerInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_MySubComponentInterface</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::MySubComponentInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_MyHTMLParserInterface</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::MyHTMLParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -341,15 +330,15 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3_Urlwrapper</classname></para>
+              <para><classname>F3::Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>IsomeComponent_classname</classname></para>
+              <para><classname>IsomeComponent::classname</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_FLOW3_Component_Manager_Interface</classname></para>
+              <para><classname>F3::FLOW3::Component::Manager::Interface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -370,19 +359,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3_FLOW3_Component_Exception</classname></para>
+              <para><classname>F3::FLOW3::Component::Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_FLOW3_Component_Exception_InvalidClassName</classname></para>
+              <para><classname>F3::FLOW3::Component::Exception::InvalidClassName</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_Exception</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3_MyPackage_MyComponent_Exception_OutOfCoffee</classname></para>
+              <para><classname>F3::MyPackage::MyComponent::Exception::OutOfCoffee</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -566,41 +555,41 @@ public‧function‧getContext()‧{
                   <para><filename>F3_TemplateEngine_TemplateEngineInterface.php</filename></para>
 
                   <para>Contains the interface
-                  <classname>F3_TemplateEngine_TemplateEngineInterface</classname>
+                  <classname>F3::TemplateEngine::TemplateEngineInterface</classname>
                   which is part of the package
-                  <package>F3_TemplateEngine</package></para>
+                  <package>F3::TemplateEngine</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_Error_RuntimeException.php</filename></para>
 
                   <para>Contains the
-                  <classname>F3_Error_RuntimeException</classname> being a
-                  part of the package <package>F3_Error</package></para>
+                  <classname>F3::Error::RuntimeException</classname> being a
+                  part of the package <package>F3::Error</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_DataAccess_Manager.php</filename></para>
 
                   <para>Contains class
-                  <classname>F3_DataAccess_Manager</classname> which is part
-                  of the package <package>F3_DataAccess</package></para>
+                  <classname>F3::DataAccess::Manager</classname> which is part
+                  of the package <package>F3::DataAccess</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_FLOW3_Package_Manager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>F3_FLOW3_Package_Manager</classname> which is
-                  part of the package <package>F3_FLOW3</package></para>
+                  <classname>F3::FLOW3::Package::Manager</classname> which is
+                  part of the package <package>F3::FLOW3</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_FLOW3_Package_ManagerTest.php</filename></para>
 
                   <para>Contains the class
-                  <classname>F3_FLOW3_Package_ManagerTest</classname> which is
-                  a test case for PHPUnit.</para>
+                  <classname>F3::FLOW3::Package::ManagerTest</classname> which
+                  is a test case for PHPUnit.</para>
                 </listitem>
               </itemizedlist></para>
           </example></para>
@@ -638,8 +627,7 @@ public‧function‧getContext()‧{
           <title>Variable substitution</title>
 
           <literallayout>$message = 'Hey ' . $name . ', you look ' . $look . ' today!';
-$message = "Hey $name, you look $look today!";
-</literallayout>
+$message = "Hey $name, you look $look today!";</literallayout>
         </example>
 
         <para>As you've seen in the previous example, we concatenate strings
@@ -678,7 +666,9 @@ $message = "Hey $name, you look $look today!";
         <para>...<example>
             <title>Classes</title>
 
-            <literallayout>class F3_MyPackage_MyComponent {
+            <literallayout>namespace F3::MyPackage;
+
+class MyComponent {
 
 }</literallayout>
           </example></para>
@@ -713,9 +703,9 @@ $message = "Hey $name, you look $look today!";
 
 if (allGoesWrong()) throw new Exception('Hey, all went wrong!');
 
-if (weHaveALotOfCriteria() &amp;&amp;
-   notEverythingFitsIntoOneLine() ||
-   youJustTendToLikeIt()) {
+if (weHaveALotOfCriteria()
+   &amp;&amp; notEverythingFitsIntoOneLine()
+   || youJustTendToLikeIt()) {
       doThis();
 
 } else {
@@ -732,8 +722,12 @@ if (weHaveALotOfCriteria() &amp;&amp;
     <para>All code must be documented with inline comments. The syntax is that
     known from the Java programming language (JavaDoc). This way code
     documentation can automatically be generated using tools like
-    phpDocumentor or Doxygen. The "official" tool used is phpDocumentor, so
-    syntax and documentation usage are chosen to work best with it.</para>
+    phpDocumentor or Doxygen. The "official" tool used is
+    phpDocumentor<footnote>
+        <para>We look into Doxygen as well, currently both tools have problems
+        with using namespaces in PHP.</para>
+      </footnote>, so syntax and documentation usage are chosen to work best
+    with it.</para>
 
     <section>
       <title>Documentation blocks</title>
@@ -832,7 +826,7 @@ enable-auto-props = yes
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_SomeClass {
+class SomeClass {
  ...</literallayout>
         </example>
 
@@ -852,7 +846,7 @@ class F3_FLOW3_SomeClass {
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @author Your Name &lt;your@email.here&gt;
  */
-interface F3_FLOW3_SomeInterface {
+interface SomeInterface {
  ...</literallayout>
         </example>
 
@@ -871,7 +865,7 @@ interface F3_FLOW3_SomeInterface {
  * @version    $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class F3_FLOW3_SomeException {
+class SomeException extends ::Exception {
  ...</literallayout>
         </example>
 
@@ -912,12 +906,12 @@ protected $title = 'Untitled';</literallayout>
  *
  * Paragraphs are seperated by a empty line.
  *
- * @param F3_Log_LoggerInterface $logger A logger
+ * @param F3::Log::LoggerInterface $logger A logger
  * @param string $someString This parameter should contain some string
  * @return void
  * @author Your Name &lt;your@email.here&gt;
  */
-public function __construct(F3_Log_LoggerInterface $logger, $someString) {
+public function __construct(F3::Log::LoggerInterface $logger, $someString) {
  ...</literallayout>
         </example>
 
@@ -1067,6 +1061,11 @@ public function __construct(F3_Log_LoggerInterface $logger, $someString) {
           <para>All code must make use of PHP5 / PHP6 advanced features for
           object oriented programming.<itemizedlist>
               <listitem>
+                <para>Use PHP namespaces (see <link
+                linkend="???">http://www.php.net/manual/language.namespaces.php</link>)</para>
+              </listitem>
+
+              <listitem>
                 <para>Always declare the scope (public, protected, private) of
                 classes and member variables</para>
               </listitem>
@@ -1091,13 +1090,15 @@ public function __construct(F3_Log_LoggerInterface $logger, $someString) {
 
         <listitem>
           <para>Add an encoding declaration as the first line of your PHP
-          code. For TYPO3 the encoding must be <acronym>UTF-8</acronym></para>
+          code, followed by the namespace declaration. For TYPO3 the encoding
+          must be <acronym>UTF-8</acronym></para>
 
           <example>
             <title>Encoding statement for .php files</title>
 
             <literallayout>&lt;?php
 declare(ENCODING = 'utf-8');
+namespace F3::Your::Stuff::Here;
 
 ...</literallayout>
           </example>
@@ -1153,15 +1154,15 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       manager. However, instead of providing a string containing the component
       name, the method passed an object (of course not on purpose - something
       went wrong). The component manager now throws an
-      <classname>InvalidComponentNameException</classname>. In order to catch
+      <classname>InvalidComponentName</classname> exception. In order to catch
       this exception you can, of course, catch it specifically - or only
-      consider a more general <classname>ComponentException</classname> (or an
-      even more general <classname>FLOW3Exception</classname>). This all works
-      because we have the following hierarchy:</para>
+      consider a more general <classname>Component</classname> exception (or
+      an even more general <classname>FLOW3</classname> exception). This all
+      works because we have the following hierarchy:</para>
 
-      <literallayout>+ F3_FLOW3Exception
-  + F3_FLOW3_ComponentException
-    + F3_FLOW3_Component_InvalidComponentNameException</literallayout>
+      <literallayout>+ F3::FLOW3::Exception
+  + F3::FLOW3::Component::Exception
+    + F3::FLOW3::Component::Exception::InvalidComponentName</literallayout>
     </section>
 
     <section>

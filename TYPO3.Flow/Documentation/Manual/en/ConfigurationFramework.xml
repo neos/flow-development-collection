@@ -163,7 +163,7 @@ declare(ENCODING="utf-8");
  *
  * @var F3_TYPO3CR_Storage_BackendInterface
  */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3_TYPO3CR_Storage_Backend_PDO';
+$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3::TYPO3CR::Storage::Backend::PDO';
 
 /**
  * Options which are passed to the storage backend used by TYPO3CR
@@ -184,7 +184,7 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
       syntax.</para>
 
       <para>Technically the <varname>$c</varname> variable is an instance of
-      <classname>F3_FLOW3_Configuration_Container</classname> which
+      <classname>F3::FLOW3::Configuration::Container</classname> which
       automatically creates sub containers as soon as you try to access a
       not-yet-existing property. Taking the above example,
       <varname>$c</varname>, <varname>$c-&gt;TYPO3CR</varname> and
@@ -216,9 +216,9 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
         <para><programlisting><literal>/**
  * The storage backend to use for TYPO3CR.
  *
- * @var F3_TYPO3CR_Storage_BackendInterface
+ * @var F3::TYPO3CR::Storage::BackendInterface
  */
-$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3_TYPO3CR_Storage_Backend_PDO';</literal></programlisting></para>
+$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3::TYPO3CR::Storage::Backend::PDO';</literal></programlisting></para>
       </example>
 
       <para>Finally you may even call virtual setter methods in order to get a
@@ -354,11 +354,11 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
       <example>
         <title>Retrieving settings</title>
 
-        <programlisting>class F3_Demo_SomeClass {
+        <programlisting>class SomeClass {
 
    protected $configurationManager;
 
-   public function injectConfigurationManager(F3_FLOW3_Configuration_Manager $configurationManager) {
+   public function injectConfigurationManager(F3::FLOW3::Configuration::Manager $configurationManager) {
       $this-&gt;configurationManager = $configurationManager;
    }
 

@@ -102,15 +102,17 @@
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_Default.php</literallayout>
+        F3_Demo_Controller_DefaultController.php</literallayout>
 
-      <para>The Default Controller class looks as simple as this (leaving out
+      <para>The DefaultController class looks as simple as this (leaving out
       the very recommended comments):</para>
 
       <example>
         <title>Hello World! controller</title>
 
-        <programlisting language="PHP">class F3_Demo_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
+        <programlisting language="PHP">namespace F3::Demo::Controller;
+
+class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
    public function defaultAction() {
       return "Hello World!";
    }
@@ -126,23 +128,25 @@
 
       <para>Great, that was easy - but didn't we say that it's the view's
       responsibility to take care of the presentation? Let's create a simple
-      PHP-based view for that purpose: </para>
+      PHP-based view for that purpose:</para>
 
       <literallayout>Packages/
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_Default.php
+        F3_Demo_Controller_DefaultController.php
       View/
         Default/
-          F3_Demo_View_Default_Default.php</literallayout>
+          F3_Demo_View_Default_DefaultView.php</literallayout>
 
       <para>The view's code is equally trivial:</para>
 
       <example>
         <title>Hello World! view</title>
 
-        <programlisting>class F3_Demo_View_Default_Default extends F3_FLOW3_MVC_View_Abstract {
+        <programlisting>namespace F3::Demo::View;
+
+class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
    public function render() {
       return "Hello World!";
    }
@@ -156,7 +160,9 @@
       <example>
         <title>Improved Hello World! controller</title>
 
-        <programlisting>class F3_Demo_Controller_Default extends F3_FLOW3_MVC_Controller_ActionController {
+        <programlisting>namespace F3::Demo::Controller;
+
+class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
    public function defaultAction() {
       return $this-&gt;view-&gt;render();
    }
@@ -177,10 +183,10 @@
           <para><emphasis>Controllers</emphasis> are located in their own
           directory <filename>Controller</filename> just below the
           <filename>Classes</filename> directory of your package. They can
-          have arbitrary names while the <classname>Default</classname>
-          controller has a special meaning: If the package was specified in
-          the request but no controller, the <classname>Default</classname>
-          controller will be used.</para>
+          have arbitrary names while the
+          <classname>DefaultController</classname> has a special meaning: If
+          the package was specified in the request but no controller, the
+          <classname>DefaultController</classname> will be used.</para>
         </listitem>
 
         <listitem>
@@ -188,7 +194,7 @@
           <filename>View</filename> directory. They are grouped by controllers
           and named by their actions: Directories below the
           <filename>View</filename> folder are named after the controller and
-          the view's class name refers to the action. </para>
+          the view's class name refers to the action.</para>
         </listitem>
       </itemizedlist>
 
@@ -201,18 +207,18 @@
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_Default.php
-        F3_Demo_Controller_Customer.php
-        F3_Demo_Controller_Order.php
+        F3_Demo_Controller_DefaultController.php
+        F3_Demo_Controller_CustomerController.php
+        F3_Demo_Controller_OrderController.php
       View/
         Default/
-          F3_Demo_View_Default_Default.php
+          F3_Demo_View_Default_DefaultView.php
         Customer/
-          F3_Demo_View_Customer_Default.php
-          F3_Demo_View_Customer_List.php
-          F3_Demo_View_Customer_Details.php
+          F3_Demo_View_Customer_DefaultView.php
+          F3_Demo_View_Customer_ListView.php
+          F3_Demo_View_Customer_DetailsView.php
         Order/
-          F3_Demo_View_Order_List.php</literallayout>
+          F3_Demo_View_Order_ListView.php</literallayout>
       </example>
 
       <para>Adhering to these conventions has the advantage that views for
@@ -319,7 +325,7 @@
       <para>The final task of the MVC framework consists in dispatching the
       request to the controller specified in the request object. The request
       dispatcher will try to call the action specified in the request object
-      and if none was specified fall back on a default action. </para>
+      and if none was specified fall back on a default action.</para>
 
       <note>
         <para>There are more features planned for the dispatcher, but at the
@@ -332,17 +338,17 @@
 
       <para>FLOW3 supports the most important request types out of the box.
       Additional request types can easily be implemented by extending the
-      <classname>F3_FLOW3_MVC_Request</classname> class and registering a
+      <classname>F3::FLOW3::MVC::Request</classname> class and registering a
       request handling which can handle the new request type (and takes care
       of building the request object). Here are the request types which come
-      with the default FLOW3 distribution: </para>
+      with the default FLOW3 distribution:</para>
 
       <section>
         <title>Web Request / Response</title>
 
         <para>Web requests are the most common request types. Currently only
         the basic features are implemented, but further options - especially
-        for the web response - are in the pipeline. </para>
+        for the web response - are in the pipeline.</para>
       </section>
 
       <section>
