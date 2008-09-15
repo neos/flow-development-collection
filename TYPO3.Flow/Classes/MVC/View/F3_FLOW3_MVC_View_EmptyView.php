@@ -41,5 +41,19 @@ class EmptyView extends F3::FLOW3::MVC::View::AbstractView {
 	public function render() {
 		return '';
 	}
+
+	/**
+	 * A magic call method.
+	 *
+	 * Because this empty view is used as a Special Case in situations when no matching
+	 * view is available, it must be able to handle method calls which originally were
+	 * directed to another type of view. This magic method should prevent PHP from issuing
+	 * a fatal error.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __call($methodName, array $arguments) {
+	}
 }
 ?>
