@@ -120,7 +120,7 @@ namespace F3::Your::Stuff::Here;
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-     *
  * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General       *
  * Public License for more details.                                        *
- *                                                                         */ 
+ *                                                                         */
 </literallayout>
           </example>
         </listitem>
@@ -816,7 +816,7 @@ enable-auto-props = yes
 
           <literallayout>/**
  * First sentence is short description. Then you can write more, just as you like
- * 
+ *
  * Here may follow some detailed description about what the class is for.
  *
  * Paragraphs are seperated by a empty line.
@@ -835,7 +835,7 @@ class SomeClass {
 
           <literallayout>/**
  * First sentence is short description. Then you can write more, just as you like
- * 
+ *
  * Here may follow some detailed description about what the interface is for.
  *
  * Paragraphs are seperated by a empty line.
@@ -855,7 +855,7 @@ interface SomeInterface {
 
           <literallayout>/**
  * First sentence is short description. Then you can write more, just as you like
- * 
+ *
  * Here may follow some detailed description about what the interface is for.
  *
  * Paragraphs are seperated by a empty line.
@@ -884,7 +884,7 @@ class SomeException extends ::Exception {
 
           <literallayout>/**
  * A short description, very much recommended
- * @var string 
+ * @var string
  */
 protected $title = 'Untitled';</literallayout>
         </example>
@@ -906,12 +906,12 @@ protected $title = 'Untitled';</literallayout>
  *
  * Paragraphs are seperated by a empty line.
  *
- * @param F3::Log::LoggerInterface $logger A logger
+ * @param F3::FLOW3::Log::LoggerInterface $logger A logger
  * @param string $someString This parameter should contain some string
  * @return void
  * @author Your Name &lt;your@email.here&gt;
  */
-public function __construct(F3::Log::LoggerInterface $logger, $someString) {
+public function __construct(F3::FLOW3::Log::LoggerInterface $logger, $someString) {
  ...</literallayout>
         </example>
 

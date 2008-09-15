@@ -320,7 +320,7 @@ class SomeClass {
       <para>In the context of the previous example it means that the
       authentication component announces that it needs a logger which
       implements a certain PHP interface (eg. the
-      <interfacename>F3::Log::LoggerInterface</interfacename>). The component
+      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename>). The component
       itself has no control over what kind of logger (simple file logger,
       sms-logger, ...) it finally gets and it doesn't have to care about it
       anyway as long as it matches the expected API. As soon as the
@@ -361,7 +361,7 @@ class SomeClass {
 
    protected $logger;
 
-   public function __construct(F3::Log::LoggerInterface $logger) {
+   public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
@@ -373,7 +373,7 @@ class SomeClass {
 
         <para>So far there's nothing special about this class, it just makes
         sure that an instance of a class implementing the
-        <interfacename>F3::Log::LoggerInterface</interfacename> is passed to
+        <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> is passed to
         the constructor. However, this is already a quite flexible approach
         because the type of logger can be determined from outside by just
         passing one or the another implementation to the constructor.</para>
@@ -382,7 +382,7 @@ class SomeClass {
         called <firstterm>Autowiring</firstterm> all dependencies which were
         declared in a constructor will be injected automagically if the
         constructor argument provides a type definition (ie.
-        <classname>F3::Log::LoggerInterface</classname> in the above example).
+        <classname>F3::FLOW3::Log::LoggerInterface</classname> in the above example).
         Autowiring is activated by default (but can be switched off),
         therefore all you have to do is to write your constructor
         method.</para>
@@ -396,11 +396,11 @@ class SomeClass {
           <title>Components.php file for Constructor Injection</title>
 
           <programlisting language="php">$c-&gt;F3_Authentication_LDAPAuthentication-&gt;
-constructorArguments[1]-&gt;reference = 'F3::Log::ASpecialLogger';</programlisting>
+constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::ASpecialLogger';</programlisting>
         </example>
 
         <para>The two lines above define that a component instance of
-        <interfacename>F3::Log::ASpecialLogger</interfacename> must be passed
+        <interfacename>F3::FLOW3::Log::ASpecialLogger</interfacename> must be passed
         to the first argument of the constructor when an instance of the
         component
         <classname>F3::Authentication::LDAPAuthentication</classname> is
@@ -428,7 +428,7 @@ constructorArguments[1]-&gt;reference = 'F3::Log::ASpecialLogger';</programlisti
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function setSomeLogger(F3::Log::LoggerInterface $someLogger) {
+   public function setSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -445,7 +445,7 @@ constructorArguments[1]-&gt;reference = 'F3::Log::ASpecialLogger';</programlisti
 
           <programlisting language="php">&lt;?php
 
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;reference = 'F3::Log::LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
 
 ?&gt;</programlisting>
         </example>
@@ -471,7 +471,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function injectSomeLogger(F3::Log::LoggerInterface $someLogger) {
+   public function injectSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -566,7 +566,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
         <programlisting language="php">public class LDAPAuthentication {
 
    /**
-    * @var F3::Log::LoggerInterface
+    * @var F3::FLOW3::Log::LoggerInterface
     */
    protected $someLogger;
 
@@ -583,12 +583,12 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
    /**
     * Injects a logger
     *
-    * @param F3::Log::LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
+    * @param F3::FLOW3::Log::LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
     * @return void
     * @author Robert Lemke &lt;robert@typo3.org&gt;
     * @optional
     */
-   public function injectSomeLogger(F3::Log::LoggerInterface $someLogger) {
+   public function injectSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
       $this-&gt;someLogger = $someLogger;
    }
 }</programlisting>
@@ -714,7 +714,7 @@ declare(ENCODING = 'utf-8');
  * @version $Id: Components.php 123 2008-01-01 12:00:00Z robert $
  */
 
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3::Log::LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
 $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3::LDAP::LDAPServerInterface';
 $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH';
 
@@ -945,7 +945,7 @@ $greeter-&gt;sayHelloTo('Heike');</programlisting>
    protected $LDAPServer;
    protected $distinguishedName = '';
 
-   public function __construct(F3::Log::LoggerInterface $logger, F3::LDAP::LDAPServerInterface $LDAPServer, $distinguishedName) {
+   public function __construct(F3::FLOW3::Log::LoggerInterface $logger, F3::LDAP::LDAPServerInterface $LDAPServer, $distinguishedName) {
       $this-&gt;logger = $logger;
       $this-&gt;LDAPServer = $LDAPServer;
       $this-&gt;distinguishedName = $distinguishedName;
@@ -962,7 +962,7 @@ $greeter-&gt;sayHelloTo('Heike');</programlisting>
           <title>Sample configuration for Constructor Injection</title>
 
           <programlisting language="php">  # Inject two component references as the first two arguments:
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3::Log::LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
 $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3::LDAP::LDAPServerInterface';
 
   # Inject a straight value as the third argument:
@@ -973,7 +973,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=Jo
           <para>It is usually not necessary to configure injection of
           references explicitly. It is much more convent to just declare the
           type of the constructor arguments (like
-          <interfacename>F3::Log::LoggerInterface</interfacename> and
+          <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> and
           <interfacename>F3::LDAP::LDAPServerInterface in the above example)
           and let the Autowiring feature configure and resolve the
           dependencies for you.</interfacename></para>
@@ -1001,7 +1001,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=Jo
       $this-&gt;logger-&gt;log('tried to authenticate');
    }
 
-   public function injectLogger(F3::Log::LoggerInterface $logger) {
+   public function injectLogger(F3::FLOW3::Log::LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
@@ -1019,7 +1019,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=Jo
           <title>Sample configuration for Setter Injection</title>
 
           <programlisting language="php">  # Inject two component references:
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;logger-&gt;reference = 'F3::Log::LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;logger-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
 $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;LDAPServer-&gt;reference = 'F3::LDAP::LDAPServerInterface';
 
   # Inject a straight value as the third argument:
@@ -1209,14 +1209,14 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       <example>
         <title>An autowired logger</title>
 
-        <programlisting language="PHP">public function __construct(F3::Log::LoggerInterface $logger) {
+        <programlisting language="PHP">public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
    $logger-&gt;log("Hooray");
 }</programlisting>
       </example>
 
       <para>The constructor of the above example will get an instance of the
       component of type
-      <interfacename>F3::Log::LoggerInterface</interfacename> injected and can
+      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> injected and can
       use it for further operations.</para>
 
       <para>If, for some reason, you need to disable autowiring support, you
@@ -1303,7 +1303,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
 
    protected $logger;
 
-   public function __construct(F3::Log::LoggerInterface $logger) {
+   public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
       $this-&gt;logger = $logger;
    }
 
