@@ -108,7 +108,7 @@ class VariableCacheTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';

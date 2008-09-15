@@ -115,7 +115,7 @@ class Arrays {
 	 * @param array $array Array to reorder
 	 * @return array The array with randomly ordered values
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfuerst <sebastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public static function randomizeArrayOrder(array $array) {
 		$reorderedArray = array();
