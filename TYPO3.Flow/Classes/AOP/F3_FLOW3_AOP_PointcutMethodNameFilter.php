@@ -61,13 +61,13 @@ class PointcutMethodNameFilter implements F3::FLOW3::AOP::PointcutFilterInterfac
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class - won't be checked here
-	 * @param F3::FLOW3::Reflection::Method $method The method to check the name of
+	 * @param F3::FLOW3::Reflection::ClassReflection $class The class - won't be checked here
+	 * @param F3::FLOW3::Reflection::MethodReflection $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the method name matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $method->getName());
 		if ($matchResult === FALSE) {
 			throw new F3::FLOW3::AOP::Exception('Error in regular expression', 1168876915);

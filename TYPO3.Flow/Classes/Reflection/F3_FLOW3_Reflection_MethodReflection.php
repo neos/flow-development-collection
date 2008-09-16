@@ -18,18 +18,18 @@ namespace F3::FLOW3::Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::MethodReflection.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
- * Extended version of the ReflectionProperty
+ * Extended version of the ReflectionMethod
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::MethodReflection.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Property extends ReflectionProperty {
+class MethodReflection extends ::ReflectionMethod {
 
 	/**
 	 * @var F3::FLOW3::Reflection::DocCommentParser: An instance of the doc comment parser
@@ -39,20 +39,46 @@ class Property extends ReflectionProperty {
 	/**
 	 * The constructor, initializes the reflection class
 	 *
-	 * @param  string $className: Name of the property's class
-	 * @param  string $propertyName: Name of the property to reflect
+	 * @param  string $className Name of the method's class
+	 * @param  string $methodName Name of the method to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($className, $propertyName) {
-		parent::__construct($className, $propertyName);
+	public function __construct($className, $methodName) {
+		parent::__construct($className, $methodName);
 	}
 
 	/**
-	 * Checks if the doc comment of this property is tagged with
+	 * Returns the declaring class
+	 *
+	 * @return F3::FLOW3::Reflection::ClassReflection The declaring class
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDeclaringClass() {
+		return new F3::FLOW3::Reflection::ClassReflection(parent::getDeclaringClass()->getName());
+	}
+
+	/**
+	 * Replacement for the original getParameters() method which makes sure
+	 * that F3::FLOW3::Reflection::ParameterReflection objects are returned instead of the
+	 * orginal ReflectionParameter instances.
+	 *
+	 * @return array of F3::FLOW3::Reflection::ParameterReflection Parameter reflection objects of the parameters of this method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getParameters() {
+		$extendedParameters = array();
+		foreach (parent::getParameters() as $parameter) {
+			$extendedParameters[] = new F3::FLOW3::Reflection::ParameterReflection(array($this->getDeclaringClass()->getName(), $this->getName()), $parameter->getName());
+		}
+		return $extendedParameters;
+	}
+
+	/**
+	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
-	 * @param  string $tag: Tag name to check for
+	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 */
 	public function isTaggedWith($tag) {
@@ -73,6 +99,7 @@ class Property extends ReflectionProperty {
 	/**
 	 * Returns the values of the specified tag
 	 *
+	 * @param string $tag Tag name to check for
 	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -81,28 +108,7 @@ class Property extends ReflectionProperty {
 	}
 
 	/**
-	 * Returns the value of the reflected property - even if it is protected.
-	 *
-	 * @param  object $object: Instance of the declaring class to read the value from
-	 * @return mixed Value of the property
-	 * @throws F3::FLOW3::Reflection::Exception
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Maybe support private properties as well
-	 */
-	public function getValue($object) {
-		if (!is_object($object)) throw new F3::FLOW3::Reflection::Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
-		if ($this->isPublic()) return parent::getValue($object);
-		if ($this->isPrivate()) throw new F3::FLOW3::Reflection::Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
-
-		$propertyValues = (array)$object;
-		$index = chr(0) . '*' . chr(0) . $this->name;
-		if (!isset($propertyValues[$index])) return;
-
-		return $propertyValues[$index];
-	}
-
-	/**
-	 * Returns an instance of the doc comment parser and 
+	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
 	 * @return F3::FLOW3::Reflection::DocCommentParser

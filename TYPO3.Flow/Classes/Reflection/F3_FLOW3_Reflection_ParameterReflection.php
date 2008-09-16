@@ -18,7 +18,7 @@ namespace F3::FLOW3::Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Reflection;
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::Property.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Parameter extends ReflectionParameter {
+class ParameterReflection extends ::ReflectionParameter {
 
 	/**
 	 * The constructor, initializes the reflection parameter
@@ -46,22 +46,22 @@ class Parameter extends ReflectionParameter {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return F3::FLOW3::Reflection::ReflectionClass The declaring class
+	 * @return F3::FLOW3::Reflection::ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3::FLOW3::Reflection::ReflectionClass(parent::getDeclaringClass()->getName());
+		return new F3::FLOW3::Reflection::ClassReflection(parent::getDeclaringClass()->getName());
 	}
 
 	/**
 	 * Returns the parameter class
 	 *
-	 * @return F3::FLOW3::Reflection::ReflectionClass The parameter class
+	 * @return F3::FLOW3::Reflection::ClassReflection The parameter class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClass() {
 		$class = parent::getClass();
-		return (is_object($class)) ? new F3::FLOW3::Reflection::ReflectionClass(parent::getClass()->getName()) : NULL;
+		return (is_object($class)) ? new F3::FLOW3::Reflection::ClassReflection(parent::getClass()->getName()) : NULL;
 	}
 
 }

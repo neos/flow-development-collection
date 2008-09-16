@@ -348,7 +348,7 @@ class Framework {
 							$splittedTagValue = explode(',', $tagValue);
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new F3::FLOW3::AOP::Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcut = $this->componentFactory->getComponent('F3::FLOW3::AOP::Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
-							$interface = new F3::FLOW3::Reflection::ReflectionClass(trim($splittedTagValue[0]));
+							$interface = new F3::FLOW3::Reflection::ClassReflection(trim($splittedTagValue[0]));
 							$introduction = $this->componentFactory->getComponent('F3::FLOW3::AOP::Introduction', $aspectClassName, $interface, $pointcut);
 							$aspectContainer->addIntroduction($introduction);
 						break;
@@ -380,7 +380,7 @@ class Framework {
 			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3::FLOW3::') {
 				try {
 					if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
-						$proxyBuildResult = F3::FLOW3::AOP::ProxyClassBuilder::buildProxyClass(new F3::FLOW3::Reflection::ReflectionClass($targetClassName), $aspectContainers, $context, $this->reflectionService);
+						$proxyBuildResult = F3::FLOW3::AOP::ProxyClassBuilder::buildProxyClass(new F3::FLOW3::Reflection::ClassReflection($targetClassName), $aspectContainers, $context, $this->reflectionService);
 						if ($proxyBuildResult !== FALSE) {
 							$proxyBuildResults[$targetClassName] = $proxyBuildResult;
 							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];

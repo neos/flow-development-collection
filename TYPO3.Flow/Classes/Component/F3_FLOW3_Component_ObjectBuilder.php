@@ -91,7 +91,7 @@ class ObjectBuilder {
 
 			$setterProperties = $componentConfiguration->getProperties();
 
-			$class = new F3::FLOW3::Reflection::ReflectionClass($className);
+			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			if ($componentConfiguration->getAutoWiringMode() == F3::FLOW3::Component::Configuration::AUTOWIRING_MODE_ON) {
 				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
 				$setterProperties = $this->autoWireSetterProperties($setterProperties, $class);
@@ -149,11 +149,11 @@ class ObjectBuilder {
 	 * them if possible.
 	 *
 	 * @param array $constructorArguments: Array of F3::FLOW3::Component::ConfigurationArgument for the current component
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class: The component class which contains the methods supposed to be analyzed
+	 * @param F3::FLOW3::Reflection::ClassReflection $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of F3::FLOW3::Component::ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireConstructorArguments(array $constructorArguments, F3::FLOW3::Reflection::ReflectionClass $class) {
+	protected function autoWireConstructorArguments(array $constructorArguments, F3::FLOW3::Reflection::ClassReflection $class) {
 		$className = $class->getName();
 		$constructor = $class->getConstructor();
 		if ($constructor !== NULL) {
@@ -189,14 +189,14 @@ class ObjectBuilder {
 	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
 	 *
 	 * @param array $setterProperties: Array of F3::FLOW3::Component::ConfigurationProperty for the current component
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class: The component class which contains the methods supposed to be analyzed
+	 * @param F3::FLOW3::Reflection::ClassReflection $class: The component class which contains the methods supposed to be analyzed
 	 * @return array The modified array of F3::FLOW3::Component::ConfigurationProperty
 	 * @throws F3::FLOW3::Component::Exception::CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireSetterProperties(array $setterProperties, F3::FLOW3::Reflection::ReflectionClass $class) {
+	protected function autoWireSetterProperties(array $setterProperties, F3::FLOW3::Reflection::ClassReflection $class) {
 		$className = $class->getName();
-		foreach ($class->getMethods(F3::FLOW3::Reflection::Method::IS_PUBLIC) as $method) {
+		foreach ($class->getMethods(F3::FLOW3::Reflection::MethodReflection::IS_PUBLIC) as $method) {
 			$methodName = $method->getName();
 			if (F3::PHP6::Functions::substr($methodName, 0, 6) == 'inject') {
 				$propertyName = F3::PHP6::Functions::strtolower(F3::PHP6::Functions::substr($methodName, 6, 1)) . F3::PHP6::Functions::substr($methodName, 7);

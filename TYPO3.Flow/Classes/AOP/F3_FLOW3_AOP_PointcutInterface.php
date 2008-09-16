@@ -47,12 +47,12 @@ interface PointcutInterface {
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
 	 *
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class Class to check against
+	 * @param F3::FLOW3::Reflection::ClassReflection $class Class to check against
 	 * @param F3::FLOW3::Reflection::Methd $method Method to check against
 	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier);
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier);
 
 	/**
 	 * Returns the pointcut expression which has been passed to the constructor.

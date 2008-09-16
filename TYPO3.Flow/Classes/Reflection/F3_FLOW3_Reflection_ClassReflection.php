@@ -18,7 +18,7 @@ namespace F3::FLOW3::Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::ReflectionClass.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::ClassReflection.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Reflection;
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::ReflectionClass.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::ClassReflection.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ReflectionClass extends ReflectionClass {
+class ClassReflection extends ::ReflectionClass {
 
 	/**
 	 * @var F3::FLOW3::Reflection::DocCommentParser Holds an instance of the doc comment parser for this class
@@ -48,11 +48,11 @@ class ReflectionClass extends ReflectionClass {
 
 	/**
 	 * Replacement for the original getMethods() method which makes sure
-	 * that F3::FLOW3::Reflection::Method objects are returned instead of the
+	 * that F3::FLOW3::Reflection::MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
 	 * @param  long $filter: A filter mask
-	 * @return F3::FLOW3::Reflection::Method Method reflection objects of the methods in this class
+	 * @return F3::FLOW3::Reflection::MethodReflection Method reflection objects of the methods in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethods($filter = NULL) {
@@ -60,98 +60,98 @@ class ReflectionClass extends ReflectionClass {
 
 		$methods = ($filter === NULL ? parent::getMethods() : parent::getMethods($filter));
 		foreach ($methods as $method) {
-			$extendedMethods[] = new F3::FLOW3::Reflection::Method($this->getName(), $method->getName());
+			$extendedMethods[] = new F3::FLOW3::Reflection::MethodReflection($this->getName(), $method->getName());
 		}
 		return $extendedMethods;
 	}
 
 	/**
 	 * Replacement for the original getMethod() method which makes sure
-	 * that F3::FLOW3::Reflection::Method objects are returned instead of the
+	 * that F3::FLOW3::Reflection::MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @return F3::FLOW3::Reflection::Method Method reflection object of the named method
+	 * @return F3::FLOW3::Reflection::MethodReflection Method reflection object of the named method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod($name) {
 		$parentMethod = parent::getMethod($name);
 		if (!is_object($parentMethod)) return $parentMethod;
-		return new F3::FLOW3::Reflection::Method($this->getName(), $parentMethod->getName());
+		return new F3::FLOW3::Reflection::MethodReflection($this->getName(), $parentMethod->getName());
 	}
 
 	/**
 	 * Replacement for the original getConstructor() method which makes sure
-	 * that F3::FLOW3::Reflection::Method objects are returned instead of the
+	 * that F3::FLOW3::Reflection::MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @return F3::FLOW3::Reflection::Method Method reflection object of the constructor method
+	 * @return F3::FLOW3::Reflection::MethodReflection Method reflection object of the constructor method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructor() {
 		$parentConstructor = parent::getConstructor();
 		if (!is_object($parentConstructor)) return $parentConstructor;
-		return new F3::FLOW3::Reflection::Method($this->getName(), $parentConstructor->getName());
+		return new F3::FLOW3::Reflection::MethodReflection($this->getName(), $parentConstructor->getName());
 	}
 
 	/**
 	 * Replacement for the original getProperties() method which makes sure
-	 * that F3::FLOW3::Reflection::Property objects are returned instead of the
+	 * that F3::FLOW3::Reflection::PropertyReflection objects are returned instead of the
 	 * orginal ReflectionProperty instances.
 	 *
 	 * @param  long $filter: A filter mask
-	 * @return array of F3::FLOW3::Reflection::Property Property reflection objects of the properties in this class
+	 * @return array of F3::FLOW3::Reflection::PropertyReflection Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties($filter = NULL) {
 		$extendedProperties = array();
 		$properties = ($filter === NULL ? parent::getProperties() : parent::getProperties($filter));
 		foreach ($properties as $property) {
-			$extendedProperties[] = new F3::FLOW3::Reflection::Property($this->getName(), $property->getName());
+			$extendedProperties[] = new F3::FLOW3::Reflection::PropertyReflection($this->getName(), $property->getName());
 		}
 		return $extendedProperties;
 	}
 
 	/**
 	 * Replacement for the original getProperty() method which makes sure
-	 * that a F3::FLOW3::Reflection::Property object is returned instead of the
+	 * that a F3::FLOW3::Reflection::PropertyReflection object is returned instead of the
 	 * orginal ReflectionProperty instance.
 	 *
 	 * @param  string $name: Name of the property
-	 * @return F3::FLOW3::Reflection::Property Property reflection object of the specified property in this class
+	 * @return F3::FLOW3::Reflection::PropertyReflection Property reflection object of the specified property in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperty($name) {
-		return new F3::FLOW3::Reflection::Property($this->getName(), $name);
+		return new F3::FLOW3::Reflection::PropertyReflection($this->getName(), $name);
 	}
 
 	/**
 	 * Replacement for the original getInterfaces() method which makes sure
-	 * that F3::FLOW3::Reflection::ReflectionClass objects are returned instead of the
+	 * that F3::FLOW3::Reflection::ClassReflection objects are returned instead of the
 	 * orginal ReflectionClass instances.
 	 *
-	 * @return array of F3::FLOW3::Reflection::ReflectionClass Class reflection objects of the properties in this class
+	 * @return array of F3::FLOW3::Reflection::ClassReflection Class reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfaces() {
 		$extendedInterfaces = array();
 		$interfaces = parent::getInterfaces();
 		foreach ($interfaces as $interface) {
-			$extendedInterfaces[] = new F3::FLOW3::Reflection::ReflectionClass($interface->getName());
+			$extendedInterfaces[] = new F3::FLOW3::Reflection::ClassReflection($interface->getName());
 		}
 		return $extendedInterfaces;
 	}
 
 	/**
 	 * Replacement for the original getParentClass() method which makes sure
-	 * that a F3::FLOW3::Reflection::ReflectionClass object is returned instead of the
+	 * that a F3::FLOW3::Reflection::ClassReflection object is returned instead of the
 	 * orginal ReflectionClass instance.
 	 *
-	 * @return F3::FLOW3::Reflection::ReflectionClass Reflection of the parent class - if any
+	 * @return F3::FLOW3::Reflection::ClassReflection Reflection of the parent class - if any
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentClass() {
 		$parentClass = parent::getParentClass();
-		return ($parentClass === NULL) ? NULL : new F3::FLOW3::Reflection::ReflectionClass($parentClass->getName());
+		return ($parentClass === NULL) ? NULL : new F3::FLOW3::Reflection::ClassReflection($parentClass->getName());
 	}
 
 	/**

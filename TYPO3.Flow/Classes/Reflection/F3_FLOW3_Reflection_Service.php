@@ -158,13 +158,13 @@ class Service {
 		$this->availableClassNames = array_unique($availableClassNames);
 
 		foreach ($this->availableClassNames as $className) {
-			$class = new F3::FLOW3::Reflection::ReflectionClass($className);
+			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
 			if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
 		}
 
 		foreach ($this->availableClassNames as $className) {
-			$class = new F3::FLOW3::Reflection::ReflectionClass($className);
+			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			$constructor = $class->getConstructor();
 			if ($constructor instanceof ::ReflectionMethod) {
 				$this->classConstructorMethodNames[$className] = $constructor->getName();

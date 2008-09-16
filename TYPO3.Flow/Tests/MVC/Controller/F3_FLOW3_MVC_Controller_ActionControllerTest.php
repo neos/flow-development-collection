@@ -65,7 +65,7 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 		$request->setControllerActionName('exotic');
 
 		$mockController->processRequest($request, $response);
-		$viewReflection = new F3::FLOW3::Reflection::Property(get_class($mockController), 'view');
+		$viewReflection = new F3::FLOW3::Reflection::PropertyReflection(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
 		$this->assertType('F3::FLOW3::MVC::View::AbstractView', $view, 'The view has either not been set or is not of the expected type.');
@@ -92,7 +92,7 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 		$request->setControllerActionName('thing');
 
 		$mockController->processRequest($request, $response);
-		$viewReflection = new F3::FLOW3::Reflection::Property(get_class($mockController), 'view');
+		$viewReflection = new F3::FLOW3::Reflection::PropertyReflection(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
 		$this->assertType('F3::FLOW3::MVC::View::AbstractView', $view, 'The view has either not been set or is not of the expected type.');

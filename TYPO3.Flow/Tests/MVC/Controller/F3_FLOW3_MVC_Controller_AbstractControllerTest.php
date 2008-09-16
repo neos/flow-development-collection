@@ -42,7 +42,7 @@ class AbstractControllerTest extends F3::Testing::BaseTestCase {
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
 
 		$controller = $this->getMock('F3::FLOW3::MVC::Controller::AbstractController', array(), array($this->componentFactory, $mockPackageManager), 'F3::' . $packageKey . '::Controller', TRUE);
-		$controllerReflection = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::MVC::Controller::AbstractController');
+		$controllerReflection = new F3::FLOW3::Reflection::ClassReflection('F3::FLOW3::MVC::Controller::AbstractController');
 		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
 		$packagePropertyReflection = $controllerReflection->getProperty('package');
 

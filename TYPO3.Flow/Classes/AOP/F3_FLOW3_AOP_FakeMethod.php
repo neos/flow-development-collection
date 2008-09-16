@@ -18,7 +18,7 @@ namespace F3::FLOW3::AOP;
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::MethodReflection.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::Reflection::Method.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:F3::FLOW3::Reflection::MethodReflection.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class FakeMethod extends F3::FLOW3::Reflection::Method {
+class FakeMethod extends F3::FLOW3::Reflection::MethodReflection {
 
 	/**
 	 * @var string
@@ -72,16 +72,16 @@ class FakeMethod extends F3::FLOW3::Reflection::Method {
 	/**
 	 * Returns the declaring class
 	 *
-	 * @return F3::FLOW3::Reflection::ReflectionClass The declaring class
+	 * @return F3::FLOW3::Reflection::ClassReflection The declaring class
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getDeclaringClass() {
-		return new F3::FLOW3::Reflection::ReflectionClass($this->className);
+		return new F3::FLOW3::Reflection::ClassReflection($this->className);
 	}
 
 	/**
 	 * Replacement for the original getParameters() method which makes sure
-	 * that F3::FLOW3::Reflection::Parameter objects are returned instead of the
+	 * that F3::FLOW3::Reflection::ParameterReflection objects are returned instead of the
 	 * orginal ReflectionParameter instances.
 	 *
 	 * @return array

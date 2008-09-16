@@ -143,7 +143,7 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 		}
 		if (!class_exists($className, TRUE)) throw new F3::FLOW3::Component::Exception::UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as a component.', 1200239063);
 		$useReflectionService = $this->reflectionService->isInitialized();
-		if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ReflectionClass($className);
+		if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ClassReflection($className);
 
 		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
 		if ($classIsAbstract) throw new F3::FLOW3::Component::Exception::InvalidClass('Cannot register the abstract class "' . $className . '" as a component.', 1200239129);
@@ -181,7 +181,7 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 			$componentConfiguration->setClassName($className);
 
 			$useReflectionService = $this->reflectionService->isInitialized();
-			if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ReflectionClass($className);
+			if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ClassReflection($className);
 
 			if ($useReflectionService) {
 				if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {

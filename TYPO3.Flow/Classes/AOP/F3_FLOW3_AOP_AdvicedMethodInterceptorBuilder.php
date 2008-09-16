@@ -36,11 +36,11 @@ class AdvicedMethodInterceptorBuilder extends F3::FLOW3::AOP::AbstractMethodInte
 	 *
 	 * @param string $methodName Name of the method to build an interceptor for
 	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3::FLOW3::Reflection::ReflectionClass $targetClass A reflection of the target class to build the interceptor for
+	 * @param F3::FLOW3::Reflection::ClassReflection $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, F3::FLOW3::Reflection::ReflectionClass $targetClass) {
+	static public function build($methodName, array $interceptedMethods, F3::FLOW3::Reflection::ClassReflection $targetClass) {
 		if ($methodName === '__construct') throw new F3::FLOW3::AOP::Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];

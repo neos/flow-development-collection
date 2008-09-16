@@ -61,7 +61,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 */
 	public function defaultCacheDirectoryIsWritable() {
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
-		$propertyReflection = new F3::FLOW3::Reflection::Property($backend, 'cacheDirectory');
+		$propertyReflection = new F3::FLOW3::Reflection::PropertyReflection($backend, 'cacheDirectory');
 		$cacheDirectory = $propertyReflection->getValue($backend);
 		$this->assertTrue(is_writable($cacheDirectory), 'The default cache directory "' . $cacheDirectory . '" is not writable.');
 	}

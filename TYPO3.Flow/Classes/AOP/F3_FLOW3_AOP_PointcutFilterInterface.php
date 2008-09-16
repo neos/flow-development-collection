@@ -35,12 +35,12 @@ interface PointcutFilterInterface {
 	/**
 	 * Checks if the specified class and method matches against the filter
 	 *
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class: The class to check the name of
-	 * @param F3::FLOW3::Reflection::Method $method: The method to check the name of
+	 * @param F3::FLOW3::Reflection::ClassReflection $class: The class to check the name of
+	 * @param F3::FLOW3::Reflection::MethodReflection $method: The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier: Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class / method match, otherwise FALSE
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier);
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier);
 }
 
 ?>

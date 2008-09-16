@@ -42,8 +42,8 @@ class MethodTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection() {
-		$method = new F3::FLOW3::Reflection::Method(__CLASS__, __FUNCTION__);
-		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $method->getDeclaringClass());
+		$method = new F3::FLOW3::Reflection::MethodReflection(__CLASS__, __FUNCTION__);
+		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $method->getDeclaringClass());
 	}
 
 	/**
@@ -51,9 +51,9 @@ class MethodTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParametersReturnsFLOW3sParameterReflection($dummyArg1 = NULL, $dummyArg2 = NULL) {
-		$method = new F3::FLOW3::Reflection::Method(__CLASS__, __FUNCTION__);
+		$method = new F3::FLOW3::Reflection::MethodReflection(__CLASS__, __FUNCTION__);
 		foreach ($method->getParameters() as $parameter) {
-			$this->assertType('F3::FLOW3::Reflection::Parameter', $parameter);
+			$this->assertType('F3::FLOW3::Reflection::ParameterReflection', $parameter);
 			$this->assertEquals(__CLASS__, $parameter->getDeclaringClass()->getName());
 		}
 	}

@@ -31,7 +31,7 @@ class PointcutMethodNameFilterTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pointcutFilterDoesNotMatchFinalMethod() {
-		$targetClass = new F3::FLOW3::Reflection::ReflectionClass('F3::TestPackage::BasicClass');
+		$targetClass = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClass');
 		$targetMethod = $targetClass->getMethod('someFinalMethod');
 
 		$methodNameFilter = new F3::FLOW3::AOP::PointcutMethodNameFilter('.*');

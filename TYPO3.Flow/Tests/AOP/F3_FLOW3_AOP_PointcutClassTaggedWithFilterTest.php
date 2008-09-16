@@ -39,7 +39,7 @@ class PointcutClassTaggedWithFilterTest extends F3::Testing::BaseTestCase {
 	 */
 	public function filterMatchesClassWithSimpleTag() {
 		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('something');
-		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
+		$class = new F3::FLOW3::Reflection::ClassReflection('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}
@@ -50,7 +50,7 @@ class PointcutClassTaggedWithFilterTest extends F3::Testing::BaseTestCase {
 	 */
 	public function filterMatchesClassWithTagWithWildcard() {
 		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('some.*');
-		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
+		$class = new F3::FLOW3::Reflection::ClassReflection('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}
@@ -61,7 +61,7 @@ class PointcutClassTaggedWithFilterTest extends F3::Testing::BaseTestCase {
 	 */
 	public function filterCorrectlyDoesntMatchClassWithoutSpecifiedTag() {
 		$classTaggedWithFilter = new F3::FLOW3::AOP::PointcutClassTaggedWithFilter('any.*');
-		$class = new F3::FLOW3::Reflection::ReflectionClass('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
+		$class = new F3::FLOW3::Reflection::ClassReflection('F3::FLOW3::Tests::AOP::Fixture::ClassTaggedWithSomething');
 		$methods = $class->getMethods();
 		$this->assertFALSE($classTaggedWithFilter->matches($class, $methods[0], microtime()));
 	}

@@ -36,8 +36,8 @@ class ParameterTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3::FLOW3::Reflection::Parameter(array(__CLASS__, 'fixtureMethod'), 'arg2');
-		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $parameter->getDeclaringClass());
+		$parameter = new F3::FLOW3::Reflection::ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
+		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $parameter->getDeclaringClass());
 	}
 
 	/**
@@ -45,8 +45,8 @@ class ParameterTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3::FLOW3::Reflection::Parameter(array(__CLASS__, 'fixtureMethod'), 'arg1');
-		$this->assertType('F3::FLOW3::Reflection::ReflectionClass', $parameter->getClass());
+		$parameter = new F3::FLOW3::Reflection::ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
+		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $parameter->getClass());
 	}
 
 	/**

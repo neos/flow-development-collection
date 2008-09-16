@@ -46,12 +46,12 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
 	 *
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class to check the name of
-	 * @param F3::FLOW3::Reflection::Method $method The method to check the name of
+	 * @param F3::FLOW3::Reflection::ClassReflection $class The class to check the name of
+	 * @param F3::FLOW3::Reflection::MethodReflection $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
 		//if there is a match, lay the configured roles and privileges for this method interception in a cache
 	}
 

@@ -37,7 +37,7 @@ class CustomFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @return TRUE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
 		return TRUE;
 	}
 

@@ -50,13 +50,13 @@ class PointcutClassTaggedWithFilter implements F3::FLOW3::AOP::PointcutFilterInt
 	/**
 	 * Checks if the specified class matches with the class tag filter pattern
 	 *
-	 * @param F3::FLOW3::Reflection::ReflectionClass $class The class to check against
-	 * @param F3::FLOW3::Reflection::ReflectionClassMethod $method The method - not used here
+	 * @param F3::FLOW3::Reflection::ClassReflection $class The class to check against
+	 * @param F3::FLOW3::Reflection::ClassReflectionMethod $method The method - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ReflectionClass $class, F3::FLOW3::Reflection::Method $method, $pointcutQueryIdentifier) {
+	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
 		foreach ($class->getTagsValues() as $tag => $values) {
 			$matchResult =  @preg_match('/^' . $this->classTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {

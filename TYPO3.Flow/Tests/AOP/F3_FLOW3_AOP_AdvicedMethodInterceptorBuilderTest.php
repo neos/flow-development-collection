@@ -31,7 +31,7 @@ class AdvicedMethodInterceptorBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function checkIfParameterOfTypeArrayIsReflectedCorrectly() {
-		$targetClass = new F3::FLOW3::Reflection::ReflectionClass('F3::TestPackage::BasicClass');
+		$targetClass = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClass');
 		$targetMethod = $targetClass->getMethod('methodWhichExpectsAnArrayArgument');
 
 		$builder = new F3::FLOW3::AOP::AdvicedMethodInterceptorBuilder();
