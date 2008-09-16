@@ -80,7 +80,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getAvailablePackagesReturnsAtLeastTheFLOW3Package() {
 		$availablePackages = $this->packageManager->getAvailablePackages();
-		$this->assertTrue(key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getAvailablePackages().');
+		$this->assertTrue(array_key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getAvailablePackages().');
 		$this->assertType('F3::FLOW3::Package::PackageInterface', $availablePackages['FLOW3'], 'The meta information about package "FLOW3" delivered by getAvailablePackages() is not a valid package object.');
 	}
 
@@ -90,7 +90,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getActivePackagesReturnsAtLeastTheFLOW3Package() {
 		$availablePackages = $this->packageManager->getActivePackages();
-		$this->assertTrue(key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getActivePackages().');
+		$this->assertTrue(array_key_exists('FLOW3', $availablePackages), 'The package "FLOW3" was not in the result of getActivePackages().');
 		$this->assertType('F3::FLOW3::Package::PackageInterface', $availablePackages['FLOW3'], 'The meta information about package "FLOW3" delivered by getActiveePackages() is not a valid package object.');
 	}
 

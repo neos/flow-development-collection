@@ -542,7 +542,7 @@ final class FLOW3 {
 				if (!$this->componentManager->isComponentRegistered($componentName)) {
 					throw new F3::FLOW3::Component::Exception::InvalidComponentConfiguration('Tried to configure unknown component "' . $componentName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
 				}
-				$existingComponentConfiguration = (array_key_exists($componentName, $componentConfigurations)) ? $componentConfigurations[$componentName] : NULL;
+				$existingComponentConfiguration = (isset($componentConfigurations[$componentName])) ? $componentConfigurations[$componentName] : NULL;
 				$componentConfigurations[$componentName] = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationContainer($componentName, $rawComponentConfiguration, 'Package ' . $packageKey, $existingComponentConfiguration);
 			}
 		}

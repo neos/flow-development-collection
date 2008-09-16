@@ -170,7 +170,7 @@ class Service {
 				$this->classConstructorMethodNames[$className] = $constructor->getName();
 			}
 			foreach ($class->getInterfaces() as $interface) {
-				if (!key_exists($className, $this->abstractClasses)) {
+				if (!isset($this->abstractClasses[$className])) {
 					$this->interfaceImplementations[$interface->getName()][] = $className;
 				}
 			}
@@ -282,7 +282,7 @@ class Service {
 	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the specified interface does not exist.
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
-		$classNamesFound = key_exists($interfaceName, $this->interfaceImplementations) ? $this->interfaceImplementations[$interfaceName] : array();
+		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
 		return (count($classNamesFound) == 1 ? $classNamesFound[0] : FALSE);
 	}
 
@@ -296,7 +296,7 @@ class Service {
 	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the given interface does not exist
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
-		return key_exists($interfaceName, $this->interfaceImplementations) ? $this->interfaceImplementations[$interfaceName] : array();
+		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
 	}
 
 	/**
@@ -308,7 +308,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassNamesByTag($tag) {
-		return key_exists($tag, $this->taggedClasses) ? $this->taggedClasses[$tag] : array();
+		return (isset($this->taggedClasses[$tag])) ? $this->taggedClasses[$tag] : array();
 	}
 
 	/**
@@ -319,7 +319,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTagsValues($className) {
-		return (key_exists($className, $this->classTagsValues)) ? $this->classTagsValues[$className] : array();
+		return (isset($this->classTagsValues[$className])) ? $this->classTagsValues[$className] : array();
 	}
 
 	/**
@@ -331,8 +331,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTagValues($className, $tag) {
-		if (!key_exists($className, $this->classTagsValues)) return array();
-		return (key_exists($tag, $this->classTagsValues[$className])) ? $this->classTagsValues[$className][$tag] : array();
+		if (!isset($this->classTagsValues[$className])) return array();
+		return (isset($this->classTagsValues[$className][$tag])) ? $this->classTagsValues[$className][$tag] : array();
 	}
 
 	/**
@@ -344,8 +344,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassTaggedWith($className, $tag) {
-		if (!key_exists($className, $this->classTagsValues)) return FALSE;
-		return key_exists($tag, $this->classTagsValues[$className]);
+		if (!isset($this->classTagsValues[$className])) return FALSE;
+		return isset($this->classTagsValues[$className][$tag]);
 	}
 
 	/**
@@ -356,7 +356,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassAbstract($className) {
-		return (key_exists($className, $this->abstractClasses));
+		return isset($this->abstractClasses[$className]);
 	}
 
 	/**
@@ -367,7 +367,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isClassFinal($className) {
-		return (key_exists($className, $this->finalClasses));
+		return isset($this->finalClasses[$className]);
 	}
 
 	/**
@@ -378,7 +378,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassMethodNames($className) {
-		return (key_exists($className, $this->classMethodNames)) ? $this->classMethodNames[$className] : array();
+		return (isset($this->classMethodNames[$className])) ? $this->classMethodNames[$className] : array();
 	}
 
 	/**
@@ -389,7 +389,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassConstructorName($className) {
-		return (key_exists($className, $this->classConstructorMethodNames)) ? $this->classConstructorMethodNames[$className] : NULL;
+		return (isset($this->classConstructorMethodNames[$className])) ? $this->classConstructorMethodNames[$className] : NULL;
 	}
 
 	/**
@@ -400,7 +400,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassPropertyNames($className) {
-		return (key_exists($className, $this->classPropertyNames)) ? $this->classPropertyNames[$className] : array();
+		return (isset($this->classPropertyNames[$className])) ? $this->classPropertyNames[$className] : array();
 	}
 
 	/**
@@ -412,8 +412,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodTagsValues($className, $methodName) {
-		if (!key_exists($className, $this->methodTagsValues)) return array();
-		return (key_exists($methodName, $this->methodTagsValues[$className])) ? $this->methodTagsValues[$className][$methodName] : array();
+		if (!isset($this->methodTagsValues[$className])) return array();
+		return (isset($this->methodTagsValues[$className][$methodName])) ? $this->methodTagsValues[$className][$methodName] : array();
 	}
 
 	/**
@@ -426,10 +426,10 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyNamesByTag($className, $tag) {
-		if (!key_exists($className, $this->propertyTagsValues)) return array();
+		if (!isset($this->propertyTagsValues[$className])) return array();
 		$propertyNames = array();
 		foreach ($this->propertyTagsValues[$className] as $propertyName => $tagsValues) {
-			if (key_exists($tag, $tagsValues)) $propertyNames[$propertyName] = TRUE;
+			if (isset($tagsValues[$tag])) $propertyNames[$propertyName] = TRUE;
 		}
 		return array_keys($propertyNames);
 	}
@@ -443,8 +443,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTagsValues($className, $propertyName) {
-		if (!key_exists($className, $this->propertyTagsValues)) return array();
-		return (key_exists($propertyName, $this->propertyTagsValues[$className])) ? $this->propertyTagsValues[$className][$propertyName] : array();
+		if (!isset($this->propertyTagsValues[$className])) return array();
+		return (isset($this->propertyTagsValues[$className][$propertyName])) ? $this->propertyTagsValues[$className][$propertyName] : array();
 	}
 
 	/**
@@ -457,9 +457,9 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTagValues($className, $propertyName, $tag) {
-		if (!key_exists($className, $this->propertyTagsValues)) return array();
-		if (!key_exists($propertyName, $this->propertyTagsValues[$className])) return array();
-		return (key_exists($tag, $this->propertyTagsValues[$className][$propertyName])) ? $this->propertyTagsValues[$className][$propertyName][$tag] : array();
+		if (!isset($this->propertyTagsValues[$className])) return array();
+		if (!isset($this->propertyTagsValues[$className][$propertyName])) return array();
+		return (isset($this->propertyTagsValues[$className][$propertyName][$tag])) ? $this->propertyTagsValues[$className][$propertyName][$tag] : array();
 	}
 
 	/**
@@ -472,9 +472,9 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPropertyTaggedWith($className, $propertyName, $tag) {
-		if (!key_exists($className, $this->propertyTagsValues)) return FALSE;
-		if (!key_exists($propertyName, $this->propertyTagsValues[$className])) return FALSE;
-		return key_exists($tag, $this->propertyTagsValues[$className][$propertyName]);
+		if (!isset($this->propertyTagsValues[$className])) return FALSE;
+		if (!isset($this->propertyTagsValues[$className][$propertyName])) return FALSE;
+		return isset($this->propertyTagsValues[$className][$propertyName][$tag]);
 	}
 
 }

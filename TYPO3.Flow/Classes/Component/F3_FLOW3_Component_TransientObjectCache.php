@@ -84,7 +84,7 @@ class TransientObjectCache implements F3::FLOW3::Component::ObjectCacheInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function componentObjectExists($componentName) {
-		return key_exists($componentName, $this->componentObjects);
+		return isset($this->componentObjects[$componentName]);
 	}
 
 }

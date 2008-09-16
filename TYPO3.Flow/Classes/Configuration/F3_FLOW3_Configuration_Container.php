@@ -228,7 +228,7 @@ class Container implements ::Countable, ::Iterator, ::ArrayAccess {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __set($optionName, $optionValue) {
-		if ($this->locked && !key_exists($optionName, $this->options)) throw new F3::FLOW3::Configuration::Exception::ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
+		if ($this->locked && !array_key_exists($optionName, $this->options)) throw new F3::FLOW3::Configuration::Exception::ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
 		$this->options[$optionName] = $optionValue;
 		$this->iteratorCount = count($this->options);
 	}

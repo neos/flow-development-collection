@@ -51,7 +51,7 @@ class Manager {
 	 */
 	public function registerCache(F3::FLOW3::Cache::AbstractCache $cache) {
 		$identifier = $cache->getIdentifier();
-		if (key_exists($identifier, $this->caches)) throw new F3::FLOW3::Cache::Exception::DuplicateIdentifier('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+		if (isset($this->caches[$identifier])) throw new F3::FLOW3::Cache::Exception::DuplicateIdentifier('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		$this->caches[$identifier] = $cache;
 	}
 
@@ -63,7 +63,7 @@ class Manager {
 	 * @throws F3::FLOW3::Cache::Exception::NoSuchCache
 	 */
 	public function getCache($identifier) {
-		if (!key_exists($identifier, $this->caches)) throw new F3::FLOW3::Cache::Exception::NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+		if (!isset($this->caches[$identifier])) throw new F3::FLOW3::Cache::Exception::NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
 		return $this->caches[$identifier];
 	}
 
@@ -75,7 +75,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasCache($identifier) {
-		return key_exists($identifier, $this->caches);
+		return isset($this->caches[$identifier]);
 	}
 
 	/**

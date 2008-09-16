@@ -225,7 +225,7 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 	 */
 	public function isComponentRegistered($componentName) {
 		if (!is_string($componentName)) throw new InvalidArgumentException('The component name must be of type string, ' . gettype($componentName) . ' given.', 1181907931);
-		return key_exists($componentName, $this->registeredComponents);
+		return isset($this->registeredComponents[$componentName]);
 	}
 
 	/**
@@ -295,7 +295,7 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 		foreach ($newComponentConfigurations as $newComponentConfiguration) {
 			if (!$newComponentConfiguration instanceof F3::FLOW3::Component::Configuration) throw new InvalidArgumentException('The new component configuration must be an instance of F3::FLOW3::Component::Configuration', 1167826954);
 			$componentName = $newComponentConfiguration->getComponentName();
-			if (!key_exists($componentName, $this->componentConfigurations) || $this->componentConfigurations[$componentName] !== $newComponentConfiguration) {
+			if (!isset($this->componentConfigurations[$componentName]) || $this->componentConfigurations[$componentName] !== $newComponentConfiguration) {
 				$this->setComponentConfiguration($newComponentConfiguration);
 			}
 		}

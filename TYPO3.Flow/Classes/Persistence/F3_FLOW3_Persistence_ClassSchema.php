@@ -143,7 +143,7 @@ class ClassSchema {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasProperty($propertyName) {
-		return key_exists($propertyName, $this->properties);
+		return array_key_exists($propertyName, $this->properties);
 	}
 
 	/**

@@ -37,7 +37,7 @@ class EventDispatcher implements F3::FLOW3::Event::EventDispatcherInterface {
 	 *
 	 * @var array Array of registered listeners. Key = Event type, value = Closure to execute when Event occurs.
 	 */
-	protected $listeners;
+	protected $listeners = array();
 
 	/**
 	 * Adds an Event listener method (Closure) to the internal listeners collection.
@@ -61,7 +61,7 @@ class EventDispatcher implements F3::FLOW3::Event::EventDispatcherInterface {
 	 */
 	public function dispatchEvent(F3::FLOW3::Event::Event $event) {
 		$type = $event->getType();
-		if (!key_exists($type, $this->listeners) || !is_array($this->listeners[$type])) {
+		if (!isset($this->listeners[$type]) || !is_array($this->listeners[$type])) {
 			return;
 		}
 		foreach($this->listeners[$type] as $listener) {

@@ -96,7 +96,7 @@ class Manager {
 		}
 		$URIString = (string)$URI;
 
-		if (key_exists($URIString, $this->loadedResources)) {
+		if (isset($this->loadedResources[$URIString])) {
 			return $this->loadedResources[$URIString];
 		}
 

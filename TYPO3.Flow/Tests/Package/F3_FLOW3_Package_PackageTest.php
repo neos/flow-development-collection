@@ -74,8 +74,8 @@ class PackageTest extends F3::Testing::BaseTestCase {
 		$package = new F3::FLOW3::Package::Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
 		$classFiles = $package->getClassFiles();
 
-		$this->assertTrue(key_exists('F3::TestPackage::BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
-		$this->assertTrue(key_exists('F3::TestPackage::SubDirectory::ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
+		$this->assertTrue(array_key_exists('F3::TestPackage::BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
+		$this->assertTrue(array_key_exists('F3::TestPackage::SubDirectory::ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
 		$this->assertTrue($classFiles['F3::TestPackage::BasicClass'] == 'F3_TestPackage_BasicClass.php', 'Class files array contains wrong path for BasicClass!');
 		$this->assertTrue($classFiles['F3::TestPackage::SubDirectory::ClassInSubDirectory'] == 'SubDirectory/F3_TestPackage_SubDirectory_ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
 	}

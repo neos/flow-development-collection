@@ -86,13 +86,13 @@ class Arrays {
 	public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {
-			if (key_exists($key, $firstArray) && is_array($firstArray[$key])) {
+			if (array_key_exists($key, $firstArray) && is_array($firstArray[$key])) {
 				if (is_array($secondArray[$key])) {
 					$firstArray[$key] = self::arrayMergeRecursiveOverrule($firstArray[$key], $secondArray[$key], $dontAddNewKeys, $emptyValuesOverride);
 				}
 			} else {
 				if ($dontAddNewKeys) {
-					if (key_exists($key, $firstArray)) {
+					if (array_key_exists($key, $firstArray)) {
 						if ($emptyValuesOverride || !empty($value)) {
 							$firstArray[$key] = $value;
 						}

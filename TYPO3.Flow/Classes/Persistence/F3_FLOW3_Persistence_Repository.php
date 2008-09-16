@@ -74,7 +74,7 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	 */
 	public function remove($object) {
 		$objectHash = spl_object_hash($object);
-		if (!key_exists($objectHash, $this->objects)) return;
+		if (!isset($this->objects[$objectHash])) return;
 		unset ($this->objects[$objectHash]);
 	}
 

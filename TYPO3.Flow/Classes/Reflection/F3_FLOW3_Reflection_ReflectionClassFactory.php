@@ -70,7 +70,7 @@ class ReflectionClassFactory {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reflect($className) {
-		if (key_exists($className, $this->reflections)) {
+		if (isset($this->reflections[$className])) {
 			return $this->reflections[$className];
 		} else {
 			$this->reflections[$className] = new F3::FLOW3::Reflection::ReflectionClass($className);

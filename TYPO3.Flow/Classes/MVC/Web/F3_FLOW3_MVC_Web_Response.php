@@ -115,7 +115,7 @@ class Response extends F3::FLOW3::MVC::Response {
 	 */
 	public function setStatus($code, $message = NULL) {
 		if (!is_int($code)) throw new InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
-		if ($message === NULL && !key_exists($code, $this->statusMessages)) throw new InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
+		if ($message === NULL && !isset($this->statusMessages[$code])) throw new InvalidArgumentException('No message found for HTTP status code "' . $code . '".', 1220526014);
 
 		$this->statusCode = $code;
 		$this->statusMessage = ($message === NULL) ? $this->statusMessages[$code] : $message;
@@ -142,7 +142,7 @@ class Response extends F3::FLOW3::MVC::Response {
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
 		if (strtoupper(substr($name, 0, 4)) == 'HTTP') throw new InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
-		if ($replaceExistingHeader === TRUE || !key_exists($name, $this->headers)) {
+		if ($replaceExistingHeader === TRUE || !isset($this->headers[$name])) {
 			$this->headers[$name] = array($value);
 		} else {
 			$this->headers[$name][] = $value;

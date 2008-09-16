@@ -96,8 +96,8 @@ class Locale {
 		if (preg_match(self::PATTERN_MATCH_LOCALEIDENTIFIER, $localeIdentifier, $matches) === 0) throw new F3::FLOW3::Locale::Exception::InvalidLocaleIdentifier('"' . $localeIdentifier . '" is not a valid locale identifier.', 1221137814);
 
 		$this->language = strtolower($matches['language']);
-		if (key_exists('script', $matches)) $this->script = ucfirst(strtolower($matches['script']));
-		if (key_exists('region', $matches)) $this->region = strtoupper($matches['region']);
+		if (isset($matches['script'])) $this->script = ucfirst(strtolower($matches['script']));
+		if (isset($matches['region'])) $this->region = strtoupper($matches['region']);
 	}
 
 	/**

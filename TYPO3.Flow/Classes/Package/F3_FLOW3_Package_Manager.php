@@ -85,7 +85,7 @@ class Manager implements F3::FLOW3::Package::ManagerInterface {
 	 */
 	public function isPackageAvailable($packageKey) {
 		if (!is_string($packageKey)) throw new InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
-		return (key_exists($packageKey, $this->packages));
+		return (isset($this->packages[$packageKey]));
 	}
 
 	/**
@@ -136,8 +136,7 @@ class Manager implements F3::FLOW3::Package::ManagerInterface {
 	 */
 	public function getCaseSensitivePackageKey($unknownCasedPackageKey) {
 		$lowerCasedPackageKey = strtolower($unknownCasedPackageKey);
-		if (!array_key_exists($lowerCasedPackageKey, $this->packageKeys)) return FALSE;
-		return $this->packageKeys[$lowerCasedPackageKey];
+		return (isset($this->packageKeys[$lowerCasedPackageKey])) ? $this->packageKeys[$lowerCasedPackageKey] : FALSE;
 	}
 
 	/**

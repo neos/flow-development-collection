@@ -91,7 +91,7 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 */
 	public function getData($key) {
 		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043308);
-		return (key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
+		return (array_key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
 	}
 
 	/**

@@ -58,7 +58,7 @@ class Session {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isNew($object) {
-		return array_key_exists(spl_object_hash($object), $this->newObjects);
+		return isset($this->newObjects[spl_object_hash($object)]);
 	}
 
 	/**
