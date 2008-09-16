@@ -129,7 +129,7 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function indexAction() {
-		return 'No default action has been implemented yet for this controller.';
+		return 'No index action has been implemented yet for this controller.';
 	}
 }
 ?>
