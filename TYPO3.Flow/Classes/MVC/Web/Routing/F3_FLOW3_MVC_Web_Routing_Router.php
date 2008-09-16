@@ -86,6 +86,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 			$route->setUrlPattern($routeConfiguration->urlPattern);
 			$route->setDefaults($routeConfiguration->defaults);
 			if (isset($routeConfiguration->controllerComponentNamePattern)) $route->setControllerComponentNamePattern($routeConfiguration->controllerComponentNamePattern);
+			if (isset($routeConfiguration->viewComponentNamePattern)) $route->setViewComponentNamePattern($routeConfiguration->viewComponentNamePattern);
 			$this->routes[$routeName] = $route;
 		}
 	}
@@ -131,6 +132,9 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 				}
 				$pattern = $route->getControllerComponentNamePattern();
 				if ($pattern !== NULL) $request->setControllerComponentNamePattern($pattern);
+
+				$pattern = $route->getViewComponentNamePattern();
+				if ($pattern !== NULL) $request->setViewComponentNamePattern($pattern);
 				break;
 			}
 		}

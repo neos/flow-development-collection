@@ -45,27 +45,38 @@ class Request {
 	protected $packageManager;
 
 	/**
-	 * @var string Pattern after which the controller component name is built
+	 * Pattern after which the controller component name is built
+	 *
+	 * @var string
 	 */
-	protected $controllerComponentNamePattern = 'F3::@package::Controller::@controller';
+	protected $controllerComponentNamePattern = 'F3::@package::Controller::@controllerController';
 
 	/**
-	 * @var string Package key of the controller which is supposed to handle this request.
+	 * Pattern after which the view component name is built
+	 *
+	 * @var string
+	 */
+	protected $viewComponentNamePattern = 'F3::@package::View::@controller@action@format';
+
+	/**
+	 * Package key of the controller which is supposed to handle this request.
+	 *
+	 * @var string
 	 */
 	protected $controllerPackageKey = 'FLOW3';
 
 	/**
 	 * @var string Component name of the controller which is supposed to handle this request.
 	 */
-	protected $controllerName = 'DefaultController';
+	protected $controllerName = 'Default';
 
 	/**
 	 * @var string Name of the action the controller is supposed to take.
 	 */
-	protected $controllerActionName = 'default';
+	protected $controllerActionName = 'index';
 
 	/**
-	 * @var ::ArrayObject The arguments for this request
+	 * @var ArrayObject The arguments for this request
 	 */
 	protected $arguments;
 
@@ -173,6 +184,50 @@ class Request {
 	 */
 	public function getControllerComponentNamePattern() {
 		return $this->controllerComponentNamePattern;
+	}
+
+	/**
+	 * Sets the pattern for building the view component name
+	 *
+	 * @param string $pattern The view component name pattern, eg. F3::@package::View::@controller@action
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setViewComponentNamePattern($pattern) {
+		if (!is_string($pattern)) throw new ::InvalidArgumentException('The view component name pattern must be a valid string, ' . gettype($pattern) . ' given.', 1221563219);
+		$this->viewComponentNamePattern = $pattern;
+	}
+
+	/**
+	 * Returns the View Component Name Pattern
+	 *
+	 * @return string The pattern
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getViewComponentNamePattern() {
+		return $this->viewComponentNamePattern;
+	}
+
+	/**
+	 * Returns the view's (possible) component name according to the defined view component
+	 * name pattern and the specified values for package, controller, action and format.
+	 *
+	 * If no valid view component name could be resolved, FALSE is returned
+	 *
+	 * @return mixed Either the view component name or FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getViewComponentName() {
+		$possibleViewName = $this->viewComponentNamePattern;
+		$possibleViewName = str_replace('@package', $this->controllerPackageKey, $possibleViewName);
+		$possibleViewName = str_replace('@controller', $this->controllerName, $possibleViewName);
+		$possibleViewName = str_replace('@action', $this->controllerActionName, $possibleViewName);
+
+		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName(str_replace('@format', $this->format, $possibleViewName));
+		if ($viewComponentName === FALSE) {
+			$viewComponentName = $this->componentManager->getCaseSensitiveComponentName(str_replace('@format', '', $possibleViewName));
+		}
+		return $viewComponentName;
 	}
 
 	/**

@@ -12,13 +12,13 @@ declare(ENCODING="utf-8");
 
 $c->fallback
 	->setUrlPattern('[dummy]')
-	->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controller')
+	->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controllerController')
 	->setDefaults(
 		array(
 			'dummy' => 'foo',
 			'@package' => 'FLOW3',
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 		)
 	);
 
@@ -29,8 +29,8 @@ $c->default
 	->setUrlPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 			'@format' => 'html'
 		)
 	);
@@ -42,8 +42,8 @@ $c->defaultWithFormat
 	->setUrlPattern('[@package]/[@controller]/[@action].[@format]')
 	->setDefaults(
 		array(
-			'@controller' => 'DefaultController',
-			'@action' => 'default',
+			'@controller' => 'Default',
+			'@action' => 'index',
 			'@format' => 'html'
 		)
 	);

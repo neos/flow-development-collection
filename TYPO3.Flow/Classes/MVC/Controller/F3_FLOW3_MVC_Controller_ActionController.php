@@ -37,11 +37,6 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	protected $componentManager;
 
 	/**
-	 * @var string Method name of the default action. Set it to the name of another action to define an alternative method as the default action.
-	 */
-	protected $defaultActionMethodName = 'defaultAction';
-
-	/**
 	 * @var boolean If initializeView() should be called on an action invocation.
 	 */
 	protected $initializeView = TRUE;
@@ -84,7 +79,7 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 */
 	protected function callActionMethod() {
-		$actionMethodName = ($this->request->getControllerActionName() == 'default') ? $this->defaultActionMethodName : $this->request->getControllerActionName() . 'Action';
+		$actionMethodName = $this->request->getControllerActionName() . 'Action';
 
 		if (!method_exists($this, $actionMethodName)) throw new F3::FLOW3::MVC::Exception::NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
@@ -104,19 +99,10 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$possibleViewName = str_replace('Controller', 'View', $this->request->getControllerComponentNamePattern());
-		$possibleViewName = str_replace('@package', $this->request->getControllerPackageKey(), $possibleViewName);
-		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
-		$possibleViewName .= '::'  . F3::PHP6::Functions::ucfirst($this->request->getControllerActionName());
-
-		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName . F3::PHP6::Functions::ucfirst($this->request->getFormat()));
-		if ($viewComponentName === FALSE) {
-			$viewComponentName = $this->componentManager->getCaseSensitiveComponentName($possibleViewName);
-		}
+		$viewComponentName = $this->request->getViewComponentName();
 		if ($viewComponentName === FALSE) {
 			$viewComponentName = 'F3::FLOW3::MVC::View::EmptyView';
 		}
-
 		$this->view = $this->componentFactory->getComponent($viewComponentName);
 		$this->view->setRequest($this->request);
 	}
@@ -142,7 +128,7 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function defaultAction() {
+	protected function indexAction() {
 		return 'No default action has been implemented yet for this controller.';
 	}
 }

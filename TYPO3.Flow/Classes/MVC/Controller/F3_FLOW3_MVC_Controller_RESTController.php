@@ -66,8 +66,8 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	protected function callActionMethod() {
 #		if ($this->arguments['identifier']->isValid() === FALSE) $this->throwStatus(400);
 
-		if ($this->request->getControllerActionName() == 'default') {
-			$actionName = 'default';
+		if ($this->request->getControllerActionName() == 'index') {
+			$actionName = 'index';
 			switch ($this->request->getMethod()) {
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET :
 					$actionName = ($this->arguments['identifier']->getValue() === NULL) ? 'list' : 'show';

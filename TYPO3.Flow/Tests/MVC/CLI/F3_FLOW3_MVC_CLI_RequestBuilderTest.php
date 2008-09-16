@@ -92,7 +92,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 3;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 
 		$request = $this->requestBuilder->build();
 		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
@@ -108,7 +108,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 4;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
@@ -126,7 +126,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=value2';
@@ -148,7 +148,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 12;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=';
 		$this->environment->SERVER['argv'][5] = 'value';
@@ -180,7 +180,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 10;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '-d';
 		$this->environment->SERVER['argv'][5] = 'valued';
@@ -207,7 +207,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argc'] = 27;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'DefaultController';
+		$this->environment->SERVER['argv'][2] = 'Default';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=';

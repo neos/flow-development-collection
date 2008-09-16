@@ -55,6 +55,11 @@ class Route {
 	protected $controllerComponentNamePattern = NULL;
 
 	/**
+	 * @var string
+	 */
+	protected $viewComponentNamePattern = NULL;
+
+	/**
 	 * Contains the routing results (indexed by "package", "controller" and "action") after a successful call of matches()
 	 *
 	 * @var array
@@ -146,12 +151,36 @@ class Route {
 	/**
 	 * Returns the custom controller component name pattern.
 	 *
-	 * @return string Teh pattern or NULL if none was defined
+	 * @return string The pattern or NULL if none was defined
 	 * @see F3::FLOW3::MVC::Web::Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerComponentNamePattern() {
 		return $this->controllerComponentNamePattern;
+	}
+
+	/**
+	 * Sets a custom view component name pattern which will be
+	 * passed to the web request.
+	 *
+	 * @param string $pattern A pattern which may contain placeholders
+	 * @return void
+	 * @see F3::FLOW3::MVC::Web::Request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setViewComponentNamePattern($pattern) {
+		$this->viewComponentNamePattern = $pattern;
+	}
+
+	/**
+	 * Returns the custom view component name pattern.
+	 *
+	 * @return string The pattern or NULL if none was defined
+	 * @see F3::FLOW3::MVC::Web::Request
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getViewComponentNamePattern() {
+		return $this->viewComponentNamePattern;
 	}
 
 	/**

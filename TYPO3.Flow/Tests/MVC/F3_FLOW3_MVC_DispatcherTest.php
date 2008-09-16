@@ -158,7 +158,7 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	public function theDispatcherInitializesTheSecurityContextWithTheGivenRequest() {
 		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controller');
+		$request->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controllerController');
 		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$securityContextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface', array('initializeContext', 'setContext', 'getContext', 'clearContext'));
@@ -175,7 +175,7 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	public function theDispatcherCallsTheFirewallWithTheGivenRequest() {
 		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controller');
+		$request->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controllerController');
 		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$firewall = $this->getMock('F3::FLOW3::Security::Authorization::FirewallInterface');

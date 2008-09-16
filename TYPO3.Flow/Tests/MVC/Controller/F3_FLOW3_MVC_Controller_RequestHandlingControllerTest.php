@@ -94,7 +94,7 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 		$controller->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
 
 		$controller->processRequest($request, $response);
-		$controller->forward('default');
+		$controller->forward('index');
 	}
 
 	/**
@@ -111,7 +111,7 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 		$controller->processRequest($request, $response);
 		$this->assertTrue($request->isDispatched());
 		try {
-			$controller->forward('default');
+			$controller->forward('index');
 		} catch(F3::FLOW3::MVC::Exception::StopAction $exception) {
 		}
 		$this->assertFalse($request->isDispatched());

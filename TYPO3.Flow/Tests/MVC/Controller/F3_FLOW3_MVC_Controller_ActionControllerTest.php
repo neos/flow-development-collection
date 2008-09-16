@@ -90,6 +90,7 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Some');
 		$request->setControllerActionName('thing');
+		$request->setViewComponentNamePattern('F3::@package::View::@controller::@action');
 
 		$mockController->processRequest($request, $response);
 		$viewReflection = new F3::FLOW3::Reflection::PropertyReflection(get_class($mockController), 'view');

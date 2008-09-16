@@ -113,7 +113,7 @@
         <programlisting language="PHP">namespace F3::Demo::Controller;
 
 class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
-   public function defaultAction() {
+   public function indexAction() {
       return "Hello World!";
    }
 }</programlisting>
@@ -163,7 +163,7 @@ class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
         <programlisting>namespace F3::Demo::Controller;
 
 class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
-   public function defaultAction() {
+   public function indexAction() {
       return $this-&gt;view-&gt;render();
    }
 }</programlisting>
@@ -411,7 +411,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
       <section>
         <title>Action Methods</title>
 
-        <para>$this-&gt;defaultActionMethodName</para>
+        <para>$this-&gt;indexActionMethodName</para>
 
         <para></para>
       </section>
