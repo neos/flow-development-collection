@@ -37,7 +37,7 @@ class ErrorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function theConstructorSetsTheErrorMessageCorrectly() {
 		$errorMessage = 'The message';
-		$error = new Error($errorMessage, 0);
+		$error = new F3::FLOW3::Error::Error($errorMessage, 0);
 
 		$this->assertEquals($errorMessage, $error->getErrorMessage());
 	}
@@ -48,7 +48,7 @@ class ErrorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function theConstructorSetsTheErrorCodeCorrectly() {
 		$errorCode = 123456789;
-		$error = new Error('', $errorCode);
+		$error = new F3::FLOW3::Error::Error('', $errorCode);
 
 		$this->assertEquals($errorCode, $error->getErrorCode());
 	}

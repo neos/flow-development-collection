@@ -101,8 +101,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function route(F3::FLOW3::MVC::Web::Request $request) {
-		$requestURI = $request->getRequestURI();
-		$requestPath = F3::PHP6::Functions::substr($requestURI->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
+		$requestPath = F3::PHP6::Functions::substr($request->getRequestURI()->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
 		if (F3::PHP6::Functions::substr($requestPath, 0, 9) == 'index.php' || F3::PHP6::Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}
@@ -139,12 +138,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 			}
 		}
 
-		foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
-			$request->setArgument($argumentName, $argumentValue);
-		}
-		foreach ($requestURI->getArguments() as $argumentName => $argumentValue) {
-			$request->setArgument($argumentName, $argumentValue);
-		}
+		$this->setArgumentsFromRawRequestData($request);
 	}
 
 	/**
@@ -163,6 +157,37 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 			}
 		}
 		return '';
+	}
+
+	/**
+	 * Takes the raw request data and - depending on the request method
+	 * maps them into the request object. Afterwards all mapped arguments
+	 * can be retrieved by the getArgument(s) method, no matter if they
+	 * have been GET, POST or PUT arguments before.
+	 *
+	 * @param F3::FLOW3::MVC::Web::Request $request The web request which will contain the arguments
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function setArgumentsFromRawRequestData(F3::FLOW3::MVC::Web::Request $request) {
+		switch ($request->getMethod()) {
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST:
+				foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
+					$request->setArgument($argumentName, $argumentValue);
+				}
+			break;
+			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT:
+				$putArguments = array();
+				parse_str(file_get_contents("php://input"), $putArguments);
+				foreach ($putArguments as $argumentName => $argumentValue) {
+					$request->setArgument($argumentName, $argumentValue);
+				}
+			break;
+		}
+
+		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
+			$request->setArgument($argumentName, $argumentValue);
+		}
 	}
 }
 ?>

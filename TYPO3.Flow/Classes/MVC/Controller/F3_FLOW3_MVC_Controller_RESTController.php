@@ -76,6 +76,7 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 					$actionName = 'create';
 				break;
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT :
+					if ($this->arguments['identifier']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
 					$actionName = 'update';
 				break;
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE :
@@ -94,13 +95,13 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * by the action methods.
 	 *
 	 * NOTE: If you override this method, don't forget to call the parent
-	 * method as well.
+	 * method as well (or define the identifier own your own).
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeArguments() {
-		$this->arguments->addNewArgument('identifier');
+		$this->arguments->addNewArgument('identifier', 'UUID');
 	}
 }
 ?>
