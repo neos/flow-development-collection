@@ -36,7 +36,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
@@ -47,7 +47,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
@@ -58,10 +58,38 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForANullValue() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
+		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$notEmptyValidator->isValidProperty('', $validationErrors);
+
+		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertEquals(1221560718, $validationErrors[0]->getErrorCode());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
+		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$notEmptyValidator->isValidProperty(NULL, $validationErrors);
+
+		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertEquals(1221560910, $validationErrors[0]->getErrorCode());
 	}
 }
 

@@ -36,7 +36,7 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorReturnsTrueForASimpleFloat() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new F3::FLOW3::Validation::Validator::Float($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($floatValidator->isValidProperty(1029437.234726, $validationErrors));
@@ -47,7 +47,7 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorReturnsFalseForASimpleInteger() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new F3::FLOW3::Validation::Validator::Float($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($floatValidator->isValidProperty(1029437, $validationErrors));
@@ -58,10 +58,24 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorReturnsFalseForAString() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new F3::FLOW3::Validation::Validator::Float($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($floatValidator->isValidProperty('not a number', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$floatValidator = new F3::FLOW3::Validation::Validator::Float($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$floatValidator->isValidProperty(123456, $validationErrors);
+
+		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertEquals(1221560288, $validationErrors[0]->getErrorCode());
 	}
 }
 

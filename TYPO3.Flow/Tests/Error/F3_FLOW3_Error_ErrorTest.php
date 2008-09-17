@@ -17,58 +17,40 @@ namespace F3::FLOW3::Error;
 
 /**
  * @package FLOW3
- * @subpackage Error
+ * @subpackage Tests
+ * @version $Id: $
  */
 
 /**
- * An object representation of a generic error. Subclass this to create
- * more specific errors if necessary.
+ * Testcase for the alphanumeric validator
  *
  * @package FLOW3
- * @subpackage Error
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id: $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Error {
+class ErrorTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var string The default (english) error message.
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected $message = 'Unknown error';
+	public function theConstructorSetsTheErrorMessageCorrectly() {
+		$errorMessage = 'The message';
+		$error = new Error($errorMessage, 0);
 
-	/**
-	 * @var string The error code
-	 */
-	protected $code;
-
-	/**
-	 * Constructs this error
-	 *
-	 * @param string $message: An english error message which is used if no other error message can be resolved
-	 * @param integer $code: A unique error code
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($message, $code) {
-		$this->message = $message;
-		$this->code = $code;
+		$this->assertEquals($errorMessage, $error->getErrorMessage());
 	}
 
 	/**
-	 * Returns the error message
-	 * @return string The error message
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getErrorMessage() {
-		return $this->message;
-	}
+	public function theConstructorSetsTheErrorCodeCorrectly() {
+		$errorCode = 123456789;
+		$error = new Error('', $errorCode);
 
-	/**
-	 * Returns the error code
-	 * @return string The error code
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getErrorCode() {
-		return $this->code;
+		$this->assertEquals($errorCode, $error->getErrorCode());
 	}
 }
 

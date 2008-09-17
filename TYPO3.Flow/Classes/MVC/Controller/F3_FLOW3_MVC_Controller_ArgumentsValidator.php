@@ -82,6 +82,8 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 		foreach ($object as $argument) {
 			$isValid &= $this->validateProperty($object, $argument->getName(), $errors);
 		}
+
+		return (boolean)$isValid;
 	}
 
 	/**
@@ -97,13 +99,18 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 	public function validateProperty($object, $propertyName, F3::FLOW3::Validation::Errors &$errors) {
 		if (!$object instanceof F3::FLOW3::MVC::Controller::Arguments) throw new F3::FLOW3::Validation::Exception::InvalidSubject('The specified object cannot be validated by this validator.', 1216720830);
 
-		$isValid = TRUE;
-		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $errors);
-		$datatypeValidator = $object[$propertyName]->getDatatypeValidator();
-		$isValid &= $datatypeValidator->isValidProperty($object[$propertyName]->getValue(), $errors);
+		$propertyValidatorErrors = $this->createNewValidationErrorsObject();
 
-		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3::FLOW3::Validation::Error');
-		return $isValid;
+		$isValid = TRUE;
+		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $propertyValidatorErrors);
+		$datatypeValidator = $object[$propertyName]->getDatatypeValidator();
+		$isValid &= $datatypeValidator->isValidProperty($object[$propertyName]->getValue(), $propertyValidatorErrors);
+
+		if (!$isValid) {
+			$errors[$propertyName] = $propertyValidatorErrors;
+		}
+
+		return (boolean)$isValid;
 	}
 
 	/**
@@ -122,7 +129,17 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $errors);
 
 		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3::FLOW3::Validation::Error');
-		return $isValid;
+		return (boolean)$isValid;
+	}
+
+	/**
+	 * This is a factory method to get a clean validation errors object
+	 *
+	 * @return F3::FLOW3::Validation::Errors An empty errors object
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function createNewValidationErrorsObject() {
+		return $this->componentFactory->getComponent('F3::FLOW3::Validation::Errors');
 	}
 }
 ?>

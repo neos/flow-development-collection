@@ -36,7 +36,7 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($emailAddressValidator->isValidProperty('andreas.foerthner@netlogix.de', $validationErrors));
@@ -47,10 +47,24 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailAddressValidatorReturnsFalseForAnIncompleteEmailAddress() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($emailAddressValidator->isValidProperty('andreas.foerthner@netlogix', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);
+
+		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertEquals(1221559976, $validationErrors[0]->getErrorCode());
 	}
 }
 

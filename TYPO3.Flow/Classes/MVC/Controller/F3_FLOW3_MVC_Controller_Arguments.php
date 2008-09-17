@@ -244,6 +244,7 @@ class Arguments extends ::ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function translateToLongArgumentName($argumentName) {
+
 		if (in_array($argumentName, $this->getArgumentNames())) return $argumentName;
 
 		foreach ($this as $argument) {

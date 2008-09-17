@@ -36,7 +36,7 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsTrueForASimpleInteger() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($integerValidator->isValidProperty(1029437, $validationErrors));
@@ -47,7 +47,7 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAString() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($integerValidator->isValidProperty('not a number', $validationErrors));
@@ -58,10 +58,24 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAFloat() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($integerValidator->isValidProperty(3.1415, $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$integerValidator->isValidProperty('not a number', $validationErrors);
+
+		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertEquals(1221560494, $validationErrors[0]->getErrorCode());
 	}
 }
 

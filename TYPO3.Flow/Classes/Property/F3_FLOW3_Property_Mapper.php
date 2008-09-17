@@ -259,6 +259,7 @@ class Mapper {
 		if ($this->validator === NULL) $this->resolveValidator();
 
 		foreach ($properties as $propertyName => $propertyValue) {
+
 			if ($this->isAllowedProperty($propertyName)) {
 
 				$propertyValue = $this->invokeFilter($propertyName, $propertyValue);
@@ -448,10 +449,17 @@ class Mapper {
 	 */
 	protected function validateTarget() {
 		if ($this->validator != NULL) {
-			$errors = $this->createNewValidationErrorsObject();
-			if (!$this->validator->validate($this->target, $errors)) {
-				foreach ($errors as $propertyName => $error) {
-					$this->mappingResults->addError($error, $propertyName);
+			$objectValidatorErrors = $this->createNewValidationErrorsObject();
+
+			if (!$this->validator->validate($this->target, $objectValidatorErrors)) {
+				foreach ($objectValidatorErrors as $propertyName => $objectValidatorError) {
+					if ($objectValidatorError instanceof F3::FLOW3::Validation::Errors) {
+						foreach ($objectValidatorError as $error) {
+							$this->mappingResults->addError($error, $propertyName);
+						}
+					} else {
+						$this->mappingResults->addError($objectValidatorError, $propertyName);
+					}
 				}
 			}
 		}

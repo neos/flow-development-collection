@@ -28,6 +28,7 @@ namespace F3::FLOW3::Validation;
  * @subpackage Validation
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Error extends F3::FLOW3::Error::Error {
 
