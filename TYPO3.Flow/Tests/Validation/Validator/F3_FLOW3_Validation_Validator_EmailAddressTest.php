@@ -35,7 +35,7 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress() {
+	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress1() {
 		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
 		$emailAddressValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
@@ -69,6 +69,57 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
 		$this->assertEquals(1221559976, $validationErrors[0]->getErrorCode());
 	}
+
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress2() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($emailAddressValidator->isValidProperty('user@localhost', $validationErrors), 'user@localhost was rejected.');
+	}
+
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress3() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($emailAddressValidator->isValidProperty('user@localhost.localdomain', $validationErrors), 'user@localhost.localdomain was rejected.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress4() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($emailAddressValidator->isValidProperty('info@guggenheim.museum', $validationErrors), 'info@guggenheim.museum was rejected.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress5() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($emailAddressValidator->isValidProperty('just@test.invalid', $validationErrors), 'just@test.invalid was rejected.');
+	}
+
 }
 
 ?>
