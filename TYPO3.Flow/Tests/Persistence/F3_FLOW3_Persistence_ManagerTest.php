@@ -72,10 +72,11 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
 
-		$mockReflectionService->expects($this->any())->method('getClassNamesByTag')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
 
 		$manager = new F3::FLOW3::Persistence::Manager($mockReflectionService, $mockClassSchemataBuilder);
 		$manager->injectBackend($mockBackend);
+		$manager->injectSession(new F3::FLOW3::Persistence::Session());
 
 		$manager->persistAll();
 	}
