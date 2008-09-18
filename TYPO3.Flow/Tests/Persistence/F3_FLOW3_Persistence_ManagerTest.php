@@ -21,6 +21,9 @@ namespace F3::FLOW3::Persistence;
  * @version $Id$
  */
 
+require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Entity2.php');
+require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Entity3.php');
+
 /**
  * Testcase for the Persistence Manager
  *
@@ -69,14 +72,57 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function persistAllWorksIfNoRepositoryClassesAreFound() {
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
 
-		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-
 		$manager = new F3::FLOW3::Persistence::Manager($mockReflectionService, $mockClassSchemataBuilder);
 		$manager->injectBackend($mockBackend);
-		$manager->injectSession(new F3::FLOW3::Persistence::Session());
+
+		$manager->persistAll();
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistAllFindsObjectReferences() {
+		$entity31 = new F3::FLOW3::Tests::Persistence::Fixture::Entity3;
+		$entity32 = new F3::FLOW3::Tests::Persistence::Fixture::Entity3;
+		$entity33 = new F3::FLOW3::Tests::Persistence::Fixture::Entity3;
+		$entity2 = new F3::FLOW3::Tests::Persistence::Fixture::Entity2;
+		$entity2->someString = 'Entity2';
+		$entity2->someInteger = 42;
+		$entity2->someReference = $entity31;
+		$entity2->someReferenceArray = array($entity32, $entity33);
+
+		$repository = new F3::FLOW3::Persistence::Repository;
+		$repository->add($entity2);
+
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
+		$mockReflectionService->expects($this->exactly(3))->method('getPropertyNamesByTag')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array()));
+		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
+		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
+		$mockComponentFactory->expects($this->once())->method('getComponent')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
+		$mockSession = $this->getMock('F3::FLOW3::Persistence::Session');
+		$mockSession->expects($this->exactly(4))->method('isNew')->will($this->returnValue(TRUE));
+		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
+
+			// this is the really important assertion!
+		$mockBackend->expects($this->once())->method('setNewObjects')->with(
+			array(
+				spl_object_hash($entity2) => $entity2,
+				spl_object_hash($entity31) => $entity31,
+				spl_object_hash($entity32) => $entity32,
+				spl_object_hash($entity33) => $entity33
+			)
+		);
+
+		$manager = new F3::FLOW3::Persistence::Manager($mockReflectionService, $mockClassSchemataBuilder);
+		$manager->injectComponentFactory($mockComponentFactory);
+		$manager->injectSession($mockSession);
+		$manager->injectBackend($mockBackend);
 
 		$manager->persistAll();
 	}

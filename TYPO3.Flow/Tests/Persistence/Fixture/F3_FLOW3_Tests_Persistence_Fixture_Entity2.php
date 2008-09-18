@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3::FLOW3::Tests::Persistence::Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,20 +17,53 @@ namespace F3::FLOW3::AOP;
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Persistence
  * @version $Id$
  */
 
 /**
- * Contract and marker interface for the AOP Proxy classes
+ * A model fixture used for testing the persistence manager
  *
  * @package FLOW3
- * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::ProxyInterface.php 201 2007-03-30 11:18:30Z robert $
- * @author Robert Lemke <robert@typo3.org>
+ * @subpackage Persistence
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @entity
  */
-interface ProxyInterface {
+class Entity2 implements F3::FLOW3::AOP::ProxyInterface {
+
+	/**
+	 * Just a normal string
+	 *
+	 * @var string
+	 */
+	public $someString;
+
+	/**
+	 * @var integer
+	 */
+	public $someInteger;
+
+	/**
+	 * @var F3::FLOW3::Tests::Persistence::Fixture::Entity3
+	 * @reference
+	 */
+	public $someReference;
+
+	/**
+	 * @var array
+	 * @reference
+	 */
+	public $someReferenceArray = array();
+
+	/**
+	 * Returns the name of the class this proxy extends.
+	 *
+	 * @return string Name of the target class
+	 */
+	public function AOPProxyGetProxyTargetClassName() {
+		return 'F3::FLOW3::Tests::Persistence::Fixture::Entity2';
+	}
 
 	/**
 	 * Invokes the joinpoint - calls the target methods.
@@ -38,14 +71,9 @@ interface ProxyInterface {
 	 * @param F3::FLOW3::AOP::JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint);
+	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 
-	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
-	 */
-	public function AOPProxyGetProxyTargetClassName();
+	}
 
 	/**
 	 * Returns the value of an arbitrary property.
@@ -54,7 +82,9 @@ interface ProxyInterface {
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 */
-	public function AOPProxyGetProperty($propertyName);
+	public function AOPProxyGetProperty($propertyName) {
+		return $this->$propertyName;
+	}
 
 	/**
 	 * Sets the value of an arbitrary property.
@@ -63,6 +93,9 @@ interface ProxyInterface {
 	 * @param mixed $propertyValue Value to set
 	 * @return void
 	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue);}
+	public function AOPProxySetProperty($propertyName, $propertyValue) {
 
+	}
+
+}
 ?>

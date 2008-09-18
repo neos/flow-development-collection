@@ -184,7 +184,7 @@ class Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function traverseAndInspectReferenceObjects(array $referenceObjects, array &$newObjects, array &$dirtyObjects, array &$allObjects) {
-		if (count($referenceObjects) == 0 || !$referenceObjects[0] instanceof F3::FLOW3::AOP::ProxyInterface) return;
+		if (count($referenceObjects) == 0 || !($referenceObjects[0] instanceof F3::FLOW3::AOP::ProxyInterface)) return;
 
 		$referenceClassName = $referenceObjects[0]->AOPProxyGetProxyTargetClassName();
 		$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
@@ -198,8 +198,9 @@ class Manager {
 				$dirtyObjects[$objectHash] = $referenceObject;
 			}
 			foreach ($referencePropertyNames as $propertyName) {
-				$subReferenceObject = $referenceObject->AOPProxyGetProperty($propertyName);
-				$this->traverseAndInspectReferenceObjects($subReferenceObject, $newObjects, $dirtyObjects, $allObjects);
+				$propertyValue = $referenceObject->AOPProxyGetProperty($propertyName);
+				$subReferenceObjects = is_array($propertyValue) ? $propertyValue : array($propertyValue);
+				$this->traverseAndInspectReferenceObjects($subReferenceObjects, $newObjects, $dirtyObjects, $allObjects);
 			}
 		}
 	}
