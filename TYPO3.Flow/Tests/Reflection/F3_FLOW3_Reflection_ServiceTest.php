@@ -359,6 +359,21 @@ class ServiceTest extends F3::Testing::BaseTestCase {
 		$this->assertFalse($reflectionService->isPropertyTaggedWith('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'noProperty', 'firsttag'));
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isClassImplementationOfReturnsTrueIfClassImplementsSpecifiedInterface() {
+		$availableClassNames = array(
+			'F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1'
+		);
+		$reflectionService = new F3::FLOW3::Reflection::Service();
+		$reflectionService->initialize($availableClassNames);
+
+		$this->assertTrue($reflectionService->isClassImplementationOf('F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1', 'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface1'));
+		$this->assertFalse($reflectionService->isClassImplementationOf('F3::FLOW3::Tests::Reflection::Fixture::ImplementationOfDummyInterface1', 'F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2'));
+	}
+
 }
 
 ?>

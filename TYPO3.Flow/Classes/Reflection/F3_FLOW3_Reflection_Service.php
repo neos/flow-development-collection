@@ -288,7 +288,7 @@ class Service {
 
 	/**
 	 * Searches for and returns all class names of implementations of the given component type
-	 * (interface name). If no class implementing the interface was found, FALSE is returned.
+	 * (interface name). If no class implementing the interface was found, an empty array is returned.
 	 *
 	 * @param string $interfaceName Name of the interface
 	 * @return array An array of class names of the default implementation for the component type
@@ -346,6 +346,19 @@ class Service {
 	public function isClassTaggedWith($className, $tag) {
 		if (!isset($this->classTagsValues[$className])) return FALSE;
 		return isset($this->classTagsValues[$className][$tag]);
+	}
+
+	/**
+	 * Tells if the specified class implements the given interface
+	 *
+	 * @param string $className Name of the class
+	 * @param string $interfaceName interface to check for
+	 * @return boolean TRUE if the class implements $interfaceName, otherwise FALSE
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isClassImplementationOf($className, $interfaceName) {
+		if (!isset($this->interfaceImplementations[$interfaceName])) return FALSE;
+		return (array_search($className, $this->interfaceImplementations[$interfaceName]) !== FALSE);
 	}
 
 	/**

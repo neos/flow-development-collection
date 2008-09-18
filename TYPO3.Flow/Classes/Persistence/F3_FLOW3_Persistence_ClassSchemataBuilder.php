@@ -64,7 +64,7 @@ class ClassSchemataBuilder {
 			$modelType = NULL;
 			if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
 				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_ENTITY;
-			} elseif ($this->reflectionService->isClassTaggedWith($className, 'repository')) {
+			} elseif ($this->reflectionService->isClassImplementationOf($className, 'F3::FLOW3::Persistence::RepositoryInterface')) {
 				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_REPOSITORY;
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
 				$modelType = F3::FLOW3::Persistence::ClassSchema::MODELTYPE_VALUEOBJECT;

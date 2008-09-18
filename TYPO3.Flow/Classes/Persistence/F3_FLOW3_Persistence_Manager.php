@@ -160,7 +160,7 @@ class Manager {
 		$deletedObjects = array();
 		$allObjects = array();
 
-		$repositoryClassNames = $this->reflectionService->getClassNamesByTag('repository');
+		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Persistence::RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$aggregateRootObjects = $this->componentFactory->getComponent($repositoryClassName)->getObjects();
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);

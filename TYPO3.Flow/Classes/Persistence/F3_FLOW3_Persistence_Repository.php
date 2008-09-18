@@ -83,10 +83,34 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	 *
 	 * @return array An array of objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findAll() {
-		$type = str_replace('Repository', '', get_class($this));
-		return $this->queryFactory->create($type)->execute();
+		return $this->createQuery()->execute();
+	}
+
+	/**
+	 * Returns a query for objects of this repository
+	 *
+	 * @return F3::FLOW3:Persistence::QueryInterface
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQuery() {
+		$type = str_replace('Repository', '', $this->AOPProxyGetProxyTargetClassName());
+		return $this->queryFactory->create($type);
+	}
+
+	/**
+	 * Returns the class name of this class. Seems useless until you think about
+	 * the possibility of $this *not* being an AOP proxy. If $this is an AOP proxy
+	 * this method will be overridden.
+	 *
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function AOPProxyGetProxyTargetClassName() {
+		return get_class($this);
 	}
 
 	/**
@@ -101,5 +125,6 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	public function getObjects() {
 		return array_values($this->objects);
 	}
+
 }
 ?>
