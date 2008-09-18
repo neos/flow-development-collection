@@ -34,7 +34,7 @@ class Raw implements F3::FLOW3::Validation::ValidatorInterface {
 	/**
 	 * Always returns TRUE.
 	 *
-	 * @param  object $propertyValue: The value that should be validated
+	 * @param object $propertyValue The value that should be validated
 	 * @param F3::FLOW3::Validation::Errors $errors Any occured Error will be stored here
 	 * @return boolean Always TRUE
 	 * @author Robert Lemke <robert@typo3.org>

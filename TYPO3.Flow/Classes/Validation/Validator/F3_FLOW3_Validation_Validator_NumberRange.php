@@ -29,7 +29,7 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id: F3::FLOW3::Validation::Validator::NumberRange.php 681 2008-04-02 14:00:27Z andi $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NumberRange implements F3::FLOW3::Validation::ValidatorInterface {
+class NumberRange extends F3::FLOW3::Validation::AbstractValidator {
 
 	/**
 	 * @var number The start value of the range
@@ -40,11 +40,6 @@ class NumberRange implements F3::FLOW3::Validation::ValidatorInterface {
 	 * @var number The end value of the range
 	 */
 	protected $endRange;
-
-	/**
-	 * @var F3::FLOW3::Component::FactoryInterface The component factory
-	 */
-	protected $componentFactory;
 
 	/**
 	 * constructor
@@ -75,33 +70,11 @@ class NumberRange implements F3::FLOW3::Validation::ValidatorInterface {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
-		if (!is_numeric($propertyValue)) $errors->append($this->createNewValidationErrorObject('The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
-		if ($propertyValue < $this->startRange || $propertyValue > $this->endRange) $errors->append($this->createNewValidationErrorObject('The given subject was not in the valid range (' . $this->startRange . ', ' . $this->endRange . '). Got: "' . $propertyValue . '"', 1221561046));
+		if (!is_numeric($propertyValue)) $errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
+		if ($propertyValue < $this->startRange || $propertyValue > $this->endRange) $errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not in the valid range (' . $this->startRange . ', ' . $this->endRange . '). Got: "' . $propertyValue . '"', 1221561046));
 
 		if (count($errors) > 0) return FALSE;
 		return TRUE;
-	}
-
-	/**
-	 * Injector method for the component factory
-	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A component factory implementation
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
-	}
-
-	/**
-	 * This is a factory method to get a clean validation error object
-	 *
-	 * @param string The error message
-	 * @param integer The error code
-	 * @return F3::FLOW3::Validation::Error An empty error object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function createNewValidationErrorObject($message, $code) {
-		return $this->componentFactory->getComponent('F3::FLOW3::Validation::Error', $message, $code);
 	}
 }
 

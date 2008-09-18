@@ -36,13 +36,12 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	 */
 	protected $validators = array();
 
-
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param object $propertyValue: The value that should be validated
+	 * @param object $propertyValue The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

@@ -36,7 +36,8 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailAddressValidatorReturnsTrueForACorrectEmailAddress() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($emailAddressValidator->isValidProperty('andreas.foerthner@netlogix.de', $validationErrors));
@@ -47,7 +48,8 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailAddressValidatorReturnsFalseForAnIncompleteEmailAddress() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($emailAddressValidator->isValidProperty('andreas.foerthner@netlogix', $validationErrors));
@@ -57,8 +59,9 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress($this->componentFactory);
+	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
+		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);
