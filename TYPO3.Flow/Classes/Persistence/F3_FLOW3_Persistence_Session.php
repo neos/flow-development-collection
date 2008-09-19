@@ -40,6 +40,13 @@ class Session {
 	protected $newObjects = array();
 
 	/**
+	 * Reconstituted objects
+	 *
+	 * @var array
+	 */
+	protected $reconstitutedObjects = array();
+
+	/**
 	 * Registers a newly instantiated object
 	 *
 	 * @param object The object to register
@@ -71,6 +78,25 @@ class Session {
 		return $this->newObjects;
 	}
 
+	/**
+	 * Enter description here...
+	 *
+	 * @param object $object
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function registerReconstitutedObject($object) {
+		$this->reconstitutedObjects[spl_object_hash($object)] = $object;
+	}
+
+	/**
+	 * Returns all objects which have been registered as reconstituted objects
+	 *
+	 * @return array All reconstituted objects
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getReconstitutedObjects() {
+		return $this->reconstitutedObjects;
+	}
 
 }
 ?>

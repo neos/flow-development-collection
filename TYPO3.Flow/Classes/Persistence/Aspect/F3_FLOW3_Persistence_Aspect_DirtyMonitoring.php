@@ -54,12 +54,12 @@ class DirtyMonitoring {
 	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function entityOrValueObject() {}
+	public function isEntityOrValueObject() {}
 
 	/**
 	 * Register an object as new with the FLOW3 persistence manager session
 	 *
-	 * @afterreturning method(.*->__construct()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
+	 * @afterreturning method(.*->__construct()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -71,7 +71,7 @@ class DirtyMonitoring {
 	/**
 	 * Register an object's clean state after it has been reconstituted from the FLOW3 persistence layer
 	 *
-	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
+	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -88,7 +88,7 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * @introduce F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface, F3::FLOW3::Persistence::Aspect::DirtyMonitoring->entityOrValueObject
+	 * @introduce F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface, F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
 	 */
 	public $dirtyMonitoringInterface;
 

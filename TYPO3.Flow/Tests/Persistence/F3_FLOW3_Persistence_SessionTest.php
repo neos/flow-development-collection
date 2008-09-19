@@ -57,5 +57,17 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		$this->assertTrue($session->isNew($newObject));
 		$this->assertFalse($session->isNew($notRegisteredObject));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function objectRegisteredWithRegisterReconstitutedObjectCanBeRetrievedWithGetReconstitutedObjects() {
+		$someObject = new ::ArrayObject();
+		$session = new F3::FLOW3::Persistence::Session();
+		$session->registerReconstitutedObject($someObject);
+
+		$this->assertSame($someObject, array_pop($session->getReconstitutedObjects()));
+	}
 }
 ?>
