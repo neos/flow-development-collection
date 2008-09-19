@@ -18,7 +18,7 @@ namespace F3::FLOW3::Property;
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3::FLOW3::Property::MappingError.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Property;
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3::FLOW3::Property::MappingError.php 681 2008-04-02 14:00:27Z andi $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */

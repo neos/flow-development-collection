@@ -26,7 +26,7 @@ namespace F3::FLOW3::Error;
  *
  * @package FLOW3
  * @subpackage Error
- * @version $Id: F3::FLOW3::Error::Warning.php 726 2008-04-16 15:36:28Z andi $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Warning {

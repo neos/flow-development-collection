@@ -18,7 +18,7 @@ namespace F3::FLOW3::Property;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3::FLOW3::Property::CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Property;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3::FLOW3::Property::CompositeEditorAbstractTest.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class AbstractCompositeEditorTest extends F3::Testing::BaseTestCase {

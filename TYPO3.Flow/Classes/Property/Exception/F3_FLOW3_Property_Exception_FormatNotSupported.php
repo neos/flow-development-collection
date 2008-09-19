@@ -18,7 +18,7 @@ namespace F3::FLOW3::Property::Exception;
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3::FLOW3::Property::Exception::FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Property::Exception;
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id: F3::FLOW3::Property::Exception::FormatNotSupported.php 661 2008-03-25 14:03:49Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class FormatNotSupported extends F3::FLOW3::Property::Exception {

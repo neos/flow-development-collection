@@ -18,7 +18,7 @@ namespace F3::FLOW3::Validation::Filter;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3::FLOW3::Validation::Filter::ChainTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Validation::Filter;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3::FLOW3::Validation::Filter::ChainTest.php 688 2008-04-03 09:35:36Z andi $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ChainTest extends F3::Testing::BaseTestCase {
