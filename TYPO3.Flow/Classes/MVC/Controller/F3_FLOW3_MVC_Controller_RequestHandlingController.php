@@ -52,14 +52,14 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 	protected $propertyMapper;
 
 	/**
-	 * @var F3::FLOW3::Property::MappingResults Mapping results of the arguments mapping process
-	 */
-	protected $argumentMappingResults;
-
-	/**
 	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
 	 */
 	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Request');
+
+	/**
+	 * @var F3::FLOW3::Property::MappingResults Mapping results of the arguments mapping process
+	*/
+	protected $argumentMappingResults;
 
 	/**
 	 * Constructs the controller.
@@ -216,8 +216,8 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 	protected function mapRequestArgumentsToLocalArguments() {
 		$this->propertyMapper->setTarget($this->arguments);
 		foreach ($this->arguments as $argument) {
-			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter());
-			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getPropertyEditorInputFormat());
+			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter(), $argument->getName());
+			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getName(), $argument->getPropertyEditorInputFormat());
 		}
 
 		$argumentsValidator = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::ArgumentsValidator', $this->arguments);
@@ -226,10 +226,16 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 		$this->propertyMapper->map(new ::ArrayObject($this->request->getArguments()));
 
 		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
-		$this->propertyMapper->map(new ::ArrayObject($this->request->getArguments()));
 
 		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
-			$this->arguments[$propertyName]->setValidity(FALSE);
+			if (isset($this->arguments[$propertyName])) {
+				$this->arguments[$propertyName]->setValidity(FALSE);
+				$this->arguments[$propertyName]->addError($error);
+			}
+		}
+
+		foreach ($this->argumentMappingResults->getWarnings() as $propertyName => $warning) {
+			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->addWarning($warning);
 		}
 	}
 }

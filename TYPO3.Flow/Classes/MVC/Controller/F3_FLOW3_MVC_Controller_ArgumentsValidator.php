@@ -80,7 +80,7 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 
 		$isValid = TRUE;
 		foreach ($object as $argument) {
-			$isValid &= $this->validateProperty($object, $argument->getName(), $errors);
+			if ($argument->isRequired()) $isValid &= $this->validateProperty($object, $argument->getName(), $errors);
 		}
 
 		return (boolean)$isValid;
@@ -89,6 +89,7 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 	/**
 	 * Validates a specific property ($propertyName) of the given object. Any errors will be stored
 	 * in the given errors object. If validation succeeds, this method returns TRUE, else it will return FALSE.
+	 * It also invokes any registered property editors.
 	 *
 	 * @param object $object: The object of which the property should be validated
 	 * @param string $propertyName: The name of the property that should be validated
@@ -106,9 +107,7 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 		$datatypeValidator = $object[$propertyName]->getDatatypeValidator();
 		$isValid &= $datatypeValidator->isValidProperty($object[$propertyName]->getValue(), $propertyValidatorErrors);
 
-		if (!$isValid) {
-			$errors[$propertyName] = $propertyValidatorErrors;
-		}
+		if (!$isValid) $errors[$propertyName] = $propertyValidatorErrors;
 
 		return (boolean)$isValid;
 	}
@@ -121,14 +120,16 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 	 * @param string $propertyName: The name of the property for wich the value should be validated
 	 * @param object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
-	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function isValidProperty($className, $propertyName, $propertyValue, F3::FLOW3::Validation::Errors &$errors) {
-		$isValid = TRUE;
-		if ($this->registeredArguments[$propertyName]->getValidator() != NULL) $isValid &= $this->registeredArguments[$propertyName]->getValidator()->isValidProperty($propertyValue->getValue(), $errors);
-		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $errors);
+		$propertyValidatorErrors = $this->createNewValidationErrorsObject();
 
-		if (!$isValid) $errors[$propertyName] = $this->componentFactory->getComponent('F3::FLOW3::Validation::Error');
+		$isValid = TRUE;
+		if ($this->registeredArguments[$propertyName]->getValidator() != NULL) $isValid &= $this->registeredArguments[$propertyName]->getValidator()->isValidProperty($propertyValue->getValue(), $propertyValidatorErrors);
+		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $propertyValidatorErrors);
+
+		if (!$isValid) $errors[$propertyName] = $propertyValidatorErrors;
+
 		return (boolean)$isValid;
 	}
 

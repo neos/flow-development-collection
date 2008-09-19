@@ -233,7 +233,7 @@ class Mapper {
 
 	/**
 	 * Registers the given Validator to validate the target object.
-	 * Note: You can only use one validator. Use a filterChain, if you need more.
+	 * Note: You can only use one validator. Use a validatorChain, if you need more.
 	 *
 	 * @param  F3::FLOW3::Validation::ObjectValidatorInterface $validator: The validator
 	 * @return void
@@ -347,10 +347,16 @@ class Mapper {
 	protected function setPropertyValue($propertyName, $propertyValue) {
 
 		if ($this->validator !== NULL) {
-			$errors = $this->createNewValidationErrorsObject();
-			if (!$this->validator->isValidProperty('F3::FLOW3::MVC::Controller::Arguments', $propertyName, $propertyValue, $errors)) {
-				foreach ($errors as $error) {
-					$this->mappingResults->addError($error, $propertyName);
+			$objectValidatorErrors = $this->createNewValidationErrorsObject();
+			if (!$this->validator->isValidProperty('F3::FLOW3::MVC::Controller::Arguments', $propertyName, $propertyValue, $objectValidatorErrors)) {
+				foreach ($objectValidatorErrors as $propertyName => $objectValidatorError) {
+					if ($objectValidatorError instanceof F3::FLOW3::Validation::Errors) {
+						foreach ($objectValidatorError as $error) {
+							$this->mappingResults->addError($error, $propertyName);
+						}
+					} else {
+						$this->mappingResults->addError($objectValidatorError, $propertyName);
+					}
 				}
 				return FALSE;
 			}

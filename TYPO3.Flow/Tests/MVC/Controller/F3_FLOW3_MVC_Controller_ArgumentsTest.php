@@ -172,5 +172,16 @@ class ArgumentsTest extends F3::Testing::BaseTestCase {
 		$addedArgument = $arguments->addNewArgument('dummyName');
 		$this->assertEquals('Text', $addedArgument->getDataType(), 'addNewArgument() did not create an argument of type "Text" by default.');
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addNewArgumentCanAddArgumentsMarkedAsRequired() {
+		$arguments = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
+
+		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', TRUE);
+		$this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
+	}
 }
 ?>

@@ -179,5 +179,77 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals($expectedHeaders, $response->getHeaders());
 		$this->assertEquals('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>', $response->getContent());
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentFilters() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentPropertyEditors() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheArgumentsValidator() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheArgumentsObjectAsTarget() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theRawArgumentsAreMappedByThePropertyMapper() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function everyArgumentThatRaisedAnErrorInTheMappingProcessIsMarkedInvalid() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function errorsAndWarningsAreAddedToTheCorrespondigArgumentObjects() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function forUnregisteredArgumentsAWarningIsAdded() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function requiredArgumentsAreConfiguredAsRequiredPropertiesInThePropertyMapper() {
+		$this->markTestIncomplete();
+	}
 }
 ?>

@@ -33,6 +33,11 @@ namespace F3::FLOW3::MVC::Controller;
 class Argument {
 
 	/**
+	 * @var F3::FLOW3::Component::ManagerInterface
+	 */
+	protected $componentManager;
+
+	/**
 	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
@@ -53,6 +58,11 @@ class Argument {
 	protected $dataType = 'Text';
 
 	/**
+	 * @var boolean TRUE if this argument is required
+	 */
+	protected $isRequired = FALSE;
+
+	/**
 	 * @var object Actual value of this argument
 	 */
 	protected $value = NULL;
@@ -68,9 +78,14 @@ class Argument {
 	protected $isValid = TRUE;
 
 	/**
-	 * @var array Any error (F3::FLOW3::Error::Error) that occured while initializing this argument (e.g. a mapping error or warning)
+	 * @var array Any error (F3::FLOW3::Error::Error) that occured while initializing this argument (e.g. a mapping error)
 	 */
 	protected $errors = array();
+
+	/**
+	 * @var array Any warning (F3::FLOW3::Error::Warning) that occured while initializing this argument (e.g. a mapping warning)
+	 */
+	protected $warnings = array();
 
 	/**
 	 * @var F3::FLOW3::Validation::ValidatorInterface The property validator for this argument
@@ -80,7 +95,7 @@ class Argument {
 	/**
 	 * @var F3::FLOW3::Validation::ValidatorInterface The property validator for this arguments datatype
 	 */
-	protected $datatypeValidator;
+	protected $datatypeValidator = NULL;
 
 	/**
 	 * @var F3::FLOW3::Validation::FilterInterface The filter for this argument
@@ -102,16 +117,17 @@ class Argument {
 	 *
 	 * @param string $name Name of this argument
 	 * @param string $dataType The data type of this argument
-	 * @param F3::FLOW3::Component::FactoryInterface The component factory
+	 * @param F3::FLOW3::Component::ManagerInterface The component manager
 	 * @throws InvalidArgumentException if $name is not a string or empty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($name, $dataType = 'Text', F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct($name, $dataType = 'Text', F3::FLOW3::Component::ManagerInterface $componentManager) {
 		if (!is_string($name) || F3::PHP6::Functions::strlen($name) < 1) throw new InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
-		$this->componentFactory = $componentFactory;
+		$this->componentManager = $componentManager;
+		$this->componentFactory = $this->componentManager->getComponentFactory();
 		$this->name = $name;
+
 		$this->setDataType($dataType);
-		if ($dataType != '') $this->datatypeValidator = $this->componentFactory->getComponent('F3::FLOW3::Validation::Validator::' . $dataType);
 	}
 
 	/**
@@ -156,7 +172,12 @@ class Argument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDataType($dataType) {
-		$this->dataType = $dataType;
+		$this->dataType = ($dataType != '' ? $dataType : 'Text');
+
+		$dataTypeValidatorClassname = $this->dataType;
+		if (!$this->componentManager->isComponentRegistered($dataTypeValidatorClassname)) $dataTypeValidatorClassname = 'F3::FLOW3::Validation::Validator::' . $this->dataType;
+		$this->datatypeValidator = $this->componentFactory->getComponent($dataTypeValidatorClassname);
+
 		return $this;
 	}
 
@@ -168,6 +189,28 @@ class Argument {
 	 */
 	public function getDataType() {
 		return $this->dataType;
+	}
+
+	/**
+	 * Marks this argument to be required
+	 *
+	 * @param boolean $required TRUE if this argument should be required
+	 * @return F3::FLOW3::MVC::Controller::Argument $this
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setRequired($required) {
+		$this->isRequired = $required;
+		return $this;
+	}
+
+	/**
+	 * Returns TRUE if this argument is required
+	 *
+	 * @return boolean TRUE if this argument is required
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isRequired() {
+		return $this->isRequired;
 	}
 
 	/**
@@ -249,7 +292,7 @@ class Argument {
 	}
 
 	/**
-	 * Add an initialization error (e.g. a mapping error or warning)
+	 * Add an initialization error (e.g. a mapping error)
 	 *
 	 * @param F3::FLOW3::Error::Error An error object
 	 * @return void
@@ -262,13 +305,34 @@ class Argument {
 	/**
 	 * Get all initialization errors
 	 *
-	 * @param F3::FLOW3::Error::Error An error object
-	 * @return array An array containing F3::FLOW3::Error::Error object
+	 * @return array An array containing F3::FLOW3::Error::Error objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @see addError(F3::FLOW3::Error::Error $error)
 	 */
 	public function getErrors() {
 		return $this->errors;
+	}
+
+	/**
+	 * Add an initialization warning (e.g. a mapping warning)
+	 *
+	 * @param F3::FLOW3::Error::Warning A warning object
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addWarning(F3::FLOW3::Error::Warning $warning) {
+		$this->warnings[] = $warning;
+	}
+
+	/**
+	 * Get all initialization warnings
+	 *
+	 * @return array An array containing F3::FLOW3::Error::Warning objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @see addWarning(F3::FLOW3::Error::Warning $warning)
+	 */
+	public function getWarnings() {
+		return $this->warnings;
 	}
 
 	/**
@@ -326,6 +390,7 @@ class Argument {
 		$this->filter = $this->createNewFilterChainObject();
 
 		foreach ($classNames as $className) {
+			if (!$this->componentManager->isComponentRegistered($className)) $className = 'F3::FLOW3::Validation::Filter::' . $className;
 			$this->filter->addFilter($this->componentFactory->getComponent($className));
 		}
 
@@ -343,6 +408,7 @@ class Argument {
 		$this->validator = $this->createNewValidatorChainObject();
 
 		foreach ($classNames as $className) {
+			if (!$this->componentManager->isComponentRegistered($className)) $className = 'F3::FLOW3::Validation::Validator::' . $className;
 			$this->validator->addValidator($this->componentFactory->getComponent($className));
 		}
 

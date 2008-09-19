@@ -108,5 +108,109 @@ class ArgumentTest extends F3::Testing::BaseTestCase {
 		$this->assertSame((string)$argument, '123', 'The returned argument is not a string.');
 		$this->assertNotSame((string)$argument, 123, 'The returned argument is identical to the set value.');
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function dataTypeValidatorCanBeAFullClassname() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'SomeArgument', 'F3::FLOW3::Validation::Validator::Text');
+
+		$this->assertType('F3::FLOW3::Validation::Validator::Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function dataTypeValidatorCanBeAShortName() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'SomeArgument', 'Text');
+
+		$this->assertType('F3::FLOW3::Validation::Validator::Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function defaultDataTypeIsText() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'SomeArgument');
+
+		$this->assertType('F3::FLOW3::Validation::Validator::Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewValidatorChainCreatesANewValidatorChainObject() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewValidatorChain(array('F3::FLOW3::Validation::Validator::Text', 'F3::FLOW3::Validation::Validator::EmailAddress'));
+
+		$this->assertType('F3::FLOW3::Validation::Validator::Chain', $argument->getValidator(), 'The returned validator is not a chain as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewValidatorChainAddsThePassedValidatorsToTheCreatedValidatorChain() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewValidatorChain(array('F3::FLOW3::Validation::Validator::Text', 'F3::FLOW3::Validation::Validator::EmailAddress'));
+
+		$validatorChain = $argument->getValidator();
+		$this->assertType('F3::FLOW3::Validation::Validator::Text', $validatorChain->getValidator(0), 'The returned validator is not a text validator as expected.');
+		$this->assertType('F3::FLOW3::Validation::Validator::EmailAddress', $validatorChain->getValidator(1), 'The returned validator is not a email validator as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewValidatorChainCanHandleShortValidatorNames() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewValidatorChain(array('Text', 'EmailAddress'));
+
+		$validatorChain = $argument->getValidator();
+		$this->assertType('F3::FLOW3::Validation::Validator::Text', $validatorChain->getValidator(0), 'The returned validator is not a text validator as expected.');
+		$this->assertType('F3::FLOW3::Validation::Validator::EmailAddress', $validatorChain->getValidator(1), 'The returned validator is not a email validator as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewFilterChainCreatesANewFilterChainObject() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewFilterChain(array('F3::FLOW3::Validation::Filter::Chain', 'F3::FLOW3::Validation::Filter::Chain'));
+
+		$this->assertType('F3::FLOW3::Validation::Filter::Chain', $argument->getFilter(), 'The returned filter is not a chain as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewFilterChainAddsThePassedFiltersToTheCreatedFilterChain() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewFilterChain(array('F3::FLOW3::Validation::Filter::Chain', 'F3::FLOW3::Validation::Filter::Chain'));
+
+		$filterChain = $argument->getFilter();
+		$this->assertType('F3::FLOW3::Validation::Filter::Chain', $filterChain->getFilter(0), 'The returned filter is not a filter chain as expected.');
+		$this->assertType('F3::FLOW3::Validation::Filter::Chain', $filterChain->getFilter(1), 'The returned filter is not a filter chain as expected.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setNewFilterChainCanHandleShortFilterNames() {
+		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', 'dummy');
+		$argument->setNewFilterChain(array('Chain', 'Chain'));
+
+		$filterChain = $argument->getFilter();
+		$this->assertType('F3::FLOW3::Validation::Filter::Chain', $filterChain->getFilter(0), 'The returned filter is not a filter chain as expected.');
+		$this->assertType('F3::FLOW3::Validation::Filter::Chain', $filterChain->getFilter(1), 'The returned filter is not a filter chain as expected.');
+	}
 }
 ?>

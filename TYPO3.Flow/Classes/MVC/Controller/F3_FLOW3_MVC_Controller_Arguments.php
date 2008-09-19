@@ -134,11 +134,13 @@ class Arguments extends ::ArrayObject {
 	 *
 	 * @param string $name Name of the argument
 	 * @param string $dataType Name of one of the built-in data types
+	 * @param boolean $isRequired TRUE if this argument should be marked as required
 	 * @return F3::FLOW3::MVC::Controller::Argument The new argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addNewArgument($name, $dataType = 'Text') {
+	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
 		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
+		$argument->setRequired($isRequired);
 		$this->addArgument($argument);
 		return $argument;
 	}
