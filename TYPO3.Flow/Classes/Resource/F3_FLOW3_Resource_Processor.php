@@ -30,6 +30,8 @@ namespace F3::FLOW3::Resource;
  */
 class Processor {
 
+	const PREFIX_RELATIVE_LINKS = '/(src="|href="|url\()(?!(\/|http))/iUu';
+
 	/**
 	 * Prepends the given prefix to relative paths in links, css, ...
 	 *
@@ -40,7 +42,7 @@ class Processor {
 	 * @todo Make regular expression water-tight
 	 */
 	static public function adjustRelativePathsInHTML($HTML, $pathPrefix) {
-		return preg_replace('/(src="|url\()(?!\/)/iUu', '$1' . $pathPrefix, $HTML);
+		return preg_replace(self::PREFIX_RELATIVE_LINKS, '$1' . $pathPrefix, $HTML);
 	}
 }
 

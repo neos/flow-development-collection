@@ -44,9 +44,12 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 				background-image: url(DefaultView_FloatingWindow.png);
 			}
 		</style>
+		<link rel="stylesheet" href="SomeCoolStyle.css" />
 	</head>
 	<body>
 		<img src="DefaultView_Package.png" class="DefaultView_Package" />
+		<a href="http://test.invalid/">do not change this link</a>
+		<a href="/an/absolute/URL/">nor this link</a>
 	</body>
 </html>';
 		$expectedHTML = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
@@ -58,9 +61,12 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
 			}
 		</style>
+		<link rel="stylesheet" href="test/prefix/to/insert/SomeCoolStyle.css" />
 	</head>
 	<body>
 		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
+		<a href="http://test.invalid/">do not change this link</a>
+		<a href="/an/absolute/URL/">nor this link</a>
 	</body>
 </html>';
 		$processor = $this->componentFactory->getComponent('F3::FLOW3::Resource::Processor');
