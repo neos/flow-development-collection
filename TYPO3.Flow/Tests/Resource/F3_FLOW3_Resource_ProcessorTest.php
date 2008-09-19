@@ -40,7 +40,7 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 <html>
 	<head>
 		<style type="text/css">
-			.F3::WidgetLibrary::Widgets::FloatingWindow {
+			.F3_WidgetLibrary_Widgets_FloatingWindow {
 				background-image: url(DefaultView_FloatingWindow.png);
 			}
 		</style>
@@ -54,7 +54,7 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 <html>
 	<head>
 		<style type="text/css">
-			.F3::WidgetLibrary::Widgets::FloatingWindow {
+			.F3_WidgetLibrary_Widgets_FloatingWindow {
 				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
 			}
 		</style>
