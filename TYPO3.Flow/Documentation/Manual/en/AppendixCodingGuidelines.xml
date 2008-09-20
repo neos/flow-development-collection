@@ -1030,8 +1030,9 @@ public function __construct(F3::FLOW3::Log::LoggerInterface $logger, $someString
       <note>
         <para>There are more tags which are used in FLOW3, however their
         purpose is not documention but configuration. Currently annotations
-        are also used for defining aspects and advices for the
-        <acronym>AOP</acronym> framework.</para>
+        are also used for defining aspects and advices for the AOP framework
+        as well as for giving instructions to the Persistence
+        framework.</para>
       </note>
     </section>
   </section>
@@ -1062,7 +1063,7 @@ public function __construct(F3::FLOW3::Log::LoggerInterface $logger, $someString
           object oriented programming.<itemizedlist>
               <listitem>
                 <para>Use PHP namespaces (see <link
-                linkend="???">http://www.php.net/manual/language.namespaces.php</link>)</para>
+                xl:href="http://www.php.net/manual/language.namespaces.php">http://www.php.net/manual/language.namespaces.php</link>)</para>
               </listitem>
 
               <listitem>

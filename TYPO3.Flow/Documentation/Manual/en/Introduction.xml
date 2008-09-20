@@ -112,6 +112,12 @@
       </listitem>
 
       <listitem>
+        <para>The <emphasis>Persistence</emphasis> module allows you to
+        transparently persist your objects following principles of
+        <emphasis>Domain Driven Design</emphasis>.</para>
+      </listitem>
+
+      <listitem>
         <para>The <emphasis>Security</emphasis> Framework enforces security
         policies and provides an API for managing those.</para>
       </listitem>

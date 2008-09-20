@@ -34,29 +34,33 @@
   <chapter>
     <title>FLOW3</title>
 
-    <xi:include href="Introduction.xml"/>
+    <xi:include href="Introduction.xml" />
 
-    <xi:include href="FLOW3Bootstrap.xml"/>
+    <xi:include href="FLOW3Bootstrap.xml" />
 
-    <xi:include href="PackageManager.xml"/>
+    <xi:include href="PackageManager.xml" />
 
-    <xi:include href="ComponentFramework.xml"/>
+    <xi:include href="ComponentFramework.xml" />
 
-    <xi:include href="ConfigurationFramework.xml"/>
+    <xi:include href="ConfigurationFramework.xml" />
 
-    <xi:include href="ResourceManager.xml"/>
+    <xi:include href="ResourceManager.xml" />
 
-    <xi:include href="MVCFramework.xml"/>
+    <xi:include href="MVCFramework.xml" />
 
-    <xi:include href="CacheFramework.xml"/>
+    <xi:include href="CacheFramework.xml" />
 
-    <xi:include href="ErrorException.xml"/>
+    <xi:include href="ErrorException.xml" />
 
-    <xi:include href="AOPFramework.xml"/>
+    <xi:include href="AOPFramework.xml" />
+
+    <xi:include href="PersistenceFramework.xml" />
+
   </chapter>
 
   <appendix>
     <title>Coding Guidelines</title>
-    <xi:include href="AppendixCodingGuidelines.xml"/>
+
+    <xi:include href="AppendixCodingGuidelines.xml" />
   </appendix>
 </book>

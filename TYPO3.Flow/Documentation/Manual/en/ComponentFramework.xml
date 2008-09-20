@@ -243,6 +243,7 @@ class SomeClass {
       adding a new parameter to your class constructor method:</para>
 
       <programlisting language="php">public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
+   $this-&gt;componentFactory = $componentFactory;
 }</programlisting>
 
       <para>To explicitly retrieve the instance of a component use the
@@ -277,6 +278,8 @@ class SomeClass {
       <interfacename>F3::MyPackage::MyInterface</interfacename> will be
       available as a component name as long as there exists at least one class
       implemententing that interface.</para>
+
+      <programlisting language="php">$otherComponentInstance = $componentFactory-&gt;getComponent('F3::SomePackage::SomeInterfaceName');</programlisting>
     </section>
   </section>
 
@@ -320,18 +323,18 @@ class SomeClass {
       <para>In the context of the previous example it means that the
       authentication component announces that it needs a logger which
       implements a certain PHP interface (eg. the
-      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename>). The component
-      itself has no control over what kind of logger (simple file logger,
-      sms-logger, ...) it finally gets and it doesn't have to care about it
-      anyway as long as it matches the expected API. As soon as the
+      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename>). The
+      component itself has no control over what kind of logger (simple file
+      logger, sms-logger, ...) it finally gets and it doesn't have to care
+      about it anyway as long as it matches the expected API. As soon as the
       authentication component is instantiated, the component manager will
       resolve these dependencies, prepare an instance of a logger and inject
       it to the authentication component.</para>
 
       <tip>
         <para><link xl:href="http://www.ddj.com/dept/java/184405016">An
-        article</link> by <personname> <firstname>Jonathan</firstname>
-        <surname>Amsterdam</surname> </personname> discusses the difference
+        article</link> by <personname><firstname>Jonathan</firstname>
+        <surname>Amsterdam</surname></personname> discusses the difference
         between creating an object and requesting one (ie. using
         <function>new</function> versus using dependency injection). It
         demonstrates why <function>new</function> should be considered as a
@@ -373,18 +376,19 @@ class SomeClass {
 
         <para>So far there's nothing special about this class, it just makes
         sure that an instance of a class implementing the
-        <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> is passed to
-        the constructor. However, this is already a quite flexible approach
-        because the type of logger can be determined from outside by just
-        passing one or the another implementation to the constructor.</para>
+        <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> is
+        passed to the constructor. However, this is already a quite flexible
+        approach because the type of logger can be determined from outside by
+        just passing one or the another implementation to the
+        constructor.</para>
 
         <para>Now the FLOW3 Component Manager does some magic: By a mechanism
         called <firstterm>Autowiring</firstterm> all dependencies which were
         declared in a constructor will be injected automagically if the
         constructor argument provides a type definition (ie.
-        <classname>F3::FLOW3::Log::LoggerInterface</classname> in the above example).
-        Autowiring is activated by default (but can be switched off),
-        therefore all you have to do is to write your constructor
+        <classname>F3::FLOW3::Log::LoggerInterface</classname> in the above
+        example). Autowiring is activated by default (but can be switched
+        off), therefore all you have to do is to write your constructor
         method.</para>
 
         <para>The Component Factory can also be configured manually to inject
@@ -400,9 +404,9 @@ constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::ASpecialLogger';</progr
         </example>
 
         <para>The two lines above define that a component instance of
-        <interfacename>F3::FLOW3::Log::ASpecialLogger</interfacename> must be passed
-        to the first argument of the constructor when an instance of the
-        component
+        <interfacename>F3::FLOW3::Log::ASpecialLogger</interfacename> must be
+        passed to the first argument of the constructor when an instance of
+        the component
         <classname>F3::Authentication::LDAPAuthentication</classname> is
         created. Mind that in the configuration file the class name is written
         with underscores!</para>
@@ -804,8 +808,7 @@ class Greeter {
 $greeter = $componentManager-&gt;getComponent('F3::MyPackage::Greeter');
 
    // Say hello to Heike:
-$greeter-&gt;sayHelloTo('Heike');
-</programlisting>
+$greeter-&gt;sayHelloTo('Heike');</programlisting>
       </example>
 
       <para>Great, that looks all fine and dandy but what if we want to use
@@ -1216,8 +1219,8 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
 
       <para>The constructor of the above example will get an instance of the
       component of type
-      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> injected and can
-      use it for further operations.</para>
+      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> injected
+      and can use it for further operations.</para>
 
       <para>If, for some reason, you need to disable autowiring support, you
       can do so by setting an option in your component configuration:</para>
