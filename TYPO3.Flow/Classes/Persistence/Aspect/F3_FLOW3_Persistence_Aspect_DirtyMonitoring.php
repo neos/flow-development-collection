@@ -69,7 +69,7 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Register an object's clean state after it has been reconstituted from the FLOW3 persistence layer
+	 * Register an object's clean state, e.g. after it has been reconstituted from the FLOW3 persistence layer
 	 *
 	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint

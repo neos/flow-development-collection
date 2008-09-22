@@ -166,10 +166,17 @@ class Manager {
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
 		}
 
+		$this->traverseAndInspectReferenceObjects(array_values($this->session->getReconstitutedObjects()), $newObjects, $dirtyObjects, $allObjects);
+
 		$this->backend->setNewObjects($newObjects);
 		$this->backend->setUpdatedObjects($dirtyObjects);
 		$this->backend->setDeletedObjects($deletedObjects);
 		$this->backend->commit();
+
+		$this->session->unregisterAllNewObjects();
+		foreach($dirtyObjects as $dirtyObject) {
+			$dirtyObject->memorizeCleanState();
+		}
 	}
 
 	/**

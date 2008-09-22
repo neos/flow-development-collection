@@ -79,6 +79,16 @@ class Session {
 	}
 
 	/**
+	 * Resets information about new objects registered with the session.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unregisterAllNewObjects() {
+		$this->newObjects = array();
+	}
+
+	/**
 	 * Enter description here...
 	 *
 	 * @param object $object
