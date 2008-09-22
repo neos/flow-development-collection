@@ -191,12 +191,12 @@ class Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function traverseAndInspectReferenceObjects(array $referenceObjects, array &$newObjects, array &$dirtyObjects, array &$allObjects) {
-		if (count($referenceObjects) == 0 || !($referenceObjects[0] instanceof F3::FLOW3::AOP::ProxyInterface)) return;
-
-		$referenceClassName = $referenceObjects[0]->AOPProxyGetProxyTargetClassName();
-		$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
-
 		foreach ($referenceObjects as $referenceObject) {
+			if (!($referenceObject instanceof F3::FLOW3::AOP::ProxyInterface)) continue;
+
+			$referenceClassName = $referenceObject->AOPProxyGetProxyTargetClassName();
+			$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
+
 			$objectHash = spl_object_hash($referenceObject);
 			$allObjects[$objectHash] = $referenceObject;
 			if ($this->session->isNew($referenceObject)) {

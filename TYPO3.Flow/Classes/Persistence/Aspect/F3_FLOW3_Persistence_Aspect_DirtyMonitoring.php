@@ -69,22 +69,15 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Register an object's clean state, e.g. after it has been reconstituted from the FLOW3 persistence layer
+	 * Automatically call memorizeCleanState() after __wakeup()
 	 *
 	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		$proxy = $joinPoint->getProxy();
-		$cleanProperties = array();
-		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
-
-		foreach ($propertyNames as $propertyName) {
-			$cleanProperties[$propertyName] = $proxy->AOPProxyGetProperty($propertyName);
-		}
-		$proxy->AOPProxySetProperty('FLOW3PersistenceCleanProperties', $cleanProperties);
+	public function autoMemorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+		$joinPoint->getProxy()->memorizeCleanState($joinPoint);
 	}
 
 	/**
@@ -117,5 +110,29 @@ class DirtyMonitoring {
 
 		return $isDirty;
 	}
+
+	/**
+	 * Register an object's clean state, e.g. after it has been reconstituted from the FLOW3 persistence layer
+	 *
+	 * @before method(.*->memorizeCleanState())
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL) {
+		if ($joinPoint === NULL) {
+			$proxy = $this;
+		} else {
+			$proxy = $joinPoint->getProxy();
+		}
+		$cleanProperties = array();
+		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
+
+		foreach ($propertyNames as $propertyName) {
+			$cleanProperties[$propertyName] = $proxy->AOPProxyGetProperty($propertyName);
+		}
+		$proxy->AOPProxySetProperty('FLOW3PersistenceCleanProperties', $cleanProperties);
+	}
+
 }
 ?>

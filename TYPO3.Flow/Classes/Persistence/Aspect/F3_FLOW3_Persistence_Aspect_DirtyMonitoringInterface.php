@@ -32,6 +32,7 @@ namespace F3::FLOW3::Persistence::Aspect;
 interface DirtyMonitoringInterface {
 
 	public function isDirty();
+	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL);
 
 }
 ?>
