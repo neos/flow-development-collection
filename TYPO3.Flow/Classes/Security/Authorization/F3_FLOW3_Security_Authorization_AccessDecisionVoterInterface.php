@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -46,14 +46,6 @@ interface AccessDecisionVoterInterface {
 	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
 	public function vote(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
-
-	/**
-	 * Returns TRUE if this access decision voter can vote for objects with the given classname
-	 *
-	 * @param string $className The classname that should be checked
-	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
-	 */
-	public function supports($className);
 }
 
 ?>

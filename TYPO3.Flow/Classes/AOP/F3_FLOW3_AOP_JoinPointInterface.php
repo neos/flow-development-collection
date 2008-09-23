@@ -33,20 +33,6 @@ namespace F3::FLOW3::AOP;
 interface JoinPointInterface {
 
 	/**
-	 * Constructor, creates the join point
-	 *
-	 * @param F3::FLOW3::AOP::ProxyInterface $proxy: Reference to the proxy class instance of the target class
-	 * @param string $className: Class name of the target class this join point refers to
-	 * @param string $methodName: Method name of the target method which is about to or has been invoked
-	 * @param array $methodArguments: Array of method arguments which have been passed to the target method
-	 * @param F3::FLOW3::AOP::AdviceChainInterface $adviceChain: The advice chain for this join point
-	 * @param mixed $result: The result of the method invocations (only used for After Returning advices)
-	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
-	 * @return void
-	 */
-	public function __construct(F3::FLOW3::AOP::ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL);
-
-	/**
 	 * Returns the reference to the proxy class instance
 	 *
 	 * @return F3::FLOW3::AOP::ProxyInterface

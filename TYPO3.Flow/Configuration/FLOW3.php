@@ -248,6 +248,68 @@ $c->security->authentication->providers = array(
 $c->security->authentication->authenticateAllTokens = FALSE;
 
 /**
+ * The security policy resources configuration. Here is an example configuration array:
+ *
+ * $c->security->policy->resources = array(
+ * 		'theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())',
+ * 		'theOtherLonelyResource' => 'method(F3::TestPackage::BasicClassValidator->.*())',
+ * 		'theIntegrativeResource' => 'theOneAndOnlyResource || theOtherLonelyResource',
+ * );
+ *
+ * @var array
+ */
+$c->security->policy->resources = array();
+
+/**
+ * The security policy roles configuration. Here is an example configuration array:
+ *
+ * $c->security->policy->roles = array(
+ *		'ADMINISTRATOR' => array(),
+ * 		'DEVELOPER' => array(),
+ * 		'CUSTOMER' => array(),
+ * 		//Role that is a child role of CUSTOMER
+ * 		'PRIVILEGED_CUSTOMER' => array('CUSTOMER'),
+ * );
+ *
+ * @var array
+ */
+$c->security->policy->roles = array();
+
+/**
+ * The security policy acls configuration connects the resources with the roles by assigning
+ * privileges. Here is an example configuration array:
+ *
+ * $c->security->policy->acls = array(
+ * 		'ADMINISTRATOR' => array(
+ * 			'deleteMethods' => 'ACCESS_GRANT',
+ * 			'MyPackageUpdateMethods' => 'ACCESS_DENY'
+ * 		);
+ * 		'CUSTOMER' = array(
+ * 			'deleteMethods' => 'ACCESS_DENY',
+ * 			'MyPackageUpdateMethods' => 'ACCESS_DENY'
+ * 		);
+ * );
+ *
+ * @var array
+ */
+$c->security->policy->acls = array();
+
+/**
+ * Define the backend used for caching the security policy ACLs. Specify the
+ * name of a component implementing the F3::FLOW3::Cache::BackendInterface.
+ *
+ * @var F3::FLOW3::Cache::BackendInterface
+ */
+$c->security->policy->aclCache->backend = $c->cache->defaultCache->backend;
+
+/**
+ * Options which are passed the backend of the security policy ACL cache.
+ *
+ * @var array
+ */
+$c->security->policy->aclCache->backendOptions = $c->cache->defaultCache->backendOptions;
+
+/**
  * The default locale identifier.
  *
  * @var string

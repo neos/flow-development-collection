@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization::Voter;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authorization::Voter;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ACL implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface {
@@ -42,16 +42,6 @@ class ACL implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInte
 	public function vote(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		//ask the current token if for the roles the user currently has
 		//search for an ACCESS privilege, that isGrant(), any of the user's roles has for this joinpoint (ask the policyservice to return the privileges for each role)
-	}
-
-	/**
-	 *
-	 *
-	 * @param string $className The classname that should be checked
-	 * @return boolean TRUE if this access decision voter can vote for objects with the given classname
-	 */
-	public function supports($className) {
-
 	}
 }
 

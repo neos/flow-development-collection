@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -27,7 +27,7 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -117,6 +117,16 @@ class Context {
 		}
 
 		return $activeTokens;
+	}
+
+	/**
+	 * Returns the granted authorities of all active and authenticated tokens
+	 *
+	 * @return array Array of F3_FLOW3_Security_Authentication_GrantedAuthorityInterface objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getGrantedAuthorities() {
+
 	}
 
 	/**

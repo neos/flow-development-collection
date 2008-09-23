@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface {
@@ -62,9 +62,10 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	 * Returns TRUE if any of the configured access decision voters can decide on objects with the given classname
 	 *
 	 * @param string $className The classname that should be checked
+	 * @param string $methodName The methodname that should be checked
 	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
 	 */
-	public function supports($className) {
+	public function supports($className, $methodName) {
 
 	}
 }

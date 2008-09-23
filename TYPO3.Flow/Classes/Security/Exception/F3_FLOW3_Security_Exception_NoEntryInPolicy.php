@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security;
+namespace F3::FLOW3::Security::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,28 +22,14 @@ namespace F3::FLOW3::Security;
  */
 
 /**
- * The central security aspect.
+ * A "NoEntryInPolicy" Exception
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @aaspect
  */
-class Aspect {
-
-	/**
-	 * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
-	 *
-	 * @aaround callback(F3::FLOW3::Security::ACL::PolicyService)
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function enforcePolicy() {
-		//Asks the policy service to return the roles for this joinpoint (it will have a cache to speed this up)
-		//Set the joinpoint in the interceptor
-		//invoke the policy enforcement interceptor
-	}
+class NoEntryInPolicy extends F3::FLOW3::Security::Exception {
 }
 
 ?>

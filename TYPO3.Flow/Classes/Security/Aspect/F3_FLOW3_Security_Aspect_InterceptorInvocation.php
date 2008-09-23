@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3::FLOW3::Security::Aspect;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,34 +22,31 @@ namespace F3::FLOW3::Security::Authorization;
  */
 
 /**
- * Contract for an access decision manager.
+ * The central security aspect, that invoces the security interceptors.
  *
  * @package FLOW3
  * @subpackage Security
  * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @aspect
  */
-interface AccessDecisionManagerInterface {
+class InterceptorInvocation {
 
 	/**
-	 * Decides if access should be granted on the given object in the current security context
+	 * The policy enforcement advice. This advices applies the security enforcement interceptor to all methods configured in the policy.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
+	 * @around filter(F3::FLOW3::Security::ACL::PolicyService)
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
-
-	/**
-	 * Returns TRUE if this access decision manager can decide on objects with the given classname
-	 *
-	 * @param string $className The classname that should be checked
-	 * @param string $methodName The methodname that should be checked
-	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
-	 */
-	public function supports($className, $methodName);
+	public function enforcePolicy() {
+		//Asks the policy service to return the roles for this joinpoint (it will have a cache to speed this up)
+		//Set the joinpoint in the interceptor
+		//invoke the policy enforcement interceptor
+		//$result = $joinPoint->getAdviceChain()->proceed($joinPoint);
+		//invoke the after invocation interceptor
+		//return $result;
+	}
 }
 
 ?>
