@@ -295,6 +295,39 @@ class ServiceTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyNamesByTagReturnsEmptyArrayIfNoPropertiesTaggedBySpecifiedTagWhereFound() {
+		$availableClassNames = array(
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties',
+		);
+		$reflectionService = new F3::FLOW3::Reflection::Service();
+		$reflectionService->initialize($availableClassNames);
+
+		$expectedPropertyNames = array();
+		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3::FLOW3::Tests::Reflection::Fixture::DummyClass', 'firsttag');
+		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
+
+		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithProperties', 'tagnothere');
+		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertyNamesByTagReturnsEmptyArrayIfGivenClassIsUnknown() {
+		$reflectionService = new F3::FLOW3::Reflection::Service();
+		$reflectionService->initialize(array());
+
+		$expectedPropertyNames = array();
+		$detectedPropertyNames = $reflectionService->getPropertyNamesByTag('F3::FLOW3::Tests::Reflection::Fixture::ClassDoesNotExist', 'tagnothere');
+		$this->assertEquals($expectedPropertyNames, $detectedPropertyNames);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyTagsValuesReturnsArrayOfTagsAndValuesOfAProperty() {
