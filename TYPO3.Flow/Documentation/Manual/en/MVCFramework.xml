@@ -491,4 +491,100 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
     <para></para>
   </section>
+
+  <section>
+    <title>CLI request handling</title>
+
+    <para>FLOW3's CLI request handling offers a comfortable and flexible way
+    of calling code from the command line:</para>
+
+    <para><command>php index.php [<replaceable>command</replaceable>]
+    [<replaceable>options</replaceable>] [--]
+    [<replaceable>arguments</replaceable>]</command></para>
+
+    <para><replaceable>command</replaceable>,
+    <replaceable>options</replaceable> and
+    <replaceable>arguments</replaceable> are optional, with varying results.
+    The command structure follows what is commonly accpeted on unixoid systems
+    for CLI programs:<variablelist>
+        <varlistentry>
+          <term>command</term>
+
+          <listitem>
+            <para>If not given, the default controller of the FLOW3 package is
+            used and it's index action is called. While this is an allowed
+            call, it hardly makes sense (other than checking if FLOW basically
+            works). If command is given then it is defined as
+            <emphasis><replaceable>package</replaceable>
+            [[<replaceable>sub1..N</replaceable>]
+            <replaceable>controller</replaceable>
+            <replaceable>action</replaceable>]</emphasis></para>
+
+            <para>First part is always the package. If only the package is
+            given, it's default controller's index action is called.</para>
+
+            <para>If at least three command parts are given, the last two
+            sepcify controller and action. Anything in between specifys a sub
+            package structure.<example>
+                <title>Some FLOW3 CLI command specifications</title>
+
+                <para><literal>testing cli run</literal> would call the "run"
+                action of the "cli" controller in the "Testing" package</para>
+
+                <para><literal>typo3cr admin setup default</literal> would
+                call the "setup" controller's "default" action in the
+                subpackage "admin" of the package "TYPO3CR"</para>
+              </example></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>options</term>
+
+          <listitem>
+            <para>Options are either short- or long-style. The first option
+            detected ends collecting command parts. Here are some
+            examples:<example>
+                <title>Giving options to FLOW3 CLI requests</title>
+
+                <para><literal>-o -f=value --a-long-option --with-spaces="is
+                possible" --input file1 -o=file2 --event-this =
+                works</literal></para>
+              </example></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term>arguments</term>
+
+          <listitem>
+            <para>Arguments can follow and will be available to the called
+            controller in the request object. To distinguish between
+            <replaceable>command</replaceable> and
+            <replaceable>arguments</replaceable> in cases where no
+            <replaceable>options</replaceable> are given the seperator
+            <literal>--</literal> must be used.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist></para>
+
+    <example>
+      <title>Some FLOW3 CLI commands</title>
+
+      <para>Calling the TYPO3CR setup:</para>
+
+      <para><code>php index.php typo3cr admin setup setup
+      --dsn=sqlite:/tmp/typo3cr.db --indexlocation=/tmp/lucene/</code></para>
+
+      <para>Running FLOW3 unit tests:</para>
+
+      <para><code>php index.php testing cli run --package-key=FLOW3
+      --output-directory=./</code></para>
+
+      <para>Rendering the FLOW3 documentation to HTML:</para>
+
+      <para><code>php index.php doctools render render -p FLOW3 -o
+      flow3-manual/</code></para>
+    </example>
+  </section>
 </section>

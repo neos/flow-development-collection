@@ -80,22 +80,23 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$request = $this->requestBuilder->build();
 		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
+		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
 	}
 
 	/**
-	 * Checks if a CLI request specifying a package and a controller name results in the expected request object
+	 * Checks if a CLI request specifying a package and a controller name results in the expected exception
 	 *
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException F3::FLOW3::MVC::Exception::InvalidFormat
 	 */
-	public function CLIAccessWithPackageAndControllerNameBuildsCorrectRequest() {
+	public function CLIAccessWithPackageAndControllerNameThrowsInvalidFormatException() {
 		$this->environment->SERVER['argc'] = 3;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$this->environment->SERVER['argv'][2] = 'Default';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
 	}
 
 	/**
@@ -258,5 +259,80 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals($request->getArgument('testArgument5'), '5', 'The "testArgument4" had not the given value.');
 		$this->assertEquals($request->getArgument('j'), 'kjk', 'The "j" had not the given value.');
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function requestContainsCorrectControllerComponentNamePatternForCLIAccessWithSubpackage() {
+		$this->environment->SERVER['argc'] = 6;
+		$this->environment->SERVER['argv'][0] = 'index.php';
+		$this->environment->SERVER['argv'][1] = 'TestPackage';
+		$this->environment->SERVER['argv'][2] = 'Sub';
+		$this->environment->SERVER['argv'][3] = 'Package';
+		$this->environment->SERVER['argv'][4] = 'Test';
+		$this->environment->SERVER['argv'][5] = 'run';
+
+		$request = $this->requestBuilder->build();
+		$this->assertEquals('F3::@package::Sub::Package::Controller::@controllerController', $request->getControllerComponentNamePattern());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function argumentsAreDetectedAfterOptions() {
+		$this->environment->SERVER['argc'] = 6;
+		$this->environment->SERVER['argv'][0] = 'index.php';
+		$this->environment->SERVER['argv'][1] = 'TestPackage';
+		$this->environment->SERVER['argv'][2] = '--some';
+		$this->environment->SERVER['argv'][3] = '-option=value';
+		$this->environment->SERVER['argv'][4] = 'file1';
+		$this->environment->SERVER['argv'][5] = 'file2';
+
+		$request = $this->requestBuilder->build();
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
+		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function argumentsAreDetectedIfNoOptionsAreGivenWithFullCommand() {
+		$this->environment->SERVER['argc'] = 7;
+		$this->environment->SERVER['argv'][0] = 'index.php';
+		$this->environment->SERVER['argv'][1] = 'TestPackage';
+		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][3] = 'index';
+		$this->environment->SERVER['argv'][4] = '--';
+		$this->environment->SERVER['argv'][5] = 'file1';
+		$this->environment->SERVER['argv'][6] = 'file2';
+
+		$request = $this->requestBuilder->build();
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
+		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function argumentsAreDetectedIfNoOptionsAreGiven() {
+		$this->environment->SERVER['argc'] = 6;
+		$this->environment->SERVER['argv'][0] = 'index.php';
+		$this->environment->SERVER['argv'][1] = 'TestPackage';
+		$this->environment->SERVER['argv'][3] = '--';
+		$this->environment->SERVER['argv'][4] = 'file1';
+		$this->environment->SERVER['argv'][5] = 'file2';
+
+		$request = $this->requestBuilder->build();
+		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerComponentName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
+		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+	}
+
 }
 ?>

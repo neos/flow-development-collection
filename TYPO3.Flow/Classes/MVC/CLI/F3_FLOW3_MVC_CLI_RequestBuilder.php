@@ -76,23 +76,94 @@ class RequestBuilder {
 			return $request;
 		}
 
-		$commandLineArguments = $this->environment->getCommandLineArguments();
+		$rawCommandLineArguments = $this->environment->getCommandLineArguments();
+		array_shift($rawCommandLineArguments);
+		$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
 
-		if (isset($commandLineArguments[1])) $request->setControllerPackageKey($commandLineArguments[1]);
-		if (isset($commandLineArguments[2])) $request->setControllerName($commandLineArguments[2]);
-		if (isset($commandLineArguments[3])) $request->setControllerActionName($commandLineArguments[3]);
+		$this->setControllerOptions($request, $commandLineArguments['command']);
+		foreach ($commandLineArguments['options'] as $optionName => $optionValue) {
+			$request->setArgument($optionName, $optionValue);
+		}
 
-		$remainingArguments = array_slice($commandLineArguments, 4);
+		$request->setCLIArguments($commandLineArguments['arguments']);
 
-		while (count($remainingArguments) > 0) {
-			$argumentName = $this->convertCurrentCommandLineArgumentToRequestArgumentName($remainingArguments);
-			$argumentValue = $this->getValueOfCurrentCommandLineArgument($remainingArguments);
-			if (F3::PHP6::Functions::strlen($argumentName) > 0) {
-				$request->setArgument($argumentName, $argumentValue);
+		return $request;
+	}
+
+	/**
+	 * Sets package, controller, action if found in $command
+	 *
+	 * @param F3::FLOW3::MVC::CLI::Request $request
+	 * @param array $command
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function setControllerOptions(F3::FLOW3::MVC::CLI::Request $request, array $command) {
+		if ($command['package'] !== NULL) $request->setControllerPackageKey($command['package']);
+		if ($command['controller'] !== NULL) $request->setControllerName($command['controller']);
+		if ($command['action'] !== NULL) $request->setControllerActionName($command['action']);
+
+		if (count($command['subpackages']) > 0) {
+			$subPackages = implode('::', $command['subpackages']);
+			$request->setControllerComponentNamePattern('F3::@package::' . $subPackages . '::Controller::@controllerController');
+		}
+	}
+
+	/**
+	 * Parses raw command line arguments and returns an array with
+	 *  command => being an array with
+	 *    package => package key
+	 *    controller => controller name
+	 *    action => action name
+	 *      (if no value is found for any of those keys, it will be NULL)
+	 *  options => array of name/value pairs, empty if no options found
+	 *  arguments => array of values, empty if no options found
+	 *
+	 * @param array $rawCommandLineArguments
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function parseRawCommandLineArguments(array $rawCommandLineArguments) {
+		$commandLineArguments = array('command' => array(), 'options' => array(), 'arguments' => array());
+		$command = array();
+		$commandHasEnded = FALSE;
+		$onlyArgumentsFollow = FALSE;
+
+		while (count($rawCommandLineArguments) > 0) {
+			$rawArgument = array_shift($rawCommandLineArguments);
+
+			if ($rawArgument === '--') {
+				$onlyArgumentsFollow = TRUE;
+				$commandHasEnded = TRUE;
+				continue;
+			}
+
+			if ($onlyArgumentsFollow) {
+				$commandLineArguments['arguments'][] = $rawArgument;
+			} else {
+				if (!$commandHasEnded && $rawArgument{0} !== '-') {
+					$command[] = $rawArgument;
+				} elseif ($rawArgument{0} === '-') {
+					$commandHasEnded = TRUE;
+					if ($rawArgument{1} === '-') {
+							// long option (--blah=hurz)
+						$rawArgument = substr($rawArgument, 2);
+					} else {
+							// short option (-b hurz)
+						$rawArgument = substr($rawArgument, 1);
+					}
+					$optionName = $this->convertCommandLineOptionToRequestArgumentName($rawArgument);
+					$optionValue = $this->getValueOfCurrentCommandLineOption($rawArgument, $rawCommandLineArguments);
+					$commandLineArguments['options'][$optionName] = $optionValue;
+				} else {
+					$commandLineArguments['arguments'][] = $rawArgument;
+				}
 			}
 		}
 
-		return $request;
+		$commandLineArguments['command'] = $this->buildCommandArrayFromRawCommandData($command);
+
+		return $commandLineArguments;
 	}
 
 	/**
@@ -101,13 +172,16 @@ class RequestBuilder {
 	 * @param array array of the remaining command line arguments
 	 * @return string converted argument name
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function convertCurrentCommandLineArgumentToRequestArgumentName(&$commandLineArguments) {
-		$argumentName = explode('=', $commandLineArguments[0]);
+	protected function convertCommandLineOptionToRequestArgumentName($commandLineOption) {
+		$explodedOption = explode('=', $commandLineOption, 2);
+		$argumentName = explode('-', $explodedOption[0]);
 		$convertedName = '';
 
-		foreach (explode('-', $argumentName[0]) as $part)
-			$convertedName .= ($convertedName !== '' ? F3::PHP6::Functions::ucfirst($part) : $part);
+		foreach ($argumentName as $part) {
+			$convertedName .= ($convertedName !== '') ? F3::PHP6::Functions::ucfirst($part) : $part;
+		}
 
 		return $convertedName;
 	}
@@ -119,28 +193,57 @@ class RequestBuilder {
 	 * @return string The value of the first argument
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function getValueOfCurrentCommandLineArgument(array &$commandLineArguments) {
-		$currentArgument = array_shift($commandLineArguments);
-
-		if (isset($commandLineArguments[0]) && preg_match('/^-/', $commandLineArguments[0]) && !preg_match('/=/', $currentArgument))
-			return '';
-
-		if (!preg_match('/--/', $currentArgument) && !preg_match('/=/', $currentArgument)) {
-			$mightBeTheValue = array_shift($commandLineArguments);
-
-			if (!preg_match('/=/', $mightBeTheValue)) return $mightBeTheValue;
-
-			$currentArgument .= $mightBeTheValue;
+	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments) {
+		if (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0]{0} === '-' && (strpos($currentArgument, '=') === FALSE)) {
+			return NULL;
 		}
 
-		$splittedArgument = explode('=', $currentArgument);
-		while ((!isset($splittedArgument[1]) || trim($splittedArgument[1]) == '') && count($commandLineArguments) > 0) {
-			$currentArgument .= array_shift($commandLineArguments);
-			$splittedArgument = explode('=', $currentArgument);
+		if (strpos($currentArgument, '=') === FALSE) {
+			$possibleValue = array_shift($rawCommandLineArguments);
+			if (strpos($possibleValue, '=') === FALSE) {
+				return $possibleValue;
+			}
+			$currentArgument .= $possibleValue;
 		}
 
-		$valueString = (isset($splittedArgument[1])) ? $splittedArgument[1] : '';
-		return $valueString;
+		$splitArgument = explode('=', $currentArgument, 2);
+		while ((!isset($splitArgument[1]) || trim($splitArgument[1]) == '') && count($rawCommandLineArguments) > 0) {
+			$currentArgument .= array_shift($rawCommandLineArguments);
+			$splitArgument = explode('=', $currentArgument);
+		}
+
+		$value = (isset($splitArgument[1])) ? $splitArgument[1] : '';
+		return $value;
+	}
+
+	/**
+	 * Enter description here...
+	 *
+	 * @param array $command
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
+		if (count($rawCommand) === 2) throw new F3::FLOW3::MVC::Exception::InvalidFormat('CLI access needs 0, 1 or at least 3 command parts.', 1222252361);
+
+		$command = array(
+			'package' => NULL,
+			'subpackages' => array(),
+			'controller' => NULL,
+			'action' => NULL
+		);
+
+		if (count($rawCommand) === 0) return $command;
+
+		$command['package'] = array_shift($rawCommand);
+		if (count($rawCommand) === 0) return $command;
+
+		$command['action'] = F3::PHP6::Functions::strtolower(array_pop($rawCommand));
+		$command['controller'] = array_pop($rawCommand);
+		if (count($rawCommand) === 0) return $command;
+
+		$command['subpackages'] = $rawCommand;
+		return $command;
 	}
 }
 ?>
