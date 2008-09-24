@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3::FLOW3::Security::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,29 +18,19 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken.php 1264 2008-09-19 18:27:06Z k-fish $
  */
 
 /**
- * Contract for an access decision manager.
+ * A "VoterNotFound" Exception
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken.php 1264 2008-09-19 18:27:06Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface AccessDecisionManagerInterface {
+class VoterNotFound extends F3::FLOW3::Security::Exception {
 
-	/**
-	 * Decides if access should be granted on the given object in the current security context
-	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return void
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
-	 */
-	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 }
 
 ?>

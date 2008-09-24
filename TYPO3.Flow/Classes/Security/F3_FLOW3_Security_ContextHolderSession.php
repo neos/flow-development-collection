@@ -113,6 +113,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 		$context = $this->getContext();
 		$context->setRequest($request);
 
+		$this->authenticationManager->setSecurityContext($context);
 		$managerTokens = $this->authenticationManager->getTokens();
 		$sessionTokens = $context->getAuthenticationTokens();
 		$mergedTokens = $this->mergeTokens($managerTokens, $sessionTokens);

@@ -248,6 +248,20 @@ $c->security->authentication->providers = array(
 $c->security->authentication->authenticateAllTokens = FALSE;
 
 /**
+ * An array of access decision voters that should vote when access decisions are made
+ *
+ * @var array
+ */
+$c->security->accessDecisionVoters = array('F3::FLOW3::Security::Authorization::Voter::ACL');
+
+/**
+ * If this is set to TRUE access will be granted even if all voters abstain
+ *
+ * @var boolean
+ */
+$c->security->allowAccessIfAllVotersAbstain = FALSE;
+
+/**
  * The security policy resources configuration. Here is an example configuration array:
  *
  * $c->security->policy->resources = array(

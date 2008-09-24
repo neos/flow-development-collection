@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -31,15 +31,10 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequireAuthentication implements F3::FLOW3::Security::Authorization::InterceptorInterface {
-
-	/**
-	 * @var F3::FLOW3::Security::Context The security context
-	 */
-	protected $securityContext = NULL;
 
 	/**
 	 * @var F3::FLOW3::Security::Authentication::ManagerInterface The authentication manager
@@ -49,16 +44,11 @@ class RequireAuthentication implements F3::FLOW3::Security::Authorization::Inter
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current security context
 	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(
-					F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
-					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager
-					) {
-		$this->securityContext = $securityContextHolder->getContext();
+	public function __construct(F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 
@@ -69,9 +59,7 @@ class RequireAuthentication implements F3::FLOW3::Security::Authorization::Inter
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-			$this->authenticationManager->authenticate($token);
-		}
+		$this->authenticationManager->authenticate();
 	}
 }
 

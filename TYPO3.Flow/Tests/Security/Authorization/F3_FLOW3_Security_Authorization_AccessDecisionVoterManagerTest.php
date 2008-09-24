@@ -35,29 +35,81 @@ class AccessDecisionVoterManagerTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function theManagerCallsEveryConfiguredVoterToVoteIfItSupportsTheCurrentClassAndMethodName() {
-		$this->markTestIncomplete();
+	public function decideThrowsAnExceptionIfOnVoterReturnsADenyVote() {
+		$mockContext = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
 
-		$mockContext = $this->getMock('F3_FLOW3_Security_Context', array(), array(), '', FALSE);
-
-		$mockJoinPoint = $this->getMock('F3_FLOW3_AOP_JoinPointInterface', array(), array(), '', FALSE);
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('someClassName'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('someMethodName'));
-
-		$voter1 = $this->getMock('F3_FLOW3_Security_Authorization_VoterInterface', array(), array(), 'voter1');
-		$voter2 = $this->getMock('F3_FLOW3_Security_Authorization_VoterInterface', array(), array(), 'voter2');
-		$voter3 = $this->getMock('F3_FLOW3_Security_Authorization_VoterInterface', array(), array(), 'voter3');
-
-		$voter1->expects($this->once())->method('vote')->with($this->equalTo($mockJoinPoint));
-		$voter2->expects($this->once())->method('vote')->with($this->equalTo($mockJoinPoint));
-		$voter3->expects($this->once())->method('vote')->with($this->equalTo($mockJoinPoint));
-
-		$mockConfigurationManager = $this->getMock('F3_FLOW3_Configuration_Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->voters = array('voter1', 'voter2', 'voter3');
+		$settings->security->accessDecisionVoters = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AccessDenyVoter', 'F3::TestPackage::AccessGrantVoter');
+		$settings->security->allowAccessIfAllVotersAbstain = FALSE;
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager();
+		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
+
+		try {
+			$voterManager->decide($mockContext, $mockJoinPoint);
+			$this->fail('No exception has been thrown');
+		} catch (F3::FLOW3::Security::Exception::AccessDenied $exception) {}
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
+		$mockContext = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
+
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$settings = new F3::FLOW3::Configuration::Container();
+		$settings->security->accessDecisionVoters = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings->security->allowAccessIfAllVotersAbstain = FALSE;
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+
+		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
+
+		try {
+			$voterManager->decide($mockContext, $mockJoinPoint);
+			$this->fail('No exception has been thrown');
+		} catch (F3::FLOW3::Security::Exception::AccessDenied $exception) {}
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
+		$mockContext = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
+
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$settings = new F3::FLOW3::Configuration::Container();
+		$settings->security->accessDecisionVoters = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings->security->allowAccessIfAllVotersAbstain = TRUE;
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+
+		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
+
+		$voterManager->decide($mockContext, $mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
+		$mockContext = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
+
+		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
+		$settings = new F3::FLOW3::Configuration::Container();
+		$settings->security->accessDecisionVoters = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings->security->allowAccessIfAllVotersAbstain = TRUE;
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+
+		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
+
 		$voterManager->decide($mockContext, $mockJoinPoint);
 	}
 }

@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -28,7 +28,7 @@ namespace F3::FLOW3::Security::Authentication;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -39,17 +39,24 @@ interface ManagerInterface {
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
 	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface An array of tokens this manager is responsible for
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens();
 
 	/**
-	 * Authenticates the given token. (Have a look at the F3::FLOW3::Security::Authentication::TokenManager for an implementation example)
+	 * Sets the security context
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
-	 * @return F3::FLOW3::Security::Authentication::TokenInterface The authenticated token, NULL if authentication failed
+	 * @param F3::FLOW3::Security::Context $securityContext The security context of the current request
+	 * @return void
 	 */
-	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken);
+	public function setSecurityContext(F3::FLOW3::Security::Context $securityContext);
+
+	/**
+	 * Tries to authenticate the tokens in the security context, if needed.
+	 * (Have a look at the F3::FLOW3::Security::Authentication::TokenManager for an implementation example)
+	 *
+	 * @return void
+	 */
+	public function authenticate();
 }
 
 ?>

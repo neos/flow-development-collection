@@ -31,17 +31,56 @@ namespace F3::FLOW3::Security::Authorization;
  */
 class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface {
 
-//TODO: This has to be filled by configuration and is extended by automatic resolving jointpoint voters in the decide method
 	/**
-	 * @var array Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
+	 * The component factory
+	 * @var F3::FLOW3::Component::FactoryInterface
+	 */
+	protected $componentFactory;
+
+	/**
+	 * The component manager
+	 * @var F3::FLOW3::Component::ManagerInterface
+	 */
+	protected $componentManager;
+
+	/**
+	 * Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
+	 * @var array
 	 */
 	protected $accessDecisionVoters = array();
 
-//TODO: Set by configuratin
 	/**
-	 * @var boolean If set to TRUE access will be granted for objects where all voters abstain from decision.
+	 * If set to TRUE access will be granted for objects where all voters abstain from decision.
+	 * @var boolean
 	 */
 	protected $allowAccessIfAllAbstain = FALSE;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
+		$this->componentFactory = $this->componentManager->getComponentFactory();
+
+		$configuration = $configurationManager->getSettings('FLOW3');
+		$this->createAccessDecisionVoters($configuration->security->accessDecisionVoters);
+		$this->allowAccessIfAllAbstain = $configuration->security->allowAccessIfAllVotersAbstain;
+	}
+
+	/**
+	 * Returns the configured access decision voters
+	 *
+	 * @return array Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAccessDecisionVoters() {
+		return $this->accessDecisionVoters();
+	}
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context.
@@ -50,23 +89,51 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	 *
 	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
-	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
+	 * @return void
 	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
 	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		//TODO: resolve voters that could vote on the given method parameters (if $object is a joinpoint)
-		//return values of the voters: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
+		$denyVotes = 0;
+		$grantVotes = 0;
+		$abstainVotes = 0;
+
+		foreach ($this->accessDecisionVoters as $voter) {
+			$vote = $voter->vote($securityContext, $joinPoint);
+			switch ($vote) {
+				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_DENY:
+					$denyVotes++;
+					break;
+				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_GRANT:
+					$grantVotes++;
+					break;
+				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_ABSTAIN:
+					$abstainVotes++;
+					break;
+			}
+		}
+
+		if ($denyVotes === 0 && $grantVotes > 0) return;
+		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
+
+		throw new F3::FLOW3::Security::Exception::AccessDenied('You are not allowed to access. Go away!', 1222268609);
 	}
 
 	/**
-	 * Returns TRUE if any of the configured access decision voters can decide on objects with the given classname
+	 * Creates and sets the configured access decision voters
 	 *
-	 * @param string $className The classname that should be checked
-	 * @param string $methodName The methodname that should be checked
-	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
+	 * @param array Array of access decision voter classes
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function supports($className, $methodName) {
+	protected function createAccessDecisionVoters($voterClasses) {
+		foreach ($voterClasses as $voterClass) {
+			if (!$this->componentManager->isComponentRegistered($voterClass)) throw new F3::FLOW3::Security::Exception::VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
 
+			$voter = $this->componentFactory->getComponent($voterClass);
+			if (!($voter instanceof F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface)) throw new F3::FLOW3::Security::Exception::VoterNotFound('The found voter class did not implement F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface', 1222268008);
+
+			$this->accessDecisionVoters[] = $voter;
+		}
 	}
 }
 

@@ -34,12 +34,14 @@ namespace F3::FLOW3::Security;
 class Context {
 
 	/**
-	 * @var array Array of configured tokens (might have request patterns)
+	 * Array of configured tokens (might have request patterns)
+	 * @var array
 	 */
 	protected $tokens = array();
 
 	/**
-	 * @var boolean TRUE, if all tokens have to be authenticated, FALSE if one is sufficient.
+	 * TRUE, if all tokens have to be authenticated, FALSE if one is sufficient.
+	 * @var boolean
 	 */
 	protected $authenticateAllTokens = FALSE;
 
@@ -47,6 +49,12 @@ class Context {
 	 * @var F3::FLOW3::MVC::Request
 	 */
 	protected $request;
+
+	/**
+	 * TRUE if the tokens already have been authenticated in this request
+	 * @var boolean
+	 */
+	protected $authenticationPerformed = FALSE;
 
 	/**
 	 * Constructor.
@@ -80,6 +88,29 @@ class Context {
 	 */
 	public function setRequest(F3::FLOW3::MVC::Request $request) {
 		$this->request = $request;
+	}
+
+	/**
+	 * Sets the authentication performed flag. If it is set to TRUE
+	 * the authentication manager will not reauthenticate the tokens
+	 * in the current request.
+	 *
+	 * @param boolean $status Set this to TRUE, if the tokens have been authenticated in this request
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAuthenticationPerformed($status) {
+		$this->authenticationPerformed = $status;
+	}
+
+	/**
+	 * Returns TRUE if the tokens already have been authenticated in this request
+	 *
+	 * @return boolean TRUE if the tokens already have been authenticated in this request
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function authenticationPerformed() {
+		return $this->authenticationPerformed;
 	}
 
 	/**

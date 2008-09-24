@@ -18,93 +18,96 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * This is the main security interceptor, which enforces the current security policy and is usually applied over AOP:
+ * This is the main security interceptor, which enforces the current security policy and is usually called by the central security aspect:
  *
- * 1. Checks the authentication tokens in the security context (in the given order) if isAuthenticated() returns TRUE.
- *    If context->authenticateAllTokens() returns TRUE all tokens have be authenticated, otherwise there has to be at least one
- *    authenticated token to have a valid authentication.
- * 1.1. If there is no valid authentication the configured authentication manager is called to authenticate its tokens
- *      If there hast to be only one authenticated token, authentication stops after the first successfully authenticated token.
- * 2. If we have something like a "run as" functionality in the future, it will be invoked at this point (for now we don't have something like that)
+ * 1. If authentication has not been performed (flag is set in the security context) the configured authentication manager is called to authenticate its tokens
+ * 2. If a AuthenticationRequired exception has been thrown we look for an authentication entry point in the active tokens to redirect to authentication
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
- * 4. If no exception has been thrown we pass over the controll to the requested resource (i.e. a secured method)
- * 5. Right before the method returns we call the AfterInvocationManager with the method's return value as paramter
- * 6. If we had a "run as" support, we would have to reset the security context
- * 7. If a PermissionDeniedException was thrown we look for any an authentication entry point in the active tokens to redirect to authentication
- * 8. Then the value is returned to the caller
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class PolicyEnforcement implements F3::FLOW3::Security::Authorization::InterceptorInterface {
 
 	/**
-	 * @var F3::FLOW3::Secuirty::Authentication::ManagerInterface The authentication manager
+	 * The current security context
+	 * @var F3::FLOW3::Security::Context
 	 */
-	protected $authenticationManagers = NULL;
-
-//TODO: This has to be filled/configured by configuration
-	/**
-	 * @var array Array of F3::FLOW3::Secuirty::Authorization::AccessDecisionManagerInterface objects
-	 */
-	protected $accessDecisionManagers = array();
+	protected $securityContext;
 
 	/**
-	 * @var F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface The after invocation manager
+	 * The authentication manager
+	 * @var F3::FLOW3::Secuirty::Authentication::ManagerInterface
 	 */
-	protected $afterInvocationManager = NULL;
+	protected $authenticationManager;
+
+	/**
+	 * The access decision manager
+	 * @var F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface $accessDecisionManager
+	 */
+	protected $accessDecisionManager;
+
+	/**
+	 * The current joinpoint
+	 * @var F3::FLOW3::AOP::JoinPointInterface $joinPoint
+	 */
+	protected $joinPoint;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current security context
-	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
+	 * @param F3::FLOW3::Security::ContextHolderInterface $securityContextHolder The security context holder
+	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication manager
+	 * @param F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3::FLOW3::Security::Context $securityContext,
-					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager
+					F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
+					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager,
+					F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface $accessDecisionManager
 					) {
-
+		$this->securityContext = $securityContextHolder->getContext();
+		$this->authenticationManager = $authenticationManager;
+		$this->accessDecisionManager = $accessDecisionManager;
 	}
 
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param F3::FLOW3::AOP::JoinPoint $joinPoint The current joinpoint
+	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(F3::FLOW3::AOP::JoinPoint $joinPoint) {
-
+	public function setJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+		$this->joinPoint = $joinPoint;
 	}
 
 	/**
 	 * Invokes the security interception
 	 *
 	 * @return boolean TRUE if the security checks was passed
+	 * @throws F3::FLOW3::Security::Exception::AccessDenied
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
 
-	}
+		try {
+			if (!$this->securityContext->authenticationPerformed()) $this->authenticationManager->authenticate();
+		} catch (F3::FLOW3::Security::Exception::AuthenticationRequired $exception) {
+			foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+				if ($token->getAuthenticationEntryPoint() !== NULL && !($this->joinPoint->getProxy() instanceof F3::FLOW3::Security::Authentication::EntryPointInterface)) $token->getAuthenticationEntryPoint()->startAuthentication();
+			}
+			throw $exception;
+		}
 
-	/**
-	 * Injects the after invocation manager
-	 *
-	 * @param F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectAfterInvocationManager(F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager) {
-
+		$this->accessDecisionManager->decide($this->securityContext, $this->joinPoint);
 	}
 }
 

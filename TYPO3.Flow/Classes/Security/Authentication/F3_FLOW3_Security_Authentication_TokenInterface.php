@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authentication;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -38,6 +38,13 @@ interface TokenInterface {
 	 * @return boolean TRUE if this this token is currently authenticated
 	 */
 	public function isAuthenticated();
+
+	/**
+	 * Returns the configured authentication entry point, NULL if none is available
+	 *
+	 * @return F3::FLOW3::Security::Authentication::EntryPoint The configured authentication entry point, NULL if none is available
+	 */
+	public function getAuthenticationEntryPoint();
 
 	/**
 	 * Returns TRUE if a F3::FLOW3::Security::RequestPattern was set

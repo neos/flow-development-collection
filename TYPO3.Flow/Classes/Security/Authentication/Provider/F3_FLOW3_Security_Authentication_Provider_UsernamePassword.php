@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication::Provider;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authentication::Provider;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderInterface {

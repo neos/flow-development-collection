@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -27,7 +27,7 @@ namespace F3::FLOW3::Security::Authentication;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInterface {
@@ -41,6 +41,12 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	 * @var F3::FLOW3::Security::Authentication::ProviderResolver The provider resolver
 	 */
 	protected $providerResolver;
+
+	/**
+	 * The security context of the current request
+	 * @var F3::FLOW3::Security::Context
+	 */
+	protected $securityContext;
 
 	/**
 	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
@@ -91,6 +97,17 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	}
 
 	/**
+	 * Sets the security context
+	 *
+	 * @param F3::FLOW3::Security::Context $securityContext The security context of the current request
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setSecurityContext(F3::FLOW3::Security::Context $securityContext) {
+		$this->securityContext = $securityContext;
+	}
+
+	/**
 	 * Returns the configured providers
 	 *
 	 * @return array Array of configured providers
@@ -112,21 +129,34 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	}
 
 	/**
-	 * Tries to authenticate the given token with the available authentication providers.
-	 * If authentication fails and a F3::FLOW3::Security::Authentication::EntryPoint is set for the token, the entry point
-	 * is called.
+	 * Tries to authenticate the tokens in the security context (in the given order)
+	 * with the available authentication providers, if needed.
+	 * If securityContext->authenticateAllTokens() returns TRUE all tokens have be authenticated,
+	 * otherwise there has to be at least one authenticated token to have a valid authentication.
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
-	 * @return F3::FLOW3::Security::Authentication::TokenInterface The authenticated token, NULL if authentication failed
+	 * @return void
+	 * @throws F3::FLOW3::Security::Exception::AuthenticationRequired
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken) {
-		foreach ($this->providers as $provider) {
-			if ($provider->canAuthenticate($authenticationToken)) {
-				$provider->authenticate($authenticationToken);
-				break;
+	public function authenticate() {
+		$allTokensAreAuthenticated = TRUE;
+		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+			foreach ($this->providers as $provider) {
+				if ($provider->canAuthenticate($token)) {
+					$provider->authenticate($token);
+					break;
+				}
 			}
+
+			if ($token->isAuthenticated() && !$this->securityContext->authenticateAllTokens()) return;
+			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) throw new F3::FLOW3::Security::Exception::AuthenticationRequired('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
+			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
+
+		$this->securityContext->setAuthenticationPerformed(TRUE);
+		if ($allTokensAreAuthenticated) return;
+
+		throw new F3::FLOW3::Security::Exception::AuthenticationRequired('Could not authenticate any token.', 1222204027);
 	}
 
 	/**

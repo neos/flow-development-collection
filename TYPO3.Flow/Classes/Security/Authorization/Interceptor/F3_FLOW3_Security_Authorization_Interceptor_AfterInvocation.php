@@ -59,11 +59,22 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param F3_FLOW3_AOP_JoinPoint $joinPoint The current joinpoint
+	 * @param F3_FLOW3_AOP_JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(F3_FLOW3_AOP_JoinPoint $joinPoint) {
+	public function setJoinPoint(F3_FLOW3_AOP_JoinPointInterface $joinPoint) {
+
+	}
+
+	/**
+	 * Sets the result (return object) of the intercepted method
+	 *
+	 * @param mixed The result of the intercepted method
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setResult($result) {
 
 	}
 

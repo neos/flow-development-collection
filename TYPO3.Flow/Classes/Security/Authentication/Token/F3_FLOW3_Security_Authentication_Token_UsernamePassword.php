@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication::Token;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authentication::Token;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  * @todo here we also need a user details service and an authentication entry point
@@ -73,6 +73,15 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 */
 	public function isAuthenticated() {
 		return $this->authenticationStatus;
+	}
+
+	/**
+	 * Returns the configured authentication entry point, NULL if none is available
+	 *
+	 * @return F3::FLOW3::Security::Authentication::EntryPoint The configured authentication entry point, NULL if none is available
+	 */
+	public function getAuthenticationEntryPoint() {
+
 	}
 
 	/**

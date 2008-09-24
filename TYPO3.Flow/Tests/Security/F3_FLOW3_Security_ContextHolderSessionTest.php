@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ContextHolderSessionTest extends F3::Testing::BaseTestCase {
@@ -169,6 +169,29 @@ class ContextHolderSessionTest extends F3::Testing::BaseTestCase {
 		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3::FLOW3::Security::ContextHolderSession'))->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
+
+		$securityContextHolder = new F3::FLOW3::Security::ContextHolderSession($mockSession);
+		$securityContextHolder->injectComponentFactory($this->componentFactory);
+		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
+
+		$securityContextHolder->initializeContext($mockRequest);
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theSecurityContextHolderSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
+		$mockSession = $this->getMock('F3::FLOW3::Session::SessionInterface');
+		$mockRequest = $this->getMock('F3::FLOW3::MVC::Request');
+		$mockContext = $this->getMock('F3::FLOW3::Security::Context', array(), array(), '', FALSE);
+		$mockAuthenticationManager = $this->getMock('F3::FLOW3::Security::Authentication::ManagerInterface');
+
+		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3::FLOW3::Security::ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
+		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
+		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($mockContext);
 
 		$securityContextHolder = new F3::FLOW3::Security::ContextHolderSession($mockSession);
 		$securityContextHolder->injectComponentFactory($this->componentFactory);

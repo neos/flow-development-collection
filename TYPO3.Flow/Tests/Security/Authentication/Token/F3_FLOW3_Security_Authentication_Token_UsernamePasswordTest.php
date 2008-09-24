@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication::Token;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authentication::Token;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class UsernamePasswordTest extends F3::Testing::BaseTestCase {
@@ -51,6 +51,15 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 
 		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');
 		$this->assertEquals($expectedCredentials, $token->getCredentials(), 'The credentials have not been extracted correctly from the POST arguments');
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAuthenticationEntryPointReturnsTheConfiguredAuthenticationEntryPoint() {
+		$this->markTestIncomplete();
 	}
 }
 ?>
