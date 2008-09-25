@@ -82,11 +82,14 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticateReturnsTrueOnlyForTheUsernamePasswordTokenClass() {
+	public function canAuthenticateReturnsTrueOnlyForTheUsernamePasswordToken() {
+		$mockUserNamePasswordToken = $this->getMock('F3::FLOW3::Security::Authentication::Token::UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface');
+
 		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
 
-		$this->assertTrue($usernamePasswordProvider->canAuthenticate('F3::FLOW3::Security::Authentication::Token::UsernamePassword'));
-		$this->assertFalse($usernamePasswordProvider->canAuthenticate('F3::TestPackage::TestAuthenticationToken'));
+		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockUserNamePasswordToken));
+		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken));
 	}
 }
 ?>

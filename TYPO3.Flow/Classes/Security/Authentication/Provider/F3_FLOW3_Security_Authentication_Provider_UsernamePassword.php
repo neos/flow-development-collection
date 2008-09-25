@@ -37,14 +37,14 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderI
 	protected $entryPoint = NULL;
 
 	/**
-	 * Returns TRUE if the given token class can be authenticated by this provider
+	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param string $className The class name of the token that should be authenticated
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate($className) {
-		if ($className == 'F3::FLOW3::Security::Authentication::Token::UsernamePassword') return TRUE;
+	public function canAuthenticate(F3::FLOW3::Security::Authentication::TokenInterface $token) {
+		if ($token instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword) return TRUE;
 		return FALSE;
 	}
 

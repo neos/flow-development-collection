@@ -81,6 +81,30 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
 		$this->assertEquals(1221560494, $validationErrors[0]->getErrorCode());
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function integerValidatorReturnsTrueForAnIntegerGivenAsAString() {
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($integerValidator->isValidProperty('12345', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function integerValidatorReturnsFalseForAFloatGivenAsAString() {
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertFalse($integerValidator->isValidProperty('12345.987', $validationErrors));
+	}
 }
 
 ?>

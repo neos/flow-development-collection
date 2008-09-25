@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::ACL;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -28,20 +28,44 @@ namespace F3::FLOW3::Security::ACL;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Privilege {
 
 	/**
+	 * The string identifier of this privilege
+	 * @var string
+	 */
+	protected $identifier;
+
+	/**
+	 * TRUE if this privilege is granting, FALSE if it is denying
+	 * @var boolean
+	 */
+	protected $isGrant;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param string $identifier An identifier for this privilege. Note: Always prefix your package key for custom privileges!
+	 * @param boolean $isGrant The isGrant flag of the privilege
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct($identifier) {
+	public function __construct($identifier, $isGrant = FALSE) {
+		$this->identifier = $identifier;
+		$this->isGrant = $isGrant;
+	}
 
+	/**
+	 * Returns the string representation of this privilege
+	 *
+	 * @return string The string representation of this privilege
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegeType() {
+		return $this->identifier;
 	}
 
 	/**
@@ -51,7 +75,7 @@ class Privilege {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setGrant() {
-
+		$this->isGrant = TRUE;
 	}
 
 	/**
@@ -61,7 +85,7 @@ class Privilege {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setDeny() {
-
+		$this->isGrant = FALSE;
 	}
 
 	/**
@@ -71,7 +95,7 @@ class Privilege {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isGrant() {
-
+		return $this->isGrant;
 	}
 
 	/**
@@ -81,7 +105,17 @@ class Privilege {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isDeny() {
+		return !$this->isGrant;
+	}
 
+	/**
+	 * Returns the string representation of this privilege
+	 *
+	 * @return string The string representation of this privilege
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __toString() {
+		return $this->identifier;
 	}
 }
 

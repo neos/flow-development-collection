@@ -35,12 +35,13 @@ namespace F3::FLOW3::Security::Authentication;
 interface ProviderInterface {
 
 	/**
-	 * Returns TRUE if the given token class can be authenticated by this provider
+	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param string $className The class name of the token that should be authenticated
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate($className);
+	public function canAuthenticate(F3::FLOW3::Security::Authentication::TokenInterface $token);
 
 	/**
 	 * Returns the classname of the token this provider is responsible for.

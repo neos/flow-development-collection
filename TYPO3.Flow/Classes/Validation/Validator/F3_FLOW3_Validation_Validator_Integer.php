@@ -45,7 +45,8 @@ class Integer extends F3::FLOW3::Validation::AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
-		if (is_integer($propertyValue)) return TRUE;
+		if (!is_string($propertyValue) && is_integer($propertyValue)) return TRUE;
+		if (preg_match('/^[0-9]+$/', $propertyValue)) return TRUE;
 
 		$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221560494));
 		return FALSE;

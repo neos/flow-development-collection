@@ -32,12 +32,6 @@ namespace F3::FLOW3::Security::Authorization::Voter;
 class AccessDeny implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface {
 
 	/**
-	 * @var array Array of classnames this voter should support
-	 * @todo This has to be set by configuration
-	 */
-	protected $supportedClasses = array();
-
-	/**
 	 * Votes to deny access, if the given object is one of the supported types
 	 *
 	 * @param F3::FLOW3::Security::Context $securityContext The current securit context

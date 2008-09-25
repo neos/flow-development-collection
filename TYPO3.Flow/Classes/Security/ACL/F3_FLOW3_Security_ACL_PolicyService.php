@@ -140,26 +140,31 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
 		if (!isset($this->acls[$methodIdentifier])) throw new F3::FLOW3::Security::Exception::NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
-		return array_keys($this->acls[$methodIdentifier]);
+		$resultRoles = array();
+		foreach ($this->acls[$methodIdentifier] as $roleIdentifier => $notNeededEntry) {
+			$resultRoles[] = $this->createNewRole($roleIdentifier);
+		}
+
+		return $resultRoles;
 	}
 
 	/**
 	 * Returns the privileges a specific role has for the given joinpoint
 	 *
-	 * @param string The role for which the privileges should be returned
+	 * @param F3::FLOW3::Security::ACL::Role The role for which the privileges should be returned
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param string $privilegeType If set we check only for this type of privilege
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivileges($role, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function getPrivileges(F3::FLOW3::Security::ACL::Role $role, F3::FLOW3::AOP::JoinPointInterface $joinPoint, $privilegeType = '') {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
 		if (!isset($this->acls[$methodIdentifier])) throw new F3::FLOW3::Security::Exception::NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 
 		$privileges = array();
-		if (!isset($this->acls[$methodIdentifier][$role])) {
-			foreach ($this->roles[$role] as $parentRole) $privileges = array_merge($privileges, $this->getPrivileges($parentRole, $joinPoint));
-		} else {
-			$privileges = $this->acls[$methodIdentifier][$role];
+
+		foreach ($this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType) as $privilegeString => $isGrant) {
+			$privileges[] = $this->createNewPrivilege($privilegeString, $isGrant);
 		}
 
 		return $privileges;
@@ -173,6 +178,55 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 */
 	public function createPolicyExpressionParser() {
 		return $this->componentFactory->getComponent('F3::FLOW3::Security::ACL::PolicyExpressionParser');
+	}
+
+	/**
+	 * Parses the privileges for the specified method identifier and role
+	 *
+	 * @param string $methodIdentifier The method identifier to parse the privileges for
+	 * @param string $role The string representation of a role to parse the privileges for
+	 * @param string $privilegeType If set, only the privilege of the given type will be parsed
+	 * @return array Parsed privileges
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function parsePrivileges($methodIdentifier, $role, $privilegeType) {
+		$privileges = array();
+
+		foreach ($this->acls[$methodIdentifier][(string)$role] as $privilegeString) {
+			preg_match('/^(.+)_(.+)$/', $privilegeString, $matches);
+
+			if ($privilegeType !== '' && $privilegeType !== $matches[1]) continue;
+
+			if ($matches[2] === 'GRANT') $privileges[$matches[1]] = TRUE;
+			else $privileges[$matches[1]] = FALSE;
+		}
+
+		foreach ($this->roles[$role] as $parentRole) $privileges = array_merge($this->parsePrivileges($methodIdentifier, $parentRole, $privilegeType), $privileges);
+
+		return $privileges;
+	}
+
+	/**
+	 * Returns a new role object
+	 *
+	 * @param string $roleIdentifier The identifier for the new role
+	 * @return F3::FLOW3::Security::ACL::Role A new role object
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function createNewRole($roleIdentifier) {
+		return $this->componentFactory->getComponent('F3::FLOW3::Security::ACL::Role', $roleIdentifier);
+	}
+
+	/**
+	 * Returns a new privilege object
+	 *
+	 * @param string $privilegeIdentifier The identifier for the new privilege
+	 * @param boolean $isGrant The isGrant flag of the privilege
+	 * @return F3::FLOW3::Security::ACL::Privilege A new role object
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function createNewPrivilege($privilegeIdentifier, $isGrant = FALSE) {
+		return $this->componentFactory->getComponent('F3::FLOW3::Security::ACL::Privilege', $privilegeIdentifier, $isGrant);
 	}
 }
 

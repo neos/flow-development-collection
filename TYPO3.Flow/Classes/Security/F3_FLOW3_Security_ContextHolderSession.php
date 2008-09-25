@@ -118,7 +118,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 		$sessionTokens = $context->getAuthenticationTokens();
 		$mergedTokens = $this->mergeTokens($managerTokens, $sessionTokens);
 
-		$this->updateTokenCredentials($mergedTokens);
+		$this->updateTokens($mergedTokens);
 		$context->setAuthenticationTokens($mergedTokens);
 
 		$this->setContext($context);
@@ -170,14 +170,16 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	}
 
 	/**
-	 * Updates the token credentials for all tokens in the given array
+	 * Updates the token credentials for all tokens in the given array. It also sets
+	 * the current instance of the component factory.
 	 *
 	 * @param array Array of authentication tokens the credentials should be updated for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function updateTokenCredentials(array $tokens) {
+	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
+			$token->setComponentFactory($this->componentFactory);
 			$token->updateCredentials();
 		}
 	}

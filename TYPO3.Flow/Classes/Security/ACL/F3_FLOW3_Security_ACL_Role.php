@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::ACL;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,30 +26,27 @@ namespace F3::FLOW3::Security::ACL;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Role implements F3::FLOW3::Security::Authentication::GrantedAuthorityInterface {
 
 	/**
-	 * @var array Array of child roles
+	 * The string identifier of this role
+	 * @var string
 	 */
-	protected $children = array();
-
-	/**
-	 * @var F3::FLOW3::Security::ACL::Role A reference to the parent role
-	 */
-	protected $parent = NULL;
+	protected $identifier;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Security::ACL::Role $parent The parent role
+	 * @param string $identifier The string identifier of this role
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Security::ACL::Role $parent = NULL) {
-
+	public function __construct($identifier) {
+		$this->identifier = $identifier;
 	}
 
 	/**
@@ -59,48 +56,17 @@ class Role implements F3::FLOW3::Security::Authentication::GrantedAuthorityInter
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthority() {
-
+		return $this->identifier;
 	}
 
 	/**
-	 * Adds a new child role to this role.
+	 * Returns the string representation of this role (the identifier)
 	 *
-	 * @param F3::FLOW3::Security::ACL::Role $role A new child role for this role
-	 * @return void
+	 * @return string the string representation of this role
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addChild(F3::FLOW3::Security::ACL::Role $role) {
-
-	}
-
-	/**
-	 * Returns an array of all child roles of this role.
-	 *
-	 * @return array Array of F3::FLOW3::Security::ACL::Role objects, beeing the children of this role
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getChildren() {
-
-	}
-
-	/**
-	 * Returns the parent role of this role, NULL if there is none.
-	 *
-	 * @return F3::FLOW3::Security::ACL::Role The parent role of this one, NULL if there is none
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getParent() {
-
-	}
-
-	/**
-	 * Returns an array of the string representation of all roles in the tree starting from this one to the tree root.
-	 *
-	 * @return array Array of the string representation of all roles in the tree starting from this one to the tree root
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getFlattenedAuthorityTree() {
-
+	public function __toString() {
+		return $this->identifier;
 	}
 }
 

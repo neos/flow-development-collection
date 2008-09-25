@@ -32,6 +32,23 @@ namespace F3::FLOW3::Security::Authorization::Voter;
 class ACL implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface {
 
 	/**
+	 * The policy service
+	 * @var F3::FLOW3::Security::ACL::PolicyService
+	 */
+	protected $policyService;
+
+	/**
+	 * Constructor.
+	 *
+	 * @param F3::FLOW3::Security::ACL::PolicyService $policyService The policy service
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct(F3::FLOW3::Security::ACL::PolicyService $policyService) {
+		$this->policyService = $policyService;
+	}
+
+	/**
 	 * This is the default ACL voter, it votes for the ACCESS privilege
 	 *
 	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
@@ -40,8 +57,22 @@ class ACL implements F3::FLOW3::Security::Authorization::AccessDecisionVoterInte
 	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
 	public function vote(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		//ask the current token if for the roles the user currently has
-		//search for an ACCESS privilege, that isGrant(), any of the user's roles has for this joinpoint (ask the policyservice to return the privileges for each role)
+		$accessGrants = 0;
+		$accessDenies = 0;
+		foreach ($securityContext->getAuthenticationTokens() as $token) {
+			foreach ($token->getGrantedAuthorities() as $grantedAuthority) {
+				$privileges = $this->policyService->getPrivileges($grantedAuthority, $joinPoint, 'ACCESS');
+				if (!isset($privileges[0])) continue;
+
+				if ($privileges[0]->isGrant()) $accessGrants++;
+				else $accessDenies++;
+			}
+		}
+
+		if ($accessDenies > 0) return self::VOTE_DENY;
+		if ($accessGrants > 0) return self::VOTE_GRANT;
+
+		return VOTE_ABSTAIN;
 	}
 }
 

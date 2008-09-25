@@ -97,7 +97,6 @@ class PolicyEnforcement implements F3::FLOW3::Security::Authorization::Intercept
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-
 		try {
 			if (!$this->securityContext->authenticationPerformed()) $this->authenticationManager->authenticate();
 		} catch (F3::FLOW3::Security::Exception::AuthenticationRequired $exception) {
