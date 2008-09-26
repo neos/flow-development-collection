@@ -28,7 +28,6 @@ namespace F3::FLOW3::Resource;
  * @subpackage Resource
  * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope singleton
  */
 class Publisher {
 

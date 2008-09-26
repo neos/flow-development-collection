@@ -38,6 +38,11 @@ class MockEnvironment extends F3::FLOW3::Utility::Environment {
 	public $SERVER;
 
 	/**
+	 * @var array A local copy of the _GET super global.
+	 */
+	public $GET;
+
+	/**
 	 * @var array A local copy of the _POST super global.
 	 */
 	public $POST;

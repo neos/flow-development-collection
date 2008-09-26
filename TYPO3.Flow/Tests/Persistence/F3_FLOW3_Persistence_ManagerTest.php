@@ -105,7 +105,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
-		$mockReflectionService->expects($this->exactly(4))->method('getPropertyNamesByTag')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array()));
+		$mockReflectionService->expects($this->exactly(4))->method('getPropertyNamesByTag')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array(), array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
 		$mockComponentFactory->expects($this->once())->method('getComponent')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));

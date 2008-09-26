@@ -50,6 +50,11 @@ class Environment {
 	protected $SERVER;
 
 	/**
+	 * @var array A local copy of the _GET super global.
+	 */
+	protected $GET;
+
+	/**
 	 * @var array A local copy of the _POST super global.
 	 */
 	protected $POST;
@@ -65,19 +70,20 @@ class Environment {
 	protected $temporaryDirectory;
 
 	/**
-	 * This constructor copies the superglobal $_SERVER to a local variable
-	 * and unsets the orginal.
+	 * This constructor copies the superglobals $_SERVER, $_GET, $_POST to local
+	 * variables and unsets the orginals.
 	 *
-	 * @param  array The configuration for the utility environment
+	 * @param array The configuration for the utility environment
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Container $configuration) {
 		$this->SERVER = $_SERVER;
+		$this->GET = $_GET;
 		$this->POST = $_POST;
 		$this->SAPIName = PHP_SAPI;
-		#$_SERVER = $componentFactory->getComponent('F3::FLOW3::Utility::SuperGlobalReplacement', '_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
-		#$_GET = $componentFactory->getComponent('F3::FLOW3::Utility::SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
-		#$_POST = $componentFactory->getComponent('F3::FLOW3::Utility::SuperGlobalReplacement', '_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+		#$_SERVER = new F3::FLOW3::Utility::SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
+		#$_GET = new F3::FLOW3::Utility::SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
+		#$_POST = new F3::FLOW3::Utility::SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 
 		try {
 			$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
@@ -268,6 +274,16 @@ class Environment {
 	 */
 	public function getSAPIName() {
 		return $this->SAPIName;
+	}
+
+	/**
+	 * Returns the GET arguments array from the _GET superglobal
+	 *
+	 * @return array Unfiltered, raw, insecure, tainted GET arguments
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getGETArguments() {
+		return $this->GET;
 	}
 
 	/**
