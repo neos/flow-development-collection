@@ -46,10 +46,13 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 	 * Sets up this test case
 	 *
 	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
 		$configuration = $this->componentFactory->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
 		$this->environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
+		$this->environment->SERVER['argc'] = 0;
+		$this->environment->SERVER['argv'] = array();
 		$this->requestBuilder = new F3::FLOW3::MVC::CLI::RequestBuilder($this->componentManager, $this->componentFactory, $this->environment);
 	}
 
@@ -75,7 +78,6 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 	 */
 	public function CLIAccessWithPackageNameBuildsCorrectRequest() {
 		$this->environment->SERVER['argc'] = 2;
-		$this->environment->SERVER['argv'] = array();
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$request = $this->requestBuilder->build();

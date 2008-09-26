@@ -91,6 +91,19 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	}
 
 	/**
+	 * Save the found matches to the cache.
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo: could also be trigered by a hook/event after AOP initialization is finished. That would seem cleaner than using the destructor.
+	 */
+	public function __destruct() {
+		if ($this->configuration->aop->proxyCache->enable) {
+			$tags = array('F3_FLOW3_AOP');
+			$this->aclCache->save('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
+		}
+	}
+
+	/**
 	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
 	 * This method also creates a cache entry for every method, to cache the associated roles and privileges.
 	 *
@@ -118,11 +131,6 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 					$matches = TRUE;
 				}
 			}
-		}
-
-		if ($this->configuration->aop->proxyCache->enable) {
-			$tags = array('F3_FLOW3_AOP');
-			$this->aclCache->save('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
 		}
 
 		return $matches;
@@ -193,7 +201,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 		$privileges = array();
 
 		foreach ($this->acls[$methodIdentifier][(string)$role] as $privilegeString) {
-			preg_match('/^(.+)_(.+)$/', $privilegeString, $matches);
+			preg_match('/^(.+)_(GRANT|DENY)$/', $privilegeString, $matches);
 
 			if ($privilegeType !== '' && $privilegeType !== $matches[1]) continue;
 
