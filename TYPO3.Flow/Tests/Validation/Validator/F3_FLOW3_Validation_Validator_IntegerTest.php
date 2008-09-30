@@ -97,6 +97,32 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function integerValidatorReturnsTrueForAPositiveIntegerGivenAsString() {
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($integerValidator->isValidProperty('+12345', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function integerValidatorReturnsTrueForANegativeIntegerGivenAsString() {
+		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
+		$integerValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertTrue($integerValidator->isValidProperty('-12345', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAFloatGivenAsAString() {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();

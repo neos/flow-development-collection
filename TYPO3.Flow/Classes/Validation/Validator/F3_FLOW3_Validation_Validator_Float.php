@@ -46,6 +46,7 @@ class Float extends F3::FLOW3::Validation::AbstractValidator {
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
 		if (is_float($propertyValue)) return TRUE;
+		if (is_string($propertyValue) && strpos($propertyValue, '.') && preg_match('/^[0-9.e+-]+$/', $propertyValue)) return TRUE;
 
 		$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid float. Got: "' . $propertyValue . '"', 1221560288));
 		return FALSE;

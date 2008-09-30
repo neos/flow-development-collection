@@ -37,11 +37,11 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	protected $validators = array();
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid.
+	 * Returns TRUE, if the given property ($propertyValue) is a valid.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param object $propertyValue The value that should be validated
+	 * @param mixed $propertyValue The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -59,7 +59,7 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 *
-	 * @param F3::FLOW3::Validation::ValidatorInterface The validator that should be added
+	 * @param F3::FLOW3::Validation::ValidatorInterface $validator The validator that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -71,7 +71,7 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	/**
 	 * Returns the validator with the given index of the chain.
 	 *
-	 * @param  integer The index of the validator that should be returned
+	 * @param integer $index The index of the validator that should be returned
 	 * @return F3::FLOW3::Validation::ValidatorInterface The requested validator
 	 * @throws F3::FLOW3::Validation::Exception::InvalidChainIndex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -84,7 +84,7 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	/**
 	 * Removes the validator with the given index of the chain.
 	 *
-	 * @param integer The index of the validator that should be removed
+	 * @param integer $index The index of the validator that should be removed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeValidator($index) {

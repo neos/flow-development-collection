@@ -36,7 +36,7 @@ class UUID extends F3::FLOW3::Validation::AbstractValidator {
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param  object $propertyValue The value that should be validated
+	 * @param mixed $propertyValue The value that should be validated
 	 * @param F3::FLOW3::Validation::Errors $errors Any occured Error will be stored here
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
@@ -44,7 +44,7 @@ class UUID extends F3::FLOW3::Validation::AbstractValidator {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
-		if (!preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $propertyValue)) {
+		if (!is_string($propertyValue) || !preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $propertyValue)) {
 			$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid UUID. Got: "' . $propertyValue . '"', 1221565853));
 			return FALSE;
 		}
