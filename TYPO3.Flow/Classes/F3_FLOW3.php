@@ -411,12 +411,14 @@ final class FLOW3 {
 		$packageManager = $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface');
 
 		$metadataCache = $this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
+		$statusCache = $this->cacheFactory->create('FLOW3_Resource_Status', 'F3::FLOW3::Cache::StringCache', 'F3::FLOW3::Cache::Backend::File');
 		$environment = $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
 		$resourcePublisher = $this->componentFactory->getComponent('F3::FLOW3::Resource::Publisher');
 		$resourcePublisher->initializeMirrorDirectory($this->settings->resource->cache->publicPath . $requestType . '/');
 		$resourcePublisher->setMetadataCache($metadataCache);
+		$resourcePublisher->setStatusCache($statusCache);
 		$resourcePublisher->setCacheStrategy($this->settings->resource->cache->strategy);
 
 		$activePackages = $packageManager->getActivePackages();

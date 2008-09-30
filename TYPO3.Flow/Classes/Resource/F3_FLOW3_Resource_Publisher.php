@@ -52,6 +52,11 @@ class Publisher {
 	protected $resourceMetadataCache;
 
 	/**
+	 * @var F3::FLOW3::Cache::StringCache The cache used for storing metadata about resources
+	 */
+	protected $resourceStatusCache;
+
+	/**
 	 * @var integer One of the CACHE_STRATEGY constants defined in F3::FLOW3::Resource::Manager
 	 */
 	protected $cacheStrategy = F3::FLOW3::Resource::Manager::CACHE_STRATEGY_NONE;
@@ -93,6 +98,17 @@ class Publisher {
 	}
 
 	/**
+	 * Sets the cache used for storing resources status
+	 *
+	 * @param F3::FLOW3::Cache::StringCache $statusCache
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setStatusCache(F3::FLOW3::Cache::StringCache $statusCache) {
+		$this->resourceStatusCache = $statusCache;
+	}
+
+	/**
 	 * Sets the cache strategy to use for resource files
 	 *
 	 * @param integer $strategy One of the CACHE_STRATEGY constants from F3::FLOW3::Resource::Manager
@@ -129,10 +145,10 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mirrorPublicPackageResources($packageName) {
-		if ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE && $this->resourceMetadataCache->has($packageName . 'IsMirrored')) {
+		if ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($packageName)) {
 			return;
 		} elseif ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE) {
-			$this->resourceMetadataCache->save($packageName . 'IsMirrored', TRUE);
+			$this->resourceStatusCache->save($packageName, '');
 		}
 
 		$sourcePath = FLOW3_PATH_PACKAGES . $packageName . '/Resources/Public/';

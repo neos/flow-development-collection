@@ -22,7 +22,7 @@ namespace F3::FLOW3::Cache;
  */
 
 /**
- * A cache for any kinds of PHP variables
+ * A cache for strings. Nothing else.
  *
  * @package FLOW3
  * @subpackage Cache
@@ -30,31 +30,33 @@ namespace F3::FLOW3::Cache;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class VariableCache extends F3::FLOW3::Cache::AbstractCache {
+class StringCache extends F3::FLOW3::Cache::AbstractCache {
 
 	/**
 	 * Saves the value of a PHP variable in the cache. Note that the variable
 	 * will be serialized if necessary.
 	 *
 	 * @param string $entryIdentifier An identifier used for this cache entry
-	 * @param mixed $variable The variable to cache
+	 * @param string $string The variable to cache
 	 * @param array $tags Tags to associate with this cache entry
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function save($entryIdentifier, $variable, $tags = array()) {
-		$this->backend->save($entryIdentifier, serialize($variable), $tags);
+	public function save($entryIdentifier, $string, $tags = array()) {
+		if (!is_string($string)) throw new F3::FLOW3::Cache::Exception::InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
+
+		$this->backend->save($entryIdentifier, $string, $tags);
 	}
 
 	/**
 	 * Loads a variable value from the cache.
 	 *
 	 * @param string $entryIdentifier Identifier of the cache entry to fetch
-	 * @return mixed The value
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The value
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function load($entryIdentifier) {
-		return unserialize($this->backend->load($entryIdentifier));
+		return $this->backend->load($entryIdentifier);
 	}
 
 	/**
