@@ -42,6 +42,12 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	protected $afterInvocationManager = NULL;
 
 	/**
+	 * Result of the (probably intercepted) target method
+	 * @var mixed
+	 */
+	protected $result;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param F3::FLOW3_Security::ContextHolderInterface $securityContextHolder The current security context
@@ -50,9 +56,9 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
-					F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager
-					) {
+		F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
+		F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager
+		) {
 
 	}
 
@@ -75,7 +81,7 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setResult($result) {
-
+		$this->result = $result;
 	}
 
 	/**
@@ -83,9 +89,10 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo Implement interception logic
 	 */
 	public function invoke() {
-
+		return $this->result;
 	}
 }
 

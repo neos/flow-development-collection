@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface AfterInvocationManagerInterface {
@@ -40,7 +40,7 @@ interface AfterInvocationManagerInterface {
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 */
-	public function process(F3::FLOW3::Security::Context $securityContext, object $object, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
+	public function process(F3::FLOW3::Security::Context $securityContext, $object, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns TRUE if this after invocation processor can process return objects of the given classname

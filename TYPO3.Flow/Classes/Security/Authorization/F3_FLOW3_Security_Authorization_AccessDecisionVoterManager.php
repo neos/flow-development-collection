@@ -115,7 +115,7 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 		if ($denyVotes === 0 && $grantVotes > 0) return;
 		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
 
-		throw new F3::FLOW3::Security::Exception::AccessDenied('You are not allowed to access. Go away!', 1222268609);
+		throw new F3::FLOW3::Security::Exception::AccessDenied('Access denied.', 1222268609);
 	}
 
 	/**

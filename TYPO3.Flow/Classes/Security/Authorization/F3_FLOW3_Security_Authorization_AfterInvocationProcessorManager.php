@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -27,7 +27,7 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class AfterInvocationProcessorManager implements F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface {
@@ -45,7 +45,7 @@ class AfterInvocationProcessorManager implements F3::FLOW3::Security::Authorizat
 	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
 	 * @todo processors must also be configurable
 	 */
-	public function process(F3::FLOW3::Security::Context $securityContext, object $object, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function process(F3::FLOW3::Security::Context $securityContext, $object, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 
 	}
 

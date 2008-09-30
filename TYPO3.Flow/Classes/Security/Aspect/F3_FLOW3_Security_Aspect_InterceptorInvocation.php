@@ -64,7 +64,7 @@ class InterceptorInvocation {
 	 *
 	 * @around filter(F3::FLOW3::Security::ACL::PolicyService)
 	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The current joinpoint
-	 * @return void
+	 * @return The result of the target method if it has not been intercepted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicy(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
