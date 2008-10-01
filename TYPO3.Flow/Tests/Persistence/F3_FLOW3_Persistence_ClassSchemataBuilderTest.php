@@ -64,7 +64,7 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
-		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean');
+		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier');
 
 		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
 		$actualProperties = array_keys($builtClassSchema->getProperties());
@@ -83,7 +83,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 			'someString' => 'string',
 			'someInteger' => 'integer',
 			'someFloat' => 'float',
-			'someDate' => 'DateTime'
+			'someDate' => 'DateTime',
+			'someIdentifier' => 'string'
 		);
 
 		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
@@ -136,6 +137,15 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	public function identifierPropertyIsDetectedFromAnnotation() {
 		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
 		$this->assertEquals($builtClassSchema->getIdentifierProperty(), 'someIdentifier');
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function identifierPropertyIsSetAsRegularPropertyAsWell() {
+		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
 	}
 }
 
