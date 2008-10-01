@@ -101,6 +101,11 @@ class DirtyMonitoring {
 		$proxy = $joinPoint->getProxy();
 		$cleanProperties = $proxy->AOPProxyGetProperty('FLOW3PersistenceCleanProperties');
 
+		$identifierProperty = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getIdentifierProperty();
+		if ($identifierProperty !== NULL && $proxy->AOPProxyGetProperty($identifierProperty) != $cleanProperties[$identifierProperty]) {
+			throw new F3::FLOW3::Persistence::Exception::TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
+		}
+
 		foreach ($cleanProperties as $propertyName => $cleanValue) {
 			if ($cleanValue !== $proxy->AOPProxyGetProperty($propertyName)) {
 				$isDirty = TRUE;
