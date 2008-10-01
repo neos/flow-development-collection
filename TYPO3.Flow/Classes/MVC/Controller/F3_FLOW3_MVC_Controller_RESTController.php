@@ -61,22 +61,21 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
-	 * @todo as soon as argument validation works as expected throw 400 on invalid identifier
 	 */
 	protected function callActionMethod() {
-#		if ($this->arguments['identifier']->isValid() === FALSE) $this->throwStatus(400);
+		if ($this->arguments['id']->isValid() === FALSE) $this->throwStatus(400);
 
 		if ($this->request->getControllerActionName() == 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET :
-					$actionName = ($this->arguments['identifier']->getValue() === NULL) ? 'list' : 'show';
+					$actionName = ($this->arguments['id']->getValue() === NULL) ? 'list' : 'show';
 				break;
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST :
 					$actionName = 'create';
 				break;
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT :
-					if ($this->arguments['identifier']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
+					if ($this->arguments['id']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
 					$actionName = 'update';
 				break;
 				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE :
@@ -101,7 +100,7 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeArguments() {
-		$this->arguments->addNewArgument('identifier', 'UUID');
+		$this->arguments->addNewArgument('id', 'UUID');
 	}
 }
 ?>

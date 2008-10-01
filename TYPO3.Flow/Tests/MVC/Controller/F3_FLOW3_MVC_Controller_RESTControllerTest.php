@@ -68,7 +68,7 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
 		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
 
-		$request->setArgument('identifier', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
+		$request->setArgument('id', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
 
 		$this->mockController->processRequest($request, $response);
 		$this->assertEquals('show action called', $response->getContent());

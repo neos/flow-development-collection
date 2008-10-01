@@ -170,6 +170,9 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setArgumentsFromRawRequestData(F3::FLOW3::MVC::Web::Request $request) {
+		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
+			$request->setArgument($argumentName, $argumentValue);
+		}
 		switch ($request->getMethod()) {
 			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST:
 				foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
@@ -183,10 +186,6 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;
-		}
-
-		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
-			$request->setArgument($argumentName, $argumentValue);
 		}
 	}
 }

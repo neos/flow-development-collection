@@ -112,7 +112,7 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
-		if (!$this->canProcessRequest($request)) throw new F3::FLOW3::MVC::Exception::UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '"' , 1187701131);
+		if (!$this->canProcessRequest($request)) throw new F3::FLOW3::MVC::Exception::UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 
 		$this->request = $request;
 		$this->request->setDispatched(TRUE);
