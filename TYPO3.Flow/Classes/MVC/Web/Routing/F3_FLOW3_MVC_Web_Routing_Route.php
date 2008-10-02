@@ -1,7 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
 namespace F3::FLOW3::MVC::Web::Routing;
-use F3::FLOW3::MVC::Web::Routing::Events::RouteEvent;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -118,7 +117,7 @@ class Route {
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
 	}
-	
+
 	/**
 	 * Sets Route name.
 	 *
@@ -316,7 +315,7 @@ class Route {
 			}
 			$url.= '/';
 		}
-		foreach($this->defaults as $key => $defaultValue) {
+		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
 				if ($routeValues[$key] != $defaultValue) {
 					return FALSE;
