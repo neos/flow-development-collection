@@ -38,7 +38,7 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 */
 	public function authenticatingAUsernamePasswordTokenWorks() {
 		$mockToken = $this->getMock('F3::FLOW3::Security::Authentication::Token::UsernamePassword', array(), array(), '', FALSE);
-		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'FLOW3', 'password' => 'verysecurepassword')));
+		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TRUE);
 
 		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
