@@ -33,7 +33,6 @@ class MockRoutePartHandler extends F3::FLOW3::MVC::Web::Routing::DynamicRoutePar
 
 	protected function matchValue($value) {
 		$this->value = '_match_invoked_';
-		array_shift($urlSegments);
 		return TRUE;
 	}
 
