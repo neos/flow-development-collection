@@ -69,7 +69,7 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderI
 		if (!($authenticationToken instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword)) throw new F3::FLOW3::Security::Exception::UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
-		if ($credentials['username'] === 'FLOW3' && $credentials['password'] === 'verysecurepassword') $authenticationToken->setAuthenticationStatus(TRUE);
+		if ($credentials['username'] === 'admin' && $credentials['password'] === 'password') $authenticationToken->setAuthenticationStatus(TRUE);
 	}
 }
 

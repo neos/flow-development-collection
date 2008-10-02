@@ -324,6 +324,20 @@ $c->security->policy->aclCache->backend = $c->cache->defaultCache->backend;
 $c->security->policy->aclCache->backendOptions = $c->cache->defaultCache->backendOptions;
 
 /**
+ * This is a very dirty and not recommended playground option.
+ *
+ * As long as we don't have a proper mechanism for resolving authentication entry points,
+ * this URI may point to some login page. The MVC Dispatcher is the only one who knows
+ * about this option (and nobody else should use it because we'll discard it soon without
+ * further notice).
+ *
+ * Currently used by the TYPO3 package for demo purposes.
+ *
+ * @var string
+ */
+$c->security->loginPageURIForDemoPurposes = '';
+
+/**
  * The default locale identifier.
  *
  * @var string
