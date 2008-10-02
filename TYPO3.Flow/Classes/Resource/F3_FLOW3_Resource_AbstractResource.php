@@ -108,6 +108,15 @@ abstract class AbstractResource implements F3::FLOW3::Resource::ResourceInterfac
 		return $this->path;
 	}
 
+	/**
+	 * Returns the path the resource was obtained from including file name
+	 *
+	 * @return string
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getPathAndFileName() {
+		return F3::FLOW3::Utility::Files::concatenatePaths(array($this->path, $this->name));
+	}
 
 	/**
 	 * Returns the media type of the resource

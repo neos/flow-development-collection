@@ -83,10 +83,12 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	public function setRoutesConfiguration(F3::FLOW3::Configuration::Container $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
 			$route = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::Route');
+			$route->setName($routeName);
 			$route->setUrlPattern($routeConfiguration->urlPattern);
 			$route->setDefaults($routeConfiguration->defaults);
 			if (isset($routeConfiguration->controllerComponentNamePattern)) $route->setControllerComponentNamePattern($routeConfiguration->controllerComponentNamePattern);
 			if (isset($routeConfiguration->viewComponentNamePattern)) $route->setViewComponentNamePattern($routeConfiguration->viewComponentNamePattern);
+			if (isset($routeConfiguration->routePartHandlers)) $route->setRoutePartHandlers($routeConfiguration->routePartHandlers);
 			$this->routes[$routeName] = $route;
 		}
 	}
@@ -102,6 +104,9 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 */
 	public function route(F3::FLOW3::MVC::Web::Request $request) {
 		$requestPath = F3::PHP6::Functions::substr($request->getRequestURI()->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
+		if (F3::PHP6::Functions::strlen($request->getRequestURI()->getQuery()) > 0) {
+			$requestPath .= '?' . $request->getRequestURI()->getQuery();
+		}
 		if (F3::PHP6::Functions::substr($requestPath, 0, 9) == 'index.php' || F3::PHP6::Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}

@@ -1,6 +1,7 @@
 <?php
 declare(ENCODING = 'utf-8');
 namespace F3::FLOW3::MVC::Web::Routing;
+use F3::FLOW3::MVC::Web::Routing::Events::RouteEvent;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,6 +36,13 @@ class Route {
 
 	const ROUTEPART_TYPE_STATIC = 'static';
 	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
+
+	/**
+	 * Route name
+	 *
+	 * @var string
+	 */
+	protected $name;
 
 	/**
 	 * Default values
@@ -109,6 +117,27 @@ class Route {
 	 */
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
+	}
+	
+	/**
+	 * Sets Route name.
+	 *
+	 * @param string $name The Route name
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setName($name) {
+		$this->name = $name;
+	}
+
+	/**
+	 * Returns the name of this Route.
+	 *
+	 * @return string Route name.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
@@ -232,12 +261,11 @@ class Route {
 		if ($requestPath === NULL) {
 			return FALSE;
 		}
-		if ($this->urlPattern === NULL || $this->urlPattern == '') {
+		if ($this->urlPattern === NULL) {
 			return FALSE;
 		}
 		$requestPath = trim($requestPath, '/ ');
-		$requestPathSegments = explode('/', $requestPath);
-
+		$requestPathSegments = strlen($requestPath) ? explode('/', $requestPath) : array();
 		if (!$this->isParsed) {
 			$this->parse();
 		}
@@ -253,7 +281,7 @@ class Route {
 				}
 			}
 		}
-		if (count($requestPathSegments) > 1) {
+		if (count($requestPathSegments) > 0) {
 			return FALSE;
 		}
 		$this->matchResults = array_merge($this->defaults, $matchResults);
@@ -271,7 +299,7 @@ class Route {
 	 */
 	public function resolves(array $routeValues) {
 		$this->matchingURL = NULL;
-		if ($this->urlPattern === NULL || $this->urlPattern == '') {
+		if ($this->urlPattern === NULL) {
 			return FALSE;
 		}
 		if (!$this->isParsed) {
@@ -287,6 +315,14 @@ class Route {
 				$url.= F3::PHP6::Functions::strtolower($routePart->getValue());
 			}
 			$url.= '/';
+		}
+		foreach($this->defaults as $key => $defaultValue) {
+			if (isset($routeValues[$key])) {
+				if ($routeValues[$key] != $defaultValue) {
+					return FALSE;
+				}
+				unset($routeValues[$key]);
+			}
 		}
 		if (count($routeValues) > 0) {
 			return FALSE;

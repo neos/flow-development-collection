@@ -64,37 +64,67 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function match(array &$urlSegments) {
+	final public function match(array &$urlSegments) {
 		$this->value = NULL;
 
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-
-		$valueToMatch = isset($urlSegments[0]) ? $urlSegments[0] : NULL;
-		if (F3::PHP6::Functions::strlen($this->splitString) > 0 && F3::PHP6::Functions::strlen($valueToMatch)) {
-			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $this->splitString);
-			if ($splitStringPosition === FALSE) {
-				return FALSE;
-			}
-			$valueToMatch = F3::PHP6::Functions::substr($valueToMatch, 0, $splitStringPosition);
+		$valueToMatch = $this->findValueToMatch($urlSegments);
+		if (!$this->matchValue($valueToMatch)) {
+			return FALSE;
 		}
-
-		if (!F3::PHP6::Functions::strlen($valueToMatch)) {
-			if (empty($this->defaultValue)) {
-				return FALSE;
-			}
-			$this->value = $this->defaultValue;
-		} else {
-			$this->value = $valueToMatch;
-			if (F3::PHP6::Functions::strlen($valueToMatch)) {
-				$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
-			}
+		if (F3::PHP6::Functions::strlen($valueToMatch)) {
+			$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
 		}
 		if (F3::PHP6::Functions::strlen($this->splitString) == 0 && isset($urlSegments[0]) && F3::PHP6::Functions::strlen($urlSegments[0]) == 0) {
 			array_shift($urlSegments);
 		}
 
+		return TRUE;
+	}
+
+	/**
+	 * Returns the first URL segment.
+	 * If a split string is set, only the first part of the value is returned.
+	 * 
+	 * @param array $urlSegments
+	 * @return string value to match, or an empty string if no URL segment is left or split string was not found
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function findValueToMatch(array $urlSegments) {
+		if (!isset($urlSegments[0])) {
+			return '';
+		}
+		$valueToMatch = $urlSegments[0];
+		if (F3::PHP6::Functions::strlen($this->splitString) > 0) {
+			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $this->splitString);
+			if ($splitStringPosition === FALSE) {
+				return '';
+			}
+			$valueToMatch = F3::PHP6::Functions::substr($valueToMatch, 0, $splitStringPosition);
+		}
+		return $valueToMatch;
+	}
+
+	/**
+	 * Checks, whether given value can be matched.
+	 * If $value is empty, this method checks whether a default value exists.
+	 * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
+	 *
+	 * @param string $value value to match
+	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function matchValue($value) {
+		if (!F3::PHP6::Functions::strlen($value)) {
+			if (!isset($this->defaultValue)) {
+				return FALSE;
+			}
+			$this->value = $this->defaultValue;
+		} else {
+			$this->value = $value;
+		}
 		return TRUE;
 	}
 
@@ -106,23 +136,39 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolve(array &$routeValues) {
+	final public function resolve(array &$routeValues) {
 		$this->value = NULL;
 
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		if (!isset($routeValues[$this->name])) {
+		$valueToResolve = isset($routeValues[$this->name]) ? $routeValues[$this->name] : NULL;
+		if (!$this->resolveValue($valueToResolve)) {
+			return FALSE;
+		}
+		unset($routeValues[$this->name]);
+
+		return TRUE;
+	}
+
+	/**
+	 * Checks, whether given value can be resolved.
+	 * If $value is empty, this method checks whether a default value exists.
+	 * This method can be overridden by custom RoutePartHandlers to implement custom resolving mechanisms.
+	 *
+	 * @param string $value value to resolve
+	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function resolveValue($value) {
+		if (!isset($value)) {
 			if (!isset($this->defaultValue)) {
 				return FALSE;
 			}
 			$this->value = $this->defaultValue;
-			return TRUE;
+		} else {
+			$this->value = $value;
 		}
-
-		$this->value = $routeValues[$this->name];
-		unset($routeValues[$this->name]);
-
 		return TRUE;
 	}
 }

@@ -52,6 +52,11 @@ abstract class AbstractView {
 	protected $request;
 
 	/**
+	 * @var array of F3::FLOW3::MVC::View::Helper::HelperInterface
+	 */
+	protected $viewHelpers;
+
+	/**
 	 * Constructs the view.
 	 *
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
@@ -76,6 +81,26 @@ abstract class AbstractView {
 	 */
 	public function setRequest(F3::FLOW3::MVC::Request $request) {
 		$this->request = $request;
+	}
+
+	/**
+	 * Returns an View Helper instance.
+	 * View Helpers must implement the interface F3::FLOW3::MVC::View::Helper::HelperInterface
+	 *
+	 * @param string $viewHelperClassName the full name of the View Helper Class including namespace
+	 * @return F3::FLOW3::MVC::View::Helper::HelperInterface The View Helper instance
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getViewHelper($viewHelperClassName) {
+		if (!isset($this->viewHelpers[$viewHelperClassName])) {
+			$viewHelper = $this->componentFactory->getComponent($viewHelperClassName);
+			if (!$viewHelper instanceof F3::FLOW3::MVC::View::Helper::HelperInterface) {
+				throw new F3::FLOW3::MVC::Exception::InvalidViewHelper('View Helpers must implement interface "F3::FLOW3::MVC::View::Helper::HelperInterface"', 1222895456);
+			}
+			$viewHelper->setRequest($this->request);
+			$this->viewHelpers[$viewHelperClassName] = $viewHelper;
+		}
+		return $this->viewHelpers[$viewHelperClassName];
 	}
 
 	/**

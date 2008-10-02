@@ -49,8 +49,7 @@ class Files {
 	 * Note: trailing slashes will be removed, leading slashes won't.
 	 * Usage: concatenatePaths(array('dir1/dir2', 'dir3', 'file'))
 	 *
-	 * @param array $paths the file paths to be combined. Last array element may
-	 * include the filename.
+	 * @param array $paths the file paths to be combined. Last array element may include the filename.
 	 * @return string concatenated path without trailing slash.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getUnixStylePath()

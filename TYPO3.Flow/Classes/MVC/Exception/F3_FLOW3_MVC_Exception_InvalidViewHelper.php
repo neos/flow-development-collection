@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3::FLOW3::MVC::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,76 +17,20 @@ namespace F3::FLOW3::Resource;
 
 /**
  * @package FLOW3
- * @subpackage Resource
+ * @subpackage MVC
  * @version $Id$
  */
 
 /**
- *
+ * An "invalid ViewHelper" exception
  *
  * @package FLOW3
- * @subpackage Resource
+ * @subpackage MVC
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface ResourceInterface {
+class InvalidViewHelper extends F3::FLOW3::MVC::Exception {
 
-	/**
-	 * Returns the type of source the resource originates
-	 *
-	 * @return string Type, e.g. file, http, ftp, ...
-	 */
-	public function getDataSourceType();
-
-	/**
-	 * The URI representing
-	 *
-	 * @return F3::FLOW3
-	 */
-	public function getURI();
-
-	/**
-	 * Returns the name the resource was obtained from
-	 *
-	 * @return string
-	 */
-	public function getName();
-
-	/**
-	 * Returns the path the resource was obtained from
-	 *
-	 * @return string
-	 */
-	public function getPath();
-
-	/**
-	 * Returns the path the resource was obtained from including file name
-	 *
-	 * @return string
-	 */
-	public function getPathAndFileName();
-
-	/**
-	 * Returns the media type of the resource
-	 *
-	 * @return string
-	 */
-	public function getMediaType();
-
-	/**
-	 * Returns the MIME type of the resource
-	 *
-	 * @return string
-	 */
-	public function getMIMEType();
-
-
-	/**
-	 * Returns the content represented by the resource object
-	 *
-	 * @return string|binary
-	 */
-	public function getContent();
 }
 
 ?>

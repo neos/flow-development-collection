@@ -37,16 +37,6 @@ class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
 	protected $request;
 
 	/**
-	 * Sets the request
-	 *
-	 * @param F3::FLOW3::MVC::Request $request The request
-	 * @return void
-	 */
-	public function setRequest(F3::FLOW3::MVC::Request $request) {
-		$this->request = $request;
-	}
-
-	/**
 	 * Renders the default view
 	 *
 	 * @return string The rendered view
