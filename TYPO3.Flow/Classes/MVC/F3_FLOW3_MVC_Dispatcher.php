@@ -145,6 +145,7 @@ class Dispatcher {
 			$controller = $this->componentFactory->getComponent($controllerComponentName);
 		} catch (F3::FLOW3::Security::Exception::AuthenticationRequired $exception) {
 			if (!$request instanceof F3::FLOW3::MVC::Web::Request) throw $exception;
+			$request->setDispatched(TRUE);
 
 			$uri = (string)$request->getBaseURI() . $this->configurationManager->getSettings('FLOW3')->security->loginPageURIForDemoPurposes;
 			$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
