@@ -37,18 +37,18 @@ class RouterTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
 		$routesConfiguration = new F3::FLOW3::Configuration::Container();
-		$routesConfiguration->route1->urlPattern = 'number1';
-		$routesConfiguration->route2->urlPattern = 'number2';
-		$routesConfiguration->route3->urlPattern = 'number3';
+		$routesConfiguration->route1->uriPattern = 'number1';
+		$routesConfiguration->route2->uriPattern = 'number2';
+		$routesConfiguration->route3->uriPattern = 'number3';
 
-		$route1 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
-		$route1->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number1'));
+		$route1 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route1->expects($this->once())->method('setUriPattern')->with($this->equalTo('number1'));
 
-		$route2 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
-		$route2->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number2'));
+		$route2 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route2->expects($this->once())->method('setUriPattern')->with($this->equalTo('number2'));
 
-		$route3 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUrlPattern', 'setDefaults'), array(), '', FALSE);
-		$route3->expects($this->once())->method('setUrlPattern')->with($this->equalTo('number3'));
+		$route3 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
+		$route3->expects($this->once())->method('setUriPattern')->with($this->equalTo('number3'));
 
 		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
 		$mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);

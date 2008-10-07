@@ -11,11 +11,10 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 $c->fallback
-	->setUrlPattern('[dummy]')
+	->setUriPattern('')
 	->setControllerComponentNamePattern('F3::@package::MVC::Controller::@controllerController')
 	->setDefaults(
 		array(
-			'dummy' => 'foo',
 			'@package' => 'FLOW3',
 			'@controller' => 'Default',
 			'@action' => 'index',
@@ -26,7 +25,7 @@ $c->fallback
  * Default route to map the first three URL segments to package, controller and action
  */
 $c->default
-	->setUrlPattern('[@package]/[@controller]/[@action]')
+	->setUriPattern('[@package]/[@controller]/[@action]')
 	->setDefaults(
 		array(
 			'@controller' => 'Default',
@@ -39,7 +38,7 @@ $c->default
  * Default route to map the first three URL segments to package, controller and action including optional format-suffix
  */
 $c->defaultWithFormat
-	->setUrlPattern('[@package]/[@controller]/[@action].[@format]')
+	->setUriPattern('[@package]/[@controller]/[@action].[@format]')
 	->setDefaults(
 		array(
 			'@controller' => 'Default',
