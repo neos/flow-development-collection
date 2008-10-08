@@ -67,6 +67,10 @@ class DebugExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerInterfa
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionWeb(::Exception $exception) {
+		if (!headers_sent()) {
+			header("HTTP/1.1 500 Internal Server Error");
+		}
+
 		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
 		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
 
