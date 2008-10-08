@@ -52,9 +52,9 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 	protected $propertyMapper;
 
 	/**
-	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
+	 * @var array An array of supported request types. By default only web requests are supported. Modify or replace this array if your specific controller supports certain (additional) request types.
 	 */
-	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Request');
+	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Web::Request');
 
 	/**
 	 * @var F3::FLOW3::Property::MappingResults Mapping results of the arguments mapping process
