@@ -63,17 +63,17 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function staticRoutePartDoesNotMatchIfUrlSegmentIsEmptyOrNull() {
+	public function staticRoutePartDoesNotMatchIfUriSegmentIsEmptyOrNull() {
 		$this->routePart1->setName('foo');
 
-		$urlSegments = array();
-		$this->assertFalse($this->routePart1->match($urlSegments), 'static route part should never match if urlSegments array is empty');
+		$uriSegments = array();
+		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if uriSegments array is empty');
 
-		$urlSegments = array(NULL, 'foo');
-		$this->assertFalse($this->routePart1->match($urlSegments), 'static route part should never match if urlSegment is NULL');
+		$uriSegments = array(NULL, 'foo');
+		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if uriSegment is NULL');
 
-		$urlSegments = array('', 'foo');
-		$this->assertFalse($this->routePart1->match($urlSegments), 'static route part should never match if current urlSegment is empty');
+		$uriSegments = array('', 'foo');
+		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if current uriSegment is empty');
 	}
 
 	/**
@@ -81,42 +81,42 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesNotMatchIfNameIsNotSet() {
-		$urlSegments = array('foo', 'bar');
-		$this->assertFalse($this->routePart1->match($urlSegments), 'static route part should not match if name is not set');
+		$uriSegments = array('foo', 'bar');
+		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should not match if name is not set');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function staticRoutePartDoesNotMatchIfNameIsNotEqualToFirstUrlSegment() {
+	public function staticRoutePartDoesNotMatchIfNameIsNotEqualToFirstUriSegment() {
 		$this->routePart1->setName('foo');
-		$urlSegments = array('bar', 'foo');
+		$uriSegments = array('bar', 'foo');
 
-		$this->assertFalse($this->routePart1->match($urlSegments), 'static route part should not match if name is not equal to first urlSegment');
+		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should not match if name is not equal to first uriSegment');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function staticRoutePartDoesMatchIfNameIsEqualToFirstUrlSegment() {
+	public function staticRoutePartDoesMatchIfNameIsEqualToFirstUriSegment() {
 		$this->routePart1->setName('foo');
-		$urlSegments = array('foo', 'bar');
+		$uriSegments = array('foo', 'bar');
 
-		$this->assertTrue($this->routePart1->match($urlSegments), 'static route part should match if name equals first urlSegment');
+		$this->assertTrue($this->routePart1->match($uriSegments), 'static route part should match if name equals first uriSegment');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function staticRoutePartDoesNotMatchIfNameIsEqualToTheBeginningOfTheFirstUrlSegmentButTheSegmentIsLonger() {
+	public function staticRoutePartDoesNotMatchIfNameIsEqualToTheBeginningOfTheFirstUriSegmentButTheSegmentIsLonger() {
 		$this->routePart1->setName('foo');
 		$this->routePart1->setLastRoutePartInSegment(TRUE);
-		$urlSegments = array('foos', 'bar');
+		$uriSegments = array('foos', 'bar');
 
-		$this->assertFalse($this->routePart1->match($urlSegments));
+		$this->assertFalse($this->routePart1->match($uriSegments));
 	}
 
 	/**
@@ -126,11 +126,11 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	public function valueIsNullAfterUnsuccessfulMatch() {
 		$this->routePart1->setName('foo');
 
-		$urlSegments = array('foo', 'bar');
-		$this->routePart1->match($urlSegments);
+		$uriSegments = array('foo', 'bar');
+		$this->routePart1->match($uriSegments);
 
-		$urlSegments = array('bar', 'foo');
-		$this->routePart1->match($urlSegments);
+		$uriSegments = array('bar', 'foo');
+		$this->routePart1->match($uriSegments);
 		$this->assertNull($this->routePart1->getValue(), 'static route part value should be NULL after unsuccessful match');
 	}
 
@@ -138,43 +138,43 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function urlSegmentsAreNotChangedAfterUnsuccessfulMatch() {
+	public function uriSegmentsAreNotChangedAfterUnsuccessfulMatch() {
 		$this->routePart1->setName('bar');
 
-		$urlSegments = array('foo', 'bar');
-		$urlSegmentsCopy = $urlSegments;
+		$uriSegments = array('foo', 'bar');
+		$uriSegmentsCopy = $uriSegments;
 
-		$this->routePart1->match($urlSegments);
+		$this->routePart1->match($uriSegments);
 
-		$this->assertSame($urlSegmentsCopy, $urlSegments, 'static route part should not change urlSegments array on unsuccessful match');
+		$this->assertSame($uriSegmentsCopy, $uriSegments, 'static route part should not change uriSegments array on unsuccessful match');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function urlSegmentsAreShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsLastInSegment() {
+	public function uriSegmentsAreShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsLastInSegment() {
 		$this->routePart1->setName('bar');
 		$this->routePart1->setLastRoutePartInSegment(TRUE);
-		$urlSegments = array('bar', 'foo', 'test');
+		$uriSegments = array('bar', 'foo', 'test');
 
-		$this->routePart1->match($urlSegments);
+		$this->routePart1->match($uriSegments);
 
-		$this->assertSame(array('foo', 'test'), $urlSegments, 'static route part should shorten urlSegments array by one entry on successful match');
+		$this->assertSame(array('foo', 'test'), $uriSegments, 'static route part should shorten uriSegments array by one entry on successful match');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function urlSegmentsAreNotShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsNotLastInSegment() {
+	public function uriSegmentsAreNotShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsNotLastInSegment() {
 		$this->routePart1->setName('bar');
 		$this->routePart1->setLastRoutePartInSegment(FALSE);
-		$urlSegments = array('bar', 'foo', 'test');
+		$uriSegments = array('bar', 'foo', 'test');
 
-		$this->routePart1->match($urlSegments);
+		$this->routePart1->match($uriSegments);
 
-		$this->assertSame(array('', 'foo', 'test'), $urlSegments, 'static route part should shorten urlSegments array by one entry on successful match');
+		$this->assertSame(array('', 'foo', 'test'), $uriSegments, 'static route part should shorten uriSegments array by one entry on successful match');
 	}
 
 	/**

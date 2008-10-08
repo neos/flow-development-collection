@@ -296,7 +296,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
 
 		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('value1-value2/value3.value4.xml', $route->getMatchingURL());
+		$this->assertEquals('value1-value2/value3.value4.xml', $route->getMatchingURI());
 	}
 
 	/**
@@ -348,7 +348,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 		$routeValues = array('query' => 'foo');
 
 		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?query=foo', $route->getMatchingURL());
+		$this->assertEquals('search?query=foo', $route->getMatchingURI());
 	}
 	
 	/**
@@ -364,7 +364,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 
 		$routeValues = array('differentKey' => 'value1');
 		$this->assertFalse($route->resolves($routeValues));
-		$this->assertNull($route->getMatchingURL());
+		$this->assertNull($route->getMatchingURI());
 	}
 
 	/**
@@ -401,7 +401,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 		$routeValues = array('key2' => 'value2');
 		$route->resolves($routeValues);
 
-		$this->assertEquals('_resolve_invoked_/value2', $route->getMatchingURL());
+		$this->assertEquals('_resolve_invoked_/value2', $route->getMatchingURI());
 	}
 }
 ?>
