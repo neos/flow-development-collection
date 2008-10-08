@@ -159,6 +159,7 @@ class Route {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUriPattern($uriPattern) {
+		if (!is_string($uriPattern)) throw new InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
 		$this->uriPattern = trim($uriPattern, '/ ');
 		$this->isParsed = FALSE;
 	}
