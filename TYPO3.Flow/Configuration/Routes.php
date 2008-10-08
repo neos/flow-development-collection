@@ -35,6 +35,20 @@ $c->default
 	);
 
 /**
+ * Default route with just the package
+ */
+$c->defaultWithPackage
+	->setUriPattern('[@package]')
+	->setDefaults(
+		array(
+			'@controller' => 'Default',
+			'@action' => 'index',
+			'@format' => 'html',
+			'@demo' => ''
+		)
+	);
+
+/**
  * Default route to map the first three URL segments to package, controller and action including optional format-suffix
  */
 $c->defaultWithFormat
