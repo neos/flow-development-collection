@@ -38,6 +38,11 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	protected $splitString;
 
 	/**
+	 * @var boolean if the route part is optional
+	 */
+	protected $isOptional = FALSE;
+
+	/**
 	 * Sets split string.
 	 *
 	 * If not empty, match() will check the existence of $splitString in the current URI segment.
@@ -87,7 +92,7 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	/**
 	 * Returns the first URI segment.
 	 * If a split string is set, only the first part of the value is returned.
-	 * 
+	 *
 	 * @param array $uriSegments
 	 * @return string value to match, or an empty string if no URI segment is left or split string was not found
 	 * @author Bastian Waidelich <bastian@typo3.org>
