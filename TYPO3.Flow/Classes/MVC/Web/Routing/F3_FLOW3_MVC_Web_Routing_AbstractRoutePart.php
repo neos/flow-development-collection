@@ -53,13 +53,6 @@ abstract class AbstractRoutePart {
 	protected $defaultValue;
 
 	/**
-	 * Specifies whether this Route part is optional. Which means it's put in parentheses in the routes URI pattern.
-	 *
-	 * @var boolean
-	 */
-	protected $isOptional = FALSE;
-
-	/**
 	 * Returns name of the Route part.
 	 * 
 	 * @return string
@@ -99,17 +92,6 @@ abstract class AbstractRoutePart {
 	 */
 	public function setDefaultValue($defaultValue) {
 		$this->defaultValue = $defaultValue;
-	}
-
-	/**
-	 * Specifies whether this Route part is optional.
-	 * 
-	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setOptional($isOptional) {
-		$this->isOptional = $isOptional;
 	}
 
 	/**

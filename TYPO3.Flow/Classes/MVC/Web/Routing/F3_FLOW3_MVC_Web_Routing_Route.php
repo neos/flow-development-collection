@@ -359,18 +359,14 @@ class Route {
 	 */
 	protected function createRoutePartsFromUriPatternSegment($uriPatternSegment) {
 		$routeParts = array();
-		$pattern = '/(\(?)(\[?)(@?[^\]\[\(\)]+)\]?(\)?)/';
+		$pattern = '/(\[?)(@?[^\]\[]+)\]?/';
 		$matches = array();
 		preg_match_all($pattern, $uriPatternSegment, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
-		$routePartIsOptional = FALSE;
 		foreach ($matches as $matchIndex => $match) {
-			$routePartType = $match[2] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
-			$routePartName = $match[3];
-			if ($match[1] == '(') {
-				$routePartIsOptional = TRUE;
-			}
+			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
+			$routePartName = $match[2];
 			$splitString = '';
 			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
@@ -403,14 +399,10 @@ class Route {
 						$routePart->setLastRoutePartInSegment(TRUE);
 					}
 			}
-			$routePart->SetOptional($routePartIsOptional);
 			$routePart->setName($routePartName);
 
 			$routeParts[] = $routePart;
 			$lastRoutePartType = $routePartType;
-			if ($match[4] == ')') {
-				$routePartIsOptional = FALSE;
-			}
 		}
 
 		return $routeParts;
