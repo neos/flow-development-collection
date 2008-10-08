@@ -147,7 +147,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	}
 
 	/**
-	 * Builds the corresponding url (excluding protocol and host) by iterating through all configured routes
+	 * Builds the corresponding uri (excluding protocol and host) by iterating through all configured routes
 	 * and calling their respective resolves()-method.
 	 * If no matching route is found, an empty string is returned.
 	 *
@@ -158,7 +158,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	public function resolve(array $routeValues) {
 		foreach (array_reverse($this->routes) as $route) {
 			if ($route->resolves($routeValues)) {
-				return $route->getMatchingURL();
+				return $route->getMatchingURI();
 			}
 		}
 		return '';

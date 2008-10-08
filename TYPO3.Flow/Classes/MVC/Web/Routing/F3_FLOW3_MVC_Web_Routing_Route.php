@@ -74,11 +74,11 @@ class Route {
 	protected $matchResults = array();
 
 	/**
-	 * Contains the matching url (excluding protocol and host) after a successful call of resolves()
+	 * Contains the matching uri (excluding protocol and host) after a successful call of resolves()
 	 *
 	 * @var string
 	 */
-	protected $matchingURL;
+	protected $matchingURI;
 
 	/**
 	 * Contains associative array of custom route part handler classnames (key: route part name, value: route part handler classname)
@@ -237,13 +237,13 @@ class Route {
 	}
 
 	/**
-	 * Returns the url which corresponds to this Route.
+	 * Returns the uri which corresponds to this Route.
 	 *
-	 * @return string A string containing the corresponding url (excluding protocol and host)
+	 * @return string A string containing the corresponding uri (excluding protocol and host)
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function getMatchingURL() {
-		return $this->matchingURL;
+	public function getMatchingURI() {
+		return $this->matchingURI;
 	}
 
 	/**
@@ -288,16 +288,16 @@ class Route {
 	}
 
 	/**
-	 * Checks whether $routeValues can be resolved to a corresponding url.
-	 * If all Route parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURL contains
-	 * the generated url (excluding protocol and host).
+	 * Checks whether $routeValues can be resolved to a corresponding uri.
+	 * If all Route parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURI contains
+	 * the generated uri (excluding protocol and host).
 	 *
-	 * @param array $routeValues An array containing key/value pairs to be resolved to url segments
+	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolves(array $routeValues) {
-		$this->matchingURL = NULL;
+		$this->matchingURI = NULL;
 		if ($this->uriPattern === NULL) {
 			return FALSE;
 		}
@@ -305,15 +305,15 @@ class Route {
 			$this->parse();
 		}
 
-		$url = '';
+		$uri = '';
 		foreach ($this->uriPatternSegments as $uriPatternSegment) {
 			foreach ($uriPatternSegment as $routePart) {
 				if (!$routePart->resolve($routeValues)) {
 					return FALSE;
 				}
-				$url.= F3::PHP6::Functions::strtolower($routePart->getValue());
+				$uri.= F3::PHP6::Functions::strtolower($routePart->getValue());
 			}
-			$url.= '/';
+			$uri.= '/';
 		}
 		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
@@ -326,7 +326,7 @@ class Route {
 		if (count($routeValues) > 0) {
 			return FALSE;
 		}
-		$this->matchingURL = rtrim($url, '/');
+		$this->matchingURI = rtrim($uri, '/');
 		return TRUE;
 	}
 
@@ -359,14 +359,18 @@ class Route {
 	 */
 	protected function createRoutePartsFromUriPatternSegment($uriPatternSegment) {
 		$routeParts = array();
-		$pattern = '/(\[?)(@?[^\]\[]+)\]?/';
+		$pattern = '/(\(?)(\[?)(@?[^\]\[\(\)]+)\]?(\)?)/';
 		$matches = array();
 		preg_match_all($pattern, $uriPatternSegment, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
+		$routePartIsOptional = FALSE;
 		foreach ($matches as $matchIndex => $match) {
-			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
-			$routePartName = $match[2];
+			$routePartType = $match[2] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
+			$routePartName = $match[3];
+			if ($match[1] == '(') {
+				$routePartIsOptional = TRUE;
+			}
 			$splitString = '';
 			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
@@ -399,10 +403,14 @@ class Route {
 						$routePart->setLastRoutePartInSegment(TRUE);
 					}
 			}
+			$routePart->SetOptional($routePartIsOptional);
 			$routePart->setName($routePartName);
 
 			$routeParts[] = $routePart;
 			$lastRoutePartType = $routePartType;
+			if ($match[4] == ')') {
+				$routePartIsOptional = FALSE;
+			}
 		}
 
 		return $routeParts;

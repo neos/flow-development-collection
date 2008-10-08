@@ -53,6 +53,13 @@ abstract class AbstractRoutePart {
 	protected $defaultValue;
 
 	/**
+	 * Specifies whether this Route part is optional. Which means it's put in parentheses in the routes URI pattern.
+	 *
+	 * @var boolean
+	 */
+	protected $isOptional = FALSE;
+
+	/**
 	 * Returns name of the Route part.
 	 * 
 	 * @return string
@@ -95,16 +102,27 @@ abstract class AbstractRoutePart {
 	}
 
 	/**
-	 * Checks whether this Route part corresponds to the given $urlSegments.
-	 * This method does not only check if the Route part matches. It can also
-	 * shorten the $urlSegments-Array by one or more elements when matching is successful.
-	 * This is why $urlSegments has to be passed by reference.
-	 *
-	 * @param array $urlSegments An array with one element per request URL segment.
-	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.
+	 * Specifies whether this Route part is optional.
+	 * 
+	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
+	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public abstract function match(array &$urlSegments);
+	public function setOptional($isOptional) {
+		$this->isOptional = $isOptional;
+	}
+
+	/**
+	 * Checks whether this Route part corresponds to the given $uriSegments.
+	 * This method does not only check if the Route part matches. It can also
+	 * shorten the $uriSegments-Array by one or more elements when matching is successful.
+	 * This is why $uriSegments has to be passed by reference.
+	 *
+	 * @param array $uriSegments An array with one element per request URI segment.
+	 * @return boolean TRUE if route part matched $uriSegments, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public abstract function match(array &$uriSegments);
 
 	/**
 	 * Checks whether this Route part corresponds to the given $routeValues.

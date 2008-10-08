@@ -33,16 +33,16 @@ namespace F3::FLOW3::MVC::Web::Routing;
 class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 
 	/**
-	 * @var string if not empty, match() will check existence of $splitString in current URL segment.
+	 * @var string if not empty, match() will check existence of $splitString in current URI segment.
 	 */
 	protected $splitString;
 
 	/**
 	 * Sets split string.
 	 *
-	 * If not empty, match() will check the existence of $splitString in the current URL segment.
-	 * If the URL segment does not contain $splitString, the route part won't match.
-	 * Otherwise all characters before $splitString are removed from the URL segment.
+	 * If not empty, match() will check the existence of $splitString in the current URI segment.
+	 * If the URI segment does not contain $splitString, the route part won't match.
+	 * Otherwise all characters before $splitString are removed from the URI segment.
 	 *
 	 * @param string $splitString
 	 * @return void
@@ -53,50 +53,50 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	}
 
 	/**
-	 * Checks whether this dynamic route part corresponds to the given $urlSegments.
+	 * Checks whether this dynamic route part corresponds to the given $uriSegments.
 	 *
-	 * On successful match this method sets $this->value to the corresponding urlPart
-	 * and shortens $urlSegments respectively.
-	 * If the first element of $urlSegments is empty, $this->value is set to $this->defaultValue
+	 * On successful match this method sets $this->value to the corresponding uriPart
+	 * and shortens $uriSegments respectively.
+	 * If the first element of $uriSegments is empty, $this->value is set to $this->defaultValue
 	 * (if it exists).
 	 *
-	 * @param array $urlSegments An array with one element per request URL segment.
-	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.
+	 * @param array $uriSegments An array with one element per request URI segment.
+	 * @return boolean TRUE if route part matched $uriSegments, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	final public function match(array &$urlSegments) {
+	final public function match(array &$uriSegments) {
 		$this->value = NULL;
 
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		$valueToMatch = $this->findValueToMatch($urlSegments);
-		if (!$this->matchValue($valueToMatch)) {
+		$valueToMatch = $this->findValueToMatch($uriSegments);
+		if (!$this->matchValue($valueToMatch) && !$this->isOptional) {
 			return FALSE;
 		}
 		if (F3::PHP6::Functions::strlen($valueToMatch)) {
-			$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
+			$uriSegments[0] = F3::PHP6::Functions::substr($uriSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
 		}
-		if (F3::PHP6::Functions::strlen($this->splitString) == 0 && isset($urlSegments[0]) && F3::PHP6::Functions::strlen($urlSegments[0]) == 0) {
-			array_shift($urlSegments);
+		if (F3::PHP6::Functions::strlen($this->splitString) == 0 && isset($uriSegments[0]) && F3::PHP6::Functions::strlen($uriSegments[0]) == 0) {
+			array_shift($uriSegments);
 		}
 
 		return TRUE;
 	}
 
 	/**
-	 * Returns the first URL segment.
+	 * Returns the first URI segment.
 	 * If a split string is set, only the first part of the value is returned.
 	 * 
-	 * @param array $urlSegments
-	 * @return string value to match, or an empty string if no URL segment is left or split string was not found
+	 * @param array $uriSegments
+	 * @return string value to match, or an empty string if no URI segment is left or split string was not found
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function findValueToMatch(array $urlSegments) {
-		if (!isset($urlSegments[0])) {
+	protected function findValueToMatch(array $uriSegments) {
+		if (!isset($uriSegments[0])) {
 			return '';
 		}
-		$valueToMatch = $urlSegments[0];
+		$valueToMatch = $uriSegments[0];
 		if (F3::PHP6::Functions::strlen($this->splitString) > 0) {
 			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $this->splitString);
 			if ($splitStringPosition === FALSE) {
