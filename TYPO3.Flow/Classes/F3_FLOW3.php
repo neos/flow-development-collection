@@ -21,10 +21,10 @@ namespace F3;
  */
 
 if (version_compare(phpversion(), F3::FLOW3::MINIMUM_PHP_VERSION, '<')) {
-	die ('FLOW3 requires PHP version ' . F3::FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+	die('FLOW3 requires PHP version ' . F3::FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 }
 if (version_compare(PHP_VERSION, F3::FLOW3::MAXIMUM_PHP_VERSION, '>')) {
-	die ('FLOW3 requires PHP version ' . F3::FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+	die('FLOW3 requires PHP version ' . F3::FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 }
 
 /**
@@ -472,7 +472,7 @@ final class FLOW3 {
 	 */
 	protected function checkEnvironment() {
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
-			die ('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
+			die('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
 
 		if (!extension_loaded('Reflection')) throw new F3::FLOW3::Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
@@ -486,6 +486,10 @@ final class FLOW3 {
 		#locale_set_default('en_UK');
 		if (ini_get('date.timezone') == '') {
 			date_default_timezone_set('Europe/Copenhagen');
+		}
+		
+		if (ini_get('magic_quotes_gpc') == '1' || ini_get('magic_quotes_gpc') == 'On') {
+			die('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 		}
 	}
 
