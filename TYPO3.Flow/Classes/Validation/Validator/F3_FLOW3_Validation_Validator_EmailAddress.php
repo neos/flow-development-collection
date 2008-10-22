@@ -135,8 +135,17 @@ class EmailAddress extends F3::FLOW3::Validation::AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
-		if(is_string($propertyValue) && preg_match('/[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|asia|biz|cat|com|edu|coop|gov|info|int|invalid|jobs|localdomain|mil|mobi|museum|name|net|org|pro|tel|travel)|localhost)\b/i', $propertyValue)) return TRUE;
-
+		if(is_string($propertyValue) && preg_match('
+				/
+					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
+					@
+					(?:
+						(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+(?:[a-z]{2}|aero|asia|biz|cat|com|edu|coop|gov|info|int|invalid|jobs|localdomain|mil|mobi|museum|name|net|org|pro|tel|travel)|
+						localhost|
+						(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5]))
+					)
+					\b
+				/ix', $propertyValue)) return TRUE;
 		$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid email address. Got: "' . $propertyValue . '"', 1221559976));
 		return FALSE;
 	}
