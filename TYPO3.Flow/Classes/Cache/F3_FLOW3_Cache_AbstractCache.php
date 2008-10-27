@@ -82,9 +82,9 @@ abstract class AbstractCache {
 	/**
 	 * Saves data in the cache.
 	 *
-	 * @param string $entryIdentifier: Something which identifies the data - depends on concrete cache
-	 * @param mixed $data: The data to cache - also depends on the concrete cache implementation
-	 * @param array $tags: Tags to associate with this cache entry
+	 * @param string $entryIdentifier Something which identifies the data - depends on concrete cache
+	 * @param mixed $data The data to cache - also depends on the concrete cache implementation
+	 * @param array $tags Tags to associate with this cache entry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -93,7 +93,7 @@ abstract class AbstractCache {
 	/**
 	 * Loads data from the cache.
 	 *
-	 * @param string $entryIdentifier: Something which identifies the cache entry - depends on concrete cache
+	 * @param string $entryIdentifier Something which identifies the cache entry - depends on concrete cache
 	 * @return mixed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -102,7 +102,7 @@ abstract class AbstractCache {
 	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
-	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -111,7 +111,7 @@ abstract class AbstractCache {
 	/**
 	 * Removes the given cache entry from the cache.
 	 *
-	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -136,6 +136,16 @@ abstract class AbstractCache {
 	 */
 	public function flushByTag($tag) {
 		$this->backend->flushByTag($tag);
+	}
+
+	/**
+	 * Does garbage collection
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectGarbage() {
+		$this->backend->collectGarbage();
 	}
 
 }

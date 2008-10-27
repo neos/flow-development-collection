@@ -159,7 +159,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$backend->save($entryIdentifier, $data);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier;
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 
@@ -189,7 +189,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$backend->save($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $backend->getCacheDirectory();
-		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier ;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier ;
 		$filesFound = glob($pattern);
 		$this->assertEquals(1, count($filesFound), 'There was not exactly one cache entry.');
 	}
@@ -268,7 +268,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$backend->save($entryIdentifier, $data);
 
 		$this->assertTrue($backend->has($entryIdentifier), 'has() did not return TRUE.');
-		$this->assertFALSE($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
+		$this->assertFalse($backend->has($entryIdentifier . 'Not'), 'has() did not return FALSE.');
 	}
 
 	/**
@@ -290,7 +290,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
 
-		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/????-??-?????;??;???_' . $entryIdentifier;
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier;
 
 		$backend->save($entryIdentifier, $data);
 		$filesFound = glob($pattern);
@@ -299,6 +299,73 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$backend->remove($entryIdentifier);
 		$filesFound = glob($pattern);
 		$this->assertTrue(count($filesFound) == 0, 'The cache entry still exists.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 *
+	 */
+	public function collectGarbageReallyRemovesAnExpiredCacheEntry() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileRemovalTest';
+		$entryIdentifierHash = sha1($entryIdentifier);
+
+		$context = $this->componentManager->getContext();
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$this->backend = $backend;
+		$cacheDirectory = $backend->getCacheDirectory();
+		$backend->setCache($cache);
+
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier;
+
+		$backend->save($entryIdentifier, $data, array(), 1);
+		$filesFound = glob($pattern);
+		$this->assertTrue(is_array($filesFound) && count($filesFound) > 0, 'The cache entry does not exist.');
+
+		sleep(3);
+
+		$backend->collectGarbage($entryIdentifier);
+		$filesFound = glob($pattern);
+		$this->assertTrue(count($filesFound) == 0, 'The cache entry still exists.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 *
+	 */
+	public function collectGarbageReallyRemovesAllExpiredCacheEntries() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileRemovalTest';
+
+		$context = $this->componentManager->getContext();
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$this->backend = $backend;
+		$cacheDirectory = $backend->getCacheDirectory();
+		$backend->setCache($cache);
+
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/*/*/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier . '?';
+
+		$backend->save($entryIdentifier . 'A', $data, array(), 1);
+		$backend->save($entryIdentifier . 'B', $data, array(), 1);
+		$backend->save($entryIdentifier . 'C', $data, array(), 1);
+		$filesFound = glob($pattern);
+		$this->assertTrue(is_array($filesFound) && count($filesFound) > 0, 'The cache entries do not exist.');
+
+		sleep(3);
+
+		$backend->collectGarbage();
+		$filesFound = glob($pattern);
+		$this->assertTrue(count($filesFound) == 0, 'The cache entries still exist.');
 	}
 
 	/**
@@ -411,6 +478,107 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$this->assertTrue($backend->has('BackendFileTest1'), 'BackendFileTest1');
 		$this->assertFalse($backend->has('BackendFileTest2'), 'BackendFileTest2');
 		$this->assertTrue($backend->has('BackendFileTest3'), 'BackendFileTest3');
+	}
+
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasReturnsTheCorrectResultForEntryWithExceededLifetime() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$entryIdentifier = 'BackendFileTest';
+		$data = 'some data' . microtime();
+		$backend->save($entryIdentifier, $data);
+
+		$expiredEntryIdentifier = 'ExpiredBackendFileTest';
+		$expiredData = 'some old data' . microtime();
+		$backend->save($expiredEntryIdentifier, $expiredData, array(), 1);
+
+		sleep(3);
+
+		$this->assertFalse($backend->has($expiredEntryIdentifier), 'has() did not return FALSE.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function loadReturnsFalseForEntryWithExceededLifetime() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$entryIdentifier = 'BackendFileTest';
+		$data = 'some data' . microtime();
+		$backend->save($entryIdentifier, $data);
+
+		$expiredEntryIdentifier = 'ExpiredBackendFileTest';
+		$expiredData = 'some old data' . microtime();
+		$backend->save($expiredEntryIdentifier, $expiredData, array(), 1);
+
+		sleep(3);
+
+		$this->assertEquals($data, $backend->load($entryIdentifier), 'The original and the retrieved data don\'t match.');
+		$this->assertFalse($backend->load($expiredEntryIdentifier), 'The expired entry could be loaded.');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findEntriesByTagReturnsEmptyArrayForEntryWithExceededLifetime() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$this->backend = $backend;
+		$backend->setCache($cache);
+
+		$backend->save('BackendFileTest', 'some data', array('UnitTestTag%special'), 1);
+
+		sleep(3);
+
+		$this->assertEquals(array(), $backend->findEntriesByTag('UnitTestTag%special'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function saveWithUnlimitedLifetimeWritesCorrectEntry() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileTest';
+		$entryIdentifierHash = sha1($entryIdentifier);
+
+		$context = $this->componentManager->getContext();
+
+		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$this->backend = $backend;
+		$backend->setCache($cache);
+		$backend->save($entryIdentifier, $data, array(), 0);
+
+		$cacheDirectory = $backend->getCacheDirectory();
+		$pattern = $cacheDirectory . $context . '/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . F3::FLOW3::Cache::Backend::File::FILENAME_EXPIRYTIME_UNLIMITED . '_' . $entryIdentifier;
+		$filesFound = glob($pattern);
+		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
+
+		$retrievedData = file_get_contents(array_pop($filesFound));
+		$this->assertEquals($data, $retrievedData, 'The original and the retrieved data don\'t match.');
 	}
 
 	/**

@@ -123,6 +123,9 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	/**
 	 * Saves data in the cache.
 	 *
+	 * Note on lifetime: the number of seconds may not exceed 2592000 (30 days),
+	 * otherwise it is interpreted as a UNIX timestamp (seconds since epoch).
+	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry
 	 * @param string $data The data to be stored
 	 * @param array $tags Tags to associate with this cache entry
@@ -336,6 +339,14 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 		} else {
 			return array();
 		}
+	}
+
+	/**
+	 * Does nothing, as memcached does GC itself
+	 *
+	 * @return void
+	 */
+	public function collectGarbage() {
 	}
 }
 

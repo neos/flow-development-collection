@@ -151,6 +151,13 @@ abstract class AbstractBackend {
 	abstract public function findEntriesByTag($tag);
 
 	/**
+	 * Does garbage collection
+	 *
+	 * @return void
+	 */
+	abstract public function collectGarbage();
+
+	/**
 	 * Checks the validity of an entry identifier. Returns true if it's valid.
 	 *
 	 * @param string An identifier to be checked for validity
@@ -171,5 +178,6 @@ abstract class AbstractBackend {
 	static public function isValidTag($tag) {
 		return preg_match(self::PATTERN_TAG, $tag) === 1;
 	}
+
 }
 ?>

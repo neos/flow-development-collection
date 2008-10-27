@@ -107,5 +107,14 @@ class Null extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	public function flushByTag($tag) {
 	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectGarbage() {
+	}
 }
 ?>
