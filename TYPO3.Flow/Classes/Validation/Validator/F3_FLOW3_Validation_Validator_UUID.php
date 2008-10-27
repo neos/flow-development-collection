@@ -32,7 +32,7 @@ namespace F3::FLOW3::Validation::Validator;
 class UUID extends F3::FLOW3::Validation::AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a formally valid UUID.
+	 * Returns TRUE, if the given property ($propertyValue) is a formally valid UUID.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
