@@ -159,7 +159,7 @@ class SuperGlobalReplacement extends ::ArrayObject {
 		} else {
 			$callingMethod = 'in file ' . $debugBacktrace[1]['file'];
 		}
-		$message = sprintf('You tried to access the the $%s super global in %s but access to this variable has been restricted. %s', $this->replacedSuperGlobalName, $callingMethod, $this->accessHintMessage);
+		$message = sprintf('You tried to access the $%s super global in %s but access to this variable has been restricted. %s', $this->replacedSuperGlobalName, $callingMethod, $this->accessHintMessage);
 		throw new F3::FLOW3::Utility::Exception($message, 1176548856);
 	}
 }

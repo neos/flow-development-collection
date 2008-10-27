@@ -77,13 +77,17 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Container $configuration) {
-		$this->SERVER = $_SERVER;
-		$this->GET = $_GET;
-		$this->POST = $_POST;
-		$this->SAPIName = PHP_SAPI;
-		#$_SERVER = new F3::FLOW3::Utility::SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
-		#$_GET = new F3::FLOW3::Utility::SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
-		#$_POST = new F3::FLOW3::Utility::SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+
+		if (!($_SERVER instanceof F3::FLOW3::Utility::SuperGlobalReplacement)) {
+			$this->SERVER = $_SERVER;
+			$this->GET = $_GET;
+			$this->POST = $_POST;
+			$this->SAPIName = PHP_SAPI;
+
+			$_SERVER = new F3::FLOW3::Utility::SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' component instead of accessing the superglobal directly.');
+			$_GET = new F3::FLOW3::Utility::SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
+			$_POST = new F3::FLOW3::Utility::SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+		}
 
 		try {
 			$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
