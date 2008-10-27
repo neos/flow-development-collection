@@ -111,7 +111,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushCashesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
+	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
@@ -131,7 +131,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function flushCashesCallsTheFlushMethodOfAllRegisteredCaches() {
+	public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches() {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
