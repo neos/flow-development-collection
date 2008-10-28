@@ -190,7 +190,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findEntriesByTagFindsSavedEntries() {
+	public function findIdentifiersByTagFindsSavedEntries() {
 		try {
 			$backend = $this->setUpBackend();
 
@@ -198,10 +198,10 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$entryIdentifier = 'MyIdentifier';
 			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
-			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag1');
+			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
 			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 
-			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
+			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
 			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
 		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
@@ -221,7 +221,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag3'));
 
-			$retrieved = $backend->findEntriesByTag('UnitTestTag%tag2');
+			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
 			$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
 		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');

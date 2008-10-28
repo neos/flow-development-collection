@@ -37,7 +37,7 @@ class StringCacheTest extends F3::Testing::BaseTestCase {
 	 */
 	public function savePassesStringToBackend() {
 		$theString = 'Just some value';
-		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('save')->with($this->equalTo('StringCacheTest'), $this->equalTo($theString));
 
 		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
@@ -50,7 +50,7 @@ class StringCacheTest extends F3::Testing::BaseTestCase {
 	 * @expectedException F3::FLOW3::Cache::Exception::InvalidData
 	 */
 	public function saveThrowsInvalidDataExceptionOnNonStringValues() {
-		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
 		$cache->save('StringCacheTest', array());
@@ -62,7 +62,7 @@ class StringCacheTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function loadLoadsStringValueFromBackend() {
-		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('load')->will($this->returnValue('Just some value'));
 
 		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
@@ -74,7 +74,7 @@ class StringCacheTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsResultFromBackend() {
-		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(TRUE));
 
 		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
@@ -87,12 +87,29 @@ class StringCacheTest extends F3::Testing::BaseTestCase {
 	 */
 	public function removeCallsBackend() {
 		$cacheIdentifier = 'someCacheIdentifier';
-		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findEntriesByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
 
 		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
 		$this->assertTRUE($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findByTagCallsBackend() {
+		$tag = 'sometag';
+		$identifiers = array('one', 'two');
+		$entries = array('one value', 'two value');
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('load', 'save', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+
+		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
+		$backend->expects($this->exactly(2))->method('load')->will($this->onConsecutiveCalls('one value', 'two value'));
+
+		$cache = new F3::FLOW3::Cache::StringCache('StringCache', $backend);
+		$this->assertEquals($entries, $cache->findByTag($tag), 'Did not receive the expected entries');
 	}
 }
 ?>

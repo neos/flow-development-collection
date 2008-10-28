@@ -102,7 +102,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveRejectsInvalidIdentifiers() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $context);
 		$data = 'Some data';
@@ -123,7 +123,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveThrowsExceptionIfDataIsNotAString() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 
 		$data = array('Some data');
 		$entryIdentifier = 'BackendFileTest';
@@ -144,7 +144,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveReallySavesToTheSpecifiedDirectory() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -172,7 +172,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function saveRemovesAnAlreadyExistingCacheEntryForTheSameIdentifier() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data1 = 'some data' . microtime();
@@ -200,7 +200,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 */
 	public function saveReallySavesSpecifiedTags() {
 		$cacheIdentifier = 'UnitTestCache';
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
 
 		$data = 'some data' . microtime();
@@ -231,7 +231,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadReturnsContentOfTheCorrectCacheFile() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -255,7 +255,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasReturnsTheCorrectResult() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -277,7 +277,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 *
 	 */
 	public function removeReallyRemovesACacheEntry() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -308,7 +308,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 *
 	 */
 	public function collectGarbageReallyRemovesAnExpiredCacheEntry() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -341,7 +341,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 *
 	 */
 	public function collectGarbageReallyRemovesAllExpiredCacheEntries() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has', 'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -374,7 +374,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 *
 	 */
 	public function removeReallyRemovesTagsOfRemovedEntry() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();
@@ -399,8 +399,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findByTagFindsCacheEntriesWithSpecifiedTag() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -414,7 +414,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 
 		$expectedEntry = 'BackendFileTest2';
 
-		$actualEntries = $backend->findEntriesByTag('UnitTestTag%special');
+		$actualEntries = $backend->findIdentifiersByTag('UnitTestTag%special');
 		$this->assertTrue(is_array($actualEntries), 'actualEntries is not an array.');
 
 		$this->assertEquals($expectedEntry, array_pop($actualEntries));
@@ -428,7 +428,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$context = $this->componentManager->getContext();
 		$data = 'some data' . microtime();
 
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -461,7 +461,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -487,7 +487,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function hasReturnsTheCorrectResultForEntryWithExceededLifetime() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -512,7 +512,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function loadReturnsFalseForEntryWithExceededLifetime() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -537,8 +537,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findEntriesByTagReturnsEmptyArrayForEntryWithExceededLifetime() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+	public function findIdentifiersByTagReturnsEmptyArrayForEntryWithExceededLifetime() {
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$backend = $this->componentFactory->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
@@ -549,7 +549,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 
 		sleep(3);
 
-		$this->assertEquals(array(), $backend->findEntriesByTag('UnitTestTag%special'));
+		$this->assertEquals(array(), $backend->findIdentifiersByTag('UnitTestTag%special'));
 	}
 
 	/**
@@ -558,7 +558,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function saveWithUnlimitedLifetimeWritesCorrectEntry() {
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'has',  'remove'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
 		$data = 'some data' . microtime();

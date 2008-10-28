@@ -141,14 +141,15 @@ abstract class AbstractBackend {
 	abstract public function flushByTag($tag);
 
 	/**
-	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * Finds and returns all cache entry identifiers which are tagged by the
+	 * specified tag.
 	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
 	 * the tag.
 	 *
 	 * @param string $tag The tag to search for, the "*" wildcard is supported
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 */
-	abstract public function findEntriesByTag($tag);
+	abstract public function findIdentifiersByTag($tag);
 
 	/**
 	 * Does garbage collection

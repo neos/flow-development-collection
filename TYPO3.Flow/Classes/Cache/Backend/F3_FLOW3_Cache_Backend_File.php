@@ -171,7 +171,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function load($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByEntry($entryIdentifier);
+		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
 
 		if ($pathsAndFilenames === FALSE) return FALSE;
 		if ($this->isLifetimeExceeded($pathsAndFilenames)) return FALSE;
@@ -188,7 +188,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function has($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByEntry($entryIdentifier);
+		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
 
 		if ($pathsAndFilenames === FALSE) return FALSE;
 		if ($this->isLifetimeExceeded($pathsAndFilenames)) return FALSE;
@@ -205,7 +205,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByEntry($entryIdentifier);
+		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
 		if ($pathsAndFilenames === FALSE) return FALSE;
 
 		foreach ($pathsAndFilenames as $pathAndFilename) {
@@ -224,16 +224,17 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	}
 
 	/**
-	 * Finds and returns all cache entries which are tagged by the specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
+	 * Finds and returns all cache entry identifiers which are tagged by the
+	 * specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end
+	 * of the tag.
 	 *
 	 * @param string $tag The tag to search for, the "*" wildcard is supported
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findEntriesByTag($tag) {
+	public function findIdentifiersByTag($tag) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . $tag . '/*';
@@ -278,7 +279,8 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		foreach ($this->findEntriesByTag($tag) as $entryIdentifier) {
+		$identifiers = $this->findIdentifiersByTag($tag);
+		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
 	}
@@ -342,7 +344,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws F3::FLOW3::Cache::Exception if no frontend has been set
 	 */
-	protected function findCacheFilesByEntry($entryIdentifier) {
+	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/' . self::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier;

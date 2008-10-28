@@ -21,6 +21,8 @@ namespace F3::FLOW3::Cache::Backend;
  * @version $Id$
  */
 
+// @codeCoverageIgnoreStart
+
 /**
  * A caching backend which forgets everything immediately
  *
@@ -85,7 +87,7 @@ class Null extends F3::FLOW3::Cache::AbstractBackend {
 	 * @return array An empty array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function findEntriesByTag($tag) {
+	public function findIdentifiersByTag($tag) {
 		return array();
 	}
 
@@ -117,4 +119,5 @@ class Null extends F3::FLOW3::Cache::AbstractBackend {
 	public function collectGarbage() {
 	}
 }
+// @codeCoverageIgnoreEnd
 ?>

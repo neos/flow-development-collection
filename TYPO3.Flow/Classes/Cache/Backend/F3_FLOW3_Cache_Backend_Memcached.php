@@ -197,7 +197,8 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	}
 
 	/**
-	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * Finds and returns all cache entry identifiers which are tagged by the
+	 * specified tag.
 	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
 	 * the tag.
 	 *
@@ -206,7 +207,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo implement wildcard support
 	 */
-	public function findEntriesByTag($tag) {
+	public function findIdentifiersByTag($tag) {
 		if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
 
 		return $this->findIdentifiersTaggedWith($tag);
@@ -348,6 +349,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	public function collectGarbage() {
 	}
+
 }
 
 ?>

@@ -100,6 +100,16 @@ abstract class AbstractCache {
 	abstract public function load($entryIdentifier);
 
 	/**
+	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
+	 * the tag.
+	 *
+	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @return array An array with the content of all matching entries. An empty array if no entries matched
+	 */
+	abstract public function findByTag($tag);
+
+	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry

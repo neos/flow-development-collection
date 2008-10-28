@@ -60,6 +60,24 @@ class StringCache extends F3::FLOW3::Cache::AbstractCache {
 	}
 
 	/**
+	 * Finds and returns all cache entries which are tagged by the specified tag.
+	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
+	 * the tag.
+	 *
+	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @return array An array with the content of all matching entries. An empty array if no entries matched
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findByTag($tag) {
+		$entries = array();
+		$identifiers = $this->backend->findIdentifiersByTag($tag);
+		foreach ($identifiers as $identifier) {
+			$entries[] = $this->backend->load($identifier);
+		}
+		return $entries;
+	}
+
+	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
