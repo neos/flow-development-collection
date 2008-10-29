@@ -45,7 +45,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	/**
 	 * @var boolean whether the memcache uses compression or not (requires zlib)
 	 */
-	protected $useCompressed;
+	protected $useCompression;
 
 	/**
 	 * @var string A prefix to seperate stored data from other data possible stored in the memcache
@@ -112,12 +112,12 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	/**
 	 * Setter for useCompressed
 	 *
-	 * @param boolean $enableCompression
+	 * @param boolean $useCompression
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	protected function setCompression($enableCompression) {
-		$this->useCompressed = $enableCompression;
+	protected function setCompression($useCompression) {
+		$this->useCompression = $useCompression;
 	}
 
 	/**
@@ -148,7 +148,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
 			$this->remove($entryIdentifier);
-			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompressed, $expiration);
+			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompression, $expiration);
 			if (!$success) throw new F3::FLOW3::Cache::Exception('Memcache was unable to connect to any server.', 1207165277);
 			$this->addTagsToTagIndex($tags);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
