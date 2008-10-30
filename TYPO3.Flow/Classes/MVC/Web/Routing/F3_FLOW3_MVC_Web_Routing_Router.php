@@ -104,15 +104,12 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 */
 	public function route(F3::FLOW3::MVC::Web::Request $request) {
 		$requestPath = F3::PHP6::Functions::substr($request->getRequestURI()->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
-		if (F3::PHP6::Functions::strlen($request->getRequestURI()->getQuery()) > 0) {
-			$requestPath .= '?' . $request->getRequestURI()->getQuery();
-		}
 		if (F3::PHP6::Functions::substr($requestPath, 0, 9) == 'index.php' || F3::PHP6::Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}
-
+		$requestQuery = $request->getRequestURI()->getQuery();
 		foreach (array_reverse($this->routes) as $route) {
-			if ($route->matches($requestPath)) {
+			if ($route->matches($requestPath, $requestQuery)) {
 				$matchResults = $route->getMatchResults();
 				foreach ($matchResults as $argumentName => $argumentValue) {
 					if ($argumentName{0} == '@') {

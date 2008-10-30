@@ -193,12 +193,166 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeMatchesUrisWithRequestParameters() {
+	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingStaticQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
-		$route->setUriPattern('search?query=[query]');
+		$route->setUriPattern('search?param1=value1');
 		
-		$this->assertTrue($route->matches('search?query=foo'));
-		$this->assertEquals(array('query' => 'foo'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
+		$this->assertTrue($route->matches('search', 'param1=value1'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithQueryStringIfUriPatternContainsDifferentStaticQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=value1');
+		
+		$this->assertFalse($route->matches('search', 'param1=value2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingDynamicQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]');
+		
+		$this->assertTrue($route->matches('search', 'param1=value1'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithoutQueryStringIfUriPatternContainsQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]');
+		
+		$this->assertFalse($route->matches('search'), 'if UriPattern contains a query string, the URI must include a query string too.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithMissingQueryParametersIfUriPatternContainsQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
+		
+		$this->assertFalse($route->matches('search', 'param1=value1'), 'if UriPattern contains a query string, the URI must include all configured query parameters.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithDifferentQueryParametersIfUriPatternContainsQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]');
+		
+		$this->assertFalse($route->matches('search', 'differentParamenter=value'), 'if UriPattern contains a query string, the URI\'s query parameter must be the same.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithDifferentQueryParameterOrderIfUriPatternContainsQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
+		
+		$this->assertFalse($route->matches('search', 'param2=value2&param1=value1'), 'if UriPattern contains a query string, the URI\'s query parameter must be in the same order.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchAnUriWithAdditionalQueryParametersIfUriPatternContainsQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]');
+		
+		$this->assertFalse($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern contains a query string, the URI may not include additional query parameters.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesAnUriWithAnyQueryStringIfUriPatternDoesNotContainQueryString() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search');
+		
+		$this->assertTrue($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern does not contain a query string, the URI\'s query parameters are ignored.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCanResolveUrisWithOneStaticQueryParameter() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=value1');
+		$routeValues = array();
+
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('search?param1=value1', $route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCanResolveUrisWithMultipleStaticQueryParameter() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=value1&param2=value2&param3=value3');
+		$routeValues = array();
+
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('search?param1=value1&param2=value2&param3=value3', $route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCanResolveUrisWithOneDefaultDynamicQueryParameter() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[value1]');
+		$route->setDefaults(array('value1' => 'defaultValue1'));
+		$routeValues = array();
+
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('search?param1=defaultvalue1', $route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCanResolveUrisWithMultipleDefaultDynamicQueryParameters() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
+		$route->setDefaults(array('param1' => 'defaultValue1', 'param2' => 'defaultValue2'));
+		$routeValues = array();
+
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('search?param1=defaultvalue1&param2=defaultvalue2', $route->getMatchingURI());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeCanResolveUrisWithQueryParameters() {
+		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
+		$route->setUriPattern('search?param1=[param1]');
+		$routeValues = array('param1' => 'foo');
+
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('search?param1=foo', $route->getMatchingURI());
 	}
 
 	/**
@@ -338,18 +492,6 @@ class RouteTest extends F3::Testing::BaseTestCase {
 		$this->assertFalse($route->resolves($routeValues));
 	}
 
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithRequestParameters() {
-		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
-		$route->setUriPattern('search?query=[query]');
-		$routeValues = array('query' => 'foo');
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?query=foo', $route->getMatchingURI());
-	}
 	
 	/**
 	 * @test

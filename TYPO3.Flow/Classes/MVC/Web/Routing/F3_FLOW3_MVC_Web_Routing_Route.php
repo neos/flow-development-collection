@@ -35,6 +35,7 @@ class Route {
 
 	const ROUTEPART_TYPE_STATIC = 'static';
 	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
+	const PATTERN_EXTRACTROUTEPARTS = '/(\[?)(@?[^\]\[]+)\]?/';
 
 	/**
 	 * Route name
@@ -96,11 +97,18 @@ class Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Twodimensional Array. Each element contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 * Twodimensional array. Each element represents one URI segment and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
 	 *
 	 * @var array
 	 */
 	protected $uriPatternSegments = array();
+
+	/**
+	 * Twodimensional array. Each element represents one Query parameter and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 *
+	 * @var array
+	 */
+	protected $uriPatternQueryParameters;
 
 	/**
 	 * @var F3::FLOW3::Component::FactoryInterface
@@ -252,11 +260,12 @@ class Route {
 	 * If all Route parts match successfully TRUE is returned and $this->matchResults contains
 	 * an array combining Route default values and calculated matchResults from the individual Route parts.
 	 *
-	 * @param string $requestPath
+	 * @param string $requestPath the request path without protocol, host and query string
+	 * @param string $requestQuery the request query string (optional)
 	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function matches($requestPath) {
+	public function matches($requestPath, $requestQuery = NULL) {
 		$this->matchResults = NULL;
 		if ($requestPath === NULL) {
 			return FALSE;
@@ -264,13 +273,14 @@ class Route {
 		if ($this->uriPattern === NULL) {
 			return FALSE;
 		}
-		$requestPath = trim($requestPath, '/ ');
-		$requestPathSegments = strlen($requestPath) ? explode('/', $requestPath) : array();
 		if (!$this->isParsed) {
 			$this->parse();
 		}
 
 		$matchResults = array();
+
+		$requestPath = trim($requestPath, '/ ');
+		$requestPathSegments = strlen($requestPath) ? explode('/', $requestPath) : array();
 		foreach ($this->uriPatternSegments as $uriPatternSegment) {
 			foreach ($uriPatternSegment as $routePart) {
 				if (!$routePart->match($requestPathSegments)) {
@@ -284,6 +294,25 @@ class Route {
 		if (count($requestPathSegments) > 0) {
 			return FALSE;
 		}
+
+		if ($this->uriPatternQueryParameters !== NULL) {
+			$requestQuery = trim($requestQuery);
+			$requestQueryParameters = strlen($requestQuery) ? explode('&', $requestQuery) : array();
+			foreach ($this->uriPatternQueryParameters as $uriPatternQueryParameter) {
+				foreach ($uriPatternQueryParameter as $routePart) {
+					if (!$routePart->match($requestQueryParameters)) {
+						return FALSE;
+					}
+					if ($routePart->getValue() !== NULL) {
+						$matchResults[$routePart->getName()] = $routePart->getValue();
+					}
+				}
+			}
+			if (count($requestQueryParameters) > 0) {
+				return FALSE;
+			}
+		}
+
 		$this->matchResults = array_merge($this->defaults, $matchResults);
 		return TRUE;
 	}
@@ -307,6 +336,7 @@ class Route {
 		}
 
 		$uri = '';
+
 		foreach ($this->uriPatternSegments as $uriPatternSegment) {
 			foreach ($uriPatternSegment as $routePart) {
 				if (!$routePart->resolve($routeValues)) {
@@ -316,6 +346,22 @@ class Route {
 			}
 			$uri.= '/';
 		}
+		$uri = rtrim($uri, '/');
+
+		if ($this->uriPatternQueryParameters !== NULL) {
+			$uri.= '?';
+			foreach ($this->uriPatternQueryParameters as $uriPatternQueryParameter) {
+				foreach ($uriPatternQueryParameter as $routePart) {
+					if (!$routePart->resolve($routeValues)) {
+						return FALSE;
+					}
+					$uri.= F3::PHP6::Functions::strtolower($routePart->getValue());
+				}
+				$uri.= '&';
+			}
+			$uri = rtrim($uri, '&');
+		}
+
 		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
 				if ($routeValues[$key] != $defaultValue) {
@@ -327,12 +373,12 @@ class Route {
 		if (count($routeValues) > 0) {
 			return FALSE;
 		}
-		$this->matchingURI = rtrim($uri, '/');
+		$this->matchingURI = $uri;
 		return TRUE;
 	}
 
 	/**
-	 * Iterates through all segments in $this->uriPattern and creates appropriate route part instances.
+	 * Iterates through all segments and query parameters in $this->uriPattern and creates appropriate route part instances.
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -342,27 +388,43 @@ class Route {
 			return;
 		}
 		$this->uriPatternSegments = array();
-		$uriPatternSegments = explode('/', $this->uriPattern);
+		$this->uriPatternQueryParameters = NULL;
+
+		$splittedUriPattern = explode('?', $this->uriPattern);
+		$uriPatternPath = $splittedUriPattern[0];
+		if (isset($splittedUriPattern[1])) {
+			$uriPatternQuery = $splittedUriPattern[1];
+		} else {
+			$uriPatternQuery = NULL;
+		}
+
+		$uriPatternSegments = explode('/', $uriPatternPath);
 		foreach ($uriPatternSegments as $uriPatternSegment) {
-			$this->uriPatternSegments[] = $this->createRoutePartsFromUriPatternSegment($uriPatternSegment);
+			$this->uriPatternSegments[] = $this->createRoutePartsFromUriPatternPart($uriPatternSegment);
+		}
+
+		if ($uriPatternQuery !== NULL) {
+			$uriPatternQueryParameters = explode('&', $uriPatternQuery);
+			$this->uriPatternQueryParameters = array();
+			foreach ($uriPatternQueryParameters as $uriPatternQueryParameter) {
+				$this->uriPatternQueryParameters[] = $this->createRoutePartsFromUriPatternPart($uriPatternQueryParameter);
+			}
 		}
 	}
 
 	/**
-	 * Creates corresponding Route part instances for a given $uriPatternSegment.
-	 * The segment must contain at least one route part.
+	 * Creates corresponding Route part instances for a given URI pattern fragment (either an URI pattern segment or a URI pattern query parameter).
 	 * A route part can by dynamic or static. dynamic route parts are wrapped in square brackets.
 	 * One segment can contain more than one dynamic route part, but they have to be separated by static route parts.
 	 *
-	 * @param string $uriPatternSegment one segment of the URI pattern including brackets.
-	 * @return F3::FLOW3::MVC::Web::Routing::AbstractRoutePart corresponding Route part instance
+	 * @param string $uriPatternPart one segment or one query parameter (name and value) of the URI pattern including brackets.
+	 * @return array of F3::FLOW3::MVC::Web::Routing::AbstractRoutePart corresponding Route part instances
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createRoutePartsFromUriPatternSegment($uriPatternSegment) {
+	protected function createRoutePartsFromUriPatternPart($uriPatternPart) {
 		$routeParts = array();
-		$pattern = '/(\[?)(@?[^\]\[]+)\]?/';
 		$matches = array();
-		preg_match_all($pattern, $uriPatternSegment, $matches, PREG_SET_ORDER);
+		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $uriPatternPart, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
 		foreach ($matches as $matchIndex => $match) {
