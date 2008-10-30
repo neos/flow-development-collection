@@ -196,7 +196,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingStaticQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=value1');
-		
+
 		$this->assertTrue($route->matches('search', 'param1=value1'));
 	}
 
@@ -207,7 +207,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithQueryStringIfUriPatternContainsDifferentStaticQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=value1');
-		
+
 		$this->assertFalse($route->matches('search', 'param1=value2'));
 	}
 
@@ -218,7 +218,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingDynamicQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]');
-		
+
 		$this->assertTrue($route->matches('search', 'param1=value1'));
 	}
 
@@ -229,7 +229,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithoutQueryStringIfUriPatternContainsQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]');
-		
+
 		$this->assertFalse($route->matches('search'), 'if UriPattern contains a query string, the URI must include a query string too.');
 	}
 
@@ -240,7 +240,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithMissingQueryParametersIfUriPatternContainsQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
-		
+
 		$this->assertFalse($route->matches('search', 'param1=value1'), 'if UriPattern contains a query string, the URI must include all configured query parameters.');
 	}
 
@@ -251,7 +251,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithDifferentQueryParametersIfUriPatternContainsQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]');
-		
+
 		$this->assertFalse($route->matches('search', 'differentParamenter=value'), 'if UriPattern contains a query string, the URI\'s query parameter must be the same.');
 	}
 
@@ -262,7 +262,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithDifferentQueryParameterOrderIfUriPatternContainsQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
-		
+
 		$this->assertFalse($route->matches('search', 'param2=value2&param1=value1'), 'if UriPattern contains a query string, the URI\'s query parameter must be in the same order.');
 	}
 
@@ -273,7 +273,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeDoesNotMatchAnUriWithAdditionalQueryParametersIfUriPatternContainsQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search?param1=[param1]');
-		
+
 		$this->assertFalse($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern contains a query string, the URI may not include additional query parameters.');
 	}
 
@@ -284,7 +284,7 @@ class RouteTest extends F3::Testing::BaseTestCase {
 	public function routeMatchesAnUriWithAnyQueryStringIfUriPatternDoesNotContainQueryString() {
 		$route = new F3::FLOW3::MVC::Web::Routing::Route($this->componentFactory);
 		$route->setUriPattern('search');
-		
+
 		$this->assertTrue($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern does not contain a query string, the URI\'s query parameters are ignored.');
 	}
 
@@ -492,7 +492,6 @@ class RouteTest extends F3::Testing::BaseTestCase {
 		$this->assertFalse($route->resolves($routeValues));
 	}
 
-	
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>

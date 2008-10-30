@@ -41,7 +41,7 @@ class Arrays {
 	 * @return array Exploded values, all converted to integers
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public static function integerExplode($delimiter, $string) {
+	static public function integerExplode($delimiter, $string) {
 		$chunksArr = explode($delimiter, $string);
 		while (list($key, $value) = each($chunksArr)) {
 			$chunks[$key] = intval($value);
@@ -60,7 +60,7 @@ class Arrays {
 	 * @return array Exploded values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public static function trimExplode($delimiter, $string, $onlyNonEmptyValues = FALSE) {
+	static public function trimExplode($delimiter, $string, $onlyNonEmptyValues = FALSE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
 		foreach ($chunksArr as $value) {
@@ -83,7 +83,7 @@ class Arrays {
 	 * @return array Resulting array where $secondArray values has overruled $firstArray values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	public static function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
+	static public function arrayMergeRecursiveOverrule(array $firstArray, array $secondArray, $dontAddNewKeys = FALSE, $emptyValuesOverride = TRUE) {
 		reset($secondArray);
 		while (list($key, $value) = each($secondArray)) {
 			if (array_key_exists($key, $firstArray) && is_array($firstArray[$key])) {
@@ -117,7 +117,7 @@ class Arrays {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public static function randomizeArrayOrder(array $array) {
+	static public function randomizeArrayOrder(array $array) {
 		$reorderedArray = array();
 		if (count($array) > 1) {
 			$keysInRandomOrder = array_rand($array, count($array));
@@ -137,7 +137,7 @@ class Arrays {
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public static function containsMultipleTypes(array $array) {
+	static public function containsMultipleTypes(array $array) {
 		if (count($array) > 0) {
 			reset($array);
 			$previousType = gettype(current($array));
@@ -150,5 +150,25 @@ class Arrays {
 		}
 		return FALSE;
 	}
+
+	/**
+	 * Replacement for array_reduce that allows any type for $initial (instead
+	 * of only integer)
+	 *
+	 * @param array $array the array to reduce
+	 * @param string $function the reduce function with the same order of parameters as in the native array_reduce (i.e. accumulator first, then current array element)
+	 * @param mixed $initial the initial accumulator value
+	 * @return mixed
+	 * @author Matthias Hoermann <hoermann@saltation.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	static public function array_reduce(array $array, $function, $initial = NULL) {
+		$accumlator = $initial;
+		foreach($array as $value) {
+			$accumlator = $function($accumlator, $value);
+		}
+		return $accumlator;
+	}
+
 }
 ?>
