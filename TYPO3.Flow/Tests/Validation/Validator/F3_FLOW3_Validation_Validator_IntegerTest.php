@@ -32,39 +32,58 @@ namespace F3::FLOW3::Validation::Validator;
 class IntegerTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Data provider with valid integers
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function integerValidatorReturnsTrueForASimpleInteger() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($integerValidator->isValidProperty(1029437, $validationErrors));
+	public function validIntegers() {
+		return array(
+			array(1029437),
+			array('12345'),
+			array('+12345'),
+			array('-12345')
+		);
 	}
 
 	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @dataProvider validIntegers
 	 */
-	public function integerValidatorReturnsFalseForAString() {
+	public function integerValidatorReturnsTrueForAValidInteger($integer) {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
 		$integerValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
-		$this->assertFalse($integerValidator->isValidProperty('not a number', $validationErrors));
+		$this->assertTrue($integerValidator->isValidProperty($integer, $validationErrors));
 	}
 
 	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Data provider with invalid email addresses
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function integerValidatorReturnsFalseForAFloat() {
+	public function invalidIntegers() {
+		return array(
+			array('not a number'),
+			array(3.1415),
+			array('12345.987')
+		);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider invalidIntegers
+	 */
+	public function integerValidatorReturnsTrueForAnInvalidInteger($integer) {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
 		$integerValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
-		$this->assertFalse($integerValidator->isValidProperty(3.1415, $validationErrors));
+		$this->assertFalse($integerValidator->isValidProperty($integer, $validationErrors));
 	}
 
 	/**
@@ -82,55 +101,6 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 		$this->assertEquals(1221560494, $validationErrors[0]->getErrorCode());
 	}
 
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function integerValidatorReturnsTrueForAnIntegerGivenAsAString() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($integerValidator->isValidProperty('12345', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function integerValidatorReturnsTrueForAPositiveIntegerGivenAsString() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($integerValidator->isValidProperty('+12345', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function integerValidatorReturnsTrueForANegativeIntegerGivenAsString() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($integerValidator->isValidProperty('-12345', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function integerValidatorReturnsFalseForAFloatGivenAsAString() {
-		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertFalse($integerValidator->isValidProperty('12345.987', $validationErrors));
-	}
 }
 
 ?>

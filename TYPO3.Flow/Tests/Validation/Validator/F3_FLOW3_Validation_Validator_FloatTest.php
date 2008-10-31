@@ -32,52 +32,60 @@ namespace F3::FLOW3::Validation::Validator;
 class FloatTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function floatValidatorReturnsTrueForASimpleFloat() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($floatValidator->isValidProperty(1029437.234726, $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function floatValidatorReturnsFalseForASimpleInteger() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertFalse($floatValidator->isValidProperty(1029437, $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Data provider with valid email addresses
+	 *
+	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function floatValidatorReturnsFalseForASimpleIntegerGivenAsString() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertFalse($floatValidator->isValidProperty('1029437', $validationErrors));
+	public function validFloats() {
+		return array(
+			array(1029437.234726),
+			array('123.45'),
+			array('+123.45'),
+			array('-123.45'),
+			array('123.45e3'),
+			array(123.45e3)
+		);
 	}
 
 	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @dataProvider validFloats
 	 */
-	public function floatValidatorReturnsFalseForAString() {
+	public function floatValidatorReturnsTrueForAValidFloat($address) {
 		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
 		$floatValidator->injectComponentFactory($this->componentFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
-		$this->assertFalse($floatValidator->isValidProperty('not a number', $validationErrors));
+		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
+	}
+
+	/**
+	 * Data provider with invalid email addresses
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function invalidFloats() {
+		return array(
+			array(1029437),
+			array('1029437'),
+			array('not a number')
+		);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider invalidFloats
+	 */
+	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
+		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator->injectComponentFactory($this->componentFactory);
+		$validationErrors = new F3::FLOW3::Validation::Errors();
+
+		$this->assertFalse($floatValidator->isValidProperty($address, $validationErrors));
 	}
 
 	/**
@@ -93,45 +101,6 @@ class FloatTest extends F3::Testing::BaseTestCase {
 
 		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
 		$this->assertEquals(1221560288, $validationErrors[0]->getErrorCode());
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function floatValidatorReturnsTrueForAFloatGivenAsAString() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($floatValidator->isValidProperty('123.45', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function floatValidatorReturnsTrueForAPositiveFloatGivenAsString() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($floatValidator->isValidProperty('+123.45', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function floatValidatorReturnsTrueForANegativeFloatGivenAsString() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
-
-		$this->assertTrue($floatValidator->isValidProperty('-123.45', $validationErrors));
 	}
 
 }
