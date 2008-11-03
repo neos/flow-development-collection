@@ -139,7 +139,7 @@ class Arguments extends ::ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
-		$argument = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
+		$argument = $this->componentFactory->create('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 		$this->addArgument($argument);
 		return $argument;

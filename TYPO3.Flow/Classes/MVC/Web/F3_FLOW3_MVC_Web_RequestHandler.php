@@ -50,6 +50,11 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
 	 */
 	protected $requestProcessorChainManager;
+	
+	/**
+	 * @var F3::FLOW3::MVC::Web::RequestBuilder
+	 */
+	protected $requestBuilder;
 
 	/**
 	 * Constructs the Web Request Handler
@@ -65,10 +70,12 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 			F3::FLOW3::Component::FactoryInterface $componentFactory,
 			F3::FLOW3::Utility::Environment $utilityEnvironment,
 			F3::FLOW3::MVC::Dispatcher $dispatcher,
+			F3::FLOW3::MVC::Web::RequestBuilder $requestBuilder,
 			F3::FLOW3::MVC::RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
+		$this->requestBuilder = $requestBuilder;
 		$this->requestProcessorChainManager = $requestProcessorChainManager;
 	}
 
@@ -79,9 +86,9 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::RequestBuilder')->build();
+		$request = $this->requestBuilder->build();
 		$this->requestProcessorChainManager->processRequest($request);
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$response = $this->componentFactory->create('F3::FLOW3::MVC::Web::Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}

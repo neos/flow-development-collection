@@ -38,18 +38,18 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 */
 	public function credentialsAreSetCorrectlyFromPOSTArguments() {
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);
 
 		$POSTArguments = array(
 			'F3::FLOW3::Security::Authentication::Token::UsernamePassword::username' => 'FLOW3',
 			'F3::FLOW3::Security::Authentication::Token::UsernamePassword::password' => 'verysecurepassword'
 		);
-
+		
+		$mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPOSTArguments')->will($this->returnValue($POSTArguments));
-		$mockComponentFactory->expects($this->atLeastOnce())->method('getComponent')->with('F3::FLOW3::Utility::Environment')->will($this->returnValue($mockEnvironment));
 
 		$token = new F3::FLOW3::Security::Authentication::Token::UsernamePassword();
-		$token->setComponentFactory($mockComponentFactory);
+		$token->injectComponentFactory($mockComponentFactory);		
+		$token->injectEnvironment($mockEnvironment);
 		$token->updateCredentials();
 
 		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');

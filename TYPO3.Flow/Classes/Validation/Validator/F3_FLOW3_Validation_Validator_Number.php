@@ -47,7 +47,7 @@ class Number extends F3::FLOW3::Validation::AbstractValidator {
 
 		if (is_numeric($propertyValue)) return TRUE;
 
-		$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
+		$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
 		return FALSE;
 	}
 }

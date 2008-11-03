@@ -44,7 +44,7 @@ class PublisherTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
+		$environment = $this->componentManager->getComponent('F3::FLOW3::Utility::Environment');
 		$this->publicResourcePath = $environment->getPathToTemporaryDirectory() . uniqid() . '/';
 
 		$metadataCache = $this->getMock('F3::FLOW3::Cache::VariableCache', array(), array(), '', FALSE);

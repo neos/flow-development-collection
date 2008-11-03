@@ -83,38 +83,36 @@ class Factory implements F3::FLOW3::Component::FactoryInterface {
 	}
 
 	/**
-	 * Returns an instance of the component specified by $componentName.
+	 * Creates a fresh instance of the component specified by $componentName.
 	 *
-	 * This factory method should mainly be used for components of the scope prototype.
-	 * Singleton components should rather be injected by some type of Dependency Injection.
+	 * This factory method can only create components of the scope prototype.
+	 * Singleton components must be either injected by some type of Dependency Injection or
+	 * if that is not possible, be retrieved by the getComponent() method of the
+	 * Component Manager
 	 *
 	 * You must use either Dependency Injection or this factory method for instantiation
 	 * of your objects if you need FLOW3's object management capabilities (including
-	 * Aspect Oriented Programming). It is absolutely okay and often advisable to
+	 * AOP, Security and Persistence). It is absolutely okay and often advisable to
 	 * use the "new" operator for instantiation in your automated tests.
 	 *
-	 * Note: If neccessary (while using legacy classes for example), you may
-	 *       pass additional parameters which are then used as parameters passed
-	 *       to the constructor of the component class. However, you whould only
-	 *       use this feature if your parameters are truly dynamic. Otherwise just
-	 *       configure them in your Components.php file.
-	 *
-	 * @param string $componentName The name of the component to return an instance of
-	 * @return object The component instance
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $componentName The name of the component to create
+	 * @return object The new component instance
 	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
-	 */
-	public function getComponent($componentName) {
+	 * @throws F3::FLOW3::Component::Exception::WrongScope if the specified component is not configured as Prototype
+	 * @author Robert Lemke <robert@typo3.org>
+ 	 */
+	public function create($componentName) {
 		if (!$this->componentManager->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);
+		if ($componentConfiguration->getScope() != 'prototype') throw new F3::FLOW3::Component::Exception::WrongScope('Component "' . $componentName . '" is of scope ' . $componentConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
+		
 		$arguments = array_slice(func_get_args(), 1);
 		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
-		switch ($componentConfiguration->getScope()) {
-			case 'prototype' :
-				$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
-				break;
-			case 'singleton' :
+		$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
+
+
+/*		case 'singleton' :
 				if ($this->componentObjectCache->componentObjectExists($componentName)) {
 					$componentObject = $this->componentObjectCache->getComponentObject($componentName);
 				} else {
@@ -124,8 +122,8 @@ class Factory implements F3::FLOW3::Component::FactoryInterface {
 				break;
 			default :
 				throw new F3::FLOW3::Component::Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
-		}
-
+*/
+			
 		return $componentObject;
 	}
 
@@ -136,7 +134,7 @@ class Factory implements F3::FLOW3::Component::FactoryInterface {
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
 	 * @return array An array of F3::FLOW3::Component::ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see getComponent()
+	 * @see create()
 	 */
 	protected function getOverridingConstructorArguments(array $arguments) {
 		$constructorArguments = array();

@@ -32,9 +32,9 @@ namespace F3::FLOW3::MVC;
 class RequestHandlerResolver {
 
 	/**
-	 * @var F3::FLOW3::ComponentFactoryInterface Reference to the component factory
+	 * @var F3::FLOW3::ComponentManagerInterface Reference to the component manager
 	 */
-	protected $componentFactory;
+	protected $componentManager;
 
 	/**
 	 * @var F3::FLOW3::Configuration::Container FLOW3 configuration
@@ -45,13 +45,13 @@ class RequestHandlerResolver {
 	 * Constructs the Request Handler Resolver
 	 *
 	 * @param F3::FLOW3::Configuration::Container $configuration The FLOW3 configuration
-	 * @param F3::FLOW3::ComponentFactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::ComponentManagerInterface $componentManager A reference to the component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Container $configuration, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Configuration::Container $configuration, F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->configuration = $configuration;
-		$this->componentFactory = $componentFactory;
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -67,7 +67,7 @@ class RequestHandlerResolver {
 
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
-			$requestHandler = $this->componentFactory->getComponent($requestHandlerClassName);
+			$requestHandler = $this->componentManager->getComponent($requestHandlerClassName);
 			if ($requestHandler->canHandleRequest()) {
 				$priority = $requestHandler->getPriority();
 				if (isset($suitableRequestHandlers[$priority])) throw new LogicException('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);

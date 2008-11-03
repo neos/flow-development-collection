@@ -99,7 +99,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
 
 		if ($context instanceof F3::FLOW3::Security::Context) return $context;
-		return $this->componentFactory->getComponent('F3::FLOW3::Security::Context');
+		return $this->componentFactory->create('F3::FLOW3::Security::Context');
 	}
 
 	/**
@@ -170,8 +170,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	}
 
 	/**
-	 * Updates the token credentials for all tokens in the given array. It also sets
-	 * the current instance of the component factory.
+	 * Updates the token credentials for all tokens in the given array.
 	 *
 	 * @param array Array of authentication tokens the credentials should be updated for
 	 * @return void
@@ -179,7 +178,6 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
-			$token->setComponentFactory($this->componentFactory);
 			$token->updateCredentials();
 		}
 	}

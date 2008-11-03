@@ -50,6 +50,11 @@ class Manager {
 	protected $componentFactory;
 
 	/**
+	 * @var F3::FLOW3::Resource::Publisher
+	 */
+	protected $resourcePublisher;
+
+	/**
 	 * @var array The loaded resources (identity map)
 	 */
 	protected $loadedResources = array();
@@ -64,6 +69,17 @@ class Manager {
 	public function __construct(F3::FLOW3::Resource::ClassLoader $classLoader, F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->classLoader = $classLoader;
 		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Injects the resource publisher
+	 *
+	 * @param F3::FLOW3::Resource::Publisher $resourcePublisher
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectResourcePublisher(F3::FLOW3::Resource::Publisher $resourcePublisher) {
+		$this->resourcePublisher = $resourcePublisher;
 	}
 
 	/**
@@ -92,7 +108,7 @@ class Manager {
 	 */
 	public function getResource($URI) {
 		if (is_string($URI)) {
-			$URI = $this->componentFactory->getComponent('F3::FLOW3::Property::DataType::URI', $URI);
+			$URI = $this->componentFactory->create('F3::FLOW3::Property::DataType::URI', $URI);
 		}
 		$URIString = (string)$URI;
 
@@ -100,7 +116,7 @@ class Manager {
 			return $this->loadedResources[$URIString];
 		}
 
-		$metadata = $this->componentFactory->getComponent('F3::FLOW3::Resource::Publisher')->getMetadata($URI);
+		$metadata = $this->resourcePublisher->getMetadata($URI);
 		$this->loadedResources[$URIString] = $this->instantiateResource($metadata);
 
 		return $this->loadedResources[$URIString];
@@ -116,7 +132,7 @@ class Manager {
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {
 			case 'text/html':
-				$resource = $this->componentFactory->getComponent('F3::FLOW3::Resource::HTMLResource');
+				$resource = $this->componentFactory->create('F3::FLOW3::Resource::HTMLResource');
 				break;
 			default:
 				throw new F3::FLOW3::Resource::Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);

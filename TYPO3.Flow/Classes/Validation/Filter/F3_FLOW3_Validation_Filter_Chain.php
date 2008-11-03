@@ -28,6 +28,7 @@ namespace F3::FLOW3::Validation::Filter;
  * @subpackage Validation
  * @version $Id:F3::FLOW3::Validation::Filter::Chain.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Chain implements F3::FLOW3::Validation::FilterInterface {
 

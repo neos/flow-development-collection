@@ -42,23 +42,23 @@ class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
 	 */
-	protected $componentFactory;
+	protected $componentManager;
 
 	/**
 	 * Constructor
 	 *
 	 * @param string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param string $adviceMethodName: Name of the advice method
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory: A reference to the component factory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->aspectComponentName = $aspectComponentName;
 		$this->adviceMethodName = $adviceMethodName;
-		$this->componentFactory = $componentFactory;
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -69,7 +69,7 @@ class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		$adviceObject = $this->componentFactory->getComponent($this->aspectComponentName);
+		$adviceObject = $this->componentManager->getComponent($this->aspectComponentName);
 		$methodName = $this->adviceMethodName;
 		return $adviceObject->$methodName($joinPoint);
 	}

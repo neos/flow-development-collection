@@ -125,7 +125,7 @@ class ProxyClassBuilder {
 	 *	$this->targetMethodsAndGroupedAdvices = array(
 	 *		'getSomeProperty' => array(
 	 *			'F3::FLOW3::AOP::AroundAdvice' => array(
-	 *				$this->componentFactory->getComponent('F3::FLOW3::AOP::AroundAdvice', 'F3::TestPackage::GetSomeChinesePropertyAspect', 'aroundFourtyTwoToChinese'),
+	 *				$this->componentFactory->create('F3::FLOW3::AOP::AroundAdvice', 'F3::TestPackage::GetSomeChinesePropertyAspect', 'aroundFourtyTwoToChinese'),
 	 *			),
 	 *		),
 	 *	);
@@ -145,7 +145,7 @@ class ProxyClassBuilder {
 			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
 				foreach ($advices as $advice) {
-					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->componentFactory->getComponent('" . get_class($advice) . "', '" . $advice->getAspectComponentName() . "', '" . $advice->getAdviceMethodName() . "', \$this->componentFactory),\n";
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->componentFactory->create('" . get_class($advice) . "', '" . $advice->getAspectComponentName() . "', '" . $advice->getAdviceMethodName() . "', \$this->componentManager),\n";
 				}
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
 			}

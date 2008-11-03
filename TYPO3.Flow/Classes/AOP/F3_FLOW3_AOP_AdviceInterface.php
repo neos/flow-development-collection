@@ -39,10 +39,10 @@ interface AdviceInterface {
 	 *
 	 * @param  string $aspectComponentName: Name of the aspect component containing the advice
 	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component factory
+	 * @param  F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component manager
 	 * @return void
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::FactoryInterface $componentFactory);
+	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::ManagerInterface $componentManager);
 
 	/**
 	 * Invokes the advice method

@@ -38,11 +38,6 @@ class Dispatcher {
 	protected $componentManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the component factory
-	 */
-	protected $componentFactory;
-
-	/**
 	 * @var F3::FLOW3::Security::ContextHolderInterface A reference to the security contextholder
 	 */
 	protected $securityContextHolder;
@@ -61,12 +56,10 @@ class Dispatcher {
 	 * Constructs the global dispatcher
 	 *
 	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
 	}
 
 	/**
@@ -142,7 +135,7 @@ class Dispatcher {
 		$controllerComponentName = $request->getControllerComponentName();
 
 		try {
-			$controller = $this->componentFactory->getComponent($controllerComponentName);
+			$controller = $this->componentManager->getComponent($controllerComponentName);
 		} catch (F3::FLOW3::Security::Exception::AuthenticationRequired $exception) {
 			if (!$request instanceof F3::FLOW3::MVC::Web::Request) throw $exception;
 			$request->setDispatched(TRUE);

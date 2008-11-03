@@ -42,7 +42,7 @@ class PointcutTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->AOPFramework = $this->componentFactory->getComponent('F3::FLOW3::AOP::Framework');
+		$this->AOPFramework = $this->componentManager->getComponent('F3::FLOW3::AOP::Framework');
 		if (!$this->AOPFramework->isInitialized()) {
 			$this->AOPFramework->initialize($this->componentManager->getComponentConfigurations());
 		}

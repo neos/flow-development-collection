@@ -56,9 +56,9 @@ class Manager {
 	protected $session;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
-	protected $componentFactory;
+	protected $componentManager;
 
 	/**
 	 * Schemata of all classes which need to be persisted
@@ -91,14 +91,14 @@ class Manager {
 	}
 
 	/**
-	 * Injects the component factory
+	 * Injects the component manager
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -162,7 +162,7 @@ class Manager {
 
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Persistence::RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
-			$aggregateRootObjects = $this->componentFactory->getComponent($repositoryClassName)->getObjects();
+			$aggregateRootObjects = $this->componentManager->getComponent($repositoryClassName)->getObjects();
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
 		}
 

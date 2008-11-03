@@ -82,7 +82,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 */
 	public function setRoutesConfiguration(F3::FLOW3::Configuration::Container $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
-			$route = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::Route');
+			$route = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::Route');
 			$route->setName($routeName);
 			$route->setUriPattern($routeConfiguration->uriPattern);
 			$route->setDefaults($routeConfiguration->defaults);

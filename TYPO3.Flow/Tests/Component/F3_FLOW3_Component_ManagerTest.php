@@ -65,7 +65,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterNormalClasses() {
-		$reflectionService = $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service');
+		$reflectionService = $this->componentManager->getComponent('F3::FLOW3::Reflection::Service');
 		$componentManager = new F3::FLOW3::Component::Manager($reflectionService);
 		$this->assertEquals($componentManager->isComponentRegistered('F3::TestPackage::BasicClass'), FALSE, 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$componentManager->registerComponent('F3::TestPackage::BasicClass');
@@ -80,7 +80,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentCanRegisterClassesInSubDirectories() {
-		$reflectionService = $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service');
+		$reflectionService = $this->componentManager->getComponent('F3::FLOW3::Reflection::Service');
 		$componentManager = new F3::FLOW3::Component::Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3::TestPackage::BasicClass'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
 		$this->assertFalse($componentManager->isComponentRegistered('F3::TestPackage::SubDirectory::ClassInSubDirectory'), 'isComponentRegistered() did not return FALSE although component is not yet registered.');
@@ -93,7 +93,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentRejectsAbstractClasses() {
-		$reflectionService = $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service');
+		$reflectionService = $this->componentManager->getComponent('F3::FLOW3::Reflection::Service');
 		$componentManager = new F3::FLOW3::Component::Manager($reflectionService);
 		$this->assertFalse($componentManager->isComponentRegistered('F3::TestPackage::AbstractClass'), 'isComponentRegistered() did not return FALSE although the abstract class is not yet registered.');
 		try {
@@ -176,7 +176,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerComponentTypeBasicallyWorks() {
-		$implementation = $this->componentFactory->getComponent('F3::TestPackage::SomeInterface');
+		$implementation = $this->componentManager->getComponent('F3::TestPackage::SomeInterface');
 		$this->assertType('F3::TestPackage::SomeImplementation', $implementation, 'The component of component type ...SomeInterface is not implemented by ...SomeImplementation!');
 	}
 
@@ -189,7 +189,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	public function setComponentClassNameWorksAsExpected() {
 		$componentName = 'F3::TestPackage::BasicClass';
 		$this->componentManager->setComponentClassName($componentName, 'F3::TestPackage::ReplacingClass');
-		$component = $this->componentFactory->getComponent($componentName);
+		$component = $this->componentManager->getComponent($componentName);
 
 		$this->assertEquals('F3::TestPackage::ReplacingClass', get_class($component), 'The component was not of the expected class.');
 	}

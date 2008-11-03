@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class FilterFirewallTest extends F3::Testing::BaseTestCase {
@@ -55,7 +55,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
 		$filters = $firewall->getFilters();
 
 		$this->assertType('F3::FLOW3::Security::Authorization::RequestFilter', $filters[0]);
@@ -89,7 +89,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
 
 		try {
 			$firewall->blockIllegalRequests($mockRequest);
@@ -119,7 +119,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentFactory, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
 
 		try {
 			$firewall->blockIllegalRequests($mockRequest);

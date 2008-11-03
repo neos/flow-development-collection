@@ -34,9 +34,9 @@ namespace F3::FLOW3::Component;
 class ObjectBuilder {
 
 	/**
-	 * @var F3::FLOW3::Component::Factory A reference to the component factory - used for fetching other component objects while solving dependencies
+	 * @var F3::FLOW3::Component::ManagerInterfac A reference to the component manager - used for fetching other component objects while solving dependencies
 	 */
-	protected $componentFactory;
+	protected $componentManager;
 
 	/**
 	 * @var F3::FLOW3::Reflection::Service A reference to the reflection service
@@ -56,12 +56,14 @@ class ObjectBuilder {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Component::Factory $componentFactory A reference to the component factory - used for fetching other component objects while solving dependencies
+	 * @param F3::FLOW3::Component::Manager $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Component::Factory $componentFactory A reference to the component factory
 	 * @param F3::FLOW3::Reflection::Service $reflectionService A reference to the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Reflection::Service $reflectionService) {
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Reflection::Service $reflectionService) {
+		$this->componentManager = $componentManager;
 		$this->componentFactory = $componentFactory;
 		$this->reflectionService = $reflectionService;
 	}
@@ -136,6 +138,7 @@ class ObjectBuilder {
 
 			// those objects will be fetched from within the __wakeup() method of the object...
 		$GLOBALS['reconstituteComponentObject']['componentFactory'] = $this->componentFactory;
+		$GLOBALS['reconstituteComponentObject']['componentManager'] = $this->componentManager;
 		$GLOBALS['reconstituteComponentObject']['properties'] = $properties;
 		$componentObject = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
 		unset($GLOBALS['reconstituteComponentObject']);
@@ -244,7 +247,7 @@ class ObjectBuilder {
 					$preparedArguments[] = $constructorArgument->getValue();
 				} else {
 					if ($constructorArgument->getType() === F3::FLOW3::Component::configurationArgument::ARGUMENT_TYPES_REFERENCE) {
-						$value = $this->componentFactory->getComponent($constructorArgument->getValue());
+						$value = $this->componentManager->getComponent($constructorArgument->getValue());
 					} else {
 						$value = $constructorArgument->getValue();
 					}
@@ -268,7 +271,7 @@ class ObjectBuilder {
 		foreach ($setterProperties as $propertyName => $property) {
 			switch ($property->getType()) {
 				case F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_REFERENCE:
-					$propertyValue = $this->componentFactory->getComponent($property->getValue());
+					$propertyValue = $this->componentManager->getComponent($property->getValue());
 				break;
 				case F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
 					$propertyValue = $property->getValue();

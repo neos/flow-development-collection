@@ -101,7 +101,7 @@ class RequestBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
+		$request = $this->componentFactory->create('F3::FLOW3::MVC::Web::Request');
 		$request->injectEnvironment($this->environment);
 		$request->setRequestURI($this->environment->getRequestURI());
 		$request->setMethod($this->environment->getRequestMethod());

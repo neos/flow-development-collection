@@ -37,11 +37,11 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsReturnedByActionMethodAreAppendedToResponseObject() {
-		$mockController = new F3::FLOW3::MVC::Fixture::Controller::MockActionController($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface'));
+		$mockController = new F3::FLOW3::MVC::Fixture::Controller::MockActionController($this->componentFactory, $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface'));
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$mockController->injectPropertyMapper($this->componentManager->getComponent('F3::FLOW3::Property::Mapper'));
+		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerActionName('returnSomeString');
 		$mockController->processRequest($request, $response);
@@ -53,12 +53,12 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function ifNoViewCouldBeResolvedAnEmptyViewIsProvided() {
-		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('exoticAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
+		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('exoticAction'), array($this->componentFactory, $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
+		$mockController->injectPropertyMapper($this->componentManager->getComponent('F3::FLOW3::Property::Mapper'));
 
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('DefaultController');
@@ -80,12 +80,12 @@ class ActionControllerTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function aViewMatchingTheActionNameIsProvidedAutomatically() {
-		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('thingAction'), array($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
+		$mockController = $this->getMock('F3::FLOW3::MVC::Controller::ActionController', array('thingAction'), array($this->componentFactory, $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface')), 'F3::FLOW3::MVC::Controller::ActionController' . uniqid());
 		$mockController->injectComponentManager($this->componentManager);
-		$mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
+		$mockController->injectPropertyMapper($this->componentManager->getComponent('F3::FLOW3::Property::Mapper'));
 
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Some');

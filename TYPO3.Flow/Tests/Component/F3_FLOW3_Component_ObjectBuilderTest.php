@@ -44,7 +44,7 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$this->componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this->componentManager, $this->componentManager->getComponentFactory(), $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 	}
 
 	/**
@@ -291,7 +291,7 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 */
 	public function autoWiringWorksForConstructorInjection() {
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::InjectedClassWithDependencies');
-		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$component = $this->componentManager->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
 		$this->assertType('F3::TestPackage::SomeImplementation', $component->argument1, 'Autowiring didn\'t work out for F3::TestPackage::ClassWithSomeImplementationInjected');
 	}
 
@@ -301,7 +301,7 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringForConstructorInjectionRespectsAlreadyDefinedArguments() {
-		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$component = $this->componentManager->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->argument2 instanceof F3::TestPackage::InjectedClassWithDependencies, 'Autowiring didn\'t respect that the second constructor argument was already set in the Components.ini!');
 	}
 
@@ -310,7 +310,7 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringWorksForSetterInjectionViaInjectMethod() {
-		$component = $this->componentFactory->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
+		$component = $this->componentManager->getComponent('F3::TestPackage::ClassWithSomeImplementationInjected');
 		$this->assertTrue($component->optionalSetterArgument instanceof F3::TestPackage::SomeInterface, 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
 
@@ -320,7 +320,7 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 */
 	public function autoWiringThrowsExceptionForUnmatchedDependenciesOfRequiredSetterInjectedDependencies() {
 		try {
-			$this->componentFactory->getComponent('F3::TestPackage::ClassWithUnmatchedRequiredSetterDependency');
+			$this->componentManager->getComponent('F3::TestPackage::ClassWithUnmatchedRequiredSetterDependency');
 			$this->fail('The object builder did not throw an exception.');
 		} catch (F3::FLOW3::Component::Exception::CannotBuildObject $exception) {
 		}
@@ -331,8 +331,9 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectReturnsAnObjectOfTheSpecifiedType() {
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::Manager', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentManager, $mockComponentFactory, $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
@@ -344,8 +345,9 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectRejectsComponentTypesWhichAreNotPersistable() {
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::Manager', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentManager, $mockComponentFactory, $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::NonPersistableClass');
 
@@ -362,8 +364,9 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectTakesPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::Manager', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentManager, $mockComponentFactory, $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
@@ -376,8 +379,9 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethod() {
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::Manager', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentManager, $mockComponentFactory, $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$object = $componentObjectBuilder->reconstituteComponentObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $componentConfiguration, array());
@@ -390,8 +394,9 @@ class ObjectBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function reconstituteComponentObjectCallsTheTargetObjectsWakeupMethodOnlyAfterAllPropertiesHaveBeenRestored() {
+		$mockComponentManager = $this->getMock('F3::FLOW3::Component::Manager', array(), array(), '', FALSE);
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::Factory', array(), array(), '', FALSE);
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentFactory, $this->componentFactory->getComponent('F3::FLOW3::Reflection::Service'));
+		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($mockComponentManager, $mockComponentFactory, $this->componentManager->getComponent('F3::FLOW3::Reflection::Service'));
 		$componentConfiguration = $this->componentManager->getComponentConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$properties = array(

@@ -33,6 +33,22 @@ namespace F3::FLOW3::MVC::Controller;
 class DefaultController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
 
 	/**
+	 * @var F3::FLOW3::MVC::View::DefaultView
+	 */
+	protected $defaultView;
+
+	/**
+	 * Injects the default view
+	 *
+	 * @param F3::FLOW3::MVC::View::DefaultView $defaultView The default view
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectDefaultView(F3::FLOW3::MVC::View::DefaultView $defaultView) {
+		$this->defaultView = $defaultView;
+	}
+
+	/**
 	 * Processes a generic request and returns a response
 	 *
 	 * @param F3::FLOW3::MVC::Request $request: The request
@@ -64,9 +80,8 @@ class DefaultController extends F3::FLOW3::MVC::Controller::RequestHandlingContr
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function processWebRequest(F3::FLOW3::MVC::Web::Request $request, F3::FLOW3::MVC::Web::Response $response) {
-		$view = $this->componentFactory->getComponent('F3::FLOW3::MVC::View::DefaultView');
-		$view->setRequest($request);
-		$response->setContent($view->render());
+		$this->defaultView->setRequest($request);
+		$response->setContent($this->defaultView->render());
 	}
 
 }

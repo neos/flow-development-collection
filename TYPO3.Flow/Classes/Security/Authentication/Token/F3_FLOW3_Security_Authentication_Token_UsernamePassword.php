@@ -33,20 +33,25 @@ namespace F3::FLOW3::Security::Authentication::Token;
  */
 class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInterface {
 
-
 	/**
-	 * The component factory
 	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var boolean Indicates wether this token is authenticated
+	 * @var F3::FLOW3::Utility::Environment
+	 */
+	protected $environment;
+
+	/**
+	 * Indicates wether this token is authenticated
+	 * @var boolean
 	 */
 	protected $authenticationStatus = FALSE;
 
 	/**
-	 * @var array The username/password credentials
+	 * The username/password credentials
+	 * @var array
 	 */
 	protected $credentials = array('username' => '', 'password' => '');
 
@@ -56,15 +61,25 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	protected $requestPattern = NULL;
 
 	/**
-	 * This function is called while initializing the security context, to make sure we have an
-	 * instance of the current component factory.
+	 * Injects the component factory
 	 *
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Injects the environment
+	 *
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
+		$this->environment = $environment;
 	}
 
 	/**
@@ -127,7 +142,7 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentials() {
-		$POSTArguments = $this->getEnvironmentObject()->getPOSTArguments();
+		$POSTArguments = $this->environment->getPOSTArguments();
 		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'];
 		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'];
 	}
@@ -162,7 +177,7 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 * @todo implement this method, otherwise everbody will be an administrator ;-)
 	 */
 	public function getGrantedAuthorities() {
-		return array($this->componentFactory->getComponent('F3::FLOW3::Security::ACL::Role', 'ADMINISTRATOR'));
+		return array($this->componentFactory->create('F3::FLOW3::Security::ACL::Role', 'ADMINISTRATOR'));
 	}
 
 	/**
@@ -174,16 +189,6 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
 		$this->authenticationStatus = $authenticationStatus;
-	}
-
-	/**
-	 * Returns the current environment object
-	 *
-	 * @return F3::FLOW3::Utility::Environment The current environment object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function getEnvironmentObject() {
-		return $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
 	}
 
 	/**

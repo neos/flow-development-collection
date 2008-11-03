@@ -69,7 +69,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$locale = $this->componentFactory->getComponent('F3::FLOW3::Locale::Locale', $this->settings->locale->defaultLocaleIdentifier);
+		$locale = $this->componentFactory->create('F3::FLOW3::Locale::Locale', $this->settings->locale->defaultLocaleIdentifier);
 		$this->settings->locale->defaultLocale = $locale;
 	}
 

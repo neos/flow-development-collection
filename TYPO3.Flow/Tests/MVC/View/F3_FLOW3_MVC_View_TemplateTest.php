@@ -29,8 +29,8 @@ class TemplateTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function scopeIsPrototype() {
-		$instance1 = $this->componentFactory->getComponent('F3::FLOW3::MVC::View::Template');
-		$instance2 = $this->componentFactory->getComponent('F3::FLOW3::MVC::View::Template');
+		$instance1 = $this->componentManager->getComponent('F3::FLOW3::MVC::View::Template');
+		$instance2 = $this->componentManager->getComponent('F3::FLOW3::MVC::View::Template');
 		$this->assertNotSame($instance1, $instance2, 'The template view is not a prototype.');
 	}
 }

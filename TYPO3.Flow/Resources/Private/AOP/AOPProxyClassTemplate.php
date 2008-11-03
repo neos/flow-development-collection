@@ -7,24 +7,32 @@ namespace ###PROXY_NAMESPACE###;
 class ###PROXY_CLASS_NAME### extends ###TARGET_CLASS_NAME### implements ###INTRODUCED_INTERFACES###F3::FLOW3::AOP::ProxyInterface {
 
 	/**
-	 * @var array An array of target method names and their advices grouped by advice type
+	 * An array of target method names and their advices grouped by advice type
+	 * @var array
 	 */
 	protected $targetMethodsAndGroupedAdvices = array();
 
 	/**
-	 * @var array An array of method names and the advices grouped by advice type in the order of their invocation
+	 * An array of method names and the advices grouped by advice type in the order of their invocation
+	 * @var array
 	 */
 	protected $groupedAdviceChains = array();
 
 	/**
-	 * @var array An array of method names and their state: If set to TRUE, an advice for that method is currently being executed
+	 * An array of method names and their state: If set to TRUE, an advice for that method is currently being executed
+	 * @var array
 	 */
 	protected $methodIsInAdviceMode = array();
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the component factory
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
+	
+	/**
+	 * @var F3::FLOW3::Component::ManagerInterface
+	 */
+	protected $componentManager;
 
 ###METHODS_INTERCEPTOR_CODE###
 

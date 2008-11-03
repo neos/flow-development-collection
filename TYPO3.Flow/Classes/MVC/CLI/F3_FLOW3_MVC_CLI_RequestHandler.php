@@ -74,9 +74,9 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::CLI::RequestBuilder')->build();
+		$request = $this->componentFactory->create('F3::FLOW3::MVC::CLI::RequestBuilder')->build();
 		$this->requestProcessorChainManager->processRequest($request);
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::CLI::Response');
+		$response = $this->componentFactory->create('F3::FLOW3::MVC::CLI::Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}

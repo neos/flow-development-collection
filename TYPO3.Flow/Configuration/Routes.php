@@ -60,5 +60,17 @@ $c->defaultWithFormat
 			'@format' => 'html'
 		)
 	);
-
+/**
+ * Default route to map the first three URL segments to package, controller and action including format and optional GET parameters
+ */
+$c->defaultWithFormat
+	->setUriPattern('[@package]/[@controller]/[@action].[@format]?[parameters]')
+	->setDefaults(
+		array(
+			'@controller' => 'Default',
+			'@action' => 'index',
+			'@format' => 'html'
+		)
+	);
+	
 ?>

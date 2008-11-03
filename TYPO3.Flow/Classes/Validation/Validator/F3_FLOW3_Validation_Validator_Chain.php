@@ -28,6 +28,7 @@ namespace F3::FLOW3::Validation::Validator;
  * @subpackage Validation
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 

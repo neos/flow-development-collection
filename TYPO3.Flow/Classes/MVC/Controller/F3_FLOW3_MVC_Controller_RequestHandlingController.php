@@ -69,7 +69,7 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager) {
-		$this->arguments = $componentFactory->getComponent('F3::FLOW3::MVC::Controller::Arguments');
+		$this->arguments = $componentFactory->create('F3::FLOW3::MVC::Controller::Arguments');
 		parent::__construct($componentFactory, $packageManager);
 	}
 
@@ -220,7 +220,7 @@ class RequestHandlingController extends F3::FLOW3::MVC::Controller::AbstractCont
 			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getName(), $argument->getPropertyEditorInputFormat());
 		}
 
-		$argumentsValidator = $this->componentFactory->getComponent('F3::FLOW3::MVC::Controller::ArgumentsValidator', $this->arguments);
+		$argumentsValidator = $this->componentFactory->create('F3::FLOW3::MVC::Controller::ArgumentsValidator', $this->arguments);
 		$this->propertyMapper->registerValidator($argumentsValidator);
 		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
 		$this->propertyMapper->map(new ::ArrayObject($this->request->getArguments()));

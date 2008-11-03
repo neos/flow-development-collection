@@ -37,8 +37,8 @@ class EventDispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function eventDispatcherIsPrototype() {
-		$dispatcher1 = $this->componentFactory->getComponent('F3::FLOW3::Event::EventDispatcher');
-		$dispatcher2 = $this->componentFactory->getComponent('F3::FLOW3::Event::EventDispatcher');
+		$dispatcher1 = $this->componentManager->getComponent('F3::FLOW3::Event::EventDispatcher');
+		$dispatcher2 = $this->componentManager->getComponent('F3::FLOW3::Event::EventDispatcher');
 		$this->assertNotSame($dispatcher1, $dispatcher2, 'Obviously EventDispatcher is not prototype!');
 	}
 

@@ -47,8 +47,8 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author  Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setUp() {
-		$this->routePart1 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
-		$this->routePart2 = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$this->routePart1 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$this->routePart2 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
 	}
 
 	/**

@@ -43,9 +43,9 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockController = new F3::FLOW3::MVC::Fixture::Controller::MockRESTController($this->componentFactory, $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface'));
+		$this->mockController = new F3::FLOW3::MVC::Fixture::Controller::MockRESTController($this->componentFactory, $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface'));
 		$this->mockController->injectComponentManager($this->componentManager);
-		$this->mockController->injectPropertyMapper($this->componentFactory->getComponent('F3::FLOW3::Property::Mapper'));
+		$this->mockController->injectPropertyMapper($this->componentManager->getComponent('F3::FLOW3::Property::Mapper'));
 	}
 
 	/**
@@ -53,8 +53,8 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheListActionOnGETRequestsWithoutIdentifier() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$this->mockController->processRequest($request, $response);
 		$this->assertEquals('list action called', $response->getContent());
@@ -65,8 +65,8 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheShowActionOnGETRequestsWithIdentifier() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
 
 		$request->setArgument('id', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
 

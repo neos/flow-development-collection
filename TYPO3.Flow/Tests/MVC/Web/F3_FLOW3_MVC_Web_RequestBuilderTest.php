@@ -76,7 +76,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->mockRequest = $this->getMock('F3::FLOW3::MVC::Web::Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
 
 		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('getComponent')->will($this->returnValue($this->mockRequest));
+		$mockComponentFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
 
 		$this->mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSpecialConfiguration'), array(), '', FALSE);
 		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(new F3::FLOW3::Configuration::Container()));

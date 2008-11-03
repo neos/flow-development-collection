@@ -38,7 +38,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorsOfProxiedClassesAreStillIntact() {
-		$componentWithConstructor = $this->componentFactory->getComponent('F3::TestPackage::ClassWithOptionalConstructorArguments', 'modified argument1', 'modified argument2', 'modified argument3');
+		$componentWithConstructor = $this->componentManager->getComponent('F3::TestPackage::ClassWithOptionalConstructorArguments', 'modified argument1', 'modified argument2', 'modified argument3');
 		$this->assertEquals('modified argument1', $componentWithConstructor->argument1, 'The property set through the first constructor argument does not contain the expected value.');
 		$this->assertEquals('modified argument2', $componentWithConstructor->argument2, 'The property set through the second constructor argument does not contain the expected value.');
 		$this->assertEquals('modified argument3', $componentWithConstructor->argument3, 'The property set through the third constructor argument does not contain the expected value.');
@@ -51,7 +51,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aroundAdviceBasicallyworks() {
-		$basicObject = $this->componentFactory->getComponent('F3::TestPackage::BasicClass');
+		$basicObject = $this->componentManager->getComponent('F3::TestPackage::BasicClass');
 		$this->assertType('F3::FLOW3::AOP::ProxyInterface', $basicObject, 'The basic object seems not to be a proxy object!');
 		$this->assertEquals('四十二', $basicObject->getSomeProperty(), 'The chinese advice seems not to be active - getSomeProperty() did not return the expected result.');
 		$basicObject->setSomeProperty(100);
@@ -65,9 +65,9 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function beforeAdviceBasicallyWorks() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
 		$time = 'before' . microtime();
-		$target = $this->componentFactory->getComponent('F3::TestPackage::BasicClass');
+		$target = $this->componentManager->getComponent('F3::TestPackage::BasicClass');
 		$target->setSomeProperty($time);
 		$this->assertEquals($time, $aspect->getFlags('before'), 'The internal flag of the aspect did not contain the expected value after testing the before advice.');
 	}
@@ -79,9 +79,9 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function afterReturningAdviceBasicallyWorks() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
 		$time = 'afterReturning' . microtime();
-		$target = $this->componentFactory->getComponent('F3::TestPackage::BasicClass');
+		$target = $this->componentManager->getComponent('F3::TestPackage::BasicClass');
 		$target->setSomeProperty($time);
 		$target->getSomeProperty();
 		$this->assertEquals($time, $aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the After Returning advice.');
@@ -94,8 +94,8 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function afterReturningAdviceOnConstructorWorksEvenIfTargetClassHasNoConstructor() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::AfterNonExistingConstructorAspect');
-		$this->componentFactory->getComponent('F3::TestPackage::BasicClass');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::AfterNonExistingConstructorAspect');
+		$this->componentManager->getComponent('F3::TestPackage::BasicClass');
 		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the constructor advice.');
 	}
 
@@ -106,9 +106,10 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function afterReturningAdviceOnWakeupWorksEvenIfTargetClassHasNoWakeup() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::AfterNonExistingWakeupAspect');
-		$target = $this->componentFactory->getComponent('F3::TestPackage::EmptyClass');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::AfterNonExistingWakeupAspect');
+		$target = $this->componentManager->getComponent('F3::TestPackage::EmptyClass');
 		$GLOBALS['reconstituteComponentObject']['componentFactory'] = $this->componentFactory;
+		$GLOBALS['reconstituteComponentObject']['componentManager'] = $this->componentManager;
 		$GLOBALS['reconstituteComponentObject']['properties'] = array();
 		$target = unserialize(serialize($target));
 		unset($GLOBALS['reconstituteComponentObject']);
@@ -122,9 +123,9 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function afterThrowingAdviceBasicallyWorks() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::GetSomeChinesePropertyAspect');
 		$time = 'afterThrowing' . microtime();
-		$target = $this->componentFactory->getComponent('F3::TestPackage::BasicClass');
+		$target = $this->componentManager->getComponent('F3::TestPackage::BasicClass');
 		try {
 			$target->throwAnException('RuntimeException', $time);
 		} catch (::Exception $exception) {
@@ -140,8 +141,8 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function introductionDeclarationBasicallyWorks() {
-		$aspect = $this->componentFactory->getComponent('F3::TestPackage::IntroductionAspect');
-		$target = $this->componentFactory->getComponent('F3::TestPackage::IntroductionTargetClass');
+		$aspect = $this->componentManager->getComponent('F3::TestPackage::IntroductionAspect');
+		$target = $this->componentManager->getComponent('F3::TestPackage::IntroductionTargetClass');
 		$this->assertTrue(method_exists($target, 'newMethod'), 'The method "newMethod" does not exist in the target class (' . get_class($target) . ').');
 
 		$time = microtime();
@@ -155,7 +156,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function introductionWithoutAdviceWorks() {
-		$target = $this->componentFactory->getComponent('F3::TestPackage::IntroductionTargetClass');
+		$target = $this->componentManager->getComponent('F3::TestPackage::IntroductionTargetClass');
 		$this->assertTrue(method_exists($target, 'anotherMethod'), 'The method "anotherMethod" does not exist in the target class (' . get_class($target) . ').');
 	}
 
@@ -166,7 +167,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mandatoryArgumentInNonAdvisedConstructorStaysIntact() {
-		$target = $this->componentFactory->getComponent('F3::TestPackage::ClassWithOneConstructorArgument');
+		$target = $this->componentManager->getComponent('F3::TestPackage::ClassWithOneConstructorArgument');
 		$this->assertType('F3::TestPackage::InjectedClass', $target->getInjectedComponent(), 'The injected class is not of the expected type or has not been injected at all.');
 	}
 
@@ -175,7 +176,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvicedMethodsInformationByTargetClassReturnsCorrectArrayOfAdviceInformation() {
-		$aopFramework = $this->componentFactory->getComponent('F3::FLOW3::AOP::Framework');
+		$aopFramework = $this->componentManager->getComponent('F3::FLOW3::AOP::Framework');
 		$advicedMethodsInformation = $aopFramework->getAdvicedMethodsInformationByTargetClass('F3::TestPackage::BasicClass');
 		$this->assertTrue(is_array($advicedMethodsInformation), 'No array was returned.');
 		$this->assertTrue(count($advicedMethodsInformation) > 0, 'The returned array was empty.');
@@ -196,7 +197,7 @@ class FrameworkTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTargetAndProxyClassNamesReturnsANonEmptyArray() {
-		$aopFramework = $this->componentFactory->getComponent('F3::FLOW3::AOP::Framework');
+		$aopFramework = $this->componentManager->getComponent('F3::FLOW3::AOP::Framework');
 		$targetAndProxyClassNames = $aopFramework->getTargetAndProxyClassNames();
 		$this->assertTrue(is_array($targetAndProxyClassNames), 'The returned value is not an array.');
 		$this->assertTrue(count($targetAndProxyClassNames) > 0, 'The returned array was empty.');

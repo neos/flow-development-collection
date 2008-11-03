@@ -48,7 +48,7 @@ class Alphanumeric extends F3::FLOW3::Validation::AbstractValidator {
 
 		if (is_string($propertyValue) && preg_match('/^[a-z0-9]*$/i', $propertyValue)) return TRUE;
 
-		$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221551320));
+		$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221551320));
 		return FALSE;
 	}
 }

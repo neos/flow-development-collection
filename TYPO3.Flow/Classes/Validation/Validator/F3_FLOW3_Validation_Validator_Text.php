@@ -46,7 +46,7 @@ class Text extends F3::FLOW3::Validation::AbstractValidator {
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
 		if (!is_string($propertyValue) || preg_match('/<[\/]*[a-z,A-Z,0-9]*>/', $propertyValue)) {
-			$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject was not a valid text (contained XML tags). Got: "' . $propertyValue . '"', 1221565786));
+			$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid text (contained XML tags). Got: "' . $propertyValue . '"', 1221565786));
 			return FALSE;
 		}
 

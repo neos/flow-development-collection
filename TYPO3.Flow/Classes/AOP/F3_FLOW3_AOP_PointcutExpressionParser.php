@@ -39,18 +39,18 @@ class PointcutExpressionParser {
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @var F3::FLOW3::Component::ManagerInterface $componentManager
 	 */
-	protected $componentFactory;
+	protected $componentManager;
 
 	/**
 	 * Constructs this expression parser
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -191,7 +191,7 @@ class PointcutExpressionParser {
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, F3::FLOW3::AOP::PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($pointcutExpression, '->') === FALSE) throw new F3::FLOW3::AOP::Exception::InvalidPointcutExpression('Syntax error: "->" expected in "' . $pointcutExpression . '".', 1172219205);
 		list($aspectClassName, $pointcutMethodName) = explode ('->', $pointcutExpression, 2);
-		$pointcutFilterComposite->addFilter($operator, $this->componentFactory->getComponent('F3::FLOW3::AOP::PointcutFilter', $aspectClassName, $pointcutMethodName));
+		$pointcutFilterComposite->addFilter($operator, $this->componentManager->getComponent('F3::FLOW3::AOP::PointcutFilter', $aspectClassName, $pointcutMethodName));
 	}
 
 	/**
@@ -261,7 +261,7 @@ class PointcutExpressionParser {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createCustomFilter($filterComponentName) {
-		return $this->componentFactory->getComponent($filterComponentName);
+		return $this->componentManager->getComponent($filterComponentName);
 	}
 }
 ?>

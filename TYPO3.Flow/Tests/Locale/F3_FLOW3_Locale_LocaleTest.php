@@ -36,8 +36,8 @@ class LocaleTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aLocaleIsPrototype() {
-		$locale1 = $this->componentFactory->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
-		$locale2 = $this->componentFactory->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
+		$locale1 = $this->componentManager->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
+		$locale2 = $this->componentManager->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
 
 		$this->assertNotSame($locale1, $locale2);
 	}

@@ -178,7 +178,7 @@ class Manager implements F3::FLOW3::Package::ManagerInterface {
 	protected function scanAvailablePackages() {
 		$availablePackagesArr = array();
 
-		$availablePackagesArr['FLOW3'] = new F3::FLOW3::Package::Package('FLOW3', FLOW3_PATH_PACKAGES . '/FLOW3/');
+		$availablePackagesArr['FLOW3'] = new F3::FLOW3::Package::Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/');
 
 		$packagesDirectoryIterator = new DirectoryIterator(FLOW3_PATH_PACKAGES);
 		while ($packagesDirectoryIterator->valid()) {

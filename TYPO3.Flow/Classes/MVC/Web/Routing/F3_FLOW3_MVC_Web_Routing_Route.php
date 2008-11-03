@@ -114,6 +114,11 @@ class Route {
 	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
+	
+	/**
+	 * @var F3::FLOW3::Component::ManagerInterface
+	 */
+	protected $componentManager;
 
 	/**
 	 * Constructor
@@ -122,8 +127,9 @@ class Route {
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentFactory = $componentFactory;
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -444,12 +450,12 @@ class Route {
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
 					if (isset($this->routePartHandlers[$routePartName])) {
-						$routePart = $this->componentFactory->getComponent($this->routePartHandlers[$routePartName]);
+						$routePart = $this->componentManager->getComponent($this->routePartHandlers[$routePartName]);
 						if (!$routePart instanceof F3::FLOW3::MVC::Web::Routing::DynamicRoutePart) {
 							throw new F3::FLOW3::MVC::Exception::InvalidRoutePartHandler('routePart handlers must inherit from "F3::FLOW3::MVC::Web::Routing::DynamicRoutePart"', 1218480972);
 						}
 					} else {
-						$routePart = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
+						$routePart = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
 					}
 					$routePart->setSplitString($splitString);
 					if (isset($this->defaults[$routePartName])) {
@@ -457,7 +463,7 @@ class Route {
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = $this->componentFactory->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+					$routePart = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
 					if (($matchIndex + 1) == count($matches)) {
 						$routePart->setLastRoutePartInSegment(TRUE);
 					}

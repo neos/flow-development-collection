@@ -35,7 +35,7 @@ namespace F3::FLOW3::Property;
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper = $componentFactory->getComponent('F3::FLOW3::Property::Mapper', $target);
+ * $mapper = $componentFactory->create('F3::FLOW3::Property::Mapper', $target);
  * $mapper->map($source);
  *
  * Now the target object equals the source object.
@@ -478,7 +478,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createNewMappingResults() {
-		return $this->componentFactory->getComponent('F3::FLOW3::Property::MappingResults');
+		return $this->componentFactory->create('F3::FLOW3::Property::MappingResults');
 	}
 
 	/**
@@ -488,7 +488,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorsObject() {
-		return $this->componentFactory->getComponent('F3::FLOW3::Validation::Errors');
+		return $this->componentFactory->create('F3::FLOW3::Validation::Errors');
 	}
 
 	/**
@@ -500,7 +500,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorObject($message, $code) {
-		return $this->componentFactory->getComponent('F3::FLOW3::Validation::Error', $message, $code);
+		return $this->componentFactory->create('F3::FLOW3::Validation::Error', $message, $code);
 	}
 
 	/**
@@ -512,7 +512,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingErrorObject($message, $code) {
-		return $this->componentFactory->getComponent('F3::FLOW3::Property::MappingError', $message, $code);
+		return $this->componentFactory->create('F3::FLOW3::Property::MappingError', $message, $code);
 	}
 
 	/**
@@ -524,7 +524,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingWarningObject($message, $code) {
-		return $this->componentFactory->getComponent('F3::FLOW3::Property::MappingWarning', $message, $code);
+		return $this->componentFactory->create('F3::FLOW3::Property::MappingWarning', $message, $code);
 	}
 
 	/**

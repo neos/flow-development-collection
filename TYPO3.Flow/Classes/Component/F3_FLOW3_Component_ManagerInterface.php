@@ -63,6 +63,21 @@ interface ManagerInterface {
 	public function getComponentFactory();
 
 	/**
+	 * Returns a fresh or existing instance of the component specified by $componentName.
+	 *
+	 * Important:
+	 * 
+	 * If possible, instances of Prototype components should always be created with the
+	 * Component Factory's create() method and Singleton components should rather be 
+	 * injected by some type of Dependency Injection.
+	 *
+	 * @param string $componentName The name of the component to return an instance of
+	 * @return object The component instance
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
+	 */
+	public function getComponent($componentName);
+
+	/**
 	 * Registers the given class as a component
 	 *
 	 * @param string $componentName: The unique identifier of the component

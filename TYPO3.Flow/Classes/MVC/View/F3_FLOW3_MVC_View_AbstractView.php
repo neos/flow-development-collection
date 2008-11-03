@@ -69,6 +69,15 @@ abstract class AbstractView {
 		$this->componentFactory = $componentFactory;
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
+	}
+
+	/**
+	 * Initializes the view after all dependencies have been injected
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeComponent() {
 		$this->initializeView();
 	}
 
@@ -93,7 +102,7 @@ abstract class AbstractView {
 	 */
 	public function getViewHelper($viewHelperClassName) {
 		if (!isset($this->viewHelpers[$viewHelperClassName])) {
-			$viewHelper = $this->componentFactory->getComponent($viewHelperClassName);
+			$viewHelper = $this->componentFactory->create($viewHelperClassName);
 			if (!$viewHelper instanceof F3::FLOW3::MVC::View::Helper::HelperInterface) {
 				throw new F3::FLOW3::MVC::Exception::InvalidViewHelper('View Helpers must implement interface "F3::FLOW3::MVC::View::Helper::HelperInterface"', 1222895456);
 			}

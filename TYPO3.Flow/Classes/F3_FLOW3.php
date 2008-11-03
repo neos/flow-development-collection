@@ -254,6 +254,7 @@ final class FLOW3 {
 		$this->componentManager->setContext($this->context);
 		$this->componentFactory = $this->componentManager->getComponentFactory();
 
+		$this->componentManager->registerComponent('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
 		$this->componentManager->registerComponent('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
 		$this->componentManager->registerComponent('F3::FLOW3::Utility::Environment', NULL, $environment);
 		$this->componentManager->registerComponent('F3::FLOW3::AOP::Framework');
@@ -264,11 +265,12 @@ final class FLOW3 {
 		$this->componentManager->registerComponent('F3::FLOW3::Cache::Backend::Memcached');
 		$this->componentManager->registerComponent('F3::FLOW3::Cache::VariableCache');
 		$this->componentManager->registerComponent('F3::FLOW3::Reflection::Service', NULL, $this->reflectionService);
-		$this->componentManager->registerComponent('F3::FLOW3::Resource::Manager', 'F3::FLOW3::Resource::Manager', new F3::FLOW3::Resource::Manager($this->classLoader, $this->componentFactory));
+		$this->componentManager->registerComponent('F3::FLOW3::Resource::Publisher');
+		$this->componentManager->registerComponent('F3::FLOW3::Resource::Manager');
 
 		$this->componentManager->registerComponent('F3::FLOW3::Session::SessionInterface', $this->settings->session->backend->className);
 
-		$this->cacheFactory = $this->componentFactory->getComponent('F3::FLOW3::Cache::Factory');
+		$this->cacheFactory = $this->componentManager->getComponent('F3::FLOW3::Cache::Factory');
 
 		if ($this->settings->reflection->cache->enable === TRUE) {
 			$this->reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings->reflection->cache->backend, $this->settings->reflection->cache->backendOptions);
@@ -292,10 +294,11 @@ final class FLOW3 {
 	public function initializePackages() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new F3::FLOW3::Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
 
-		$packageManager = $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface');
+		$packageManager = $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface');
 
 		$packageManager->initialize();
 		$activePackages = $packageManager->getActivePackages();
+
 		foreach ($activePackages as $packageKey => $package) {
 			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(F3::FLOW3::Configuration::Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
@@ -328,7 +331,7 @@ final class FLOW3 {
 		}
 
 		if ($componentConfigurations === NULL) {
-			$packageManager = $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface');
+			$packageManager = $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface');
 			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 			if ($this->settings->component->configurationCache->enable) {
@@ -353,7 +356,7 @@ final class FLOW3 {
 
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 
-			$AOPFramework = $this->componentFactory->getComponent('F3::FLOW3::AOP::Framework');
+			$AOPFramework = $this->componentManager->getComponent('F3::FLOW3::AOP::Framework');
 			$AOPFramework->initialize($componentConfigurations);
 
 			$this->componentManager->setComponentConfigurations($componentConfigurations);
@@ -368,7 +371,7 @@ final class FLOW3 {
 	 * @see intialize()
 	 */
 	public function initializeLocale() {
-		$this->componentFactory->getComponent('F3::FLOW3::Locale::Service', $this->settings)->initialize();
+		$this->componentManager->getComponent('F3::FLOW3::Locale::Service', $this->settings)->initialize();
 	}
 
 	/**
@@ -378,7 +381,7 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSession() {
-		$session = $this->componentFactory->getComponent('F3::FLOW3::Session::SessionInterface');
+		$session = $this->componentManager->getComponent('F3::FLOW3::Session::SessionInterface');
 		$session->start();
 	}
 
@@ -391,7 +394,7 @@ final class FLOW3 {
 	 */
 	public function initializePersistence() {
 		if ($this->settings->persistence->enable === TRUE) {
-			$persistenceManager = $this->componentFactory->getComponent('F3::FLOW3::Persistence::Manager');
+			$persistenceManager = $this->componentManager->getComponent('F3::FLOW3::Persistence::Manager');
 			$persistenceManager->initialize();
 		}
 
@@ -408,14 +411,14 @@ final class FLOW3 {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_RESOURCES) throw new F3::FLOW3::Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1210080996);
 		$this->initializationLevel = self::INITIALIZATION_LEVEL_RESOURCES;
 
-		$packageManager = $this->componentFactory->getComponent('F3::FLOW3::Package::ManagerInterface');
+		$packageManager = $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface');
 
 		$metadataCache = $this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
 		$statusCache = $this->cacheFactory->create('FLOW3_Resource_Status', 'F3::FLOW3::Cache::StringCache', 'F3::FLOW3::Cache::Backend::File');
-		$environment = $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
+		$environment = $this->componentManager->getComponent('F3::FLOW3::Utility::Environment');
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
-		$resourcePublisher = $this->componentFactory->getComponent('F3::FLOW3::Resource::Publisher');
+		$resourcePublisher = $this->componentManager->getComponent('F3::FLOW3::Resource::Publisher');
 		$resourcePublisher->initializeMirrorDirectory($this->settings->resource->cache->publicPath . $requestType . '/');
 		$resourcePublisher->setMetadataCache($metadataCache);
 		$resourcePublisher->setStatusCache($statusCache);
@@ -438,15 +441,15 @@ final class FLOW3 {
 		if ($this->initializationLevel == self::INITIALIZATION_LEVEL_CONSTRUCT) $this->initialize();
 		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_RESOURCES) throw new F3::FLOW3::Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
 
-		$requestHandlerResolver = $this->componentFactory->getComponent('F3::FLOW3::MVC::RequestHandlerResolver', $this->settings);
+		$requestHandlerResolver = $this->componentManager->getComponent('F3::FLOW3::MVC::RequestHandlerResolver', $this->settings);
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
 		if ($this->settings->persistence->enable === TRUE) {
-			$this->componentFactory->getComponent('F3::FLOW3::Persistence::Manager')->persistAll();
+			$this->componentManager->getComponent('F3::FLOW3::Persistence::Manager')->persistAll();
 		}
 
-		$session = $this->componentFactory->getComponent('F3::FLOW3::Session::SessionInterface');
+		$session = $this->componentManager->getComponent('F3::FLOW3::Session::SessionInterface');
 		$session->close();
 	}
 
@@ -455,8 +458,8 @@ final class FLOW3 {
 	 * be used by unit tests and special cases. In almost any other case, a reference to the
 	 * component manager can be injected.
 	 *
- 	 * @return F3::FLOW3::Component::ManagerInterface
- 	 * @author Robert Lemke <robert@typo3.org>
+		* @return F3::FLOW3::Component::ManagerInterface
+		* @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getComponentManager() {
 		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_FLOW3) throw new F3::FLOW3::Exception('FLOW3 has not yet been fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759260);
@@ -487,7 +490,7 @@ final class FLOW3 {
 		if (ini_get('date.timezone') == '') {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
-		
+
 		if (ini_get('magic_quotes_gpc') == '1' || ini_get('magic_quotes_gpc') == 'On') {
 			die('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 		}
@@ -504,6 +507,7 @@ final class FLOW3 {
 	 */
 	protected function registerAndConfigureAllPackageComponents(array $packages) {
 		$componentTypes = array();
+		$availableClassNames = array();
 
 		foreach ($packages as $packageKey => $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
@@ -590,7 +594,7 @@ final class FLOW3 {
 	protected function evaluatePackageConfiguration(F3::FLOW3::Package::Package $package, F3::FLOW3::Configuration::Container $packageConfiguration) {
 		if (isset($packageConfiguration->resourceManager)) {
 			if (isset($packageConfiguration->resourceManager->specialClassNameAndPaths)) {
-				$resourceManager = $this->componentFactory->getComponent('F3::FLOW3::Resource::Manager');
+				$resourceManager = $this->componentManager->getComponent('F3::FLOW3::Resource::Manager');
 				foreach ($packageConfiguration->resourceManager->specialClassNameAndPaths as $className => $classFilePathAndName) {
 					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);

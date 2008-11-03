@@ -62,6 +62,11 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 	protected $componentConfigurations = array();
 
 	/**
+	 * @var F3::FLOW3::Component::ObjectBuilder Holds an instance of the Component Object Builder
+	 */
+	protected $componentObjectBuilder;
+
+	/**
 	 * Constructor. Instantiates the object cache and object builder.
 	 *
 	 * @param F3::FLOW3::Reflection::Service $reflectionService
@@ -75,12 +80,12 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 
 
 		$this->componentFactory = new F3::FLOW3::Component::Factory();
-		$componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this->componentFactory, $this->reflectionService);
+		$this->componentObjectBuilder = new F3::FLOW3::Component::ObjectBuilder($this, $this->componentFactory, $this->reflectionService);
 		$this->componentFactory->injectComponentManager($this);
-		$this->componentFactory->injectComponentObjectBuilder($componentObjectBuilder);
+		$this->componentFactory->injectComponentObjectBuilder($this->componentObjectBuilder);
 		$this->componentFactory->injectComponentObjectCache($this->componentObjectCache);
 		$this->registerComponent('F3::FLOW3::Component::FactoryInterface', 'F3::FLOW3::Component::Factory', $this->componentFactory);
-		$this->registerComponent('F3::FLOW3::Component::ObjectBuilder', 'F3::FLOW3::Component::ObjectBuilder', $componentObjectBuilder);
+		$this->registerComponent('F3::FLOW3::Component::ObjectBuilder', 'F3::FLOW3::Component::ObjectBuilder', $this->componentObjectBuilder);
 	}
 
 	/**
@@ -123,6 +128,44 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 	 */
 	public function getComponentFactory() {
 		return $this->componentFactory;
+	}
+
+	/**
+	 * Returns a fresh or existing instance of the component specified by $componentName.
+	 *
+	 * Important:
+	 *
+	 * If possible, instances of Prototype components should always be created with the
+	 * Component Factory's create() method and Singleton components should rather be
+	 * injected by some type of Dependency Injection.
+	 *
+	 * @param string $componentName The name of the component to return an instance of
+	 * @return object The component instance
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
+	 */
+	public function getComponent($componentName) {
+		if (!$this->isComponentRegistered($componentName)) throw new F3::FLOW3::Component::Exception::UnknownComponent('Component "' . $componentName . '" is not registered.', 1166550023);
+
+		switch ($this->componentConfigurations[$componentName]->getScope()) {
+			case 'prototype' :
+				$componentObject = call_user_func_array(array($this->componentFactory, 'create'), func_get_args());
+				break;
+			case 'singleton' :
+				if ($this->componentObjectCache->componentObjectExists($componentName)) {
+					$componentObject = $this->componentObjectCache->getComponentObject($componentName);
+				} else {
+					$arguments = array_slice(func_get_args(), 1);
+					$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
+					$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $this->componentConfigurations[$componentName], $overridingConstructorArguments);
+					$this->componentObjectCache->putComponentObject($componentName, $componentObject);
+				}
+				break;
+			default :
+				throw new F3::FLOW3::Component::Exception('Support for scope "' . $this->componentConfigurations[$componentName]->getScope() . '" has not been implemented (yet)', 1167484148);
+		}
+
+		return $componentObject;
 	}
 
 	/**
@@ -332,6 +375,23 @@ class Manager implements F3::FLOW3::Component::ManagerInterface {
 		$componentConfiguration = $this->getComponentConfiguration($componentName);
 		$componentConfiguration->setClassName($className);
 		$this->setComponentConfiguration($componentConfiguration);
+	}
+
+	/**
+	 * Returns straight-value constructor arguments for a component by creating appropriate
+	 * F3::FLOW3::Component::ConfigurationArgument objects.
+	 *
+	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @return array An array of F3::FLOW3::Component::ConfigurationArgument which can be passed to the object builder
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see getComponent()
+	 */
+	protected function getOverridingConstructorArguments(array $arguments) {
+		$constructorArguments = array();
+		foreach ($arguments as $index => $value) {
+			$constructorArguments[$index + 1] = new F3::FLOW3::Component::ConfigurationArgument($index + 1, $value, F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+		}
+		return $constructorArguments;
 	}
 
 	/**

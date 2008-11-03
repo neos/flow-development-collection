@@ -63,6 +63,10 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function createPassesBackendOptionsToTheCreatedBackend() {
 		$this->componentManager->registerComponent('F3::FLOW3::Cache::MockBackend');
+		$backendComponentConfiguration = $this->componentManager->getComponentConfiguration('F3::FLOW3::Cache::MockBackend');
+		$backendComponentConfiguration->setScope(F3::FLOW3::Component::Configuration::SCOPE_PROTOTYPE);
+		$this->componentManager->setComponentConfiguration($backendComponentConfiguration);
+
 		$mockCacheManager = $this->getMock('F3::FLOW3::Cache::Manager', array('registerCache'), array(), '', FALSE);
 
 		$factory = new F3::FLOW3::Cache::Factory($this->componentManager, $this->componentFactory, $mockCacheManager);

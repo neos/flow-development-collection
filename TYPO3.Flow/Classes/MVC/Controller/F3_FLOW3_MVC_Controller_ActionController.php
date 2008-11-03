@@ -103,7 +103,7 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 		if ($viewComponentName === FALSE) {
 			$viewComponentName = 'F3::FLOW3::MVC::View::EmptyView';
 		}
-		$this->view = $this->componentFactory->getComponent($viewComponentName);
+		$this->view = $this->componentManager->getComponent($viewComponentName);
 		$this->view->setRequest($this->request);
 	}
 

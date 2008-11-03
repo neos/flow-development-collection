@@ -193,6 +193,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	static protected function buildWakeupCode() {
 		$wakeupCode = '
 		$this->componentFactory = $GLOBALS[\'reconstituteComponentObject\'][\'componentFactory\'];
+		$this->componentManager = $GLOBALS[\'reconstituteComponentObject\'][\'componentManager\'];
 		$this->AOPProxyDeclareMethodsAndAdvices();
 		foreach ($GLOBALS[\'reconstituteComponentObject\'][\'properties\'] as $property => $value) {
 			$this->$property = $value;

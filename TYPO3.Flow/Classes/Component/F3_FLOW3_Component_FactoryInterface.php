@@ -33,14 +33,15 @@ namespace F3::FLOW3::Component;
 interface FactoryInterface {
 
 	/**
-	 * Returns an instance of the component specified by $componentName.
+	 * Creates a fresh instance of the component specified by $componentName.
 	 *
 	 * @param string $componentName The name of the component to return an instance of
 	 * @return object The component instance
 	 * @throws InvalidArgumentException if $componentName is not a string
 	 * @throws F3::FLOW3::Component::Exception::UnknownComponent if a component with the given name does not exist
+	 * @throws F3::FLOW3::Component::Exception::WrongScope if the specified component is not configured as Prototype
 	 */
-	public function getComponent($componentName);
+	public function create($componentName);
 
 }
 ?>

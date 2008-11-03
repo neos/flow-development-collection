@@ -61,7 +61,7 @@ class RegularExpression extends F3::FLOW3::Validation::AbstractValidator {
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
 		if (!is_string($propertyValue) || preg_match($this->regularExpression, $propertyValue) === 0) {
-			$errors->append($this->componentFactory->getComponent('F3::FLOW3::Validation::Error', 'The given subject did not match the pattern. Got: "' . $propertyValue . '"', 1221565130));
+			$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject did not match the pattern. Got: "' . $propertyValue . '"', 1221565130));
 			return FALSE;
 		}
 

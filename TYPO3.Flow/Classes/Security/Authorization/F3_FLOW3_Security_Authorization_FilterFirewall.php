@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,15 +26,15 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::Factory The component factory
+	 * @var F3::FLOW3::Component::Manager The component manager
 	 */
-	protected $componentFactory = NULL;
+	protected $componentManager = NULL;
 
 	/**
 	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
@@ -60,18 +60,18 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 	 * Constructor.
 	 *
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
-	 * @param F3::FLOW3::Component::Factory $componentFactory The component factory
+	 * @param F3::FLOW3::Component::Manager $componentManager The component manager
 	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
-			F3::FLOW3::Component::FactoryInterface $componentFactory,
+			F3::FLOW3::Component::ManagerInterface $componentManager,
 			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver,
 			F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver) {
 
-		$this->componentFactory = $componentFactory;
+		$this->componentManager = $componentManager;
 		$this->requestPatternResolver = $requestPatternResolver;
 		$this->interceptorResolver = $interceptorResolver;
 		$configuration = $configurationManager->getSettings('FLOW3');
@@ -117,11 +117,11 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 	 */
 	protected function buildFiltersFromConfiguration($filterConfiguration) {
 		foreach($filterConfiguration as $filter) {
-			$requestPattern = $this->componentFactory->getComponent($this->requestPatternResolver->resolveRequestPatternClass($filter['patternType']));
+			$requestPattern = $this->componentManager->getComponent($this->requestPatternResolver->resolveRequestPatternClass($filter['patternType']));
 			$requestPattern->setPattern($filter['patternValue']);
-			$interceptor = $this->componentFactory->getComponent($this->interceptorResolver->resolveInterceptorClass($filter['interceptor']));
+			$interceptor = $this->componentManager->getComponent($this->interceptorResolver->resolveInterceptorClass($filter['interceptor']));
 
-			$this->filters[] = $this->componentFactory->getComponent('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->componentManager->getComponent('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
 		}
 	}
 }

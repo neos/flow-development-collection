@@ -36,8 +36,8 @@ class HTMLResourceTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isPrototype() {
-		$resource1 = $this->componentFactory->getComponent('F3::FLOW3::Resource::HTMLResource');
-		$resource2 = $this->componentFactory->getComponent('F3::FLOW3::Resource::HTMLResource');
+		$resource1 = $this->componentManager->getComponent('F3::FLOW3::Resource::HTMLResource');
+		$resource2 = $this->componentManager->getComponent('F3::FLOW3::Resource::HTMLResource');
 		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
 	}
 

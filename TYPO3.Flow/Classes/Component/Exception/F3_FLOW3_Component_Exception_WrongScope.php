@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Event;
+namespace F3::FLOW3::Component::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,39 +17,20 @@ namespace F3::FLOW3::Event;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Component
  * @version $Id$
  */
 
-
 /**
- * Testcase for the Event Class
+ * "Wrong Scope" Exception
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Component
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EventTest extends F3::Testing::BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function eventIsPrototype() {
-		$event1 = $this->componentManager->getComponent('F3::FLOW3::Event::Event');
-		$event2 = $this->componentManager->getComponent('F3::FLOW3::Event::Event');
-		$this->assertNotSame($event1, $event2, 'Obviously Event is not prototype!');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function eventTypeIsSet() {
-		$event = new F3::FLOW3::Event::Event('testEventType');
-		$this->assertEquals($event->getType(), 'testEventType');
-	}
+class WrongScope extends F3::FLOW3::Component::Exception {
 
 }
+
 ?>

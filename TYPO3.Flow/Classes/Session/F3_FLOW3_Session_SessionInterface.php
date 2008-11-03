@@ -18,7 +18,7 @@ namespace F3::FLOW3::Session;
 /**
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Session;
  *
  * @package FLOW3
  * @subpackage Session
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

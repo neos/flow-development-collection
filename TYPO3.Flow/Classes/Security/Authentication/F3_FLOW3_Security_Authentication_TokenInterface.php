@@ -33,16 +33,6 @@ namespace F3::FLOW3::Security::Authentication;
 interface TokenInterface {
 
 	/**
-	 * This function is called while initializing the security context, to make sure we have an
-	 * instance of the current component factory.
-	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory);
-
-	/**
 	 * Returns TRUE if this token is currently authenticated
 	 *
 	 * @return boolean TRUE if this this token is currently authenticated

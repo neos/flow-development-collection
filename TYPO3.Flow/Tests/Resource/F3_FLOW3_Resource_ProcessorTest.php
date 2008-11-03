@@ -69,7 +69,7 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 		<a href="/an/absolute/URL/">nor this link</a>
 	</body>
 </html>';
-		$processor = $this->componentFactory->getComponent('F3::FLOW3::Resource::Processor');
+		$processor = $this->componentManager->getComponent('F3::FLOW3::Resource::Processor');
 		$processedHTML = $processor->adjustRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}

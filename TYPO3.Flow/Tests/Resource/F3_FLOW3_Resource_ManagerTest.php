@@ -39,8 +39,19 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
+		$metaData = array(
+			'mimeType' => 'text/html',
+			'mediaType' => 'html',
+			'URI' => 'file://TestPackage/Public/TestTemplate.html',
+			'name' => 'TestTemplate.html',
+			'path' => '', 
+		);
+		
 		$mockClassLoader = $this->getMock('F3::FLOW3::Resource::ClassLoader', array(), array(), '', FALSE);
+		$mockResourcePublisher = $this->getMock('F3::FLOW3::Resource::Publisher', array(), array(), '', FALSE);
+		$mockResourcePublisher->expects($this->any())->method('getMetadata')->will($this->returnValue($metaData));
 		$this->manager = new F3::FLOW3::Resource::Manager($mockClassLoader, $this->componentFactory);
+		$this->manager->injectResourcePublisher($mockResourcePublisher);
 	}
 
 	/**

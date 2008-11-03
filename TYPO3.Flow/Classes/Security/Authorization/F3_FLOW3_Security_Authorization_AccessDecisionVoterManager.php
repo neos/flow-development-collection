@@ -129,7 +129,7 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 		foreach ($voterClasses as $voterClass) {
 			if (!$this->componentManager->isComponentRegistered($voterClass)) throw new F3::FLOW3::Security::Exception::VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
 
-			$voter = $this->componentFactory->getComponent($voterClass);
+			$voter = $this->componentManager->getComponent($voterClass);
 			if (!($voter instanceof F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface)) throw new F3::FLOW3::Security::Exception::VoterNotFound('The found voter class did not implement F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;

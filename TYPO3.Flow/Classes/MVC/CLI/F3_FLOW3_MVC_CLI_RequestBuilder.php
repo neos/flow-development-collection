@@ -70,7 +70,7 @@ class RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->componentFactory->getComponent('F3::FLOW3::MVC::CLI::Request');
+		$request = $this->componentFactory->create('F3::FLOW3::MVC::CLI::Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
 			$request->setControllerComponentNamePattern('F3::FLOW3::MVC::Controller::DefaultController');
 			return $request;

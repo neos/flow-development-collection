@@ -41,7 +41,7 @@ class SimpleFileLoggerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->componentFactory->getComponent('F3::FLOW3::Utility::Environment');
+		$environment = $this->componentManager->getComponent('F3::FLOW3::Utility::Environment');
 		$this->testDirectory = $environment->getPathToTemporaryDirectory();
 	}
 
