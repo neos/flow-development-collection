@@ -74,7 +74,7 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	/**
 	 * Injects the environment
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
+	 * @param F3::FLOW3::Utility::Environment $componentFactory The component factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

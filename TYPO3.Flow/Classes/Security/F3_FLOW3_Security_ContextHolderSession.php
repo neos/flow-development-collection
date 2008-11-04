@@ -37,6 +37,11 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	protected $componentFactory = NULL;
 
 	/**
+	 * @var F3::FLOW3::Component::ManagerInterface
+	 */
+	protected $componentManager = NULL;
+
+	/**
 	 * @var F3::FLOW3::Security::Authentication::ManagerInterface
 	 */
 	protected $authenticationManager = NULL;
@@ -65,6 +70,17 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 */
 	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
 		$this->componentFactory = $componentFactory;
+	}
+
+	/**
+	 * Inject the component manager
+	 *
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -184,10 +200,27 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 * @param array Array of authentication tokens the credentials should be updated for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @todo Remove manual DI. Should be handled by a session scope
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
+			$this->manuallyInjectDependenciesIntoUsernamePasswordToken($token);
 			$token->updateCredentials();
+		}
+	}
+
+	/**
+	 * Manual dependency injection into UsernamePassword tokens until we have working session scope.
+	 * Note: This is definitely a dirty hack
+	 *
+	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token we should inject some objects
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(F3::FLOW3::Security::Authentication::TokenInterface $token) {
+		if ($token instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword) {
+			$token->injectComponentFactory($this->componentFactory);
+			$token->injectEnvironment($this->componentManager->getComponent('F3::FLOW3::Utility::Environment'));
 		}
 	}
 }
