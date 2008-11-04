@@ -47,11 +47,22 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	protected $dispatcher = NULL;
 
 	/**
+	 * @var F3::FLOW3::MVC::CLI::RequestBuilder
+	 */
+	protected $requestBuilder;
+
+	/**
+	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
+	 */
+	protected $requestProcessorChainManager;
+
+	/**
 	 * Constructs the CLI Request Handler
 	 *
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
 	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
 	 * @param F3::FLOW3::MVC::Dispatcher $dispatcher The request dispatcher
+	 * @param F3::FLOW3::MVC::CLI::RequestBuilder $requestBuilder The request builder
 	 * @param F3::FLOW3::MVC::RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -60,10 +71,12 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 			F3::FLOW3::Component::FactoryInterface $componentFactory,
 			F3::FLOW3::Utility::Environment $utilityEnvironment,
 			F3::FLOW3::MVC::Dispatcher $dispatcher,
+			F3::FLOW3::MVC::CLI::RequestBuilder $requestBuilder,
 			F3::FLOW3::MVC::RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->componentFactory = $componentFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
+		$this->requestBuilder = $requestBuilder;
 		$this->requestProcessorChainManager = $requestProcessorChainManager;
 	}
 
@@ -74,7 +87,7 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleRequest() {
-		$request = $this->componentFactory->create('F3::FLOW3::MVC::CLI::RequestBuilder')->build();
+		$request = $this->requestBuilder->build();
 		$this->requestProcessorChainManager->processRequest($request);
 		$response = $this->componentFactory->create('F3::FLOW3::MVC::CLI::Response');
 		$this->dispatcher->dispatch($request, $response);

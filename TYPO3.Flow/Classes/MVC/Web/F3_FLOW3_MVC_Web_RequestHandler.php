@@ -47,14 +47,14 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	protected $dispatcher;
 
 	/**
-	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
-	 */
-	protected $requestProcessorChainManager;
-	
-	/**
 	 * @var F3::FLOW3::MVC::Web::RequestBuilder
 	 */
 	protected $requestBuilder;
+
+	/**
+	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
+	 */
+	protected $requestProcessorChainManager;
 
 	/**
 	 * Constructs the Web Request Handler
@@ -62,6 +62,7 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
 	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
 	 * @param F3::FLOW3::MVC::Dispatcher $dispatcher The request dispatcher
+	 * @param F3::FLOW3::MVC::Web::RequestBuilder $requestBuilder The request builder
 	 * @param F3::FLOW3::MVC::RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

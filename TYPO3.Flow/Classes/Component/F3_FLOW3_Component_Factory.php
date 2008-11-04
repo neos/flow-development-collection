@@ -106,25 +106,10 @@ class Factory implements F3::FLOW3::Component::FactoryInterface {
 
 		$componentConfiguration = $this->componentManager->getComponentConfiguration($componentName);
 		if ($componentConfiguration->getScope() != 'prototype') throw new F3::FLOW3::Component::Exception::WrongScope('Component "' . $componentName . '" is of scope ' . $componentConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
-		
+
 		$arguments = array_slice(func_get_args(), 1);
 		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
-		$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
-
-
-/*		case 'singleton' :
-				if ($this->componentObjectCache->componentObjectExists($componentName)) {
-					$componentObject = $this->componentObjectCache->getComponentObject($componentName);
-				} else {
-					$componentObject = $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
-					$this->componentObjectCache->putComponentObject($componentName, $componentObject);
-				}
-				break;
-			default :
-				throw new F3::FLOW3::Component::Exception('Support for scope "' . $componentConfiguration->getScope() . '" has not been implemented (yet)', 1167484148);
-*/
-			
-		return $componentObject;
+		return $this->componentObjectBuilder->createComponentObject($componentName, $componentConfiguration, $overridingConstructorArguments);
 	}
 
 	/**

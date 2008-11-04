@@ -28,6 +28,7 @@ namespace F3::FLOW3::MVC::CLI;
  * @subpackage MVC
  * @version $Id:F3::FLOW3::MVC::CLI::Response.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Response extends F3::FLOW3::MVC::Response {
 }
