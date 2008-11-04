@@ -64,16 +64,17 @@ class ContextHolderSessionTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @expectedException F3::FLOW3::Security::Exception::NoContextAvailable
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getContextReturnsANewContextInstanceIfThereIsNoneInTheSession() {
+	public function getContextThrowsAnExceptionIfThereIsNoContextInTheSession() {
 		$mockSession = $this->getMock('F3::FLOW3::Session::SessionInterface');
 
 		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3::FLOW3::Security::ContextHolderSession'))->will($this->returnValue(NULL));
 
 		$securityContextHolder = new F3::FLOW3::Security::ContextHolderSession($mockSession);
-		$securityContextHolder->injectComponentFactory($this->componentFactory);
-		$this->assertType('F3::FLOW3::Security::Context', $securityContextHolder->getContext());
+		$securityContextHolder->getContext();
 	}
 
 	/**
