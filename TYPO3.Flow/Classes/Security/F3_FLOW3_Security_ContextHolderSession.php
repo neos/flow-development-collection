@@ -90,16 +90,21 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	}
 
 	/**
-	 * Returns the current F3::FLOW3::Security::Context. A new one is created if there was none in the session.
+	 * Returns the current F3::FLOW3::Security::Context.
 	 *
 	 * @return F3::FLOW3::Security::Context The current security context
+	 * @throws F3::FLOW3::Security::Exception::NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getContext() {
 		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
 
-		if ($context instanceof F3::FLOW3::Security::Context) return $context;
-		return $this->componentFactory->create('F3::FLOW3::Security::Context');
+		if ($context instanceof F3::FLOW3::Security::Context) {
+			return $context;
+		} else {
+			throw new F3::FLOW3::Security::Exception::NoContextAvailable('No context found in session, did you call initializeContext()?', 1225800610);
+		}
 	}
 
 	/**
@@ -108,9 +113,13 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 * @param F3::FLOW3::MVC::Request $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeContext(F3::FLOW3::MVC::Request $request) {
-		$context = $this->getContext();
+		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
+		if (!($context instanceof F3::FLOW3::Security::Context)) {
+			$context =  $this->componentFactory->create('F3::FLOW3::Security::Context');
+		}
 		$context->setRequest($request);
 
 		$this->authenticationManager->setSecurityContext($context);

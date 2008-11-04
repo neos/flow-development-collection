@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -27,7 +27,7 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -46,6 +46,7 @@ interface ContextHolderInterface {
 	 * Returns the current security context.
 	 *
 	 * @return F3::FLOW3::Security::ContextInterface The current security context
+	 * @throws F3::FLOW3::Security::Exception::NoContextAvailable if no context is available
 	 */
 	public function getContext();
 
