@@ -185,9 +185,9 @@ class Framework {
 
 					// The AOP Pointcut Filter needs a fresh reference to the AOP framework - this is passed through a global:
 				$GLOBALS['FLOW3']['F3::FLOW3::AOP::Framework'] = $this;
-				$proxyBuildResults =  $proxyCache->load('proxyBuildResults');
-				$this->advicedMethodsInformationByTargetClass = $configurationCache->load('advicedMethodsInformationByTargetClass');
-				$this->aspectContainers = $configurationCache->load('aspectContainers');
+				$proxyBuildResults =  $proxyCache->get('proxyBuildResults');
+				$this->advicedMethodsInformationByTargetClass = $configurationCache->get('advicedMethodsInformationByTargetClass');
+				$this->aspectContainers = $configurationCache->get('aspectContainers');
 				$loadedFromCache = TRUE;
 				unset($GLOBALS['FLOW3']['F3::FLOW3::AOP::Framework']);
 			}
@@ -217,9 +217,9 @@ class Framework {
 
 		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
 			$tags = array('F3_FLOW3_AOP', F3::FLOW3::Cache::Manager::TAG_PACKAGES_CODE);
-			$configurationCache->save('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
-			$configurationCache->save('aspectContainers', $this->aspectContainers, $tags);
-			$proxyCache->save('proxyBuildResults', $proxyBuildResults, $tags);
+			$configurationCache->set('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
+			$configurationCache->set('aspectContainers', $this->aspectContainers, $tags);
+			$proxyCache->set('proxyBuildResults', $proxyBuildResults, $tags);
 		}
 	}
 

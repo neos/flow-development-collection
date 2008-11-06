@@ -42,21 +42,21 @@ class StringCache extends F3::FLOW3::Cache::AbstractCache {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function save($entryIdentifier, $string, $tags = array()) {
+	public function set($entryIdentifier, $string, $tags = array()) {
 		if (!is_string($string)) throw new F3::FLOW3::Cache::Exception::InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
 
-		$this->backend->save($entryIdentifier, $string, $tags);
+		$this->backend->set($entryIdentifier, $string, $tags);
 	}
 
 	/**
-	 * Loads a variable value from the cache.
+	 * Finds and returns a variable value from the cache.
 	 *
 	 * @param string $entryIdentifier Identifier of the cache entry to fetch
 	 * @return string The value
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function load($entryIdentifier) {
-		return $this->backend->load($entryIdentifier);
+	public function get($entryIdentifier) {
+		return $this->backend->get($entryIdentifier);
 	}
 
 	/**
@@ -68,11 +68,11 @@ class StringCache extends F3::FLOW3::Cache::AbstractCache {
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findByTag($tag) {
+	public function getByTag($tag) {
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
-			$entries[] = $this->backend->load($identifier);
+			$entries[] = $this->backend->get($identifier);
 		}
 		return $entries;
 	}

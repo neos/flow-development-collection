@@ -86,18 +86,16 @@ abstract class AbstractCache {
 	 * @param mixed $data The data to cache - also depends on the concrete cache implementation
 	 * @param array $tags Tags to associate with this cache entry
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract public function save($entryIdentifier, $data, $tags = array());
+	abstract public function set($entryIdentifier, $data, $tags = array());
 
 	/**
-	 * Loads data from the cache.
+	 * Finds and returns data from the cache.
 	 *
 	 * @param string $entryIdentifier Something which identifies the cache entry - depends on concrete cache
 	 * @return mixed
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract public function load($entryIdentifier);
+	abstract public function get($entryIdentifier);
 
 	/**
 	 * Finds and returns all cache entries which are tagged by the specified tag.
@@ -107,14 +105,13 @@ abstract class AbstractCache {
 	 * @param string $tag The tag to search for, the "*" wildcard is supported
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 */
-	abstract public function findByTag($tag);
+	abstract public function getByTag($tag);
 
 	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	abstract public function has($entryIdentifier);
 
@@ -123,7 +120,6 @@ abstract class AbstractCache {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	abstract public function remove($entryIdentifier);
 

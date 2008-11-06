@@ -275,7 +275,7 @@ final class FLOW3 {
 		if ($this->settings->reflection->cache->enable === TRUE) {
 			$this->reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings->reflection->cache->backend, $this->settings->reflection->cache->backendOptions);
 			if ($this->reflectionCache->has('reflectionServiceData')) {
-				$this->reflectionService->import($this->reflectionCache->load('reflectionServiceData'));
+				$this->reflectionService->import($this->reflectionCache->get('reflectionServiceData'));
 			}
 		}
 
@@ -326,7 +326,7 @@ final class FLOW3 {
 		if ($this->settings->component->configurationCache->enable === TRUE) {
 			$componentConfigurationsCache = $this->cacheFactory->create('FLOW3_Component_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings->component->configurationCache->backend, $this->settings->component->configurationCache->backendOptions);
 			if ($componentConfigurationsCache->has('baseComponentConfigurations')) {
-				$componentConfigurations = $componentConfigurationsCache->load('baseComponentConfigurations');
+				$componentConfigurations = $componentConfigurationsCache->get('baseComponentConfigurations');
 			}
 		}
 
@@ -335,7 +335,7 @@ final class FLOW3 {
 			$this->registerAndConfigureAllPackageComponents($packageManager->getActivePackages());
 			$componentConfigurations = $this->componentManager->getComponentConfigurations();
 			if ($this->settings->component->configurationCache->enable) {
-				$componentConfigurationsCache->save('baseComponentConfigurations', $componentConfigurations);
+				$componentConfigurationsCache->set('baseComponentConfigurations', $componentConfigurations);
 			}
 		}
 
@@ -520,7 +520,7 @@ final class FLOW3 {
 		if (!$this->reflectionService->isInitialized()) {
 			$this->reflectionService->initialize($availableClassNames);
 			if ($this->settings->reflection->cache->enable === TRUE) {
-				$this->reflectionCache->save('reflectionServiceData', $this->reflectionService->export());
+				$this->reflectionCache->set('reflectionServiceData', $this->reflectionService->export());
 			}
 		}
 

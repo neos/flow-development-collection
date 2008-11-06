@@ -129,10 +129,10 @@ class Publisher {
 		$metadata = array();
 		$identifier = md5((string)$URI);
 		if ($this->resourceMetadataCache->has($identifier)) {
-			$metadata = $this->resourceMetadataCache->load($identifier);
+			$metadata = $this->resourceMetadataCache->get($identifier);
 		} else {
 			$metadata = $this->extractResourceMetadata($URI);
-			$this->resourceMetadataCache->save($identifier, $metadata);
+			$this->resourceMetadataCache->set($identifier, $metadata);
 		}
 		return $metadata;
 	}
@@ -148,7 +148,7 @@ class Publisher {
 		if ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($packageName)) {
 			return;
 		} elseif ($this->cacheStrategy === F3::FLOW3::Resource::Manager::CACHE_STRATEGY_PACKAGE) {
-			$this->resourceStatusCache->save($packageName, '');
+			$this->resourceStatusCache->set($packageName, '');
 		}
 
 		$sourcePath = FLOW3_PATH_PACKAGES . $packageName . '/Resources/Public/';
@@ -180,7 +180,7 @@ class Publisher {
 			}
 			touch($destinationPath . $relativeFile, $sourceMTime);
 
-			$this->resourceMetadataCache->save(md5((string)$URI), $metadata);
+			$this->resourceMetadataCache->set(md5((string)$URI), $metadata);
 		}
 	}
 

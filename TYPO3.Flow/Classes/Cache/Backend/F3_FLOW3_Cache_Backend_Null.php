@@ -44,7 +44,7 @@ class Null extends F3::FLOW3::Cache::AbstractBackend {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function save($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
+	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 	}
 
 	/**
@@ -54,7 +54,7 @@ class Null extends F3::FLOW3::Cache::AbstractBackend {
 	 * @return boolean FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function load($entryIdentifier) {
+	public function get($entryIdentifier) {
 		return FALSE;
 	}
 

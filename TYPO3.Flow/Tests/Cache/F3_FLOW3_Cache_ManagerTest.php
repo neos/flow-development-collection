@@ -39,10 +39,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
-		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
 		$manager->registerCache($cache1);
@@ -61,10 +61,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 
-		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache2'));
 
 		$manager->registerCache($cache1);
@@ -80,7 +80,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('someidentifier'));
 
 		$manager->registerCache($cache);
@@ -99,7 +99,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	public function hasCacheReturnsCorrectResult() {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
-		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$manager->registerCache($cache1);
 
@@ -115,12 +115,12 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
 		$manager->registerCache($cache1);
 
-		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache2->expects($this->once())->method('flushByTag')->with($this->equalTo('theTag'));
 		$manager->registerCache($cache2);
 
@@ -135,12 +135,12 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager = new F3::FLOW3::Cache::Manager();
 		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array(), array(), '', FALSE);
 
-		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache1 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache1->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('cache1'));
 		$cache1->expects($this->once())->method('flush');
 		$manager->registerCache($cache1);
 
-		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'save', 'load', 'findByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
+		$cache2 = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
 		$cache2->expects($this->once())->method('flush');
 		$manager->registerCache($cache2);
 

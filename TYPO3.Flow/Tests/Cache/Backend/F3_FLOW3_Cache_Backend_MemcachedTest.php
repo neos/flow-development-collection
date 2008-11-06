@@ -57,15 +57,15 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	public function saveThrowsExceptionIfNoFrontEndHasBeenSet() {
+	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 		$context = $this->componentManager->getContext();
 		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
-			$backend->save($identifier, $data);
-			$this->fail('save() did not throw exception on missing cache frontend');
+			$backend->set($identifier, $data);
+			$this->fail('set() did not throw exception on missing cache frontend');
 		} catch (F3::FLOW3::Cache::Exception $exception) {
 		}
 	}
@@ -74,14 +74,14 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function saveRejectsInvalidIdentifiers() {
+	public function setRejectsInvalidIdentifiers() {
 		$backend = $this->setUpBackend();
 		$data = 'Somedata';
 
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
 			try {
-				$backend->save($entryIdentifier, $data);
-				$this->fail('save() did no reject the entry identifier "' . $entryIdentifier . '".');
+				$backend->set($entryIdentifier, $data);
+				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
 			} catch (InvalidArgumentException $exception) {
 			}
 		}
@@ -104,13 +104,13 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	public function saveThrowsExceptionIfConfiguredServersAreUnreachable() {
+	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
 		$data = 'Somedata';
 		$identifier = 'MyIdentifier';
 		try {
-			$backend->save($identifier, $data);
-			$this->fail('save() did not throw exception on missing connection');
+			$backend->set($identifier, $data);
+			$this->fail('set() did not throw exception on missing connection');
 		} catch (F3::FLOW3::Cache::Exception  $exception) {
 		}
 	}
@@ -119,12 +119,12 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	public function itIsPossibleToSaveAndCheckExistenceInCache() {
+	public function itIsPossibleToSetAndCheckExistenceInCache() {
 		try {
 			$backend = $this->setUpBackend();
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
-			$backend->save($identifier, $data);
+			$backend->set($identifier, $data);
 			$inCache = $backend->has($identifier);
 			$this->assertTrue($inCache,'Memcache failed to set and check entry');
 		} catch (F3::FLOW3::Cache::Exception $e) {
@@ -136,13 +136,13 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	public function itIsPossibleToSaveAndGetEntry() {
+	public function itIsPossibleToSetAndGetEntry() {
 		try {
 			$backend = $this->setUpBackend();
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
-			$backend->save($identifier, $data);
-			$fetchedData = $backend->load($identifier);
+			$backend->set($identifier, $data);
+			$fetchedData = $backend->get($identifier);
 			$this->assertEquals($data,$fetchedData,'Memcache failed to set and retrieve data');
 		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
@@ -158,7 +158,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend = $this->setUpBackend();
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
-			$backend->save($identifier, $data);
+			$backend->set($identifier, $data);
 			$backend->remove($identifier);
 			$inCache = $backend->has($identifier);
 			$this->assertFalse($inCache,'Failed to set and remove data from Memcache');
@@ -176,10 +176,10 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend = $this->setUpBackend();
 			$data = 'Some data';
 			$identifier = 'MyIdentifier';
-			$backend->save($identifier, $data);
+			$backend->set($identifier, $data);
 			$otherData = 'some other data';
-			$backend->save($identifier, $otherData);
-			$fetchedData = $backend->load($identifier);
+			$backend->set($identifier, $otherData);
+			$fetchedData = $backend->get($identifier);
 			$this->assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
 		} catch (F3::FLOW3::Cache::Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
@@ -190,13 +190,13 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findIdentifiersByTagFindsSavedEntries() {
+	public function findIdentifiersByTagFindsSetEntries() {
 		try {
 			$backend = $this->setUpBackend();
 
 			$data = 'Some data';
 			$entryIdentifier = 'MyIdentifier';
-			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+			$backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
 			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag1');
 			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
@@ -212,14 +212,14 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function saveRemovesTagsFromPreviousSave() {
+	public function setRemovesTagsFromPreviousSet() {
 		try {
 			$backend = $this->setUpBackend();
 
 			$data = 'Some data';
 			$entryIdentifier = 'MyIdentifier';
-			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
-			$backend->save($entryIdentifier, $data, array('UnitTestTag%tag3'));
+			$backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
+			$backend->set($entryIdentifier, $data, array('UnitTestTag%tag3'));
 
 			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
 			$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
@@ -260,9 +260,9 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend = $this->setUpBackend();
 
 			$data = 'some data' . microtime();
-			$backend->save('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-			$backend->save('BackendMemcacheTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-			$backend->save('BackendMemcacheTest3', $data, array('UnitTestTag%test'));
+			$backend->set('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
+			$backend->set('BackendMemcacheTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+			$backend->set('BackendMemcacheTest3', $data, array('UnitTestTag%test'));
 
 			$backend->flushByTag('UnitTestTag%special');
 
@@ -283,9 +283,9 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend = $this->setUpBackend();
 
 			$data = 'some data' . microtime();
-			$backend->save('BackendMemcacheTest1', $data);
-			$backend->save('BackendMemcacheTest2', $data);
-			$backend->save('BackendMemcacheTest3', $data);
+			$backend->set('BackendMemcacheTest1', $data);
+			$backend->set('BackendMemcacheTest2', $data);
+			$backend->set('BackendMemcacheTest3', $data);
 
 			$backend->flush();
 

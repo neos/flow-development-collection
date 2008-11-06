@@ -87,7 +87,9 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 		if ($this->configuration->aop->proxyCache->enable) {
 			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3::FLOW3::Cache::VariableCache', $this->configuration->security->policy->aclCache->backend, $this->configuration->security->policy->aclCache->backendOptions);
-			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) $this->acls = $this->aclCache->load('FLOW3_Security_Policy_ACLs');
+			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) {
+				$this->acls = $this->aclCache->get('FLOW3_Security_Policy_ACLs');
+			}
 		}
 	}
 
@@ -100,7 +102,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	public function __destruct() {
 		if ($this->configuration->aop->proxyCache->enable) {
 			$tags = array('F3_FLOW3_AOP');
-			$this->aclCache->save('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
+			$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
 		}
 	}
 

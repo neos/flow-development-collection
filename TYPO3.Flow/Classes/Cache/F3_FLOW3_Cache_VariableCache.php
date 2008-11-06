@@ -41,20 +41,22 @@ class VariableCache extends F3::FLOW3::Cache::AbstractCache {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function save($entryIdentifier, $variable, $tags = array()) {
-		$this->backend->save($entryIdentifier, serialize($variable), $tags);
+	public function set($entryIdentifier, $variable, $tags = array()) {
+		$this->backend->set($entryIdentifier, serialize($variable), $tags);
 	}
 
 	/**
-	 * Loads a variable value from the cache.
+	 * Finds and returns a variable value from the cache.
 	 *
 	 * @param string $entryIdentifier Identifier of the cache entry to fetch
 	 * @return mixed The value
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function load($entryIdentifier) {
-		return unserialize($this->backend->load($entryIdentifier));
+	public function get($entryIdentifier) {
+		return unserialize($this->backend->get($entryIdentifier));
 	}
 
 	/**
@@ -66,11 +68,11 @@ class VariableCache extends F3::FLOW3::Cache::AbstractCache {
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findByTag($tag) {
+	public function getByTag($tag) {
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
-			$entries[] = unserialize($this->backend->load($identifier));
+			$entries[] = unserialize($this->backend->get($identifier));
 		}
 		return $entries;
 	}
