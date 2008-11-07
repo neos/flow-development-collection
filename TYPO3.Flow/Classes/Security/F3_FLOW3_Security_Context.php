@@ -64,8 +64,8 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager) {
-		$configuration = $configurationManager->getSettings('FLOW3');
-		$this->authenticateAllTokens = $configuration->security->authentication->authenticateAllTokens;
+		$settings = $configurationManager->getSettings('FLOW3');
+		$this->authenticateAllTokens = $settings['security']['authentication']['authenticateAllTokens'];
 	}
 
 	/**
