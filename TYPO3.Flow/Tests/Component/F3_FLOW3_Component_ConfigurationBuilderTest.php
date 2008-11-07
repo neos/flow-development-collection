@@ -65,9 +65,9 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function existingComponentConfigurationIsUsedIfSpecified() {
-		$configurationContainer = new F3::FLOW3::Configuration::Container();
-		$configurationContainer->scope = 'prototype';
-		$configurationContainer->properties->firstProperty = 'straightValue';
+		$configurationContainer = array();
+		$configurationContainer['scope'] = 'prototype';
+		$configurationContainer['properties']['firstProperty'] = 'straightValue';
 
 		$componentConfiguration = new F3::FLOW3::Component::Configuration('TestComponent', __CLASS__);
 
@@ -80,8 +80,8 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidOptionResultsInException() {
-		$configurationContainer = new F3::FLOW3::Configuration::Container();
-		$configurationContainer->scoopy = 'prototype';
+		$configurationContainer = array();
+		$configurationContainer['scoopy'] = 'prototype';
 
 		try {
 			$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationContainer, __CLASS__);

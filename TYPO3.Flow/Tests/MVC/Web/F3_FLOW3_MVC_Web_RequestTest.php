@@ -47,8 +47,8 @@ class RequestTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$configuration = $this->componentManager->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
-		$this->environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
+		$settings = $this->componentManager->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$this->environment = new F3::FLOW3::Utility::MockEnvironment($settings['utility']['environment']);
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
