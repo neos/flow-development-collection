@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Locale;
+namespace F3::FLOW3::Configuration::Source;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,62 +17,35 @@ namespace F3::FLOW3::Locale;
 
 /**
  * @package FLOW3
- * @subpackage Locale
- * @version $Id$
+ * @subpackage Configuration
  */
 
 /**
- * A Service which provides further information about a given locale.
+ * Configuration source based on YAML files
  *
  * @package FLOW3
- * @subpackage Locale
+ * @subpackage Configuration
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Service {
+class YAML implements F3::FLOW3::Configuration::SourceInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
-	 */
-	protected $componentFactory;
-
-	/**
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
-	 * Constructs this service
+	 * Loads the specified configuration file and returns its content as an
+	 * array. If the file does not exist or could not be loaded, an empty
+	 * array is returned
 	 *
-	 * @param array $settings The FLOW3 settings
+	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".yaml")
+	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(array $settings) {
-		$this->settings = $settings;
+	public function load($pathAndFilename) {
+		if (file_exists($pathAndFilename . '.yaml')) {
+			$configuration = F3::YAML::YAML::loadFile($pathAndFilename . '.yaml');
+		} else {
+			$configuration = array();
+		}
+		return $configuration;
 	}
-
-	/**
-	 * Injects the component factory
-	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
-	}
-
-	/**
-	 * Initializes this locale service
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initialize() {
-		$locale = $this->componentFactory->create('F3::FLOW3::Locale::Locale', $this->settings['locale']['defaultLocaleIdentifier']);
-		$this->settings['locale']['defaultLocale'] = $locale;
-	}
-
 }
-
 ?>

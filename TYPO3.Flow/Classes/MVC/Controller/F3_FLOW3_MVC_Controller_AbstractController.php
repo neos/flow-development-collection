@@ -49,7 +49,7 @@ abstract class AbstractController {
 	/**
 	 * Contains the settings of the current package
 	 *
-	 * @var F3::FLOW3::Configuration::Container
+	 * @var array
 	 */
 	protected $settings;
 
@@ -69,11 +69,11 @@ abstract class AbstractController {
 	/**
 	 * Sets / injects the settings of the package this controller belongs to.
 	 *
-	 * @param F3::FLOW3::Configuration::Container $settings Settings container of the current package
+	 * @param array $settings Settings container of the current package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSettings(F3::FLOW3::Configuration::Container $settings) {
+	public function setSettings(array $settings) {
 		$this->settings = $settings;
 	}
 

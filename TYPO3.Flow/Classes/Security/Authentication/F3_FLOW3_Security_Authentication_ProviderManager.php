@@ -162,13 +162,13 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	/**
 	 * Builds the provider and token objects based on the given configuration
 	 *
-	 * @param F3::FLOW3::Configuration::Container $configuration The provider configuration
+	 * @param array The FLOW3 settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 */
-	protected function buildProvidersAndTokensFromConfiguration(F3::FLOW3::Configuration::Container $configuration) {
-		foreach ($configuration->security->authentication->providers as $provider) {
+	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
+		foreach ($settings['security']['authentication']['providers'] as $provider) {
 			$providerInstance = $this->componentManager->getComponent($this->providerResolver->resolveProviderClass($provider['provider']));
 			$this->providers[] = $providerInstance;
 

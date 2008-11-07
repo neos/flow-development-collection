@@ -76,19 +76,19 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	/**
 	 * Sets the routes configuration.
 	 *
-	 * @param F3::FLOW3::Configuration::Container $configuration The routes configuration
+	 * @param array $configuration The routes configuration
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setRoutesConfiguration(F3::FLOW3::Configuration::Container $routesConfiguration) {
+	public function setRoutesConfiguration(array $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
 			$route = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::Route');
 			$route->setName($routeName);
-			$route->setUriPattern($routeConfiguration->uriPattern);
-			$route->setDefaults($routeConfiguration->defaults);
-			if (isset($routeConfiguration->controllerComponentNamePattern)) $route->setControllerComponentNamePattern($routeConfiguration->controllerComponentNamePattern);
-			if (isset($routeConfiguration->viewComponentNamePattern)) $route->setViewComponentNamePattern($routeConfiguration->viewComponentNamePattern);
-			if (isset($routeConfiguration->routePartHandlers)) $route->setRoutePartHandlers($routeConfiguration->routePartHandlers);
+			$route->setUriPattern($routeConfiguration['uriPattern']);
+			$route->setDefaults($routeConfiguration['defaults']);
+			if (isset($routeConfiguration['controllerComponentNamePattern'])) $route->setControllerComponentNamePattern($routeConfiguration['controllerComponentNamePattern']);
+			if (isset($routeConfiguration['viewComponentNamePattern'])) $route->setViewComponentNamePattern($routeConfiguration['viewComponentNamePattern']);
+			if (isset($routeConfiguration['routePartHandlers'])) $route->setRoutePartHandlers($routeConfiguration['routePartHandlers']);
 			$this->routes[$routeName] = $route;
 		}
 	}

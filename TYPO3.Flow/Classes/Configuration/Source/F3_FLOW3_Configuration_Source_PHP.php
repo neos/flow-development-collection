@@ -31,20 +31,20 @@ namespace F3::FLOW3::Configuration::Source;
 class PHP implements F3::FLOW3::Configuration::SourceInterface {
 
 	/**
-	 * Loads the specified configuration file and returns its content in a
-	 * configuration container. If the file does not exist or could not be loaded,
-	 * the empty configuration container is returned.
+	 * Loads the specified configuration file and returns its content as an
+	 * array. If the file does not exist or could not be loaded, an empty
+	 * array is returned
 	 *
-	 * @param string $pathAndFilename Full path and file name of the file to load
-	 * @return F3::FLOW3::Configuration::Container
+	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".php")
+	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function load($pathAndFilename) {
 		$c = new F3::FLOW3::Configuration::Container();
-		if (file_exists($pathAndFilename)) {
-			require ($pathAndFilename);
+		if (file_exists($pathAndFilename . '.php')) {
+			require ($pathAndFilename . '.php');
 		}
-		return $c;
+		return $c->getAsArray();
 	}
 }
 ?>

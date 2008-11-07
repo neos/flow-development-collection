@@ -41,7 +41,8 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	abstract static public function build($methodName, array $methodMetaInformation, F3::FLOW3::Reflection::ClassReflection $targetClass);
+	static public function build($methodName, array $methodMetaInformation, F3::FLOW3::Reflection::ClassReflection $targetClass) {
+	}
 
 	/**
 	 * Builds the PHP code for the parameters of the specified method to be

@@ -37,11 +37,6 @@ class Publisher {
 	protected $componentFactory;
 
 	/**
-	 * @var F3::FLOW3::Configuration::Container The FLOW3 base configuration
-	 */
-	protected $configuration;
-
-	/**
 	 * @var string The base path for the mirrored public assets
 	 */
 	protected $publicResourcePath = NULL;

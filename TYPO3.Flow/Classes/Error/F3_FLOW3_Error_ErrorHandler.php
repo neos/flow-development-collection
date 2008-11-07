@@ -83,7 +83,8 @@ class ErrorHandler {
 			E_STRICT             => 'Runtime Notice',
 			E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
 		);
-		if (in_array($errorLevel, $this->exceptionalErrors)) {
+
+		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
 			throw new F3::FLOW3::Error::Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 		}
 	}

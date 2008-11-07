@@ -36,28 +36,28 @@ class ConfigurationBuilder {
 	 * Builds a component configuration object from a generic configuration container.
 	 *
 	 * @param string $componentName Name of the component
-	 * @param F3::FLOW3::Configuration::Container configurationContainer The configuration container with options for the component configuration
+	 * @param array configurationArray The configuration array with options for the component configuration
 	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
 	 * @param F3::FLOW3::Component::Configuration existingComponentConfiguration If set, this component configuration object will be used instead of creating a fresh one
 	 * @return F3::FLOW3::Component::Configuration The component configuration object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function buildFromConfigurationContainer($componentName, F3::FLOW3::Configuration::Container $configurationContainer, $configurationSourceHint = '', $existingComponentConfiguration = NULL) {
-		$className = (isset($configurationContainer->className) ? $configurationContainer->className : $componentName);
+	static public function buildFromConfigurationArray($componentName, array $configurationArray, $configurationSourceHint = '', $existingComponentConfiguration = NULL) {
+		$className = (isset($configurationArray['className']) ? $configurationArray['className'] : $componentName);
 		$componentConfiguration = ($existingComponentConfiguration instanceof F3::FLOW3::Component::Configuration) ? $componentConfiguration = $existingComponentConfiguration : new F3::FLOW3::Component::Configuration($componentName, $className);
 		$componentConfiguration->setConfigurationSourceHint($configurationSourceHint);
 
-		foreach ($configurationContainer as $optionName => $optionValue) {
+		foreach ($configurationArray as $optionName => $optionValue) {
 			switch ($optionName) {
 				case 'scope':
 					$componentConfiguration->setScope(self::parseScope($optionValue));
 				break;
 				case 'properties':
-					if ($optionValue instanceof F3::FLOW3::Configuration::Container) {
+					if (is_array($optionValue)) {
 						foreach ($optionValue as $propertyName => $propertyValue) {
-							if ($propertyValue instanceof F3::FLOW3::Configuration::Container && isset($propertyValue->reference)) {
+							if (is_array($propertyValue) && isset($propertyValue['reference'])) {
 								$propertyType = F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_REFERENCE;
-								$property = new F3::FLOW3::Component::ConfigurationProperty($propertyName, $propertyValue->reference, $propertyType);
+								$property = new F3::FLOW3::Component::ConfigurationProperty($propertyName, $propertyValue['reference'], $propertyType);
 							} else {
 								$propertyType = F3::FLOW3::Component::ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE;
 								$property = new F3::FLOW3::Component::ConfigurationProperty($propertyName, $propertyValue, $propertyType);
@@ -67,11 +67,11 @@ class ConfigurationBuilder {
 					}
 				break;
 				case 'constructorArguments':
-					if ($optionValue instanceof F3::FLOW3::Configuration::Container) {
+					if (is_array($optionValue)) {
 						foreach ($optionValue as $argumentName => $argumentValue) {
-							if ($argumentValue instanceof F3::FLOW3::Configuration::Container && isset($argumentValue->reference)) {
+							if (is_array($argumentValue) && isset($argumentValue->reference)) {
 								$argumentType = F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_REFERENCE;
-								$argument = new F3::FLOW3::Component::ConfigurationArgument($argumentName, $argumentValue->reference, $argumentType);
+								$argument = new F3::FLOW3::Component::ConfigurationArgument($argumentName, $argumentValue['reference'], $argumentType);
 							} else {
 								$argumentType = F3::FLOW3::Component::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE;
 								$argument = new F3::FLOW3::Component::ConfigurationArgument($argumentName, $argumentValue, $argumentType);

@@ -51,7 +51,7 @@ abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInt
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo this should be just a setter used by the configuration
 	 */
-	public function registerNewFormat($name, F3::FLOW3::Property::EditorInterface &$propertyEditor) {
+	public function registerNewFormat($name, F3::FLOW3::Property::EditorInterface $propertyEditor) {
 		$this->propertyEditors[$name] = $propertyEditor;
 	}
 

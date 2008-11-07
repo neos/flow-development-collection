@@ -39,12 +39,15 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	public function matchesReturnsTrueForAnACLEntryReferingToAResourceRepresentedByANotNestedPointcutExpression() {
 		$mockCacheFactory = $this->getMock('F3::FLOW3::Cache::Factory', array(), array(), '', FALSE);
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = FALSE;
-		$settings->security->policy->roles = array('EXAMPLE_ROLE' => array());
-		$settings->security->policy->resources = array('theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())');
-		$settings->security->policy->acls['EXAMPLE_ROLE'] = array(
-			'theOneAndOnlyResource' => 'ACCESS_GRANT',
+		$settings = array(
+			'aop' => array('proxyCache' => array('enable' => FALSE)),
+			'security' => array(
+				'policy' => array(
+					'roles' => array('EXAMPLE_ROLE' => array()),
+					'resources' => array('theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())'),
+					'acls' => array('EXAMPLE_ROLE' => array('theOneAndOnlyResource' => 'ACCESS_GRANT'))
+				)
+			)
 		);
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 

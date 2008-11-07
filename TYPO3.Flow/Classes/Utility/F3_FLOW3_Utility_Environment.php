@@ -73,10 +73,10 @@ class Environment {
 	 * This constructor copies the superglobals $_SERVER, $_GET, $_POST to local
 	 * variables and unsets the orginals.
 	 *
-	 * @param array The configuration for the utility environment
+	 * @param array Settings for this environment class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Container $configuration) {
+	public function __construct(array $settings) {
 
 		if (!($_SERVER instanceof F3::FLOW3::Utility::SuperGlobalReplacement)) {
 			$this->SERVER = $_SERVER;
@@ -90,7 +90,7 @@ class Environment {
 		}
 
 		try {
-			$this->temporaryDirectory = $this->createTemporaryDirectory((string)$configuration['temporaryDirectoryBase']);
+			$this->temporaryDirectory = $this->createTemporaryDirectory($settings['temporaryDirectoryBase']);
 		} catch (F3::FLOW3::Utility::Exception $exception) {
 			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
 			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
@@ -335,7 +335,7 @@ class Environment {
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new F3::FLOW3::Utility::Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 configuration.', 1216287176);
+			throw new F3::FLOW3::Utility::Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
 		}
 
 		return $temporaryDirectory;

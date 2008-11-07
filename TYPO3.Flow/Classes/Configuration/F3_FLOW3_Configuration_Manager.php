@@ -27,7 +27,7 @@ namespace F3::FLOW3::Configuration;
  * @package FLOW3
  * @subpackage Configuration
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://opensource.org/licenses/gpl-license GNU Public License, version 2
  */
 class Manager {
 
@@ -45,53 +45,49 @@ class Manager {
 	/**
 	 * Storage for the settings, loaded by loadGlobalSettings()
 	 *
-	 * @var F3::FLOW3::Configuration::Container
+	 * @var array
 	 */
-	protected $settings;
+	protected $settings = array();
 
 	/**
 	 * Storage of the raw routing configuration
 	 *
-	 * @var F3::FLOW3::Configuration::Container
+	 * @var array
 	 */
-	protected $routes;
+	protected $routes = array();
 
 	/**
-	 * The configuration source used for loading the raw configuration
+	 * The configuration sources used for loading the raw configuration
 	 *
-	 * @var F3::FLOW3::Configuration::SourceInterface
+	 * @var array
 	 */
-	protected $configurationSource;
+	protected $configurationSources;
 
 	/**
 	 * Constructs the configuration manager
 	 *
 	 * @param string $context The application context to fetch configuration for.
-	 * @param F3::FLOW3::Configuration::SourceInterface $configurationSource The configuration source
+	 * @param array $configurationSources An array of configuration sources
 	 */
-	public function __construct($context, F3::FLOW3::Configuration::SourceInterface $configurationSource) {
+	public function __construct($context, array $configurationSources) {
 		$this->context = $context;
-		$this->configurationSource = $configurationSource;
-		$this->settings = new F3::FLOW3::Configuration::Container;
-		$this->routes = new F3::FLOW3::Configuration::Container;
+		$this->configurationSources = $configurationSources;
 	}
 
 	/**
-	 * Returns a configuration container with the settings defined for the specified
-	 * package.
+	 * Returns an array with the settings defined for the specified package.
 	 *
 	 * @param string $packageKey Key of the package to return the settings for
-	 * @return F3::FLOW3::Configuration::Container The settings of the specified package
+	 * @return array The settings of the specified package
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettings($packageKey) {
-		if ($this->settings->offsetExists($packageKey)) {
-			$settingsContainer = $this->settings->$packageKey;
+		if (isset($this->settings[$packageKey])) {
+			$settings = $this->settings[$packageKey];
 		} else {
-			$settingsContainer = new F3::FLOW3::Configuration::Container();
+			$settings = array();
 		}
-		$settingsContainer->lock();
-		return $settingsContainer;
+		return $settings;
 	}
 
 	/**
@@ -107,10 +103,17 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadFLOW3Settings() {
-		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3.php'));
-		$this->settings->FLOW3->lock();
-		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3.php'));
-		$this->settings->FLOW3->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3.php'));
+		$settings = array();
+		foreach ($this->configurationSources as $configurationSource) {
+			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3'));
+		}
+
+		foreach ($this->configurationSources as $configurationSource) {
+			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
+			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
+		}
+		$this->postProcessSettings($settings);
+		$this->settings['FLOW3'] = $settings;
 	}
 
 	/**
@@ -127,6 +130,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadGlobalSettings(array $packageKeys) {
+		$settings = array();
 		sort ($packageKeys);
 		$index = array_search('FLOW3', $packageKeys);
 		if ($index !== FALSE) {
@@ -134,10 +138,16 @@ class Manager {
 			array_unshift($packageKeys, 'FLOW3');
 		}
 		foreach ($packageKeys as $packageKey) {
-			$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings.php'));
+			foreach ($this->configurationSources as $configurationSource) {
+				$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings'));
+			}
 		}
-		$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings.php'));
-		$this->settings->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings.php'));
+		foreach ($this->configurationSources as $configurationSource) {
+			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings', TRUE));
+			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings', TRUE));
+		}
+		$this->postProcessSettings($settings);
+		$this->settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->settings, $settings);
 	}
 
 	/**
@@ -162,10 +172,16 @@ class Manager {
 			array_unshift($packageKeys, 'FLOW3');
 		}
 		foreach ($packageKeys as $packageKey) {
-			$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes.php'));
+			foreach ($this->configurationSources as $configurationSource) {
+				$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes'));
+			}
 		}
-		$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes.php'));
-		$this->routes->mergeWith($this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes.php'));
+		foreach ($this->configurationSources as $configurationSource) {
+			$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes'));
+		}
+		foreach ($this->configurationSources as $configurationSource) {
+			$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes'));
+		}
 	}
 
 	/**
@@ -177,12 +193,12 @@ class Manager {
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param string $packageKey Key of the package the configuration is for
-	 * @return F3::FLOW3::Configuration::Container The configuration
+	 * @return array The configuration
 	 * @throws F3::FLOW3::Configuration::Exception::InvalidConfigurationType on invalid configuration types
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSpecialConfiguration($configurationType, $packageKey= 'FLOW3') {
+	public function getSpecialConfiguration($configurationType, $packageKey = 'FLOW3') {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_ROUTES :
 				return $this->routes;
@@ -192,26 +208,49 @@ class Manager {
 			default:
 				throw new F3::FLOW3::Configuration::Exception::InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
-
-		$configuration = $this->configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType . '.php');
-		if (file_exists(FLOW3_PATH_CONFIGURATION . $configurationType . '.php')) {
-			$additionalConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType . '.php');
-			$configuration->mergeWith($additionalConfiguration);
+		$configuration = array();
+		foreach ($this->configurationSources as $configurationSource) {
+			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
 		}
-		if (file_exists(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType . '.php')) {
-			$additionalConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType . '.php');
-			$configuration->mergeWith($additionalConfiguration);
+		foreach ($this->configurationSources as $configurationSource) {
+			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+		}
+		foreach ($this->configurationSources as $configurationSource) {
+			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 		}
 
 		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_COMPONENTS :
-			case self::CONFIGURATION_TYPE_ROUTES :
-				$configuration->lock();
-				return $configuration;
 			case self::CONFIGURATION_TYPE_PACKAGES :
-			case self::CONFIGURATION_TYPE_SETTINGS :
-				$configuration->$packageKey->lock();
-				return $configuration->$packageKey;
+				return (isset($configuration[$packageKey])) ? $configuration[$packageKey] : array();
+			case self::CONFIGURATION_TYPE_COMPONENTS :
+				return $configuration;
+		}
+	}
+
+	/**
+	 * Post processes the given settings array by replacing constants with their
+	 * actual value.
+	 *
+	 * This is a preliminary solution, we'll surely have some better way to handle
+	 * this soon.
+	 *
+	 * @param array &$settings The settings to post process. The results are stored directly in the given array
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function postProcessSettings(&$settings) {
+		foreach ($settings as $key => $setting) {
+			if (is_array($setting)) {
+				$this->postProcessSettings($settings[$key]);
+			} elseif (is_string($setting)) {
+				$matches = array();
+				preg_match_all('/(?:%)([a-zA-Z_0-9]+)(?:%)/', $setting, $matches);
+				if (count($matches[1]) > 0) {
+					foreach ($matches[1] as $match) {
+						if (defined($match)) $settings[$key] = str_replace('%' . $match . '%', constant($match), $settings[$key]);
+					}
+				}
+			}
 		}
 	}
 }

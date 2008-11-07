@@ -32,57 +32,64 @@ namespace F3::FLOW3::AOP;
 class Framework {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface A reference to the component manager
+	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
 	protected $componentManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the component factory
+	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
 
 	/**
-	 * @var F3::FLOW3::Configuration::Container The FLOW3 configuration
+	 * The FLOW3 settings
+	 * @var array
 	 */
-	protected $configuration;
+	protected $settings;
 
 	/**
-	 * @var F3::FLOW3::Reflection::Service A reference to the reflection service
+	 * @var F3::FLOW3::Reflection::Service
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var F3::FLOW3::AOP::PointcutExpressionParserInterface An instance of the pointcut expression parser
+	 * An instance of the pointcut expression parser
+	 * @var F3::FLOW3::AOP::PointcutExpressionParserInterface
 	 */
 	protected $pointcutExpressionParser;
 
 	/**
-	 * @var F3::FLOW3::Cache::Factory A reference to the cache factory
+	 * @var F3::FLOW3::Cache::Factory
 	 */
 	protected $cacheFactory;
 
 	/**
-	 * @var array A registry of all known aspects
+	 * A registry of all known aspects
+	 * @var array
 	 */
 	protected $aspectContainers = array();
 
 	/**
-	 * @var array An array of all proxied class names and adviced methods with information about the advice which has been applied.
+	 * An array of all proxied class names and adviced methods with information about the advice which has been applied.
+	 * @var array
 	 */
 	protected $advicedMethodsInformationByTargetClass = array();
 
 	/**
-	 * @var array An array target class names and their proxy class name.
+	 * An array target class names and their proxy class name.
+	 * @var array
 	 */
 	protected $targetAndProxyClassNames = array();
 
 	/**
-	 * @var array List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
+	 * List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
+	 * @var array
 	 */
 	protected $componentProxyBlacklist = array();
 
 	/**
-	 * @var boolean Flag which signals if this class has already been initialized.
+	 * Flag which signals if this class has already been initialized.
+	 * @var boolean
 	 */
 	protected $isInitialized = FALSE;
 
@@ -141,7 +148,7 @@ class Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectConfigurationManager(F3::FLOW3::Configuration::Manager $configurationManager) {
-		$this->configuration = $configurationManager->getSettings('FLOW3');
+		$this->settings = $configurationManager->getSettings('FLOW3');
 	}
 
 	/**
@@ -177,9 +184,9 @@ class Framework {
 		$loadedFromCache = FALSE;
 		$context = $this->componentManager->getContext();
 
-		if ($this->configuration->aop->proxyCache->enable) {
-			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3::FLOW3::Cache::VariableCache', $this->configuration->aop->proxyCache->backend, $this->configuration->aop->proxyCache->backendOptions);
-			$configurationCache = $this->cacheFactory->create('FLOW3_AOP_Configuration', 'F3::FLOW3::Cache::VariableCache', $this->configuration->aop->proxyCache->backend, $this->configuration->aop->proxyCache->backendOptions);
+		if ($this->settings['aop']['proxyCache']['enable']) {
+			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['proxyCache']['backend'], $this->settings['aop']['proxyCache']['backendOptions']);
+			$configurationCache = $this->cacheFactory->create('FLOW3_AOP_Configuration', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['proxyCache']['backend'], $this->settings['aop']['proxyCache']['backendOptions']);
 
 			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
 
@@ -215,7 +222,7 @@ class Framework {
 			$componentConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
 		}
 
-		if ($this->configuration->aop->proxyCache->enable && !$loadedFromCache) {
+		if ($this->settings['aop']['proxyCache']['enable'] === TRUE && !$loadedFromCache) {
 			$tags = array('F3_FLOW3_AOP', F3::FLOW3::Cache::Manager::TAG_PACKAGES_CODE);
 			$configurationCache->set('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
 			$configurationCache->set('aspectContainers', $this->aspectContainers, $tags);

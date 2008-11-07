@@ -35,19 +35,21 @@ class PHPTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function returnsEmptyContainerOnNonExistingFile() {
-		$configuration = F3::FLOW3::Configuration::Source::PHP::load('/ThisFileDoesNotExist.php');
-		$this->assertEquals(new F3::FLOW3::Configuration::Container(), $configuration, 'No empty container was returned.');
+	public function returnsEmptyArrayOnNonExistingFile() {
+		$configurationSource = new F3::FLOW3::Configuration::Source::PHP();
+		$configuration = $configurationSource->load('/ThisFileDoesNotExist');
+		$this->assertEquals(array(), $configuration, 'No empty array was returned.');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function optionSetInTheConfigurationFileReallyEndsUpInTheContainer() {
-		$pathAndFilename = __DIR__ . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile.php';
-		$configuration = F3::FLOW3::Configuration::Source::PHP::load($pathAndFilename);
-		$this->assertTrue($configuration->configurationFileHasBeenLoaded, 'The option has not been set by the fixture.');
+	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
+		$pathAndFilename = __DIR__ . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile';
+		$configurationSource = new F3::FLOW3::Configuration::Source::PHP();
+		$configuration = $configurationSource->load($pathAndFilename);
+		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
 	}
 }
 ?>

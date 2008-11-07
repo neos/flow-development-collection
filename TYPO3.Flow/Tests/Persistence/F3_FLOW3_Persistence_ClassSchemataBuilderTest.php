@@ -66,7 +66,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	public function classSchemaOnlyContainsNonTransientProperties() {
 		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier');
 
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$actualProperties = array_keys($builtClassSchema->getProperties());
 		sort($expectedProperties);
 		sort($actualProperties);
@@ -87,7 +88,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 			'someIdentifier' => 'string'
 		);
 
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$actualProperties = $builtClassSchema->getProperties();
 		asort($expectedProperties);
 		asort($actualProperties);
@@ -99,7 +101,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeRepositoryIsRecognizedByRepositoryAnnotation() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Repository1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Repository1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), F3::FLOW3::Persistence::ClassSchema::MODELTYPE_REPOSITORY);
 	}
 
@@ -108,7 +111,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeEntityIsRecognizedByValueObjectAnnotation() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), F3::FLOW3::Persistence::ClassSchema::MODELTYPE_ENTITY);
 	}
 
@@ -117,7 +121,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::ValueObject1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::ValueObject1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), F3::FLOW3::Persistence::ClassSchema::MODELTYPE_VALUEOBJECT);
 	}
 
@@ -126,7 +131,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaContainsNameOfItsRelatedClass() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getClassName(), 'F3::FLOW3::Tests::Persistence::Fixture::Entity1');
 	}
 
@@ -135,7 +141,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function identifierPropertyIsDetectedFromAnnotation() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getIdentifierProperty(), 'someIdentifier');
 	}
 
@@ -144,7 +151,8 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function identifierPropertyIsSetAsRegularPropertyAsWell() {
-		$builtClassSchema = array_pop($this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1')));
+		$builtClassSchemata = $this->builder->build(array('F3::FLOW3::Tests::Persistence::Fixture::Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
 	}
 }

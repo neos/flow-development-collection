@@ -63,7 +63,7 @@ class Request {
 	 *
 	 * @var string
 	 */
-	protected $controllerPackageKey = 'FLOW3';
+	protected $controllerPackageKey = 'FLOW3::MVC';
 
 	/**
 	 * @var string Component name of the controller which is supposed to handle this request.

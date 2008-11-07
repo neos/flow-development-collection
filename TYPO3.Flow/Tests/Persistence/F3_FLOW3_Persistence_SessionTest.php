@@ -40,7 +40,8 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		$session = new F3::FLOW3::Persistence::Session();
 		$session->registerNewObject($someObject);
 
-		$this->assertSame($someObject, array_pop($session->getNewObjects()));
+		$newObjects = $session->getNewObjects();
+		$this->assertSame($someObject, array_pop($newObjects));
 	}
 
 	/**
@@ -67,7 +68,8 @@ class SessionTest extends F3::Testing::BaseTestCase {
 		$session = new F3::FLOW3::Persistence::Session();
 		$session->registerReconstitutedObject($someObject);
 
-		$this->assertSame($someObject, array_pop($session->getReconstitutedObjects()));
+		$reconstitutedObjects = $session->getReconstitutedObjects();
+		$this->assertSame($someObject, array_pop($reconstitutedObjects));
 	}
 
 	/**

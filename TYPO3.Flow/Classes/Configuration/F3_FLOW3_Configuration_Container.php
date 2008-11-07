@@ -51,6 +51,50 @@ class Container implements ::Countable, ::Iterator, ::ArrayAccess {
 	protected $iteratorCount = 0;
 
 	/**
+	 * Constructs the configuration container
+	 *
+	 * @param array $fromArray If specified, the configuration container will be intially built from the given array structure and values
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($fromArray = NULL) {
+		if (is_array($fromArray)) {
+			$this->setFromArray($fromArray);
+		}
+	}
+
+	/**
+	 * Sets the content of this configuration container by parsing the given array.
+	 *
+	 * @param array $fromArray Array structure (and values) which are supposed to be converted into container properties and sub containers
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFromArray(array $fromArray) {
+		foreach ($fromArray as $key => $value) {
+			if (is_array($value)) {
+				$subContainer = new self($value);
+				$this->offsetSet($key, $subContainer);
+			} else {
+				$this->offsetSet($key, $value);
+			}
+		}
+	}
+
+	/**
+	 * Returns this configuration container (and possible sub containers) as an array
+	 *
+	 * @return array This container converted to an array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getAsArray() {
+		$optionsArray = array();
+		foreach ($this->options as $key => $value) {
+			$optionsArray[$key] = ($value instanceof F3::FLOW3::Configuration::Container) ? $value->getAsArray() : $value;
+		}
+		return $optionsArray;
+	}
+
+	/**
 	 * Locks this configuration container agains write access.
 	 *
 	 * @return void
@@ -268,13 +312,13 @@ class Container implements ::Countable, ::Iterator, ::ArrayAccess {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function __call($methodName, $arguments) {
-		if (F3::PHP6::Functions::substr($methodName, 0, 3) != 'set') {
+		if (substr($methodName, 0, 3) != 'set') {
 			throw new F3::FLOW3::Configuration::Exception('Method "' . $methodName . '" does not exist.', 1213444319);
 		}
 		if (count($arguments) != 1) {
 			throw new F3::FLOW3::Configuration::Exception('You have to pass exactly one argument to a configuration option setter.', 1213444809);
 		}
-		$optionName = F3::PHP6::Functions::lcfirst(F3::PHP6::Functions::substr($methodName, 3));
+		$optionName = lcfirst(substr($methodName, 3));
 		$this->__set($optionName, $arguments[0]);
 
 		return $this;

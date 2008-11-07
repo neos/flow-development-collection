@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Locale;
+namespace F3::FLOW3::Configuration::Source;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -17,62 +17,39 @@ namespace F3::FLOW3::Locale;
 
 /**
  * @package FLOW3
- * @subpackage Locale
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id:F3::FLOW3::Component::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
- * A Service which provides further information about a given locale.
+ * Testcase for the YAML configuration source
  *
  * @package FLOW3
- * @subpackage Locale
- * @version $Id$
+ * @subpackage Tests
+ * @version $Id:F3::FLOW3::Component::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Service {
+class YAMLTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
-	 */
-	protected $componentFactory;
-
-	/**
-	 * @var array
-	 */
-	protected $settings;
-
-	/**
-	 * Constructs this service
-	 *
-	 * @param array $settings The FLOW3 settings
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(array $settings) {
-		$this->settings = $settings;
+	public function returnsEmptyArrayOnNonExistingFile() {
+		$configurationSource = new F3::FLOW3::Configuration::Source::YAML();
+		$configuration = $configurationSource->load('/ThisFileDoesNotExist');
+		$this->assertEquals(array(), $configuration, 'No empty array was returned.');
 	}
 
 	/**
-	 * Injects the component factory
-	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
+		$pathAndFilename = __DIR__ . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_YAMLConfigurationFile';
+		$configurationSource = new F3::FLOW3::Configuration::Source::YAML();
+		$configuration = $configurationSource->load($pathAndFilename);
+		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
 	}
-
-	/**
-	 * Initializes this locale service
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initialize() {
-		$locale = $this->componentFactory->create('F3::FLOW3::Locale::Locale', $this->settings['locale']['defaultLocaleIdentifier']);
-		$this->settings['locale']['defaultLocale'] = $locale;
-	}
-
 }
-
 ?>

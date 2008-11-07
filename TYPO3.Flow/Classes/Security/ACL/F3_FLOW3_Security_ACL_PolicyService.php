@@ -38,10 +38,10 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	protected $componentManager = NULL;
 
 	/**
-	/**
-	 * @var F3::FLOW3::Configuration::Container The policy configuration
+	 * The FLOW3 Settings
+	 * @var array
 	 */
-	protected $configuration = NULL;
+	protected $settings = NULL;
 
 	/**
 	 * @var F3::FLOW3::Cache::AbstractCache A reference to the cache factory
@@ -81,12 +81,12 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Cache::Factory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
 		$this->componentManager = $componentManager;
-		$this->configuration = $configurationManager->getSettings('FLOW3');
+		$this->settings = $configurationManager->getSettings('FLOW3');
 
-		$this->roles = $this->configuration->security->policy->roles;
+		$this->roles = $this->settings['security']['policy']['roles'];
 
-		if ($this->configuration->aop->proxyCache->enable) {
-			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3::FLOW3::Cache::VariableCache', $this->configuration->security->policy->aclCache->backend, $this->configuration->security->policy->aclCache->backendOptions);
+		if ($this->settings['aop']['proxyCache']['enable']) {
+			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3::FLOW3::Cache::VariableCache', $this->settings['security']['policy']['aclCache']['backend'], $this->settings['security']['policy']['aclCache']['backendOptions']);
 			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) {
 				$this->acls = $this->aclCache->get('FLOW3_Security_Policy_ACLs');
 			}
@@ -97,12 +97,18 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * Save the found matches to the cache.
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo: could also be trigered by a hook/event after AOP initialization is finished. That would seem cleaner than using the destructor.
+	 * @todo could also be trigered by a hook/event after AOP initialization is finished. That would seem cleaner than using the destructor.
+	 * @todo make sure that exceptions are handled properly in the destructor - or better remove the destructor alltogether
 	 */
 	public function __destruct() {
-		if ($this->configuration->aop->proxyCache->enable) {
+		if ($this->settings['aop']['proxyCache']['enable'] === TRUE) {
 			$tags = array('F3_FLOW3_AOP');
-			$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
+			try {
+				$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
+			} catch (Exception $exception) {
+				echo ('<br />Exception thrown in ' . __FILE__ . ' in line ' . __LINE__ . ':<br />');
+				var_dump($exception);
+			}
 		}
 	}
 
@@ -120,8 +126,8 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 		if (count($this->filters) === 0) {
 			$policyExpressionParser = $this->componentManager->getComponent('F3::FLOW3::Security::ACL::PolicyExpressionParser');
-			$policyExpressionParser->setResourcesTree($this->configuration->security->policy->resources);
-			foreach ($this->configuration->security->policy->acls as $role => $acl) {
+			$policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
+			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) $this->filters[$role][$resource] = $policyExpressionParser->parse($resource);
 			}
 		}
@@ -130,7 +136,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 			foreach ($filtersForRole as $resource => $filter) {
 				if ($filter->matches($class, $method, $pointcutQueryIdentifier)) {
 					$methodIdentifier = $class->getName() . '->' . $method->getName();
-					$this->acls[$methodIdentifier][$role][] = $this->configuration->security->policy->acls[$role][$resource];
+					$this->acls[$methodIdentifier][$role][] = $this->settings['security']['policy']['acls'][$role][$resource];
 					$matches = TRUE;
 				}
 			}

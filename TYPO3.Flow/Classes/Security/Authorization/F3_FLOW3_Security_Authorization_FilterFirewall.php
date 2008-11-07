@@ -74,10 +74,10 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 		$this->componentManager = $componentManager;
 		$this->requestPatternResolver = $requestPatternResolver;
 		$this->interceptorResolver = $interceptorResolver;
-		$configuration = $configurationManager->getSettings('FLOW3');
+		$settings = $configurationManager->getSettings('FLOW3');
 
-		$this->rejectAll = $configuration->security->firewall->rejectAll;
-		$this->buildFiltersFromConfiguration($configuration->security->firewall->filters);
+		$this->rejectAll = $settings['security']['firewall']['rejectAll'];
+		$this->buildFiltersFromSettings($settings['security']['firewall']['filters']);
 	}
 
 	/**
@@ -115,11 +115,11 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildFiltersFromConfiguration($filterConfiguration) {
-		foreach($filterConfiguration as $filter) {
-			$requestPattern = $this->componentManager->getComponent($this->requestPatternResolver->resolveRequestPatternClass($filter['patternType']));
-			$requestPattern->setPattern($filter['patternValue']);
-			$interceptor = $this->componentManager->getComponent($this->interceptorResolver->resolveInterceptorClass($filter['interceptor']));
+	protected function buildFiltersFromSettings($filterSettings) {
+		foreach($filterSettings as $singleFilterSettings) {
+			$requestPattern = $this->componentManager->getComponent($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
+			$requestPattern->setPattern($singleFilterSettings['patternValue']);
+			$interceptor = $this->componentManager->getComponent($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
 			$this->filters[] = $this->componentManager->getComponent('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
 		}

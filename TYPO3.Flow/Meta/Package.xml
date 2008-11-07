@@ -1,33 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <package xmlns="http://typo3.org/ns/2008/flow3/package">
-    <key>FLOW3</key>
-    <title>FLOW3</title>
-    <description></description>
-    <version>0..0.1</version>
-    <state>Development</state>
-    <categories/>
-    <parties>
-        <person role="LeadDeveloper">
-            <name>Robert Lemke</name>
-            <email>robert@typo3.org</email>
-            <website>typo3.org</website>
-            <organisation>TYPO3 Association</organisation>
-            <repositoryUserName>robert</repositoryUserName>
-        </person>
-    </parties>
-    <constraints>
-        <depends>
-            <system minVersion="5.3.0" type="PHP"/>
-            <system minVersion="1.2.0" type="PHPExtension">zlib</system>
-            <system type="PHPExtension">SPL</system>
-            <system minVersion="1.2.0" type="PHPExtension">json</system>
-            <system type="PHPExtension">session</system>
-        </depends>
-        <conflicts>
-            <system maxVersion="0.9.4" type="PHPExtension">eAccelerator</system>
-        </conflicts>
-        <suggests>
-            <system minVersion="0.9.5" type="PHPExtension">eAccelerator</system>
-        </suggests>
-    </constraints>
+	<key>FLOW3</key>
+	<title>FLOW3</title>
+	<description></description>
+	<version>0.0.1</version>
+	<state>Development</state>
+	<categories/>
+	<parties>
+		<person role="LeadDeveloper">
+				<name>Robert Lemke</name>
+				<email>robert@typo3.org</email>
+				<website>typo3.org</website>
+				<organisation>TYPO3 Association</organisation>
+				<repositoryUserName>robert</repositoryUserName>
+		</person>
+	</parties>
+	<constraints>
+		<depends>
+				<system minVersion="5.3.0" type="PHP"/>
+				<system minVersion="1.2.0" type="PHPExtension">zlib</system>
+				<system type="PHPExtension">SPL</system>
+				<system minVersion="1.2.0" type="PHPExtension">json</system>
+				<system type="PHPExtension">session</system>
+				<package>PHP6</package>
+				<package>YAML</package>
+		</depends>
+		<conflicts>
+				<system maxVersion="0.9.4" type="PHPExtension">eAccelerator</system>
+		</conflicts>
+		<suggests>
+				<system minVersion="0.9.5" type="PHPExtension">eAccelerator</system>
+		</suggests>
+	</constraints>
 </package>
