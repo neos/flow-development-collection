@@ -140,7 +140,8 @@ class Dispatcher {
 			if (!$request instanceof F3::FLOW3::MVC::Web::Request) throw $exception;
 			$request->setDispatched(TRUE);
 
-			$uri = (string)$request->getBaseURI() . $this->configurationManager->getSettings('FLOW3')->security->loginPageURIForDemoPurposes;
+			$settings = $this->configurationManager->getSettings('FLOW3');
+			$uri = (string)$request->getBaseURI() . $settings['security']['loginPageURIForDemoPurposes'];
 			$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 			$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
 			$response->setStatus(303);

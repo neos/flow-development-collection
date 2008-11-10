@@ -16,7 +16,7 @@ errorHandler:
 
   # Defines which errors should result in an exception thrown - all other error
   # levels will be silently ignored.
-  exceptionalErrors: [%E_ERROR%, %E_RECOVERABLE_ERROR%]
+  exceptionalErrors: [%E_ERROR%, %E_PARSE%, %E_CORE_ERROR%, %E_COMPILE_ERROR%, %E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
 
 utility:
   environment:
@@ -36,7 +36,7 @@ cache:
     # configuration by default if they have no special requirements in terms
     # of the caching backend.
     backend: F3::FLOW3::Cache::Backend::File
-    backendOptions: []
+    backendOptions: {}
 
 component:
   configurationCache:
@@ -45,7 +45,7 @@ component:
     # enabled, a cache backend must be properly configured.
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
-    backendOptions: []
+    backendOptions: {}
   
 mvc:
   
@@ -66,7 +66,7 @@ aop:
   proxyCache:
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
-    backendOptions: []
+    backendOptions: {}
 
 reflection:
   
@@ -75,7 +75,7 @@ reflection:
   cache:
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
-    backendOptions: []
+    backendOptions: {}
 
 resource:
   
@@ -83,7 +83,7 @@ resource:
   cache:
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
-    backendOptions: []
+    backendOptions: {}
 
     # The path for the public resources mirror
     publicPath: Resources/
@@ -190,7 +190,7 @@ security:
     # Settings for caching the security policy ACLs.
     aclCache:
       backend: F3::FLOW3::Cache::Backend::File
-      backendOptions: []
+      backendOptions: {}
 
   # This is a very dirty and not recommended playground option.
   #

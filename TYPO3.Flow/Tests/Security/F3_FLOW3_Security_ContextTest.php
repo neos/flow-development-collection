@@ -39,6 +39,7 @@ class ContextTest extends F3::Testing::BaseTestCase {
 	public function getAuthenticationTokensReturnsOnlyTokensActiveForThisRequest() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
 		$settings = array();
+		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
 		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 		$request = $this->getMock('F3::FLOW3::MVC::Request');
 

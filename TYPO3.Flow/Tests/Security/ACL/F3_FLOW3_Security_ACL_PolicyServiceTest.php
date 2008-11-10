@@ -145,6 +145,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$settings['aop']['proxyCache']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
@@ -193,6 +194,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$settings['aop']['proxyCache']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
@@ -350,6 +352,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$settings['aop']['proxyCache']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
