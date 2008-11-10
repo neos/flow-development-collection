@@ -32,7 +32,7 @@ namespace F3::FLOW3::MVC::View;
 abstract class AbstractView {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
+	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
 	 */
 	protected $componentFactory;
 
@@ -47,6 +47,11 @@ abstract class AbstractView {
 	protected $resourceManager;
 
 	/**
+	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
+	 */
+	protected $componentManager;
+
+	/**
 	 * @var F3::FLOW3::MVC::Request
 	 */
 	protected $request;
@@ -59,16 +64,18 @@ abstract class AbstractView {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
 	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
 	 * @param F3::FLOW3::Resource::Manager $resourceManager A reference to the Resource Manager
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the Component Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
+		$this->componentFactory = $componentFactory;
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
+		$this->componentManager = $componentManager;
 	}
 
 	/**
