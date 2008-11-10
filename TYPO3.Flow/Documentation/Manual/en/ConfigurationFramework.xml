@@ -26,7 +26,7 @@
 
     <variablelist>
       <varlistentry>
-        <term><filename>Settings.php</filename></term>
+        <term><filename>Settings.yaml</filename></term>
 
         <listitem>
           <para>Contains user-level settings, i.e. configuration options the
@@ -36,7 +36,7 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>FLOW3.php</filename></term>
+        <term><filename>FLOW3.yaml</filename></term>
 
         <listitem>
           <para>Contains settings for FLOW3 itself.</para>
@@ -44,7 +44,7 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>Routes.php</filename></term>
+        <term><filename>Routes.yaml</filename></term>
 
         <listitem>
           <para>Contains routes configuration. This routing information is
@@ -54,7 +54,7 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>Components.php</filename></term>
+        <term><filename>Components.yaml</filename></term>
 
         <listitem>
           <para>Contains component configuration, ie. options which configure
@@ -64,7 +64,7 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>Packages.php</filename></term>
+        <term><filename>Packages.yaml</filename></term>
 
         <listitem>
           <para>Contains package configuration, ie. options which define
@@ -94,7 +94,7 @@
             parsed, the resulting configuration containers are protected
             against further introduction of new options.</para>
 
-            <para>Note that <filename>FLOW3.php</filename> files are only
+            <para>Note that <filename>FLOW3.yaml</filename> files are only
             allowed in the <package>FLOW3</package> package and are ignored in
             any other package configuration dir.</para>
           </listitem>
@@ -131,17 +131,61 @@
   <section>
     <title>Defining Configuration</title>
 
-    <para>Although configuration files are plain PHP, they should follow
-    FLOW3's conventions for configuration files.</para>
+    <section>
+      <title>Configuration Formats</title>
+
+      <para>Although YAML is the preferred and default configuration format,
+      it is possible to use other kinds of markup. Currently FLOW3 has
+      built-in support for YAML and PHP based configuration.</para>
+    </section>
 
     <section>
-      <title>Configuration Format</title>
+      <title>YAML</title>
 
-      <para>As mentioned above, it is only possible to declare new
-      configuration options in the package-level configuration files. All
-      options are properties of a special configuration container object which
-      is automagically provided in a variable named
-      <varname>$c</varname>.</para>
+      <para>YAML is a well-readable format which is espcially well-suited for
+      defining configuration. The full specification among with many examples
+      can be found on the <link ns5:href="???">YAML website</link>. All
+      important parts of the YAML specification are supported by the parser
+      used by FLOW3, it might happen though that some exotic features won't
+      have the desired effect. At best you look at the configuration files
+      which come with the FLOW3 distribution for getting more examples.</para>
+
+      <example>
+        <title>.Example for a package-level Settings.yaml</title>
+
+        <programlisting language="yaml">#                                                                        #
+# Settings Configuration for the TYPO3CR Package                         #
+#                                                                        #
+
+# $Id: Settings.yaml 1459 2008-11-10 10:11:28Z k-fish $
+
+TYPO3CR:
+
+  # The storage backend configuration
+  storage:
+    backend: 'F3::TYPO3CR::Storage::Backend::PDO'
+    backendOptions:
+      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
+      username: 
+      password: 
+
+  # The indexing/search backend configuration
+  search:
+    backend: 'F3::TYPO3CR::Storage::Search::Lucene'
+    backendOptions:
+      indexLocation: '%FLOW3_PATH_DATA%Persistent/Index/'
+
+</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>PHP</title>
+
+      <para>Although configuration files are plain PHP, they should follow
+      FLOW3's conventions for configuration files. All options are properties
+      of a special configuration container object which is automagically
+      provided in a variable named <varname>$c</varname>.</para>
 
       <example>
         <title>Example for a package-level Settings.php</title>
@@ -247,11 +291,10 @@ $c-&gt;Demo-&gt;administrator-&gt;
     </section>
 
     <section>
-      <title>Special configuration options for
-      <filename>Packages.php</filename></title>
+      <title>Constants (special case)</title>
 
-      <para>In <filename>Packages.php</filename> you can use two special
-      options influencing the class autoloader of FLOW3's resource
+      <para>In the <filename>Packages</filename> configuration you can use two
+      special options influencing the class autoloader of FLOW3's resource
       manager.</para>
 
       <caution>
@@ -310,6 +353,22 @@ $c-&gt;Demo-&gt;administrator-&gt;
           </listitem>
         </varlistentry>
       </variablelist>
+
+      <example>
+        <title>Example for using specialClassNameAndPaths</title>
+
+        <programlisting language="yaml">#                                                                        #
+# Package configuration of the Smarty package                            #
+#                                                                        #
+
+# @package Smarty
+
+Smarty:
+  resourceManager:
+    specialClassNameAndPaths:
+      Smarty: %PATH_PACKAGE_RESOURCES%/PHP/Smarty/Smarty.class.php
+</programlisting>
+      </example>
 
       <example>
         <title>Example for using specialClassNameAndPaths</title>
