@@ -70,12 +70,32 @@ class Manager {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Reflection::Service $reflectionService
-	 * @param F3::FLOW3::Persistence::ClassSchemataBuilder $ClassSchemataBuilder
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param F3::FLOW3::Persistence::BackendInterface $backend the backend to use for persistence
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Reflection::Service $reflectionService, F3::FLOW3::Persistence::ClassSchemataBuilder $classSchemataBuilder) {
+	public function __construct(F3::FLOW3::Persistence::BackendInterface $backend) {
+		$this->backend = $backend;
+	}
+
+	/**
+	 * Injects the reflection service
+	 *
+	 * @param F3::FLOW3::Reflection::Service $reflectionService The reflection service
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Injects the class schemata builder
+	 *
+	 * @param F3::FLOW3::Persistence::ClassSchemataBuilder $classSchemataBuilder The class schemata builder
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectClassSchemataBuilder(F3::FLOW3::Persistence::ClassSchemataBuilder $classSchemataBuilder) {
 		$this->classSchemataBuilder = $classSchemataBuilder;
 	}
 
@@ -102,17 +122,6 @@ class Manager {
 	}
 
 	/**
-	 * Injects the backend to use for persistence
-	 *
-	 * @param F3::FLOW3::Persistence::BackendInterface $backend
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectBackend(F3::FLOW3::Persistence::BackendInterface $backend) {
-		$this->backend = $backend;
-	}
-
-	/**
 	 * Initializes the persistence manager
 	 *
 	 * @return void
@@ -135,6 +144,16 @@ class Manager {
 	 */
 	public function getSession() {
 		return $this->session;
+	}
+
+	/**
+	 * Returns the persistence backend
+	 *
+	 * @return F3::FLOW3::Persistence::Backend
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getBackend() {
+		return $this->backend;
 	}
 
 	/**

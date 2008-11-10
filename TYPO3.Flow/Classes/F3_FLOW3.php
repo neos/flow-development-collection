@@ -398,7 +398,10 @@ final class FLOW3 {
 	 */
 	public function initializePersistence() {
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$persistenceManager = $this->componentManager->getComponent('F3::FLOW3::Persistence::Manager');
+			$repository = $this->componentManager->getComponent('F3::PHPCR::RepositoryInterface');
+			$session = $repository->login();
+			$persistenceBackend = $this->componentManager->getComponent('F3::FLOW3::Persistence::BackendInterface', $session);
+			$persistenceManager = $this->componentManager->getComponent('F3::FLOW3::Persistence::Manager', $persistenceBackend);
 			$persistenceManager->initialize();
 		}
 
