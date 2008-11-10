@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ContextTest extends F3::Testing::BaseTestCase {
@@ -38,7 +38,7 @@ class ContextTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getAuthenticationTokensReturnsOnlyTokensActiveForThisRequest() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
+		$settings = array();
 		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 		$request = $this->getMock('F3::FLOW3::MVC::Request');
 
@@ -84,8 +84,8 @@ class ContextTest extends F3::Testing::BaseTestCase {
 	 */
 	public function authenticateAllTokensIsSetCorrectlyFromConfiguration() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->authentication->authenticateAllTokens = TRUE;
+		$settings = array();
+		$settings['security']['authentication']['authenticateAllTokens'] = TRUE;
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 		$securityContext = new F3::FLOW3::Security::Context($mockConfigurationManager);

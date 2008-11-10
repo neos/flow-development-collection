@@ -38,9 +38,9 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->firewall->rejectAll = FALSE;
-		$settings->security->firewall->filters = array(
+		$settings = array();
+		$settings['security']['firewall']['rejectAll'] = FALSE;
+		$settings['security']['firewall']['filters'] = array(
 			array(
 				'patternType' => 'URL',
 				'patternValue' => '/some/url/.*',
@@ -77,15 +77,16 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 	public function configuredFiltersAreCalledAndTheirInterceptorsInvoked() {
 		$mockRequest = $this->getMock('F3::FLOW3::MVC::Web::Request');
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->firewall->rejectAll = FALSE;
-		$settings->security->firewall->filters = array(
+		$settings = array();
+		$settings['security']['firewall']['rejectAll'] = FALSE;
+		$settings['security']['firewall']['filters'] = array(
 			array(
 				'patternType' => 'F3::TestPackage::TestRequestPattern',
 				'patternValue' => '.*',
 				'interceptor' => 'AccessDeny'
 			),
 		);
+
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
@@ -107,9 +108,9 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
 		$mockRequest = $this->getMock('F3::FLOW3::MVC::Request');
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->firewall->rejectAll = TRUE;
-		$settings->security->firewall->filters = array(
+		$settings = array();
+		$settings['security']['firewall']['rejectAll'] = TRUE;
+		$settings['security']['firewall']['filters'] = array(
 			array(
 				'patternType' => 'URL',
 				'patternValue' => '/some/url/.*',

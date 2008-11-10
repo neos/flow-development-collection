@@ -36,10 +36,10 @@ class RouterTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setRoutesConfigurationParsesTheGivenConfigurationAndBuildsRouteObjectsFromIt() {
-		$routesConfiguration = new F3::FLOW3::Configuration::Container();
-		$routesConfiguration->route1->uriPattern = 'number1';
-		$routesConfiguration->route2->uriPattern = 'number2';
-		$routesConfiguration->route3->uriPattern = 'number3';
+		$routesConfiguration = array();
+		$routesConfiguration['route1']['uriPattern'] = 'number1';
+		$routesConfiguration['route2']['uriPattern'] = 'number2';
+		$routesConfiguration['route3']['uriPattern'] = 'number3';
 
 		$route1 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
 		$route1->expects($this->once())->method('setUriPattern')->with($this->equalTo('number1'));

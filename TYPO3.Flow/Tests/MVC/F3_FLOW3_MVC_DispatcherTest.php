@@ -48,7 +48,7 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	public function setUp() {
 		$securityContextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface');
 		$firewall = $this->getMock('F3::FLOW3::Security::Authorization::FirewallInterface');
-		$settings = new F3::FLOW3::Configuration::Container();
+		$settings = array();
 		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSettings'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
@@ -131,7 +131,7 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDispatcherInjectsThePackageSettingsIntoTheController() {
-		$settings = new F3::FLOW3::Configuration::Container();
+		$settings = array();
 		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSettings'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 

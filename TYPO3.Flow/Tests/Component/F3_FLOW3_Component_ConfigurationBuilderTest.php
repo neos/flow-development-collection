@@ -36,15 +36,15 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allValidOptionsAreSetCorrectly() {
-		$configurationContainer = array();
-		$configurationContainer['scope'] = 'prototype';
-		$configurationContainer['properties']['firstProperty'] = 'straightValue';
-		$configurationContainer['properties']['secondProperty']['reference'] = 'F3::FLOW3::Component::ManagerInterface';
-		$configurationContainer['constructorArguments'][1] = 'straightConstructorValue';
-		$configurationContainer['constructorArguments'][2]['reference'] = 'F3::FLOW3::Configuration::Manager';
-		$configurationContainer['className'] = __CLASS__;
-		$configurationContainer['lifecycleInitializationMethod'] = 'initializationMethod';
-		$configurationContainer['autoWiringMode'] = FALSE;
+		$configurationArray = array();
+		$configurationArray['scope'] = 'prototype';
+		$configurationArray['properties']['firstProperty'] = 'straightValue';
+		$configurationArray['properties']['secondProperty']['reference'] = 'F3::FLOW3::Component::ManagerInterface';
+		$configurationArray['constructorArguments'][1] = 'straightConstructorValue';
+		$configurationArray['constructorArguments'][2]['reference'] = 'F3::FLOW3::Configuration::Manager';
+		$configurationArray['className'] = __CLASS__;
+		$configurationArray['lifecycleInitializationMethod'] = 'initializationMethod';
+		$configurationArray['autoWiringMode'] = FALSE;
 
 		$componentConfiguration = new F3::FLOW3::Component::Configuration('TestComponent', __CLASS__);
 		$componentConfiguration->setScope(F3::FLOW3::Component::Configuration::SCOPE_PROTOTYPE);
@@ -56,7 +56,7 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 		$componentConfiguration->setLifecycleInitializationMethod('initializationMethod');
 		$componentConfiguration->setAutoWiringMode(FALSE);
 
-		$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationContainer, __CLASS__);
+		$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationArray, __CLASS__);
 		$this->assertEquals($componentConfiguration, $builtComponentConfiguration, 'The manually created and the built component configuration don\'t match.');
 	}
 
@@ -65,13 +65,13 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function existingComponentConfigurationIsUsedIfSpecified() {
-		$configurationContainer = array();
-		$configurationContainer['scope'] = 'prototype';
-		$configurationContainer['properties']['firstProperty'] = 'straightValue';
+		$configurationArray = array();
+		$configurationArray['scope'] = 'prototype';
+		$configurationArray['properties']['firstProperty'] = 'straightValue';
 
 		$componentConfiguration = new F3::FLOW3::Component::Configuration('TestComponent', __CLASS__);
 
-		$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationContainer, __CLASS__, $componentConfiguration);
+		$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationArray, __CLASS__, $componentConfiguration);
 		$this->assertSame($componentConfiguration, $builtComponentConfiguration, 'The returned component configuration object is not the one we passed to the builder.');
 	}
 
@@ -80,11 +80,10 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidOptionResultsInException() {
-		$configurationContainer = array();
-		$configurationContainer['scoopy'] = 'prototype';
+		$configurationArray = array('scoopy' => 'prototype');
 
 		try {
-			$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationContainer, __CLASS__);
+			$builtComponentConfiguration = F3::FLOW3::Component::ConfigurationBuilder::buildFromConfigurationArray('TestComponent', $configurationArray, __CLASS__);
 			$this->fail('No exception was thrown.');
 		} catch (F3::FLOW3::Component::Exception::InvalidComponentConfiguration $exception) {
 		}

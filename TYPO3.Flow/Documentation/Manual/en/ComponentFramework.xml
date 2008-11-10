@@ -35,23 +35,23 @@
 
     <para><orderedlist>
         <listitem>
-          <para><emphasis>Use <function>getComponent()</function> instead of
-          the <function>new</function> operator!</emphasis></para>
+          <para><emphasis>Avoid the <function>new</function>
+          operator!</emphasis></para>
 
-          <para>The instantiation of classes must be handled by the
-          <firstterm>Component Factory</firstterm>. Therefore if you have to
-          instantiate a class or need an existing instance of a class, use the
-          Component Factory for retrieving one:</para>
+          <para>The instantiation of classes must be handled by the Component
+          Framework. Therefore if you have to instantiate a class or need an
+          existing instance of a class, you'll have to call an API function
+          instead of using the <function>new</function> operator:</para>
 
           <example>
             <title>Don't use the new operator</title>
 
             <programlisting language="php">   // Avoid this:
-$myObject = new F3::MyPackage::MyClassName;</programlisting>
+$myFreshObject = new F3::MyPackage::MyClassName;</programlisting>
           </example>
 
           <example>
-            <title>Ask the Component Factory instead</title>
+            <title>Ask the Component Factory</title>
 
             <programlisting language="php">namespace F3::MyPackage;
 
@@ -80,17 +80,16 @@ class SomeClass {
     * @return void
     */
    public function someFunction() {
-      $myObject = $this-&gt;componentFactory-&gt;getComponent('F3::MyPackage::MyClassName');
+      $myFreshObject = $this-&gt;componentFactory-&gt;create('F3::MyPackage::MyClassName');
    }
 }</programlisting>
           </example>
 
-          <para>In the above example you ask the Component Factory for the
+          <para>In the above example you ask the Component Factory for a fresh
           instance of <classname>F3::MyPackage::MyClassName</classname>. In
-          order to get an instance of the Component Factory, just add a
-          parameter to your class constructor as seen in the example - you
-          will automatically get a reference
-          <emphasis>injected</emphasis>.</para>
+          order to get the Component Factory instance, just add a parameter to
+          your class constructor as seen in the example - you will
+          automatically get a reference <emphasis>injected</emphasis>.</para>
         </listitem>
 
         <listitem>
@@ -108,11 +107,20 @@ class SomeClass {
           with unit testing (sometimes the Singleton is referred to as a
           <emphasis>Anti Pattern</emphasis>).</para>
 
-          <para>The Component Factory will, if not configured differently,
-          <emphasis>always return a unique instance</emphasis> of a component.
-          Therefore Singleton is the default behaviour! If you need a fresh
-          instance of your class, you will have to configure the scope of it
-          by adding some annotation to your class:</para>
+          <para>The Component Factory can only be used for creating fresh
+          instances (scope: prototype). However, all components in FLOW3
+          follow, if not configured differently, the Singleton pattern and
+          therefore can only be instantiated once. Instead of calling the
+          Component Factory, you use Dependency Injection for retrieving
+          unique instances of Singleton-type classes. One kind of Dependency
+          Injection is called <firstterm>constructor injection</firstterm> and
+          is demonstrated in the above example: The
+          <classname>ComponentFactory</classname> itself is a
+          Singleton.</para>
+
+          <para>If your own classes should rather be handled as prototypes,
+          you will have to configure the scope of it by adding some
+          annotation:</para>
 
           <example>
             <title>Sample scope annotation</title>
@@ -126,6 +134,11 @@ class SomeClass {
 
 }</programlisting>
           </example>
+
+          <para>Now it's possible to create fresh instances of
+          <classname>SomeClass</classname> by calling the
+          <methodname>create()</methodname> method of the
+          <classname>ComponentFactory</classname>.</para>
         </listitem>
       </orderedlist></para>
   </section>
@@ -236,7 +249,7 @@ class SomeClass {
       <para>Although Dependency Injection is what you should strive for, it
       might happen that you need to retrieve component instances directly.
       Instead of using PHP's <function>new</function> operator, you must ask
-      the Component Factory for the instance of a component.</para>
+      the Component Factory for the fresh instance of a component.</para>
 
       <para>First, you need an instance of the Component Factory itself and as
       you have seen in the shortcut example before, one way of getting it is
@@ -246,16 +259,48 @@ class SomeClass {
    $this-&gt;componentFactory = $componentFactory;
 }</programlisting>
 
-      <para>To explicitly retrieve the instance of a component use the
-      <function>getComponent()</function> method:</para>
+      <para>To explicitly create an instance of a component use the
+      <function>create()</function> method:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;getComponent('F3::MyPackage::MyClassName');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;create('F3::MyPackage::MyClassName');</programlisting>
 
       <para>It is possible to pass arguments to the constructor of the
-      component class just by adding them to the
-      <function>getComponent()</function> call:</para>
+      component class just by adding them to the <function>create()</function>
+      call:</para>
 
-      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;getComponent('F3::MyPackage::MyClassName', 'first argument', 'second argument');</programlisting>
+      <programlisting language="php">$myComponentInstance = $componentFactory-&gt;create('F3::MyPackage::MyClassName', 'first argument', 'second argument');</programlisting>
+    </section>
+
+    <section>
+      <title>Manually Retrieving Singleton Instances</title>
+
+      <para>Although Dependency Injection is what you should strive for, it
+      might happen that you need to retrieve component instances directly. The
+      <classname>ComponentManager</classname> provides methods for retrieving
+      component instances for these rare situations.</para>
+
+      <para>First, you need an instance of the
+      <classname>ComponentManager</classname> itself and as you have seen in
+      the shortcut example before, one way of getting it is adding a new
+      parameter to your class constructor method (constructor
+      injection):</para>
+
+      <programlisting language="php">public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
+   $this-&gt;componentManager = $componentManager;
+}</programlisting>
+
+      <para>To explicitly retrieve a component instance use the
+      <function>getComponent()</function> method:</para>
+
+      <programlisting language="php">$myComponentInstance = $componentManager-&gt;getComponent('F3::MyPackage::MyClassName');</programlisting>
+
+      <para>Like with the <classname>ComponentFactory</classname>'s
+      <methodname>create</methodname> method, it is possible to pass arguments
+      to the constructor of the component class just by adding them to the
+      <function>getComponent()</function> call. However passing arguments to a
+      Singleton component makes only sense on the first call when the instance
+      is actually created. On all consecutive calls the arguments are just
+      ignored. </para>
     </section>
 
     <section>
@@ -279,7 +324,7 @@ class SomeClass {
       available as a component name as long as there exists at least one class
       implemententing that interface.</para>
 
-      <programlisting language="php">$otherComponentInstance = $componentFactory-&gt;getComponent('F3::SomePackage::SomeInterfaceName');</programlisting>
+      <programlisting language="php">$otherComponentInstance = $componentFactory-&gt;create('F3::SomePackage::SomeInterfaceName');</programlisting>
     </section>
   </section>
 
@@ -397,13 +442,14 @@ class SomeClass {
         configuration which differs from would be done automatically.</para>
 
         <example>
-          <title>Components.php file for Constructor Injection</title>
+          <title>Components.yaml file for Constructor Injection</title>
 
-          <programlisting language="php">$c-&gt;F3_Authentication_LDAPAuthentication-&gt;
-constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::ASpecialLogger';</programlisting>
+          <programlisting language="yaml">F3_Authentication_LDAPAuthentication:
+  constructorArguments:
+    1: { reference: F3::FLOW3::Log::ASpecialLogger }</programlisting>
         </example>
 
-        <para>The two lines above define that a component instance of
+        <para>The three lines above define that a component instance of
         <interfacename>F3::FLOW3::Log::ASpecialLogger</interfacename> must be
         passed to the first argument of the constructor when an instance of
         the component
@@ -445,13 +491,11 @@ constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::ASpecialLogger';</progr
         configuration for the above example looks like this:</para>
 
         <example>
-          <title>Components.php file for Setter Injection</title>
+          <title>Components.yaml file for Setter Injection</title>
 
-          <programlisting language="php">&lt;?php
-
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
-
-?&gt;</programlisting>
+          <programlisting language="php">F3_Authentication_LDAPAuthentication:
+  properties:
+    someLogger: { reference: F3::FLOW3::Log::LoggerInterface }</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -559,10 +603,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       <para>Also <emphasis>autowired setter-injected dependencies</emphasis>
       are, by default, required. There is a way to declare a setter-injected
       dependency as optional without the need to configure the dependency in a
-      <filename>Components.php</filename> file. If an optional dependency
-      can't be solved, it just won't be injected and it is the developer's
-      responsability to test for the availability of the desired object. FLOW3
-      uses the @optional annotation for this purpose:</para>
+      <filename>Components</filename> configuration file. If an optional
+      dependency can't be solved, it just won't be injected and it is the
+      developer's responsability to test for the availability of the desired
+      object. FLOW3 uses the @optional annotation for this purpose:</para>
 
       <example>
         <title>Marking a setter-injected dependency as optional</title>
@@ -644,21 +688,14 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
 
     <orderedlist>
       <listitem>
-        <para>If it exists, the file
-        <filename><replaceable>PackageName</replaceable>/Configuration/Components.php</filename>
-        will be included. PHP code in this file must follow the general rules
-        for PHP configuration files in FLOW3.</para>
+        <para>If they exist, the
+        <filename><replaceable>PackageName</replaceable>/Configuration/Components.*</filename>
+        will be included. </para>
       </listitem>
 
       <listitem>
         <para>Additional configuration defined in the global
         <filename>Configuration/</filename> directory is applied.</para>
-      </listitem>
-
-      <listitem>
-        <para>Additional configuration defined through the component manager
-        user interface will be applied. <remark>This feature has not been
-        implemented yet!</remark></para>
       </listitem>
     </orderedlist>
 
@@ -675,7 +712,7 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       </listitem>
 
       <listitem>
-        <para>Define dependencies to other components</para>
+        <para>Explicitly define dependencies to other components</para>
       </listitem>
     </itemizedlist>
 
@@ -683,23 +720,58 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;properties-&gt;someLogger-&gt;re
       <title>Configuration sources</title>
 
       <para>As already mentioned, the configuration for each component is
-      compiled from different sources. The <filename>Components.php</filename>
-      file is the recommended format and is therefore used in most of the
-      examples. However, the names of the configuration options and their
-      possible values are identical to all configuration sources.</para>
+      compiled from different sources. The
+      <filename>Components.yaml</filename> file is the recommended format and
+      is therefore used in most of the examples. However, the names of the
+      configuration options and their possible values are identical to all
+      configuration sources.</para>
 
       <section>
-        <title>Components.php</title>
+        <title>Components.yaml</title>
 
-        <para>If a file named <filename>Components.php</filename> exists in
+        <para>If a file named <filename>Components.yaml</filename> exists in
         the <filename>Configuration</filename> directory of a package, it will
         be included during the configuration process (ie. before the first
-        component class is instantiated!). The PHP file should stick to
-        FLOW3's general rules for PHP-based configuration.</para>
+        component class is instantiated!). The YAML file should stick to
+        FLOW3's general rules for YAML-based configuration.</para>
 
         <para>The following code adds the same configuration as in the
         Constructor Injection example which will be used in the next
         sections:</para>
+
+        <example>
+          <title>Sample Components.yaml file</title>
+
+          <programlisting language="yaml">#                                                                        #
+# Component Configuration for the Authentication package                 #
+# (this package doesn't really exist, and even if so, the configuration  #
+# would probably be different)                                           #
+#                                                                        #
+
+# @package Authentication
+# @version $Id: Components.yaml 123 2008-01-01 12:00:00Z robert $
+
+F3_Authentication_LDAPAuthentication:
+  constructorArguments:
+    1: { reference: F3::FLOW3::Log::LoggerInterface }
+
+F3_Authentication_LDAPAuthentication: constructorArguments: 2: reference: F3::LDAP::LDAPServerInterface
+
+F3_Authentication_LDAPAuthentication:
+  constructorArguments:
+    3: 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH'</programlisting>
+        </example>
+      </section>
+
+      <section>
+        <title>Components.php</title>
+
+        <para>As an alternative to YAML, it is possible to write configuration
+        files in plain PHP. However, the PHP file should stick to FLOW3's
+        general rules for PHP-based configuration.</para>
+
+        <para>The following code again adds the same configuration as in the
+        Constructor Injection example:</para>
 
         <example>
           <title>Sample Components.php file</title>
@@ -746,9 +818,10 @@ $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=Jo
         <literal>scope</literal> is the only supported annotation.</para>
 
         <para>It's up to you defining the scope in the class directly or doing
-        it in a Components.php file – both have the same effect. We recommend
-        using annotations in this case, as the scope usually is a design
-        decision which is very unlikely to be changed.</para>
+        it in a <filename>Components</filename> configuration file – both have
+        the same effect. We recommend using annotations in this case, as the
+        scope usually is a design decision which is very unlikely to be
+        changed.</para>
 
         <example>
           <title>Sample scope annotation</title>

@@ -16,7 +16,7 @@ errorHandler:
 
   # Defines which errors should result in an exception thrown - all other error
   # levels will be silently ignored.
-  exceptionalErrors: [E_ERROR, E_RECOVERABLE_ERROR]
+  exceptionalErrors: [%E_ERROR%, %E_RECOVERABLE_ERROR%]
 
 utility:
   environment:

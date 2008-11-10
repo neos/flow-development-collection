@@ -166,8 +166,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 			case FLOW3_PATH_PACKAGES . 'PackageA/Configuration/Settings' : return $settingsA;
 			case FLOW3_PATH_PACKAGES . 'PackageB/Configuration/Settings' : return $settingsB;
 			case FLOW3_PATH_PACKAGES . 'PackageC/Configuration/Settings' : return $settingsC;
-			case FLOW3_PATH_CONFIGURATION . 'Settings' : return new F3::FLOW3::Configuration::Container();
-			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return new F3::FLOW3::Configuration::Container();
+			case FLOW3_PATH_CONFIGURATION . 'Settings' : return array();
+			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return array();
+			default:
+				throw new Exception('Unexpected filename: ' . $filenameAndPath);
 		}
 	}
 

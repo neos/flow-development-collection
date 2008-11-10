@@ -62,7 +62,7 @@ class MockRequestHandlingController extends F3::FLOW3::MVC::Controller::RequestH
 	/**
 	 * Returns the package settings which were injected into this controller
 	 *
-	 * @return F3::FLOW3::Configuration::Container
+	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettings() {

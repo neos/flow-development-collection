@@ -40,9 +40,9 @@ class AccessDecisionVoterManagerTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
 
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->accessDecisionVoters = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AccessDenyVoter', 'F3::TestPackage::AccessGrantVoter');
-		$settings->security->allowAccessIfAllVotersAbstain = FALSE;
+		$settings = array();
+		$settings['security']['accessDecisionVoters'] = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AccessDenyVoter', 'F3::TestPackage::AccessGrantVoter');
+		$settings['security']['allowAccessIfAllVotersAbstain'] = FALSE;
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
@@ -62,9 +62,9 @@ class AccessDecisionVoterManagerTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
 
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->accessDecisionVoters = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
-		$settings->security->allowAccessIfAllVotersAbstain = FALSE;
+		$settings = array();
+		$settings['security']['accessDecisionVoters'] = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings['security']['allowAccessIfAllVotersAbstain'] = FALSE;
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
@@ -84,9 +84,9 @@ class AccessDecisionVoterManagerTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
 
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->accessDecisionVoters = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
-		$settings->security->allowAccessIfAllVotersAbstain = TRUE;
+		$settings = array();
+		$settings['security']['accessDecisionVoters'] = array('F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings['security']['allowAccessIfAllVotersAbstain'] = TRUE;
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);
@@ -103,9 +103,9 @@ class AccessDecisionVoterManagerTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
 
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->security->accessDecisionVoters = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
-		$settings->security->allowAccessIfAllVotersAbstain = TRUE;
+		$settings = array();
+		$settings['security']['accessDecisionVoters'] = array('F3::TestPackage::AccessGrantVoter', 'F3::TestPackage::AbstainingVoter', 'F3::TestPackage::AbstainingVoter');
+		$settings['security']['allowAccessIfAllVotersAbstain'] = TRUE;
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
 		$voterManager = new F3::FLOW3::Security::Authorization::AccessDecisionVoterManager($mockConfigurationManager, $this->componentManager);

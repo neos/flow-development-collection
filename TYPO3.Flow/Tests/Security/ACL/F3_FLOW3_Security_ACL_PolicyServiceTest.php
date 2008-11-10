@@ -66,15 +66,15 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	public function matchesReturnsTrueForAnACLEntryReferingToAResourceRepresentedByANestedPointcutExpression() {
 		$mockCacheFactory = $this->getMock('F3::FLOW3::Cache::Factory', array(), array(), '', FALSE);
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = FALSE;
-		$settings->security->policy->roles = array('EXAMPLE_ROLE' => array());
-		$settings->security->policy->resources = array(
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = FALSE;
+		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
+		$settings['security']['policy']['resources'] = array(
 			'theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())',
 			'theOtherLonelyResource' => 'method(F3::TestPackage::BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theOtherLonelyResource',
 		);
-		$settings->security->policy->acls['EXAMPLE_ROLE'] = array(
+		$settings['security']['policy']['acls']['EXAMPLE_ROLE'] = array(
 			'theIntegrativeResource' => 'ACCESS_GRANT',
 		);
 
@@ -98,17 +98,17 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function matchesCreatesTheCorrectACLCacheArray() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
-		$settings->security->policy->roles = array('EXAMPLE_ROLE' => array());
-		$settings->security->policy->resources = array(
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
+		$settings['security']['policy']['resources'] = array(
 			'theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())',
 			'theOtherLonelyResource' => 'method(F3::TestPackage::BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theOtherLonelyResource',
 		);
-		$settings->security->policy->acls['EXAMPLE_ROLE'] = array(
+		$settings['security']['policy']['acls']['EXAMPLE_ROLE'] = array(
 			'theIntegrativeResource' => 'ACCESS_GRANT',
 		);
 
@@ -141,10 +141,10 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getRolesReturnsTheCorrectRolesForAGivenJoinpoint() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
@@ -189,10 +189,10 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getRolesThrowsAnExceptionIfTheGivenJoinPointIsNotRegisteredInThePolicy() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
@@ -233,11 +233,11 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPrivilgesReturnsTheCorrectPrivilegesForAGivenJoinpoint() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
-		$settings->security->policy->roles = array(
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array(
 			'ADMINISTRATOR' => array(),
 			'CUSTOMER' => array(),
 			'PRIVILEGED_CUSTOMER' => array('CUSTOMER'),
@@ -292,11 +292,11 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPrivilgesReturnsTheCorrectPrivilegeForAGivenJoinpointAndPrivilegeType() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
-		$settings->security->policy->roles = array(
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
+		$settings['security']['policy']['roles'] = array(
 			'ADMINISTRATOR' => array(),
 			'CUSTOMER' => array(),
 			'PRIVILEGED_CUSTOMER' => array('CUSTOMER'),
@@ -346,10 +346,10 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getPrivilegesThrowsAnExceptionIfTheGivenJoinPointIsNotRegisteredInThePolicy() {
 		$mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array(), array(), '', FALSE);
-		$settings = new F3::FLOW3::Configuration::Container();
-		$settings->aop->proxyCache->enable = TRUE;
-		$settings->security->policy->aclCache->backend = '';
-		$settings->security->policy->aclCache->backendOptions = array();
+		$settings = array();
+		$settings['aop']['proxyCache']['enable'] = TRUE;
+		$settings['security']['policy']['aclCache']['backend'] = '';
+		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 

@@ -49,8 +49,8 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$configuration = $this->componentManager->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
-		$this->environment = new F3::FLOW3::Utility::MockEnvironment($configuration->utility->environment);
+		$settings = $this->componentManager->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$this->environment = new F3::FLOW3::Utility::MockEnvironment($settings['utility']['environment']);
 		$this->environment->SERVER['argc'] = 0;
 		$this->environment->SERVER['argv'] = array();
 		$this->requestBuilder = new F3::FLOW3::MVC::CLI::RequestBuilder($this->componentManager, $this->componentFactory, $this->environment);

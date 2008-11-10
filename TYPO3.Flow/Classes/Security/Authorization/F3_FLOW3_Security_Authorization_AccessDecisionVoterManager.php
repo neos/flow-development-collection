@@ -58,18 +58,18 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
+	 * @param F3::FLOW3::Configuration::Manager $settingsManager The configuration manager
 	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
+	public function __construct(F3::FLOW3::Configuration::Manager $settingsManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
 		$this->componentManager = $componentManager;
 		$this->componentFactory = $this->componentManager->getComponentFactory();
 
-		$configuration = $configurationManager->getSettings('FLOW3');
-		$this->createAccessDecisionVoters($configuration->security->accessDecisionVoters);
-		$this->allowAccessIfAllAbstain = $configuration->security->allowAccessIfAllVotersAbstain;
+		$settings = $settingsManager->getSettings('FLOW3');
+		$this->createAccessDecisionVoters($settings['security']['accessDecisionVoters']);
+		$this->allowAccessIfAllAbstain = $settings['security']['allowAccessIfAllVotersAbstain'];
 	}
 
 	/**
