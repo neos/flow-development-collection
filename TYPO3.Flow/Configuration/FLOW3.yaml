@@ -61,9 +61,9 @@ aop:
   # disable the AOP framework.
   enable: y
   
-  # Settings for the caching of proxy classes which were built by
+  # Settings for the caching of configuration an proxy classes which were built by
   # the AOP Framework.
-  proxyCache:
+  cache:
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
     backendOptions: {}

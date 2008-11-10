@@ -98,7 +98,6 @@ class Framework {
 	 *
 	 * @param F3::FLOW3::Component::ManagerInterface $componentManager: An instance of the component manager
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory: An instance of the component factory
-	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory) {
@@ -184,9 +183,9 @@ class Framework {
 		$loadedFromCache = FALSE;
 		$context = $this->componentManager->getContext();
 
-		if ($this->settings['aop']['proxyCache']['enable']) {
-			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['proxyCache']['backend'], $this->settings['aop']['proxyCache']['backendOptions']);
-			$configurationCache = $this->cacheFactory->create('FLOW3_AOP_Configuration', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['proxyCache']['backend'], $this->settings['aop']['proxyCache']['backendOptions']);
+		if ($this->settings['aop']['cache']['enable'] === TRUE) {
+			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['cache']['backend'], $this->settings['aop']['cache']['backendOptions']);
+			$configurationCache = $this->cacheFactory->create('FLOW3_AOP_Configuration', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['cache']['backend'], $this->settings['aop']['cache']['backendOptions']);
 
 			if ($proxyCache->has('proxyBuildResults') && $configurationCache->has('advicedMethodsInformationByTargetClass')) {
 
@@ -222,7 +221,7 @@ class Framework {
 			$componentConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
 		}
 
-		if ($this->settings['aop']['proxyCache']['enable'] === TRUE && !$loadedFromCache) {
+		if ($this->settings['aop']['cache']['enable'] === TRUE && !$loadedFromCache) {
 			$tags = array('F3_FLOW3_AOP', F3::FLOW3::Cache::Manager::TAG_PACKAGES_CODE);
 			$configurationCache->set('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
 			$configurationCache->set('aspectContainers', $this->aspectContainers, $tags);

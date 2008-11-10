@@ -85,7 +85,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 		$this->roles = $this->settings['security']['policy']['roles'];
 
-		if ($this->settings['aop']['proxyCache']['enable']) {
+		if ($this->settings['aop']['cache']['enable']) {
 			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3::FLOW3::Cache::VariableCache', $this->settings['security']['policy']['aclCache']['backend'], $this->settings['security']['policy']['aclCache']['backendOptions']);
 			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) {
 				$this->acls = $this->aclCache->get('FLOW3_Security_Policy_ACLs');
@@ -101,7 +101,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @todo make sure that exceptions are handled properly in the destructor - or better remove the destructor alltogether
 	 */
 	public function __destruct() {
-		if ($this->settings['aop']['proxyCache']['enable'] === TRUE) {
+		if ($this->settings['aop']['cache']['enable'] === TRUE) {
 			$tags = array('F3_FLOW3_AOP');
 			try {
 				$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
