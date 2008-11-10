@@ -35,7 +35,7 @@ class Route {
 
 	const ROUTEPART_TYPE_STATIC = 'static';
 	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
-	const PATTERN_EXTRACTROUTEPARTS = '/(\[?)(@?[^\]\[]+)\]?/';
+	const PATTERN_EXTRACTROUTEPARTS = '/(?P<dynamic>\[?)(?P<content>@?[^\]\[]+)\]?/';
 
 	/**
 	 * Route name
@@ -82,7 +82,7 @@ class Route {
 	protected $matchingURI;
 
 	/**
-	 * Contains associative array of custom route part handler classnames (key: route part name, value: route part handler classname)
+	 * Contains associative array of custom Route Part handler classnames (key: Route Part name, value: Route Part handler classname)
 	 *
 	 * @var array
 	 */
@@ -97,16 +97,16 @@ class Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Twodimensional array. Each element represents one URI segment and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 * Container for RoutePartCollections. Each element represents one URI segment and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
 	 *
-	 * @var array
+	 * @var F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection
 	 */
-	protected $uriPatternSegments = array();
+	protected $uriPatternSegments;
 
 	/**
-	 * Twodimensional array. Each element represents one Query parameter and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 * Container for RoutePartCollections. Each element represents one Query parameter and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
 	 *
-	 * @var array
+	 * @var F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection
 	 */
 	protected $uriPatternQueryParameters;
 
@@ -114,7 +114,7 @@ class Route {
 	 * @var F3::FLOW3::Component::FactoryInterface
 	 */
 	protected $componentFactory;
-	
+
 	/**
 	 * @var F3::FLOW3::Component::ManagerInterface
 	 */
@@ -124,6 +124,7 @@ class Route {
 	 * Constructor
 	 *
 	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -227,12 +228,12 @@ class Route {
 	}
 
 	/**
-	 * By default all dynamic route parts are resolved by F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
-	 * But you can specify different classes to handle particular route parts.
-	 * Note: route part handler must inherit from F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
+	 * By default all Dynamic Route Parts are resolved by F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
+	 * But you can specify different classes to handle particular Route Parts.
+	 * Note: Route Part handler must inherit from F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
 	 * Usage: setRoutePartHandlers(array('@controller' => 'F3::Package::Subpackage::MyRoutePartHandler'));
 	 *
-	 * @param array $routePartHandlers route part handler classnames
+	 * @param array $routePartHandlers Route Part handler classnames
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -243,7 +244,7 @@ class Route {
 	/**
 	 * Returns an array with the Route match results.
 	 *
-	 * @return array An array of route parts and their values for further handling by the Router
+	 * @return array An array of Route Parts and their values for further handling by the Router
 	 * @see F3::FLOW3::MVC::Web::Routing::Router
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -263,8 +264,8 @@ class Route {
 
 	/**
 	 * Checks whether $requestPath corresponds to this Route.
-	 * If all Route parts match successfully TRUE is returned and $this->matchResults contains
-	 * an array combining Route default values and calculated matchResults from the individual Route parts.
+	 * If all Route Parts match successfully TRUE is returned and $this->matchResults contains
+	 * an array combining Route default values and calculated matchResults from the individual Route Parts.
 	 *
 	 * @param string $requestPath the request path without protocol, host and query string
 	 * @param string $requestQuery the request query string (optional)
@@ -325,7 +326,7 @@ class Route {
 
 	/**
 	 * Checks whether $routeValues can be resolved to a corresponding uri.
-	 * If all Route parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURI contains
+	 * If all Route Parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURI contains
 	 * the generated uri (excluding protocol and host).
 	 *
 	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
@@ -384,7 +385,7 @@ class Route {
 	}
 
 	/**
-	 * Iterates through all segments and query parameters in $this->uriPattern and creates appropriate route part instances.
+	 * Iterates through all segments and query parameters in $this->uriPattern and creates appropriate Route Part instances.
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -393,7 +394,7 @@ class Route {
 		if ($this->isParsed) {
 			return;
 		}
-		$this->uriPatternSegments = array();
+		$this->uriPatternSegments = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
 		$this->uriPatternQueryParameters = NULL;
 
 		$splittedUriPattern = explode('?', $this->uriPattern);
@@ -406,43 +407,40 @@ class Route {
 
 		$uriPatternSegments = explode('/', $uriPatternPath);
 		foreach ($uriPatternSegments as $uriPatternSegment) {
-			$this->uriPatternSegments[] = $this->createRoutePartsFromUriPatternPart($uriPatternSegment);
+			$this->uriPatternSegments->append($this->createRoutePartsFromUriPatternPart($uriPatternSegment, $this->uriPatternSegments));
 		}
 
 		if ($uriPatternQuery !== NULL) {
 			$uriPatternQueryParameters = explode('&', $uriPatternQuery);
-			$this->uriPatternQueryParameters = array();
+			$this->uriPatternQueryParameters = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
 			foreach ($uriPatternQueryParameters as $uriPatternQueryParameter) {
-				$this->uriPatternQueryParameters[] = $this->createRoutePartsFromUriPatternPart($uriPatternQueryParameter);
+				$this->uriPatternQueryParameters->append($this->createRoutePartsFromUriPatternPart($uriPatternQueryParameter, $this->uriPatternQueryParameters));
 			}
 		}
 	}
 
 	/**
-	 * Creates corresponding Route part instances for a given URI pattern fragment (either an URI pattern segment or a URI pattern query parameter).
-	 * A route part can by dynamic or static. dynamic route parts are wrapped in square brackets.
-	 * One segment can contain more than one dynamic route part, but they have to be separated by static route parts.
+	 * Creates corresponding Route Part instances for a given URI pattern fragment (either an URI pattern segment or a URI pattern query parameter).
+	 * A Route Part can by dynamic or static. Dynamic Route Parts are wrapped in square brackets.
+	 * One segment can contain more than one Dynamic Route Part, but they have to be separated by Static Route Parts.
 	 *
 	 * @param string $uriPatternPart one segment or one query parameter (name and value) of the URI pattern including brackets.
-	 * @return array of F3::FLOW3::MVC::Web::Routing::AbstractRoutePart corresponding Route part instances
+	 * @param F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection $uriPatternSegments current collection of uriPattern parts.
+	 * @return F3::FLOW3::MVC::Web::Routing::RoutePartCollection corresponding Route Part instances
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createRoutePartsFromUriPatternPart($uriPatternPart) {
-		$routeParts = array();
+	protected function createRoutePartsFromUriPatternPart($uriPatternPart, F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection &$uriPatternSegments) {
+		$routePartCollection = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::RoutePartCollection');
 		$matches = array();
 		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $uriPatternPart, $matches, PREG_SET_ORDER);
 
 		$lastRoutePartType = NULL;
 		foreach ($matches as $matchIndex => $match) {
-			$routePartType = $match[1] == '[' ? self::ROUTEPART_TYPE_DYNAMIC : self::ROUTEPART_TYPE_STATIC;
-			$routePartName = $match[2];
-			$splitString = '';
+			$routePartType = empty($match['dynamic']) ? self::ROUTEPART_TYPE_STATIC : self::ROUTEPART_TYPE_DYNAMIC;
+			$routePartName = $match['content'];
 			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
-					throw new F3::FLOW3::MVC::Exception::SuccessiveDynamicRouteParts('two succesive dynamic route parts are not allowed!', 1218446975);
-				}
-				if (($matchIndex + 1) < count($matches)) {
-					$splitString = $matches[$matchIndex + 1][2];
+					throw new F3::FLOW3::MVC::Exception::SuccessiveDynamicRouteParts('two succesive Dynamic Route Parts are not allowed!', 1218446975);
 				}
 			}
 
@@ -457,24 +455,21 @@ class Route {
 					} else {
 						$routePart = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
 					}
-					$routePart->setSplitString($splitString);
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
 					$routePart = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
-					if (($matchIndex + 1) == count($matches)) {
-						$routePart->setLastRoutePartInSegment(TRUE);
-					}
 			}
 			$routePart->setName($routePartName);
+			$routePart->setUriPatternSegments($uriPatternSegments);
 
-			$routeParts[] = $routePart;
+			$routePartCollection->append($routePart);
 			$lastRoutePartType = $routePartType;
 		}
 
-		return $routeParts;
+		return $routePartCollection;
 	}
 }
 

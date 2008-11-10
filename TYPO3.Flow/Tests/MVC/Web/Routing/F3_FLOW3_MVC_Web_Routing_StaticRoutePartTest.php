@@ -32,31 +32,13 @@ namespace F3::FLOW3::MVC::Web::Routing;
 class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::MVC::Web::Routing::StaticRoutePart
-	 */
-	protected $routePart1;
-
-	/**
-	 * @var F3::FLOW3::MVC::Web::Routing::StaticRoutePart
-	 */
-	protected $routePart2;
-
-	/**
-	 * Sets up this test case
-	 *
-	 * @author  Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function setUp() {
-		$this->routePart1 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
-		$this->routePart2 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
-	}
-
-	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartIsPrototype() {
-		$this->assertNotSame($this->routePart1, $this->routePart2, 'Obviously the static route part is not prototype!');
+		$routePart1 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$routePart2 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Static Route Part is not prototype!');
 	}
 
 	/**
@@ -64,16 +46,17 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesNotMatchIfUriSegmentIsEmptyOrNull() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 
 		$uriSegments = array();
-		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if uriSegments array is empty');
+		$this->assertFalse($routePart->match($uriSegments), 'Static Route Part should never match if uriSegments array is empty');
 
 		$uriSegments = array(NULL, 'foo');
-		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if uriSegment is NULL');
+		$this->assertFalse($routePart->match($uriSegments), 'Static Route Part should never match if uriSegment is NULL');
 
 		$uriSegments = array('', 'foo');
-		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should never match if current uriSegment is empty');
+		$this->assertFalse($routePart->match($uriSegments), 'Static Route Part should never match if current uriSegment is empty');
 	}
 
 	/**
@@ -81,8 +64,9 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesNotMatchIfNameIsNotSet() {
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
 		$uriSegments = array('foo', 'bar');
-		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should not match if name is not set');
+		$this->assertFalse($routePart->match($uriSegments), 'Static Route Part should not match if name is not set');
 	}
 
 	/**
@@ -90,10 +74,11 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesNotMatchIfNameIsNotEqualToFirstUriSegment() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$uriSegments = array('bar', 'foo');
 
-		$this->assertFalse($this->routePart1->match($uriSegments), 'static route part should not match if name is not equal to first uriSegment');
+		$this->assertFalse($routePart->match($uriSegments), 'Static Route Part should not match if name is not equal to first uriSegment');
 	}
 
 	/**
@@ -101,22 +86,24 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesMatchIfNameIsEqualToFirstUriSegment() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$uriSegments = array('foo', 'bar');
 
-		$this->assertTrue($this->routePart1->match($uriSegments), 'static route part should match if name equals first uriSegment');
+		$this->assertTrue($routePart->match($uriSegments), 'Static Route Part should match if name equals first uriSegment');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartDoesNotMatchIfNameIsEqualToTheBeginningOfTheFirstUriSegmentButTheSegmentIsLonger() {
-		$this->routePart1->setName('foo');
-		$this->routePart1->setLastRoutePartInSegment(TRUE);
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$uriSegments = array('foos', 'bar');
 
-		$this->assertFalse($this->routePart1->match($uriSegments));
+		$this->assertFalse($routePart->match($uriSegments));
 	}
 
 	/**
@@ -124,14 +111,15 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function valueIsNullAfterUnsuccessfulMatch() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 
 		$uriSegments = array('foo', 'bar');
-		$this->routePart1->match($uriSegments);
+		$routePart->match($uriSegments);
 
 		$uriSegments = array('bar', 'foo');
-		$this->routePart1->match($uriSegments);
-		$this->assertNull($this->routePart1->getValue(), 'static route part value should be NULL after unsuccessful match');
+		$routePart->match($uriSegments);
+		$this->assertNull($routePart->getValue(), 'Static Route Part value should be NULL after unsuccessful match');
 	}
 
 	/**
@@ -139,14 +127,15 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriSegmentsAreNotChangedAfterUnsuccessfulMatch() {
-		$this->routePart1->setName('bar');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('bar');
 
 		$uriSegments = array('foo', 'bar');
 		$uriSegmentsCopy = $uriSegments;
 
-		$this->routePart1->match($uriSegments);
+		$routePart->match($uriSegments);
 
-		$this->assertSame($uriSegmentsCopy, $uriSegments, 'static route part should not change uriSegments array on unsuccessful match');
+		$this->assertSame($uriSegmentsCopy, $uriSegments, 'Static Route Part should not change uriSegments array on unsuccessful match');
 	}
 
 	/**
@@ -154,13 +143,16 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriSegmentsAreShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsLastInSegment() {
-		$this->routePart1->setName('bar');
-		$this->routePart1->setLastRoutePartInSegment(TRUE);
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('bar');
+		$mockUriPatternSegmentCollection = $this->getMock('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue(NULL));
+		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
 		$uriSegments = array('bar', 'foo', 'test');
 
-		$this->routePart1->match($uriSegments);
+		$routePart->match($uriSegments);
 
-		$this->assertSame(array('foo', 'test'), $uriSegments, 'static route part should shorten uriSegments array by one entry on successful match');
+		$this->assertSame(array('foo', 'test'), $uriSegments, 'Static Route Part should shorten uriSegments array by one entry on successful match');
 	}
 
 	/**
@@ -168,13 +160,17 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriSegmentsAreNotShortenedByOneSegmentAfterSuccessfulMatchIfRoutePartIsNotLastInSegment() {
-		$this->routePart1->setName('bar');
-		$this->routePart1->setLastRoutePartInSegment(FALSE);
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('bar');
+		$mockRoutePart = $this->getMock('F3::FLOW3::MVC::Web::Routing::AbstractRoutePart');
+		$mockUriPatternSegmentCollection = $this->getMock('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
+		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
 		$uriSegments = array('bar', 'foo', 'test');
 
-		$this->routePart1->match($uriSegments);
+		$routePart->match($uriSegments);
 
-		$this->assertSame(array('', 'foo', 'test'), $uriSegments, 'static route part should shorten uriSegments array by one entry on successful match');
+		$this->assertSame(array('', 'foo', 'test'), $uriSegments, 'Static Route Part should shorten uriSegments array by one entry on successful match');
 	}
 
 	/**
@@ -182,11 +178,12 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartCanResolveEmptyArray() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$routeValues = array();
 		
-		$this->assertTrue($this->routePart1->resolve($routeValues));
-		$this->assertEquals('foo', $this->routePart1->getValue(), 'static route part should resolve empty routeValues-array');
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve empty routeValues-array');
 	}
 
 	/**
@@ -194,11 +191,12 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartCanResolveNonEmptyArray() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
 
-		$this->assertTrue($this->routePart1->resolve($routeValues));
-		$this->assertEquals('foo', $this->routePart1->getValue(), 'static route part should resolve non-empty routeValues-array');
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve non-empty routeValues-array');
 	}
 
 	/**
@@ -206,11 +204,12 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingResolveDoesNotChangeRouteValues() {
-		$this->routePart1->setName('foo');
+		$routePart = new F3::FLOW3::MVC::Web::Routing::StaticRoutePart();
+		$routePart->setName('foo');
 		$routeValues = array('@controller' => 'foo', '@action' => 'bar');
 
-		$this->assertTrue($this->routePart1->resolve($routeValues));
-		$this->assertEquals(array('@controller' => 'foo', '@action' => 'bar'), $routeValues, 'when resolve() is called on static route part, specified routeValues-array should never be changed');
+		$this->assertTrue($routePart->resolve($routeValues));
+		$this->assertEquals(array('@controller' => 'foo', '@action' => 'bar'), $routeValues, 'when resolve() is called on Static Route Part, specified routeValues-array should never be changed');
 	}
 }
 ?>

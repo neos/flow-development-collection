@@ -22,7 +22,7 @@ namespace F3::FLOW3::MVC::Web::Routing;
  */
 
 /**
- * static route part
+ * Static Route Part
  *
  * @package FLOW3
  * @subpackage MVC
@@ -33,28 +33,11 @@ namespace F3::FLOW3::MVC::Web::Routing;
 class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 
 	/**
-	 * @var boolean specifies whether this route part is the last in the current url segment
-	 */
-	protected $lastRoutePartInSegment = FALSE;
-
-	/**
-	 * After a successful match, first urlSegment is cut off. But only if this route part
-	 * is the last inside the current url segment
-	 *
-	 * @param boolean $lastRoutePartInSegment TRUE if this is the last route part in the current url segment
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setLastRoutePartInSegment($lastRoutePartInSegment) {
-		$this->lastRoutePartInSegment = $lastRoutePartInSegment;
-	}
-
-	/**
-	 * Checks whether this static Route part correspond to the given $urlSegments.
-	 * This is TRUE if the first element of $urlSegments is not empty and is equal to the Route part name
+	 * Checks whether this Static Route Part correspond to the given $urlSegments.
+	 * This is TRUE if the first element of $urlSegments is not empty and is equal to the Route Part name
 	 *
 	 * @param array $urlSegments An array with one element per request URL segment.
-	 * @return boolean TRUE if route part matched $urlSegments, otherwise FALSE.
+	 * @return boolean TRUE if Route Part matched $urlSegments, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function match(array &$urlSegments) {
@@ -69,7 +52,8 @@ class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 			return FALSE;
 		}
 		$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
-		if ($this->lastRoutePartInSegment) {
+		
+		if ($this->getNextRoutePartInCurrentUriPatternSegment() === NULL) {
 			if (F3::PHP6::Functions::strlen($urlSegments[0]) != 0) {
 				return FALSE;
 			}
@@ -80,7 +64,7 @@ class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	}
 
 	/**
-	 * Sets the route part value to the route part name and returns TRUE.
+	 * Sets the Route Part value to the Route Part name and returns TRUE.
 	 *
 	 * @param array $routeValues not used but needed to implement F3::FLOW3::MVC::Web::Routing::AbstractRoutePart
 	 * @return boolean always TRUE

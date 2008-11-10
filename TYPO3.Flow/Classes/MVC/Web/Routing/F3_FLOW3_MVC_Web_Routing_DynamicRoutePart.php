@@ -22,7 +22,7 @@ namespace F3::FLOW3::MVC::Web::Routing;
  */
 
 /**
- * dynamic route part
+ * Dynamic Route Part
  *
  * @package FLOW3
  * @subpackage MVC
@@ -33,32 +33,7 @@ namespace F3::FLOW3::MVC::Web::Routing;
 class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 
 	/**
-	 * @var string if not empty, match() will check existence of $splitString in current URI segment.
-	 */
-	protected $splitString;
-
-	/**
-	 * @var boolean if the route part is optional
-	 */
-	protected $isOptional = FALSE;
-
-	/**
-	 * Sets split string.
-	 *
-	 * If not empty, match() will check the existence of $splitString in the current URI segment.
-	 * If the URI segment does not contain $splitString, the route part won't match.
-	 * Otherwise all characters before $splitString are removed from the URI segment.
-	 *
-	 * @param string $splitString
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function setSplitString($splitString) {
-		$this->splitString = $splitString;
-	}
-
-	/**
-	 * Checks whether this dynamic route part corresponds to the given $uriSegments.
+	 * Checks whether this Dynamic Route Part corresponds to the given $uriSegments.
 	 *
 	 * On successful match this method sets $this->value to the corresponding uriPart
 	 * and shortens $uriSegments respectively.
@@ -66,7 +41,7 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	 * (if it exists).
 	 *
 	 * @param array $uriSegments An array with one element per request URI segment.
-	 * @return boolean TRUE if route part matched $uriSegments, otherwise FALSE.
+	 * @return boolean TRUE if Route Part matched $uriSegments, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	final public function match(array &$uriSegments) {
@@ -76,13 +51,13 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 			return FALSE;
 		}
 		$valueToMatch = $this->findValueToMatch($uriSegments);
-		if (!$this->matchValue($valueToMatch) && !$this->isOptional) {
+		if (!$this->matchValue($valueToMatch)) {
 			return FALSE;
 		}
 		if (F3::PHP6::Functions::strlen($valueToMatch)) {
 			$uriSegments[0] = F3::PHP6::Functions::substr($uriSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
 		}
-		if (F3::PHP6::Functions::strlen($this->splitString) == 0 && isset($uriSegments[0]) && F3::PHP6::Functions::strlen($uriSegments[0]) == 0) {
+		if (isset($uriSegments[0]) && F3::PHP6::Functions::strlen($uriSegments[0]) == 0 && $this->getNextRoutePartInCurrentUriPatternSegment() === NULL) {
 			array_shift($uriSegments);
 		}
 
@@ -102,8 +77,9 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 			return '';
 		}
 		$valueToMatch = $uriSegments[0];
-		if (F3::PHP6::Functions::strlen($this->splitString) > 0) {
-			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $this->splitString);
+		$splitString = $this->getSplitString();
+		if (F3::PHP6::Functions::strlen($splitString) > 0) {
+			$splitStringPosition = F3::PHP6::Functions::strpos($valueToMatch, $splitString);
 			if ($splitStringPosition === FALSE) {
 				return '';
 			}
@@ -134,7 +110,7 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	}
 
 	/**
-	 * Checks whether $routeValues contains elements which correspond to this dynamic route part.
+	 * Checks whether $routeValues contains elements which correspond to this Dynamic Route Part.
 	 * If a corresponding element is found in $routeValues, this element is removed from the array.
 	 *
 	 * @param array $routeValues
@@ -175,6 +151,22 @@ class DynamicRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 			$this->value = $value;
 		}
 		return TRUE;
+	}
+
+	/**
+	 * Returns the next Route Parts name. This will be used to locate the end of this Dynamic Route Part.
+	 * The next Route Part must be NULL or an instance of tpye F3::FLOW3::MVC::Web::Routing::StaticRoutePart
+	 * because two Dynamic Route Parts can't directly follow each other.
+	 * 
+	 * @return string value of the following Route Part if it exists. Otherwise an empty string.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function getSplitString() {
+		$nextRoutePart = $this->getNextRoutePartInCurrentUriPatternSegment();
+		if ($nextRoutePart === NULL) {
+			return '';
+		}
+		return $nextRoutePart->getName();
 	}
 }
 ?>
