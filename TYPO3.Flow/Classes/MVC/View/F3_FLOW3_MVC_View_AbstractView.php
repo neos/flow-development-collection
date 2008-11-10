@@ -32,7 +32,7 @@ namespace F3::FLOW3::MVC::View;
 abstract class AbstractView {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
 	 */
 	protected $componentFactory;
 
@@ -59,14 +59,14 @@ abstract class AbstractView {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
+	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the Component Manager
 	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
 	 * @param F3::FLOW3::Resource::Manager $resourceManager A reference to the Resource Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager) {
+		$this->componentManager = $componentManager;
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
 	}
@@ -102,7 +102,7 @@ abstract class AbstractView {
 	 */
 	public function getViewHelper($viewHelperClassName) {
 		if (!isset($this->viewHelpers[$viewHelperClassName])) {
-			$viewHelper = $this->componentFactory->create($viewHelperClassName);
+			$viewHelper = $this->componentManager->getComponent($viewHelperClassName);
 			if (!$viewHelper instanceof F3::FLOW3::MVC::View::Helper::HelperInterface) {
 				throw new F3::FLOW3::MVC::Exception::InvalidViewHelper('View Helpers must implement interface "F3::FLOW3::MVC::View::Helper::HelperInterface"', 1222895456);
 			}
