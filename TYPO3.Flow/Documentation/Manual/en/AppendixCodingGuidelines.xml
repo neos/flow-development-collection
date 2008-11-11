@@ -240,19 +240,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Component</classname></para>
+              <para><classname>F3::FLOW3::Object</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Component::Manager</classname></para>
+              <para><classname>F3::FLOW3::Object::Manager</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::MySubComponent</classname></para>
+              <para><classname>F3::MyPackage::MyObject::MySubObject</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::MyHTMLParser</classname></para>
+              <para><classname>F3::MyPackage::MyObject::MyHTMLParser</classname></para>
             </listitem>
 
             <listitem>
@@ -260,7 +260,7 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::AbstractLogger</classname></para>
+              <para><classname>F3::MyPackage::MyObject::AbstractLogger</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -278,11 +278,11 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>someComponent::classname</classname></para>
+              <para><classname>someObject::classname</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponentMySubComponent</classname></para>
+              <para><classname>F3::MyPackage::MyObjectMySubObject</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -304,19 +304,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Component::ComponentInterface</classname></para>
+              <para><classname>F3::FLOW3::Object::ObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Component::ManagerInterface</classname></para>
+              <para><classname>F3::FLOW3::Object::ManagerInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::MySubComponentInterface</classname></para>
+              <para><classname>F3::MyPackage::MyObject::MySubObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::MyHTMLParserInterface</classname></para>
+              <para><classname>F3::MyPackage::MyObject::MyHTMLParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -334,11 +334,11 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>IsomeComponent::classname</classname></para>
+              <para><classname>IsomeObject::classname</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Component::Manager::Interface</classname></para>
+              <para><classname>F3::FLOW3::Object::Manager::Interface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -359,19 +359,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Component::Exception</classname></para>
+              <para><classname>F3::FLOW3::Object::Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Component::Exception::InvalidClassName</classname></para>
+              <para><classname>F3::FLOW3::Object::Exception::InvalidClassName</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::Exception</classname></para>
+              <para><classname>F3::MyPackage::MyObject::Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyComponent::Exception::OutOfCoffee</classname></para>
+              <para><classname>F3::MyPackage::MyObject::Exception::OutOfCoffee</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -668,7 +668,7 @@ $message = "Hey $name, you look $look today!";</literallayout>
 
             <literallayout>namespace F3::MyPackage;
 
-class MyComponent {
+class MyObject {
 
 }</literallayout>
           </example></para>
@@ -1151,19 +1151,19 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       them bubble up until a place where more general exceptions are catched.
       Consider the following example:</para>
 
-      <para>Some method tried to retrieve a component from the component
-      manager. However, instead of providing a string containing the component
+      <para>Some method tried to retrieve an object from the object
+      manager. However, instead of providing a string containing the object
       name, the method passed an object (of course not on purpose - something
-      went wrong). The component manager now throws an
-      <classname>InvalidComponentName</classname> exception. In order to catch
+      went wrong). The object manager now throws an
+      <classname>InvalidObjectName</classname> exception. In order to catch
       this exception you can, of course, catch it specifically - or only
-      consider a more general <classname>Component</classname> exception (or
+      consider a more general <classname>Object</classname> exception (or
       an even more general <classname>FLOW3</classname> exception). This all
       works because we have the following hierarchy:</para>
 
       <literallayout>+ F3::FLOW3::Exception
-  + F3::FLOW3::Component::Exception
-    + F3::FLOW3::Component::Exception::InvalidComponentName</literallayout>
+  + F3::FLOW3::Object::Exception
+    + F3::FLOW3::Object::Exception::InvalidObjectName</literallayout>
     </section>
 
     <section>

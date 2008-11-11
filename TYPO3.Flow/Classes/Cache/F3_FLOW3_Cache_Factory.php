@@ -34,18 +34,18 @@ namespace F3::FLOW3::Cache;
 class Factory {
 
 	/**
-	 * A reference to the component manager
+	 * A reference to the object manager
 	 *
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * A reference to the component factory
+	 * A reference to the object factory
 	 *
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * A reference to the cache manager
@@ -57,14 +57,14 @@ class Factory {
 	/**
 	 * Constructs this cache factory
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
-	 * @param F3::FLOW3::Component::ManagerInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectFactory A reference to the object factory
 	 * 	 * @param F3::FLOW3::Cache::Manager $cacheManager A reference to the cache manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Cache::Manager $cacheManager) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Cache::Manager $cacheManager) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $objectFactory;
 		$this->cacheManager = $cacheManager;
 	}
 
@@ -73,18 +73,18 @@ class Factory {
 	 * After creating the cache, it will be registered at the cache manager.
 	 *
 	 * @param string $cacheIdentifier The name / identifier of the cache to create
-	 * @param string $cacheComponentName Component name of the cache frontend
-	 * @param string $backendComponentName Component name of the cache backend
+	 * @param string $cacheObjectName Object name of the cache frontend
+	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
 	 * @return F3::FLOW3::Cache::AbstractCache The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function create($cacheIdentifier, $cacheComponentName, $backendComponentName, array $backendOptions = array()) {
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentFactory->create($backendComponentName, $context, $backendOptions);
-		if (!$backend instanceof F3::FLOW3::Cache::AbstractBackend) throw new F3::FLOW3::Cache::Exception::InvalidBackend('"' . $backendComponentName . '" is not a valid cache backend component.', 1216304301);
-		$cache = $this->componentFactory->create($cacheComponentName, $cacheIdentifier, $backend);
-		if (!$cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception::InvalidCache('"' . $cacheComponentName . '" is not a valid cache component.', 1216304300);
+	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectFactory->create($backendObjectName, $context, $backendOptions);
+		if (!$backend instanceof F3::FLOW3::Cache::AbstractBackend) throw new F3::FLOW3::Cache::Exception::InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+		$cache = $this->objectFactory->create($cacheObjectName, $cacheIdentifier, $backend);
+		if (!$cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception::InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);
 		return $cache;

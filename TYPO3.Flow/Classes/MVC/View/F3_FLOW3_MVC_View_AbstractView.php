@@ -32,12 +32,12 @@ namespace F3::FLOW3::MVC::View;
 abstract class AbstractView {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Object::FactoryInterface A reference to the Object Factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Package::FactoryInterface A reference to the Package Factory
+	 * @var F3::FLOW3::Package::FactoryInterface
 	 */
 	protected $packageManager;
 
@@ -47,9 +47,9 @@ abstract class AbstractView {
 	protected $resourceManager;
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * @var F3::FLOW3::MVC::Request
@@ -64,18 +64,18 @@ abstract class AbstractView {
 	/**
 	 * Constructs the view.
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the Object Factory
 	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
 	 * @param F3::FLOW3::Resource::Manager $resourceManager A reference to the Resource Manager
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the Component Manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the Object Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Package::ManagerInterface $packageManager, F3::FLOW3::Resource::Manager $resourceManager, F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectFactory = $objectFactory;
+		$this->objectManager = $objectManager;
 		$this->packageManager = $packageManager;
 		$this->resourceManager = $resourceManager;
-		$this->componentManager = $componentManager;
 	}
 
 	/**
@@ -84,7 +84,7 @@ abstract class AbstractView {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeComponent() {
+	public function initializeObject() {
 		$this->initializeView();
 	}
 
@@ -109,7 +109,7 @@ abstract class AbstractView {
 	 */
 	public function getViewHelper($viewHelperClassName) {
 		if (!isset($this->viewHelpers[$viewHelperClassName])) {
-			$viewHelper = $this->componentManager->getComponent($viewHelperClassName);
+			$viewHelper = $this->objectManager->getObject($viewHelperClassName);
 			if (!$viewHelper instanceof F3::FLOW3::MVC::View::Helper::HelperInterface) {
 				throw new F3::FLOW3::MVC::Exception::InvalidViewHelper('View Helpers must implement interface "F3::FLOW3::MVC::View::Helper::HelperInterface"', 1222895456);
 			}

@@ -35,9 +35,9 @@ class Request {
 	const PATTERN_MATCH_FORMAT = '/^[a-z0-9]{1,5}$/';
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * @var F3::FLOW3::Package::ManagerInterface
@@ -45,18 +45,18 @@ class Request {
 	protected $packageManager;
 
 	/**
-	 * Pattern after which the controller component name is built
+	 * Pattern after which the controller object name is built
 	 *
 	 * @var string
 	 */
-	protected $controllerComponentNamePattern = 'F3::@package::Controller::@controllerController';
+	protected $controllerObjectNamePattern = 'F3::@package::Controller::@controllerController';
 
 	/**
-	 * Pattern after which the view component name is built
+	 * Pattern after which the view object name is built
 	 *
 	 * @var string
 	 */
-	protected $viewComponentNamePattern = 'F3::@package::View::@controller@action@format';
+	protected $viewObjectNamePattern = 'F3::@package::View::@controller@action@format';
 
 	/**
 	 * Package key of the controller which is supposed to handle this request.
@@ -66,7 +66,7 @@ class Request {
 	protected $controllerPackageKey = 'FLOW3::MVC';
 
 	/**
-	 * @var string Component name of the controller which is supposed to handle this request.
+	 * @var string Object name of the controller which is supposed to handle this request.
 	 */
 	protected $controllerName = 'Default';
 
@@ -100,14 +100,14 @@ class Request {
 	}
 
 	/**
-	 * Injects the component manager
+	 * Injects the object manager
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -146,24 +146,24 @@ class Request {
 	}
 
 	/**
-	 * Returns the component name of the controller defined by the package key and
+	 * Returns the object name of the controller defined by the package key and
 	 * controller name
 	 *
-	 * @return string The controller's Component Name
+	 * @return string The controller's Object Name
 	 * @throws F3::FLOW3::MVC:Exception::NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getControllerComponentName() {
-		$lowercaseComponentName = str_replace('@package', $this->controllerPackageKey, $this->controllerComponentNamePattern);
-		$lowercaseComponentName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseComponentName));
-		$componentName = $this->componentManager->getCaseSensitiveComponentName($lowercaseComponentName);
-		if ($componentName === FALSE) throw new F3::FLOW3::MVC::Exception::NoSuchController('The controller component "' . $lowercaseComponentName . '" does not exist.', 1220884009);
+	public function getControllerObjectName() {
+		$lowercaseObjectName = str_replace('@package', $this->controllerPackageKey, $this->controllerObjectNamePattern);
+		$lowercaseObjectName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseObjectName));
+		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
+		if ($objectName === FALSE) throw new F3::FLOW3::MVC::Exception::NoSuchController('The controller object "' . $lowercaseObjectName . '" does not exist.', 1220884009);
 
-		return $componentName;
+		return $objectName;
 	}
 
 	/**
-	 * Sets the pattern for building the controller component name.
+	 * Sets the pattern for building the controller object name.
 	 *
 	 * The pattern may contain the placeholders "@package" and "@controller" which will be substituted
 	 * by the real package key and controller name.
@@ -172,62 +172,62 @@ class Request {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setControllerComponentNamePattern($pattern) {
-		$this->controllerComponentNamePattern = $pattern;
+	public function setControllerObjectNamePattern($pattern) {
+		$this->controllerObjectNamePattern = $pattern;
 	}
 
 	/**
-	 * Returns the pattern for building the controller component name.
+	 * Returns the pattern for building the controller object name.
 	 *
 	 * @return string $pattern The pattern
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getControllerComponentNamePattern() {
-		return $this->controllerComponentNamePattern;
+	public function getControllerObjectNamePattern() {
+		return $this->controllerObjectNamePattern;
 	}
 
 	/**
-	 * Sets the pattern for building the view component name
+	 * Sets the pattern for building the view object name
 	 *
-	 * @param string $pattern The view component name pattern, eg. F3::@package::View::@controller@action
+	 * @param string $pattern The view object name pattern, eg. F3::@package::View::@controller@action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setViewComponentNamePattern($pattern) {
-		if (!is_string($pattern)) throw new ::InvalidArgumentException('The view component name pattern must be a valid string, ' . gettype($pattern) . ' given.', 1221563219);
-		$this->viewComponentNamePattern = $pattern;
+	public function setViewObjectNamePattern($pattern) {
+		if (!is_string($pattern)) throw new ::InvalidArgumentException('The view object name pattern must be a valid string, ' . gettype($pattern) . ' given.', 1221563219);
+		$this->viewObjectNamePattern = $pattern;
 	}
 
 	/**
-	 * Returns the View Component Name Pattern
+	 * Returns the View Object Name Pattern
 	 *
 	 * @return string The pattern
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getViewComponentNamePattern() {
-		return $this->viewComponentNamePattern;
+	public function getViewObjectNamePattern() {
+		return $this->viewObjectNamePattern;
 	}
 
 	/**
-	 * Returns the view's (possible) component name according to the defined view component
+	 * Returns the view's (possible) object name according to the defined view object
 	 * name pattern and the specified values for package, controller, action and format.
 	 *
-	 * If no valid view component name could be resolved, FALSE is returned
+	 * If no valid view object name could be resolved, FALSE is returned
 	 *
-	 * @return mixed Either the view component name or FALSE
+	 * @return mixed Either the view object name or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getViewComponentName() {
-		$possibleViewName = $this->viewComponentNamePattern;
+	public function getViewObjectName() {
+		$possibleViewName = $this->viewObjectNamePattern;
 		$possibleViewName = str_replace('@package', $this->controllerPackageKey, $possibleViewName);
 		$possibleViewName = str_replace('@controller', $this->controllerName, $possibleViewName);
 		$possibleViewName = str_replace('@action', $this->controllerActionName, $possibleViewName);
 
-		$viewComponentName = $this->componentManager->getCaseSensitiveComponentName(str_replace('@format', $this->format, $possibleViewName));
-		if ($viewComponentName === FALSE) {
-			$viewComponentName = $this->componentManager->getCaseSensitiveComponentName(str_replace('@format', '', $possibleViewName));
+		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(str_replace('@format', $this->format, $possibleViewName));
+		if ($viewObjectName === FALSE) {
+			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(str_replace('@format', '', $possibleViewName));
 		}
-		return $viewComponentName;
+		return $viewObjectName;
 	}
 
 	/**
@@ -256,7 +256,7 @@ class Request {
 
 	/**
 	 * Sets the name of the controller which is supposed to handle the request.
-	 * Note: This is not the component name of the controller!
+	 * Note: This is not the object name of the controller!
 	 *
 	 * @param string $controllerName Name of the controller
 	 * @return void
@@ -269,10 +269,10 @@ class Request {
 	}
 
 	/**
-	 * Returns the component name of the controller supposed to handle this request, if one
+	 * Returns the object name of the controller supposed to handle this request, if one
 	 * was set already (if not, the name of the default controller is returned)
 	 *
-	 * @return string Component name of the controller
+	 * @return string Object name of the controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerName() {

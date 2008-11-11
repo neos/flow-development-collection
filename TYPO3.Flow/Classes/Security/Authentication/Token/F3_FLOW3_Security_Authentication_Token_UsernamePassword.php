@@ -34,9 +34,9 @@ namespace F3::FLOW3::Security::Authentication::Token;
 class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Utility::Environment
@@ -61,14 +61,14 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	protected $requestPattern = NULL;
 
 	/**
-	 * Injects the component factory
+	 * Injects the object factory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -177,7 +177,7 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 * @todo implement this method, otherwise everbody will be an administrator ;-)
 	 */
 	public function getGrantedAuthorities() {
-		return array($this->componentFactory->create('F3::FLOW3::Security::ACL::Role', 'ADMINISTRATOR'));
+		return array($this->objectFactory->create('F3::FLOW3::Security::ACL::Role', 'ADMINISTRATOR'));
 	}
 
 	/**

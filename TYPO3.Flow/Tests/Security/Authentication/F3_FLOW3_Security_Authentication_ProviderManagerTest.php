@@ -55,7 +55,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providers = $providerManager->getProviders();
 		$tokens = $providerManager->getTokens();
 
@@ -99,7 +99,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2)));
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providerManager->setProviders(array($mockProvider1, $mockProvider2));
 		$providerManager->setSecurityContext($securityContext);
 
@@ -122,7 +122,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$securityContext->expects($this->once())->method('setAuthenticationPerformed')->with(TRUE);
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providerManager->setSecurityContext($securityContext);
 		$providerManager->setProviders(array());
 
@@ -150,7 +150,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 
@@ -178,7 +178,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 
@@ -210,7 +210,7 @@ class ProviderManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager), new F3::FLOW3::Security::RequestPatternResolver($this->componentManager));
+		$providerManager = new F3::FLOW3::Security::Authentication::ProviderManager($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager), new F3::FLOW3::Security::RequestPatternResolver($this->objectManager));
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 

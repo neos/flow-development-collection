@@ -33,9 +33,9 @@ namespace F3::FLOW3::MVC;
 class Dispatcher {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface A reference to the component manager
+	 * @var F3::FLOW3::Object::ManagerInterface A reference to the object manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * @var F3::FLOW3::Security::ContextHolderInterface A reference to the security contextholder
@@ -55,11 +55,11 @@ class Dispatcher {
 	/**
 	 * Constructs the global dispatcher
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -132,10 +132,10 @@ class Dispatcher {
 	 * @todo Implement proper mechanism for handling authentication exceptions
 	 */
 	protected function getPreparedController(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
-		$controllerComponentName = $request->getControllerComponentName();
+		$controllerObjectName = $request->getControllerObjectName();
 
 		try {
-			$controller = $this->componentManager->getComponent($controllerComponentName);
+			$controller = $this->objectManager->getObject($controllerObjectName);
 		} catch (F3::FLOW3::Security::Exception::AuthenticationRequired $exception) {
 			if (!$request instanceof F3::FLOW3::MVC::Web::Request) throw $exception;
 			$request->setDispatched(TRUE);
@@ -149,7 +149,7 @@ class Dispatcher {
 			throw new F3::FLOW3::MVC::Exception::StopAction();
 		}
 
-		if (!$controller instanceof F3::FLOW3::MVC::Controller::RequestHandlingController) throw new F3::FLOW3::MVC::Exception::InvalidController('Invalid controller "' . $controllerComponentName . '". The controller must be a valid request handling controller.', 1202921619);
+		if (!$controller instanceof F3::FLOW3::MVC::Controller::RequestHandlingController) throw new F3::FLOW3::MVC::Exception::InvalidController('Invalid controller "' . $controllerObjectName . '". The controller must be a valid request handling controller.', 1202921619);
 
 		$controller->setSettings($this->configurationManager->getSettings($request->getControllerPackageKey()));
 		return $controller;

@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestPatternResolverTest extends F3::Testing::BaseTestCase {
@@ -36,7 +36,7 @@ class RequestPatternResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
-		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->objectManager);
 
 		try {
 			$requestPatternResolver->resolveRequestPatternClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
@@ -51,7 +51,7 @@ class RequestPatternResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
-		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->objectManager);
 		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('URL');
 
 		$this->assertEquals('F3::FLOW3::Security::RequestPattern::URL', $requestPatternClass, 'The wrong classname has been resolved');
@@ -62,7 +62,7 @@ class RequestPatternResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassname() {
-		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->componentManager);
+		$requestPatternResolver = new F3::FLOW3::Security::RequestPatternResolver($this->objectManager);
 		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3::TestPackage::TestRequestPattern');
 
 		$this->assertEquals('F3::TestPackage::TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');

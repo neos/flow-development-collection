@@ -37,8 +37,8 @@ class EventTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function eventIsPrototype() {
-		$event1 = $this->componentManager->getComponent('F3::FLOW3::Event::Event');
-		$event2 = $this->componentManager->getComponent('F3::FLOW3::Event::Event');
+		$event1 = $this->objectManager->getObject('F3::FLOW3::Event::Event');
+		$event2 = $this->objectManager->getObject('F3::FLOW3::Event::Event');
 		$this->assertNotSame($event1, $event2, 'Obviously Event is not prototype!');
 	}
 

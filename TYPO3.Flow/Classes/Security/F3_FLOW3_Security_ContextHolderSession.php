@@ -32,14 +32,14 @@ namespace F3::FLOW3::Security;
 class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory = NULL;
+	protected $objectFactory = NULL;
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager = NULL;
+	protected $objectManager = NULL;
 
 	/**
 	 * @var F3::FLOW3::Security::Authentication::ManagerInterface
@@ -62,31 +62,31 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	}
 
 	/**
-	 * Inject the component factory
+	 * Inject the object factory
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory The component factory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
-	 * Inject the component manager
+	 * Inject the object manager
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $componentManager The authentication manager
+	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $objectManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -134,7 +134,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	public function initializeContext(F3::FLOW3::MVC::Request $request) {
 		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
 		if (!($context instanceof F3::FLOW3::Security::Context)) {
-			$context =  $this->componentFactory->create('F3::FLOW3::Security::Context');
+			$context =  $this->objectFactory->create('F3::FLOW3::Security::Context');
 		}
 		$context->setRequest($request);
 
@@ -219,8 +219,8 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 */
 	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(F3::FLOW3::Security::Authentication::TokenInterface $token) {
 		if ($token instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword) {
-			$token->injectComponentFactory($this->componentFactory);
-			$token->injectEnvironment($this->componentManager->getComponent('F3::FLOW3::Utility::Environment'));
+			$token->injectObjectFactory($this->objectFactory);
+			$token->injectEnvironment($this->objectManager->getObject('F3::FLOW3::Utility::Environment'));
 		}
 	}
 }

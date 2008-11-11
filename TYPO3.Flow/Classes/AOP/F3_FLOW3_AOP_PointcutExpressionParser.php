@@ -39,18 +39,18 @@ class PointcutExpressionParser {
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface $componentManager
+	 * @var F3::FLOW3::Object::ManagerInterface $objectManager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * Constructs this expression parser
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -191,20 +191,20 @@ class PointcutExpressionParser {
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, F3::FLOW3::AOP::PointcutFilterComposite $pointcutFilterComposite) {
 		if (strpos($pointcutExpression, '->') === FALSE) throw new F3::FLOW3::AOP::Exception::InvalidPointcutExpression('Syntax error: "->" expected in "' . $pointcutExpression . '".', 1172219205);
 		list($aspectClassName, $pointcutMethodName) = explode ('->', $pointcutExpression, 2);
-		$pointcutFilterComposite->addFilter($operator, $this->componentManager->getComponent('F3::FLOW3::AOP::PointcutFilter', $aspectClassName, $pointcutMethodName));
+		$pointcutFilterComposite->addFilter($operator, $this->objectManager->getObject('F3::FLOW3::AOP::PointcutFilter', $aspectClassName, $pointcutMethodName));
 	}
 
 	/**
 	 * Adds a custom filter to the poincut filter composite
 	 *
 	 * @param string $operator The operator
-	 * @param string $filterComponentName Component Name of the custom filter (value of the designator)
+	 * @param string $filterObjectName Object Name of the custom filter (value of the designator)
 	 * @param F3::FLOW3::AOP::PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseDesignatorFilter($operator, $filterComponentName, F3::FLOW3::AOP::PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, $this->createCustomFilter($filterComponentName));
+	protected function parseDesignatorFilter($operator, $filterObjectName, F3::FLOW3::AOP::PointcutFilterComposite $pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, $this->createCustomFilter($filterObjectName));
 	}
 
 	/**
@@ -256,12 +256,12 @@ class PointcutExpressionParser {
 	/**
 	 * Factory method for creating custom filter instances
 	 *
-	 * @param string Component name of the filter
-	 * @return object An instance of the filter component
+	 * @param string Object name of the filter
+	 * @return object An instance of the filter object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createCustomFilter($filterComponentName) {
-		return $this->componentManager->getComponent($filterComponentName);
+	protected function createCustomFilter($filterObjectName) {
+		return $this->objectManager->getObject($filterObjectName);
 	}
 }
 ?>

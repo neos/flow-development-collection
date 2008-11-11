@@ -37,7 +37,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
 		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
-		$notEmptyValidator->injectComponentFactory($this->componentFactory);
+		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
@@ -49,7 +49,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 */
 	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
 		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
-		$notEmptyValidator->injectComponentFactory($this->componentFactory);
+		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
@@ -61,7 +61,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 */
 	public function notEmptyValidatorReturnsFalseForANullValue() {
 		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
-		$notEmptyValidator->injectComponentFactory($this->componentFactory);
+		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
@@ -73,7 +73,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
 		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
-		$notEmptyValidator->injectComponentFactory($this->componentFactory);
+		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$notEmptyValidator->isValidProperty('', $validationErrors);
@@ -88,7 +88,7 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
 		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
-		$notEmptyValidator->injectComponentFactory($this->componentFactory);
+		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$notEmptyValidator->isValidProperty(NULL, $validationErrors);

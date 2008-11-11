@@ -36,8 +36,8 @@ class UriPatternSegmentCollectionTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternSegmentCollectionIsPrototype() {
-		$uriPatternSegmentCollection1 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
-		$uriPatternSegmentCollection2 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$uriPatternSegmentCollection1 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$uriPatternSegmentCollection2 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
 		$this->assertNotSame($uriPatternSegmentCollection1, $uriPatternSegmentCollection2, 'Obviously UriPatternSegmentCollection is not prototype!');
 	}
 

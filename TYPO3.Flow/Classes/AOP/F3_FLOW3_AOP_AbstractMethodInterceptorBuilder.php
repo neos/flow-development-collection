@@ -185,7 +185,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	}
 
 	/**
-	 * Builds code for the __wakeup() method to fetch a component factory, set
+	 * Builds code for the __wakeup() method to fetch an object factory, set
 	 * up AOP internals and collect properties after reconstitution.
 	 *
 	 * @return string
@@ -193,10 +193,10 @@ abstract class AbstractMethodInterceptorBuilder {
 	 */
 	static protected function buildWakeupCode() {
 		$wakeupCode = '
-		$this->componentFactory = $GLOBALS[\'reconstituteComponentObject\'][\'componentFactory\'];
-		$this->componentManager = $GLOBALS[\'reconstituteComponentObject\'][\'componentManager\'];
+		$this->objectFactory = $GLOBALS[\'reconstituteObject\'][\'objectFactory\'];
+		$this->objectManager = $GLOBALS[\'reconstituteObject\'][\'objectManager\'];
 		$this->AOPProxyDeclareMethodsAndAdvices();
-		foreach ($GLOBALS[\'reconstituteComponentObject\'][\'properties\'] as $property => $value) {
+		foreach ($GLOBALS[\'reconstituteObject\'][\'properties\'] as $property => $value) {
 			$this->$property = $value;
 		}';
 		return $wakeupCode;

@@ -33,9 +33,9 @@ namespace F3::FLOW3::MVC::Controller;
 class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface The component factory
+	 * @var F3::FLOW3::Object::FactoryInterface The object factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::MVC::Controller::Arguments The registered arguments with the specified property validators
@@ -46,11 +46,11 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 	 * Constructor
 	 *
 	 * @param F3::FLOW3::MVC::Controller::Arguments The registered arguments with the specified property editors
-	 * @param F3::FLOW3::Component::FactoryInterface The component factory
+	 * @param F3::FLOW3::Object::FactoryInterface The object factory
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::MVC::Controller::Arguments $registeredArguments, F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::MVC::Controller::Arguments $registeredArguments, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 		$this->registeredArguments = $registeredArguments;
 	}
 
@@ -140,7 +140,7 @@ class ArgumentsValidator implements F3::FLOW3::Validation::ObjectValidatorInterf
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorsObject() {
-		return $this->componentFactory->create('F3::FLOW3::Validation::Errors');
+		return $this->objectFactory->create('F3::FLOW3::Validation::Errors');
 	}
 }
 ?>

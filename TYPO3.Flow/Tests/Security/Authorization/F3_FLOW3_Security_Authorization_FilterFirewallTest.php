@@ -55,7 +55,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::RequestPatternResolver($this->objectManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->objectManager));
 		$filters = $firewall->getFilters();
 
 		$this->assertType('F3::FLOW3::Security::Authorization::RequestFilter', $filters[0]);
@@ -90,7 +90,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::RequestPatternResolver($this->objectManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->objectManager));
 
 		try {
 			$firewall->blockIllegalRequests($mockRequest);
@@ -120,7 +120,7 @@ class FilterFirewallTest extends F3::Testing::BaseTestCase {
 
 		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 
-		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->componentManager, new F3::FLOW3::Security::RequestPatternResolver($this->componentManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->componentManager));
+		$firewall = new F3::FLOW3::Security::Authorization::FilterFirewall($mockConfigurationManager, $this->objectManager, new F3::FLOW3::Security::RequestPatternResolver($this->objectManager), new F3::FLOW3::Security::Authorization::InterceptorResolver($this->objectManager));
 
 		try {
 			$firewall->blockIllegalRequests($mockRequest);

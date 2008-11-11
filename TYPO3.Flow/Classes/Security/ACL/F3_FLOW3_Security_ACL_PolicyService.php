@@ -33,9 +33,9 @@ namespace F3::FLOW3::Security::ACL;
 class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @var F3::FLOW3::Object::ManagerInterface $objectManager The object manager
 	 */
-	protected $componentManager = NULL;
+	protected $objectManager = NULL;
 
 	/**
 	 * The FLOW3 Settings
@@ -71,16 +71,16 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
 	 * @param F3::FLOW3::Cache::Factory $cacheFactory The cache factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo cache the whole thing, if aop proxy cache is enabled
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Cache::Factory $cacheFactory) {
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Cache::Factory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
-		$this->componentManager = $componentManager;
+		$this->objectManager = $objectManager;
 		$this->settings = $configurationManager->getSettings('FLOW3');
 
 		$this->roles = $this->settings['security']['policy']['roles'];
@@ -125,7 +125,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 		$matches = FALSE;
 
 		if (count($this->filters) === 0) {
-			$policyExpressionParser = $this->componentManager->getComponent('F3::FLOW3::Security::ACL::PolicyExpressionParser');
+			$policyExpressionParser = $this->objectManager->getObject('F3::FLOW3::Security::ACL::PolicyExpressionParser');
 			$policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
 			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) $this->filters[$role][$resource] = $policyExpressionParser->parse($resource);
@@ -221,7 +221,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewRole($roleIdentifier) {
-		return $this->componentManager->getComponent('F3::FLOW3::Security::ACL::Role', $roleIdentifier);
+		return $this->objectManager->getObject('F3::FLOW3::Security::ACL::Role', $roleIdentifier);
 	}
 
 	/**
@@ -233,7 +233,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewPrivilege($privilegeIdentifier, $isGrant = FALSE) {
-		return $this->componentManager->getComponent('F3::FLOW3::Security::ACL::Privilege', $privilegeIdentifier, $isGrant);
+		return $this->objectManager->getObject('F3::FLOW3::Security::ACL::Privilege', $privilegeIdentifier, $isGrant);
 	}
 }
 

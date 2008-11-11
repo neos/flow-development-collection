@@ -36,7 +36,7 @@ class ValidatorResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorThrowsExceptionIfNoValidatorIsAvailable() {
-		$validatorResolver = $this->componentManager->getComponent('F3::FLOW3::Validation::ValidatorResolver');
+		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
 
 		try {
 			$validatorResolver->resolveValidator('NotExistantClass');
@@ -51,7 +51,7 @@ class ValidatorResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorReturnsTheCorrectValidator() {
-		$validatorResolver = $this->componentManager->getComponent('F3::FLOW3::Validation::ValidatorResolver');
+		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
 		$validator = $validatorResolver->resolveValidator('F3::TestPackage::BasicClass');
 
 		if (!($validator instanceof F3::TestPackage::BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
@@ -62,7 +62,7 @@ class ValidatorResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorThrowsExceptionIfAvailableValidatorDoesNotImplementTheValidatorInterface() {
-		$validatorResolver = $this->componentManager->getComponent('F3::FLOW3::Validation::ValidatorResolver');
+		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
 
 		try {
 			$validatorResolver->resolveValidator('F3::TestPackage::SomeTest');

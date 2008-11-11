@@ -277,9 +277,9 @@ class Service {
 	 * implementation was found in the package defining the interface, FALSE is returned.
 	 *
 	 * @param string $interfaceName Name of the interface
-	 * @return mixed Either the class name of the default implementation for the component type or FALSE
+	 * @return mixed Either the class name of the default implementation for the object type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the specified interface does not exist.
+	 * @throws F3::FLOW3::Object::Exception::UnknownInterface if the specified interface does not exist.
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
@@ -287,13 +287,13 @@ class Service {
 	}
 
 	/**
-	 * Searches for and returns all class names of implementations of the given component type
+	 * Searches for and returns all class names of implementations of the given object type
 	 * (interface name). If no class implementing the interface was found, an empty array is returned.
 	 *
 	 * @param string $interfaceName Name of the interface
-	 * @return array An array of class names of the default implementation for the component type
+	 * @return array An array of class names of the default implementation for the object type
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Component::Exception::UnknownInterface if the given interface does not exist
+	 * @throws F3::FLOW3::Object::Exception::UnknownInterface if the given interface does not exist
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();

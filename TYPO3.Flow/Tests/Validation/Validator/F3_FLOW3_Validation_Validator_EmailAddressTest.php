@@ -56,7 +56,7 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 */
 	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
 		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
-		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$emailAddressValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($emailAddressValidator->isValidProperty($address, $validationErrors));
@@ -85,7 +85,7 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 */
 	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
 		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
-		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$emailAddressValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($emailAddressValidator->isValidProperty($address, $validationErrors));
@@ -97,7 +97,7 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 */
 	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
 		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
-		$emailAddressValidator->injectComponentFactory($this->componentFactory);
+		$emailAddressValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);

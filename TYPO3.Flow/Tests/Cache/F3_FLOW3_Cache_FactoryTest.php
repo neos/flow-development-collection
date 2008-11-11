@@ -39,7 +39,7 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function createReturnsInstanceOfTheSpecifiedCacheFrontend() {
 		$mockCacheManager = $this->getMock('F3::FLOW3::Cache::Manager', array('registerCache'), array(), '', FALSE);
-		$factory = new F3::FLOW3::Cache::Factory($this->componentManager, $this->componentFactory, $mockCacheManager);
+		$factory = new F3::FLOW3::Cache::Factory($this->objectManager, $this->objectFactory, $mockCacheManager);
 
 		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::Null');
 		$this->assertType('F3::FLOW3::Cache::VariableCache', $cache);
@@ -51,7 +51,7 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function createInjectsAnInstanceOfTheSpecifiedBackendIntoTheCacheFrontend() {
 		$mockCacheManager = $this->getMock('F3::FLOW3::Cache::Manager', array('registerCache'), array(), '', FALSE);
-		$factory = new F3::FLOW3::Cache::Factory($this->componentManager, $this->componentFactory, $mockCacheManager);
+		$factory = new F3::FLOW3::Cache::Factory($this->objectManager, $this->objectFactory, $mockCacheManager);
 
 		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
 		$this->assertType('F3::FLOW3::Cache::Backend::File', $cache->getBackend());
@@ -62,14 +62,14 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createPassesBackendOptionsToTheCreatedBackend() {
-		$this->componentManager->registerComponent('F3::FLOW3::Cache::MockBackend');
-		$backendComponentConfiguration = $this->componentManager->getComponentConfiguration('F3::FLOW3::Cache::MockBackend');
-		$backendComponentConfiguration->setScope(F3::FLOW3::Component::Configuration::SCOPE_PROTOTYPE);
-		$this->componentManager->setComponentConfiguration($backendComponentConfiguration);
+		$this->objectManager->registerObject('F3::FLOW3::Cache::MockBackend');
+		$backendObjectConfiguration = $this->objectManager->getObjectConfiguration('F3::FLOW3::Cache::MockBackend');
+		$backendObjectConfiguration->setScope(F3::FLOW3::Object::Configuration::SCOPE_PROTOTYPE);
+		$this->objectManager->setObjectConfiguration($backendObjectConfiguration);
 
 		$mockCacheManager = $this->getMock('F3::FLOW3::Cache::Manager', array('registerCache'), array(), '', FALSE);
 
-		$factory = new F3::FLOW3::Cache::Factory($this->componentManager, $this->componentFactory, $mockCacheManager);
+		$factory = new F3::FLOW3::Cache::Factory($this->objectManager, $this->objectFactory, $mockCacheManager);
 
 		$someValue = microtime();
 		$cache = $factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::MockBackend', array('someOption' => $someValue));
@@ -85,7 +85,7 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 		$mockCacheManager = $this->getMock('F3::FLOW3::Cache::Manager', array('registerCache'), array(), '', FALSE);
 		$mockCacheManager->expects($this->once())->method('registerCache');
 
-		$factory = new F3::FLOW3::Cache::Factory($this->componentManager, $this->componentFactory, $mockCacheManager);
+		$factory = new F3::FLOW3::Cache::Factory($this->objectManager, $this->objectFactory, $mockCacheManager);
 
 		$factory->create('F3_FLOW3_Cache_FactoryTest_Cache', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::Null');
 	}

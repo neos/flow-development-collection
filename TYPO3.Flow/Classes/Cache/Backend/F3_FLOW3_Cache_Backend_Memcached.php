@@ -98,7 +98,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeComponent() {
+	public function initializeObject() {
 		$this->memcache = new Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 

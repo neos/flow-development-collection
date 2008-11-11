@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Web;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::MVC::Web;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestTest extends F3::Testing::BaseTestCase {
@@ -47,13 +47,13 @@ class RequestTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$settings = $this->componentManager->getComponent('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
+		$settings = $this->objectManager->getObject('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
 		$this->environment = new F3::FLOW3::Utility::MockEnvironment($settings['utility']['environment']);
 		$this->environment->SERVER['ORIG_SCRIPT_NAME'] = '/path1/path2/index.php';
 		$this->environment->SERVER['SCRIPT_NAME'] = '/path1/path2/index.php';
 
 		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2#anchor';
-		$this->requestURI = $this->componentManager->getComponent('F3::FLOW3::Property::DataType::URI', $URIString);
+		$this->requestURI = $this->objectManager->getObject('F3::FLOW3::Property::DataType::URI', $URIString);
 	}
 
 	/**
@@ -61,8 +61,8 @@ class RequestTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function webRequestIsPrototype() {
-		$request1 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
-		$request2 = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
+		$request1 = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request2 = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
 		$this->assertNotSame($request1, $request2, 'Obviously the web request is not prototype!');
 	}
 

@@ -62,7 +62,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 *
 	 * @return void
 	 */
-	public function initializeComponent() {
+	public function initializeObject() {
 		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
 		try {
 			$this->setCacheDirectory($cacheDirectory);

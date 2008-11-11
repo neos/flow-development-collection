@@ -39,8 +39,8 @@ class GenericCollectionTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function genericCollectionIsPrototype() {
-		$collection1 = $this->componentFactory->create('F3::FLOW3::Utility::GenericCollection', 'F3::FLOW3::Fixture::DummyClass');
-		$collection2 = $this->componentFactory->create('F3::FLOW3::Utility::GenericCollection', 'F3::FLOW3::Fixture::DummyClass');
+		$collection1 = $this->objectFactory->create('F3::FLOW3::Utility::GenericCollection', 'F3::FLOW3::Fixture::DummyClass');
+		$collection2 = $this->objectFactory->create('F3::FLOW3::Utility::GenericCollection', 'F3::FLOW3::Fixture::DummyClass');
 		$this->assertNotSame($collection1, $collection2, 'Obviously GenericCollection is not prototype!');
 	}
 

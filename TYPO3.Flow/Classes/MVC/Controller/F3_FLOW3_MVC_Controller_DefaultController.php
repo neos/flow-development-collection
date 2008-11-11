@@ -64,7 +64,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::RequestHandlingContr
 			default :
 				$response->setContent(
 					"\nWelcome to FLOW3!\n\n" .
-					"This is the default view of the FLOW3 MVC component. You see this message because no \n" .
+					"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
 					"other view is available. Please refer to the Developer's Guide for more information \n" .
 					"how to create and configure one.\n\n" .
 					"Have fun! The FLOW3 Development Team\n"

@@ -32,9 +32,9 @@ namespace F3::FLOW3::AOP;
 class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 
 	/**
-	 * @var string Holds the name of the aspect component containing the advice
+	 * @var string Holds the name of the aspect object containing the advice
 	 */
-	protected $aspectComponentName;
+	protected $aspectObjectName;
 
 	/**
 	 * @var string Contains the name of the advice method
@@ -42,23 +42,23 @@ class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface A reference to the Component Manager
+	 * @var F3::FLOW3::Object::ManagerInterface A reference to the Object Manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $aspectComponentName: Name of the aspect component containing the advice
+	 * @param string $aspectObjectName: Name of the aspect object containing the advice
 	 * @param string $adviceMethodName: Name of the advice method
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager: A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->aspectComponentName = $aspectComponentName;
+	public function __construct($aspectObjectName, $adviceMethodName, F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
-		$this->componentManager = $componentManager;
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -69,19 +69,19 @@ class AroundAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		$adviceObject = $this->componentManager->getComponent($this->aspectComponentName);
+		$adviceObject = $this->objectManager->getObject($this->aspectObjectName);
 		$methodName = $this->adviceMethodName;
 		return $adviceObject->$methodName($joinPoint);
 	}
 
 	/**
-	 * Returns the aspect's component name which has been passed to the constructor
+	 * Returns the aspect's object name which has been passed to the constructor
 	 *
-	 * @return string The component name of the aspect
+	 * @return string The object name of the aspect
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAspectComponentName() {
-		return $this->aspectComponentName;
+	public function getAspectObjectName() {
+		return $this->aspectObjectName;
 	}
 
 	/**

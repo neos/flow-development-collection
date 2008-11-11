@@ -59,8 +59,8 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		try {
@@ -91,11 +91,11 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeComponentThrowsExceptionIfNoMemcacheServerIsConfigured() {
-		$context = $this->componentManager->getContext();
+	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
+		$context = $this->objectManager->getContext();
 		try {
-			$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context);
-			$this->fail('initializeComponent() did not throw exception on missing configuration of servers');
+			$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context);
+			$this->fail('initializeObject() did not throw exception on missing configuration of servers');
 		} catch (F3::FLOW3::Cache::Exception  $exception) {
 		}
 	}
@@ -320,8 +320,8 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$backend->setCache($cache);
 		return $backend;
 	}

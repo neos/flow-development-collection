@@ -33,9 +33,9 @@ namespace F3::FLOW3::Security::Authentication;
 class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface The component manager
+	 * @var F3::FLOW3::Object::ManagerInterface The object manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * @var F3::FLOW3::Security::Authentication::ProviderResolver The provider resolver
@@ -67,18 +67,18 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	 * Constructor.
 	 *
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
-	 * @param F3::FLOW3::Component::Manager $componentManager The component manager
+	 * @param F3::FLOW3::Object::Manager $objectManager The object manager
 	 * @param F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver The provider resolver
 	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
-			F3::FLOW3::Component::ManagerInterface $componentManager,
+			F3::FLOW3::Object::ManagerInterface $objectManager,
 			F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver,
 			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver) {
 
-		$this->componentManager = $componentManager;
+		$this->objectManager = $objectManager;
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
 
@@ -169,14 +169,14 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
 		foreach ($settings['security']['authentication']['providers'] as $provider) {
-			$providerInstance = $this->componentManager->getComponent($this->providerResolver->resolveProviderClass($provider['provider']));
+			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderClass($provider['provider']));
 			$this->providers[] = $providerInstance;
 
-			$tokenInstance = $this->componentManager->getComponent($providerInstance->getTokenClassname());
+			$tokenInstance = $this->objectManager->getObject($providerInstance->getTokenClassname());
 			$this->tokens[] = $tokenInstance;
 
 			if ($provider['patternType'] != '') {
-				$requestPattern = $this->componentManager->getComponent($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
+				$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
 				$requestPattern->setPattern($provider['patternValue']);
 				$tokenInstance->setRequestPattern($requestPattern);
 			}

@@ -32,9 +32,9 @@ namespace F3::FLOW3::MVC::Controller;
 abstract class AbstractController {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the Component Factory
+	 * @var F3::FLOW3::Object::FactoryInterface A reference to the Object Factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var string Key of the package this controller belongs to
@@ -56,12 +56,12 @@ abstract class AbstractController {
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the Component Factory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the Object Factory
 	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Package::ManagerInterface $packageManager) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Package::ManagerInterface $packageManager) {
+		$this->objectFactory = $objectFactory;
 		list(, $this->packageKey) = explode('::', get_class($this));
 		$this->package = $packageManager->getPackage($this->packageKey);
 	}
@@ -78,12 +78,12 @@ abstract class AbstractController {
 	}
 
 	/**
-	 * Initializes this component after all dependencies have been resolved.
+	 * Initializes this object after all dependencies have been resolved.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeComponent() {
+	public function initializeObject() {
 		$this->initializeController();
 	}
 

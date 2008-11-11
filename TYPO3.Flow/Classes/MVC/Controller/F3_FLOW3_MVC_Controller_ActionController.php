@@ -32,9 +32,9 @@ namespace F3::FLOW3::MVC::Controller;
 class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * @var boolean If initializeView() should be called on an action invocation.
@@ -47,14 +47,14 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	protected $view = NULL;
 
 	/**
-	 * Injects the component manager
+	 * Injects the object manager
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectComponentManager(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -99,11 +99,11 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewComponentName = $this->request->getViewComponentName();
-		if ($viewComponentName === FALSE) {
-			$viewComponentName = 'F3::FLOW3::MVC::View::EmptyView';
+		$viewObjectName = $this->request->getViewObjectName();
+		if ($viewObjectName === FALSE) {
+			$viewObjectName = 'F3::FLOW3::MVC::View::EmptyView';
 		}
-		$this->view = $this->componentManager->getComponent($viewComponentName);
+		$this->view = $this->objectManager->getObject($viewObjectName);
 		$this->view->setRequest($this->request);
 	}
 

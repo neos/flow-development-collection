@@ -16,7 +16,7 @@ namespace F3::FLOW3::MVC::Controller;
 
 /**
  * @package FLOW3
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  * Testcase for the MVC REST Controller
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RESTControllerTest extends F3::Testing::BaseTestCase {
@@ -43,9 +43,9 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->mockController = new F3::FLOW3::MVC::Fixture::Controller::MockRESTController($this->componentFactory, $this->componentManager->getComponent('F3::FLOW3::Package::ManagerInterface'));
-		$this->mockController->injectComponentManager($this->componentManager);
-		$this->mockController->injectPropertyMapper($this->componentManager->getComponent('F3::FLOW3::Property::Mapper'));
+		$this->mockController = new F3::FLOW3::MVC::Fixture::Controller::MockRESTController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
+		$this->mockController->injectObjectManager($this->objectManager);
+		$this->mockController->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
 	}
 
 	/**
@@ -53,8 +53,8 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheListActionOnGETRequestsWithoutIdentifier() {
-		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
 
 		$this->mockController->processRequest($request, $response);
 		$this->assertEquals('list action called', $response->getContent());
@@ -65,8 +65,8 @@ class RESTControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function callActionCallsTheShowActionOnGETRequestsWithIdentifier() {
-		$request = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Request');
-		$response = $this->componentManager->getComponent('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
 
 		$request->setArgument('id', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
 

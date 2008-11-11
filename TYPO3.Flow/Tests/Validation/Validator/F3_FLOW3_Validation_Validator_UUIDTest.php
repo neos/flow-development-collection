@@ -38,7 +38,7 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	public function validatorAcceptsCorrectUUIDs() {
 		$errors = new F3::FLOW3::Validation::Errors();
 		$validator = new F3::FLOW3::Validation::Validator::UUID();
-		$validator->injectComponentFactory($this->componentFactory);
+		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertTrue($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
 		$this->assertTrue($validator->isValidProperty('533548ca-8914-4a19-9404-ef390a6ce387', $errors));
@@ -51,7 +51,7 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	public function tooShortUUIDIsRejected() {
 		$errors = new F3::FLOW3::Validation::Errors();
 		$validator = new F3::FLOW3::Validation::Validator::UUID();
-		$validator->injectComponentFactory($this->componentFactory);
+		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors));
 	}
@@ -63,7 +63,7 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	public function UUIDWithOtherThanHexValuesIsRejected() {
 		$errors = new F3::FLOW3::Validation::Errors();
 		$validator = new F3::FLOW3::Validation::Validator::UUID();
-		$validator->injectComponentFactory($this->componentFactory);
+		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
 	}
@@ -76,7 +76,7 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	public function UUIDValidatorCreatesTheCorrectErrorObjectIfTheSubjectIsInvalid() {
 		$errors = new F3::FLOW3::Validation::Errors();
 		$validator = new F3::FLOW3::Validation::Validator::UUID();
-		$validator->injectComponentFactory($this->componentFactory);
+		$validator->injectObjectFactory($this->objectFactory);
 
 		$validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors);
 

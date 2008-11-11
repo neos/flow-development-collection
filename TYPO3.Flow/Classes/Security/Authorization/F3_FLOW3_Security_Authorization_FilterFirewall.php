@@ -32,9 +32,9 @@ namespace F3::FLOW3::Security::Authorization;
 class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::Manager The component manager
+	 * @var F3::FLOW3::Object::Manager The object manager
 	 */
-	protected $componentManager = NULL;
+	protected $objectManager = NULL;
 
 	/**
 	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
@@ -60,18 +60,18 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 	 * Constructor.
 	 *
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
-	 * @param F3::FLOW3::Component::Manager $componentManager The component manager
+	 * @param F3::FLOW3::Object::Manager $objectManager The object manager
 	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
-			F3::FLOW3::Component::ManagerInterface $componentManager,
+			F3::FLOW3::Object::ManagerInterface $objectManager,
 			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver,
 			F3::FLOW3::Security::Authorization::InterceptorResolver $interceptorResolver) {
 
-		$this->componentManager = $componentManager;
+		$this->objectManager = $objectManager;
 		$this->requestPatternResolver = $requestPatternResolver;
 		$this->interceptorResolver = $interceptorResolver;
 		$settings = $configurationManager->getSettings('FLOW3');
@@ -117,11 +117,11 @@ class FilterFirewall implements F3::FLOW3::Security::Authorization::FirewallInte
 	 */
 	protected function buildFiltersFromSettings($filterSettings) {
 		foreach($filterSettings as $singleFilterSettings) {
-			$requestPattern = $this->componentManager->getComponent($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
+			$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);
-			$interceptor = $this->componentManager->getComponent($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
+			$interceptor = $this->objectManager->getObject($this->interceptorResolver->resolveInterceptorClass($singleFilterSettings['interceptor']));
 
-			$this->filters[] = $this->componentManager->getComponent('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
+			$this->filters[] = $this->objectManager->getObject('F3::FLOW3::Security::Authorization::RequestFilter', $requestPattern, $interceptor);
 		}
 	}
 }

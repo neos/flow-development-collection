@@ -83,9 +83,9 @@ class Introduction {
 	}
 
 	/**
-	 * Returns the component name of the aspect which declared this introduction
+	 * Returns the object name of the aspect which declared this introduction
 	 *
-	 * @return string The aspect component name
+	 * @return string The aspect object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringAspectClassName() {

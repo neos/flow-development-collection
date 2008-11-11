@@ -38,10 +38,10 @@ cache:
     backend: F3::FLOW3::Cache::Backend::File
     backendOptions: {}
 
-component:
+object:
   configurationCache:
     
-    # Enable or disable caching of the component configurations. If caching is
+    # Enable or disable caching of the object configurations. If caching is
     # enabled, a cache backend must be properly configured.
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
@@ -218,6 +218,6 @@ locale:
   # it might be overriden by the application's user settings or auto detection
   # mechanisms.
   #
-  # It is recommended that all components which are in need of some information
+  # It is recommended that all objects which are in need of some information
   # about the locale use the locale object stored in this setting.
   defaultLocale:

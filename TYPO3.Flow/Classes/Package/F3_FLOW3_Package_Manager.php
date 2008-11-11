@@ -48,16 +48,16 @@ class Manager implements F3::FLOW3::Package::ManagerInterface {
 	protected $arrayOfActivePackages = array();
 
 	/**
-	 * @var array Array of packages whose classes must not be registered as components automatically
+	 * @var array Array of packages whose classes must not be registered as objects automatically
 	 */
-	protected $componentRegistrationPackageBlacklist = array();
+	protected $objectRegistrationPackageBlacklist = array();
 
 	/**
-	 * @var array Array of class names which must not be registered as components automatically. Class names may also be regular expressions.
+	 * @var array Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
 	 */
-	protected $componentRegistrationClassBlacklist = array(
+	protected $objectRegistrationClassBlacklist = array(
 		'F3::FLOW3::AOP::.*',
-		'F3::FLOW3::Component.*',
+		'F3::FLOW3::Object.*',
 		'F3::FLOW3::Package.*',
 		'F3::FLOW3::Reflection.*',
 	);

@@ -34,12 +34,12 @@ class MockPointcutExpressionParser extends F3::FLOW3::AOP::PointcutExpressionPar
 	/**
 	 * Factory method for creating custom filter instances
 	 *
-	 * @param string Component name of the filter
-	 * @return object An instance of the filter component
+	 * @param string Object name of the filter
+	 * @return object An instance of the filter object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createCustomFilter($filterComponentName) {
-		return new $filterComponentName;
+	protected function createCustomFilter($filterObjectName) {
+		return new $filterObjectName;
 	}
 }
 ?>

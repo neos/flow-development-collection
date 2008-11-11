@@ -22,7 +22,7 @@ namespace F3::FLOW3::Validation;
  */
 
 /**
- * Contract for a object validator
+ * Contract for an object validator
  *
  * @package FLOW3
  * @subpackage Validation

@@ -32,16 +32,16 @@ namespace F3::FLOW3::Security::Authorization;
 class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface {
 
 	/**
-	 * The component factory
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * The object factory
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
-	 * The component manager
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * The object manager
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
@@ -59,13 +59,13 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	 * Constructor.
 	 *
 	 * @param F3::FLOW3::Configuration::Manager $settingsManager The configuration manager
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Manager $settingsManager, F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $this->componentManager->getComponentFactory();
+	public function __construct(F3::FLOW3::Configuration::Manager $settingsManager, F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $this->objectManager->getObjectFactory();
 
 		$settings = $settingsManager->getSettings('FLOW3');
 		$this->createAccessDecisionVoters($settings['security']['accessDecisionVoters']);
@@ -127,9 +127,9 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	 */
 	protected function createAccessDecisionVoters($voterClasses) {
 		foreach ($voterClasses as $voterClass) {
-			if (!$this->componentManager->isComponentRegistered($voterClass)) throw new F3::FLOW3::Security::Exception::VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
+			if (!$this->objectManager->isObjectRegistered($voterClass)) throw new F3::FLOW3::Security::Exception::VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
 
-			$voter = $this->componentManager->getComponent($voterClass);
+			$voter = $this->objectManager->getObject($voterClass);
 			if (!($voter instanceof F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface)) throw new F3::FLOW3::Security::Exception::VoterNotFound('The found voter class did not implement F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;

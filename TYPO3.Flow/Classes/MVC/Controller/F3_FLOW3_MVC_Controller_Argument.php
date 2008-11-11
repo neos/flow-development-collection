@@ -33,14 +33,14 @@ namespace F3::FLOW3::MVC::Controller;
 class Argument {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var string Name of this argument
@@ -117,14 +117,14 @@ class Argument {
 	 *
 	 * @param string $name Name of this argument
 	 * @param string $dataType The data type of this argument
-	 * @param F3::FLOW3::Component::ManagerInterface The component manager
+	 * @param F3::FLOW3::Object::ManagerInterface The object manager
 	 * @throws InvalidArgumentException if $name is not a string or empty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($name, $dataType = 'Text', F3::FLOW3::Component::ManagerInterface $componentManager) {
+	public function __construct($name, $dataType = 'Text', F3::FLOW3::Object::ManagerInterface $objectManager) {
 		if (!is_string($name) || F3::PHP6::Functions::strlen($name) < 1) throw new InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $this->componentManager->getComponentFactory();
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $this->objectManager->getObjectFactory();
 		$this->name = $name;
 
 		$this->setDataType($dataType);
@@ -175,8 +175,8 @@ class Argument {
 		$this->dataType = ($dataType != '' ? $dataType : 'Text');
 
 		$dataTypeValidatorClassname = $this->dataType;
-		if (!$this->componentManager->isComponentRegistered($dataTypeValidatorClassname)) $dataTypeValidatorClassname = 'F3::FLOW3::Validation::Validator::' . $this->dataType;
-		$this->datatypeValidator = $this->componentManager->getComponent($dataTypeValidatorClassname);
+		if (!$this->objectManager->isObjectRegistered($dataTypeValidatorClassname)) $dataTypeValidatorClassname = 'F3::FLOW3::Validation::Validator::' . $this->dataType;
+		$this->datatypeValidator = $this->objectManager->getObject($dataTypeValidatorClassname);
 
 		return $this;
 	}
@@ -343,7 +343,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setValidator($className) {
-		$this->validator = $this->componentManager->getComponent($className);
+		$this->validator = $this->objectManager->getObject($className);
 		return $this;
 	}
 
@@ -375,7 +375,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setFilter($className) {
-		$this->filter = $this->componentManager->getComponent($className);
+		$this->filter = $this->objectManager->getObject($className);
 		return $this;
 	}
 
@@ -390,8 +390,8 @@ class Argument {
 		$this->filter = $this->createNewFilterChainObject();
 
 		foreach ($classNames as $className) {
-			if (!$this->componentManager->isComponentRegistered($className)) $className = 'F3::FLOW3::Validation::Filter::' . $className;
-			$this->filter->addFilter($this->componentManager->getComponent($className));
+			if (!$this->objectManager->isObjectRegistered($className)) $className = 'F3::FLOW3::Validation::Filter::' . $className;
+			$this->filter->addFilter($this->objectManager->getObject($className));
 		}
 
 		return $this;
@@ -408,8 +408,8 @@ class Argument {
 		$this->validator = $this->createNewValidatorChainObject();
 
 		foreach ($classNames as $className) {
-			if (!$this->componentManager->isComponentRegistered($className)) $className = 'F3::FLOW3::Validation::Validator::' . $className;
-			$this->validator->addValidator($this->componentManager->getComponent($className));
+			if (!$this->objectManager->isObjectRegistered($className)) $className = 'F3::FLOW3::Validation::Validator::' . $className;
+			$this->validator->addValidator($this->objectManager->getObject($className));
 		}
 
 		return $this;
@@ -433,7 +433,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPropertyEditor($className) {
-		$this->propertyEditor = $this->componentFactory->create($className);
+		$this->propertyEditor = $this->objectFactory->create($className);
 		return $this;
 	}
 
@@ -476,7 +476,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function createNewFilterChainObject() {
-		return $this->componentFactory->create('F3::FLOW3::Validation::Filter::Chain');
+		return $this->objectFactory->create('F3::FLOW3::Validation::Filter::Chain');
 	}
 
 	/**
@@ -486,7 +486,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function createNewValidatorChainObject() {
-		return $this->componentFactory->create('F3::FLOW3::Validation::Validator::Chain');
+		return $this->objectFactory->create('F3::FLOW3::Validation::Validator::Chain');
 	}
 
 	/**

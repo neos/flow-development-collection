@@ -95,8 +95,8 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
 		$mockReflectionService->expects($this->exactly(4))->method('getPropertyNamesByTag')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array(), array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getComponent')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getObject')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
 		$mockSession = $this->getMock('F3::FLOW3::Persistence::Session', array('isNew'));
 		$mockSession->expects($this->exactly(4))->method('isNew')->will($this->returnValue(TRUE));
 		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
@@ -115,7 +115,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager->injectReflectionService($mockReflectionService);
 		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 		$manager->injectSession($mockSession);
-		$manager->injectComponentManager($mockComponentManager);
+		$manager->injectObjectManager($mockObjectManager);
 
 		$manager->persistAll();
 	}
@@ -187,8 +187,8 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
 		$mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getComponent')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getObject')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
 		$session = new F3::FLOW3::Persistence::Session();
 		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
 		$mockBackend->expects($this->once())->method('setUpdatedObjects')->with(array(spl_object_hash($mockEntity) => $mockEntity));
@@ -197,7 +197,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager->injectReflectionService($mockReflectionService);
 		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 		$manager->injectSession($session);
-		$manager->injectComponentManager($mockComponentManager);
+		$manager->injectObjectManager($mockObjectManager);
 
 		$manager->persistAll();
 	}

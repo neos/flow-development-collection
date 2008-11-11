@@ -17,7 +17,7 @@ namespace F3::FLOW3::MVC::Web;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -25,7 +25,7 @@ namespace F3::FLOW3::MVC::Web;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestBuilderTest extends F3::Testing::BaseTestCase {
@@ -75,15 +75,15 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 
 		$this->mockRequest = $this->getMock('F3::FLOW3::MVC::Web::Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
 
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
-		$mockComponentFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
 
 		$this->mockConfigurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSpecialConfiguration'), array(), '', FALSE);
 		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(array()));
 
 		$this->mockRouter = $this->getMock('F3::FLOW3::MVC::Web::Routing::RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 
-		$this->builder = new F3::FLOW3::MVC::Web::RequestBuilder($mockComponentFactory);
+		$this->builder = new F3::FLOW3::MVC::Web::RequestBuilder($mockObjectFactory);
 		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);

@@ -50,8 +50,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPrototype() {
-		$backend1 = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
-		$backend2 = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend1 = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
+		$backend2 = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->assertNotSame($backend1, $backend2, 'File Backend seems to be singleton!');
 	}
 
@@ -60,7 +60,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultCacheDirectoryIsWritable() {
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$propertyReflection = new F3::FLOW3::Reflection::PropertyReflection($backend, 'cacheDirectory');
 		$cacheDirectory = $propertyReflection->getValue($backend);
 		$this->assertTrue(is_writable($cacheDirectory), 'The default cache directory "' . $cacheDirectory . '" is not writable.');
@@ -75,7 +75,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 			$this->markTestSkipped('test not reliable in Windows environment');
 		}
 		$directoryName = '/sbin';
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		try {
 			$backend->setCacheDirectory($directoryName);
 			$this->fail('setCacheDirectory() to non-writable directory did not result in an exception.');
@@ -89,8 +89,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCacheDirectoryReturnsThePreviouslySetDirectory() {
-		$environment = $this->componentManager->getComponent('F3::FLOW3::Utility::Environment');
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$environment = $this->objectManager->getObject('F3::FLOW3::Utility::Environment');
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 
 		$directory = $environment->getPathToTemporaryDirectory();
 		$backend->setCacheDirectory($directory);
@@ -103,8 +103,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setRejectsInvalidIdentifiers() {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$data = 'Some data';
 		$this->backend = $backend;
 		$backend->setCache($cache);
@@ -128,8 +128,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$data = array('Some data');
 		$entryIdentifier = 'BackendFileTest';
 
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		try {
@@ -151,9 +151,9 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$backend->set($entryIdentifier, $data);
@@ -180,9 +180,9 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileRemoveBeforeSetTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$backend->set($entryIdentifier, $data1, array(), 500);
@@ -207,9 +207,9 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
@@ -234,7 +234,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -258,7 +258,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -284,8 +284,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileRemovalTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
@@ -315,8 +315,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileRemovalTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
@@ -347,8 +347,8 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileRemovalTest';
 
-		$context = $this->componentManager->getContext();
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$context = $this->objectManager->getContext();
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$cacheDirectory = $backend->getCacheDirectory();
 		$backend->setCache($cache);
@@ -380,9 +380,9 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileTest';
 
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -403,7 +403,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -425,13 +425,13 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushRemovesAllCacheEntriesAndRelatedTags() {
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 		$data = 'some data' . microtime();
 
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$backend->setCache($cache);
 		$this->backend = $backend;
 		$tagsDirectory = $backend->getCacheDirectory() . $context . '/Tags/';
@@ -464,7 +464,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -490,7 +490,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -515,7 +515,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -541,7 +541,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('UnitTestCache'));
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $this->componentManager->getContext());
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
 		$this->backend = $backend;
 		$backend->setCache($cache);
 
@@ -565,9 +565,9 @@ class FileTest extends F3::Testing::BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 		$entryIdentifierHash = sha1($entryIdentifier);
 
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
-		$backend = $this->componentManager->getComponent('F3::FLOW3::Cache::Backend::File', $context);
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $context);
 		$this->backend = $backend;
 		$backend->setCache($cache);
 		$backend->set($entryIdentifier, $data, array(), 0);
@@ -587,7 +587,7 @@ class FileTest extends F3::Testing::BaseTestCase {
 	 */
 	public function tearDown() {
 		if (is_object($this->backend)) {
-			$context = $this->componentManager->getContext();
+			$context = $this->objectManager->getContext();
 			$directory = $this->backend->getCacheDirectory() . $context . '/Data/UnitTestCache';
 			if (is_dir($directory)) F3::FLOW3::Utility::Files::removeDirectoryRecursively($directory);
 

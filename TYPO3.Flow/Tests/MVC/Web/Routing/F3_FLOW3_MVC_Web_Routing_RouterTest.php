@@ -50,13 +50,13 @@ class RouterTest extends F3::Testing::BaseTestCase {
 		$route3 = $this->getMock('F3::FLOW3::MVC::Web::Routing::Route', array('setUriPattern', 'setDefaults'), array(), '', FALSE);
 		$route3->expects($this->once())->method('setUriPattern')->with($this->equalTo('number3'));
 
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
 		$mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);
 
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface', array('create'));
-		$mockComponentFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface', array('create'));
+		$mockObjectFactory->expects($this->exactly(3))->method('create')->will($this->onConsecutiveCalls($route1, $route2, $route3));
 
-		$route = new F3::FLOW3::MVC::Web::Routing::Router($mockComponentManager, $mockComponentFactory, $mockEnvironment);
+		$route = new F3::FLOW3::MVC::Web::Routing::Router($mockObjectManager, $mockObjectFactory, $mockEnvironment);
 		$route->setRoutesConfiguration($routesConfiguration);
 	}
 

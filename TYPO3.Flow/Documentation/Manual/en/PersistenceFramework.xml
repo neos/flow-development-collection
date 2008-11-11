@@ -57,7 +57,7 @@ public function addPost(F3::Blog::Domain::Post $post) {
     we need.</para>
 
     <para>Now, before we can find a Blog, we need to create and save one. What
-    we do is create the object (using FLOW3's component factory) and add it to
+    we do is create the object (using FLOW3's object factory) and add it to
     the BlogRepository. This will automagically persist your Blog and you can
     retrieve it again later. No save() call needed. Oh, and the posts, commens
     and tags in your Blog are persisted as well, of course.</para>

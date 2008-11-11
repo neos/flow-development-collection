@@ -33,17 +33,17 @@ namespace F3;
 class FLOW3Test extends F3::Testing::BaseTestCase {
 
 	/**
-	 * Checks the method getComponentManager() and the magic getter
+	 * Checks the method getObjectManager() and the magic getter
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getComponentManagerReturnsComponentManager() {
+	public function getObjectManagerReturnsObjectManager() {
 		$FLOW3 = new F3::FLOW3;
 		$FLOW3->initializeClassLoader();
 		$FLOW3->initializeConfiguration();
 		$FLOW3->initializeFLOW3();
-		$this->assertTrue($FLOW3->getComponentManager() instanceof F3::FLOW3::Component::ManagerInterface, 'getComponentManager did not deliver an object implementing F3::FLOW3::Component::ManagerInterface!');
+		$this->assertTrue($FLOW3->getObjectManager() instanceof F3::FLOW3::Object::ManagerInterface, 'getObjectManager did not deliver an object implementing F3::FLOW3::Object::ManagerInterface!');
 	}
 }
 ?>

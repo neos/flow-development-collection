@@ -33,7 +33,7 @@ class Manager {
 
 	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
 	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
-	const CONFIGURATION_TYPE_COMPONENTS = 'Components';
+	const CONFIGURATION_TYPE_COMPONENTS = 'Objects';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
 

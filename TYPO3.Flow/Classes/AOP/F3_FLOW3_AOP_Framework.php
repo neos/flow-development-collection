@@ -32,14 +32,14 @@ namespace F3::FLOW3::AOP;
 class Framework {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * The FLOW3 settings
@@ -82,10 +82,10 @@ class Framework {
 	protected $targetAndProxyClassNames = array();
 
 	/**
-	 * List of component names which must not be proxied. The blacklist must be complete before calling initialize()!
+	 * List of object names which must not be proxied. The blacklist must be complete before calling initialize()!
 	 * @var array
 	 */
-	protected $componentProxyBlacklist = array();
+	protected $objectProxyBlacklist = array();
 
 	/**
 	 * Flag which signals if this class has already been initialized.
@@ -96,14 +96,14 @@ class Framework {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager: An instance of the component manager
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory: An instance of the component factory
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager: An instance of the object manager
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory: An instance of the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
-		$this->registerFrameworkComponents();
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $objectFactory;
+		$this->registerFrameworkObjects();
 	}
 
 	/**
@@ -151,37 +151,37 @@ class Framework {
 	}
 
 	/**
-	 * Adds a registered component to the proxy blacklist to prevent the component class
+	 * Adds a registered object to the proxy blacklist to prevent the object class
 	 * from being proxied by the AOP framework.
 	 *
-	 * @param string $componentName: Name of the component to add to the blacklist
+	 * @param string $objectName: Name of the object to add to the blacklist
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addComponentNameToProxyBlacklist($componentName) {
-		if ($this->isInitialized) throw new RuntimeException('Cannot add components to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
-		$this->componentProxyBlacklist[$componentName] = $componentName;
+	public function addObjectNameToProxyBlacklist($objectName) {
+		if ($this->isInitialized) throw new RuntimeException('Cannot add objects to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
+		$this->objectProxyBlacklist[$objectName] = $objectName;
 	}
 
 	/**
 	 * Initializes the AOP framework.
 	 *
-	 * During initialization the specified configuration of components is searched for possible
+	 * During initialization the specified configuration of objects is searched for possible
 	 * aspect annotations. If an aspect class is found, the poincut expressions are parsed and
 	 * a new aspect with one or more advisors is added to the aspect registry of the AOP framework.
 	 * Finally all advices are woven into their target classes by generating proxy classes.
 	 *
-	 * The class names of all proxied classes is stored back in the $componentConfigurations array.
+	 * The class names of all proxied classes is stored back in the $objectConfigurations array.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize(array &$componentConfigurations) {
+	public function initialize(array &$objectConfigurations) {
 		if ($this->isInitialized) throw new F3::FLOW3::AOP::Exception('The AOP framework has already been initialized!', 1169550994);
 		$this->isInitialized = TRUE;
 
 		$loadedFromCache = FALSE;
-		$context = $this->componentManager->getContext();
+		$context = $this->objectManager->getContext();
 
 		if ($this->settings['aop']['cache']['enable'] === TRUE) {
 			$proxyCache = $this->cacheFactory->create('FLOW3_AOP_Proxy', 'F3::FLOW3::Cache::VariableCache', $this->settings['aop']['cache']['backend'], $this->settings['aop']['cache']['backendOptions']);
@@ -202,8 +202,8 @@ class Framework {
 		if (!$loadedFromCache) {
 			$allAvailableClasses = array();
 			$proxyableClasses = array();
-			foreach ($componentConfigurations as $componentConfiguration) {
-				$className = $componentConfiguration->getClassName();
+			foreach ($objectConfigurations as $objectConfiguration) {
+				$className = $objectConfiguration->getClassName();
 				$allAvailableClasses[] = $className;
 				if (substr($className, 0, 9) != 'F3::FLOW3::') {
 					$proxyableClasses[] = $className;
@@ -218,7 +218,7 @@ class Framework {
 			if (!class_exists($proxyBuildResult['proxyClassName'])) {
 				eval($proxyBuildResult['proxyClassCode']);
 			}
-			$componentConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
+			$objectConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
 		}
 
 		if ($this->settings['aop']['cache']['enable'] === TRUE && !$loadedFromCache) {
@@ -309,7 +309,7 @@ class Framework {
 
 	/**
 	 * Creates and returns an aspect from the annotations found in a class which
-	 * is tagged as an aspect. The component acting as an advice will already be
+	 * is tagged as an aspect. The object acting as an advice will already be
 	 * fetched (and therefore instantiated if neccessary).
 	 *
 	 * @param  string $aspectClassName: Name of the class which forms the aspect, contains advices etc.
@@ -324,31 +324,31 @@ class Framework {
 				foreach ($tagValues as $tagValue) {
 					switch ($tagName) {
 						case 'around' :
-							$advice = $this->componentFactory->create('F3::FLOW3::AOP::AroundAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
+							$advice = $this->objectFactory->create('F3::FLOW3::AOP::AroundAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->objectFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
-							$advice = $this->componentFactory->create('F3::FLOW3::AOP::BeforeAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
+							$advice = $this->objectFactory->create('F3::FLOW3::AOP::BeforeAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->objectFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
-							$advice = $this->componentFactory->create('F3::FLOW3::AOP::AfterReturningAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
+							$advice = $this->objectFactory->create('F3::FLOW3::AOP::AfterReturningAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->objectFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
-							$advice = $this->componentFactory->create('F3::FLOW3::AOP::AfterThrowingAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
-							$advisor = $this->componentFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
+							$advice = $this->objectFactory->create('F3::FLOW3::AOP::AfterThrowingAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->objectFactory->create('F3::FLOW3::AOP::Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'pointcut' :
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
 						break;
 					}
@@ -363,9 +363,9 @@ class Framework {
 						case 'introduce' :
 							$splittedTagValue = explode(',', $tagValue);
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new F3::FLOW3::AOP::Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
-							$pointcut = $this->componentFactory->create('F3::FLOW3::AOP::Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
+							$pointcut = $this->objectFactory->create('F3::FLOW3::AOP::Pointcut', trim($splittedTagValue[1]), $this->pointcutExpressionParser, $aspectClassName);
 							$interface = new F3::FLOW3::Reflection::ClassReflection(trim($splittedTagValue[0]));
-							$introduction = $this->componentFactory->create('F3::FLOW3::AOP::Introduction', $aspectClassName, $interface, $pointcut);
+							$introduction = $this->objectFactory->create('F3::FLOW3::AOP::Introduction', $aspectClassName, $interface, $pointcut);
 							$aspectContainer->addIntroduction($introduction);
 						break;
 					}
@@ -393,7 +393,7 @@ class Framework {
 		$proxyBuildResults = array();
 
 		foreach ($classNames as $targetClassName) {
-			if (array_search($targetClassName, $this->componentProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3::FLOW3::') {
+			if (array_search($targetClassName, $this->objectProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3::FLOW3::') {
 				try {
 					if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
 						$proxyBuildResult = F3::FLOW3::AOP::ProxyClassBuilder::buildProxyClass(new F3::FLOW3::Reflection::ClassReflection($targetClassName), $aspectContainers, $context, $this->reflectionService);
@@ -411,36 +411,36 @@ class Framework {
 	}
 
 	/**
-	 * Registers certain classes of the AOP Framework as components, so they can
+	 * Registers certain classes of the AOP Framework as objects, so they can
 	 * be used for dependency injection elsewhere.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function registerFrameworkComponents() {
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::Advisor');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::AfterReturningAdvice');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::AfterThrowingAdvice');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::AroundAdvice');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::BeforeAdvice');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::Introduction');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::Pointcut');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::PointcutInterface', 'F3::FLOW3::AOP::Pointcut');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::PointcutFilter');
-		$this->componentManager->registerComponent('F3::FLOW3::AOP::PointcutExpressionParser');
+	protected function registerFrameworkObjects() {
+		$this->objectManager->registerObject('F3::FLOW3::AOP::Advisor');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::AfterReturningAdvice');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::AfterThrowingAdvice');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::AroundAdvice');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::BeforeAdvice');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::Introduction');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::Pointcut');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::PointcutInterface', 'F3::FLOW3::AOP::Pointcut');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::PointcutFilter');
+		$this->objectManager->registerObject('F3::FLOW3::AOP::PointcutExpressionParser');
 
-		$componentConfigurations = $this->componentManager->getComponentConfigurations();
-		$componentConfigurations['F3::FLOW3::AOP::Advisor']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::AfterReturningAdvice']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::AfterThrowingAdvice']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::AroundAdvice']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::BeforeAdvice']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::Introduction']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::Introduction']->setAutowiringMode(F3::FLOW3::Component::Configuration::AUTOWIRING_MODE_OFF);
-		$componentConfigurations['F3::FLOW3::AOP::Pointcut']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::PointcutInterface']->setScope('prototype');
-		$componentConfigurations['F3::FLOW3::AOP::PointcutFilter']->setScope('prototype');
-		$this->componentManager->setComponentConfigurations($componentConfigurations);
+		$objectConfigurations = $this->objectManager->getObjectConfigurations();
+		$objectConfigurations['F3::FLOW3::AOP::Advisor']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::AfterReturningAdvice']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::AfterThrowingAdvice']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::AroundAdvice']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::BeforeAdvice']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::Introduction']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::Introduction']->setAutowiringMode(F3::FLOW3::Object::Configuration::AUTOWIRING_MODE_OFF);
+		$objectConfigurations['F3::FLOW3::AOP::Pointcut']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::PointcutInterface']->setScope('prototype');
+		$objectConfigurations['F3::FLOW3::AOP::PointcutFilter']->setScope('prototype');
+		$this->objectManager->setObjectConfigurations($objectConfigurations);
 	}
 }
 ?>

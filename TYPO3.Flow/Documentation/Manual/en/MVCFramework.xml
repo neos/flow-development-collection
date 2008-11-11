@@ -259,7 +259,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
       <para>As you see, there are a lot of parts of the framework involved for
       answering a request - and the diagram doesn't even consider caching or
       forwarding of requests. But we didn't create this structure just for the
-      fun of it - each component plays an important role as you'll see in the
+      fun of it - each object plays an important role as you'll see in the
       next sections.</para>
     </section>
 

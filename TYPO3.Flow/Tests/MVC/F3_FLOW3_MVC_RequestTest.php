@@ -35,9 +35,9 @@ class RequestTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theDefaultPatternForBuildingTheControllerComponentNameIsPackageKeyControllerControllerNameController() {
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+	public function theDefaultPatternForBuildingTheControllerObjectNameIsPackageKeyControllerControllerNameController() {
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3::testpackage::controller::foocontroller'))
 			->will($this->returnValue('F3::TestPackage::Controller::FooController'));
 
@@ -46,20 +46,20 @@ class RequestTest extends F3::Testing::BaseTestCase {
 			->will($this->returnValue('TestPackage'));
 
 		$request = new F3::FLOW3::MVC::Request();
-		$request->injectComponentManager($mockComponentManager);
+		$request->injectObjectManager($mockObjectManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
-		$this->assertEquals('F3::TestPackage::Controller::FooController', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Controller::FooController', $request->getControllerObjectName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function thePatternForBuildingTheControllerComponentNameCanBeCustomized() {
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+	public function thePatternForBuildingTheControllerObjectNameCanBeCustomized() {
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3::testpackage::bar::baz::foo'))
 			->will($this->returnValue('F3::TestPackage::Bar::Baz::Foo'));
 
@@ -68,22 +68,22 @@ class RequestTest extends F3::Testing::BaseTestCase {
 			->will($this->returnValue('TestPackage'));
 
 		$request = new F3::FLOW3::MVC::Request();
-		$request->injectComponentManager($mockComponentManager);
+		$request->injectObjectManager($mockObjectManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
-		$request->setControllerComponentNamePattern('F3::@package::Bar::Baz::@controller');
+		$request->setControllerObjectNamePattern('F3::@package::Bar::Baz::@controller');
 
-		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerObjectName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function lowerCasePackageKeysAndComponentNamesAreConvertedToTheRealComponentName() {
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3::testpackage::bar::baz::foo'))
 			->will($this->returnValue('F3::TestPackage::Bar::Baz::Foo'));
 
@@ -93,22 +93,22 @@ class RequestTest extends F3::Testing::BaseTestCase {
 			->will($this->returnValue('TestPackage'));
 
 		$request = new F3::FLOW3::MVC::Request();
-		$request->injectComponentManager($mockComponentManager);
+		$request->injectObjectManager($mockObjectManager);
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('testpackage');
 		$request->setControllerName('foo');
-		$request->setControllerComponentNamePattern('f3::@package::bar::baz::@controller');
+		$request->setControllerObjectNamePattern('f3::@package::bar::baz::@controller');
 
-		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerComponentName());
+		$this->assertEquals('F3::TestPackage::Bar::Baz::Foo', $request->getControllerObjectName());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function thePatternForBuildingTheViewComponentNameCanBeCustomized() {
-		$mockComponentManager = $this->getMock('F3::FLOW3::Component::ManagerInterface');
-		$mockComponentManager->expects($this->once())->method('getCaseSensitiveComponentName')
+	public function thePatternForBuildingTheViewObjectNameCanBeCustomized() {
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('F3::TestPackage::Vista::FooXbarYxmlZ'))
 			->will($this->returnValue('F3::TestPackage::Vista::FooXBarYXMLZ'));
 
@@ -117,16 +117,16 @@ class RequestTest extends F3::Testing::BaseTestCase {
 			->will($this->returnValue('TestPackage'));
 
 		$request = new F3::FLOW3::MVC::Request();
-		$request->injectComponentManager($mockComponentManager);
+		$request->injectObjectManager($mockObjectManager);
 		$request->injectPackageManager($mockPackageManager);
 
 		$request->setControllerPackageKey('TestPackage');
 		$request->setControllerName('Foo');
 		$request->setControllerActionName('bar');
 		$request->setFormat('xml');
-		$request->setViewComponentNamePattern('F3::@package::Vista::@controllerX@actionY@formatZ');
+		$request->setViewObjectNamePattern('F3::@package::Vista::@controllerX@actionY@formatZ');
 
-		$this->assertEquals('F3::TestPackage::Vista::FooXBarYXMLZ', $request->getViewComponentName());
+		$this->assertEquals('F3::TestPackage::Vista::FooXBarYXMLZ', $request->getViewObjectName());
 	}
 
 	/**

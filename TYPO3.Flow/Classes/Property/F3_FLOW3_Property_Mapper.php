@@ -35,7 +35,7 @@ namespace F3::FLOW3::Property;
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper = $componentFactory->create('F3::FLOW3::Property::Mapper', $target);
+ * $mapper = $objectFactory->create('F3::FLOW3::Property::Mapper', $target);
  * $mapper->map($source);
  *
  * Now the target object equals the source object.
@@ -49,9 +49,9 @@ namespace F3::FLOW3::Property;
 class Mapper {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface The component factory
+	 * @var F3::FLOW3::Object::FactoryInterface The object factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Validation::ValidatorResolver The validator resolver
@@ -106,11 +106,11 @@ class Mapper {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A component factory implementation
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A object factory implementation
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -478,7 +478,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createNewMappingResults() {
-		return $this->componentFactory->create('F3::FLOW3::Property::MappingResults');
+		return $this->objectFactory->create('F3::FLOW3::Property::MappingResults');
 	}
 
 	/**
@@ -488,7 +488,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorsObject() {
-		return $this->componentFactory->create('F3::FLOW3::Validation::Errors');
+		return $this->objectFactory->create('F3::FLOW3::Validation::Errors');
 	}
 
 	/**
@@ -500,7 +500,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorObject($message, $code) {
-		return $this->componentFactory->create('F3::FLOW3::Validation::Error', $message, $code);
+		return $this->objectFactory->create('F3::FLOW3::Validation::Error', $message, $code);
 	}
 
 	/**
@@ -512,7 +512,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingErrorObject($message, $code) {
-		return $this->componentFactory->create('F3::FLOW3::Property::MappingError', $message, $code);
+		return $this->objectFactory->create('F3::FLOW3::Property::MappingError', $message, $code);
 	}
 
 	/**
@@ -524,7 +524,7 @@ class Mapper {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingWarningObject($message, $code) {
-		return $this->componentFactory->create('F3::FLOW3::Property::MappingWarning', $message, $code);
+		return $this->objectFactory->create('F3::FLOW3::Property::MappingWarning', $message, $code);
 	}
 
 	/**

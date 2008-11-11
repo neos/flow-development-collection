@@ -55,7 +55,7 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 */
 	public function floatValidatorReturnsTrueForAValidFloat($address) {
 		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
+		$floatValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
@@ -82,7 +82,7 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 */
 	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
 		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
+		$floatValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($floatValidator->isValidProperty($address, $validationErrors));
@@ -94,7 +94,7 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 */
 	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
 		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
-		$floatValidator->injectComponentFactory($this->componentFactory);
+		$floatValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$floatValidator->isValidProperty(123456, $validationErrors);

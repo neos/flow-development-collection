@@ -49,7 +49,7 @@ class AdvicedConstructorInterceptorBuilder extends F3::FLOW3::AOP::AbstractMetho
 		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
 			' . $callParentCode . '
 		} else {
-			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($constructor) . '	\'AOPProxyComponentManager\' => $AOPProxyComponentManager, \'AOPProxyComponentFactory\' => $AOPProxyComponentFactory
+			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($constructor) . '	\'AOPProxyObjectManager\' => $AOPProxyObjectManager, \'AOPProxyObjectFactory\' => $AOPProxyObjectFactory
 			);
 			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
 			' . self::buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClass) . '
@@ -64,9 +64,9 @@ class AdvicedConstructorInterceptorBuilder extends F3::FLOW3::AOP::AbstractMetho
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(' . $methodParametersCode . (F3::PHP6::Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3::FLOW3::Component::ManagerInterface $AOPProxyComponentManager, F3::FLOW3::Component::FactoryInterface $AOPProxyComponentFactory) {
-		$this->componentManager = $AOPProxyComponentManager;
-		$this->componentFactory = $AOPProxyComponentFactory;
+	public function __construct(' . $methodParametersCode . (F3::PHP6::Functions::strlen($methodParametersCode) ? ', ' : '') . 'F3::FLOW3::Object::ManagerInterface $AOPProxyObjectManager, F3::FLOW3::Object::FactoryInterface $AOPProxyObjectFactory) {
+		$this->objectManager = $AOPProxyObjectManager;
+		$this->objectFactory = $AOPProxyObjectFactory;
 		$result = NULL;
 		$this->AOPProxyDeclareMethodsAndAdvices();
 		' . $interceptionCode . '

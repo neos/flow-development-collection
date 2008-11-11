@@ -37,7 +37,7 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromPOSTArguments() {
-		$mockComponentFactory = $this->getMock('F3::FLOW3::Component::FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
 
 		$POSTArguments = array(
 			'F3::FLOW3::Security::Authentication::Token::UsernamePassword::username' => 'FLOW3',
@@ -48,7 +48,7 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 		$mockEnvironment->expects($this->once())->method('getPOSTArguments')->will($this->returnValue($POSTArguments));
 
 		$token = new F3::FLOW3::Security::Authentication::Token::UsernamePassword();
-		$token->injectComponentFactory($mockComponentFactory);		
+		$token->injectObjectFactory($mockObjectFactory);		
 		$token->injectEnvironment($mockEnvironment);
 		$token->updateCredentials();
 

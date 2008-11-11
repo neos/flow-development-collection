@@ -32,9 +32,9 @@ namespace F3::FLOW3::MVC::Web;
 class RequestBuilder {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface $componentFactory: A reference to the Component Factory
+	 * @var F3::FLOW3::Object::FactoryInterface $objectFactory: A reference to the Object Factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Utility::Environment
@@ -54,11 +54,11 @@ class RequestBuilder {
 	/**
 	 * Constructs this Web Request Builder
 	 *
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -101,7 +101,7 @@ class RequestBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function build() {
-		$request = $this->componentFactory->create('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectFactory->create('F3::FLOW3::MVC::Web::Request');
 		$request->injectEnvironment($this->environment);
 		$request->setRequestURI($this->environment->getRequestURI());
 		$request->setMethod($this->environment->getRequestMethod());

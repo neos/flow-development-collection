@@ -54,12 +54,12 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>Components.yaml</filename></term>
+        <term><filename>Objects.yaml</filename></term>
 
         <listitem>
-          <para>Contains component configuration, ie. options which configure
-          components and the combination of those on a lower level. See the
-          Component Manager section for more information.</para>
+          <para>Contains object configuration, ie. options which configure
+          objects and the combination of those on a lower level. See the
+          Object Manager section for more information.</para>
         </listitem>
       </varlistentry>
 
@@ -199,7 +199,7 @@ declare(ENCODING="utf-8");
 
 /**
  * @package TYPO3CR
- * @version $Id: Components.php 888 2008-05-30 16:00:05Z k-fish $
+ * @version $Id: Objects.php 888 2008-05-30 16:00:05Z k-fish $
  */
 
 /**
@@ -442,8 +442,8 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
 
       <para>Bottomline is that you should be highly aware of what you're doing
       when working with these special options. Usually there are much better
-      ways to get the desired information (eg. ask the Component Manager for
-      component configuration).</para>
+      ways to get the desired information (eg. ask the Object Manager for
+      object configuration).</para>
     </section>
   </section>
 </section>

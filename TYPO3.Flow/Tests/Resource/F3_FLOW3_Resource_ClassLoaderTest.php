@@ -18,14 +18,14 @@ namespace F3::FLOW3::Resource;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
- * Testcase for the component class loader
+ * Testcase for the object class loader
  *
  * @package    FLOW3
- * @version    $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version    $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license    http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ClassLoaderTest extends F3::Testing::BaseTestCase {

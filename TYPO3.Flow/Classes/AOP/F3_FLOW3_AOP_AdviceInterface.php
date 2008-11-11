@@ -37,12 +37,12 @@ interface AdviceInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param  string $aspectComponentName: Name of the aspect component containing the advice
+	 * @param  string $aspectObjectName: Name of the aspect object containing the advice
 	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the component manager
+	 * @param  F3::FLOW3::Object::ManagerInterface $objectManager: A reference to the object manager
 	 * @return void
 	 */
-	public function __construct($aspectComponentName, $adviceMethodName, F3::FLOW3::Component::ManagerInterface $componentManager);
+	public function __construct($aspectObjectName, $adviceMethodName, F3::FLOW3::Object::ManagerInterface $objectManager);
 
 	/**
 	 * Invokes the advice method
@@ -53,11 +53,11 @@ interface AdviceInterface {
 	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint);
 
 	/**
-	 * Returns the aspect's component name which has been passed to the constructor
+	 * Returns the aspect's object name which has been passed to the constructor
 	 *
-	 * @return string The component name of the aspect
+	 * @return string The object name of the aspect
 	 */
-	public function getAspectComponentName();
+	public function getAspectObjectName();
 
 	/**
 	 * Returns the advice's method name which has been passed to the constructor

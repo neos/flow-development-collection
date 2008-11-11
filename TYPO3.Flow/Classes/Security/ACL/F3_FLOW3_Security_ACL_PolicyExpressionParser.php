@@ -39,12 +39,12 @@ class PolicyExpressionParser extends F3::FLOW3::AOP::PointcutExpressionParser {
 	/**
 	 * Default constructor
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		parent::__construct($componentManager);
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		parent::__construct($objectManager);
 	}
 
 	/**

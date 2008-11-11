@@ -43,7 +43,7 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 		);
 
-		$parser = new PolicyExpressionParser($this->componentManager);
+		$parser = new PolicyExpressionParser($this->objectManager);
 		$parser->setResourcesTree($resourcesTree);
 		try {
 			$parser->parse('theIntegrativeResource');
@@ -63,7 +63,7 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 		);
 
-		$parser = new PolicyExpressionParser($this->componentManager);
+		$parser = new PolicyExpressionParser($this->objectManager);
 		$parser->setResourcesTree($resourcesTree);
 		try {
 			$parser->parse('theIntegrativeResource');

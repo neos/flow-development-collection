@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,25 +26,25 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestPatternResolver {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface The component manager
+	 * @var F3::FLOW3::Object::ManagerInterface The object manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager The component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager) {
-		$this->componentManager = $componentManager;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
 	}
 
 	/**
@@ -58,10 +58,10 @@ class RequestPatternResolver {
 	public function resolveRequestPatternClass($name) {
 		$resolvedClassName = '';
 
-		$nameIsClassName = $this->componentManager->getCaseSensitiveComponentName($name);
+		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
-		$extendedNameIsClassName = $this->componentManager->getCaseSensitiveComponentName('F3::FLOW3::Security::RequestPattern::' . $name);
+		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3::FLOW3::Security::RequestPattern::' . $name);
 		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
 		if ($resolvedClassName != '') return $resolvedClassName;

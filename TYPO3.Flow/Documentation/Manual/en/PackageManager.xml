@@ -47,8 +47,8 @@
                   subdirectories to organize the content if necessary. All
                   classes or interfaces below this directory are handled by
                   the autolading mechanism and will be registered at the
-                  component manager automatically (and will thus be considered
-                  "components").</para>
+                  object manager automatically (and will thus be considered
+                  "objects").</para>
                 </listitem>
               </varlistentry>
 
@@ -60,10 +60,10 @@
                   the package reside in this directory. The configuration
                   files are immutable and must not be changed by the user or
                   administrator. The most prominent configuration files are
-                  the <filename>Components.php</filename> file which may be
-                  used to configure the package's components and the
-                  <filename>Settings.php file which contains general
-                  user-level settings</filename>.</para>
+                  the <filename>Objects.</filename>yaml file which may be used
+                  to configure the package's objects and the
+                  <filename>Settings.yaml</filename> file which contains
+                  general user-level settings.</para>
                 </listitem>
               </varlistentry>
 
@@ -151,7 +151,7 @@
 
                       <listitem>
                         <para>Should hold any PHP code that is an external
-                        library which should not be handled by the component
+                        library which should not be handled by the object
                         manager (at least not by default), is of procedural
                         nature or doesn't belong into the classes directory
                         for any other reason.</para>
@@ -228,14 +228,14 @@
     <title>Package Manager</title>
 
     <para>The Package Manager is in charge of downloading, installing,
-    configuring and activating packages and registers their components and
+    configuring and activating packages and registers their objects and
     resources.</para>
 
     <note>
       <para>In its current form, the package manager only provides the basic
-      functionality which is necessary to use packages and their components.
-      More advanced features like installing or configuring packages are of
-      course planned.</para>
+      functionality which is necessary to use packages and their objects. More
+      advanced features like installing or configuring packages are of course
+      planned.</para>
     </note>
   </section>
 

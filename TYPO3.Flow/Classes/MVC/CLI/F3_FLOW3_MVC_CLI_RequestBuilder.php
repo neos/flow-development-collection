@@ -32,14 +32,14 @@ namespace F3::FLOW3::MVC::CLI;
 class RequestBuilder {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface
+	 * @var F3::FLOW3::Object::ManagerInterface
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Utility::Environment
@@ -49,15 +49,15 @@ class RequestBuilder {
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory A reference to the component factory
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
 	 * @param F3::FLOW3::Utility::Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Utility::Environment $environment) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Utility::Environment $environment) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $objectFactory;
 		$this->environment = $environment;
 	}
 
@@ -70,9 +70,9 @@ class RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->componentFactory->create('F3::FLOW3::MVC::CLI::Request');
+		$request = $this->objectFactory->create('F3::FLOW3::MVC::CLI::Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
-			$request->setControllerComponentNamePattern('F3::FLOW3::MVC::Controller::DefaultController');
+			$request->setControllerObjectNamePattern('F3::FLOW3::MVC::Controller::DefaultController');
 			return $request;
 		}
 
@@ -105,7 +105,7 @@ class RequestBuilder {
 
 		if (count($command['subpackages']) > 0) {
 			$subPackages = implode('::', $command['subpackages']);
-			$request->setControllerComponentNamePattern('F3::@package::' . $subPackages . '::Controller::@controllerController');
+			$request->setControllerObjectNamePattern('F3::@package::' . $subPackages . '::Controller::@controllerController');
 		}
 	}
 

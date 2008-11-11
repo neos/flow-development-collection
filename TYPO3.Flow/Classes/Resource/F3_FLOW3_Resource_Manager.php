@@ -45,9 +45,9 @@ class Manager {
 	protected $classLoader;
 
 	/**
-	 * @var F3::FLOW3::Component::Factory
+	 * @var F3::FLOW3::Object::Factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Resource::Publisher
@@ -66,9 +66,9 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Resource::ClassLoader $classLoader, F3::FLOW3::Component::FactoryInterface $componentFactory) {
+	public function __construct(F3::FLOW3::Resource::ClassLoader $classLoader, F3::FLOW3::Object::FactoryInterface $objectFactory) {
 		$this->classLoader = $classLoader;
-		$this->componentFactory = $componentFactory;
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -108,7 +108,7 @@ class Manager {
 	 */
 	public function getResource($URI) {
 		if (is_string($URI)) {
-			$URI = $this->componentFactory->create('F3::FLOW3::Property::DataType::URI', $URI);
+			$URI = $this->objectFactory->create('F3::FLOW3::Property::DataType::URI', $URI);
 		}
 		$URIString = (string)$URI;
 
@@ -132,7 +132,7 @@ class Manager {
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {
 			case 'text/html':
-				$resource = $this->componentFactory->create('F3::FLOW3::Resource::HTMLResource');
+				$resource = $this->objectFactory->create('F3::FLOW3::Resource::HTMLResource');
 				break;
 			default:
 				throw new F3::FLOW3::Resource::Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);

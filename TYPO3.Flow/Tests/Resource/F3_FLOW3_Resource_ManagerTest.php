@@ -18,14 +18,14 @@ namespace F3::FLOW3::Resource;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the resource manager
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Component::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ManagerTest extends F3::Testing::BaseTestCase {
@@ -50,7 +50,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$mockClassLoader = $this->getMock('F3::FLOW3::Resource::ClassLoader', array(), array(), '', FALSE);
 		$mockResourcePublisher = $this->getMock('F3::FLOW3::Resource::Publisher', array(), array(), '', FALSE);
 		$mockResourcePublisher->expects($this->any())->method('getMetadata')->will($this->returnValue($metaData));
-		$this->manager = new F3::FLOW3::Resource::Manager($mockClassLoader, $this->componentFactory);
+		$this->manager = new F3::FLOW3::Resource::Manager($mockClassLoader, $this->objectFactory);
 		$this->manager->injectResourcePublisher($mockResourcePublisher);
 	}
 

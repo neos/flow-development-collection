@@ -45,11 +45,11 @@ class NotEmpty extends F3::FLOW3::Validation::AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 		if ($propertyValue === NULL) {
-			$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was NULL.', 1221560910));
+			$errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was NULL.', 1221560910));
 			return FALSE;
 		}
 		if ($propertyValue === '') {
-			$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was empty.', 1221560718));
+			$errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was empty.', 1221560718));
 			return FALSE;
 		}
 

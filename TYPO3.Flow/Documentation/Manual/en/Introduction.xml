@@ -54,9 +54,8 @@
       </listitem>
 
       <listitem>
-        <para>The <emphasis>Component</emphasis> Manager is in charge of
-        building, caching and combining objects, which in this context are
-        called <firstterm>components</firstterm>.</para>
+        <para>The <emphasis>Object</emphasis> Manager is in charge of
+        building, caching and combining objects.</para>
       </listitem>
 
       <listitem>

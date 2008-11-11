@@ -19,7 +19,7 @@ namespace F3::FLOW3::MVC::View;
  * Testcase for the MVC Template View
  * 
  * @package		FLOW3
- * @version 	$Id:F3::FLOW3::Component::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class TemplateTest extends F3::Testing::BaseTestCase {
@@ -29,8 +29,8 @@ class TemplateTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 */
 	public function scopeIsPrototype() {
-		$instance1 = $this->componentManager->getComponent('F3::FLOW3::MVC::View::Template');
-		$instance2 = $this->componentManager->getComponent('F3::FLOW3::MVC::View::Template');
+		$instance1 = $this->objectManager->getObject('F3::FLOW3::MVC::View::Template');
+		$instance2 = $this->objectManager->getObject('F3::FLOW3::MVC::View::Template');
 		$this->assertNotSame($instance1, $instance2, 'The template view is not a prototype.');
 	}
 }

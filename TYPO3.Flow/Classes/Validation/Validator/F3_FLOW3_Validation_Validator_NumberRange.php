@@ -73,8 +73,8 @@ class NumberRange extends F3::FLOW3::Validation::AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 
-		if (!is_numeric($propertyValue)) $errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
-		if ($propertyValue < $this->startRange || $propertyValue > $this->endRange) $errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not in the valid range (' . $this->startRange . ', ' . $this->endRange . '). Got: "' . $propertyValue . '"', 1221561046));
+		if (!is_numeric($propertyValue)) $errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
+		if ($propertyValue < $this->startRange || $propertyValue > $this->endRange) $errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not in the valid range (' . $this->startRange . ', ' . $this->endRange . '). Got: "' . $propertyValue . '"', 1221561046));
 
 		if (count($errors) > 0) return FALSE;
 		return TRUE;

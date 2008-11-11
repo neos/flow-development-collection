@@ -23,7 +23,7 @@ namespace F3::FLOW3::Utility;
 
 /**
  * A subclass of "Evironment" which allows for modifying the underlying environment
- * information. This component should only be used as a mock object for unit testing.
+ * information. This object should only be used as a mock object for unit testing.
  *
  * @package FLOW3
  * @subpackage Utility

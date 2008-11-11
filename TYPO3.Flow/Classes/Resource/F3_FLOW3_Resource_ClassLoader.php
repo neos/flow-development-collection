@@ -18,7 +18,7 @@ namespace F3::FLOW3::Resource;
 /**
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3::FLOW3::Component::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Object::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  */
 
 require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
@@ -26,17 +26,17 @@ require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
 
 /**
  * Class Loader implementation which loads .php files found in the classes
- * directory of a component.
+ * directory of an object.
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3::FLOW3::Component::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3::FLOW3::Object::ClassLoader.php 203 2007-03-30 13:17:37Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ClassLoader {
 
 	/**
-	 * @var array Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the F3::Package::Component scheme.
+	 * @var array Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the F3::Package::Object scheme.
 	 */
 	protected $specialClassNamesAndPaths = array();
 

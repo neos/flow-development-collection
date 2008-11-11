@@ -33,9 +33,9 @@ namespace F3::FLOW3::MVC::Controller;
 class Arguments extends ::ArrayObject {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface A reference to the component factory
+	 * @var F3::FLOW3::Object::FactoryInterface A reference to the object factory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var array Names of the arguments contained by this object
@@ -47,8 +47,8 @@ class Arguments extends ::ArrayObject {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 		parent::__construct();
 	}
 
@@ -139,7 +139,7 @@ class Arguments extends ::ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
-		$argument = $this->componentFactory->create('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
+		$argument = $this->objectFactory->create('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 		$this->addArgument($argument);
 		return $argument;

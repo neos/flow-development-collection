@@ -36,8 +36,8 @@ class StaticRoutePartTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function staticRoutePartIsPrototype() {
-		$routePart1 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
-		$routePart2 = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$routePart1 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+		$routePart2 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
 		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Static Route Part is not prototype!');
 	}
 

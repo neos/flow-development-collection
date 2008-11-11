@@ -146,7 +146,7 @@ class EmailAddress extends F3::FLOW3::Validation::AbstractValidator {
 					)
 					\b
 				/ix', $propertyValue)) return TRUE;
-		$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid email address. Got: "' . $propertyValue . '"', 1221559976));
+		$errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid email address. Got: "' . $propertyValue . '"', 1221559976));
 		return FALSE;
 	}
 }

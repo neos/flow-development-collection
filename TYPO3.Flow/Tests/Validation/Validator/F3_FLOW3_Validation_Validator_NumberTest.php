@@ -37,7 +37,7 @@ class NumberTest extends F3::Testing::BaseTestCase {
 	 */
 	public function numberValidatorReturnsTrueForASimpleInteger() {
 		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
-		$numberValidator->injectComponentFactory($this->componentFactory);
+		$numberValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
@@ -49,7 +49,7 @@ class NumberTest extends F3::Testing::BaseTestCase {
 	 */
 	public function numberValidatorReturnsFalseForAString() {
 		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
-		$numberValidator->injectComponentFactory($this->componentFactory);
+		$numberValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($numberValidator->isValidProperty('not a number', $validationErrors));
@@ -61,7 +61,7 @@ class NumberTest extends F3::Testing::BaseTestCase {
 	 */
 	public function numberValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
 		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
-		$numberValidator->injectComponentFactory($this->componentFactory);
+		$numberValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$numberValidator->isValidProperty('this is not a number', $validationErrors);

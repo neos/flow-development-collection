@@ -54,7 +54,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$class = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClass');
 		$method = new F3::FLOW3::Reflection::MethodReflection('F3::TestPackage::BasicClass', 'setSomeProperty');
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 		$this->assertTrue($policyService->matches($class, $method, 1));
 	}
 
@@ -85,7 +85,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$class2 = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClassValidator');
 		$method2 = new F3::FLOW3::Reflection::MethodReflection('F3::TestPackage::BasicClassValidator', 'validate');
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		$this->assertTrue($policyService->matches($class, $method, 1));
 		$this->assertTrue($policyService->matches($class2, $method2, 2));
@@ -129,7 +129,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$class = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClass');
 		$method = new F3::FLOW3::Reflection::MethodReflection('F3::TestPackage::BasicClass', 'setSomeProperty');
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		$policyService->matches($class, $method, 1);
 	}
@@ -171,7 +171,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3::TestPackage::BasicClass'));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		$expectedRolesStringRepresentations = array('ADMINISTRATOR', 'PRIVILEGED_CUSTOMER');
 		$resultRoles = $policyService->getRoles($mockJoinPoint);
@@ -220,7 +220,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3::TestPackage::BasicClass'));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('notExistantMethod'));
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		try {
 			$resultRoles = $policyService->getRoles($mockJoinPoint);
@@ -273,7 +273,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3::TestPackage::BasicClass'));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		$expectedPrivilegesStringRepresentation = array('ACCESS', 'CUSTOMPRIVILEGE');
 		$resultPrivileges = $policyService->getPrivileges(new F3::FLOW3::Security::ACL::Role('PRIVILEGED_CUSTOMER'), $mockJoinPoint);
@@ -332,7 +332,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3::TestPackage::BasicClass'));
 		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		$resultPrivilege = $policyService->getPrivileges(new F3::FLOW3::Security::ACL::Role('PRIVILEGED_CUSTOMER'), $mockJoinPoint, 'ACCESS');
 
@@ -380,7 +380,7 @@ class PolicyServiceTest extends F3::Testing::BaseTestCase {
 
 		$mockRole = $this->getMock('F3::FLOW3::Security::ACL::Role', array(), array(), '', FALSE);
 
-		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->componentManager, $mockConfigurationManager, $mockCacheFactory);
+		$policyService = new F3::FLOW3::Security::ACL::PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
 
 		try {
 			$resultRoles = $policyService->getPrivileges($mockRole, $mockJoinPoint);

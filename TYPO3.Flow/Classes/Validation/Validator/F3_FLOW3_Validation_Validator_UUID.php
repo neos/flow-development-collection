@@ -45,7 +45,7 @@ class UUID extends F3::FLOW3::Validation::AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
 		if (!is_string($propertyValue) || !preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $propertyValue)) {
-			$errors->append($this->componentFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid UUID. Got: "' . $propertyValue . '"', 1221565853));
+			$errors->append($this->objectFactory->create('F3::FLOW3::Validation::Error', 'The given subject was not a valid UUID. Got: "' . $propertyValue . '"', 1221565853));
 			return FALSE;
 		}
 

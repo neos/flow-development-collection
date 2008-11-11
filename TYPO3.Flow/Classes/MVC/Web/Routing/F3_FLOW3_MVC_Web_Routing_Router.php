@@ -33,14 +33,14 @@ namespace F3::FLOW3::MVC::Web::Routing;
 class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 
 	/**
-	 * @var F3::FLOW3::Component::ManagerInterface $componentManager: A reference to the Component Manager
+	 * @var F3::FLOW3::Object::ManagerInterface $objectManager: A reference to the Object Manager
 	 */
-	protected $componentManager;
+	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @var F3::FLOW3::Object::FactoryInterface $objectFactory
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var F3::FLOW3::Utility::Environment
@@ -61,15 +61,15 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Component::ManagerInterface $componentManager A reference to the component manager
+	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
 	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
 	 * @param F3::FLOW3::Configuration::Manager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Component::ManagerInterface $componentManager, F3::FLOW3::Component::FactoryInterface $componentFactory, F3::FLOW3::Utility::Environment $utilityEnvironment) {
-		$this->componentManager = $componentManager;
-		$this->componentFactory = $componentFactory;
+	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Utility::Environment $utilityEnvironment) {
+		$this->objectManager = $objectManager;
+		$this->objectFactory = $objectFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 	}
 
@@ -82,12 +82,12 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 */
 	public function setRoutesConfiguration(array $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
-			$route = $this->componentFactory->create('F3::FLOW3::MVC::Web::Routing::Route');
+			$route = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::Route');
 			$route->setName($routeName);
 			$route->setUriPattern($routeConfiguration['uriPattern']);
 			if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
-			if (isset($routeConfiguration['controllerComponentNamePattern'])) $route->setControllerComponentNamePattern($routeConfiguration['controllerComponentNamePattern']);
-			if (isset($routeConfiguration['viewComponentNamePattern'])) $route->setViewComponentNamePattern($routeConfiguration['viewComponentNamePattern']);
+			if (isset($routeConfiguration['controllerObjectNamePattern'])) $route->setControllerObjectNamePattern($routeConfiguration['controllerObjectNamePattern']);
+			if (isset($routeConfiguration['viewObjectNamePattern'])) $route->setViewObjectNamePattern($routeConfiguration['viewObjectNamePattern']);
 			if (isset($routeConfiguration['routePartHandlers'])) $route->setRoutePartHandlers($routeConfiguration['routePartHandlers']);
 			$this->routes[$routeName] = $route;
 		}
@@ -131,11 +131,11 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 						$request->setArgument($argumentName, $argumentValue);
 					}
 				}
-				$pattern = $route->getControllerComponentNamePattern();
-				if ($pattern !== NULL) $request->setControllerComponentNamePattern($pattern);
+				$pattern = $route->getControllerObjectNamePattern();
+				if ($pattern !== NULL) $request->setControllerObjectNamePattern($pattern);
 
-				$pattern = $route->getViewComponentNamePattern();
-				if ($pattern !== NULL) $request->setViewComponentNamePattern($pattern);
+				$pattern = $route->getViewObjectNamePattern();
+				if ($pattern !== NULL) $request->setViewObjectNamePattern($pattern);
 				break;
 			}
 		}

@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::Authentication;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ProviderResolverTest extends F3::Testing::BaseTestCase {
@@ -36,7 +36,7 @@ class ProviderResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderClassThrowsAnExceptionIfNoProviderIsAvailable() {
-		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager);
 
 		try {
 			$providerResolver->resolveProviderClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
@@ -51,7 +51,7 @@ class ProviderResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
-		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager);
 		$providerClass = $providerResolver->resolveProviderClass('UsernamePassword');
 
 		$this->assertEquals('F3::FLOW3::Security::Authentication::Provider::UsernamePassword', $providerClass, 'The wrong classname has been resolved');
@@ -62,7 +62,7 @@ class ProviderResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForACompleteClassname() {
-		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->componentManager);
+		$providerResolver = new F3::FLOW3::Security::Authentication::ProviderResolver($this->objectManager);
 		$providerClass = $providerResolver->resolveProviderClass('F3::TestPackage::TestAuthenticationProvider');
 
 		$this->assertEquals('F3::TestPackage::TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');

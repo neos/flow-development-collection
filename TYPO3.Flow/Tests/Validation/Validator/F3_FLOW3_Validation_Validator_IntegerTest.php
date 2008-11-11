@@ -53,7 +53,7 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function integerValidatorReturnsTrueForAValidInteger($integer) {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
+		$integerValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($integerValidator->isValidProperty($integer, $validationErrors));
@@ -80,7 +80,7 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function integerValidatorReturnsTrueForAnInvalidInteger($integer) {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
+		$integerValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($integerValidator->isValidProperty($integer, $validationErrors));
@@ -92,7 +92,7 @@ class IntegerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
 		$integerValidator = new F3::FLOW3::Validation::Validator::Integer();
-		$integerValidator->injectComponentFactory($this->componentFactory);
+		$integerValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$integerValidator->isValidProperty('not a number', $validationErrors);

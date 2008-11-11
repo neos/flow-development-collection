@@ -18,7 +18,7 @@ namespace F3::FLOW3::Locale;
 /**
  * @package FLOW3
  * @subpackage Locale
- * @version $Id:F3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3_FLOW3_Object_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Locale;
  *
  * @package FLOW3
  * @subpackage Locale
- * @version $Id:F3_FLOW3_Component_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3_FLOW3_Object_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class LocaleTest extends F3::Testing::BaseTestCase {
@@ -36,8 +36,8 @@ class LocaleTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aLocaleIsPrototype() {
-		$locale1 = $this->componentManager->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
-		$locale2 = $this->componentManager->getComponent('F3::FLOW3::Locale::Locale', 'de_DE');
+		$locale1 = $this->objectManager->getObject('F3::FLOW3::Locale::Locale', 'de_DE');
+		$locale2 = $this->objectManager->getObject('F3::FLOW3::Locale::Locale', 'de_DE');
 
 		$this->assertNotSame($locale1, $locale2);
 	}

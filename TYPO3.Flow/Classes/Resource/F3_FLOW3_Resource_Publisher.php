@@ -32,9 +32,9 @@ namespace F3::FLOW3::Resource;
 class Publisher {
 
 	/**
-	 * @var F3::FLOW3::Component::FactoryInterface
+	 * @var F3::FLOW3::Object::FactoryInterface
 	 */
-	protected $componentFactory;
+	protected $objectFactory;
 
 	/**
 	 * @var string The base path for the mirrored public assets
@@ -57,12 +57,12 @@ class Publisher {
 	protected $cacheStrategy = F3::FLOW3::Resource::Manager::CACHE_STRATEGY_NONE;
 
 	/**
-	 * @param F3::FLOW3::Component::FactoryInterface $componentFactory
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectComponentFactory(F3::FLOW3::Component::FactoryInterface $componentFactory) {
-		$this->componentFactory = $componentFactory;
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**

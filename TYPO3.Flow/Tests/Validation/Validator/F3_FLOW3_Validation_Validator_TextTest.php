@@ -37,7 +37,7 @@ class TextTest extends F3::Testing::BaseTestCase {
 	 */
 	public function textValidatorReturnsTrueForASimpleString() {
 		$textValidator = new F3::FLOW3::Validation::Validator::Text();
-		$textValidator->injectComponentFactory($this->componentFactory);
+		$textValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($textValidator->isValidProperty('this is a very simple string', $validationErrors));
@@ -49,7 +49,7 @@ class TextTest extends F3::Testing::BaseTestCase {
 	 */
 	public function textValidatorReturnsFalseForAStringWithHTMLEntities() {
 		$textValidator = new F3::FLOW3::Validation::Validator::Text();
-		$textValidator->injectComponentFactory($this->componentFactory);
+		$textValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertFalse($textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
@@ -61,7 +61,7 @@ class TextTest extends F3::Testing::BaseTestCase {
 	 */
 	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
 		$textValidator = new F3::FLOW3::Validation::Validator::Text();
-		$textValidator->injectComponentFactory($this->componentFactory);
+		$textValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);

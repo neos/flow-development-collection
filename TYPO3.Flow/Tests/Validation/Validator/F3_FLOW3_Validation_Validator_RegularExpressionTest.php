@@ -37,7 +37,7 @@ class RegularExpressionTest extends F3::Testing::BaseTestCase {
 	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
 		$regularExpressionValidator = new F3::FLOW3::Validation::Validator::RegularExpression('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectComponentFactory($this->componentFactory);
+		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$this->assertTrue($regularExpressionValidator->isValidProperty('simple1expression', $validationErrors));
@@ -50,7 +50,7 @@ class RegularExpressionTest extends F3::Testing::BaseTestCase {
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
 		$regularExpressionValidator = new F3::FLOW3::Validation::Validator::RegularExpression('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectComponentFactory($this->componentFactory);
+		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new F3::FLOW3::Validation::Errors();
 
 		$regularExpressionValidator->isValidProperty('some subject that will not match', $validationErrors);
