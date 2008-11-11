@@ -165,7 +165,7 @@ class Publisher {
 
 			F3::FLOW3::Utility::Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
 			if ($metadata['mimeType'] == 'text/html') {
-				$HTML = F3::FLOW3::Resource::Processor::adjustRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
+				$HTML = F3::FLOW3::Resource::Processor::prefixRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {
 				copy($file, $destinationPath . $relativeFile);

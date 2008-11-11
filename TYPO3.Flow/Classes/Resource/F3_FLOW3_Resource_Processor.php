@@ -22,6 +22,7 @@ namespace F3::FLOW3::Resource;
  */
 
 /**
+ * A resource processor for making adjustments to resources
  *
  * @package FLOW3
  * @subpackage Resource
@@ -30,7 +31,7 @@ namespace F3::FLOW3::Resource;
  */
 class Processor {
 
-	const PREFIX_RELATIVE_LINKS = '/(src="|href="|url\()(?!(\/|http))/iUu';
+	const PREFIX_RELATIVE_LINKS = '/(src="|href="|url\()(?!(\/|http|#))/iUu';
 
 	/**
 	 * Prepends the given prefix to relative paths in links, css, ...
@@ -39,9 +40,8 @@ class Processor {
 	 * @param string $pathPrefix
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Make regular expression water-tight
 	 */
-	static public function adjustRelativePathsInHTML($HTML, $pathPrefix) {
+	static public function prefixRelativePathsInHTML($HTML, $pathPrefix) {
 		return preg_replace(self::PREFIX_RELATIVE_LINKS, '$1' . $pathPrefix, $HTML);
 	}
 }

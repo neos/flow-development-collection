@@ -39,6 +39,7 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
+		<base href="###BASEURI###" />
 		<style type="text/css">
 			.F3_WidgetLibrary_Widgets_FloatingWindow {
 				background-image: url(DefaultView_FloatingWindow.png);
@@ -50,12 +51,14 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 		<img src="DefaultView_Package.png" class="DefaultView_Package" />
 		<a href="http://test.invalid/">do not change this link</a>
 		<a href="/an/absolute/URL/">nor this link</a>
+		<a href="#samePage">nor that link</a>
 	</body>
 </html>';
 		$expectedHTML = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 	<head>
+		<base href="###BASEURI###" />
 		<style type="text/css">
 			.F3_WidgetLibrary_Widgets_FloatingWindow {
 				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
@@ -67,10 +70,11 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
 		<a href="http://test.invalid/">do not change this link</a>
 		<a href="/an/absolute/URL/">nor this link</a>
+		<a href="#samePage">nor that link</a>
 	</body>
 </html>';
 		$processor = $this->componentManager->getComponent('F3::FLOW3::Resource::Processor');
-		$processedHTML = $processor->adjustRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
+		$processedHTML = $processor->prefixRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}
 }
