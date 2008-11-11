@@ -242,10 +242,9 @@ final class FLOW3 {
 	public function initializeFLOW3() {
 		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3::FLOW3::Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
 
-		$errorHandler = new F3::FLOW3::Error::ErrorHandler();
-		$errorHandler->setExceptionalErrors($this->settings['errorHandler']['exceptionalErrors']);
-
-		new $this->settings['exceptionHandler']['className'];
+		$errorHandler = new $this->settings['error']['errorHandler']['className'];
+		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
+		new $this->settings['error']['exceptionHandler']['className'];
 
 		$environment = new F3::FLOW3::Utility::Environment($this->settings['utility']['environment']);
 
