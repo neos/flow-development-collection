@@ -336,7 +336,10 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	public function reconstituteObjectReturnsAnObjectOfTheSpecifiedType() {
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::Manager', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
-		$objectBuilder = new F3::FLOW3::Object::Builder($mockObjectManager, $mockObjectFactory, $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$objectBuilder = new F3::FLOW3::Object::Builder();
+		$objectBuilder->injectObjectManager($mockObjectManager);
+		$objectBuilder->injectObjectFactory($mockObjectFactory);
+		$objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 
 		$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 		$object = $objectBuilder->reconstituteObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
@@ -350,7 +353,7 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	public function reconstituteObjectRejectsObjectTypesWhichAreNotPersistable() {
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::Manager', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
-		$objectBuilder = new F3::FLOW3::Object::Builder($mockObjectManager, $mockObjectFactory, $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$objectBuilder = new F3::FLOW3::Object::Builder(); 		$objectBuilder->injectObjectManager($mockObjectManager); 		$objectBuilder->injectObjectFactory($mockObjectFactory); 		$objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 
 		$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::TestPackage::NonPersistableClass');
 
@@ -369,7 +372,7 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	public function reconstituteObjectTakesPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::Manager', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
-		$objectBuilder = new F3::FLOW3::Object::Builder($mockObjectManager, $mockObjectFactory, $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$objectBuilder = new F3::FLOW3::Object::Builder(); 		$objectBuilder->injectObjectManager($mockObjectManager); 		$objectBuilder->injectObjectFactory($mockObjectFactory); 		$objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 		$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$object = $objectBuilder->reconstituteObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
@@ -384,7 +387,7 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	public function reconstituteObjectCallsTheTargetObjectsWakeupMethod() {
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::Manager', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
-		$objectBuilder = new F3::FLOW3::Object::Builder($mockObjectManager, $mockObjectFactory, $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$objectBuilder = new F3::FLOW3::Object::Builder(); 		$objectBuilder->injectObjectManager($mockObjectManager); 		$objectBuilder->injectObjectFactory($mockObjectFactory); 		$objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 		$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$object = $objectBuilder->reconstituteObject('F3::TestPackage::ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
@@ -399,7 +402,7 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	public function reconstituteObjectCallsTheTargetObjectsWakeupMethodOnlyAfterAllPropertiesHaveBeenRestored() {
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::Manager', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::Factory', array(), array(), '', FALSE);
-		$objectBuilder = new F3::FLOW3::Object::Builder($mockObjectManager, $mockObjectFactory, $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$objectBuilder = new F3::FLOW3::Object::Builder(); 		$objectBuilder->injectObjectManager($mockObjectManager); 		$objectBuilder->injectObjectFactory($mockObjectFactory); 		$objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 		$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::TestPackage::ReconstitutableClassWithSimpleProperties');
 
 		$properties = array(

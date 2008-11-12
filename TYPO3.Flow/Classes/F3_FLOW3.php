@@ -55,18 +55,6 @@ final class FLOW3 {
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
-	 * Constants reflecting the initialization levels
-	 */
-	const INITIALIZATION_LEVEL_CONSTRUCT = 1;
-	const INITIALIZATION_LEVEL_CLASSLOADER = 2;
-	const INITIALIZATION_LEVEL_CONFIGURATION = 3;
-	const INITIALIZATION_LEVEL_FLOW3 = 4;
-	const INITIALIZATION_LEVEL_PACKAGES = 5;
-	const INITIALIZATION_LEVEL_COMPONENTS = 6;
-	const INITIALIZATION_LEVEL_RESOURCES = 7;
-	const INITIALIZATION_LEVEL_READY = 10;
-
-	/**
 	 * The application context
 	 * @var string
 	 */
@@ -114,12 +102,6 @@ final class FLOW3 {
 	protected $cacheFactory;
 
 	/**
-	 * Flag which states up to which level FLOW3 has been initialized
-	 * @var integer
-	 */
-	protected $initializationLevel;
-
-	/**
 	 * Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
 	 * @var array
 	 */
@@ -157,7 +139,6 @@ final class FLOW3 {
 	public function __construct($context = 'Production') {
 		$this->checkEnvironment();
 		$this->context = $context;
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_CONSTRUCT;
 	}
 
 	/**
@@ -172,10 +153,9 @@ final class FLOW3 {
 	 * @throws F3::FLOW3::Exception if the framework has already been initialized.
 	 */
 	public function initialize() {
-		if ($this->initializationLevel > self::INITIALIZATION_LEVEL_CONSTRUCT) throw new F3::FLOW3::Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1169546671);
-
 		$this->initializeClassLoader();
 		$this->initializeConfiguration();
+		$this->initializeError();
 		$this->initializeFLOW3();
 		$this->initializePackages();
 		$this->initializeObjects();
@@ -191,19 +171,14 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws F3::FLOW3::Exception if the class loader has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CLASSLOADER) throw new F3::FLOW3::Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1210150008);
-
 		if (!class_exists('F3::FLOW3::Resource::ClassLoader')) {
 			require(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
 		}
 		$this->classLoader = new F3::FLOW3::Resource::ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
-
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_CLASSLOADER;
 	}
 
 	/**
@@ -211,12 +186,9 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Exception if the configuration has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeConfiguration() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_CONFIGURATION) throw new F3::FLOW3::Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1214489744);
-
 		$configurationSources = array(
 			new F3::FLOW3::Configuration::Source::PHP(),
 			new F3::FLOW3::Configuration::Source::YAML()
@@ -224,28 +196,29 @@ final class FLOW3 {
 		$this->configurationManager = new F3::FLOW3::Configuration::Manager($this->context, $configurationSources);
 		$this->configurationManager->loadFLOW3Settings();
 		$this->settings = $this->configurationManager->getSettings('FLOW3');
+	}
 
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_CONFIGURATION;
+	/**
+	 * Initializes the Error component
+	 *
+	 * @return ovid
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeError() {
+		$errorHandler = new $this->settings['error']['errorHandler']['className'];
+		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
+		new $this->settings['error']['exceptionHandler']['className'];
 	}
 
 	/**
 	 * Initializes the FLOW3 core.
 	 *
-	 * Usually this method is only called from unit tests or other applications which need a more fine grained control over
-	 * the initialization and request handling process. Most other applications just call the run() method.
-	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Exception if the framework has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeFLOW3() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_FLOW3) throw new F3::FLOW3::Exception('FLOW3 has already been initialized (up to level ' . $this->initializationLevel . ').', 1205759075);
-
-		$errorHandler = new $this->settings['error']['errorHandler']['className'];
-		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
-		new $this->settings['error']['exceptionHandler']['className'];
-
 		$environment = new F3::FLOW3::Utility::Environment($this->settings['utility']['environment']);
 
 		$this->reflectionService = new F3::FLOW3::Reflection::Service();
@@ -286,8 +259,6 @@ final class FLOW3 {
 				$this->reflectionService->import($this->reflectionCache->get('reflectionServiceData'));
 			}
 		}
-
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_FLOW3;
 	}
 
 	/**
@@ -296,12 +267,9 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Exception if the package system has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializePackages() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_PACKAGES) throw new F3::FLOW3::Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760768);
-
 		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
 
 		$packageManager->initialize();
@@ -314,8 +282,6 @@ final class FLOW3 {
 
 		$this->configurationManager->loadGlobalSettings(array_keys($activePackages));
 		$this->configurationManager->loadRoutesSettings(array_keys($activePackages));
-
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_PACKAGES;
 	}
 
 	/**
@@ -323,12 +289,9 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Exception if the object system has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeObjects() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_COMPONENTS) throw new F3::FLOW3::Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1205760769);
-
 		$objectConfigurations = NULL;
 
 		if ($this->settings['object']['configurationCache']['enable'] === TRUE) {
@@ -348,8 +311,6 @@ final class FLOW3 {
 		}
 
 		$this->objectManager->setObjectConfigurations($objectConfigurations);
-
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_COMPONENTS;
 	}
 
 	/**
@@ -419,9 +380,6 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		if ($this->initializationLevel >= self::INITIALIZATION_LEVEL_RESOURCES) throw new F3::FLOW3::Exception('FLOW3 has already been initialized up to level ' . $this->initializationLevel . '.', 1210080996);
-		$this->initializationLevel = self::INITIALIZATION_LEVEL_RESOURCES;
-
 		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
 
 		$metadataCache = $this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
@@ -449,9 +407,6 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function run() {
-		if ($this->initializationLevel == self::INITIALIZATION_LEVEL_CONSTRUCT) $this->initialize();
-		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_RESOURCES) throw new F3::FLOW3::Exception('Cannot run FLOW3 because it is not fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759259);
-
 		$requestHandlerResolver = $this->objectManager->getObject('F3::FLOW3::MVC::RequestHandlerResolver', $this->settings);
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
@@ -473,7 +428,6 @@ final class FLOW3 {
 		* @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManager() {
-		if ($this->initializationLevel < self::INITIALIZATION_LEVEL_FLOW3) throw new F3::FLOW3::Exception('FLOW3 has not yet been fully initialized (current initialization level: ' . $this->initializationLevel . ').', 1205759260);
 		return $this->objectManager;
 	}
 

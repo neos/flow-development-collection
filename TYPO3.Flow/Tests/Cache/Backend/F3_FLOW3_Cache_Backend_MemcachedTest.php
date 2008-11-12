@@ -55,6 +55,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3::FLOW3::Cache::Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
@@ -63,11 +64,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
-		try {
-			$backend->set($identifier, $data);
-			$this->fail('set() did not throw exception on missing cache frontend');
-		} catch (F3::FLOW3::Cache::Exception $exception) {
-		}
+		$backend->set($identifier, $data);
 	}
 
 	/**
@@ -102,17 +99,14 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3::FLOW3::Cache::Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
 		$data = 'Somedata';
 		$identifier = 'MyIdentifier';
-		try {
-			$backend->set($identifier, $data);
-			$this->fail('set() did not throw exception on missing connection');
-		} catch (F3::FLOW3::Cache::Exception  $exception) {
-		}
+		$backend->set($identifier, $data);
 	}
 
 	/**
