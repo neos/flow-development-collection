@@ -246,6 +246,16 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTagRejectsInvalidTags() {
+		$backend = $this->setUpBackend();
+		$backend->flushByTag('SomeInvalid::Tag');
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -77,16 +77,12 @@ class ConfigurationBuilderTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3::FLOW3::Object::Exception::InvalidObjectConfiguration
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidOptionResultsInException() {
 		$configurationArray = array('scoopy' => 'prototype');
-
-		try {
-			$builtObjectConfiguration = F3::FLOW3::Object::ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
-			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Object::Exception::InvalidObjectConfiguration $exception) {
-		}
+		$builtObjectConfiguration = F3::FLOW3::Object::ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
 	}
 }
 ?>

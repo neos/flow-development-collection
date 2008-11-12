@@ -32,12 +32,38 @@ namespace F3::FLOW3::Cache;
 class AbstractBackendTest extends F3::Testing::BaseTestCase {
 
 	/**
+	 * @var F3::FLOW3::Cache::AbstractBackend
+	 */
+	protected $backend;
+
+	/**
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setUp() {
+		$className = uniqid('ConcreteBackend_');
+		eval('
+			class ' . $className. ' extends F3::FLOW3::Cache::AbstractBackend {
+				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
+				public function get($entryIdentifier) {}
+				public function has($entryIdentifier) {}
+				public function remove($entryIdentifier) {}
+				public function flush() {}
+				public function flushByTag($tag) {}
+				public function findIdentifiersByTag($tag) {}
+				public function collectGarbage() {}
+			}
+		');
+		$this->backend = new $className;
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invalidEntryIdentifiersAreRecognizedAsInvalid() {
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			$this->assertFalse(F3::FLOW3::Cache::AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
+			$this->assertFalse($this->backend->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
 		}
 	}
 
@@ -47,7 +73,7 @@ class AbstractBackendTest extends F3::Testing::BaseTestCase {
 	 */
 	public function validEntryIdentifiersAreRecognizedAsValid() {
 		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
-			$this->assertTrue(F3::FLOW3::Cache::AbstractBackend::isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
+			$this->assertTrue($this->backend->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
 		}
 	}
 
@@ -57,7 +83,7 @@ class AbstractBackendTest extends F3::Testing::BaseTestCase {
 	 */
 	public function invalidTagsAreRecognizedAsInvalid() {
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
-			$this->assertFalse(F3::FLOW3::Cache::AbstractBackend::isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
+			$this->assertFalse($this->backend->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
 		}
 	}
 
@@ -67,7 +93,7 @@ class AbstractBackendTest extends F3::Testing::BaseTestCase {
 	 */
 	public function validTagsAreRecognizedAsValid() {
 		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
-			$this->assertTrue(F3::FLOW3::Cache::AbstractBackend::isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
+			$this->assertTrue($this->backend->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
 		}
 	}
 

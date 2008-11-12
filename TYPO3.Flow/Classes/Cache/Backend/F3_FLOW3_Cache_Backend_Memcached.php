@@ -138,11 +138,11 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (!$this->cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new F3::FLOW3::Cache::Exception::InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 		foreach ($tags as $tag) {
-			if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
+			if (!$this->isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
 		}
 
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
@@ -208,7 +208,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @todo implement wildcard support
 	 */
 	public function findIdentifiersByTag($tag) {
-		if (!self::isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
+		if (!$this->isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
 
 		return $this->findIdentifiersTaggedWith($tag);
 	}
@@ -236,6 +236,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTag($tag) {
+		if (!$this->isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496752);
 		$identifiers = $this->findIdentifiersTaggedWith($tag);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);

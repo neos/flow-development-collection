@@ -458,6 +458,17 @@ class FileTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTagRejectsInvalidTags() {
+		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::File', $this->objectManager->getContext());
+		$this->backend = $backend;
+		$backend->flushByTag('SomeInvalid::Tag');
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTagRemovesCacheEntriesWithSpecifiedTag() {

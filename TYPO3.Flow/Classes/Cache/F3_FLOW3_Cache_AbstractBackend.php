@@ -165,7 +165,7 @@ abstract class AbstractBackend {
 	 * @return boolean
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
-	static public function isValidEntryIdentifier($identifier) {
+	public function isValidEntryIdentifier($identifier) {
 		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
 	}
 
@@ -176,7 +176,7 @@ abstract class AbstractBackend {
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function isValidTag($tag) {
+	public function isValidTag($tag) {
 		return preg_match(self::PATTERN_TAG, $tag) === 1;
 	}
 

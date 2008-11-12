@@ -117,11 +117,11 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!self::isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new F3::FLOW3::Cache::Exception::InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		foreach ($tags as $tag) {
-			if (!self::isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1213105438);
+			if (!$this->isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1213105438);
 		}
 
 		if ($lifetime === 0) {
@@ -279,6 +279,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTag($tag) {
+		if (!$this->isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496751);
 		$identifiers = $this->findIdentifiersByTag($tag);
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
