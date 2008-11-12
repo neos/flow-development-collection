@@ -18,43 +18,43 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::TransientObjectCache.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * A transient Object Object Cache which provides a transient memory-based
- * registry of object objects.
+ * registry of objects.
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::TransientObjectCache.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TransientObjectCache implements F3::FLOW3::Object::ObjectCacheInterface {
+class TransientRegistry implements F3::FLOW3::Object::RegistryInterface {
 
 	/**
-	 * @var array Location where object objects are stored
+	 * @var array Location where objects are stored
 	 */
 	protected $objects = array();
 
 	/**
-	 * Returns an object object from the cache. If an instance of the required
+	 * Returns an object from the registry. If an instance of the required
 	 * object does not exist yet, an exception is thrown.
 	 *
 	 * @param string $objectName Name of the object to return an object of
-	 * @return object The object object
+	 * @return object The object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object object cache.', 1167917198);
+		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
 		return $this->objects[$objectName];
 	}
 
 	/**
-	 * Put an object object into the cache.
+	 * Put an object into the registry.
 	 *
 	 * @param string $objectName Name of the object the object is made for
-	 * @param object $object The object object to store in the cache
+	 * @param object $object The object to store in the registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -65,19 +65,19 @@ class TransientObjectCache implements F3::FLOW3::Object::ObjectCacheInterface {
 	}
 
 	/**
-	 * Remove an object object from the cache.
+	 * Remove an object from the registry.
 	 *
 	 * @param string objectName Name of the object to remove the object for
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object object cache.', 1167917200);
+		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
 		unset ($this->objects[$objectName]);
 	}
 
 	/**
-	 * Checks if an object of the given object already exists in the object cache.
+	 * Checks if an object of the given object already exists in the object registry.
 	 *
 	 * @param string $objectName Name of the object to check for an object
 	 * @return boolean TRUE if an object exists, otherwise FALSE

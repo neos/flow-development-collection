@@ -33,177 +33,564 @@ namespace F3::FLOW3::Object;
 class ManagerTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * Checks if getContext() returns the "Development" context if nothing else has been defined.
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContextReturnsDefaultContext() {
+	public function theDefaultContextIsDevelopment() {
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$objectManager = new F3::FLOW3::Object::Manager($mockReflectionService);
 		$this->assertEquals('Development', $objectManager->getContext(), 'getContext() did not return "Development".');
 	}
 
 	/**
-	 * Checks if setting and retrieving the context delivers the expected results
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContextBasicallyWorks() {
+	public function setContextAllowsForSettingTheContext() {
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$objectManager = new F3::FLOW3::Object::Manager($mockReflectionService);
 		$objectManager->setContext('halululu');
 		$this->assertEquals('halululu', $objectManager->getContext(), 'getContext() did not return the context we set.');
-
 	}
 
 	/**
-	 * Checks if registerObject() can register valid and unspectactular classes
-	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeRegistersTheObjectManagerAndAllInjectedDependenciesAsManagedObjects() {
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service', array(), array(), '', FALSE, FALSE);
+		$objectBuilder = new F3::FLOW3::Object::Builder();
+		$objectFactory = new F3::FLOW3::Object::Factory();
+		$objectRegistry = new F3::FLOW3::Object::TransientRegistry();
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($mockReflectionService);
+		$objectManager->injectObjectBuilder($objectBuilder);
+		$objectManager->injectObjectFactory($objectFactory);
+		$objectManager->injectObjectRegistry($objectRegistry);
+
+		$objectManager->initialize();
+
+		$this->assertSame($objectManager, $objectManager->getObject('F3::FLOW3::Object::ManagerInterface'));
+		$this->assertSame($mockReflectionService, $objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$this->assertSame($objectBuilder, $objectManager->getObject('F3::FLOW3::Object::Builder'));
+		$this->assertSame($objectFactory, $objectManager->getObject('F3::FLOW3::Object::FactoryInterface'));
+		$this->assertSame($objectRegistry, $objectManager->getObject('F3::FLOW3::Object::RegistryInterface'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectFactoryAlwaysReturnsTheSameObjectFactory() {
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$objectManager = new F3::FLOW3::Object::Manager($mockReflectionService);
+		$objectFactory1 = $objectManager->getObjectFactory();
+		$objectFactory2 = $objectManager->getObjectFactory();
+		$this->assertSame($objectFactory1, $objectFactory2);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3::FLOW3::Object::Exception::UnknownObject
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectThrowsAnExceptionIfTheSpecifiedObjectIsNotRegistered() {
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->getObject('ThisObjectNameHasCertainlyNotBeenRegistered');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectCallsTheObjectFactoryInOrderToCreateANewPrototypeObject() {
+		$expectedObject = new ArrayObject();
+		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($expectedObject));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($mockObjectFactory);
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectConfiguration = new F3::FLOW3::Object::Configuration('F3::Foo::Bar::Fixture::Object');
+		$objectConfiguration->setScope(F3::FLOW3::Object::Configuration::SCOPE_PROTOTYPE);
+		$objectManager->setObjectConfiguration($objectConfiguration);
+
+		$retrievedObject = $objectManager->getObject('F3::Foo::Bar::Fixture::Object');
+		$this->assertSame($expectedObject, $retrievedObject);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectCreatesANewInstanceOfSingletonObjectsAndStoresThemInTheRegistryIfAnInstanceDoesntExistYet() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+
+		$expectedObject = new $className();
+
+		$mockObjectBuilder = $this->getMock('F3::FLOW3::Object::Builder');
+		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className)->will($this->returnValue($expectedObject));
+
+		$mockObjectRegistry = $this->getMock('F3::FLOW3::Object::RegistryInterface');
+		$mockObjectRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));
+		$mockObjectRegistry->expects($this->once())->method('putObject')->with($className, $expectedObject);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($mockObjectBuilder);
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($mockObjectRegistry);
+
+		$objectManager->registerObject($className);
+
+		$retrievedObject = $objectManager->getObject($className);
+		$this->assertSame($expectedObject, $retrievedObject);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectPassesAdditionalArgumentsToTheObjectBuilder() {
+		$someObject = new ArrayObject();
+		$constructorArguments = array(
+			1 => new F3::FLOW3::Object::ConfigurationArgument(1, 'arg1', F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			2 => new F3::FLOW3::Object::ConfigurationArgument(2, $someObject, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
+		);
+
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+
+		$objectConfiguration = new F3::FLOW3::Object::Configuration($className);
+		$objectConfiguration->setConfigurationSourceHint('F3::FLOW3::Object::Manager');
+
+		$mockObjectBuilder = $this->getMock('F3::FLOW3::Object::Builder');
+		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className, $objectConfiguration, $constructorArguments)->will($this->returnValue(new $className));
+
+		$mockObjectRegistry = $this->getMock('F3::FLOW3::Object::RegistryInterface');
+		$mockObjectRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($mockObjectBuilder);
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($mockObjectRegistry);
+
+		$objectManager->registerObject($className);
+		$objectManager->getObject($className, 'arg1', $someObject);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectReturnsSingletonObjectsFromTheRegistryIfAnInstanceAlreadyExists() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+		$expectedObject = new $className;
+
+		$mockObjectRegistry = $this->getMock('F3::FLOW3::Object::RegistryInterface');
+		$mockObjectRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(TRUE));
+		$mockObjectRegistry->expects($this->once())->method('getObject')->with($className)->will($this->returnValue($expectedObject));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($mockObjectRegistry);
+
+		$objectManager->registerObject($className);
+
+		$retrievedObject = $objectManager->getObject($className);
+		$this->assertSame($expectedObject, $retrievedObject);
+	}
+
+	/**
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function registerObjectCanRegisterNormalClasses() {
-		$reflectionService = $this->objectManager->getObject('F3::FLOW3::Reflection::Service');
-		$objectManager = new F3::FLOW3::Object::Manager($reflectionService);
-		$this->assertEquals($objectManager->isObjectRegistered('F3::TestPackage::BasicClass'), FALSE, 'isObjectRegistered() did not return FALSE although object is not yet registered.');
-		$objectManager->registerObject('F3::TestPackage::BasicClass');
-		$this->assertTrue($objectManager->isObjectRegistered('F3::TestPackage::BasicClass'), 'isObjectRegistered() did not return TRUE although object has been registered.');
+	public function registerObjectRegistersTheGivenObjectNameForFurtherUsage() {
+		$mockObject = $this->getMock('stdclass');
+		$mockClassName = get_class($mockObject);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$this->assertEquals($objectManager->isObjectRegistered($mockClassName), FALSE, 'isObjectRegistered() did not return FALSE although object is not yet registered.');
+		$objectManager->registerObject($mockClassName);
+		$this->assertTrue($objectManager->isObjectRegistered($mockClassName), 'isObjectRegistered() did not return TRUE although object has been registered.');
 	}
 
 	/**
-	 * Checks if registerObject() can register classes in sub directories to the
-	 * Classes/ directory.
-	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function registerObjectCanRegisterClassesInSubDirectories() {
-		$reflectionService = $this->objectManager->getObject('F3::FLOW3::Reflection::Service');
-		$objectManager = new F3::FLOW3::Object::Manager($reflectionService);
-		$this->assertFalse($objectManager->isObjectRegistered('F3::TestPackage::BasicClass'), 'isObjectRegistered() did not return FALSE although object is not yet registered.');
-		$this->assertFalse($objectManager->isObjectRegistered('F3::TestPackage::SubDirectory::ClassInSubDirectory'), 'isObjectRegistered() did not return FALSE although object is not yet registered.');
-		$objectManager->registerObject('F3::TestPackage::SubDirectory::ClassInSubDirectory');
-		$this->assertTrue($this->objectManager->isObjectRegistered('F3::TestPackage::SubDirectory::ClassInSubDirectory'), 'isObjectRegistered() did not return TRUE although object has been registered.');
+	public function registerObjectAssumesThatTheClassNameEqualsTheGivenObjectNameIfNoClassNameIsSpecified() {
+		$mockObject = $this->getMock('stdclass');
+		$mockClassName = get_class($mockObject);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($mockClassName);
+		$objectConfiguration = $objectManager->getObjectConfiguration($mockClassName);
+		$this->assertSame($mockClassName, $objectConfiguration->getClassName());
 	}
 
 	/**
 	 * @test
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function registerObjectAssignsTheClassNameToTheObjectConfigurationIfOneWasSpecified() {
+		$mockObject = $this->getMock('stdclass');
+		$mockClassName = get_class($mockObject);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject('F3::Foo:Bar::MockObjectName', $mockClassName);
+		$objectConfiguration = $objectManager->getObjectConfiguration('F3::Foo:Bar::MockObjectName');
+		$this->assertSame($mockClassName, $objectConfiguration->getClassName());
+	}
+
+	/**
+	 * @test
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function registerObjectDetectsScopeAnnotationsAndSetsTheScopeInItsObjectConfigurationAccordingly() {
+		$className1 = 'SomeClass' . uniqid();
+		eval('class ' . $className1 . ' {}');
+
+		$className2 = 'SomeClass' . uniqid();
+		eval('class ' . $className2 . ' {}');
+
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService
+			->expects($this->any())
+			->method('isInitialized')
+			->will($this->returnValue(TRUE));
+
+		$mockReflectionService
+			->expects($this->exactly(2))
+			->method('isClassTaggedWith')
+			->will($this->returnValue(TRUE));
+
+		$mockReflectionService
+			->expects($this->exactly(2))
+			->method('getClassTagValues')
+			->will($this->onConsecutiveCalls(array('singleton'), array('prototype')));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($mockReflectionService);
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className1);
+		$objectManager->registerObject($className2);
+
+		$objectConfiguration1 = $objectManager->getObjectConfiguration($className1);
+		$objectConfiguration2 = $objectManager->getObjectConfiguration($className2);
+
+		$this->assertEquals(F3::FLOW3::Object::Configuration::SCOPE_SINGLETON, $objectConfiguration1->getScope());
+		$this->assertEquals(F3::FLOW3::Object::Configuration::SCOPE_PROTOTYPE, $objectConfiguration2->getScope());
+	}
+
+	/**
+	 * @test
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function registerObjectPutsTheObjectIntoTheRegistryIfOneWasGiven() {
+		$mockObject = $this->getMock('stdclass');
+		$mockClassName = get_class($mockObject);
+
+		$mockRegistry = $this->getMock('F3::FLOW3::Object::RegistryInterface');
+		$mockRegistry->expects($this->once())->method('putObject')->with($mockClassName, $mockObject);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($mockRegistry);
+
+		$objectManager->registerObject($mockClassName, NULL, $mockObject);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3::FLOW3::Object::Exception::InvalidClass
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectRejectsAbstractClasses() {
-		$reflectionService = $this->objectManager->getObject('F3::FLOW3::Reflection::Service');
-		$objectManager = new F3::FLOW3::Object::Manager($reflectionService);
-		$this->assertFalse($objectManager->isObjectRegistered('F3::TestPackage::AbstractClass'), 'isObjectRegistered() did not return FALSE although the abstract class is not yet registered.');
-		try {
-			$objectManager->registerObject('F3::TestPackage::AbstractClass');
-			$this->fail('The object manager did not reject the registration of an abstract class.');
-		} catch (F3::FLOW3::Object::Exception::InvalidClass $exception) {
-			return;
-		}
-		$this->fail('The object manager did not throw the right kind of exception.');
+		$className = 'AbstractClass' . uniqid();
+		eval('abstract class ' . $className . ' {}');
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className);
 	}
 
 	/**
-	 * Checks if unregisterObject() unregisters objects
-	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function registerObjectTypeAutomaticallySetsTheClassNameOfTheDefaultImplementationIfTheReflectionServiceFindsOne() {
+		$interfaceName = 'SomeInterface' . uniqid();
+		eval('interface ' . $interfaceName . ' {}');
+
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' implements ' . $interfaceName . ' {}');
+
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService
+			->expects($this->once())
+			->method('getDefaultImplementationClassNameForInterface')
+			->with($interfaceName)
+			->will($this->returnValue($className));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($mockReflectionService);
+
+		$objectManager->registerObjectType($interfaceName);
+		$this->assertSame($className, $objectManager->getObjectConfiguration($interfaceName)->getClassName());
+	}
+
+	/**
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function unregisterObjectThrowsExceptionForNonExistentObject() {
-		try {
-			$this->objectManager->unregisterObject('F3::NonExistentPackage::NonExistentClass');
-		} catch (F3::FLOW3::Object::Exception::UnknownObject $exception) {
-			return;
-		}
-		$this->fail('unregisterObject() did not throw an exception while unregistering a non existent or not registered object.');
+	public function registerObjectTypeDetectsTheScopeAnnotationOfTheDefaultImplementationClassAndSetsTheScopeInItsObjectConfigurationAccordingly() {
+		$interfaceName = 'SomeInterface' . uniqid();
+		eval('interface ' . $interfaceName . ' {}');
+
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' implements ' . $interfaceName . ' {}');
+
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService
+			->expects($this->once())
+			->method('getDefaultImplementationClassNameForInterface')
+			->with($interfaceName)
+			->will($this->returnValue($className));
+
+		$mockReflectionService
+			->expects($this->any())
+			->method('isInitialized')
+			->will($this->returnValue(TRUE));
+
+		$mockReflectionService
+			->expects($this->once())
+			->method('isClassTaggedWith')
+			->will($this->returnValue(TRUE));
+
+		$mockReflectionService
+			->expects($this->once())
+			->method('getClassTagValues')
+			->will($this->returnValue(array('prototype')));
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($mockReflectionService);
+
+		$objectManager->registerObjectType($interfaceName);
+		$objectConfiguration = $objectManager->getObjectConfiguration($interfaceName);
+		$this->assertEquals(F3::FLOW3::Object::Configuration::SCOPE_PROTOTYPE, $objectConfiguration->getScope());
 	}
 
+
 	/**
-	 * Checks if unregisterObject() unregisters objects
-	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function unregisterObjectReallyUnregistersObjects() {
-		$this->assertEquals($this->objectManager->isObjectRegistered('F3::TestPackage::BasicClass'), TRUE, 'F3::TestPackage::BasicClass is not a registered object.');
-		$this->objectManager->unregisterObject('F3::TestPackage::BasicClass');
-		$this->assertEquals($this->objectManager->isObjectRegistered('F3::TestPackage::BasicClass'), FALSE, 'isObjectRegistered() did not return FALSE although object should not be registered anymore.');
+	public function unregisterObjectUnregistersPreviouslyRegisteredObjects() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className);
+		$this->assertTrue($objectManager->isObjectRegistered($className));
+		$objectManager->unregisterObject($className);
+		$this->assertFalse($objectManager->isObjectRegistered($className));
 	}
 
 	/**
-	 * Checks if setObjectConfigurations() throws an exception if the configuration is no valid configuration object
-	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfigurationsThrowsExceptionForNonArray() {
-		try {
-			$this->objectManager->setObjectconfigurations(array('F3::TestPackage::BasicClass' => 'Some string'));
-		} catch (::Exception $exception) {
-			$this->assertEquals(1167826954, $exception->getCode(), 'setObjectConfigurations() throwed an exception but returned the wrong error code.');
-			return;
-		}
-		$this->fail('setObjectConfigurations() accepted an invalid configuration object without throwing an exception.');
+	public function unregisterObjectAlsoRemovesTheObjectInstanceFromTheObjectRegistryIfOneExists() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+
+		$mockObjectRegistry = $this->getMock('F3::FLOW3::Object::RegistryInterface');
+		$mockObjectRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(TRUE));
+		$mockObjectRegistry->expects($this->once())->method('removeObject')->with($className);
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectRegistry($mockObjectRegistry);
+
+		$objectManager->registerObject($className);
+		$objectManager->unregisterObject($className);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfigurationsRegistersYetUnknownObjectsFromObjectConfiguration() {
-		$objectConfigurations = $this->objectManager->getObjectConfigurations();
-		$objectConfigurations['F3::TestPackage::SomeNonExistingObject'] = new F3::FLOW3::Object::Configuration('F3::TestPackage::SomeNonExistingObject', __CLASS__);
-		$this->objectManager->setObjectConfigurations($objectConfigurations);
-		$this->assertTrue($this->objectManager->isObjectRegistered('F3::TestPackage::SomeNonExistingObject'));
+	public function getCaseSensitiveObjectNameReturnsTheMixedCaseObjectNameOfObjectsSpecifiedInArbitraryCase() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className);
+		$this->assertSame($className, $objectManager->getCaseSensitiveObjectName(strtolower($className)));
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3::FLOW3::Object::Exception::UnknownObject
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function unregisterObjectThrowsAnExceptionOnTryingToUnregisterNotRegisteredObjects() {
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->unregisterObject('F3::NonExistentPackage::NonExistentClass');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getObjectConfigurationReturnsCloneOfConfiguration() {
-		$configuration1 = $this->objectManager->getObjectConfiguration('F3::TestPackage::BasicClass');
-		$configuration2 = $this->objectManager->getObjectConfiguration('F3::TestPackage::BasicClass');
-		$this->assertNotSame($configuration1, $configuration2, 'getObjectConfiguration() did not return a clone but the same object configuration!');
-	}
+	public function setObjectConfigurationsReplacesAllButOnlyThoseConfigurationsWhichAreSpecified() {
+		$objectManager = new F3::FLOW3::Object::Manager();
 
-	/**
-	 * Checks if the object manager registers object types (interfaces) correctly
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function registerObjectTypeBasicallyWorks() {
-		$implementation = $this->objectManager->getObject('F3::TestPackage::SomeInterface');
-		$this->assertType('F3::TestPackage::SomeImplementation', $implementation, 'The object of object type ...SomeInterface is not implemented by ...SomeImplementation!');
-	}
+		$configuration1 = new F3::FLOW3::Object::Configuration('Configuration1');
+		$configuration2 = new F3::FLOW3::Object::Configuration('Configuration2');
+		$newConfiguration2 = new F3::FLOW3::Object::Configuration('Configuration2');
+		$newConfiguration3 = new F3::FLOW3::Object::Configuration('Configuration3');
 
-	/**
-	 * Checks if the class name of an object can be really set
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setObjectClassNameWorksAsExpected() {
-		$objectName = 'F3::TestPackage::BasicClass';
-		$this->objectManager->setObjectClassName($objectName, 'F3::TestPackage::ReplacingClass');
-		$object = $this->objectManager->getObject($objectName);
+		$objectManager->setObjectConfigurations(array($configuration1, $configuration2));
+		$objectManager->setObjectConfigurations(array($newConfiguration2, $newConfiguration3));
 
-		$this->assertEquals('F3::TestPackage::ReplacingClass', get_class($object), 'The object was not of the expected class.');
+		$expectedConfiguration = array(
+			'Configuration1' => $configuration1,
+			'Configuration2' => $newConfiguration2,
+			'Configuration3' => $newConfiguration3
+		);
+		$this->assertEquals($expectedConfiguration, $objectManager->getObjectConfigurations());
 	}
 
 	/**
 	 * @test
+	 * @expectedException InvalidArgumentException
+	 * @author  Robert Lemke <robert@typo3.org>
+	 */
+	public function setObjectConfigurationsThrowsAnExceptionIfTheGivenArrayDoesNotContainConfigurationObjects() {
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->setObjectConfigurations(array('F3::TestPackage::BasicClass' => 'Some string'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getRegisteredObjectsReturnsArrayOfMixedCaseAndLowerCaseObjectNames() {
-		$registeredObjects = $this->objectManager->getRegisteredObjects();
+	public function setObjectConfigurationRegistersYetUnknownObjectsFromObjectConfiguration() {
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$this->assertFalse($objectManager->isObjectRegistered('Foo'));
+		$configuration = new F3::FLOW3::Object::Configuration('Foo');
+		$objectManager->setObjectConfiguration($configuration);
+		$this->assertTrue($objectManager->isObjectRegistered('Foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectConfigurationReturnsACloneOfTheOriginalConfigurationObject() {
+		$objectManager = new F3::FLOW3::Object::Manager();
+
+		$originalConfiguration = new F3::FLOW3::Object::Configuration('Foo');
+		$objectManager->setObjectConfiguration($originalConfiguration);
+
+		$this->assertNotSame($originalConfiguration, $objectManager->getObjectConfiguration('Foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setObjectClassNameAllowsForConvenientlySettingsTheClassNameOfARegisteredObject() {
+		$className1 = 'SomeClass' . uniqid();
+		eval('class ' . $className1 . ' {}');
+
+		$className2 = 'SomeClass' . uniqid();
+		eval('class ' . $className2 . ' {}');
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className1);
+		$objectManager->setObjectClassName($className1, $className2);
+		$this->assertSame($className2, $objectManager->getObjectConfiguration($className1)->getClassName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRegisteredObjectsReturnsAnArrayOfMixedCaseAndLowerCaseObjectNames() {
+		$className1 = 'SomeClass' . uniqid();
+		eval('class ' . $className1 . ' {}');
+		$className2 = 'SomeClass' . uniqid();
+		eval('class ' . $className2 . ' {}');
+
+		$objectManager = new F3::FLOW3::Object::Manager();
+		$objectManager->injectReflectionService($this->getMock('F3::FLOW3::Reflection::Service'));
+		$objectManager->injectObjectBuilder($this->getMock('F3::FLOW3::Object::Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3::FLOW3::Object::FactoryInterface'));
+		$objectManager->injectObjectRegistry($this->getMock('F3::FLOW3::Object::RegistryInterface'));
+
+		$objectManager->registerObject($className1);
+		$objectManager->registerObject($className2);
+
+		$registeredObjects = $objectManager->getRegisteredObjects();
 		$this->assertTrue(is_array($registeredObjects), 'The result is not an array.');
+
 		foreach ($registeredObjects as $mixedCase => $lowerCase) {
 			$this->assertTrue(strlen($mixedCase) > 0, 'The object name was an empty string.');
-			$this->assertTrue(strtolower($mixedCase) == $lowerCase, 'The key and value were not equal after strtolower().');
+			$this->assertTrue(strtolower($mixedCase) === $lowerCase, 'The key and value were not equal after strtolower().');
 		}
 	}
 }

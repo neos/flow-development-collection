@@ -32,7 +32,8 @@ namespace F3::FLOW3::Object;
 class Manager implements F3::FLOW3::Object::ManagerInterface {
 
 	/**
-	 * @var string Name of the current context
+	 * Name of the current context
+	 * @var string
 	 */
 	protected $context = 'Development';
 
@@ -42,50 +43,103 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	protected $reflectionService;
 
 	/**
-	 * @var F3::FLOW3::Object::ObjectCacheInterface Holds an instance of the Object Object Cache
+	 * @var F3::FLOW3::Object::RegistryInterface
 	 */
-	protected $objectCache;
+	protected $objectRegistry;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface A Reference to the object factory
-	 */
-	protected $objectFactory;
-
-	/**
-	 * @var array An array of all registered objects. The case sensitive object name is the key, a lower-cased variant is the value.
-	 */
-	protected $registeredObjects = array();
-
-	/**
-	 * @var array An array of all registered object configurations
-	 */
-	protected $objectConfigurations = array();
-
-	/**
-	 * @var F3::FLOW3::Object::Builder Holds an instance of the Object Object Builder
+	 * @var F3::FLOW3::Object::Builder
 	 */
 	protected $objectBuilder;
 
 	/**
-	 * Constructor. Instantiates the object cache and object builder.
+	 * @var F3::FLOW3::Object::FactoryInterface
+	 */
+	protected $objectFactory;
+
+	/**
+	 * An array of all registered objects. The case sensitive object name is the key, a lower-cased variant is the value.
+	 * @var array
+	 */
+	protected $registeredObjects = array();
+
+	/**
+	 * An array of all registered object configurations
+	 * @var array
+	 */
+	protected $objectConfigurations = array();
+
+	/**
+	 * Injects the Reflection Service
 	 *
-	 * @param F3::FLOW3::Reflection::Service $reflectionService
+	 * @param F3::FLOW3::Reflection::Service $reflectionService The Reflection Service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Reflection::Service $reflectionService) {
+	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
-		$this->objectCache = new F3::FLOW3::Object::TransientObjectCache();
+	}
+
+	/**
+	 * Injects the object registry
+	 *
+	 * @param F3::FLOW3::Object::RegistryInterface $objectRegistry The object registry
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectRegistry(F3::FLOW3::Object::RegistryInterface $objectRegistry) {
+		$this->objectRegistry = $objectRegistry;
+	}
+
+	/**
+	 * Injects the object builder
+	 *
+	 * @param F3::FLOW3::Object::Builder $objectBuilder The object builder
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectBuilder(F3::FLOW3::Object::Builder $objectBuilder) {
+		$this->objectBuilder = $objectBuilder;
+	}
+
+	/**
+	 * Injects the object factory
+	 * Note that the object builder and object registry must have been injected before the object factory
+	 * can be injected.
+	 *
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Initializes the Object Manager and its collaborators
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initialize() {
+		if (!is_object($this->reflectionService)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
+		if (!is_object($this->objectRegistry)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
+		if (!is_object($this->objectBuilder)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Builder has been injected into the Object Manager', 1226412712);
+		if (!is_object($this->objectFactory)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Factory has been injected into the Object Manager', 1226412713);
+
 		$this->registerObject('F3::FLOW3::Object::ManagerInterface', __CLASS__, $this);
+		$this->registerObject('F3::FLOW3::Reflection::Service', get_class($this->reflectionService), $this->reflectionService);
+		$this->registerObject('F3::FLOW3::Object::Builder',  get_class($this->objectBuilder), $this->objectBuilder);
+		$this->registerObject('F3::FLOW3::Object::FactoryInterface', get_class($this->objectFactory), $this->objectFactory);
+		$this->registerObject('F3::FLOW3::Object::RegistryInterface',  get_class($this->objectRegistry), $this->objectRegistry);
 
+		$this->objectBuilder->injectObjectManager($this);
+		$this->objectBuilder->injectObjectFactory($this->objectFactory);
+		$this->objectBuilder->injectReflectionService($this->reflectionService);
 
-		$this->objectFactory = new F3::FLOW3::Object::Factory();
-		$this->objectBuilder = new F3::FLOW3::Object::Builder($this, $this->objectFactory, $this->reflectionService);
 		$this->objectFactory->injectObjectManager($this);
 		$this->objectFactory->injectObjectBuilder($this->objectBuilder);
-		$this->objectFactory->injectObjectCache($this->objectCache);
-		$this->registerObject('F3::FLOW3::Object::FactoryInterface', 'F3::FLOW3::Object::Factory', $this->objectFactory);
-		$this->registerObject('F3::FLOW3::Object::Builder', 'F3::FLOW3::Object::Builder', $this->objectBuilder);
+		$this->objectFactory->injectRegistry($this->objectRegistry);
 	}
 
 	/**
@@ -152,13 +206,13 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 				$object = call_user_func_array(array($this->objectFactory, 'create'), func_get_args());
 				break;
 			case 'singleton' :
-				if ($this->objectCache->objectExists($objectName)) {
-					$object = $this->objectCache->getObject($objectName);
+				if ($this->objectRegistry->objectExists($objectName)) {
+					$object = $this->objectRegistry->getObject($objectName);
 				} else {
 					$arguments = array_slice(func_get_args(), 1);
 					$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
 					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingConstructorArguments);
-					$this->objectCache->putObject($objectName, $object);
+					$this->objectRegistry->putObject($objectName, $object);
 				}
 				break;
 			default :
@@ -193,7 +247,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 
 		if ($object !== NULL) {
 			if (!is_object($object) || !$object instanceof $className) throw new F3::FLOW3::Object::Exception::InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
-			$this->objectCache->putObject($objectName, $object);
+			$this->objectRegistry->putObject($objectName, $object);
 		}
 
 		$this->objectConfigurations[$objectName] = new F3::FLOW3::Object::Configuration($objectName, $className);
@@ -207,13 +261,13 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 			$scope = trim(implode('', $class->getTagValues('scope')));
 			$this->objectConfigurations[$objectName]->setScope($scope);
 		}
-		$this->registeredObjects[$objectName] = F3::PHP6::Functions::strtolower($objectName);
+		$this->registeredObjects[$objectName] = strtolower($objectName);
 	}
 
 	/**
 	 * Register the given interface as an object type
 	 *
-	 * @param  string $objectType: The unique identifier of the object (-type)
+	 * @param  string $objectName The name of the object type
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -222,21 +276,12 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 		$objectConfiguration = new F3::FLOW3::Object::Configuration($objectName);
 		if ($className !== FALSE) {
 			$objectConfiguration->setClassName($className);
-
-			$useReflectionService = $this->reflectionService->isInitialized();
-			if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ClassReflection($className);
-
-			if ($useReflectionService) {
-				if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-					$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
-					$objectConfiguration->setScope($scope);
-				}
-			} elseif ($class->isTaggedWith('scope')) {
-				$scope = trim(implode('', $class->getTagValues('scope')));
+			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
+				$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
 				$objectConfiguration->setScope($scope);
 			}
 		}
-		$this->registeredObjects[$objectName] = F3::PHP6::Functions::strtolower($objectName);
+		$this->registeredObjects[$objectName] = strtolower($objectName);
 		$this->objectConfigurations[$objectName] = $objectConfiguration;
 	}
 
@@ -250,8 +295,8 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 */
 	public function unregisterObject($objectName) {
 		if (!$this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Object "' . $objectName . '" is not registered.', 1167473433);
-		if ($this->objectCache->objectExists($objectName)) {
-			$this->objectCache->removeObject($objectName);
+		if ($this->objectRegistry->objectExists($objectName)) {
+			$this->objectRegistry->removeObject($objectName);
 		}
 		unset($this->registeredObjects[$objectName]);
 		unset($this->objectConfigurations[$objectName]);
@@ -288,7 +333,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
 		if (!is_string($caseInsensitiveObjectName)) throw new InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
-		return array_search(F3::PHP6::Functions::strtolower($caseInsensitiveObjectName), $this->registeredObjects);
+		return array_search(strtolower($caseInsensitiveObjectName), $this->registeredObjects);
 	}
 
 	/**
@@ -354,7 +399,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	public function setObjectConfiguration(F3::FLOW3::Object::Configuration $newObjectConfiguration) {
 		$objectName = $newObjectConfiguration->getObjectName();
 		$this->objectConfigurations[$newObjectConfiguration->getObjectName()] = clone $newObjectConfiguration;
-		$this->registeredObjects[$objectName] = F3::PHP6::Functions::strtolower($objectName);
+		$this->registeredObjects[$objectName] = strtolower($objectName);
 	}
 
 	/**
@@ -401,11 +446,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		$this->objectCache = clone $this->objectCache;
+		$this->objectRegistry = clone $this->objectRegistry;
 
 		$this->objectFactory = clone $this->objectFactory;
 		$this->objectFactory->injectObjectManager($this);
-		$this->objectFactory->injectObjectCache($this->objectCache);
+		$this->objectFactory->injectRegistry($this->objectRegistry);
 	}
 }
 

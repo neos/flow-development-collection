@@ -34,7 +34,7 @@ namespace F3::FLOW3::Object;
 class Builder {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterfac A reference to the object manager - used for fetching other object objects while solving dependencies
+	 * @var F3::FLOW3::Object::ManagerInterfac A reference to the object manager - used for fetching other objects while solving dependencies
 	 */
 	protected $objectManager;
 
@@ -54,25 +54,45 @@ class Builder {
 	protected $debugMessages = array();
 
 	/**
-	 * Constructor
+	 * Injects the Reflection Service
 	 *
-	 * @param F3::FLOW3::Object::Manager $objectManager A reference to the object manager
-	 * @param F3::FLOW3::Object::Factory $objectFactory A reference to the object factory
-	 * @param F3::FLOW3::Reflection::Service $reflectionService A reference to the reflection service
+	 * @param F3::FLOW3::Reflection::Service $reflectionService The Reflection Service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Reflection::Service $reflectionService) {
-		$this->objectManager = $objectManager;
-		$this->objectFactory = $objectFactory;
+	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * Creates and returns a ready-to-use object object of the specified type.
+	 * Injects the object manager
+	 *
+	 * @param F3::FLOW3::Object::Manager $objectManager The object manager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectManager(F3::FLOW3::Object::Manager $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the object factory
+	 * Note that the object builder and object registry must have been injected before the object factory
+	 * can be injected.
+	 *
+	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Creates and returns a ready-to-use object of the specified type.
 	 * During the building process all depencencies are resolved and injected.
 	 *
-	 * @param string $objectName: Name of the object to create an object object for
+	 * @param string $objectName: Name of the object to create an object for
 	 * @param F3::FLOW3::Object::Configuration $objectConfiguration: The object configuration
 	 * @param array $overridingConstructorArguments: An array of F3::FLOW3::Object::Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
 	 * @return object
@@ -84,7 +104,7 @@ class Builder {
 		try {
 			$this->objectsBeingBuilt[$objectName] = TRUE;
 			$className = $objectConfiguration->getClassName();
-			if (!class_exists($className, TRUE)) throw new F3::FLOW3::Object::Exception::CannotBuildObject('No valid implementation class for object "' . $objectName . '" found while building the object object (Class "' . $className . '" does not exist).', 1173184871);
+			if (!class_exists($className, TRUE)) throw new F3::FLOW3::Object::Exception::CannotBuildObject('No valid implementation class for object "' . $objectName . '" found while building the object (Class "' . $className . '" does not exist).', 1173184871);
 
 			$constructorArguments = $objectConfiguration->getConstructorArguments();
 			foreach ($overridingConstructorArguments as $index => $value) {
@@ -290,7 +310,7 @@ class Builder {
 	}
 
 	/**
-	 * Calls the lifecycle initialization method (if any) of the object object
+	 * Calls the lifecycle initialization method (if any) of the object
 	 *
 	 * @param object $object: The instance of the recently created object.
 	 * @param F3::FLOW3::Object::Configuration $objectConfiguration: The object configuration

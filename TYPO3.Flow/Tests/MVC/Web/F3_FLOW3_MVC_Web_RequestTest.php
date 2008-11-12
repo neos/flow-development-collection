@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Web;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::MVC::Web;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestTest extends F3::Testing::BaseTestCase {

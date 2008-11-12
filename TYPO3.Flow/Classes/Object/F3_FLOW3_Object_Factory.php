@@ -40,9 +40,9 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Object::ObjectCacheInterface Holds an instance of the Object Object Cache
+	 * @var F3::FLOW3::Object::RegistryInterface Holds an instance of the Object Object Cache
 	 */
-	protected $objectCache;
+	protected $objectRegistry;
 
 	/**
 	 * @var F3::FLOW3::Object::Builder Holds an instance of the Object Object Builder
@@ -61,7 +61,7 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 	}
 
 	/**
-	 * Injects the object object builder
+	 * Injects the object builder
 	 *
 	 * @param F3::FLOW3::Object::Builder $objectBuilder
 	 * @return void
@@ -72,14 +72,14 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 	}
 
 	/**
-	 * Injects the object object cache
+	 * Injects the object registry
 	 *
-	 * @param F3::FLOW3::Object::ObjectCacheInterface $objectCache
+	 * @param F3::FLOW3::Object::RegistryInterface $objectRegistry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectCache(F3::FLOW3::Object::ObjectCacheInterface $objectCache) {
-		$this->objectCache = $objectCache;
+	public function injectRegistry(F3::FLOW3::Object::RegistryInterface $objectRegistry) {
+		$this->objectRegistry = $objectRegistry;
 	}
 
 	/**
@@ -136,7 +136,7 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		$this->objectCache = clone $this->objectCache;
+		$this->objectRegistry = clone $this->objectRegistry;
 		$this->objectBuilder = clone $this->objectBuilder;
 	}
 }

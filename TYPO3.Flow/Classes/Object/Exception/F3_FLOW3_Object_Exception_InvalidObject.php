@@ -22,7 +22,7 @@ namespace F3::FLOW3::Object::Exception;
  */
 
 /**
- * "Invalid object object" Exception
+ * "Invalid object" Exception
  *
  * @package FLOW3
  * @subpackage Object

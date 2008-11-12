@@ -253,9 +253,15 @@ final class FLOW3 {
 			$this->reflectionService->setInterfaceImplementations($interfaceName, $classNames);
 		}
 
-		$this->objectManager = new F3::FLOW3::Object::Manager($this->reflectionService);
+		$this->objectFactory = new F3::FLOW3::Object::Factory();
+
+		$this->objectManager = new F3::FLOW3::Object::Manager();
+		$this->objectManager->injectReflectionService($this->reflectionService);
+		$this->objectManager->injectObjectRegistry(new F3::FLOW3::Object::TransientRegistry);
+		$this->objectManager->injectObjectBuilder(new F3::FLOW3::Object::Builder);
+		$this->objectManager->injectObjectFactory($this->objectFactory);
 		$this->objectManager->setContext($this->context);
-		$this->objectFactory = $this->objectManager->getObjectFactory();
+		$this->objectManager->initialize();
 
 		$this->objectManager->registerObject('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
 		$this->objectManager->registerObject('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
@@ -267,7 +273,6 @@ final class FLOW3 {
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::File');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::Memcached');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::VariableCache');
-		$this->objectManager->registerObject('F3::FLOW3::Reflection::Service', NULL, $this->reflectionService);
 		$this->objectManager->registerObject('F3::FLOW3::Resource::Publisher');
 		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
 

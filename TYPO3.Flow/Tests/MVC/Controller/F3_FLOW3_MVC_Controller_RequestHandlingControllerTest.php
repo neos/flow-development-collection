@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController.php');
@@ -28,7 +28,7 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {

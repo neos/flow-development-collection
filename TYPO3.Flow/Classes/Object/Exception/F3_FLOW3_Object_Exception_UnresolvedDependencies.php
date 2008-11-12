@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::View;
+namespace F3::FLOW3::Object::Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,22 +16,21 @@ namespace F3::FLOW3::MVC::View;
  *                                                                        */
 
 /**
- * Testcase for the MVC Template View
- * 
- * @package		FLOW3
- * @version 	$Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Object
+ * @version $Id$
  */
-class TemplateTest extends F3::Testing::BaseTestCase {
 
-	/**
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @test
-	 */
-	public function scopeIsPrototype() {
-		$instance1 = $this->objectManager->getObject('F3::FLOW3::MVC::View::Template');
-		$instance2 = $this->objectManager->getObject('F3::FLOW3::MVC::View::Template');
-		$this->assertNotSame($instance1, $instance2, 'The template view is not a prototype.');
-	}
+/**
+ * "Unresolved Dependencies" Exception
+ *
+ * @package FLOW3
+ * @subpackage Object
+ * @version $Id$
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ */
+class UnresolvedDependencies extends F3::FLOW3::Object::Exception {
+
 }
+
 ?>

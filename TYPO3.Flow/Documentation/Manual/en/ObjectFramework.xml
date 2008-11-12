@@ -637,7 +637,7 @@ properties:
       </example>
 
       <para>Due to the @optional annotation, the injection of a logger is now
-      no longer required. If the object object builder can't autowire a logger
+      no longer required. If the object builder can't autowire a logger
       for this injection method, it will now no longer throw an
       exception.</para>
     </section>
@@ -1309,7 +1309,7 @@ autoWiringMode: off;</programlisting>
     <section>
       <title>Lifecycle methods</title>
 
-      <para>The lifecycle of an object object goes through different stages.
+      <para>The lifecycle of an object goes through different stages.
       It boils down to the following order:</para>
 
       <orderedlist>

@@ -16,7 +16,7 @@ namespace F3::FLOW3::MVC::Controller;
 
 /**
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -26,7 +26,7 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  * Testcase for the MVC REST Controller
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RESTControllerTest extends F3::Testing::BaseTestCase {

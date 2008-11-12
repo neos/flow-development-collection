@@ -19,7 +19,7 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
 
 /**
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,15 +27,15 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
  * Testcase for the default object manager
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
+class TransientRegistryTest extends F3::Testing::BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::Object::TransientObjectCache
+	 * @var F3::FLOW3::Object::TransientRegistry
 	 */
-	protected $objectCache;
+	protected $objectRegistry;
 
 	/**
 	 * Sets up this test case
@@ -43,7 +43,7 @@ class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->objectCache = new F3::FLOW3::Object::TransientObjectCache();
+		$this->objectRegistry = new F3::FLOW3::Object::TransientRegistry();
 	}
 
 	/**
@@ -54,8 +54,8 @@ class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
 	 */
 	public function getObjectReturnsSameObjectWhichHasBeenStoredByPutObject() {
 		$originalObject = new F3::FLOW3::Fixture::DummyClass();
-		$this->objectCache->putObject('DummyObject', $originalObject);
-		$this->assertSame($originalObject, $this->objectCache->getObject('DummyObject'), 'getObject() did not return the object we stored in the object cache previously.');
+		$this->objectRegistry->putObject('DummyObject', $originalObject);
+		$this->assertSame($originalObject, $this->objectRegistry->getObject('DummyObject'), 'getObject() did not return the object we stored in the object registry previously.');
 	}
 
 	/**
@@ -68,12 +68,12 @@ class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
 		$someObject = new F3::FLOW3::Fixture::DummyClass();
 		$exceptionsThrown = 0;
 		try {
-			$this->objectCache->putObject(NULL, $someObject);
+			$this->objectRegistry->putObject(NULL, $someObject);
 		} catch (::Exception $exception) {
 			$exceptionsThrown ++;
 		}
 		try {
-			$this->objectCache->putObject('DummyObject', 'no object');
+			$this->objectRegistry->putObject('DummyObject', 'no object');
 		} catch (::Exception $exception) {
 			$exceptionsThrown ++;
 		}
@@ -89,9 +89,9 @@ class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
 	 */
 	public function removeObjectReallyRemovesTheObjectFromStorage() {
 		$originalObject = new F3::FLOW3::Fixture::DummyClass();
-		$this->objectCache->putObject('DummyObject', $originalObject);
-		$this->objectCache->removeObject('DummyObject');
-		$this->assertFalse($this->objectCache->objectExists('DummyObject'), 'removeObject() did not really remove the object.');
+		$this->objectRegistry->putObject('DummyObject', $originalObject);
+		$this->objectRegistry->removeObject('DummyObject');
+		$this->assertFalse($this->objectRegistry->objectExists('DummyObject'), 'removeObject() did not really remove the object.');
 	}
 
 	/**
@@ -100,9 +100,9 @@ class TransientObjectCacheTest extends F3::Testing::BaseTestCase {
 	 */
 	public function objectExistsReturnsCorrectResult() {
 		$originalObject = new F3::FLOW3::Fixture::DummyClass();
-		$this->assertFalse($this->objectCache->objectExists('DummyObject'), 'objectExists() did not return FALSE although the object should not exist yet.');
-		$this->objectCache->putObject('DummyObject', $originalObject);
-		$this->assertTrue($this->objectCache->objectExists('DummyObject'), 'objectExists() did not return TRUE although the object should exist.');
+		$this->assertFalse($this->objectRegistry->objectExists('DummyObject'), 'objectExists() did not return FALSE although the object should not exist yet.');
+		$this->objectRegistry->putObject('DummyObject', $originalObject);
+		$this->assertTrue($this->objectRegistry->objectExists('DummyObject'), 'objectExists() did not return TRUE although the object should exist.');
 	}
 }
 ?>

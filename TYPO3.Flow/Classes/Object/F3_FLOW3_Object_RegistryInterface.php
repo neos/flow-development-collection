@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,32 +26,32 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::ObjectCacheInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-interface ObjectCacheInterface {
+interface RegistryInterface {
 
 	/**
-	 * Returns an object object from the cache. If an instance of the required
+	 * Returns an object from the registry. If an instance of the required
 	 * object does not exist yet, an exception is thrown.
 	 *
 	 * @param  string		$objectName: Name of the object to return an object of
-	 * @return object		The object object
+	 * @return object		The object
 	 */
 	public function getObject($objectName);
 
 	/**
-	 * Put an object object into the cache.
+	 * Put an object into the registry.
 	 *
 	 * @param  string		$objectName: Name of the object the object is made for
-	 * @param  object		$object: The object object to store in the cache
+	 * @param  object		$object: The object to store in the registry
 	 * @return void
 	 */
 	public function putObject($objectName, $object);
 
 	/**
-	 * Remove an object object from the cache.
+	 * Remove an object from the registry.
 	 *
 	 * @param  string		$objectName: Name of the object to remove the object for
 	 * @return void
@@ -59,7 +59,7 @@ interface ObjectCacheInterface {
 	public function removeObject($objectName);
 
 	/**
-	 * Checks if an object of the given object already exists in the object cache.
+	 * Checks if an object of the given object already exists in the object registry.
 	 *
 	 * @param  string		$objectName: Name of the object to check for an object
 	 * @return boolean		TRUE if an object exists, otherwise FALSE

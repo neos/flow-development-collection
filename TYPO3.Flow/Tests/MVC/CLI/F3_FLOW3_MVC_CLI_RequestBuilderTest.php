@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::CLI;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,7 +27,7 @@ namespace F3::FLOW3::MVC::CLI;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientObjectCacheTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestBuilderTest extends F3::Testing::BaseTestCase {

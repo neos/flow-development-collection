@@ -44,7 +44,10 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectBuilder = new F3::FLOW3::Object::Builder($this->objectManager, $this->objectManager->getObjectFactory(), $this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
+		$this->objectBuilder = new F3::FLOW3::Object::Builder();
+		$this->objectBuilder->injectObjectManager($this->objectManager);
+		$this->objectBuilder->injectObjectFactory($this->objectManager->getObjectFactory());
+		$this->objectBuilder->injectReflectionService($this->objectManager->getObject('F3::FLOW3::Reflection::Service'));
 	}
 
 	/**
