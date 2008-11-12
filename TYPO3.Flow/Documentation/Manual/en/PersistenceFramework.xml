@@ -63,8 +63,8 @@ public function addPost(F3::Blog::Domain::Post $post) {
     and tags in your Blog are persisted as well, of course.</para>
 
     <para>For all that magic to work as expected, you need to give some hints.
-    This doesn't mean you need to write tons of XML, no a few annotations in
-    your code are enough:<example>
+    This doesn't mean you need to write tons of XML, a few annotations in your
+    code are enough:<example>
         <title>Persistence-related annotations in the Blog class</title>
 
         <para><programlisting>/**
@@ -82,7 +82,6 @@ class Blog {
 
     /**
      * @var array
-     * @reference
      */
     protected $posts = array();
 
@@ -96,8 +95,7 @@ class Blog {
     persisted as well by default. The persistence framework knows their types
     by looking at the <emphasis>@var</emphasis> annotation you use anyway when
     documenting your code (you do document your code, right?). In case of the
-    $posts array an additional <emphasis>@reference</emphasis> annotations
-    instructs the persistence framework to persist the objects held in that
+    $posts array the persistence framework persists the objects held in that
     array as independent objects.</para>
 
     <para>Let's conclude by taking a look at the BlogRepository code:<example>
@@ -181,17 +179,6 @@ class BlogRepository extends F3::FLOW3::Persistence::Repository {
               <entry>Makes the persistence framework ignore the variable.
               Neither will it's value be persisted, nor will it be touched
               during reconstitution.</entry>
-            </row>
-
-            <row>
-              <entry>@reference</entry>
-
-              <entry>Variable</entry>
-
-              <entry>Marks a variable as holding a reference (or references in
-              case of an array). This makes sure the value is stored as an
-              independent object as opposed to a scalar value and checked for
-              nested objects recursively.</entry>
             </row>
 
             <row>

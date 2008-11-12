@@ -214,7 +214,6 @@ class Manager {
 			if (!($referenceObject instanceof F3::FLOW3::AOP::ProxyInterface)) continue;
 
 			$referenceClassName = $referenceObject->AOPProxyGetProxyTargetClassName();
-			$referencePropertyNames = $this->reflectionService->getPropertyNamesByTag($referenceClassName, 'reference');
 
 			$objectHash = spl_object_hash($referenceObject);
 			$allObjects[$objectHash] = $referenceObject;
@@ -223,10 +222,14 @@ class Manager {
 			} elseif ($referenceObject->isDirty()) {
 				$dirtyObjects[$objectHash] = $referenceObject;
 			}
-			foreach ($referencePropertyNames as $propertyName) {
+
+			$propertyNames = $this->reflectionService->getClassPropertyNames($referenceClassName);
+			foreach ($propertyNames as $propertyName) {
 				$propertyValue = $referenceObject->AOPProxyGetProperty($propertyName);
-				$subReferenceObjects = is_array($propertyValue) ? $propertyValue : array($propertyValue);
-				$this->traverseAndInspectReferenceObjects($subReferenceObjects, $newObjects, $dirtyObjects, $allObjects);
+				if (is_object($propertyValue) || (is_array($propertyValue) && count($propertyValue) > 0 && is_object(current($propertyValue)))) {
+					$subReferenceObjects = is_array($propertyValue) ? $propertyValue : array($propertyValue);
+					$this->traverseAndInspectReferenceObjects($subReferenceObjects, $newObjects, $dirtyObjects, $allObjects);
+				}
 			}
 		}
 	}

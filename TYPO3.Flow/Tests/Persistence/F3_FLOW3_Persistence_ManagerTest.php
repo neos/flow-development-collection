@@ -93,7 +93,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
-		$mockReflectionService->expects($this->exactly(4))->method('getPropertyNamesByTag')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array(), array()));
+		$mockReflectionService->expects($this->exactly(4))->method('getClassPropertyNames')->will($this->onConsecutiveCalls(array('someString', 'someInteger', 'someReference', 'someReferenceArray'), array(), array(), array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
@@ -153,7 +153,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-		$mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
 
@@ -185,7 +185,7 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
-		$mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));

@@ -22,7 +22,8 @@ namespace F3::FLOW3::Persistence;
  */
 
 /**
- * Class Schemata Builder
+ * The Class Schemata Builder is used by the Persistence Manager to build class
+ * schemata for all classes tagged as ValueObject or Entity.
  *
  * @package FLOW3
  * @subpackage Persistence

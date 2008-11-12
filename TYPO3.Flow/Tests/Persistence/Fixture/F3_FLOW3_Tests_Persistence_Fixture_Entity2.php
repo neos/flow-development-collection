@@ -46,13 +46,11 @@ class Entity2 implements F3::FLOW3::AOP::ProxyInterface {
 
 	/**
 	 * @var F3::FLOW3::Tests::Persistence::Fixture::Entity3
-	 * @reference
 	 */
 	public $someReference;
 
 	/**
 	 * @var array
-	 * @reference
 	 */
 	public $someReferenceArray = array();
 
