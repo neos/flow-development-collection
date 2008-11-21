@@ -1,6 +1,7 @@
 <?php
 declare(ENCODING = 'utf-8');
 namespace F3::FLOW3::MVC::Controller;
+
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
@@ -50,7 +51,10 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3::FLOW3::MVC::Web::Request $request, F3::FLOW3::MVC::Web::Response $response) {
+	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
+		if (!($request instanceof F3::FLOW3::MVC::Web::Request) || !($response instanceof F3::FLOW3::MVC::Web::Response)) {
+			throw new F3::FLOW3::MVC::Exception::InvalidRequestType('This RESTController only supports web requests.', 1226665171);
+		}
 		parent::processRequest($request, $response);
 	}
 

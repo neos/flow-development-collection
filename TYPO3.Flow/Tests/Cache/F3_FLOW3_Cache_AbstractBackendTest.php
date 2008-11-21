@@ -54,7 +54,7 @@ class AbstractBackendTest extends F3::Testing::BaseTestCase {
 				public function collectGarbage() {}
 			}
 		');
-		$this->backend = new $className;
+		$this->backend = new $className($this->objectManager->getContext());
 	}
 
 	/**
