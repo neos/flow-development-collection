@@ -39,6 +39,13 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	protected $objects = array();
 
 	/**
+	 * Objects removed but not found in $this->objects at removal time
+	 *
+	 * @var array
+	 */
+	protected $removedObjects = array();
+
+	/**
 	 * @var F3::FLOW3::Persistence::QueryFactoryInterface
 	 */
 	protected $queryFactory;
@@ -60,22 +67,60 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	 * @param object $object The object to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function add($object) {
-		$this->objects[spl_object_hash($object)] = $object;
+		$objectHash = spl_object_hash($object);
+		$this->objects[$objectHash] = $object;
+		if (array_key_exists($objectHash, $this->removedObjects)) {
+			unset ($this->removedObjects[$objectHash]);
+		}
 	}
 
 	/**
-	 * Removes an object from this repository
+	 * Removes an object from this repository. If it is contained in $this->objects
+	 * we just remove it there, since this means it has never been persisted yet.
+	 *
+	 * Else we keep the object around to check if we need to remove it from the
+	 * storage layer.
 	 *
 	 * @param object $object The object to remove
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove($object) {
 		$objectHash = spl_object_hash($object);
-		if (!isset($this->objects[$objectHash])) return;
-		unset ($this->objects[$objectHash]);
+		if (array_key_exists($objectHash, $this->objects)) {
+			unset ($this->objects[$objectHash]);
+		} else {
+			$this->removedObjects[$objectHash] = $object;
+		}
+	}
+
+	/**
+	 * Returns all objects that have been added to this repository with add().
+	 *
+	 * This is a service method for the persistence manager to get all objects
+	 * added to the repository. Those are only objects *added*, not objects
+	 * fetched from the underlying storage.
+	 *
+	 * @return array An array of the objects, the spl_object_hash is the key
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjects() {
+		return $this->objects;
+	}
+
+	/**
+	 * Returns an array with objects remove()d from the repository that
+	 * had been persisted to the storage layer before.
+	 *
+	 * @return array An array of the objects, the spl_object_hash is the key
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getRemovedObjects() {
+		return $this->removedObjects;
 	}
 
 	/**
@@ -111,19 +156,6 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	 */
 	protected function AOPProxyGetProxyTargetClassName() {
 		return get_class($this);
-	}
-
-	/**
-	 * Returns all loaded objects of this repository
-	 *
-	 * This is a service method for the persistence manager to get all loaded objects from the
-	 * repository without running a query.
-	 *
-	 * @return array An array of the objects
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getObjects() {
-		return array_values($this->objects);
 	}
 
 }

@@ -76,6 +76,20 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function unregisterReconstitutedObjectRemovesObjectFromSession() {
+		$someObject = new ::ArrayObject();
+		$session = new F3::FLOW3::Persistence::Session();
+		$session->registerReconstitutedObject($someObject);
+		$session->unregisterReconstitutedObject($someObject);
+
+		$reconstitutedObjects = $session->getReconstitutedObjects();
+		$this->assertSame(array(), $reconstitutedObjects);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function unregisterAllNewObjectsRemovesAllObjectsRegisteredWithRegisterNewObject() {
 		$someObject = new ::ArrayObject();
 		$otherObject = new ::ArrayObject();

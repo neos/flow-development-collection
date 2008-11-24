@@ -172,29 +172,44 @@ class Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAll() {
 		$newObjects = array();
 		$dirtyObjects = array();
-		$deletedObjects = array();
+		$removedObjects = array();
 		$allObjects = array();
 
+			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Persistence::RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
-			$aggregateRootObjects = $this->objectManager->getObject($repositoryClassName)->getObjects();
+			$repository = $this->objectManager->getObject($repositoryClassName);
+			$aggregateRootObjects = $repository->getObjects();
 			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
+
+			$removedObjects = array_merge($removedObjects, $repository->getRemovedObjects());
 		}
 
-		$this->traverseAndInspectReferenceObjects(array_values($this->session->getReconstitutedObjects()), $newObjects, $dirtyObjects, $allObjects);
+			// inspect reconstituted objects
+		$this->traverseAndInspectReferenceObjects($this->session->getReconstitutedObjects(), $newObjects, $dirtyObjects, $allObjects);
 
 		$this->backend->setNewObjects($newObjects);
 		$this->backend->setUpdatedObjects($dirtyObjects);
-		$this->backend->setDeletedObjects($deletedObjects);
+			// deletes only aggregate roots, leaving cleanup of subobjects to
+			// the underlying storage layer
+		$this->backend->setDeletedObjects($removedObjects);
 		$this->backend->commit();
 
 		$this->session->unregisterAllNewObjects();
 		foreach($dirtyObjects as $dirtyObject) {
 			$dirtyObject->memorizeCleanState();
+		}
+			// this needs to unregister more than just those, as at least some of
+			// the subobjects are supposed to go away as well...
+			// OTOH those do no harm, changes to the unused ones should not happen,
+			// so all they do is eat some memory.
+		foreach($removedObjects as $removedObject) {
+			$this->session->unregisterReconstitutedObject($removedObject);
 		}
 	}
 

@@ -202,6 +202,69 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$manager->persistAll();
 	}
 
+	/**
+	 * @ test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistAllFindsRemovedObjects() {
+		$entity3 = new F3::FLOW3::Tests::Persistence::Fixture::CleanEntity;
+		$entity21 = new F3::FLOW3::Tests::Persistence::Fixture::CleanEntity;
+		$entity22 = new F3::FLOW3::Tests::Persistence::Fixture::CleanEntity;
+		$entity1 = new F3::FLOW3::Tests::Persistence::Fixture::CleanEntity;
+		$entity1->someReference = $entity21;
+		$entity1->someReferenceArray = array($entity22);
+
+		$repository = new F3::FLOW3::Persistence::Repository;
+		$repository->remove($entity1);
+
+		$mockReflectionService = $this->getMock('F3::FLOW3::Reflection::Service');
+		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3::FLOW3::Persistence::RepositoryInterface')->will($this->returnValue(array('F3::FLOW3::Persistence::Repository')));
+		$mockReflectionService->expects($this->exactly(3))->method('getClassPropertyNames')->will($this->onConsecutiveCalls(array('someReference', 'someReferenceArray'), array(), array()));
+		$mockClassSchemataBuilder = $this->getMock('F3::FLOW3::Persistence::ClassSchemataBuilder', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3::FLOW3::Object::ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getObject')->with('F3::FLOW3::Persistence::Repository')->will($this->returnValue($repository));
+		$mockSession = $this->getMock('F3::FLOW3::Persistence::Session', array('isNew'));
+		$mockSession->expects($this->exactly(3))->method('isNew')->will($this->returnValue(FALSE));
+		$mockSession->registerReconstitutedObject($entity1);
+		$mockSession->registerReconstitutedObject($entity21);
+		$mockSession->registerReconstitutedObject($entity22);
+		$mockSession->registerReconstitutedObject($entity3);
+
+		$mockBackend = $this->getMock('F3::FLOW3::Persistence::BackendInterface');
+			// this is the really important assertion!
+		$mockBackend->expects($this->once())->method('setDeletedObjects')->with(
+			array(
+				spl_object_hash($entity1) => $entity1,
+				spl_object_hash($entity21) => $entity21,
+				spl_object_hash($entity22) => $entity22
+			)
+		);
+		$mockBackend->expects($this->never())->method('setDirtyObjects');
+		$mockBackend->expects($this->never())->method('setNewObjects');
+
+		$manager = new F3::FLOW3::Persistence::Manager($mockBackend);
+		$manager->injectReflectionService($mockReflectionService);
+		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
+		$manager->injectSession($mockSession);
+		$manager->injectObjectManager($mockObjectManager);
+
+		$manager->persistAll();
+	}
+
+	/**
+	 * @ test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistAllUnregistersRemovedObjectsWithSession() {
+	}
+
+	/**
+	 * @ test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function persistAllCollectsRemovedObjectsFromRepositories() {
+	}
+
 }
 
 ?>

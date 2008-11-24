@@ -89,13 +89,25 @@ class Session {
 	}
 
 	/**
-	 * Enter description here...
+	 * Registers a reconstituted object
 	 *
 	 * @param object $object
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function registerReconstitutedObject($object) {
 		$this->reconstitutedObjects[spl_object_hash($object)] = $object;
+	}
+
+	/**
+	 * Unregisters a reconstituted object
+	 *
+	 * @param object $object
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function unregisterReconstitutedObject($object) {
+		unset($this->reconstitutedObjects[spl_object_hash($object)]);
 	}
 
 	/**

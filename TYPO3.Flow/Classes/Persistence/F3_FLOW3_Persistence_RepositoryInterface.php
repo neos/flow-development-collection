@@ -49,10 +49,20 @@ interface RepositoryInterface {
 	public function remove($object);
 
 	/**
-	 * Returns all objects of this repository
+	 * Returns all objects of this repository add()ed but not yet persisted to
+	 * the storage layer.
 	 *
 	 * @return array An array of objects
 	 */
 	public function getObjects();
+
+	/**
+	 * Returns an array with objects remove()d from the repository that
+	 * had been persisted to the storage layer before.
+	 *
+	 * @return array
+	 */
+	public function getRemovedObjects();
+
 }
 ?>

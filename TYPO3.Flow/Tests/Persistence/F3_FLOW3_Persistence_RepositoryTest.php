@@ -89,6 +89,20 @@ class RepositoryTest extends F3::Testing::BaseTestCase {
 		$repository->remove($object2);
 		$this->assertAttributeSame(array(spl_object_hash($object1) => $object1, spl_object_hash($object3) => $object3), 'objects', $repository);
 	}
+
+	/**
+	 * Make sure we remember the objects that are not currently add()ed
+	 * but might be in persistent storage.
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeRetainsObjectForObjectsNotInCurrentSession() {
+		$object = new ::ArrayObject(array('val' => '1'));
+		$repository = new F3::FLOW3::Persistence::Repository();
+		$repository->remove($object);
+		$this->assertEquals(array(spl_object_hash($object) => $object), $repository->getRemovedObjects());
+	}
 }
 
 ?>
