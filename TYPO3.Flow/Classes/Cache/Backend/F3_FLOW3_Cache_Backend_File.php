@@ -37,7 +37,9 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	const FILENAME_EXPIRYTIME_UNLIMITED = '99991231235959';
 
 	/**
-	 * @var string Directory where the files are stored
+	 * Directory where the files are stored.
+	 *
+	 * @var string
 	 */
 	protected $cacheDirectory = '';
 

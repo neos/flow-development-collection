@@ -22,7 +22,26 @@ namespace F3::FLOW3::Cache::Backend;
  */
 
 /**
- *  A caching backend which stores cache entries by using Memcached
+ * A caching backend which stores cache entries by using Memcached.
+ *
+ * This backend uses the following types of Memcache keys:
+ * - tag_xxx
+ *   xxx is tag name, value is array of associated identifiers identifier. This
+ *   is "forward" tag index. It is mainly used for obtaining content by tag
+ *   (get identifier by tag -> get content by identifier)
+ * - ident_xxx
+ *   xxx is identifier, value is array of associated tags. This is "reverse" tag
+ *   index. It provides quick access for all tags associated with this identifier
+ *   and used when removing the identifier
+ * - tagIndex
+ *   Value is a List of all tags (array)
+
+ * Each key is prepended with a prefix. By default prefix consists from two parts
+ * separated by underscore character and ends in yet another underscore character:
+ * - "FLOW3"
+ * - MD5 of script path and filename and SAPI name
+ * This prefix makes sure that keys from the different installations do not
+ * conflict.
  *
  * @package FLOW3
  * @subpackage Cache
@@ -33,22 +52,30 @@ namespace F3::FLOW3::Cache::Backend;
 class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 
 	/**
+	 * Instance of the PHP Memcache class
+	 *
 	 * @var Memcache
 	 */
 	protected $memcache;
 
 	/**
+	 * Array of Memcache server configurations
+	 *
 	 * @var array
 	 */
 	protected $servers = array();
 
 	/**
-	 * @var boolean whether the memcache uses compression or not (requires zlib)
+	 * Indicates whether the memcache uses compression or not (requires zlib)
+	 *
+	 * @var boolean
 	 */
 	protected $useCompression;
 
 	/**
-	 * @var string A prefix to seperate stored data from other data possible stored in the memcache
+	 * A prefix to seperate stored data from other data possible stored in the memcache
+	 *
+	 * @var string
 	 */
 	protected $identifierPrefix;
 
@@ -81,10 +108,9 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	}
 
 	/**
-	 * setter for servers property
-	 * should be an array of entries like host:port
+	 * Setter for servers property
 	 *
-	 * @param array $servers
+	 * @param array $servers An array of servers to add (format: "host:port")
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
@@ -110,7 +136,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	}
 
 	/**
-	 * Setter for useCompressed
+	 * Setter for useCompression
 	 *
 	 * @param boolean $useCompression
 	 * @return void
@@ -178,7 +204,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function has($entryIdentifier) {
-		return (boolean) $this->memcache->get($this->identifierPrefix . $entryIdentifier);
+		return $this->memcache->get($this->identifierPrefix . $entryIdentifier) !== FALSE;
 	}
 
 	/**
@@ -193,6 +219,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	public function remove($entryIdentifier) {
 		$this->removeIdentifierFromAllTags($entryIdentifier);
+		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
 		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
 	}
 
@@ -211,6 +238,19 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 		if (!$this->isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
 
 		return $this->findIdentifiersTaggedWith($tag);
+	}
+
+	/**
+	 * Finds all tags for the given identifier. This function uses reverse tag
+	 * index to search for tags.
+	 *
+	 * @param string $identifier Identifier to find tags by
+	 * @return array Array with tags
+	 * @author Dmitry Dulepov
+	 */
+	protected function findTagsByIdentifier($identifier) {
+		$tags = $this->memcache->get($this->identifierPrefix . 'ident_' . $identifier);
+		return ($tags == false ? array() : (array)$tags);
 	}
 
 	/**
@@ -250,7 +290,8 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getTagIndex() {
-		return (array)$this->memcache->get($this->identifierPrefix . '_tagIndex');
+		$tagIndex = $this->memcache->get($this->identifierPrefix . 'tagIndex');
+		return ($tagIndex === FALSE ? array() : (array)$tagIndex);
 	}
 
 	/**
@@ -260,7 +301,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setTagIndex(array $tags) {
-		$this->memcache->set($this->identifierPrefix . '_tagIndex', array_unique($tags), 0, 0);
+		$this->memcache->set($this->identifierPrefix . 'tagIndex', array_unique($tags), 0, 0);
 	}
 
 	/**
@@ -295,12 +336,23 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Dmitry Dulepov
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
+				// Update tag-to-identifier index
 			$identifiers = $this->findIdentifiersTaggedWith($tag);
-			$identifiers[] = $entryIdentifier;
-			$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
+			if (array_search($entryIdentifier, $identifiers) === FALSE) {
+				$identifiers[] = $entryIdentifier;
+				$this->memcache->set($this->identifierPrefix . 'tag_' . $tag, $identifiers);
+			}
+
+				// Update identifier-to-tag index
+			$existingTags = $this->findTagsByIdentifier($entryIdentifier);
+			if (array_search($entryIdentifier, $existingTags) === false) {
+				$this->memcache->set($this->identifierPrefix . 'ident_' . $entryIdentifier, array_merge($existingTags, $tags));
+			}
+
 		}
 	}
 
@@ -310,21 +362,31 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Dmitry Dulepov
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
-		$tags = $this->getTagIndex();
+			// Get tags for this identifier
+		$tags = $this->findTagsByIdentifier($entryIdentifier);
+			// Deassociate tags with this identifier
 		foreach ($tags as $tag) {
 			$identifiers = $this->findIdentifiersTaggedWith($tag);
-			if (array_search($entryIdentifier, $identifiers) !== FALSE) {
-				unset($identifiers[array_search($entryIdentifier, $identifiers)]);
-			}
-			if (count($identifiers)) {
-				$this->memcache->set($this->identifierPrefix . '_tag_' . $tag, array_unique($identifiers));
-			} else {
-				$this->removeTagsFromTagIndex(array($tag));
-				$this->memcache->delete($this->identifierPrefix . '_tag_' . $tag);
+				// Formally array_search() below should never return false due to
+				// the behavior of findTagsByIdentifier(). But if reverse index is
+				// corrupted, we still can get 'false' from array_search(). This is
+				// not a problem because we are removing this identifier from
+				// anywhere.
+			if (($key = array_search($entryIdentifier, $identifiers)) !== FALSE) {
+				unset($identifiers[$key]);
+				if (count($identifiers)) {
+					$this->memcache->set($this->identifierPrefix . 'tag_' . $tag, $identifiers);
+				} else {
+					$this->removeTagsFromTagIndex(array($tag));
+					$this->memcache->delete($this->identifierPrefix . 'tag_' . $tag);
+				}
 			}
 		}
+			// Clear reverse tag index for this identifier
+		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
 	}
 
 	/**
@@ -335,7 +397,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findIdentifiersTaggedWith($tag) {
-		$identifiers = $this->memcache->get($this->identifierPrefix . '_tag_' . $tag);
+		$identifiers = $this->memcache->get($this->identifierPrefix . 'tag_' . $tag);
 		if ($identifiers !== FALSE) {
 			return (array) $identifiers;
 		} else {
