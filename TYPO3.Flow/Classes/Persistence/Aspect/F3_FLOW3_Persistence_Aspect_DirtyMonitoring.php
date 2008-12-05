@@ -57,18 +57,6 @@ class DirtyMonitoring {
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * Register an object as new with the FLOW3 persistence manager session
-	 *
-	 * @afterreturning method(.*->__construct()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function registerNewObject(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
-		$this->persistenceManager->getSession()->registerNewObject($joinPoint->getProxy());
-	}
-
-	/**
 	 * Automatically call memorizeCleanState() after __wakeup()
 	 *
 	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
@@ -86,6 +74,24 @@ class DirtyMonitoring {
 	public $dirtyMonitoringInterface;
 
 	/**
+	 * Around advice, implements the isNew() method introduced above
+	 *
+	 * @param F3::FLOW3::AOPJoinPointInterface $joinPoint The current join point
+	 * @return boolean
+	 * @around method(.*->isNew())
+	 * @see F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isNew(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+		$joinPoint->getAdviceChain()->proceed($joinPoint);
+
+		$proxy = $joinPoint->getProxy();
+		$cleanProperties = $proxy->AOPProxyGetProperty('FLOW3PersistenceCleanProperties');
+
+		return ($cleanProperties === NULL);
+	}
+
+	/**
 	 * Around advice, implements the isDirty() method introduced above
 	 *
 	 * @param F3::FLOW3::AOPJoinPointInterface $joinPoint The current join point
@@ -96,20 +102,20 @@ class DirtyMonitoring {
 	 */
 	public function isDirty(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
+		$proxy = $joinPoint->getProxy();
 
 		$isDirty = FALSE;
-		$proxy = $joinPoint->getProxy();
 		$cleanProperties = $proxy->AOPProxyGetProperty('FLOW3PersistenceCleanProperties');
 
-		$identifierProperty = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getIdentifierProperty();
-		if ($identifierProperty !== NULL && $proxy->AOPProxyGetProperty($identifierProperty) != $cleanProperties[$identifierProperty]) {
-			throw new F3::FLOW3::Persistence::Exception::TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
-		}
+		if ($cleanProperties !== NULL) {
+			$identifierProperty = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getIdentifierProperty();
+			if ($identifierProperty !== NULL && $proxy->AOPProxyGetProperty($identifierProperty) != $cleanProperties[$identifierProperty]) {
+				throw new F3::FLOW3::Persistence::Exception::TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
+			}
 
-		foreach ($cleanProperties as $propertyName => $cleanValue) {
-			if ($cleanValue !== $proxy->AOPProxyGetProperty($propertyName)) {
+			$propertyName = $joinPoint->getMethodArgument('propertyName');
+			if ($cleanProperties[$propertyName] !== $proxy->AOPProxyGetProperty($propertyName)) {
 				$isDirty = TRUE;
-				break;
 			}
 		}
 

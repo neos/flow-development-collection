@@ -31,7 +31,11 @@ namespace F3::FLOW3::Persistence::Aspect;
  */
 interface DirtyMonitoringInterface {
 
-	public function isDirty();
+	public function isNew();
+	public function isDirty($propertyName);
+		// the $joinPoint argument here is a special case, as the introduced
+		// method is used from within an advice and "externally", thus we need
+		// to handle this specially
 	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL);
 
 }

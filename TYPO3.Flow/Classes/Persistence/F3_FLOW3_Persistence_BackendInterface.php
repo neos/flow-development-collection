@@ -40,20 +40,12 @@ interface BackendInterface {
 	public function initialize(array $classSchemata);
 
 	/**
-	 * Sets the new objects
+	 * Sets the aggregate root objects
 	 *
 	 * @param array $objects
 	 * @return void
 	 */
-	public function setNewObjects(array $objects);
-
-	/**
-	 * Sets the updated objects
-	 *
-	 * @param array $objects
-	 * @return void
-	 */
-	public function setUpdatedObjects(array $objects);
+	public function setAggregateRootObjects(array $objects);
 
 	/**
 	 * Sets the deleted objects

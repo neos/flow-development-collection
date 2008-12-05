@@ -168,84 +168,37 @@ class Manager {
 	}
 
 	/**
-	 * Commits changes of the current persistence session into the backend
+	 * Commits new objects and changes to objects in the current persistence
+	 * session into the backend
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAll() {
-		$newObjects = array();
-		$dirtyObjects = array();
+		$aggregateRootObjects = array();
 		$removedObjects = array();
-		$allObjects = array();
 
 			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Persistence::RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
-			$aggregateRootObjects = $repository->getObjects();
-			$this->traverseAndInspectReferenceObjects($aggregateRootObjects, $newObjects, $dirtyObjects, $allObjects);
-
+			$aggregateRootObjects = array_merge($aggregateRootObjects, $repository->getObjects());
 			$removedObjects = array_merge($removedObjects, $repository->getRemovedObjects());
 		}
 
-			// inspect reconstituted objects
-		$this->traverseAndInspectReferenceObjects($this->session->getReconstitutedObjects(), $newObjects, $dirtyObjects, $allObjects);
-
-		$this->backend->setNewObjects($newObjects);
-		$this->backend->setUpdatedObjects($dirtyObjects);
-			// deletes only aggregate roots, leaving cleanup of subobjects to
+			// hand in only aggregate roots, leaving handling of subobjects to
 			// the underlying storage layer
+		$this->backend->setAggregateRootObjects(array_merge($aggregateRootObjects, $this->session->getReconstitutedObjects()));
 		$this->backend->setDeletedObjects($removedObjects);
 		$this->backend->commit();
 
-		$this->session->unregisterAllNewObjects();
-		foreach($dirtyObjects as $dirtyObject) {
-			$dirtyObject->memorizeCleanState();
-		}
 			// this needs to unregister more than just those, as at least some of
 			// the subobjects are supposed to go away as well...
 			// OTOH those do no harm, changes to the unused ones should not happen,
 			// so all they do is eat some memory.
 		foreach($removedObjects as $removedObject) {
 			$this->session->unregisterReconstitutedObject($removedObject);
-		}
-	}
-
-	/**
-	 * Traverses the given object references and collects information about all, new and dirty objects.
-	 *
-	 * @param array $referenceObjects The reference objects to analyze
-	 * @param array $newObjects Pass an empty array - will contain all new objects which were found in the aggregate
-	 * @param array $dirtyObjects Pass an empty array - will contain all dirty objects which were found in the aggregate
-	 * @param array $allObjects Pass an empty array - will contain all objects which were found in the aggregate
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function traverseAndInspectReferenceObjects(array $referenceObjects, array &$newObjects, array &$dirtyObjects, array &$allObjects) {
-		foreach ($referenceObjects as $referenceObject) {
-			if (!($referenceObject instanceof F3::FLOW3::AOP::ProxyInterface)) continue;
-
-			$referenceClassName = $referenceObject->AOPProxyGetProxyTargetClassName();
-
-			$objectHash = spl_object_hash($referenceObject);
-			$allObjects[$objectHash] = $referenceObject;
-			if ($this->session->isNew($referenceObject)) {
-				$newObjects[$objectHash] = $referenceObject;
-			} elseif ($referenceObject->isDirty()) {
-				$dirtyObjects[$objectHash] = $referenceObject;
-			}
-
-			$propertyNames = $this->reflectionService->getClassPropertyNames($referenceClassName);
-			foreach ($propertyNames as $propertyName) {
-				$propertyValue = $referenceObject->AOPProxyGetProperty($propertyName);
-				if (is_object($propertyValue) || (is_array($propertyValue) && count($propertyValue) > 0 && is_object(current($propertyValue)))) {
-					$subReferenceObjects = is_array($propertyValue) ? $propertyValue : array($propertyValue);
-					$this->traverseAndInspectReferenceObjects($subReferenceObjects, $newObjects, $dirtyObjects, $allObjects);
-				}
-			}
 		}
 	}
 }

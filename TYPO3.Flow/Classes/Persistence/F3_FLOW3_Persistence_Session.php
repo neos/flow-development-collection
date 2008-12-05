@@ -33,60 +33,11 @@ namespace F3::FLOW3::Persistence;
 class Session {
 
 	/**
-	 * New objects
-	 *
-	 * @var array
-	 */
-	protected $newObjects = array();
-
-	/**
 	 * Reconstituted objects
 	 *
 	 * @var array
 	 */
 	protected $reconstitutedObjects = array();
-
-	/**
-	 * Registers a newly instantiated object
-	 *
-	 * @param object The object to register
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function registerNewObject($object) {
-		$this->newObjects[spl_object_hash($object)] = $object;
-	}
-
-	/**
-	 * States if the given object is registered as a new object
-	 *
-	 * @param object $object The object to check
-	 * @return boolean TRUE if the object is new
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isNew($object) {
-		return isset($this->newObjects[spl_object_hash($object)]);
-	}
-
-	/**
-	 * Returns all objects which have been registered as new objects
-	 *
-	 * @return array All new objects
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getNewObjects() {
-		return $this->newObjects;
-	}
-
-	/**
-	 * Resets information about new objects registered with the session.
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function unregisterAllNewObjects() {
-		$this->newObjects = array();
-	}
 
 	/**
 	 * Registers a reconstituted object
