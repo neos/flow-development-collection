@@ -123,15 +123,22 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Dmitry Dulepov
 	 */
 	public function initializeObject() {
+		if (!count($this->servers)) throw new F3::FLOW3::Cache::Exception('No servers were given to Memcache', 1213115903);
+
 		$this->memcache = new Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 
-		if (!count($this->servers)) throw new F3::FLOW3::Cache::Exception('No servers were given to Memcache', 1213115903);
-		foreach ($this->servers as $serverConf) {
-			$conf = explode(':',$serverConf, 2);
-			$this->memcache->addServer($conf[0], $conf[1]);
+		foreach ($this->servers as $server) {
+			if (substr($server, 0, 7) === 'unix://') {
+				$host = $server;
+				$port = 0;
+			} else {
+				list($host, $port) = explode(':', $server, 2);
+			}
+			$this->memcache->addServer($host, $port);
 		}
 	}
 
