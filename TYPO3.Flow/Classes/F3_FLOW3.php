@@ -306,8 +306,8 @@ final class FLOW3 {
 				$fullClassFileName = $package->getClassesPath() . $classFileName;
 				if (file_exists($fullClassFileName)) {
 					$currentFileModificationTime = filemtime($fullClassFileName);
-					$cachedFileModificationTime = $classFileModificationTimes[$fullClassFileName];
-					if (!isset($cachedFileModificationTime) || $currentFileModificationTime > $cachedFileModificationTime) {
+					$cachedFileModificationTime = isset($classFileModificationTimes[$fullClassFileName]) ? $classFileModificationTimes[$fullClassFileName] : NULL;
+					if ($cachedFileModificationTime === NULL || $currentFileModificationTime > $cachedFileModificationTime) {
 						$classFileModificationTimes[$fullClassFileName] = $currentFileModificationTime;
 						$tag = $classFileCache->getClassTag($className);
 						$this->cacheManager->flushCachesByTag($tag);
