@@ -225,8 +225,6 @@ final class FLOW3 {
 
 		$this->objectManager->registerObject('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
 		$this->objectManager->registerObject('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
-
-		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
 	}
 
 	/**
@@ -273,6 +271,9 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
+		$this->objectManager->registerObject('F3::FLOW3::Resource::Publisher');
+		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
+
 		$this->objectManager->registerObject('F3::FLOW3::Package::ManagerInterface', 'F3::FLOW3::Package::Manager');
 		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
 		$packageManager->initialize();
