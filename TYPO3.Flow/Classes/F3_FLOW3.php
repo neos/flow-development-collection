@@ -225,6 +225,8 @@ final class FLOW3 {
 
 		$this->objectManager->registerObject('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
 		$this->objectManager->registerObject('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
+
+		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
 	}
 
 	/**
