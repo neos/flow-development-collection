@@ -32,6 +32,8 @@ namespace F3::FLOW3::Cache::Backend;
  */
 class File extends F3::FLOW3::Cache::AbstractBackend {
 
+	const SEPARATOR = '-';
+
 	const FILENAME_EXPIRYTIME_FORMAT = 'YmdHis';
 	const FILENAME_EXPIRYTIME_GLOB = '??????????????';
 	const FILENAME_EXPIRYTIME_UNLIMITED = '99991231235959';
@@ -160,7 +162,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 			if (!is_writable($tagPath)) {
 				mkdir($tagPath);
 			}
-			touch($tagPath . $this->cache->getIdentifier() . '_' . $entryIdentifier);
+			touch($tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier);
 		}
 	}
 
@@ -239,13 +241,13 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	public function findIdentifiersByTag($tag) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
-		$pattern = $path . $tag . '/*';
+		$pattern = $path . $tag . '/' . $this->cache->getIdentifier() . self::SEPARATOR . '*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return array();
 
 		$cacheEntries = array();
 		foreach ($filesFound as $filename) {
-			list(,$entryIdentifier) = explode('_', basename($filename));
+			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
 			if ($this->has($entryIdentifier)) {
 				$cacheEntries[$entryIdentifier] = $entryIdentifier;
 			}
@@ -268,7 +270,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 		if ($filesFound === FALSE || count($filesFound) == 0) return;
 
 		foreach ($filesFound as $filename) {
-			list(,$entryIdentifier) = explode('_', basename($filename));
+			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
 			$this->remove($entryIdentifier);
 		}
 	}
@@ -297,7 +299,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	protected function isLifetimeExceeded(array $cacheFiles) {
 		foreach ($cacheFiles as $cacheFile) {
-			$splitFilename = explode('_', basename($cacheFile), 2);
+			$splitFilename = explode(self::SEPARATOR, basename($cacheFile), 2);
 			if ($splitFilename[0] < gmdate('YmdHis')) {
 				return TRUE;
 			}
@@ -317,7 +319,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 		$pattern = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/*/*/*';
 		$filesFound = glob($pattern);
 		foreach ($filesFound as $cacheFile) {
-			$splitFilename = explode('_', basename($cacheFile), 2);
+			$splitFilename = explode(self::SEPARATOR, basename($cacheFile), 2);
 			if ($splitFilename[0] < gmdate('YmdHis')) {
 				$this->remove($splitFilename[1]);
 			}
@@ -333,7 +335,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renderCacheFilename($identifier, DateTime $expiryTime) {
-		$filename = $expiryTime->format(self::FILENAME_EXPIRYTIME_FORMAT) . '_' . $identifier;
+		$filename = $expiryTime->format(self::FILENAME_EXPIRYTIME_FORMAT) . self::SEPARATOR . $identifier;
 		return $filename;
 	}
 
@@ -350,7 +352,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
-		$pattern = $path . '*/*/' . self::FILENAME_EXPIRYTIME_GLOB . '_' . $entryIdentifier;
+		$pattern = $path . '*/*/' . self::FILENAME_EXPIRYTIME_GLOB . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;
@@ -368,7 +370,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	protected function findTagFilesByEntry($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
-		$pattern = $path . '*/' . $this->cache->getIdentifier() . '_' . $entryIdentifier;
+		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;

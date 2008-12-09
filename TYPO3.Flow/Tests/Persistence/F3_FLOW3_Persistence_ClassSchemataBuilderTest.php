@@ -53,6 +53,7 @@ class ClassSchemataBuilderTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setUp() {
 		$this->reflectionService = new F3::FLOW3::Reflection::Service();
+		$this->reflectionService->setCache($this->getMock('F3::FLOW3::Cache::VariableCache', array(), array(), '', FALSE));
 		$this->reflectionService->initialize(
 			array('F3::FLOW3::Tests::Persistence::Fixture::Entity1', 'F3::FLOW3::Tests::Persistence::Fixture::Repository1', 'F3::FLOW3::Tests::Persistence::Fixture::ValueObject1')
 		);

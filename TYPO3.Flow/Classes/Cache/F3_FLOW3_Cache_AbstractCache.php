@@ -32,7 +32,12 @@ namespace F3::FLOW3::Cache;
  */
 abstract class AbstractCache {
 
+	/**
+	 * Pattern a cache identifer must match.
+	 */
 	const PATTERN_IDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+
+	const TAG_CLASS = '%CLASS%';
 
 	/**
 	 * @var string Identifies this cache
@@ -152,6 +157,19 @@ abstract class AbstractCache {
 	 */
 	public function collectGarbage() {
 		$this->backend->collectGarbage();
+	}
+
+	/**
+	 * Renders a tag which can be used to mark a cache entry as "depends on this class".
+	 * Whenever the specified class is modified, all cache entries tagged with the
+	 * class are flushed.
+	 *
+	 * @param string $className The class name
+	 * @return string Class Tag
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassTag($className) {
+		return self::TAG_CLASS . str_replace('::', '_', $className);
 	}
 
 }

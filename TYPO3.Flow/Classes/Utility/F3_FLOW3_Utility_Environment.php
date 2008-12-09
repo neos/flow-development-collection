@@ -65,19 +65,24 @@ class Environment {
 	protected $SAPIName;
 
 	/**
+	 * The base path of $temporaryDirectory. This property can (and should) be set from outside.
+	 *
 	 * @var string
 	 */
-	protected $temporaryDirectory;
+	protected $temporaryDirectoryBase = '/tmp/';
+
+	/**
+	 * @var string
+	 */
+	protected $temporaryDirectory = NULL;
 
 	/**
 	 * This constructor copies the superglobals $_SERVER, $_GET, $_POST to local
 	 * variables and unsets the orginals.
 	 *
-	 * @param array Settings for this environment class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(array $settings) {
-
+	public function __construct() {
 		if (!($_SERVER instanceof F3::FLOW3::Utility::SuperGlobalReplacement)) {
 			$this->SERVER = $_SERVER;
 			$this->GET = $_GET;
@@ -88,13 +93,19 @@ class Environment {
 			$_GET = new F3::FLOW3::Utility::SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 			$_POST = new F3::FLOW3::Utility::SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 		}
+	}
 
-		try {
-			$this->temporaryDirectory = $this->createTemporaryDirectory($settings['temporaryDirectoryBase']);
-		} catch (F3::FLOW3::Utility::Exception $exception) {
-			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
-			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
-		}
+	/**
+	 * Sets the base path of the temporary directory
+	 *
+	 * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setTemporaryDirectoryBase($temporaryDirectoryBase) {
+		if (!is_string($temporaryDirectoryBase)) throw new ::InvalidArgumentException('String expected.', 1228743683);
+		$this->temporaryDirectoryBase = $temporaryDirectoryBase;
+		$this->temporaryDirectory = NULL;
 	}
 
 	/**
@@ -307,6 +318,14 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPathToTemporaryDirectory() {
+		if ($this->temporaryDirectory !== NULL) return $this->temporaryDirectory;
+
+		try {
+			$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
+		} catch (F3::FLOW3::Utility::Exception $exception) {
+			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
+			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
+		}
 		return $this->temporaryDirectory;
 	}
 

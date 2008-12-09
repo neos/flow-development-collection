@@ -97,5 +97,16 @@ class AbstractCacheTest extends F3::Testing::BaseTestCase {
 		$cache->collectGarbage();
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getClassTagRendersTagWhichCanBeUsedToTagACacheEntryWithACertainClass() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3::FLOW3::Cache::AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
+
+		$cache = $this->getMock('F3::FLOW3::Cache::AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$this->assertEquals('%CLASS%F3_Foo_Bar_Baz', $cache->getClassTag('F3::Foo::Bar::Baz'));
+	}
 }
 ?>

@@ -120,16 +120,6 @@ final class FLOW3 {
 	protected $settings;
 
 	/**
-	 * Some interfaces (object types) which need to be defined before the reflection
-	 * service is initialized.
-	 * @var array
-	 */
-	protected $predefinedInterfaceImplementations = array(
-		'F3::FLOW3::Security::ContextHolderInterface' => array('F3::FLOW3::Security::ContextHolderSession'),
-		'F3::FLOW3::MVC::Web::Routing::RouterInterface' => array('F3::FLOW3::MVC::Web::Routing::Router')
-	);
-
-	/**
 	 * Constructor
 	 *
 	 * @param string $context The application context
@@ -156,8 +146,11 @@ final class FLOW3 {
 		$this->initializeClassLoader();
 		$this->initializeConfiguration();
 		$this->initializeError();
-		$this->initializeFLOW3();
+		$this->initializeObjectFramework();
+		$this->initializeEnvironment();
+		$this->initializeCache();
 		$this->initializePackages();
+		$this->detectAlteredClasses();
 		$this->initializeObjects();
 		$this->initializeAOP();
 		$this->initializeLocale();
@@ -212,20 +205,14 @@ final class FLOW3 {
 	}
 
 	/**
-	 * Initializes the FLOW3 core.
+	 * Initializes the Object framework.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeFLOW3() {
-		$environment = new F3::FLOW3::Utility::Environment($this->settings['utility']['environment']);
-
+	public function initializeObjectFramework() {
 		$this->reflectionService = new F3::FLOW3::Reflection::Service();
-		foreach ($this->predefinedInterfaceImplementations as $interfaceName => $classNames) {
-			$this->reflectionService->setInterfaceImplementations($interfaceName, $classNames);
-		}
-
 		$this->objectFactory = new F3::FLOW3::Object::Factory();
 
 		$this->objectManager = new F3::FLOW3::Object::Manager();
@@ -238,28 +225,42 @@ final class FLOW3 {
 
 		$this->objectManager->registerObject('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
 		$this->objectManager->registerObject('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
+	}
+
+	/**
+	 * Initializes the environment utility class.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeEnvironment() {
+		$environment = new F3::FLOW3::Utility::Environment;
 		$this->objectManager->registerObject('F3::FLOW3::Utility::Environment', NULL, $environment);
-		$this->objectManager->registerObject('F3::FLOW3::AOP::Framework');
-		$this->objectManager->registerObject('F3::FLOW3::Package::ManagerInterface', 'F3::FLOW3::Package::Manager');
+		$environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
+	}
+
+	/**
+	 * Initializes the cache framework
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeCache() {
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Factory');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Manager');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::File');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::Memcached');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::VariableCache');
-		$this->objectManager->registerObject('F3::FLOW3::Resource::Publisher');
-		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
-
-		$this->objectManager->registerObject('F3::FLOW3::Session::SessionInterface', $this->settings['session']['backend']['className']);
-
 		$this->cacheFactory = $this->objectManager->getObject('F3::FLOW3::Cache::Factory');
+		$this->cacheManager = $this->objectManager->getObject('F3::FLOW3::Cache::Manager');
 
-		if ($this->settings['reflection']['cache']['enable'] === TRUE) {
-			$this->reflectionCache = $this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
-			if ($this->reflectionCache->has('reflectionServiceData')) {
-				$this->reflectionService->import($this->reflectionCache->get('reflectionServiceData'));
-			}
-		}
+		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
+		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
 	}
+
 
 	/**
 	 * Initializes the package system and loads the package configuration and settings
@@ -270,8 +271,8 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
+		$this->objectManager->registerObject('F3::FLOW3::Package::ManagerInterface', 'F3::FLOW3::Package::Manager');
 		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
-
 		$packageManager->initialize();
 		$activePackages = $packageManager->getActivePackages();
 
@@ -285,6 +286,45 @@ final class FLOW3 {
 	}
 
 	/**
+	 * Checks if classes (ie. php files containing classes) have been altered and if so flushes
+	 * the related caches.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function detectAlteredClasses() {
+		if ($this->settings['cache']['classAlterationMonitoring']['enable'] !== TRUE) return;
+
+		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
+		$classFileCache = $this->cacheManager->getCache('FLOW3_Package_ClassFiles');
+		$classFileModificationTimes = ($classFileCache->has('classFileModificationTimes')) ? $classFileCache->get('classFileModificationTimes') : array();
+		$classFileModificationTimesWereModified = FALSE;
+
+		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+			foreach($package->getClassFiles() as $className => $classFileName) {
+				$fullClassFileName = $package->getClassesPath() . $classFileName;
+				if (file_exists($fullClassFileName)) {
+					$currentFileModificationTime = filemtime($fullClassFileName);
+					$cachedFileModificationTime = $classFileModificationTimes[$fullClassFileName];
+					if (!isset($cachedFileModificationTime) || $currentFileModificationTime > $cachedFileModificationTime) {
+						$classFileModificationTimes[$fullClassFileName] = $currentFileModificationTime;
+						$tag = $classFileCache->getClassTag($className);
+						$this->cacheManager->flushCachesByTag($tag);
+						$classFileModificationTimesWereModified = TRUE;
+					}
+				} else {
+					$this->cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
+					unset($classFileModificationTimes[$deletedClassFileName]);
+					$classFileModificationTimesWereModified = TRUE;
+				}
+			}
+		}
+
+		if ($classFileModificationTimesWereModified) $classFileCache->set('classFileModificationTimes', $classFileModificationTimes);
+	}
+
+	/**
 	 * Initializes the object framework and loads the object configuration
 	 *
 	 * @return void
@@ -295,7 +335,7 @@ final class FLOW3 {
 		$objectConfigurations = NULL;
 
 		if ($this->settings['object']['configurationCache']['enable'] === TRUE) {
-			$objectConfigurationsCache = $this->cacheFactory->create('FLOW3_Object_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
+			$objectConfigurationsCache = $this->cacheManager->getCache('FLOW3_Object_Configurations');
 			if ($objectConfigurationsCache->has('baseObjectConfigurations')) {
 				$objectConfigurations = $objectConfigurationsCache->get('baseObjectConfigurations');
 			}
@@ -323,6 +363,7 @@ final class FLOW3 {
 	public function initializeAOP() {
 		if ($this->settings['aop']['enable'] === TRUE) {
 
+			$this->objectManager->registerObject('F3::FLOW3::AOP::Framework');
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
 
 			$AOPFramework = $this->objectManager->getObject('F3::FLOW3::AOP::Framework');
@@ -350,6 +391,9 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSession() {
+		if (!$this->objectManager->isObjectRegistered('F3::FLOW3::Session::SessionInterface')) {
+			$this->objectManager->registerObject('F3::FLOW3::Session::SessionInterface', $this->settings['session']['backend']['className']);
+		}
 		$session = $this->objectManager->getObject('F3::FLOW3::Session::SessionInterface');
 		$session->start();
 	}
@@ -481,13 +525,8 @@ final class FLOW3 {
 				}
 			}
 		}
-
-		if (!$this->reflectionService->isInitialized()) {
-			$this->reflectionService->initialize($availableClassNames);
-			if ($this->settings['reflection']['cache']['enable'] === TRUE) {
-				$this->reflectionCache->set('reflectionServiceData', $this->reflectionService->export());
-			}
-		}
+		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
+		$this->reflectionService->initialize($availableClassNames);
 
 		foreach ($availableClassNames as $className) {
 			if (substr($className, -9, 9) == 'Interface') {

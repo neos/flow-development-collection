@@ -178,8 +178,8 @@ class Package implements PackageInterface {
 					if (is_dir($currentPath . $filename)) {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {
-						if (F3::PHP6::Functions::substr($filename, 0, 3) == 'F3_' && F3::PHP6::Functions::substr($filename, -4, 4) == '.php') {
-							$classFiles[str_replace('_', '::', F3::PHP6::Functions::substr($filename, 0, -4))] = $subDirectory . $filename;
+						if (substr($filename, 0, 3) == 'F3_' && substr($filename, -4, 4) == '.php') {
+							$classFiles[str_replace('_', '::', substr($filename, 0, -4))] = $subDirectory . $filename;
 						}
 					}
 				}

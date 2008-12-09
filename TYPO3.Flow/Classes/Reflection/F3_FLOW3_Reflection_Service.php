@@ -39,11 +39,16 @@ class Service {
 	protected $initialized = FALSE;
 
 	/**
+	 * @var F3::FLOW3::Cache::AbstractCache
+	 */
+	protected $cache;
+
+	/**
 	 * All available class names to consider
 	 *
 	 * @var array
 	 */
-	protected $availableClassNames = array();
+	protected $reflectedClassNames = array();
 
 	/**
 	 * Names of interfaces and an array of class names implementing these
@@ -123,17 +128,14 @@ class Service {
 	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const');
 
 	/**
-	 * Imports the given reflection data, usually from a cache
+	 * Sets the cache
 	 *
-	 * @param array $reflectionData The reflection data in the same format as export() delivers
+	 * @param F3::FLOW3::Cache::AbstractCache $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function import(array $reflectionData) {
-		foreach ($reflectionData as $propertyName => $propertyValue) {
-			$this->$propertyName = $propertyValue;
-		}
-		$this->initialized = TRUE;
+	public function setCache(F3::FLOW3::Cache::AbstractCache $cache) {
+		$this->cache = $cache;
 	}
 
 	/**
@@ -150,99 +152,35 @@ class Service {
 	/**
 	 * Initializes this service
 	 *
-	 * @param array $availableClassNames Names of available classes to consider in this reflection service
+	 * @param array $classNamesToReflect Names of available classes to consider in this reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize(array $availableClassNames) {
-		$this->availableClassNames = array_unique($availableClassNames);
+	public function initialize(array $classNamesToReflect) {
+		$this->loadFromCache();
 
-		foreach ($this->availableClassNames as $className) {
-			$class = new F3::FLOW3::Reflection::ClassReflection($className);
-			if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
-			if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
-		}
-
-		foreach ($this->availableClassNames as $className) {
-			$class = new F3::FLOW3::Reflection::ClassReflection($className);
-			$constructor = $class->getConstructor();
-			if ($constructor instanceof ::ReflectionMethod) {
-				$this->classConstructorMethodNames[$className] = $constructor->getName();
-			}
-			foreach ($class->getInterfaces() as $interface) {
-				if (!isset($this->abstractClasses[$className])) {
-					$this->interfaceImplementations[$interface->getName()][] = $className;
-				}
-			}
-			foreach ($class->getTagsValues() as $tag => $values) {
-				if (array_search($tag, $this->ignoredTags) === FALSE) {
-					$this->taggedClasses[$tag][] = $className;
-					$this->classTagsValues[$className][$tag] = $values;
-				}
-			}
-			foreach ($class->getProperties() as $property) {
-				$propertyName = $property->getName();
-				$this->classPropertyNames[$className][] = $propertyName;
-
-				foreach ($property->getTagsValues() as $tag => $values) {
-					if (array_search($tag, $this->ignoredTags) === FALSE) {
-						$this->propertyTagsValues[$className][$propertyName][$tag] = $values;
-					}
-				}
-			}
-			foreach ($class->getMethods() as $method) {
-				$methodName = $method->getName();
-				$this->classMethodNames[$className][] = $methodName;
-
-				foreach ($method->getTagsValues() as $tag => $values) {
-					if (array_search($tag, $this->ignoredTags) === FALSE) {
-						$this->methodTagsValues[$className][$methodName][$tag] = $values;
-					}
-				}
+		foreach ($this->reflectedClassNames as $className) {
+			if (!$this->cache->has(str_replace('::', '_', $className))) {
+				$this->forgetClass($className);
 			}
 		}
 
-		foreach ($this->taggedClasses as $tag => $classes) {
-			$this->taggedClasses[$tag] = array_unique($classes);
-		}
-		foreach ($this->classPropertyNames as $className => $propertyNames) {
-			$this->classPropertyNames[$className] = array_unique($propertyNames);
-		}
-		foreach ($this->classMethodNames as $className => $methodNames) {
-			$this->classMethodNames[$className] = array_unique($methodNames);
-		}
-		foreach ($this->interfaceImplementations as $interfaceName => $classNames) {
-			$this->interfaceImplementations[$interfaceName] = array_unique($classNames);
-		}
+		sort($classNamesToReflect);
+		$classNamesToReflect = array_unique($classNamesToReflect);
 
+		if ($this->reflectedClassNames != $classNamesToReflect) {
+			$newClassNames = array_diff($classNamesToReflect, $this->reflectedClassNames);
+			foreach ($newClassNames as $className) {
+				$this->reflectClass($className);
+				$this->reflectedClassNames[] = $className;
+				$this->cache->set(str_replace('::', '_', $className), '', array($this->cache->getClassTag($className)));
+			}
+
+			sort($this->reflectedClassNames);
+			$reflectedClassNames = array_unique($this->reflectedClassNames);
+			$this->saveToCache();
+		}
 		$this->initialized = TRUE;
-	}
-
-	/**
-	 * Exports the internal reflection data so it can be cached elsewhere
-	 *
-	 * @return array The reflection data which can be imported again with import()
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function export() {
-		$data = array();
-		$propertyNames = array(
-			'abstractClasses',
-			'availableClassNames',
-			'classConstructorMethodNames',
-			'classMethodNames',
-			'classPropertyNames',
-			'classTagsValues',
-			'finalClasses',
-			'interfaceImplementations',
-			'methodTagsValues',
-			'propertyTagsValues',
-			'taggedClasses'
-		);
-		foreach ($propertyNames as $propertyName) {
-			$data[$propertyName] = $this->$propertyName;
-		}
-		return $data;
 	}
 
 	/**
@@ -251,24 +189,8 @@ class Service {
 	 * @return array Class names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAvailableClassNames() {
-		return $this->availableClassNames;
-	}
-
-	/**
-	 * Allows to tweak the information about which classes implement a certain interface.
-	 * This is used by the FLOW3 bootstrap to register some built in implementations as
-	 * long as the reflection service is not analyzed.
-	 *
-	 * Note that this information will be overriden by intialize().
-	 *
-	 * @param string $interfaceName Name of the interface
-	 * @param array $classNames Names of classes which implement this interface
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setInterfaceImplementations($interfaceName, array $classNames) {
-		$this->interfaceImplementations[$interfaceName] = $classNames;
+	public function getAllClassNames() {
+		return $this->reflectedClassNames;
 	}
 
 	/**
@@ -488,6 +410,137 @@ class Service {
 		if (!isset($this->propertyTagsValues[$className])) return FALSE;
 		if (!isset($this->propertyTagsValues[$className][$propertyName])) return FALSE;
 		return isset($this->propertyTagsValues[$className][$propertyName][$tag]);
+	}
+
+
+	/**
+	 * Reflects the given class and stores the results in this service's properties.
+	 *
+	 * @param string $className Full qualified name of the class to reflect
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function reflectClass($className) {
+		$class = new F3::FLOW3::Reflection::ClassReflection($className);
+
+		if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
+		if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
+
+		$constructor = $class->getConstructor();
+		if ($constructor instanceof ::ReflectionMethod) {
+			$this->classConstructorMethodNames[$className] = $constructor->getName();
+		}
+		foreach ($class->getInterfaces() as $interface) {
+			if (!isset($this->abstractClasses[$className])) {
+				$this->interfaceImplementations[$interface->getName()][] = $className;
+			}
+		}
+		foreach ($class->getTagsValues() as $tag => $values) {
+			if (array_search($tag, $this->ignoredTags) === FALSE) {
+				$this->taggedClasses[$tag][] = $className;
+				$this->classTagsValues[$className][$tag] = $values;
+			}
+		}
+		foreach ($class->getProperties() as $property) {
+			$propertyName = $property->getName();
+			$this->classPropertyNames[$className][] = $propertyName;
+
+			foreach ($property->getTagsValues() as $tag => $values) {
+				if (array_search($tag, $this->ignoredTags) === FALSE) {
+					$this->propertyTagsValues[$className][$propertyName][$tag] = $values;
+				}
+			}
+		}
+		foreach ($class->getMethods() as $method) {
+			$methodName = $method->getName();
+			$this->classMethodNames[$className][] = $methodName;
+
+			foreach ($method->getTagsValues() as $tag => $values) {
+				if (array_search($tag, $this->ignoredTags) === FALSE) {
+					$this->methodTagsValues[$className][$methodName][$tag] = $values;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Forgets all reflection data related to the specified class
+	 *
+	 * @param string $className Name of the class to forget
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function forgetClass($className) {
+		foreach ($this->interfaceImplementations as $interfaceName => $interfaceImplementations) {
+			$index = array_search($className, $interfaceImplementations);
+			if ($index !== FALSE) unset($this->interfaceImplementations[$interfaceName][$index]);
+		}
+
+		foreach ($this->taggedClasses as $tag => $classNames) {
+			$index = array_search($className, $classNames);
+			if ($index !== FALSE) unset($this->taggedClasses[$tag][$index]);
+		}
+
+		$propertyNames = array(
+			'abstractClasses',
+			'classConstructorMethodNames',
+			'classMethodNames',
+			'classPropertyNames',
+			'classTagsValues',
+			'finalClasses',
+			'methodTagsValues',
+			'propertyTagsValues',
+		);
+		foreach ($propertyNames as $propertyName) {
+			if (isset($this->$propertyName[$className])) {
+				unset($this->$propertyName[$className]);
+			}
+		}
+
+		$index = array_search($className, $this->reflectedClassNames);
+		if ($index !== FALSE) unset($this->reflectedClassNames[$index]);
+	}
+
+	/**
+	 * Tries to load the reflection data from this service's cache.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function loadFromCache() {
+		if ($this->cache->has('ReflectionData')) {
+			$data = $this->cache->get('ReflectionData');
+			foreach ($data as $propertyName => $propertyValue) {
+				$this->$propertyName = $propertyValue;
+			}
+		}
+	}
+
+	/**
+	 * Exports the internal reflection data into the ReflectionData cache
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function saveToCache() {
+		$data = array();
+		$propertyNames = array(
+			'reflectedClassNames',
+			'abstractClasses',
+			'classConstructorMethodNames',
+			'classMethodNames',
+			'classPropertyNames',
+			'classTagsValues',
+			'finalClasses',
+			'interfaceImplementations',
+			'methodTagsValues',
+			'propertyTagsValues',
+			'taggedClasses'
+		);
+		foreach ($propertyNames as $propertyName) {
+			$data[$propertyName] = $this->$propertyName;
+		}
+		$this->cache->set('ReflectionData', $data);
 	}
 
 }

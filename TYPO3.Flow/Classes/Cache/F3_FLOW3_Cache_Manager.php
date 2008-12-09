@@ -34,7 +34,7 @@ class Manager {
 	/**
 	 * @const Cache Entry depends on the PHP code of the packages
 	 */
-	const TAG_PACKAGES_CODE = '%PACKAGES_CODE';
+	const TAG_PACKAGES_CODE = '%PACKAGES_CODE%';
 
 	/**
 	 * @var array Registered Caches

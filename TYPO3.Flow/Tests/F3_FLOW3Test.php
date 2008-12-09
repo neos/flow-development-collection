@@ -43,7 +43,7 @@ class FLOW3Test extends F3::Testing::BaseTestCase {
 		$FLOW3->initializeClassLoader();
 		$FLOW3->initializeConfiguration();
 		$FLOW3->initializeError();
-		$FLOW3->initializeFLOW3();
+		$FLOW3->initializeObjectFramework();
 		$this->assertTrue($FLOW3->getObjectManager() instanceof F3::FLOW3::Object::ManagerInterface, 'getObjectManager did not deliver an object implementing F3::FLOW3::Object::ManagerInterface!');
 	}
 }

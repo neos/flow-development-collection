@@ -29,7 +29,7 @@ utility:
     # Defines the base directory which FLOW3 may use for storing different kinds
     # of temporary files.
     # The directory must be writable and FLOW3 will automatically create a sub
-    # directory "FLOW3" which will contain the actualy temporary files.
+    # directory "FLOW3" which will contain the actual temporary files.
     temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/
 
 cache:
@@ -42,6 +42,13 @@ cache:
     # of the caching backend.
     backend: F3::FLOW3::Cache::Backend::File
     backendOptions: {}
+
+  # The Class Alteration Monitoring detects changes in class files and automatically
+  # flushes the dependent caches (such as the reflection cache).
+  # This mechanism comes with a speed penalty and should therefore be disabled in
+  # production context.
+  classAlterationMonitoring:
+    enable: n
 
 object:
   configurationCache:
