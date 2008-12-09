@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::ACL;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Security::ACL;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class UserDetails implements F3::FLOW3::Security::Authentication::UserDetailsInterface {
@@ -59,7 +59,7 @@ class UserDetails implements F3::FLOW3::Security::Authentication::UserDetailsInt
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo: This should be filled by configuration
 	 */
-	public function addRole(F3::FLOW3::Security::ACL::Role $role, F3::FLOW3::Security::RequestPattern $requestPattern = NULL) {
+	public function addRole(F3::FLOW3::Security::ACL::Role $role, F3::FLOW3::Security::RequestPatternInterface $requestPattern = NULL) {
 
 	}
 

@@ -90,7 +90,13 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 		$request->injectObjectManager($this->objectManager);
 		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
 
+		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+
 		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockExceptionThrowingController');
+		$mockExceptionThrowingController = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockExceptionThrowingController');
+		$mockExceptionThrowingController->injectPropertyMapper($mockPropertyMapper);
+
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
 		$request->setControllerName('MockExceptionThrowingController');
@@ -116,8 +122,13 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 		$request->injectObjectManager($this->objectManager);
 		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
 
+		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+
 		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
 		$controller = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
+		$controller->injectPropertyMapper($mockPropertyMapper);
+
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
 		$request->setControllerName('MockRequestHandlingController');
@@ -141,8 +152,13 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 		$request->injectObjectManager($this->objectManager);
 		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
 
+		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+
 		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
 		$controller = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
+		$controller->injectPropertyMapper($mockPropertyMapper);
+
 		$request->setControllerPackageKey('FLOW3');
 		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
 		$request->setControllerName('MockRequestHandlingController');

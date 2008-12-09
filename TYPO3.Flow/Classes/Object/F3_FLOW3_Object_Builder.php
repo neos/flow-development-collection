@@ -116,7 +116,7 @@ class Builder {
 			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			if ($objectConfiguration->getAutoWiringMode() == F3::FLOW3::Object::Configuration::AUTOWIRING_MODE_ON) {
 				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
-				$setterProperties = $this->autoWireSetterProperties($setterProperties, $class);
+				$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
 			}
 
 			$preparedArguments = array();
@@ -212,40 +212,35 @@ class Builder {
 	 * This function tries to find yet unmatched dependencies which need to be injected via "inject*" setter methods.
 	 *
 	 * @param array $setterProperties: Array of F3::FLOW3::Object::ConfigurationProperty for the current object
-	 * @param F3::FLOW3::Reflection::ClassReflection $class: The object class which contains the methods supposed to be analyzed
+	 * @param string $className: Name of the class which contains the methods supposed to be analyzed
 	 * @return array The modified array of F3::FLOW3::Object::ConfigurationProperty
 	 * @throws F3::FLOW3::Object::Exception::CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireSetterProperties(array $setterProperties, F3::FLOW3::Reflection::ClassReflection $class) {
-		$className = $class->getName();
-		foreach ($class->getMethods(F3::FLOW3::Reflection::MethodReflection::IS_PUBLIC) as $method) {
-			$methodName = $method->getName();
-			if (F3::PHP6::Functions::substr($methodName, 0, 6) == 'inject') {
-				$propertyName = F3::PHP6::Functions::strtolower(F3::PHP6::Functions::substr($methodName, 6, 1)) . F3::PHP6::Functions::substr($methodName, 7);
+	protected function autoWireSetterProperties(array $setterProperties, $className) {
+		foreach (get_class_methods($className) as $methodName) {
+			if (substr($methodName, 0, 6) === 'inject') {
+				$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
 				if (array_key_exists($propertyName, $setterProperties)) {
 					$this->debugMessages[] = 'Did not try to autowire property $' . $propertyName . ' in ' . $className .  ' because it was already set.';
 					continue;
 				}
-				if ($method->getNumberOfParameters() != 1) {
+				$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+				if (count($methodParameters) != 1) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because it had not exactly one parameter.';
 					continue;
 				}
-				$methodParameters = $method->getParameters();
 				$methodParameter = array_pop($methodParameters);
-				try {
-					$dependencyClass = $methodParameter->getClass();
-				} catch (ReflectionException $exception) {
-					$dependencyClass = NULL;
-				}
-				if ($dependencyClass === NULL) {
+				if ($methodParameter['class'] === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
-					if (!$method->isTaggedWith('optional')) {
+					if (!$this->reflectionService->isMethodTaggedWith('optional')) {
+						$class = new ReflectionClass($className);
+						$method = $class->getMethod($methodName);
 						throw new F3::FLOW3::Object::Exception::CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() . '.', 1203413346);
 					}
 					continue;
 				}
-				$setterProperties[$propertyName] = new F3::FLOW3::Object::ConfigurationProperty($propertyName, $dependencyClass->getName(), F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+				$setterProperties[$propertyName] = new F3::FLOW3::Object::ConfigurationProperty($propertyName, $methodParameter['class'], F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
 			}
 		}
 		return $setterProperties;
@@ -297,11 +292,11 @@ class Builder {
 					$propertyValue = $property->getValue();
 				break;
 			}
-			$setterMethodName = 'inject' . F3::PHP6::Functions::ucfirst($propertyName);
+			$setterMethodName = 'inject' . ucfirst($propertyName);
 			if (method_exists($object, $setterMethodName)) {
 				$object->$setterMethodName($propertyValue);
 			} else {
-				$setterMethodName = 'set' . F3::PHP6::Functions::ucfirst($propertyName);
+				$setterMethodName = 'set' . ucfirst($propertyName);
 				if (method_exists($object, $setterMethodName)) {
 					$object->$setterMethodName($propertyValue);
 				}

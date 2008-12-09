@@ -153,10 +153,10 @@ final class FLOW3 {
 		$this->detectAlteredClasses();
 		$this->initializeObjects();
 		$this->initializeAOP();
-		$this->initializeLocale();
 		$this->initializeSession();
 		$this->initializePersistence();
 		$this->initializeResources();
+		$this->initializeLocale();
 	}
 
 	/**
@@ -253,6 +253,12 @@ final class FLOW3 {
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::File');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::Memcached');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::VariableCache');
+
+		$property = new F3::FLOW3::Object::ConfigurationProperty('environment', 'F3::FLOW3::Utility::Environment', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+		$configuration = $this->objectManager->getObjectConfiguration('F3::FLOW3::Cache::Backend::File');
+		$configuration->setProperty($property);
+		$this->objectManager->setObjectConfiguration($configuration);
+
 		$this->cacheFactory = $this->objectManager->getObject('F3::FLOW3::Cache::Factory');
 		$this->cacheManager = $this->objectManager->getObject('F3::FLOW3::Cache::Manager');
 
@@ -367,6 +373,17 @@ final class FLOW3 {
 		if ($this->settings['aop']['enable'] === TRUE) {
 
 			$this->objectManager->registerObject('F3::FLOW3::AOP::Framework');
+			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::FLOW3::AOP::Framework');
+
+			$properties = array(
+				'reflectionService' => new F3::FLOW3::Object::ConfigurationProperty('reflectionService', 'F3::FLOW3::Reflection::Service', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'pointcutExpressionParser' => new F3::FLOW3::Object::ConfigurationProperty('pointcutExpressionParser', 'F3::FLOW3::AOP::PointcutExpressionParser', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'cacheFactory' => new F3::FLOW3::Object::ConfigurationProperty('cacheFactory', 'F3::FLOW3::Cache::Factory', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'configurationManager' => new F3::FLOW3::Object::ConfigurationProperty('configurationManager', 'F3::FLOW3::Configuration::Manager', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE)
+			);
+			$objectConfiguration->setProperties($properties);
+			$this->objectManager->setObjectConfiguration($objectConfiguration);
+
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
 
 			$AOPFramework = $this->objectManager->getObject('F3::FLOW3::AOP::Framework');

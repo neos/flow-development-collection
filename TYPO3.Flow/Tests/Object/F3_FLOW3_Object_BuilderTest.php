@@ -319,14 +319,11 @@ class BuilderTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3::FLOW3::Object::Exception
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function autoWiringThrowsExceptionForUnmatchedDependenciesOfRequiredSetterInjectedDependencies() {
-		try {
-			$this->objectManager->getObject('F3::TestPackage::ClassWithUnmatchedRequiredSetterDependency');
-			$this->fail('The object builder did not throw an exception.');
-		} catch (F3::FLOW3::Object::Exception::CannotBuildObject $exception) {
-		}
+		$this->objectManager->getObject('F3::TestPackage::ClassWithUnmatchedRequiredSetterDependency');
 	}
 
 	/**

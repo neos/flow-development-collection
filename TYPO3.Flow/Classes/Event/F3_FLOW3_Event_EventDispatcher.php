@@ -48,7 +48,7 @@ class EventDispatcher implements F3::FLOW3::Event::EventDispatcherInterface {
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function addEventListener($type, Closure $listener) {
+	public function addEventListener($type, ::Closure $listener) {
 		$this->listeners[$type][] = $listener;
 	}
 

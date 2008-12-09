@@ -39,7 +39,7 @@ interface EventDispatcherInterface {
 	 * @param Closure $listener Listener method.
 	 * @return void
 	 */
-	public function addEventListener($type, Closure $listener);
+	public function addEventListener($type, ::Closure $listener);
 
 	/**
 	 * Executes all listener methods which are registered for the respective Event type.

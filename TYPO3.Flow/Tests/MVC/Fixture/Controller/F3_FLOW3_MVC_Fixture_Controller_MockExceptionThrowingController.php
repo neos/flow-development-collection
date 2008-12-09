@@ -31,6 +31,8 @@ namespace F3::FLOW3::MVC::Fixture::Controller;
  */
 class MockExceptionThrowingController extends F3::FLOW3::MVC::Controller::ActionController {
 
+	protected $initializeView = FALSE;
+
 	/**
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

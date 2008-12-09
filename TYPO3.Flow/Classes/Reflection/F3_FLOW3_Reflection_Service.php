@@ -107,6 +107,13 @@ class Service {
 	protected $methodTagsValues = array();
 
 	/**
+	 * Array of class names, method names, their parameters and additional information about the parameters
+	 *
+	 * @var array
+	 */
+	protected $methodParameters = array();
+
+	/**
 	 * Array of class names and names of their properties
 	 *
 	 * @var array
@@ -313,7 +320,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassMethodNames($className) {
-		return (isset($this->classMethodNames[$className])) ? $this->classMethodNames[$className] : array();
+		return get_class_methods($className);
 	}
 
 	/**
@@ -349,6 +356,29 @@ class Service {
 	public function getMethodTagsValues($className, $methodName) {
 		if (!isset($this->methodTagsValues[$className])) return array();
 		return (isset($this->methodTagsValues[$className][$methodName])) ? $this->methodTagsValues[$className][$methodName] : array();
+	}
+
+	/**
+	 * Returns an array of parameters of the given method. Each entry contains
+	 * additional information about the parameter position, type hint etc.
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to return parameter information of
+	 * @return array An array of parameter names and additional information or an empty array of no parameters were found
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getMethodParameters($className, $methodName) {
+		if ($this->initialized) {
+			if (!isset($this->methodParameters[$className])) return array();
+			$parametersInformation = (isset($this->methodParameters[$className][$methodName])) ? $this->methodParameters[$className][$methodName] : array();
+		} else {
+			$method = new ReflectionMethod($className, $methodName);
+			$parametersInformation = array();
+			foreach($method->getParameters() as $parameter) {
+				$parametersInformation[$parameter->getName()] = $this->convertParameterReflectionToArray($parameter);
+			}
+		}
+		return $parametersInformation;
 	}
 
 	/**
@@ -460,7 +490,33 @@ class Service {
 					$this->methodTagsValues[$className][$methodName][$tag] = $values;
 				}
 			}
+
+			foreach ($method->getParameters() as $parameter) {
+				$this->methodParameters[$className][$methodName][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter);
+			}
 		}
+	}
+
+	/**
+	 * Converts the given parameter reflection into an information array
+	 *
+	 * @param ReflectionParameter $parameter The parameter to reflect
+	 * @return array Parameter information array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function convertParameterReflectionToArray(::ReflectionParameter $parameter) {
+		$parameterInformation = array(
+			'position' => $parameter->getPosition(),
+			'byReference' => $parameter->isPassedByReference() ? TRUE : FALSE,
+			'array' => $parameter->isArray() ? TRUE : FALSE,
+			'optional' => $parameter->isOptional() ? TRUE : FALSE,
+		);
+		$parameterClass = $parameter->getClass();
+		$parameterInformation['class'] = ($parameterClass !== NULL) ? $parameterClass->getName() : NULL;
+		if ($parameter->isDefaultValueAvailable()) {
+			$parameterInformation['defaultValue'] = $parameter->getDefaultValue();
+		}
+		return $parameterInformation;
 	}
 
 	/**
@@ -489,6 +545,7 @@ class Service {
 			'classTagsValues',
 			'finalClasses',
 			'methodTagsValues',
+			'methodParameters',
 			'propertyTagsValues',
 		);
 		foreach ($propertyNames as $propertyName) {
@@ -534,6 +591,7 @@ class Service {
 			'finalClasses',
 			'interfaceImplementations',
 			'methodTagsValues',
+			'methodParameters',
 			'propertyTagsValues',
 			'taggedClasses'
 		);

@@ -129,10 +129,10 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 		}
 
 		if ($lifetime === 0) {
-			$expiryTime = new DateTime('9999-12-31T23:59:59+0000', new DateTimeZone('UTC'));
+			$expiryTime = new ::DateTime('9999-12-31T23:59:59+0000', new DateTimeZone('UTC'));
 		} else {
 			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
-			$expiryTime = new DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
+			$expiryTime = new ::DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		}
 		$entryIdentifierHash = sha1($entryIdentifier);
 		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/';
@@ -334,7 +334,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @return string Filename of the cache data file
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function renderCacheFilename($identifier, DateTime $expiryTime) {
+	protected function renderCacheFilename($identifier, ::DateTime $expiryTime) {
 		$filename = $expiryTime->format(self::FILENAME_EXPIRYTIME_FORMAT) . self::SEPARATOR . $identifier;
 		return $filename;
 	}

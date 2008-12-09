@@ -293,6 +293,29 @@ class ServiceTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function getMethodParametersReturnsAnArrayOfParameterNamesAndAdditionalInformation() {
+		$availableClassNames = array(
+			'F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods',
+		);
+		$reflectionService = new F3::FLOW3::Reflection::Service();
+		$reflectionService->setCache($this->getMock('F3::FLOW3::Cache::VariableCache', array(), array(), '', FALSE));
+		$reflectionService->initialize($availableClassNames);
+
+		$expectedParameters = array(
+			'arg1' => array('position' => 0, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL),
+			'arg2' => array('position' => 1, 'byReference' => TRUE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL),
+			'arg3' => array('position' => 2, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => 'stdClass'),
+			'arg4' => array('position' => 3, 'byReference' => FALSE, 'array' => FALSE, 'optional' => TRUE, 'class' => NULL, 'defaultValue' => 'default')
+		);
+
+		$actualParameters = $reflectionService->getMethodParameters('F3::FLOW3::Tests::Reflection::Fixture::DummyClassWithMethods', 'firstMethod');
+		$this->assertEquals($expectedParameters, $actualParameters);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getPropertyNamesByTagReturnsArrayOfPropertiesTaggedBySpecifiedTag() {
 		$availableClassNames = array(
 			'F3::FLOW3::Tests::Reflection::Fixture::DummyClass',

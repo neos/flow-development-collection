@@ -39,8 +39,8 @@ class DummyClassWithMethods {
 	 * @secondtag b
 	 * @return void
 	 */
-	public function firstMethod() {
-		
+	public function firstMethod($arg1, &$arg2, ::stdClass $arg3, $arg4 = 'default') {
+
 	}
 
 	/**
@@ -49,7 +49,7 @@ class DummyClassWithMethods {
 	 * @return void
 	 */
 	public function secondMethod() {
-		
+
 	}
 }
 ?>
