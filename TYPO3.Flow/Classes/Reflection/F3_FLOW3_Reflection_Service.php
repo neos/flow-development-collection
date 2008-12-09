@@ -331,7 +331,13 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassConstructorName($className) {
-		return (isset($this->classConstructorMethodNames[$className])) ? $this->classConstructorMethodNames[$className] : NULL;
+		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
+			return (isset($this->classConstructorMethodNames[$className])) ? $this->classConstructorMethodNames[$className] : NULL;
+		} else {
+			$class = new ReflectionClass($className);
+			$constructor = $class->getConstructor();
+			return ($constructor !== NULL) ? $constructor->getName() : NULL;
+		}
 	}
 
 	/**
@@ -368,7 +374,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodParameters($className, $methodName) {
-		if ($this->initialized) {
+		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
 			if (!isset($this->methodParameters[$className])) return array();
 			$parametersInformation = (isset($this->methodParameters[$className][$methodName])) ? $this->methodParameters[$className][$methodName] : array();
 		} else {
@@ -510,6 +516,7 @@ class Service {
 			'byReference' => $parameter->isPassedByReference() ? TRUE : FALSE,
 			'array' => $parameter->isArray() ? TRUE : FALSE,
 			'optional' => $parameter->isOptional() ? TRUE : FALSE,
+			'allowsNull' => $parameter->allowsNull() ? TRUE : FALSE
 		);
 		$parameterClass = $parameter->getClass();
 		$parameterInformation['class'] = ($parameterClass !== NULL) ? $parameterClass->getName() : NULL;

@@ -113,15 +113,15 @@ class Builder {
 
 			$setterProperties = $objectConfiguration->getProperties();
 
-			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			if ($objectConfiguration->getAutoWiringMode() == F3::FLOW3::Object::Configuration::AUTOWIRING_MODE_ON) {
-				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $class);
+				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $className);
 				$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
 			}
 
 			$preparedArguments = array();
 			$this->injectConstructorArguments($constructorArguments, $preparedArguments);
 
+			$class = new F3::FLOW3::Reflection::ClassReflection($className);
 			$object = (count($preparedArguments) > 0) ? $class->newInstanceArgs($preparedArguments) : $class->newInstance();
 
 			if (!is_object($object)) {
@@ -172,33 +172,28 @@ class Builder {
 	 * them if possible.
 	 *
 	 * @param array $constructorArguments: Array of F3::FLOW3::Object::ConfigurationArgument for the current object
-	 * @param F3::FLOW3::Reflection::ClassReflection $class: The object class which contains the methods supposed to be analyzed
+	 * @param string $className: Class name of the object which contains the methods supposed to be analyzed
 	 * @return array The modified array of F3::FLOW3::Object::ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireConstructorArguments(array $constructorArguments, F3::FLOW3::Reflection::ClassReflection $class) {
-		$className = $class->getName();
-		$constructor = $class->getConstructor();
-		if ($constructor !== NULL) {
-			foreach ($constructor->getParameters() as $parameterIndex => $parameter) {
-				$index = $parameterIndex + 1;
+	protected function autoWireConstructorArguments(array $constructorArguments, $className) {
+		$constructorName = $this->reflectionService->getClassConstructorName($className);
+		if ($constructorName !== NULL) {
+			foreach ($this->reflectionService->getMethodParameters($className, $constructorName) as $parameterName => $parameterInformation) {
+				$index = $parameterInformation['position'] + 1;
 				if (!isset($constructorArguments[$index])) {
-					try {
-						if ($parameter->isOptional()) {
-							$defaultValue = ($parameter->isDefaultValueAvailable()) ? $parameter->getDefaultValue() : NULL;
-							$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, $defaultValue, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-						} elseif ($parameter->getClass() !== NULL) {
-							$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, $parameter->getClass()->getName(), F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
-						} elseif ($parameter->allowsNull()) {
-							$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, NULL, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
-						} else {
-							$this->debugMessages[] = 'Tried everything to autowire parameter $' . $parameter->getName() . ' in ' . $className . '::' . $constructor->getName() . '() but I saw no way.';
-						}
-					} catch (ReflectionException $exception) {
-						throw new F3::FLOW3::Object::Exception::CannotBuildObject('While trying to autowire the parameter $' . $parameter->getName() . ' of the method ' . $className . '::' . $constructor->getName() . '() a ReflectionException was thrown. Please verify the definition of your constructor method in ' . $constructor->getFileName() . ' line ' . $constructor->getStartLine() . '. Original message: ' . $exception->getMessage(), 1176467813);
+					if ($parameterInformation['optional'] === TRUE) {
+						$defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : NULL;
+						$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, $defaultValue, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+					} elseif ($parameterInformation['class'] !== NULL) {
+						$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, $parameterInformation['class'], F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+					} elseif ($parameterInformation['allowsNull'] === TRUE) {
+						$constructorArguments[$index] = new F3::FLOW3::Object::ConfigurationArgument($index, NULL, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+					} else {
+						$this->debugMessages[] = 'Tried everything to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName . '() but I saw no way.';
 					}
 				} else {
-					$this->debugMessages[] = 'Did not try to autowire parameter $' . $parameter->getName() . ' in ' . $className . '::' . $constructor->getName() . '() because it was already set.';
+					$this->debugMessages[] = 'Did not try to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName. '() because it was already set.';
 				}
 			}
 		} else {
@@ -236,7 +231,6 @@ class Builder {
 					if (!$this->reflectionService->isMethodTaggedWith('optional')) {
 						$class = new ReflectionClass($className);
 						$method = $class->getMethod($methodName);
-						throw new F3::FLOW3::Object::Exception::CannotBuildObject('While trying to autowire the required property $' . $propertyName . ' in class ' . $className . ' a ReflectionException was thrown. Please verify the definition of your setter method in ' . $method->getFileName() . ' line ' . $method->getStartLine() . '.', 1203413346);
 					}
 					continue;
 				}
