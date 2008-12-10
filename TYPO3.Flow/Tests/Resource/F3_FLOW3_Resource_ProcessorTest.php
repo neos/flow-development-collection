@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,17 +18,17 @@ namespace F3::FLOW3::Resource;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the resource processor
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ProcessorTest extends F3::Testing::BaseTestCase {
+class ProcessorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -73,7 +73,7 @@ class ProcessorTest extends F3::Testing::BaseTestCase {
 		<a href="#samePage">nor that link</a>
 	</body>
 </html>';
-		$processor = $this->objectManager->getObject('F3::FLOW3::Resource::Processor');
+		$processor = $this->objectManager->getObject('F3\FLOW3\Resource\Processor');
 		$processedHTML = $processor->prefixRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}

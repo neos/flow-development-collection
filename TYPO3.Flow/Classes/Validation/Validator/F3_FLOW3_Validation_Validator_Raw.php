@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,17 +29,17 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Raw implements F3::FLOW3::Validation::ValidatorInterface {
+class Raw implements \F3\FLOW3\Validation\ValidatorInterface {
 
 	/**
 	 * Always returns TRUE.
 	 *
 	 * @param mixed $propertyValue ignored
-	 * @param F3::FLOW3::Validation::Errors $errors ignored
+	 * @param \F3\FLOW3\Validation\Errors $errors ignored
 	 * @return boolean Always TRUE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
+	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 		return TRUE;
 	}
 }

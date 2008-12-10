@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration;
+namespace F3\FLOW3\Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -105,12 +105,12 @@ class Manager {
 	public function loadFLOW3Settings() {
 		$settings = array();
 		foreach ($this->configurationSources as $configurationSource) {
-			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3'));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3'));
 		}
 
 		foreach ($this->configurationSources as $configurationSource) {
-			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
-			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
 		}
 		$this->postProcessSettings($settings);
 		$this->settings['FLOW3'] = $settings;
@@ -139,15 +139,15 @@ class Manager {
 		}
 		foreach ($packageKeys as $packageKey) {
 			foreach ($this->configurationSources as $configurationSource) {
-				$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings'));
+				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings'));
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings', TRUE));
-			$settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings', TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings', TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings', TRUE));
 		}
 		$this->postProcessSettings($settings);
-		$this->settings = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->settings, $settings);
+		$this->settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->settings, $settings);
 	}
 
 	/**
@@ -173,14 +173,14 @@ class Manager {
 		}
 		foreach ($packageKeys as $packageKey) {
 			foreach ($this->configurationSources as $configurationSource) {
-				$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes'));
+				$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes'));
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes'));
+			$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes'));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$this->routes = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes'));
+			$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes'));
 		}
 	}
 
@@ -194,7 +194,7 @@ class Manager {
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param string $packageKey Key of the package the configuration is for
 	 * @return array The configuration
-	 * @throws F3::FLOW3::Configuration::Exception::InvalidConfigurationType on invalid configuration types
+	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -206,17 +206,17 @@ class Manager {
 			case self::CONFIGURATION_TYPE_COMPONENTS :
 				break;
 			default:
-				throw new F3::FLOW3::Configuration::Exception::InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
+				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 		$configuration = array();
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = F3::FLOW3::Utility::Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 		}
 
 		switch ($configurationType) {

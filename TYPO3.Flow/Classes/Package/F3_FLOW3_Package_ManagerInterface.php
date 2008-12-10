@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Package;
+namespace F3\FLOW3\Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package\ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package\ManagerInterface.php 203 2007-03-30 13:17:37Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -51,28 +51,28 @@ interface ManagerInterface {
 	public function isPackageAvailable($packageKey);
 
 	/**
-	 * Returns a F3::FLOW3::Package::PackageInterface object for the specified package.
+	 * Returns a \F3\FLOW3\Package\PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @param string $packageKey
-	 * @return array Array of F3::FLOW3::Package::PackageInterface
+	 * @return array Array of \F3\FLOW3\Package\PackageInterface
 	 */
 	public function getPackage($packageKey);
 
 	/**
-	 * Returns an array of F3::FLOW3::Package::PackageInterface objects of all available packages.
+	 * Returns an array of \F3\FLOW3\Package\PackageInterface objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return array Array of F3::FLOW3::Package::PackageInterface
+	 * @return array Array of \F3\FLOW3\Package\PackageInterface
 	 */
 	public function getAvailablePackages();
 
 	/**
-	 * Returns an array of F3::FLOW3::Package::Meta objects of all active packages.
+	 * Returns an array of \F3\FLOW3\Package\Meta objects of all active packages.
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
-	 * @return array Array of F3::FLOW3::Package::PackageInterface
+	 * @return array Array of \F3\FLOW3\Package\PackageInterface
 	 */
 	public function getActivePackages();
 

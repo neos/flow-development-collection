@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence::Aspect;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,7 +36,7 @@ interface DirtyMonitoringInterface {
 		// the $joinPoint argument here is a special case, as the introduced
 		// method is used from within an advice and "externally", thus we need
 		// to handle this specially
-	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL);
+	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL);
 
 }
 ?>

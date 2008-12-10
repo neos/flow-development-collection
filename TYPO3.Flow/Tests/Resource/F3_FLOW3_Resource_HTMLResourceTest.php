@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,17 +18,17 @@ namespace F3::FLOW3::Resource;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
  * Testcase for the HTMLResource
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class HTMLResourceTest extends F3::Testing::BaseTestCase {
+class HTMLResourceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -36,8 +36,8 @@ class HTMLResourceTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isPrototype() {
-		$resource1 = $this->objectManager->getObject('F3::FLOW3::Resource::HTMLResource');
-		$resource2 = $this->objectManager->getObject('F3::FLOW3::Resource::HTMLResource');
+		$resource1 = $this->objectManager->getObject('F3\FLOW3\Resource\HTMLResource');
+		$resource2 = $this->objectManager->getObject('F3\FLOW3\Resource\HTMLResource');
 		$this->assertNotSame($resource1, $resource2, 'HTMLResource seems to be singleton!');
 	}
 
@@ -46,7 +46,7 @@ class HTMLResourceTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canReturnContent() {
-		$HTMLResource = new F3::FLOW3::Resource::HTMLResource();
+		$HTMLResource = new \F3\FLOW3\Resource\HTMLResource();
 		$HTMLResource->setMetadata(array(
 			'URI' => 'file://TestPackage/Public/TestTemplate.html',
 			'path' => FLOW3_PATH_PACKAGES . 'TestPackage/Resources/Public',

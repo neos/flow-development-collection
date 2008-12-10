@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Controller;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::AbstractController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\AbstractController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,13 +26,13 @@ namespace F3::FLOW3::MVC::Controller;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::AbstractController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\AbstractController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class AbstractController {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface A reference to the Object Factory
+	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory
 	 */
 	protected $objectFactory;
 
@@ -42,7 +42,7 @@ abstract class AbstractController {
 	protected $packageKey;
 
 	/**
-	 * @var F3::FLOW3::Package::Package The package this controller belongs to
+	 * @var \F3\FLOW3\Package\Package The package this controller belongs to
 	 */
 	protected $package;
 
@@ -56,13 +56,13 @@ abstract class AbstractController {
 	/**
 	 * Constructs the controller.
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the Object Factory
-	 * @param F3::FLOW3::Package::ManagerInterface $packageManager A reference to the Package Manager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
+	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Package::ManagerInterface $packageManager) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->objectFactory = $objectFactory;
-		list(, $this->packageKey) = explode('::', get_class($this));
+		list(, $this->packageKey) = explode('\\', get_class($this));
 		$this->package = $packageManager->getPackage($this->packageKey);
 	}
 

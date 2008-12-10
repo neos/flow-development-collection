@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC;
+namespace F3\FLOW3\MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,7 +35,7 @@ class RequestProcessorChainManager {
 	/**
 	 * @var array Supported request types
 	 */
-	protected $supportedRequestTypes = array('F3::FLOW3::MVC::Request', 'F3::FLOW3::MVC::Web::Request', 'F3::FLOW3::MVC::CLI::Request');
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request', 'F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\CLI\Request');
 
 	/**
 	 * @var array Registered request processors, grouped by request type
@@ -46,11 +46,11 @@ class RequestProcessorChainManager {
 	 * Processes the given request object by invoking the processors
 	 * of the processor chain.
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request object - changes are applied directly to this object by the processors.
+	 * @param \F3\FLOW3\MVC\Request $request The request object - changes are applied directly to this object by the processors.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3::FLOW3::MVC::Request $request) {
+	public function processRequest(\F3\FLOW3\MVC\Request $request) {
 		$requestTypes = array_keys($this->requestProcessors);
 		foreach ($requestTypes as $requestType) {
 			if ($request instanceof $requestType) {
@@ -64,14 +64,14 @@ class RequestProcessorChainManager {
 	/**
 	 * Registers a Request Processor for the specified request type.
 	 *
-	 * @param F3::FLOW3::MVC::RequestProcessorInterface $requestProcessor: The request processor
+	 * @param \F3\FLOW3\MVC\RequestProcessorInterface $requestProcessor: The request processor
 	 * @param string $requestType: Type (class- or interface name) of the request this processor is interested in
 	 * @return void
-	 * @throws F3::FLOW3::MVC::Exception::InvalidRequestType if the request type is not supported.
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestType if the request type is not supported.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerRequestProcessor(F3::FLOW3::MVC::RequestProcessorInterface $requestProcessor, $requestType) {
-		if (!in_array($requestType, $this->supportedRequestTypes, TRUE)) throw new F3::FLOW3::MVC::Exception::InvalidRequestType('"' . $requestType . '" is not a valid request type - or at least it\'s not supported by the Request Processor Chain.', 1187260972);
+	public function registerRequestProcessor(\F3\FLOW3\MVC\RequestProcessorInterface $requestProcessor, $requestType) {
+		if (!in_array($requestType, $this->supportedRequestTypes, TRUE)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestType('"' . $requestType . '" is not a valid request type - or at least it\'s not supported by the Request Processor Chain.', 1187260972);
 		$this->requestProcessors[$requestType][] = $requestProcessor;
 	}
 
@@ -81,15 +81,15 @@ class RequestProcessorChainManager {
 	 *
 	 * Triggers _no_ error if the request processor did not exist.
 	 *
-	 * @param F3::FLOW3::MVC::RequestProcessorInterface $requestProcessor The request processor
+	 * @param \F3\FLOW3\MVC\RequestProcessorInterface $requestProcessor The request processor
 	 * @param string $requestType Type (class- or interface name) of the request this processor is interested in
 	 * @return void
-	 * @throws F3::FLOW3::MVC::Exception::InvalidRequestType if the request type is not supported.
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestType if the request type is not supported.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function unregisterRequestProcessor(F3::FLOW3::MVC::RequestProcessorInterface $requestProcessor, $requestType = NULL) {
+	public function unregisterRequestProcessor(\F3\FLOW3\MVC\RequestProcessorInterface $requestProcessor, $requestType = NULL) {
 		if ($requestType !== NULL) {
-			if (!in_array($requestType, $this->supportedRequestTypes, TRUE)) throw new F3::FLOW3::MVC::Exception::InvalidRequestType('"' . $requestType . '" is not a valid request type - or at least it\'s not supported by the Request Processor Chain.', 1187261072);
+			if (!in_array($requestType, $this->supportedRequestTypes, TRUE)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestType('"' . $requestType . '" is not a valid request type - or at least it\'s not supported by the Request Processor Chain.', 1187261072);
 			foreach ($this->requestProcessors[$requestType] as $index => $existingRequestProcessor) {
 				if ($existingRequestProcessor === $requestProcessor) {
 					unset($this->requestProcessors[$requestType][$index]);

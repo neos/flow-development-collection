@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence::Aspect;
+namespace F3\FLOW3\Persistence\Aspect;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,18 +35,18 @@ class DirtyMonitoring {
 	/**
 	 * The persistence manager
 	 *
-	 * @var F3::FLOW3::Persistence::Manager
+	 * @var \F3\FLOW3\Persistence\Manager
 	 */
 	protected $persistenceManager;
 
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param F3::FLOW3::Persistence::Manager $persistenceManager
+	 * @param \F3\FLOW3\Persistence\Manager $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPersistenceManager(F3::FLOW3::Persistence::Manager $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\Manager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 
@@ -59,58 +59,56 @@ class DirtyMonitoring {
 	/**
 	 * Automatically call memorizeCleanState() after __wakeup()
 	 *
-	 * @afterreturning method(.*->__wakeup()) && F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
+	 * @afterreturning method(.*->__wakeup()) && F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function autoMemorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function autoMemorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->memorizeCleanState($joinPoint);
 	}
 
 	/**
-	 * @introduce F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface, F3::FLOW3::Persistence::Aspect::DirtyMonitoring->isEntityOrValueObject
+	 * @introduce F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
 	 */
 	public $dirtyMonitoringInterface;
 
 	/**
 	 * Around advice, implements the isNew() method introduced above
 	 *
-	 * @param F3::FLOW3::AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
 	 * @around method(.*->isNew())
-	 * @see F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface
+	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isNew(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function isNew(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		$proxy = $joinPoint->getProxy();
-		$cleanProperties = $proxy->AOPProxyGetProperty('FLOW3PersistenceCleanProperties');
-
-		return ($cleanProperties === NULL);
+		return !property_exists($proxy, 'FLOW3PersistenceCleanProperties');
 	}
 
 	/**
 	 * Around advice, implements the isDirty() method introduced above
 	 *
-	 * @param F3::FLOW3::AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
 	 * @around method(.*->isDirty())
-	 * @see F3::FLOW3::Persistence::Aspect::DirtyMonitoringInterface
+	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isDirty(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function isDirty(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
+
 		$proxy = $joinPoint->getProxy();
-
 		$isDirty = FALSE;
-		$cleanProperties = $proxy->AOPProxyGetProperty('FLOW3PersistenceCleanProperties');
 
-		if ($cleanProperties !== NULL) {
+		if (property_exists($proxy, 'FLOW3PersistenceCleanProperties')) {
+			$cleanProperties = $proxy->FLOW3PersistenceCleanProperties;
 			$identifierProperty = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getIdentifierProperty();
 			if ($identifierProperty !== NULL && $proxy->AOPProxyGetProperty($identifierProperty) != $cleanProperties[$identifierProperty]) {
-				throw new F3::FLOW3::Persistence::Exception::TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
+				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
 			}
 
 			$propertyName = $joinPoint->getMethodArgument('propertyName');
@@ -123,14 +121,15 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Register an object's clean state, e.g. after it has been reconstituted from the FLOW3 persistence layer
+	 * Register an object's clean state, e.g. after it has been reconstituted
+				from the FLOW3 persistence layer
 	 *
 	 * @before method(.*->memorizeCleanState())
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function memorizeCleanState(F3::FLOW3::AOP::JoinPointInterface $joinPoint = NULL) {
+	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
 		if ($joinPoint === NULL) {
 			$proxy = $this;
 		} else {
@@ -142,7 +141,7 @@ class DirtyMonitoring {
 		foreach ($propertyNames as $propertyName) {
 			$cleanProperties[$propertyName] = $proxy->AOPProxyGetProperty($propertyName);
 		}
-		$proxy->AOPProxySetProperty('FLOW3PersistenceCleanProperties', $cleanProperties);
+		$proxy->FLOW3PersistenceCleanProperties = $cleanProperties;
 	}
 
 }

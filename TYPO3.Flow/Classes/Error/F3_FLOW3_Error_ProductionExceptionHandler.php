@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Error;
+namespace F3\FLOW3\Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Error;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ProductionExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerInterface {
+class ProductionExceptionHandler implements \F3\FLOW3\Error\ExceptionHandlerInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
@@ -43,11 +43,11 @@ class ProductionExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerIn
 	/**
 	 * Displays the given exception
 	 *
-	 * @param ::Exception $exception: The exception object
+	 * @param \Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function handleException(::Exception $exception) {
+	public function handleException(\Exception $exception) {
 		switch (PHP_SAPI) {
 			case 'cli' :
 				$this->echoExceptionCLI($exception);
@@ -60,10 +60,10 @@ class ProductionExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerIn
 	/**
 	 * Echoes an exception for the web.
 	 *
-	 * @param ::Exception $exception The exception
+	 * @param \Exception $exception The exception
 	 * @return void
 	 */
-	public function echoExceptionWeb(::Exception $exception) {
+	public function echoExceptionWeb(\Exception $exception) {
 		if (!headers_sent()) {
 			header("HTTP/1.1 500 Internal Server Error");
 		}
@@ -164,10 +164,10 @@ class ProductionExceptionHandler implements F3::FLOW3::Error::ExceptionHandlerIn
 	/**
 	 * Echoes an exception for the command line.
 	 *
-	 * @param ::Exception $exception The exception
+	 * @param \Exception $exception The exception
 	 * @return void
 	 */
-	public function echoExceptionCLI(::Exception $exception) {
+	public function echoExceptionCLI(\Exception $exception) {
 		exit(1);
 	}
 }

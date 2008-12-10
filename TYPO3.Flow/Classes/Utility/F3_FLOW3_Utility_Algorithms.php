@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Utility;
+namespace F3\FLOW3\Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Utility;
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::Algorithms.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\Algorithms.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Utility;
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::Algorithms.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\Algorithms.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Algorithms {

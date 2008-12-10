@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration::Source;
+namespace F3\FLOW3\Configuration\Source;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::FLOW3::Configuration::Source;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class YAML implements F3::FLOW3::Configuration::SourceInterface {
+class YAML implements \F3\FLOW3\Configuration\SourceInterface {
 
 	/**
 	 * Loads the specified configuration file and returns its content as an
@@ -41,7 +41,7 @@ class YAML implements F3::FLOW3::Configuration::SourceInterface {
 	 */
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
-			$configuration = F3::YAML::YAML::loadFile($pathAndFilename . '.yaml');
+			$configuration = \F3\YAML\YAML::loadFile($pathAndFilename . '.yaml');
 		} else {
 			$configuration = array();
 		}

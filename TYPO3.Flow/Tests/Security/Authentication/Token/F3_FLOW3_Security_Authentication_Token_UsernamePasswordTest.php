@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication::Token;
+namespace F3\FLOW3\Security\Authentication\Token;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::Authentication::Token;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class UsernamePasswordTest extends F3::Testing::BaseTestCase {
+class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,17 +37,17 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function credentialsAreSetCorrectlyFromPOSTArguments() {
-		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
 		$POSTArguments = array(
-			'F3::FLOW3::Security::Authentication::Token::UsernamePassword::username' => 'FLOW3',
-			'F3::FLOW3::Security::Authentication::Token::UsernamePassword::password' => 'verysecurepassword'
+			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
+			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
 		);
 		
-		$mockEnvironment = $this->getMock('F3::FLOW3::Utility::Environment', array(), array(), '', FALSE);
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getPOSTArguments')->will($this->returnValue($POSTArguments));
 
-		$token = new F3::FLOW3::Security::Authentication::Token::UsernamePassword();
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);		
 		$token->injectEnvironment($mockEnvironment);
 		$token->updateCredentials();

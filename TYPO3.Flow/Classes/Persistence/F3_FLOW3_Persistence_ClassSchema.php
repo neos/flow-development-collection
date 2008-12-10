@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -35,7 +35,7 @@ class ClassSchema {
 	const MODELTYPE_ENTITY = 2;
 	const MODELTYPE_VALUEOBJECT = 3;
 
-	const ALLOWED_TYPES_PATTERN = '/^(integer|int|float|boolean|string|array|DateTime|F3::[a-zA-Z0-9:]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -99,7 +99,7 @@ class ClassSchema {
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
 			$this->properties[$name] = ($matches[1] == 'int') ? 'integer' : $matches[1];
 		} else {
-			throw new F3::FLOW3::Persistence::Exception::InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
+			throw new \F3\FLOW3\Persistence\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
 	}
 
@@ -121,7 +121,7 @@ class ClassSchema {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setModelType($modelType) {
-		if ($modelType < 1 || $modelType > 3) throw new InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
+		if ($modelType < 1 || $modelType > 3) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
 		$this->modelType = $modelType;
 	}
 

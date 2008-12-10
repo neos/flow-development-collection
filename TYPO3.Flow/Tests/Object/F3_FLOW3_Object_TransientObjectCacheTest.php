@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,7 +19,7 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
 
 /**
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,13 +27,13 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyC
  * Testcase for the default object manager
  *
  * @package FLOW3
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TransientRegistryTest extends F3::Testing::BaseTestCase {
+class TransientRegistryTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::Object::TransientRegistry
+	 * @var \F3\FLOW3\Object\TransientRegistry
 	 */
 	protected $objectRegistry;
 
@@ -43,7 +43,7 @@ class TransientRegistryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->objectRegistry = new F3::FLOW3::Object::TransientRegistry();
+		$this->objectRegistry = new \F3\FLOW3\Object\TransientRegistry();
 	}
 
 	/**
@@ -53,7 +53,7 @@ class TransientRegistryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectReturnsSameObjectWhichHasBeenStoredByPutObject() {
-		$originalObject = new F3::FLOW3::Fixture::DummyClass();
+		$originalObject = new \F3\FLOW3\Fixture\DummyClass();
 		$this->objectRegistry->putObject('DummyObject', $originalObject);
 		$this->assertSame($originalObject, $this->objectRegistry->getObject('DummyObject'), 'getObject() did not return the object we stored in the object registry previously.');
 	}
@@ -65,16 +65,16 @@ class TransientRegistryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function putObjectThrowsExceptionsOnInvalidArguments() {
-		$someObject = new F3::FLOW3::Fixture::DummyClass();
+		$someObject = new \F3\FLOW3\Fixture\DummyClass();
 		$exceptionsThrown = 0;
 		try {
 			$this->objectRegistry->putObject(NULL, $someObject);
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			$exceptionsThrown ++;
 		}
 		try {
 			$this->objectRegistry->putObject('DummyObject', 'no object');
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			$exceptionsThrown ++;
 		}
 
@@ -88,7 +88,7 @@ class TransientRegistryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function removeObjectReallyRemovesTheObjectFromStorage() {
-		$originalObject = new F3::FLOW3::Fixture::DummyClass();
+		$originalObject = new \F3\FLOW3\Fixture\DummyClass();
 		$this->objectRegistry->putObject('DummyObject', $originalObject);
 		$this->objectRegistry->removeObject('DummyObject');
 		$this->assertFalse($this->objectRegistry->objectExists('DummyObject'), 'removeObject() did not really remove the object.');
@@ -99,7 +99,7 @@ class TransientRegistryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function objectExistsReturnsCorrectResult() {
-		$originalObject = new F3::FLOW3::Fixture::DummyClass();
+		$originalObject = new \F3\FLOW3\Fixture\DummyClass();
 		$this->assertFalse($this->objectRegistry->objectExists('DummyObject'), 'objectExists() did not return FALSE although the object should not exist yet.');
 		$this->objectRegistry->putObject('DummyObject', $originalObject);
 		$this->assertTrue($this->objectRegistry->objectExists('DummyObject'), 'objectExists() did not return TRUE although the object should exist.');

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Exception;
+namespace F3\FLOW3\Security\Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::Exception;
  * @version $Id: F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken.php 1264 2008-09-19 18:27:06Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class VoterNotFound extends F3::FLOW3::Security::Exception {
+class VoterNotFound extends \F3\FLOW3\Security\Exception {
 
 }
 

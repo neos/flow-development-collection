@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Package;
+namespace F3\FLOW3\Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::MetaInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package\MetaInterface.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::MetaInterface.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package\MetaInterface.php 203 2007-03-30 13:17:37Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
@@ -36,10 +36,10 @@ interface MetaInterface {
 	 * Constructor
 	 *
 	 * @param string $packageKey The package key
-	 * @param SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
+	 * @param \SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
 	 * @return void
 	 */
-	public function __construct($packageKey, ::SimpleXMLElement $packageMetaXML = NULL);
+	public function __construct($packageKey, \SimpleXMLElement $packageMetaXML = NULL);
 
 }
 ?>

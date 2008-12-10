@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration::Source;
+namespace F3\FLOW3\Configuration\Source;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Configuration::Source;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,17 +26,17 @@ namespace F3::FLOW3::Configuration::Source;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PHPTest extends F3::Testing::BaseTestCase {
+class PHPTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function returnsEmptyArrayOnNonExistingFile() {
-		$configurationSource = new F3::FLOW3::Configuration::Source::PHP();
+		$configurationSource = new \F3\FLOW3\Configuration\Source\PHP();
 		$configuration = $configurationSource->load('/ThisFileDoesNotExist');
 		$this->assertEquals(array(), $configuration, 'No empty array was returned.');
 	}
@@ -47,7 +47,7 @@ class PHPTest extends F3::Testing::BaseTestCase {
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
 		$pathAndFilename = __DIR__ . '/../../Fixtures/F3_FLOW3_Fixture_Configuration_PHPConfigurationFile';
-		$configurationSource = new F3::FLOW3::Configuration::Source::PHP();
+		$configurationSource = new \F3\FLOW3\Configuration\Source\PHP();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
 	}

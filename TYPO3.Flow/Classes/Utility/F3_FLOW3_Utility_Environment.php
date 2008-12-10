@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Utility;
+namespace F3\FLOW3\Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Utility;
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -31,7 +31,7 @@ namespace F3::FLOW3::Utility;
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::Environment.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\Environment.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Environment {
@@ -83,15 +83,15 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		if (!($_SERVER instanceof F3::FLOW3::Utility::SuperGlobalReplacement)) {
+		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
 			$this->SERVER = $_SERVER;
 			$this->GET = $_GET;
 			$this->POST = $_POST;
 			$this->SAPIName = PHP_SAPI;
 
-			$_SERVER = new F3::FLOW3::Utility::SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' object instead of accessing the superglobal directly.');
-			$_GET = new F3::FLOW3::Utility::SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
-			$_POST = new F3::FLOW3::Utility::SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' object instead of accessing the superglobal directly.');
+			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
+			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 		}
 	}
 
@@ -103,7 +103,7 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTemporaryDirectoryBase($temporaryDirectoryBase) {
-		if (!is_string($temporaryDirectoryBase)) throw new ::InvalidArgumentException('String expected.', 1228743683);
+		if (!is_string($temporaryDirectoryBase)) throw new \InvalidArgumentException('String expected.', 1228743683);
 		$this->temporaryDirectoryBase = $temporaryDirectoryBase;
 		$this->temporaryDirectory = NULL;
 	}
@@ -189,7 +189,7 @@ class Environment {
 	/**
 	 * Returns the request URI
 	 *
-	 * @return F3::FLOW3::Property::DataType::URI The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
+	 * @return \F3\FLOW3\Property\DataType\URI The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -200,7 +200,7 @@ class Environment {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ltrim($this->getScriptPathAndFileName(), '/') . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
 		}
 
-		$requestURI = new F3::FLOW3::Property::DataType::URI($requestURIString);
+		$requestURI = new \F3\FLOW3\Property\DataType\URI($requestURIString);
 		return $requestURI;
 	}
 
@@ -221,7 +221,7 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getScriptPathAndFilename() {
-		return F3::FLOW3::Utility::Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
+		return \F3\FLOW3\Utility\Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
 	}
 
 	/**
@@ -322,7 +322,7 @@ class Environment {
 
 		try {
 			$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
-		} catch (F3::FLOW3::Utility::Exception $exception) {
+		} catch (\F3\FLOW3\Utility\Exception $exception) {
 			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
 			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
 		}
@@ -335,11 +335,11 @@ class Environment {
 	 *
 	 * @param string Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
-	 * @throws F3::FLOW3::Utility::Exception if the temporary directory could not be created or is not writeable
+	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writeable
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
-		$temporaryDirectoryBase = F3::FLOW3::Utility::Files::getUnixStylePath($temporaryDirectoryBase);
+		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) != '/') $temporaryDirectoryBase .= '/';
 
 		$pathHash = md5(FLOW3_PATH_PUBLIC . $this->getSAPIName());
@@ -348,13 +348,13 @@ class Environment {
 
 		if (!is_dir($temporaryDirectory)) {
 			try {
-				F3::FLOW3::Utility::Files::createDirectoryRecursively($temporaryDirectory);
-			} catch (F3::FLOW3::Error::Exception $exception) {
+				\F3\FLOW3\Utility\Files::createDirectoryRecursively($temporaryDirectory);
+			} catch (\F3\FLOW3\Error\Exception $exception) {
 			}
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new F3::FLOW3::Utility::Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
+			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
 		}
 
 		return $temporaryDirectory;

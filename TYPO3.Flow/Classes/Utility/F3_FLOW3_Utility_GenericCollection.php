@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Utility;
+namespace F3\FLOW3\Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,7 +31,7 @@ namespace F3::FLOW3::Utility;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class GenericCollection implements ::Countable, ::Iterator, ::ArrayAccess {
+class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 
 	/**
 	 * @var string element type. Only objects of this type can be added to this collection.
@@ -159,7 +159,7 @@ class GenericCollection implements ::Countable, ::Iterator, ::ArrayAccess {
 	 */
 	public function offsetSet($key, $element) {
 		if (!$element instanceof $this->elementType) {
-			throw new ::InvalidArgumentException('You may only add instances of "' . $this->elementType . '" to this collection. "' . gettype($element) . '" given.', 1225385998);
+			throw new \InvalidArgumentException('You may only add instances of "' . $this->elementType . '" to this collection. "' . gettype($element) . '" given.', 1225385998);
 		}
 		$this->elements[$key] = $element;
 		$this->iteratorCount = count($this->elements);
@@ -188,7 +188,7 @@ class GenericCollection implements ::Countable, ::Iterator, ::ArrayAccess {
 	 */
 	public function append($element) {
 		if (!$element instanceof $this->elementType) {
-			throw new ::InvalidArgumentException('You may only add instances of "' . $this->elementType . '" to this collection. "' . gettype($element) . '" given.', 1225385998);
+			throw new \InvalidArgumentException('You may only add instances of "' . $this->elementType . '" to this collection. "' . gettype($element) . '" given.', 1225385998);
 		}
 		$this->elements[] = $element;
 		$this->iteratorCount = count($this->elements);

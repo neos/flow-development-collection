@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::RequestPattern;
+namespace F3\FLOW3\Security\RequestPattern;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::RequestPattern;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Security::RequestPattern;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class URLTest extends F3::Testing::BaseTestCase {
+class URLTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,13 +37,13 @@ class URLTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
-		$cliRequest = $this->getMock('F3::FLOW3::MVC::CLI::Request');
+		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
 
-		$requestPattern = new F3::FLOW3::Security::RequestPattern::URL();
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
 		try {
 			$requestPattern->matchRequest($cliRequest);
 			$this->fail('No exception has been thrown.');
-		} catch (F3::FLOW3::Security::Exception::RequestTypeNotSupported $exception) {
+		} catch (\F3\FLOW3\Security\Exception\RequestTypeNotSupported $exception) {
 
 		}
 	}
@@ -54,9 +54,9 @@ class URLTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatchReturnsTrueForASupportedRequestType() {
-		$webRequest = $this->getMock('F3::FLOW3::MVC::Web::Request');
+		$webRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 
-		$requestPattern = new F3::FLOW3::Security::RequestPattern::URL();
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
 		$this->assertTrue($requestPattern->canMatch($webRequest));
 	}
 
@@ -66,9 +66,9 @@ class URLTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
-		$cliRequest = $this->getMock('F3::FLOW3::MVC::CLI::Request');
+		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
 
-		$requestPattern = new F3::FLOW3::Security::RequestPattern::URL();
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
 		$this->assertFalse($requestPattern->canMatch($cliRequest));
 	}
 
@@ -78,13 +78,13 @@ class URLTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function requestMatchingBasicallyWorks() {
-		$request = $this->getMock('F3::FLOW3::MVC::Web::Request');
-		$uri = $this->getMock('F3::FLOW3::Property::DataType::URI', array(), array(), '', FALSE);
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$uri = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
 
 		$request->expects($this->once())->method('getRequestURI')->will($this->returnValue($uri));
 		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
 
-		$requestPattern = new F3::FLOW3::Security::RequestPattern::URL();
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
 		$requestPattern->setPattern('/some/nice/.*');
 
 		$this->assertTrue($requestPattern->matchRequest($request));

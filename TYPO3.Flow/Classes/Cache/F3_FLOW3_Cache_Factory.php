@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,7 +28,7 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Factory {
@@ -36,33 +36,33 @@ class Factory {
 	/**
 	 * A reference to the object manager
 	 *
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * A reference to the object factory
 	 *
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * A reference to the cache manager
 	 *
-	 * @var F3::FLOW3::Cache::Manager
+	 * @var \F3\FLOW3\Cache\Manager
 	 */
 	protected $cacheManager;
 
 	/**
 	 * Constructs this cache factory
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
-	 * @param F3::FLOW3::Object::ManagerInterface $objectFactory A reference to the object factory
-	 * 	 * @param F3::FLOW3::Cache::Manager $cacheManager A reference to the cache manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectFactory A reference to the object factory
+	 * 	 * @param \F3\FLOW3\Cache\Manager $cacheManager A reference to the cache manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Cache::Manager $cacheManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Cache\Manager $cacheManager) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 		$this->cacheManager = $cacheManager;
@@ -76,15 +76,15 @@ class Factory {
 	 * @param string $cacheObjectName Object name of the cache frontend
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
-	 * @return F3::FLOW3::Cache::AbstractCache The created cache frontend
+	 * @return \F3\FLOW3\Cache\AbstractCache The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
 		$context = $this->objectManager->getContext();
 		$backend = $this->objectFactory->create($backendObjectName, $context, $backendOptions);
-		if (!$backend instanceof F3::FLOW3::Cache::AbstractBackend) throw new F3::FLOW3::Cache::Exception::InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+		if (!$backend instanceof \F3\FLOW3\Cache\AbstractBackend) throw new \F3\FLOW3\Cache\Exception\InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		$cache = $this->objectFactory->create($cacheObjectName, $cacheIdentifier, $backend);
-		if (!$cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception::InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
+		if (!$cache instanceof \F3\FLOW3\Cache\AbstractCache) throw new \F3\FLOW3\Cache\Exception\InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);
 		return $cache;

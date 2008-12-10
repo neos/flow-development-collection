@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::MVC::Web::Routing;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
+class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 
 	/**
 	 * Checks whether this Static Route Part correspond to the given $urlSegments.
@@ -47,14 +47,14 @@ class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 		if (count($urlSegments) < 1) {
 			return FALSE;
 		}
-		$valueToMatch = F3::PHP6::Functions::substr($urlSegments[0], 0, F3::PHP6::Functions::strlen($this->name));
+		$valueToMatch = \F3\PHP6\Functions::substr($urlSegments[0], 0, \F3\PHP6\Functions::strlen($this->name));
 		if ($valueToMatch != $this->name) {
 			return FALSE;
 		}
-		$urlSegments[0] = F3::PHP6::Functions::substr($urlSegments[0], F3::PHP6::Functions::strlen($valueToMatch));
+		$urlSegments[0] = \F3\PHP6\Functions::substr($urlSegments[0], \F3\PHP6\Functions::strlen($valueToMatch));
 		
 		if ($this->getNextRoutePartInCurrentUriPatternSegment() === NULL) {
-			if (F3::PHP6::Functions::strlen($urlSegments[0]) != 0) {
+			if (\F3\PHP6\Functions::strlen($urlSegments[0]) != 0) {
 				return FALSE;
 			}
 			array_shift($urlSegments);
@@ -66,7 +66,7 @@ class StaticRoutePart extends F3::FLOW3::MVC::Web::Routing::AbstractRoutePart {
 	/**
 	 * Sets the Route Part value to the Route Part name and returns TRUE.
 	 *
-	 * @param array $routeValues not used but needed to implement F3::FLOW3::MVC::Web::Routing::AbstractRoutePart
+	 * @param array $routeValues not used but needed to implement \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart
 	 * @return boolean always TRUE
 	 */
 	public function resolve(array &$routeValues) {

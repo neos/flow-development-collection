@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::ACL;
+namespace F3\FLOW3\Security\ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::ACL;
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
+class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -38,8 +38,8 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 	 */
 	public function parseThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty())',
-			'theOtherLonelyResource' => 'method(F3::TestPackage::BasicClassValidator->.*())',
+			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
+			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 		);
 
@@ -47,8 +47,8 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 		$parser->setResourcesTree($resourcesTree);
 		try {
 			$parser->parse('theIntegrativeResource');
-			$this->fail('The expected F3::FLOW3::AOP::Exception::InvalidPointcutExpression exception has not been thrown.');
-		} catch (F3::FLOW3::AOP::Exception::InvalidPointcutExpression $exception) {}
+			$this->fail('The expected \F3\FLOW3\AOP\Exception\InvalidPointcutExpression exception has not been thrown.');
+		} catch (\F3\FLOW3\AOP\Exception\InvalidPointcutExpression $exception) {}
 	}
 
 	/**
@@ -58,8 +58,8 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 	 */
 	public function parseThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3::TestPackage::BasicClass->setSomeProperty()) || theIntegrativeResource',
-			'theOtherLonelyResource' => 'method(F3::TestPackage::BasicClassValidator->.*())',
+			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty()) || theIntegrativeResource',
+			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 		);
 
@@ -67,8 +67,8 @@ class PolicyExpressionParserTest extends F3::Testing::BaseTestCase {
 		$parser->setResourcesTree($resourcesTree);
 		try {
 			$parser->parse('theIntegrativeResource');
-			$this->fail('The expected F3::FLOW3::Security::Exception::CircularResourceDefinitionDetected exception has not been thrown.');
-		} catch (F3::FLOW3::Security::Exception::CircularResourceDefinitionDetected $exception) {}
+			$this->fail('The expected \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected exception has not been thrown.');
+		} catch (\F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected $exception) {}
 	}
 }
 

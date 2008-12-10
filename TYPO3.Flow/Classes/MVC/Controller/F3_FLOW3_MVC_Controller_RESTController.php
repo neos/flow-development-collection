@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Controller;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\ActionController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,18 +26,18 @@ namespace F3::FLOW3::MVC::Controller;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\ActionController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
+class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var F3::FLOW3::MVC::Web::Request The current request
+	 * @var \F3\FLOW3\MVC\Web\Request The current request
 	 */
 	protected $request;
 
 	/**
-	 * @var F3::FLOW3::MVC::Web::Response The response which will be returned by this action controller
+	 * @var \F3\FLOW3\MVC\Web\Response The response which will be returned by this action controller
 	 */
 	protected $response;
 
@@ -46,14 +46,14 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 *
 	 * Note that this REST controller only supports web requests!
 	 *
-	 * @param F3::FLOW3::MVC::Web::Request $request The request object
-	 * @param F3::FLOW3::MVC::Web::Response $response The response, modified by this handler
+	 * @param \F3\FLOW3\MVC\Web\Request $request The request object
+	 * @param \F3\FLOW3\MVC\Web\Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
-		if (!($request instanceof F3::FLOW3::MVC::Web::Request) || !($response instanceof F3::FLOW3::MVC::Web::Response)) {
-			throw new F3::FLOW3::MVC::Exception::InvalidRequestType('This RESTController only supports web requests.', 1226665171);
+	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+		if (!($request instanceof \F3\FLOW3\MVC\Web\Request) || !($response instanceof \F3\FLOW3\MVC\Web\Response)) {
+			throw new \F3\FLOW3\MVC\Exception\InvalidRequestType('This RESTController only supports web requests.', 1226665171);
 		}
 		parent::processRequest($request, $response);
 	}
@@ -64,7 +64,7 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 */
 	protected function callActionMethod() {
 		if ($this->arguments['id']->isValid() === FALSE) $this->throwStatus(400);
@@ -72,17 +72,17 @@ class RESTController extends F3::FLOW3::MVC::Controller::ActionController {
 		if ($this->request->getControllerActionName() == 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
-				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_GET :
+				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET :
 					$actionName = ($this->arguments['id']->getValue() === NULL) ? 'list' : 'show';
 				break;
-				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST :
+				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST :
 					$actionName = 'create';
 				break;
-				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT :
+				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT :
 					if ($this->arguments['id']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
 					$actionName = 'update';
 				break;
-				case F3::FLOW3::Utility::Environment::REQUEST_METHOD_DELETE :
+				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_DELETE :
 					$actionName = 'delete';
 				break;
 			}

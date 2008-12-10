@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::View::Helper;
+namespace F3\FLOW3\MVC\View\Helper;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,7 +34,7 @@ interface HelperInterface {
 	/**
 	 * Sets the current request
 	 */
-	public function setRequest(F3::FLOW3::MVC::Web::Request $request);
+	public function setRequest(\F3\FLOW3\MVC\Web\Request $request);
 }
 
 ?>

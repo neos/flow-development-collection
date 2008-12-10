@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,14 +26,14 @@ namespace F3::FLOW3::Security::Authorization;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface InterceptorInterface {
 
 	/**
-	 * Invokes the security interception (e.g. calls a F3::FLOW3::Security::Ahtorization::AccessDecisionManagerInterface)
+	 * Invokes the security interception (e.g. calls a \F3\FLOW3\Security\Ahtorization\AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 */

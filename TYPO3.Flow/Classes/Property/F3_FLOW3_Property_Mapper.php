@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property;
+namespace F3\FLOW3\Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Property;
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3::FLOW3::Property::Mapper.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Property\Mapper.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -35,26 +35,26 @@ namespace F3::FLOW3::Property;
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper = $objectFactory->create('F3::FLOW3::Property::Mapper', $target);
+ * $mapper = $objectFactory->create('F3\FLOW3\Property\Mapper', $target);
  * $mapper->map($source);
  *
  * Now the target object equals the source object.
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3::FLOW3::Property::Mapper.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Property\Mapper.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
 class Mapper {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface The object factory
+	 * @var \F3\FLOW3\Object\FactoryInterface The object factory
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Validation::ValidatorResolver The validator resolver
+	 * @var \F3\FLOW3\Validation\ValidatorResolver The validator resolver
 	 */
 	protected $validatorResolver;
 
@@ -74,7 +74,7 @@ class Mapper {
 	protected $onlyWriteOnNoErrors = FALSE;
 
 	/**
-	 * @var F3::FLOW3::Property::MappingResult Result of the last data mapping
+	 * @var \F3\FLOW3\Property\MappingResult Result of the last data mapping
 	 */
 	protected $mappingResults = NULL;
 
@@ -89,7 +89,7 @@ class Mapper {
 	protected $requiredProperties = array();
 
 	/**
-	 * @var F3::FLOW3::Validation::ValidatorInterface A validator to validate the target object
+	 * @var \F3\FLOW3\Validation\ValidatorInterface A validator to validate the target object
 	 */
 	protected $validator = NULL;
 
@@ -106,10 +106,10 @@ class Mapper {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A object factory implementation
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -117,11 +117,11 @@ class Mapper {
 	 * Sets the target object for this Property Mapper
 	 *
 	 * @param  object $target: The target object the Property Values are bound to
-	 * @throws F3::FLOW3::Property::Exception::InvalidTargetObject if the $target is no valid object
+	 * @throws \F3\FLOW3\Property\Exception\InvalidTargetObject if the $target is no valid object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setTarget($target) {
-		if (!is_object($target)) throw new F3::FLOW3::Property::Exception::InvalidTargetObject('The target object must be a valid object, ' . gettype($target) . ' given.', 1187807099);
+		if (!is_object($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('The target object must be a valid object, ' . gettype($target) . ' given.', 1187807099);
 		$this->target = $target;
 	}
 
@@ -132,7 +132,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTarget() {
-		if (!is_object($this->target)) throw new F3::FLOW3::Property::Exception::InvalidTargetObject('No target object has been defined yet.', 1187977962);
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187977962);
 		return $this->target;
 	}
 
@@ -205,13 +205,13 @@ class Mapper {
 	 * If no property is specified, it will be used for all. If no format is specified the default format will be used.
 	 * Note: You can only use one editor that is not set for a specific property. Use a editorChain, if you need more.
 	 *
-	 * @param  F3::FLOW3::Property::EditorInterface $propertyEditor: The property editor
-	 * @param  string $property: The editor should only be used for this property
-	 * @param  string $format: The source format the editor should be used with.
+	 * @param  \F3\FLOW3\Property\EditorInterface $propertyEditor The property editor
+	 * @param  string $property The editor should only be used for this property
+	 * @param  string $format The source format the editor should be used with.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registerPropertyEditor(F3::FLOW3::Property::EditorInterface $propertyEditor, $property = 'all', $format = 'default') {
+	public function registerPropertyEditor(\F3\FLOW3\Property\EditorInterface $propertyEditor, $property = 'all', $format = 'default') {
 		$this->propertyEditors[$property] = array(
 			'format' => $format,
 			'propertyEditor' => $propertyEditor
@@ -222,12 +222,12 @@ class Mapper {
 	 * Registers the given Filter for use with the specified property. If no property is specified, it will be used for all.
 	 * Note: You can only use one filter that is not set for a specific property. Use a filterChain, if you need more.
 	 *
-	 * @param  F3::FLOW3::Validation::FilterInterface $filter: The filter
+	 * @param  \F3\FLOW3\Validation\FilterInterface $filter: The filter
 	 * @param  string $property: The filter should only be used for this property
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registerFilter(F3::FLOW3::Validation::FilterInterface $filter, $property = 'all') {
+	public function registerFilter(\F3\FLOW3\Validation\FilterInterface $filter, $property = 'all') {
 		$this->filters[$property] = $filter;
 	}
 
@@ -235,11 +235,11 @@ class Mapper {
 	 * Registers the given Validator to validate the target object.
 	 * Note: You can only use one validator. Use a validatorChain, if you need more.
 	 *
-	 * @param  F3::FLOW3::Validation::ObjectValidatorInterface $validator: The validator
+	 * @param  \F3\FLOW3\Validation\ObjectValidatorInterface $validator: The validator
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registerValidator(F3::FLOW3::Validation::ObjectValidatorInterface $validator) {
+	public function registerValidator(\F3\FLOW3\Validation\ObjectValidatorInterface $validator) {
 		$this->validator = $validator;
 	}
 
@@ -247,14 +247,14 @@ class Mapper {
 	 * Maps the given properties to the target object.
 	 * After mapping the results can be retrieved with getMappingResult.
 	 *
-	 * @param  ::ArrayObject $properties: Properties to map to the target object
+	 * @param  \ArrayObject $properties: Properties to map to the target object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function map(::ArrayObject $properties) {
+	public function map(\ArrayObject $properties) {
 		$this->mappingResults = $this->createNewMappingResults();
 
-		if (!is_object($this->target)) throw new F3::FLOW3::Property::Exception::InvalidTargetObject('No target object has been defined yet.', 1187978014);
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187978014);
 		if ($this->onlyWriteOnNoErrors) $this->originalTarget = clone $this->target;
 		if ($this->validator === NULL) $this->resolveValidator();
 
@@ -286,11 +286,11 @@ class Mapper {
 	 * Returns an object containing the results of a mapping. Note that map() must be called
 	 * before mapping results are available.
 	 *
-	 * @return F3::FLOW3::Property::MappingResults Results of the last mapping
+	 * @return \F3\FLOW3\Property\MappingResults Results of the last mapping
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMappingResults() {
-		if (!is_object($this->target)) throw new F3::FLOW3::Property::Exception::InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);
 		return $this->mappingResults;
 	}
 
@@ -334,7 +334,7 @@ class Mapper {
 
 	/**
 	 * Sets the given value of the specified property at the target object.
-	 * If the target object is an ::ArrayObject, the values are set directly
+	 * If the target object is an \ArrayObject, the values are set directly
 	 * through Array access, else a setter method is called (if one exists).
 	 *
 	 * @param  string $propertyName: Name of the property to set
@@ -348,9 +348,9 @@ class Mapper {
 
 		if ($this->validator !== NULL) {
 			$objectValidatorErrors = $this->createNewValidationErrorsObject();
-			if (!$this->validator->isValidProperty('F3::FLOW3::MVC::Controller::Arguments', $propertyName, $propertyValue, $objectValidatorErrors)) {
+			if (!$this->validator->isValidProperty('F3\FLOW3\MVC\Controller\Arguments', $propertyName, $propertyValue, $objectValidatorErrors)) {
 				foreach ($objectValidatorErrors as $propertyName => $objectValidatorError) {
-					if ($objectValidatorError instanceof F3::FLOW3::Validation::Errors) {
+					if ($objectValidatorError instanceof \F3\FLOW3\Validation\Errors) {
 						foreach ($objectValidatorError as $error) {
 							$this->mappingResults->addError($error, $propertyName);
 						}
@@ -366,12 +366,12 @@ class Mapper {
 		try {
 			if (is_callable(array($this->target, $setterMethodName))) {
 				$this->target->$setterMethodName($propertyValue);
-			} elseif ($this->target instanceof ::ArrayObject) {
+			} elseif ($this->target instanceof \ArrayObject) {
 				$this->target[$propertyName] = $propertyValue;
 			} else {
 				return FALSE;
 			}
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			return FALSE;
 		}
 
@@ -426,7 +426,7 @@ class Mapper {
 				$propertyValue = $this->propertyEditors['all']['propertyEditor']->getProperty();
 			}
 
-		} catch (F3::FLOW3::Property::Exception $exception) {
+		} catch (\F3\FLOW3\Property\Exception $exception) {
 			$this->mappingResults->addError($this->createNewValidationErrorObject('The property editor could not handle the given value in the given format.', 1210368164), $propertyName);
 		}
 
@@ -442,7 +442,7 @@ class Mapper {
 	protected function resolveValidator() {
 		try {
 			$this->validator = $this->validatorResolver->resolveValidator(get_class($this->target));
-		} catch (F3::FLOW3::Validation::Exception::NoValidatorFound $exception) {
+		} catch (\F3\FLOW3\Validation\Exception\NoValidatorFound $exception) {
 			$this->validator = NULL;
 		}
 	}
@@ -459,7 +459,7 @@ class Mapper {
 
 			if (!$this->validator->validate($this->target, $objectValidatorErrors)) {
 				foreach ($objectValidatorErrors as $propertyName => $objectValidatorError) {
-					if ($objectValidatorError instanceof F3::FLOW3::Validation::Errors) {
+					if ($objectValidatorError instanceof \F3\FLOW3\Validation\Errors) {
 						foreach ($objectValidatorError as $error) {
 							$this->mappingResults->addError($error, $propertyName);
 						}
@@ -474,21 +474,21 @@ class Mapper {
 	/**
 	 * This is a factory method to get a fresh mapping results object
 	 *
-	 * @return F3::FLOW3::Property::MappingResults A Mapping Results object
+	 * @return \F3\FLOW3\Property\MappingResults A Mapping Results object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function createNewMappingResults() {
-		return $this->objectFactory->create('F3::FLOW3::Property::MappingResults');
+		return $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
 	}
 
 	/**
 	 * This is a factory method to get a clean validation errors object
 	 *
-	 * @return F3::FLOW3::Validation::Errors An empty errors object
+	 * @return \F3\FLOW3\Validation\Errors An empty errors object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorsObject() {
-		return $this->objectFactory->create('F3::FLOW3::Validation::Errors');
+		return $this->objectFactory->create('F3\FLOW3\Validation\Errors');
 	}
 
 	/**
@@ -496,11 +496,11 @@ class Mapper {
 	 *
 	 * @param string The error message
 	 * @param integer The error code
-	 * @return F3::FLOW3::Validation::Error An empty error object
+	 * @return \F3\FLOW3\Validation\Error An empty error object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewValidationErrorObject($message, $code) {
-		return $this->objectFactory->create('F3::FLOW3::Validation::Error', $message, $code);
+		return $this->objectFactory->create('F3\FLOW3\Validation\Error', $message, $code);
 	}
 
 	/**
@@ -508,11 +508,11 @@ class Mapper {
 	 *
 	 * @param string The error message
 	 * @param integer The error code
-	 * @return F3::FLOW3::Property::MappingError An empty error object
+	 * @return \F3\FLOW3\Property\MappingError An empty error object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingErrorObject($message, $code) {
-		return $this->objectFactory->create('F3::FLOW3::Property::MappingError', $message, $code);
+		return $this->objectFactory->create('F3\FLOW3\Property\MappingError', $message, $code);
 	}
 
 	/**
@@ -520,20 +520,20 @@ class Mapper {
 	 *
 	 * @param string The error message
 	 * @param integer The error code
-	 * @return F3::FLOW3::Property::MappingWarning An empty error object
+	 * @return \F3\FLOW3\Property\MappingWarning An empty error object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewMappingWarningObject($message, $code) {
-		return $this->objectFactory->create('F3::FLOW3::Property::MappingWarning', $message, $code);
+		return $this->objectFactory->create('F3\FLOW3\Property\MappingWarning', $message, $code);
 	}
 
 	/**
 	 * This is a factory method to get the validator resolver
 	 *
-	 * @return F3::FLOW3::Validation::ValidatorResolver The validator resolver
+	 * @return \F3\FLOW3\Validation\ValidatorResolver The validator resolver
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectValidatorResolver(F3::FLOW3::Validation::ValidatorResolver $validatorResolver) {
+	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
 	}
 }

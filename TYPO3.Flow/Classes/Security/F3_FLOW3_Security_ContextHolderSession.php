@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security;
+namespace F3\FLOW3\Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,112 +29,112 @@ namespace F3::FLOW3::Security;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterface {
+class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory = NULL;
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager = NULL;
 
 	/**
-	 * @var F3::FLOW3::Security::Authentication::ManagerInterface
+	 * @var \F3\FLOW3\Security\Authentication\ManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
-	 * @var F3::FLOW3::Session::SessionInterface The user session
+	 * @var \F3\FLOW3\Session\SessionInterface The user session
 	 */
 	protected $session = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Session::SessionInterface $session An readily initialized session
+	 * @param \F3\FLOW3\Session\SessionInterface $session An readily initialized session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Session::SessionInterface $session) {
+	public function __construct(\F3\FLOW3\Session\SessionInterface $session) {
 		$this->session = $session;
 	}
 
 	/**
 	 * Inject the object factory
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
 	/**
 	 * Inject the object manager
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $objectManager The authentication manager
+	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectAuthenticationManager(F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager) {
+	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 
 	/**
 	 * Stores the current security context to the session.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current security context
+	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setContext(F3::FLOW3::Security::Context $securityContext) {
-		$this->session->putData('F3::FLOW3::Security::ContextHolderSession', $securityContext);
+	public function setContext(\F3\FLOW3\Security\Context $securityContext) {
+		$this->session->putData('F3\FLOW3\Security\ContextHolderSession', $securityContext);
 	}
 
 	/**
-	 * Returns the current F3::FLOW3::Security::Context.
+	 * Returns the current \F3\FLOW3\Security\Context.
 	 *
-	 * @return F3::FLOW3::Security::Context The current security context
-	 * @throws F3::FLOW3::Security::Exception::NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
+	 * @return \F3\FLOW3\Security\Context The current security context
+	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getContext() {
-		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
+		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
 
-		if ($context instanceof F3::FLOW3::Security::Context) {
+		if ($context instanceof \F3\FLOW3\Security\Context) {
 			return $context;
 		} else {
-			throw new F3::FLOW3::Security::Exception::NoContextAvailable('No context found in session, did you call initializeContext()?', 1225800610);
+			throw new \F3\FLOW3\Security\Exception\NoContextAvailable('No context found in session, did you call initializeContext()?', 1225800610);
 		}
 	}
 
 	/**
 	 * Initializes the security context for the given request. It is loaded from the session.
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request the context should be initialized for
+	 * @param \F3\FLOW3\MVC\Request $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeContext(F3::FLOW3::MVC::Request $request) {
-		$context = $this->session->getData('F3::FLOW3::Security::ContextHolderSession');
-		if (!($context instanceof F3::FLOW3::Security::Context)) {
-			$context =  $this->objectFactory->create('F3::FLOW3::Security::Context');
+	public function initializeContext(\F3\FLOW3\MVC\Request $request) {
+		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
+		if (!($context instanceof \F3\FLOW3\Security\Context)) {
+			$context =  $this->objectFactory->create('F3\FLOW3\Security\Context');
 		}
 		$context->setRequest($request);
 
@@ -166,7 +166,7 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 *
 	 * @params array Array of tokens provided by the authentication manager
 	 * @params array Array of tokens resotored from the session
-	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface objects
+	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {
@@ -213,14 +213,14 @@ class ContextHolderSession implements F3::FLOW3::Security::ContextHolderInterfac
 	 * Manual dependency injection into UsernamePassword tokens until we have working session scope.
 	 * Note: This is definitely a dirty hack
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token we should inject some objects
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token we should inject some objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(F3::FLOW3::Security::Authentication::TokenInterface $token) {
-		if ($token instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword) {
+	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
+		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) {
 			$token->injectObjectFactory($this->objectFactory);
-			$token->injectEnvironment($this->objectManager->getObject('F3::FLOW3::Utility::Environment'));
+			$token->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
 		}
 	}
 }

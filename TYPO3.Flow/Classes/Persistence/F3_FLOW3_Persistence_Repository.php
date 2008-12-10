@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Persistence;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
+class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 
 	/**
 	 * Objects of this repository
@@ -46,18 +46,18 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	protected $removedObjects = array();
 
 	/**
-	 * @var F3::FLOW3::Persistence::QueryFactoryInterface
+	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
 	 */
 	protected $queryFactory;
 
 	/**
 	 * Injects a QueryFactory instance
 	 *
-	 * @param F3::FLOW3::Persistence::QueryFactoryInterface $queryFactory
+	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectQueryFactory(F3::FLOW3::Persistence::QueryFactoryInterface $queryFactory) {
+	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
 	}
 
@@ -137,7 +137,7 @@ class Repository implements F3::FLOW3::Persistence::RepositoryInterface {
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return F3::FLOW3:Persistence::QueryInterface
+	 * @return \F3\FLOW3:Persistence\QueryInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration;
+namespace F3\FLOW3\Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,8 +36,8 @@ interface SourceInterface {
 	 * configuration container
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
-	 * @return F3::FLOW3::Configuration::Container
-	 * @throws F3::FLOW3::Configuration::Exception::NoSuchFile if the specified file does not exist
+	 * @return \F3\FLOW3\Configuration\Container
+	 * @throws \F3\FLOW3\Configuration\Exception\NoSuchFile if the specified file does not exist
 	 */
 	public function load($pathAndFilename);
 }

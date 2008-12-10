@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\RegistryInterface.php 201 2007-03-30 11:18:30Z robert $
  * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */

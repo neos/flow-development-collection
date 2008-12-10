@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Voter;
+namespace F3\FLOW3\Security\Authorization\Voter;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::Authorization::Voter;
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ACLTest extends F3::Testing::BaseTestCase {
+class ACLTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -39,30 +39,30 @@ class ACLTest extends F3::Testing::BaseTestCase {
 	public function voteDeniesAccessIfNoAccessPrivilegeWasConfigured() {
 		$this->markTestIncomplete();
 
-		$mockCustomDenyPrivilege = $this->getMock('F3::FLOW3::Security::ACL::Privilege');
+		$mockCustomDenyPrivilege = $this->getMock('F3\FLOW3\Security\ACL\Privilege');
 		$mockCustomDenyPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMPRIVILEGE'));
 
-		$mockCustomDenyPrivilege2 = $this->getMock('F3::FLOW3::Security::ACL::Privilege');
+		$mockCustomDenyPrivilege2 = $this->getMock('F3\FLOW3\Security\ACL\Privilege');
 		$mockCustomDenyPrivilege2->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege2->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege2->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMPRIVILEGE'));
 
-		$mockRoleAdministrator = $this->getMock('F3::FLOW3::Security::ACL::Role');
+		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\ACL\Role');
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
 
-		$mockRoleCustomer = $this->getMock('F3::FLOW3::Security::ACL::Role');
+		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\ACL\Role');
 		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
 
-		$mockToken1 = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface');
+		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
 		$mockToken1->expects($this->atLeastOnce())->method('getGrantedAuthorities')->will($this->returnValue(array($mockRoleAdministrator)));
 
-		$mockSecurityContext = $this->getMock('F3::FLOW3::Security::Context');
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
 		$mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1)));
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface');
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$mockPolicyService = $this->getMock('F3::FLOW3::Security::ACL::PolicyService');
+		$mockPolicyService = $this->getMock('F3\FLOW3\Security\ACL\PolicyService');
 	}
 
 	/**

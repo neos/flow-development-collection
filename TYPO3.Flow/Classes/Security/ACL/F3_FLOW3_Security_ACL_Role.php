@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::ACL;
+namespace F3\FLOW3\Security\ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Security::ACL;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Role implements F3::FLOW3::Security::Authentication::GrantedAuthorityInterface {
+class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterface {
 
 	/**
 	 * The string identifier of this role

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication;
+namespace F3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,18 +32,18 @@ namespace F3::FLOW3::Security::Authentication;
 class ProviderResolver {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -52,7 +52,7 @@ class ProviderResolver {
 	 *
 	 * @param string $name The (short) name of the provider
 	 * @return string The class name of the authentication provider
-	 * @throws F3::FLOW3::Security::Exception::NoAuthenticationProviderFound
+	 * @throws \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderClass($name) {
@@ -61,12 +61,12 @@ class ProviderResolver {
 		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
-		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3::FLOW3::Security::Authentication::Provider::' . $name);
+		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\Provider\\' . $name);
 		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
 		if ($resolvedClassName != '') return $resolvedClassName;
 
-		throw new F3::FLOW3::Security::Exception::NoAuthenticationProviderFound('An authentication provider with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound('An authentication provider with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

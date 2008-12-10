@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication;
+namespace F3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,19 +26,19 @@ namespace F3::FLOW3::Security::Authentication;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface UserDetailsServiceInterface {
 
 	/**
-	 * Returns the F3::FLOW3::Security::Authentication::UserDetailsInterface for the given authentication token.
+	 * Returns the \F3\FLOW3\Security\Authentication\UserDetailsInterface for the given authentication token.
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The authentication token to get the user details for
-	 * @return F3::FLOW3::Security::Authentication::UserDetailsInterface The user details for the given token
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The authentication token to get the user details for
+	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface The user details for the given token
 	 */
-	public function loadUserDetails(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken);
+	public function loadUserDetails(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
 }
 
 ?>

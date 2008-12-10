@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -37,9 +37,9 @@ interface FactoryInterface {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @throws InvalidArgumentException if $objectName is not a string
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if an object with the given name does not exist
-	 * @throws F3::FLOW3::Object::Exception::WrongScope if the specified object is not configured as Prototype
+	 * @throws \InvalidArgumentException if $objectName is not a string
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\WrongScope if the specified object is not configured as Prototype
 	 */
 	public function create($objectName);
 

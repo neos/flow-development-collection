@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\PointcutMethodNameFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PointcutMethodNameFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
+class PointcutMethodNameFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected|private)/';
 
@@ -53,7 +53,7 @@ class PointcutMethodNameFilter implements F3::FLOW3::AOP::PointcutFilterInterfac
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1)	throw new RuntimeException('Invalid method visibility modifier.', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \RuntimeException('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
 	}
 
@@ -61,16 +61,16 @@ class PointcutMethodNameFilter implements F3::FLOW3::AOP::PointcutFilterInterfac
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
-	 * @param F3::FLOW3::Reflection::ClassReflection $class The class - won't be checked here
-	 * @param F3::FLOW3::Reflection::MethodReflection $method The method to check the name of
+	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class - won't be checked here
+	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the method name matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $method->getName());
 		if ($matchResult === FALSE) {
-			throw new F3::FLOW3::AOP::Exception('Error in regular expression', 1168876915);
+			throw new \F3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
 		}
 		$methodNameMatches = ($matchResult === 1);
 		switch ($this->methodVisibility) {

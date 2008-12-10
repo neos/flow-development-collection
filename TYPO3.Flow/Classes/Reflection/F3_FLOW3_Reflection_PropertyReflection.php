@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Reflection;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Reflection\PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,21 +26,21 @@ namespace F3::FLOW3::Reflection;
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:F3::FLOW3::Reflection::PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Reflection\PropertyReflection.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PropertyReflection extends ::ReflectionProperty {
+class PropertyReflection extends \ReflectionProperty {
 
 	/**
-	 * @var F3::FLOW3::Reflection::DocCommentParser: An instance of the doc comment parser
+	 * @var \F3\FLOW3\Reflection\DocCommentParser: An instance of the doc comment parser
 	 */
 	protected $docCommentParser;
 
 	/**
 	 * The constructor, initializes the reflection class
 	 *
-	 * @param  string $className: Name of the property's class
-	 * @param  string $propertyName: Name of the property to reflect
+	 * @param string $className Name of the property's class
+	 * @param string $propertyName Name of the property to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -52,7 +52,7 @@ class PropertyReflection extends ::ReflectionProperty {
 	 * Checks if the doc comment of this property is tagged with
 	 * the specified tag
 	 *
-	 * @param  string $tag: Tag name to check for
+	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 */
 	public function isTaggedWith($tag) {
@@ -83,34 +83,36 @@ class PropertyReflection extends ::ReflectionProperty {
 	/**
 	 * Returns the value of the reflected property - even if it is protected.
 	 *
-	 * @param  object $object: Instance of the declaring class to read the value from
+	 * @param object $object Instance of the declaring class to read the value from
 	 * @return mixed Value of the property
-	 * @throws F3::FLOW3::Reflection::Exception
+	 * @throws \F3\FLOW3\Reflection\Exception
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo   Maybe support private properties as well
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo Maybe support private properties as well, as of PHP 5.3.0 we can do
+	 *   $obj = new Foo;
+	 *   $prop = new ReflectionProperty('Foo', 'y'); // y is private member
+	 *   $prop->setAccessible(true);
+	 *   var_dump($prop->getValue($obj)); // int(2)
 	 */
-	public function getValue($object) {
-		if (!is_object($object)) throw new F3::FLOW3::Reflection::Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
+	public function getValue($object = NULL) {
+		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
 		if ($this->isPublic()) return parent::getValue($object);
-		if ($this->isPrivate()) throw new F3::FLOW3::Reflection::Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
+		if ($this->isPrivate()) throw new \F3\FLOW3\Reflection\Exception('Cannot return value of private property "' . $this->name . '.', 1210859206);
 
-		$propertyValues = (array)$object;
-		$index = chr(0) . '*' . chr(0) . $this->name;
-		if (!isset($propertyValues[$index])) return;
-
-		return $propertyValues[$index];
+		parent::setAccessible(TRUE);
+		return parent::getValue($object);
 	}
 
 	/**
-	 * Returns an instance of the doc comment parser and 
+	 * Returns an instance of the doc comment parser and
 	 * runs the parse() method.
 	 *
-	 * @return F3::FLOW3::Reflection::DocCommentParser
+	 * @return \F3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {
-			$this->docCommentParser = new F3::FLOW3::Reflection::DocCommentParser;
+			$this->docCommentParser = new \F3\FLOW3\Reflection\DocCommentParser;
 			$this->docCommentParser->parseDocComment($this->getDocComment());
 		}
 		return $this->docCommentParser;

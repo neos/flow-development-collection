@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,22 +29,22 @@ namespace F3::FLOW3::Security::Authorization;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::AccessDecisionManagerInterface {
+class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface {
 
 	/**
 	 * The object factory
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * The object manager
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
+	 * Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @var array
 	 */
 	protected $accessDecisionVoters = array();
@@ -58,12 +58,12 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Configuration::Manager $settingsManager The configuration manager
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Configuration\Manager $settingsManager The configuration manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Manager $settingsManager, F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Configuration\Manager $settingsManager, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $this->objectManager->getObjectFactory();
 
@@ -75,7 +75,7 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	/**
 	 * Returns the configured access decision voters
 	 *
-	 * @return array Array of F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects
+	 * @return array Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAccessDecisionVoters() {
@@ -84,15 +84,15 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 
 	/**
 	 * Decides if access should be granted on the given object in the current security context.
-	 * It iterates over all available F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface objects.
+	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 */
-	public function decide(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function decide(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$denyVotes = 0;
 		$grantVotes = 0;
 		$abstainVotes = 0;
@@ -100,13 +100,13 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 		foreach ($this->accessDecisionVoters as $voter) {
 			$vote = $voter->vote($securityContext, $joinPoint);
 			switch ($vote) {
-				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_DENY:
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
 					$denyVotes++;
 					break;
-				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_GRANT:
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
 					$grantVotes++;
 					break;
-				case F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface::VOTE_ABSTAIN:
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
 					$abstainVotes++;
 					break;
 			}
@@ -115,7 +115,7 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 		if ($denyVotes === 0 && $grantVotes > 0) return;
 		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
 
-		throw new F3::FLOW3::Security::Exception::AccessDenied('Access denied.', 1222268609);
+		throw new \F3\FLOW3\Security\Exception\AccessDenied('Access denied.', 1222268609);
 	}
 
 	/**
@@ -127,10 +127,10 @@ class AccessDecisionVoterManager implements F3::FLOW3::Security::Authorization::
 	 */
 	protected function createAccessDecisionVoters($voterClasses) {
 		foreach ($voterClasses as $voterClass) {
-			if (!$this->objectManager->isObjectRegistered($voterClass)) throw new F3::FLOW3::Security::Exception::VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
+			if (!$this->objectManager->isObjectRegistered($voterClass)) throw new \F3\FLOW3\Security\Exception\VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
 
 			$voter = $this->objectManager->getObject($voterClass);
-			if (!($voter instanceof F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface)) throw new F3::FLOW3::Security::Exception::VoterNotFound('The found voter class did not implement F3::FLOW3::Security::Authorization::AccessDecisionVoterInterface', 1222268008);
+			if (!($voter instanceof \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface)) throw new \F3\FLOW3\Security\Exception\VoterNotFound('The found voter class did not implement \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;
 		}

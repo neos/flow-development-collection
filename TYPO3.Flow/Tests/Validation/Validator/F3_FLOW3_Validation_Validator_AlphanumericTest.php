@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,16 +29,16 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AlphanumericTest extends F3::Testing::BaseTestCase {
+class AlphanumericTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
-		$alphanumericValidator = new F3::FLOW3::Validation::Validator::Alphanumeric();
+		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\Alphanumeric();
 		$alphanumericValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($alphanumericValidator->isValidProperty('12ssDF34daweidf', $validationErrors));
 	}
@@ -48,9 +48,9 @@ class AlphanumericTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
-		$alphanumericValidator = new F3::FLOW3::Validation::Validator::Alphanumeric();
+		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\Alphanumeric();
 		$alphanumericValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors));
 	}
@@ -60,13 +60,13 @@ class AlphanumericTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$alphanumericValidator = new F3::FLOW3::Validation::Validator::Alphanumeric();
+		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\Alphanumeric();
 		$alphanumericValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221551320, $validationErrors[0]->getErrorCode());
 	}
 }

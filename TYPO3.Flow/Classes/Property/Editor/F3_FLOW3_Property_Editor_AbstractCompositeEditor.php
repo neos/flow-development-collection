@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property::Editor;
+namespace F3\FLOW3\Property\Editor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Property::Editor;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInterface {
+abstract class AbstractCompositeEditor implements \F3\FLOW3\Property\EditorInterface {
 
 	/**
 	 * var array The registered extension editors
@@ -46,12 +46,12 @@ abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInt
 	 * Register a new format, the editor will support in the future
 	 *
 	 * @param string The name of the format
-	 * @param F3::FLOW3::Property::EditorInterface The property Editor that can do the editing to and from the given format.
+	 * @param \F3\FLOW3\Property\EditorInterface The property Editor that can do the editing to and from the given format.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo this should be just a setter used by the configuration
 	 */
-	public function registerNewFormat($name, F3::FLOW3::Property::EditorInterface $propertyEditor) {
+	public function registerNewFormat($name, \F3\FLOW3\Property\EditorInterface $propertyEditor) {
 		$this->propertyEditors[$name] = $propertyEditor;
 	}
 
@@ -60,11 +60,11 @@ abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInt
 	 *
 	 * @param string The name of the format that should be removed
 	 * @return void
-	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the given format can't be removed
+	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the given format can't be removed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeFormat($name) {
-		if (!isset($this->propertyEditors[$name])) throw new F3::FLOW3::Property::Exception::InvalidFormat('Format cannot be removed.', 1210858932);
+		if (!isset($this->propertyEditors[$name])) throw new \F3\FLOW3\Property\Exception\InvalidFormat('Format cannot be removed.', 1210858932);
 		unset($this->propertyEditors[$name]);
 	}
 
@@ -74,10 +74,10 @@ abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInt
 	 * @param string The format the property currently has.
 	 * @param object The property to be set.
 	 * @return void
-	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the property editor does not support the given format
+	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 */
 	public function setAs($format, $property) {
-		if (!isset($this->propertyEditors[$format])) throw new F3::FLOW3::Property::Exception::InvalidFormat('Format not supported.', 1210858950);
+		if (!isset($this->propertyEditors[$format])) throw new \F3\FLOW3\Property\Exception\InvalidFormat('Format not supported.', 1210858950);
 
 		$this->propertyEditors[$format]->setAs($format, $property);
 	}
@@ -87,10 +87,10 @@ abstract class AbstractCompositeEditor implements F3::FLOW3::Property::EditorInt
 	 *
 	 * @param string The format in which the property should be returned.
 	 * @return object The property in the given format.
-	 * @throws F3::FLOW3::Property::Exception::InvalidFormat if the property editor does not support the given format
+	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 */
 	public function getAs($format) {
-		if (!isset($this->propertyEditors[$format])) throw new F3::FLOW3::Property::Exception::InvalidFormat('Format not supported.', 1210858967);
+		if (!isset($this->propertyEditors[$format])) throw new \F3\FLOW3\Property\Exception\InvalidFormat('Format not supported.', 1210858967);
 
 		return $this->propertyEditors[$format]->getAs($format);
 	}

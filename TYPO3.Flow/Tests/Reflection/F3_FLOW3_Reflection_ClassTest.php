@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Reflection;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,11 +29,11 @@ require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2.php');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::Reflection::Fixture::DummyInterface1, F3::FLOW3::Tests::Reflection::Fixture::DummyInterface2 {
+class ClassTest extends \F3\Testing\BaseTestCase implements \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {
 
 	/**
 	 * @var mixed
@@ -50,11 +50,11 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertiesReturnsFLOW3sPropertyReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$properties = $class->getProperties();
 
 		$this->assertTrue(is_array($properties), 'The returned value is no array.');
-		$this->assertType('F3::FLOW3::Reflection::PropertyReflection', array_pop($properties), 'The returned properties are not of type F3::FLOW3::Reflection::PropertyReflection.');
+		$this->assertType('F3\FLOW3\Reflection\PropertyReflection', array_pop($properties), 'The returned properties are not of type \F3\FLOW3\Reflection\PropertyReflection.');
 	}
 
 	/**
@@ -62,8 +62,8 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPropertyReturnsFLOW3sPropertyReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
-		$this->assertType('F3::FLOW3::Reflection::PropertyReflection', $class->getProperty('someProperty'), 'The returned property is not of type F3::FLOW3::Reflection::PropertyReflection.');
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
+		$this->assertType('F3\FLOW3\Reflection\PropertyReflection', $class->getProperty('someProperty'), 'The returned property is not of type \F3\FLOW3\Reflection\PropertyReflection.');
 		$this->assertEquals('someProperty', $class->getProperty('someProperty')->getName(), 'The returned property seems not to be the right one.');
 	}
 
@@ -72,10 +72,10 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodsReturnsFLOW3sMethodReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$methods = $class->getMethods();
 		foreach ($methods as $method) {
-			$this->assertType('F3::FLOW3::Reflection::MethodReflection', $method, 'The returned methods are not of type F3::FLOW3::Reflection::MethodReflection.');
+			$this->assertType('F3\FLOW3\Reflection\MethodReflection', $method, 'The returned methods are not of type \F3\FLOW3\Reflection\MethodReflection.');
 		}
 	}
 
@@ -84,7 +84,7 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodsReturnsArrayWithNumericIndex() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$methods = $class->getMethods();
 		foreach (array_keys($methods) as $key) {
 			$this->assertType('integer', $key, 'The index was not an integer.');
@@ -96,9 +96,9 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodReturnsFLOW3sMethodReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$method = $class->getMethod('getMethodReturnsFLOW3sMethodReflection');
-		$this->assertType('F3::FLOW3::Reflection::MethodReflection', $method, 'The returned method is not of type F3::FLOW3::Reflection::MethodReflection.');
+		$this->assertType('F3\FLOW3\Reflection\MethodReflection', $method, 'The returned method is not of type \F3\FLOW3\Reflection\MethodReflection.');
 	}
 
 	/**
@@ -106,9 +106,9 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructorReturnsFLOW3sMethodReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$constructor = $class->getConstructor();
-		$this->assertType('F3::FLOW3::Reflection::MethodReflection', $constructor, 'The returned method is not of type F3::FLOW3::Reflection::MethodReflection.');
+		$this->assertType('F3\FLOW3\Reflection\MethodReflection', $constructor, 'The returned method is not of type \F3\FLOW3\Reflection\MethodReflection.');
 	}
 
 	/**
@@ -116,10 +116,10 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getInterfacesReturnsFLOW3sClassReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$interfaces = $class->getInterfaces();
 		foreach ($interfaces as $interface) {
-			$this->assertType('F3::FLOW3::Reflection::ClassReflection', $interface);
+			$this->assertType('F3\FLOW3\Reflection\ClassReflection', $interface);
 		}
 	}
 
@@ -128,9 +128,9 @@ class ClassTest extends F3::Testing::BaseTestCase implements F3::FLOW3::Tests::R
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getParentClassReturnsFLOW3sClassReflection() {
-		$class = new F3::FLOW3::Reflection::ClassReflection(__CLASS__);
+		$class = new \F3\FLOW3\Reflection\ClassReflection(__CLASS__);
 		$parentClass = $class->getParentClass();
-		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $parentClass);
+		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $parentClass);
 	}
 }
 ?>

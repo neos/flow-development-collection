@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -41,7 +41,7 @@ interface ResourceInterface {
 	/**
 	 * The URI representing
 	 *
-	 * @return F3::FLOW3
+	 * @return \F3\FLOW3
 	 */
 	public function getURI();
 

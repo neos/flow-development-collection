@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property;
+namespace F3\FLOW3\Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Property;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class MappingError extends F3::FLOW3::Error::Error {
+class MappingError extends \F3\FLOW3\Error\Error {
 
 	/**
 	 * @var string The default (english) error message.

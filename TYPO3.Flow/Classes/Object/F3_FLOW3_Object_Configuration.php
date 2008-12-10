@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Configuration.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,7 +27,7 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Configuration.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -139,7 +139,7 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setScope($scope) {
-		if (!is_string($scope))  throw new InvalidArgumentException('Scope must be a string value.', 1167820928);
+		if (!is_string($scope))  throw new \InvalidArgumentException('Scope must be a string value.', 1167820928);
 		$this->scope = $scope;
 	}
 
@@ -161,7 +161,7 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutoWiringMode($autoWiringMode) {
-		if ($autoWiringMode < 0 || $autoWiringMode > 1)  throw new RuntimeException('Invalid auto wiring mode', 1167824101);
+		if ($autoWiringMode < 0 || $autoWiringMode > 1)  throw new \RuntimeException('Invalid auto wiring mode', 1167824101);
 		$this->autoWiringMode = $autoWiringMode;
 	}
 
@@ -183,7 +183,7 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setLifecycleInitializationMethod($lifecycleInitializationMethod) {
-		if (!is_string($lifecycleInitializationMethod))  throw new RuntimeException('Invalid lifecycle initialization method name.', 1172047877);
+		if (!is_string($lifecycleInitializationMethod))  throw new \RuntimeException('Invalid lifecycle initialization method name.', 1172047877);
 		$this->lifecycleInitializationMethod = $lifecycleInitializationMethod;
 	}
 
@@ -200,13 +200,13 @@ class Configuration {
 	/**
 	 * Setter function for injection properties
 	 *
-	 * @param  array $properties: Array of F3::FLOW3::Object::ConfigurationProperty
+	 * @param  array $properties: Array of \F3\FLOW3\Object\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperties(array $properties) {
 		foreach ($properties as $name => $value) {
-			if (!$value instanceof F3::FLOW3::Object::ConfigurationProperty) throw new RuntimeException('Properties must be of type F3::FLOW3ObjectConfigurationProperty', 1167935337);
+			if (!$value instanceof \F3\FLOW3\Object\ConfigurationProperty) throw new \RuntimeException('Properties must be of type \F3\FLOW3ObjectConfigurationProperty', 1167935337);
 		}
 		$this->properties = $properties;
 	}
@@ -214,7 +214,7 @@ class Configuration {
 	/**
 	 * Returns the currently set injection properties of the object
 	 *
-	 * @return array Array of F3::FLOW3::Object::ConfigurationProperty
+	 * @return array Array of \F3\FLOW3\Object\ConfigurationProperty
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProperties() {
@@ -224,11 +224,11 @@ class Configuration {
 	/**
 	 * Setter function for a single injection property
 	 *
-	 * @param  array	$property: A F3::FLOW3::Object::ConfigurationProperty
+	 * @param  array	$property: A \F3\FLOW3\Object\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setProperty(F3::FLOW3::Object::ConfigurationProperty $property) {
+	public function setProperty(\F3\FLOW3\Object\ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
 	}
 
@@ -236,7 +236,7 @@ class Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param  array	$constructorArguments: Array of F3::FLOW3::Object::ConfigurationArgument
+	 * @param  array	$constructorArguments: Array of \F3\FLOW3\Object\ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -245,7 +245,7 @@ class Configuration {
 			$this->constructorArguments = array();
 		} else {
 			foreach ($constructorArguments as $constructorArgument) {
-				if (!$constructorArgument instanceof F3::FLOW3::Object::ConfigurationArgument) throw new RuntimeException('Properties must be of type F3::FLOW3ObjectConfigurationProperty', 1168004160);
+				if (!$constructorArgument instanceof \F3\FLOW3\Object\ConfigurationArgument) throw new \RuntimeException('Properties must be of type \F3\FLOW3ObjectConfigurationProperty', 1168004160);
 				$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
 			}
 		}
@@ -254,18 +254,18 @@ class Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param  array	$constructorArgument: A F3::FLOW3::Object::ConfigurationArgument
+	 * @param  array	$constructorArgument: A \F3\FLOW3\Object\ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setConstructorArgument(F3::FLOW3::Object::ConfigurationArgument $constructorArgument) {
+	public function setConstructorArgument(\F3\FLOW3\Object\ConfigurationArgument $constructorArgument) {
 		$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
 	}
 
 	/**
 	 * Returns a sorted array of constructor arguments indexed by position (starting with "1")
 	 *
-	 * @return array	A sorted array of F3::FLOW3::Object::ConfigurationArgument objects with the argument position as index
+	 * @return array	A sorted array of \F3\FLOW3\Object\ConfigurationArgument objects with the argument position as index
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getConstructorArguments() {

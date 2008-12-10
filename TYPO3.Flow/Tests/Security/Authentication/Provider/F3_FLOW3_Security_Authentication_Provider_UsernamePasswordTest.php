@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication::Provider;
+namespace F3\FLOW3\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::Authentication::Provider;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class UsernamePasswordTest extends F3::Testing::BaseTestCase {
+class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,11 +37,11 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAUsernamePasswordTokenWorks() {
-		$mockToken = $this->getMock('F3::FLOW3::Security::Authentication::Token::UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TRUE);
 
-		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 		$usernamePasswordProvider->authenticate($mockToken);
 	}
 
@@ -51,11 +51,11 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAUsernamePasswordToken() {
-		$mockToken = $this->getMock('F3::FLOW3::Security::Authentication::Token::UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'flow3', 'password' => 'wrongpassword')));
 		$mockToken->expects($this->never())->method('setAuthenticationStatus');
 
-		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 		$usernamePasswordProvider->authenticate($mockToken);
 	}
 
@@ -65,14 +65,14 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUnsupportedTokenThrowsAnException() {
-		$someNiceToken = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface');
+		$someNiceToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
 
-		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 
 		try {
 			$usernamePasswordProvider->authenticate($someNiceToken);
 			$this->fail('No exception has been thrown.');
-		} catch (F3::FLOW3::Security::Exception::UnsupportedAuthenticationToken $exception) {
+		} catch (\F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken $exception) {
 
 		}
 	}
@@ -83,10 +83,10 @@ class UsernamePasswordTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticateReturnsTrueOnlyForTheUsernamePasswordToken() {
-		$mockUserNamePasswordToken = $this->getMock('F3::FLOW3::Security::Authentication::Token::UsernamePassword', array(), array(), '', FALSE);
-		$mockToken = $this->getMock('F3::FLOW3::Security::Authentication::TokenInterface');
+		$mockUserNamePasswordToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
+		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
 
-		$usernamePasswordProvider = new F3::FLOW3::Security::Authentication::Provider::UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 
 		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockUserNamePasswordToken));
 		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken));

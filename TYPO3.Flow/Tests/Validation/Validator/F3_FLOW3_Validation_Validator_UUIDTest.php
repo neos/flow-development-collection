@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class UUIDTest extends F3::Testing::BaseTestCase {
+class UUIDTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
-		$errors = new F3::FLOW3::Validation::Errors();
-		$validator = new F3::FLOW3::Validation::Validator::UUID();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUID();
 		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertTrue($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
@@ -49,8 +49,8 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
-		$errors = new F3::FLOW3::Validation::Errors();
-		$validator = new F3::FLOW3::Validation::Validator::UUID();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUID();
 		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors));
@@ -61,8 +61,8 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
-		$errors = new F3::FLOW3::Validation::Errors();
-		$validator = new F3::FLOW3::Validation::Validator::UUID();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUID();
 		$validator->injectObjectFactory($this->objectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
@@ -74,13 +74,13 @@ class UUIDTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorObjectIfTheSubjectIsInvalid() {
-		$errors = new F3::FLOW3::Validation::Errors();
-		$validator = new F3::FLOW3::Validation::Validator::UUID();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUID();
 		$validator->injectObjectFactory($this->objectFactory);
 
 		$validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $errors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $errors[0]);
 		$this->assertEquals(1221565853, $errors[0]->getErrorCode());
 	}
 }

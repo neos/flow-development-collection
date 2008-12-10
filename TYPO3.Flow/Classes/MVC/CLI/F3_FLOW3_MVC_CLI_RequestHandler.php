@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::CLI;
+namespace F3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::CLI;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,53 +26,53 @@ namespace F3::FLOW3::MVC::CLI;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::RequestHandler.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\RequestHandler.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
+class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface Reference to the object factory
+	 * @var \F3\FLOW3\Object\FactoryInterface Reference to the object factory
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Utility::Environment Reference to the environment utility object
+	 * @var \F3\FLOW3\Utility\Environment Reference to the environment utility object
 	 */
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3::FLOW3::MVC::Dispatcher The dispatcher
+	 * @var \F3\FLOW3\MVC\Dispatcher The dispatcher
 	 */
 	protected $dispatcher = NULL;
 
 	/**
-	 * @var F3::FLOW3::MVC::CLI::RequestBuilder
+	 * @var \F3\FLOW3\MVC\CLI\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var F3::FLOW3::MVC::RequestProcessorChainManager
+	 * @var \F3\FLOW3\MVC\RequestProcessorChainManager
 	 */
 	protected $requestProcessorChainManager;
 
 	/**
 	 * Constructs the CLI Request Handler
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
-	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
-	 * @param F3::FLOW3::MVC::Dispatcher $dispatcher The request dispatcher
-	 * @param F3::FLOW3::MVC::CLI::RequestBuilder $requestBuilder The request builder
-	 * @param F3::FLOW3::MVC::RequestProcessorChainManager A reference to the request processor chain manager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
+	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
+	 * @param \F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder The request builder
+	 * @param \F3\FLOW3\MVC\RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(
-			F3::FLOW3::Object::FactoryInterface $objectFactory,
-			F3::FLOW3::Utility::Environment $utilityEnvironment,
-			F3::FLOW3::MVC::Dispatcher $dispatcher,
-			F3::FLOW3::MVC::CLI::RequestBuilder $requestBuilder,
-			F3::FLOW3::MVC::RequestProcessorChainManager $requestProcessorChainManager) {
+			\F3\FLOW3\Object\FactoryInterface $objectFactory,
+			\F3\FLOW3\Utility\Environment $utilityEnvironment,
+			\F3\FLOW3\MVC\Dispatcher $dispatcher,
+			\F3\FLOW3\MVC\CLI\RequestBuilder $requestBuilder,
+			\F3\FLOW3\MVC\RequestProcessorChainManager $requestProcessorChainManager) {
 		$this->objectFactory = $objectFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
@@ -89,7 +89,7 @@ class RequestHandler implements F3::FLOW3::MVC::RequestHandlerInterface {
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
 		$this->requestProcessorChainManager->processRequest($request);
-		$response = $this->objectFactory->create('F3::FLOW3::MVC::CLI::Response');
+		$response = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();
 	}

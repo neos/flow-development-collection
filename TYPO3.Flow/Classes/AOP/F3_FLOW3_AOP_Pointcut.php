@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,10 +29,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::Pointcut.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Pointcut.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Pointcut implements F3::FLOW3::AOP::PointcutInterface {
+class Pointcut implements \F3\FLOW3\AOP\PointcutInterface {
 
 	const MAXIMUM_RECURSIONS = 99;
 
@@ -42,7 +42,7 @@ class Pointcut implements F3::FLOW3::AOP::PointcutInterface {
 	protected $pointcutExpression;
 
 	/**
-	 * @var F3::FLOW3::AOP::PointcutFilterComposite: The filter composite object, created from the pointcut expression
+	 * @var \F3\FLOW3\AOP\PointcutFilterComposite: The filter composite object, created from the pointcut expression
 	 */
 	protected $pointcutFilterComposite;
 
@@ -70,14 +70,14 @@ class Pointcut implements F3::FLOW3::AOP::PointcutInterface {
 	 * The constructor
 	 *
 	 * @param string $pointcutExpression A pointcut expression which configures the pointcut
-	 * @param F3::FLOW3::AOP::PointcutExpressionParserInterface $pointcutExpressionParser The parser to use for parsing the pointcut expression
+	 * @param \F3\FLOW3\AOP\PointcutExpressionParserInterface $pointcutExpressionParser The parser to use for parsing the pointcut expression
 	 * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
 	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($pointcutExpression, F3::FLOW3::AOP::PointcutExpressionParser $pointcutExpressionParser, $aspectClassName, $pointcutMethodName = NULL) {
-		if (!is_string($pointcutExpression) || F3::PHP6::Functions::strlen($pointcutExpression) == 0) throw new F3::FLOW3::AOP::Exception::InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1202902188);
+	public function __construct($pointcutExpression, \F3\FLOW3\AOP\PointcutExpressionParser $pointcutExpressionParser, $aspectClassName, $pointcutMethodName = NULL) {
+		if (!is_string($pointcutExpression) || \F3\PHP6\Functions::strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1202902188);
 
 		$this->pointcutExpression = $pointcutExpression;
 		$this->pointcutFilterComposite = $pointcutExpressionParser->parse($pointcutExpression);
@@ -89,17 +89,17 @@ class Pointcut implements F3::FLOW3::AOP::PointcutInterface {
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
 	 *
-	 * @param F3::FLOW3::Reflection::ClassReflection $class Class to check against
-	 * @param F3::FLOW3::Reflection::ClassReflection $method Method to check against
+	 * @param \F3\FLOW3\Reflection\ClassReflection $class Class to check against
+	 * @param \F3\FLOW3\Reflection\ClassReflection $method Method to check against
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
 			$this->recursionLevel ++;
 			if ($this->recursionLevel > self::MAXIMUM_RECURSIONS) {
-				throw new RuntimeException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
+				throw new \RuntimeException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
 			}
 		} else {
 			$this->pointcutQueryIdentifier = $pointcutQueryIdentifier;

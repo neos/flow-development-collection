@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Manager.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Manager implements F3::FLOW3::Object::ManagerInterface {
+class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
 	/**
 	 * Name of the current context
@@ -38,22 +38,22 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	protected $context = 'Development';
 
 	/**
-	 * @var F3::FLOW3::Reflection::Service
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;
 
 	/**
-	 * @var F3::FLOW3::Object::RegistryInterface
+	 * @var \F3\FLOW3\Object\RegistryInterface
 	 */
 	protected $objectRegistry;
 
 	/**
-	 * @var F3::FLOW3::Object::Builder
+	 * @var \F3\FLOW3\Object\Builder
 	 */
 	protected $objectBuilder;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -72,33 +72,33 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param F3::FLOW3::Reflection::Service $reflectionService The Reflection Service
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService The Reflection Service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the object registry
 	 *
-	 * @param F3::FLOW3::Object::RegistryInterface $objectRegistry The object registry
+	 * @param \F3\FLOW3\Object\RegistryInterface $objectRegistry The object registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectRegistry(F3::FLOW3::Object::RegistryInterface $objectRegistry) {
+	public function injectObjectRegistry(\F3\FLOW3\Object\RegistryInterface $objectRegistry) {
 		$this->objectRegistry = $objectRegistry;
 	}
 
 	/**
 	 * Injects the object builder
 	 *
-	 * @param F3::FLOW3::Object::Builder $objectBuilder The object builder
+	 * @param \F3\FLOW3\Object\Builder $objectBuilder The object builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectBuilder(F3::FLOW3::Object::Builder $objectBuilder) {
+	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
 	}
 
@@ -107,11 +107,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * Note that the object builder and object registry must have been injected before the object factory
 	 * can be injected.
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -122,16 +122,16 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		if (!is_object($this->reflectionService)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
-		if (!is_object($this->objectRegistry)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
-		if (!is_object($this->objectBuilder)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Builder has been injected into the Object Manager', 1226412712);
-		if (!is_object($this->objectFactory)) throw new F3::FLOW3::Object::Exception::UnresolvedDependencies('No Object Factory has been injected into the Object Manager', 1226412713);
+		if (!is_object($this->reflectionService)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
+		if (!is_object($this->objectRegistry)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
+		if (!is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Builder has been injected into the Object Manager', 1226412712);
+		if (!is_object($this->objectFactory)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Factory has been injected into the Object Manager', 1226412713);
 
-		$this->registerObject('F3::FLOW3::Object::ManagerInterface', __CLASS__, $this);
-		$this->registerObject('F3::FLOW3::Reflection::Service', get_class($this->reflectionService), $this->reflectionService);
-		$this->registerObject('F3::FLOW3::Object::Builder',  get_class($this->objectBuilder), $this->objectBuilder);
-		$this->registerObject('F3::FLOW3::Object::FactoryInterface', get_class($this->objectFactory), $this->objectFactory);
-		$this->registerObject('F3::FLOW3::Object::RegistryInterface',  get_class($this->objectRegistry), $this->objectRegistry);
+		$this->registerObject('F3\FLOW3\Object\ManagerInterface', __CLASS__, $this);
+		$this->registerObject('F3\FLOW3\Reflection\Service', get_class($this->reflectionService), $this->reflectionService);
+		$this->registerObject('F3\FLOW3\Object\Builder',  get_class($this->objectBuilder), $this->objectBuilder);
+		$this->registerObject('F3\FLOW3\Object\FactoryInterface', get_class($this->objectFactory), $this->objectFactory);
+		$this->registerObject('F3\FLOW3\Object\RegistryInterface',  get_class($this->objectRegistry), $this->objectRegistry);
 
 		$this->objectBuilder->injectObjectManager($this);
 		$this->objectBuilder->injectObjectFactory($this->objectFactory);
@@ -155,11 +155,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 *
 	 * @param  string $context: Name of the context
 	 * @return void
-	 * @throws InvalidArgumentException if $context is not a valid string.
+	 * @throws \InvalidArgumentException if $context is not a valid string.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setContext($context) {
-		if (!is_string($context)) throw new InvalidArgumentException('Context must be given as string.', 1210857671);
+		if (!is_string($context)) throw new \InvalidArgumentException('Context must be given as string.', 1210857671);
 		$this->context = $context;
 	}
 
@@ -177,7 +177,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	/**
 	 * Returns a reference to the object factory used by the object manager.
 	 *
-	 * @return F3::FLOW3::Object::FactoryInterface
+	 * @return \F3\FLOW3\Object\FactoryInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectFactory() {
@@ -196,10 +196,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 */
 	public function getObject($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
+###		$objectName = ltrim($objectName, '\\');
+		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
 
 		switch ($this->objectConfigurations[$objectName]->getScope()) {
 			case 'prototype' :
@@ -216,7 +217,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 				}
 				break;
 			default :
-				throw new F3::FLOW3::Object::Exception('Support for scope "' . $this->objectConfigurations[$objectName]->getScope() . '" has not been implemented (yet)', 1167484148);
+				throw new \F3\FLOW3\Object\Exception('Support for scope "' . $this->objectConfigurations[$objectName]->getScope() . '" has not been implemented (yet)', 1167484148);
 		}
 
 		return $object;
@@ -230,27 +231,30 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param object $object: If the object has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::ObjectAlreadyRegistered if the object has already been registered
-	 * @throws F3::FLOW3::Object::Exception::InvalidObject if the passed $object is not a valid instance of $className
+	 * @throws \F3\FLOW3\Object\Exception\ObjectAlreadyRegistered if the object has already been registered
+	 * @throws \F3\FLOW3\Object\Exception\InvalidObject if the passed $object is not a valid instance of $className
 	 */
 	public function registerObject($objectName, $className = NULL, $object = NULL) {
-		if ($this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::ObjectAlreadyRegistered('The object ' . $objectName . ' is already registered.', 1184160573);
+###		$objectName = ltrim($objectName, '\\');
+		if ($this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\ObjectAlreadyRegistered('The object ' . $objectName . ' is already registered.', 1184160573);
 		if ($className === NULL) {
 			$className = $objectName;
+		} else {
+###			$className = ltrim($className, '\\');
 		}
-		if (!class_exists($className, TRUE)) throw new F3::FLOW3::Object::Exception::UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
+		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
 		$useReflectionService = $this->reflectionService->isInitialized();
-		if (!$useReflectionService) $class = new F3::FLOW3::Reflection::ClassReflection($className);
+		if (!$useReflectionService) $class = new \F3\FLOW3\Reflection\ClassReflection($className);
 
 		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
-		if ($classIsAbstract) throw new F3::FLOW3::Object::Exception::InvalidClass('Cannot register the abstract class "' . $className . '" as an object.', 1200239129);
+		if ($classIsAbstract) throw new \F3\FLOW3\Object\Exception\InvalidClass('Cannot register the abstract class "' . $className . '" as an object.', 1200239129);
 
 		if ($object !== NULL) {
-			if (!is_object($object) || !$object instanceof $className) throw new F3::FLOW3::Object::Exception::InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
+			if (!is_object($object) || !$object instanceof $className) throw new \F3\FLOW3\Object\Exception\InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
 			$this->objectRegistry->putObject($objectName, $object);
 		}
 
-		$this->objectConfigurations[$objectName] = new F3::FLOW3::Object::Configuration($objectName, $className);
+		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration($objectName, $className);
 
 		if ($useReflectionService) {
 			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -272,8 +276,9 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectType($objectName) {
+###		$objectName = ltrim($objectName, '\\');
 		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($objectName);
-		$objectConfiguration = new F3::FLOW3::Object::Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
 		if ($className !== FALSE) {
 			$objectConfiguration->setClassName($className);
 			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -291,10 +296,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param string $objectName: The explicit object name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if the specified object has not been registered before
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered before
 	 */
 	public function unregisterObject($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Object "' . $objectName . '" is not registered.', 1167473433);
+###		$objectName = ltrim($objectName, '\\');
+		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167473433);
 		if ($this->objectRegistry->objectExists($objectName)) {
 			$this->objectRegistry->removeObject($objectName);
 		}
@@ -309,10 +315,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param  string $objectName: Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException if $objectName is not a valid string
+	 * @throws \InvalidArgumentException if $objectName is not a valid string
 	 */
 	public function isObjectRegistered($objectName) {
-		if (!is_string($objectName)) throw new InvalidArgumentException('The object name must be of type string, ' . gettype($objectName) . ' given.', 1181907931);
+###		$objectName = ltrim($objectName, '\\');
+		if (!is_string($objectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($objectName) . ' given.', 1181907931);
 		return isset($this->registeredObjects[$objectName]);
 	}
 
@@ -329,10 +336,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param  string $caseInsensitiveObjectName: The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException if $caseInsensitiveObjectName is not a valid string
+	 * @throws \InvalidArgumentException if $caseInsensitiveObjectName is not a valid string
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
-		if (!is_string($caseInsensitiveObjectName)) throw new InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
+###		$caseInsensitiveObjectName = ltrim($caseInsensitiveObjectName, '\\');
+		if (!is_string($caseInsensitiveObjectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
 		return array_search(strtolower($caseInsensitiveObjectName), $this->registeredObjects);
 	}
 
@@ -351,7 +359,7 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered objects.
 	 *
-	 * @return arrray Array of F3::FLOW3::Object::Configuration objects, indexed by object name
+	 * @return arrray Array of \F3\FLOW3\Object\Configuration objects, indexed by object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfigurations() {
@@ -362,12 +370,13 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * Returns the configuration object of a certain object
 	 *
 	 * @param string $objectName: Name of the object to fetch the configuration for
-	 * @return F3::FLOW3::Object::Configuration The object configuration
+	 * @return \F3\FLOW3\Object\Configuration The object configuration
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if the specified object has not been registered
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered
 	 */
 	public function getObjectConfiguration($objectName) {
-		if (!$this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Object "' . $objectName . '" is not registered.', 1167993004);
+###		$objectName = ltrim($objectName, '\\');
+		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167993004);
 		return clone $this->objectConfigurations[$objectName];
 	}
 
@@ -375,13 +384,13 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * Sets the object configurations for all objects found in the
 	 * $newObjectConfigurations array.
 	 *
-	 * @param array $newObjectConfigurations: Array of $objectName => F3::FLOW3::Object::configuration
+	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations) {
 		foreach ($newObjectConfigurations as $newObjectConfiguration) {
-			if (!$newObjectConfiguration instanceof F3::FLOW3::Object::Configuration) throw new InvalidArgumentException('The new object configuration must be an instance of F3::FLOW3::Object::Configuration', 1167826954);
+			if (!$newObjectConfiguration instanceof \F3\FLOW3\Object\Configuration) throw new \InvalidArgumentException('The new object configuration must be an instance of \F3\FLOW3\Object\Configuration', 1167826954);
 			$objectName = $newObjectConfiguration->getObjectName();
 			if (!isset($this->objectConfigurations[$objectName]) || $this->objectConfigurations[$objectName] !== $newObjectConfiguration) {
 				$this->setObjectConfiguration($newObjectConfiguration);
@@ -392,11 +401,11 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	/**
 	 * Sets the object configuration for a specific object.
 	 *
-	 * @param F3::FLOW3::Object::Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfiguration(F3::FLOW3::Object::Configuration $newObjectConfiguration) {
+	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration $newObjectConfiguration) {
 		$objectName = $newObjectConfiguration->getObjectName();
 		$this->objectConfigurations[$newObjectConfiguration->getObjectName()] = clone $newObjectConfiguration;
 		$this->registeredObjects[$objectName] = strtolower($objectName);
@@ -411,12 +420,13 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 	 * @param string $className: Name of the class to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject on trying to set the class name of an unknown object
-	 * @throws F3::FLOW3::Object::Exception::UnknownClass if the class does not exist
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject on trying to set the class name of an unknown object
+	 * @throws \F3\FLOW3\Object\Exception\UnknownClass if the class does not exist
 	 */
 	public function setObjectClassName($objectName, $className) {
-		if (!$this->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Tried to set class name of non existent object "' . $objectName . '"', 1185524488);
-		if (!class_exists($className)) throw new F3::FLOW3::Object::Exception::UnknownClass('Tried to set the class name of object "' . $objectName . '" but a class "' . $className . '" does not exist.', 1185524499);
+###		$objectName = ltrim($objectName, '\\');
+		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Tried to set class name of non existent object "' . $objectName . '"', 1185524488);
+		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClass('Tried to set the class name of object "' . $objectName . '" but a class "' . $className . '" does not exist.', 1185524499);
 		$objectConfiguration = $this->getObjectConfiguration($objectName);
 		$objectConfiguration->setClassName($className);
 		$this->setObjectConfiguration($objectConfiguration);
@@ -424,17 +434,17 @@ class Manager implements F3::FLOW3::Object::ManagerInterface {
 
 	/**
 	 * Returns straight-value constructor arguments for an object by creating appropriate
-	 * F3::FLOW3::Object::ConfigurationArgument objects.
+	 * \F3\FLOW3\Object\ConfigurationArgument objects.
 	 *
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of F3::FLOW3::Object::ConfigurationArgument which can be passed to the object builder
+	 * @return array An array of \F3\FLOW3\Object\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see getObject()
 	 */
 	protected function getOverridingConstructorArguments(array $arguments) {
 		$constructorArguments = array();
 		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new F3::FLOW3::Object::ConfigurationArgument($index + 1, $value, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+			$constructorArguments[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
 		return $constructorArguments;
 	}

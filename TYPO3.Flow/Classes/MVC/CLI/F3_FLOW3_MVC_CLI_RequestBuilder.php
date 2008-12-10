@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::CLI;
+namespace F3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::CLI;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,36 +26,36 @@ namespace F3::FLOW3::MVC::CLI;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\RequestBuilder.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class RequestBuilder {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Utility::Environment
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
 	/**
 	 * Constructs the CLI Request Builder
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
-	 * @param F3::FLOW3::Utility::Environment $environment The environment
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Utility::Environment $environment) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 		$this->environment = $environment;
@@ -64,15 +64,15 @@ class RequestBuilder {
 	/**
 	 * Builds a CLI request object from the raw command call
 	 *
-	 * @return F3::FLOW3::MVC::CLI::Request The CLI request as an object
+	 * @return \F3\FLOW3\MVC\CLI\Request The CLI request as an object
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function build() {
-		$request = $this->objectFactory->create('F3::FLOW3::MVC::CLI::Request');
+		$request = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
-			$request->setControllerObjectNamePattern('F3::FLOW3::MVC::Controller::DefaultController');
+			$request->setControllerObjectNamePattern('F3\FLOW3\MVC\Controller\DefaultController');
 			return $request;
 		}
 
@@ -93,19 +93,19 @@ class RequestBuilder {
 	/**
 	 * Sets package, controller, action if found in $command
 	 *
-	 * @param F3::FLOW3::MVC::CLI::Request $request
+	 * @param \F3\FLOW3\MVC\CLI\Request $request
 	 * @param array $command
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function setControllerOptions(F3::FLOW3::MVC::CLI::Request $request, array $command) {
+	protected function setControllerOptions(\F3\FLOW3\MVC\CLI\Request $request, array $command) {
 		if ($command['package'] !== NULL) $request->setControllerPackageKey($command['package']);
 		if ($command['controller'] !== NULL) $request->setControllerName($command['controller']);
 		if ($command['action'] !== NULL) $request->setControllerActionName($command['action']);
 
 		if (count($command['subpackages']) > 0) {
-			$subPackages = implode('::', $command['subpackages']);
-			$request->setControllerObjectNamePattern('F3::@package::' . $subPackages . '::Controller::@controllerController');
+			$subPackages = implode('\\', $command['subpackages']);
+			$request->setControllerObjectNamePattern('F3\@package\\' . $subPackages . '\Controller\\@controllerController');
 		}
 	}
 
@@ -167,7 +167,7 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Converts the first element of the input array to an argument name for a F3::FLOW3::MVC::Request object.
+	 * Converts the first element of the input array to an argument name for a \F3\FLOW3\MVC\Request object.
 	 *
 	 * @param array array of the remaining command line arguments
 	 * @return string converted argument name
@@ -180,7 +180,7 @@ class RequestBuilder {
 		$convertedName = '';
 
 		foreach ($argumentName as $part) {
-			$convertedName .= ($convertedName !== '') ? F3::PHP6::Functions::ucfirst($part) : $part;
+			$convertedName .= ($convertedName !== '') ? \F3\PHP6\Functions::ucfirst($part) : $part;
 		}
 
 		return $convertedName;
@@ -224,7 +224,7 @@ class RequestBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
-		if (count($rawCommand) === 2) throw new F3::FLOW3::MVC::Exception::InvalidFormat('CLI access needs 0, 1 or at least 3 command parts.', 1222252361);
+		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('CLI access needs 0, 1 or at least 3 command parts.', 1222252361);
 
 		$command = array(
 			'package' => NULL,
@@ -238,7 +238,7 @@ class RequestBuilder {
 		$command['package'] = array_shift($rawCommand);
 		if (count($rawCommand) === 0) return $command;
 
-		$command['action'] = F3::PHP6::Functions::strtolower(array_pop($rawCommand));
+		$command['action'] = \F3\PHP6\Functions::strtolower(array_pop($rawCommand));
 		$command['controller'] = array_pop($rawCommand);
 		if (count($rawCommand) === 0) return $command;
 

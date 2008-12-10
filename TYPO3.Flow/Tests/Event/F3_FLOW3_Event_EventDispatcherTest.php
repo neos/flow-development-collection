@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Event;
+namespace F3\FLOW3\Event;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,15 +30,15 @@ namespace F3::FLOW3::Event;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EventDispatcherTest extends F3::Testing::BaseTestCase {
+class EventDispatcherTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function eventDispatcherIsPrototype() {
-		$dispatcher1 = $this->objectManager->getObject('F3::FLOW3::Event::EventDispatcher');
-		$dispatcher2 = $this->objectManager->getObject('F3::FLOW3::Event::EventDispatcher');
+		$dispatcher1 = $this->objectManager->getObject('F3\FLOW3\Event\EventDispatcher');
+		$dispatcher2 = $this->objectManager->getObject('F3\FLOW3\Event\EventDispatcher');
 		$this->assertNotSame($dispatcher1, $dispatcher2, 'Obviously EventDispatcher is not prototype!');
 	}
 
@@ -48,9 +48,9 @@ class EventDispatcherTest extends F3::Testing::BaseTestCase {
 	 */
 	public function listenersAreNotifiedWhenMatchingEventIsDispatched() {
 		$listenerExecuted = FALSE;
-		$dispatcher = new F3::FLOW3::Event::EventDispatcher();
-		$dispatcher->addEventListener('foo', function(F3::FLOW3::Event::Event $event) use (&$listenerExecuted) { $listenerExecuted = TRUE; });
-		$event = new F3::FLOW3::Event::Event('foo');
+		$dispatcher = new \F3\FLOW3\Event\EventDispatcher();
+		$dispatcher->addEventListener('foo', function(\F3\FLOW3\Event\Event $event) use (&$listenerExecuted) { $listenerExecuted = TRUE; });
+		$event = new \F3\FLOW3\Event\Event('foo');
 		$dispatcher->dispatchEvent($event);
 		
 		$this->assertTRUE($listenerExecuted, 'Listener has not been excecuted even though it was registered for the specified Event type.');
@@ -62,9 +62,9 @@ class EventDispatcherTest extends F3::Testing::BaseTestCase {
 	 */
 	public function listenersAreNotNotifiedWhenNonMatchingEventIsDispatched() {
 		$listenerExecuted = FALSE;
-		$dispatcher = new F3::FLOW3::Event::EventDispatcher();
-		$dispatcher->addEventListener('foo', function(F3::FLOW3::Event::Event $event) use (&$listenerExecuted) { $listenerExecuted = TRUE; });
-		$event = new F3::FLOW3::Event::Event('bar');
+		$dispatcher = new \F3\FLOW3\Event\EventDispatcher();
+		$dispatcher->addEventListener('foo', function(\F3\FLOW3\Event\Event $event) use (&$listenerExecuted) { $listenerExecuted = TRUE; });
+		$event = new \F3\FLOW3\Event\Event('bar');
 		$dispatcher->dispatchEvent($event);
 		
 		$this->assertFALSE($listenerExecuted, 'Listener has been excecuted even though it was registered for a different Event type.');
@@ -75,10 +75,10 @@ class EventDispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passesEventObjectToListener() {
-		$dispatcher = new F3::FLOW3::Event::EventDispatcher();
-		$originalEvent = new F3::FLOW3::Event::Event('foo');
+		$dispatcher = new \F3\FLOW3\Event\EventDispatcher();
+		$originalEvent = new \F3\FLOW3\Event\Event('foo');
 		$passedEvent = NULL;
-		$dispatcher->addEventListener('foo', function(F3::FLOW3::Event::Event $event) use (&$passedEvent) { $passedEvent = $event; });
+		$dispatcher->addEventListener('foo', function(\F3\FLOW3\Event\Event $event) use (&$passedEvent) { $passedEvent = $event; });
 		$dispatcher->dispatchEvent($originalEvent);
 		
 		$this->assertSame($originalEvent, $passedEvent, 'The EventDispatcher did not pass the original Event object to the listener method.');

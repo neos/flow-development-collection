@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Aspect;
+namespace F3\FLOW3\Security\Aspect;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,22 +29,22 @@ namespace F3::FLOW3::Security::Aspect;
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
+class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicySetsPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockPolicyEnforcementInterceptor->expects($this->once())->method('setJoinPoint')->with($mockJoinPoint);
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -53,15 +53,15 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyCallsThePolicyEnforcementInterceptorCorrectly() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockPolicyEnforcementInterceptor->expects($this->once())->method('invoke');
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -70,15 +70,15 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicySetsPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($mockJoinPoint);
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -87,10 +87,10 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicySetsPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$someResult = 'blub';
 
@@ -98,7 +98,7 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -107,15 +107,15 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyCallsTheTheAfterInvocationInterceptorCorrectly() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -124,15 +124,15 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicySetsCallsTheAdviceChainCorrectly() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$mockAdviceChain->expects($this->once())->method('proceed')->with($mockJoinPoint);
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor,$mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor,$mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -141,17 +141,17 @@ class InterceptorInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicyReturnsTheResultCorrectly() {
-		$mockJoinPoint = $this->getMock('F3::FLOW3::AOP::JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3::FLOW3::AOP::AdviceChain', array(), array(), '', FALSE);
-		$mockAfterInvocationInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation', array(), array(), '', FALSE);
-		$mockPolicyEnforcementInterceptor = $this->getMock('F3::FLOW3::Security::Authorization::Interceptor::PolicyEnforcement', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
+		$mockPolicyEnforcementInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement', array(), array(), '', FALSE);
 
 		$someResult = 'blub';
 
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
-		$securityAdvice = new F3::FLOW3::Security::Aspect::InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$this->assertEquals($someResult, $securityAdvice->enforcePolicy($mockJoinPoint));
 	}
 }

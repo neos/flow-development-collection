@@ -191,7 +191,7 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     classname as well as the file name. An example for a valid class name is
-    <classname>F3::MyPackage::Controller::Default</classname> while the file
+    <classname>F3\MyPackage\Controller\Default</classname> while the file
     containing this class would be named
     <filename>F3_MyPackage_Controller_Default.php</filename>.</para>
 

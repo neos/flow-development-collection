@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration;
+namespace F3\FLOW3\Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Configuration;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Configuration;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ManagerTest extends F3::Testing::BaseTestCase {
+class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -38,10 +38,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	public function loadFLOW3SettingsLoadsBaseSettingsOfTheFLOW3Package() {
 		$someSettings = array('option1' => 'value1');
 
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(3))->method('load')->will($this->onConsecutiveCalls($someSettings, array(), array()));
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadFLOW3Settings();
 
 		$actualSettings = $manager->getSettings('FLOW3');
@@ -67,10 +67,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 		$contextSettings['lastLoaded'] = 'contextSettings';
 		$contextSettings['contextSettings'] = TRUE;
 
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(3))->method('load')->will($this->onConsecutiveCalls($baseSettings, $globalSettings, $contextSettings));
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadFLOW3Settings();
 
 		$actualSettings = $manager->getSettings('FLOW3');
@@ -86,12 +86,12 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function loadGlobalSettingsLoadsSettingsOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
 		$someSettings = array();
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
 
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadGlobalSettings($packageKeys);
 	}
 
@@ -100,12 +100,12 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function loadGlobalSettingsMergesAllLoadedSettingsWhichThenCanBeRetrievedWithGetSettings() {
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadGlobalSettings($packageKeys);
 
 		$actualSettings = $manager->getSettings('PackageA');
@@ -119,12 +119,12 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 */
 	public function loadRoutesSettingsLoadsRoutesOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
 		$someSettings = array();
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
 
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadRoutesSettings($packageKeys);
 	}
 
@@ -178,9 +178,9 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSettingsReturnsAnArray() {
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$settings = $manager->getSettings('SomePackage');
 		$this->assertTrue(is_array($settings));
 	}
@@ -192,10 +192,10 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 	public function getSettingsReturnsTheSettingsOfTheSpecifiedPackage() {
 		$expectedSettings = array('TestPackage' => array('has' => array('several' => array('options' => 'and values'))));
 
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue($expectedSettings));
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->loadGlobalSettings(array('TestPackage'));
 
 		$actualSettings = $manager->getSettings('TestPackage');
@@ -204,14 +204,14 @@ class ManagerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::FLOW3::Configuration::Exception::InvalidConfigurationType
+	 * @expectedException \F3\FLOW3\Configuration\Exception\InvalidConfigurationType
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSpecialConfigurationOnlySupportsSpecialConfigurationTypes() {
-		$mockConfigurationSource = $this->getMock('F3::FLOW3::Configuration::SourceInterface', array('load'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 
-		$manager = new F3::FLOW3::Configuration::Manager('Testing', array($mockConfigurationSource));
-		$manager->getSpecialConfiguration(F3::FLOW3::Configuration::Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
+		$manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
 	}
 }
 ?>

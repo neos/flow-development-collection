@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::FLOW3::Persistence;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SessionTest extends F3::Testing::BaseTestCase {
+class SessionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function objectRegisteredWithRegisterReconstitutedObjectCanBeRetrievedWithGetReconstitutedObjects() {
-		$someObject = new ::ArrayObject();
-		$session = new F3::FLOW3::Persistence::Session();
+		$someObject = new \ArrayObject();
+		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerReconstitutedObject($someObject);
 
 		$reconstitutedObjects = $session->getReconstitutedObjects();
@@ -49,8 +49,8 @@ class SessionTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unregisterReconstitutedObjectRemovesObjectFromSession() {
-		$someObject = new ::ArrayObject();
-		$session = new F3::FLOW3::Persistence::Session();
+		$someObject = new \ArrayObject();
+		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerReconstitutedObject($someObject);
 		$session->unregisterReconstitutedObject($someObject);
 

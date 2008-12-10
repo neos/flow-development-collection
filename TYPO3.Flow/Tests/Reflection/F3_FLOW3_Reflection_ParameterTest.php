@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Reflection;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,18 +26,18 @@ namespace F3::FLOW3::Reflection;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ParameterTest extends F3::Testing::BaseTestCase {
+class ParameterTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDeclaringClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3::FLOW3::Reflection::ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
-		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $parameter->getDeclaringClass());
+		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg2');
+		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $parameter->getDeclaringClass());
 	}
 
 	/**
@@ -45,14 +45,14 @@ class ParameterTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassReturnsFLOW3sClassReflection($dummy = NULL) {
-		$parameter = new F3::FLOW3::Reflection::ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
-		$this->assertType('F3::FLOW3::Reflection::ClassReflection', $parameter->getClass());
+		$parameter = new \F3\FLOW3\Reflection\ParameterReflection(array(__CLASS__, 'fixtureMethod'), 'arg1');
+		$this->assertType('F3\FLOW3\Reflection\ClassReflection', $parameter->getClass());
 	}
 
 	/**
 	 * Just a fixture method
 	 */
-	protected function fixtureMethod(::ArrayObject $arg1, $arg2 = NULL) {
+	protected function fixtureMethod(\ArrayObject $arg1, $arg2 = NULL) {
 	}
 }
 ?>

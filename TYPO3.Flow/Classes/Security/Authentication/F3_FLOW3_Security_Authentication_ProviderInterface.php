@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication;
+namespace F3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,9 +22,9 @@ namespace F3::FLOW3::Security::Authentication;
  */
 
 /**
- * Contract for an authentication provider used by the F3::FLOW3::Security::Authenticaton::ProviderManager.
- * Has to add a F3::FLOW3::Security::Authentication::TokenInterface to the securit context, which contains
- * a F3::FLOW3::Security::Authentication::UserDetailsInterface.
+ * Contract for an authentication provider used by the \F3\FLOW3\Security\Authenticaton\ProviderManager.
+ * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
+ * a \F3\FLOW3\Security\Authentication\UserDetailsInterface.
  *
  * @package FLOW3
  * @subpackage Security
@@ -37,11 +37,11 @@ interface ProviderInterface {
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token that should be authenticated
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(F3::FLOW3::Security::Authentication::TokenInterface $token);
+	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token);
 
 	/**
 	 * Returns the classname of the token this provider is responsible for.
@@ -53,10 +53,10 @@ interface ProviderInterface {
 	/**
 	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 */
-	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken);
+	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
 }
 
 ?>

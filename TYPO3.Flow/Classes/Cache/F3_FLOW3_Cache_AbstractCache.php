@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -45,7 +45,7 @@ abstract class AbstractCache {
 	protected $identifier;
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractBackend
+	 * @var \F3\FLOW3\Cache\AbstractBackend
 	 */
 	protected $backend;
 
@@ -53,12 +53,12 @@ abstract class AbstractCache {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param F3::FLOW3::Cache::AbstractBackend $backend Backend to be used for this cache
+	 * @param \F3\FLOW3\Cache\AbstractBackend $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
+	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
 	 */
-	public function __construct($identifier, F3::FLOW3::Cache::AbstractBackend $backend) {
-		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
+	public function __construct($identifier, \F3\FLOW3\Cache\AbstractBackend $backend) {
+		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
 		$this->backend->setCache($this);
@@ -77,7 +77,7 @@ abstract class AbstractCache {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return F3::FLOW3::Cache::AbstractBackend The backend used by this cache
+	 * @return \F3\FLOW3\Cache\AbstractBackend The backend used by this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBackend() {
@@ -169,7 +169,7 @@ abstract class AbstractCache {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTag($className) {
-		return self::TAG_CLASS . str_replace('::', '_', $className);
+		return self::TAG_CLASS . str_replace('\\', '_', $className);
 	}
 
 }

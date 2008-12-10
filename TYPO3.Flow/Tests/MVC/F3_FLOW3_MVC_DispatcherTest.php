@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC;
+namespace F3\FLOW3\MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,13 +29,13 @@ require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_Mock
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class DispatcherTest extends F3::Testing::BaseTestCase {
+class DispatcherTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::MVC::Dispatcher
+	 * @var \F3\FLOW3\MVC\Dispatcher
 	 */
 	protected $dispatcher;
 
@@ -46,13 +46,13 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$securityContextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface');
-		$firewall = $this->getMock('F3::FLOW3::Security::Authorization::FirewallInterface');
+		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
+		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$settings = array();
-		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
-		$this->dispatcher = new F3::FLOW3::MVC::Dispatcher($this->objectManager, $this->objectFactory);
+		$this->dispatcher = new \F3\FLOW3\MVC\Dispatcher($this->objectManager, $this->objectFactory);
 		$this->dispatcher->injectSecurityContextHolder($securityContextHolder);
 		$this->dispatcher->injectFirewall($firewall);
 		$this->dispatcher->injectConfigurationManager($configurationManager);
@@ -61,21 +61,22 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\MVC\Exception
 	 */
 	public function aStopActionExceptionThrownByTheControllerIsCatchedByTheDispatcherAndBreaksTheDispatchLoop() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
 
-		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockExceptionThrowingController');
-		$mockExceptionThrowingController = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockExceptionThrowingController');
+		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockExceptionThrowingController');
+		$mockExceptionThrowingController = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockExceptionThrowingController');
 		$mockExceptionThrowingController->injectPropertyMapper($mockPropertyMapper);
 
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
+		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
 		$request->setControllerName('MockExceptionThrowingController');
 
 		$request->setControllerActionName('stopAction');
@@ -83,11 +84,8 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 
 		$request->setDispatched(FALSE);
 		$request->setControllerActionName('throwGeneralException');
-		try {
-			$this->dispatcher->dispatch($request, $response);
-			$this->fail('The exception thrown by the second action was catched somewhere or the action was not called.');
-		} catch (F3::FLOW3::MVC::Exception $exception) {
-		}
+
+		$this->dispatcher->dispatch($request, $response);
 	}
 
 	/**
@@ -95,19 +93,19 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatcherCallsProcessRequestMethodOfController() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
 
-		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
-		$controller = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
+		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
+		$controller = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
 		$controller->injectPropertyMapper($mockPropertyMapper);
 
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
+		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
 		$request->setControllerName('MockRequestHandlingController');
 
 		$this->dispatcher->dispatch($request, $response);
@@ -120,24 +118,24 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 */
 	public function theDispatcherInjectsThePackageSettingsIntoTheController() {
 		$settings = array();
-		$configurationManager = $this->getMock('F3::FLOW3::Configuration::Manager', array('getSettings'), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
 		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$this->dispatcher->injectConfigurationManager($configurationManager);
 
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$mockPropertyMapper = $this->getMock('F3::FLOW3::Property::Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new F3::FLOW3::Property::MappingResults));
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
 
-		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
-		$controller = $this->objectManager->getObject('F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController');
+		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
+		$controller = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
 		$controller->injectPropertyMapper($mockPropertyMapper);
 
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
+		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
 		$request->setControllerName('MockRequestHandlingController');
 
 		$this->dispatcher->dispatch($request, $response);
@@ -149,12 +147,12 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theDispatcherInitializesTheSecurityContextWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Controller::@controllerController');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$securityContextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface', array('initializeContext', 'setContext', 'getContext', 'clearContext'));
+		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface', array('initializeContext', 'setContext', 'getContext', 'clearContext'));
 		$this->dispatcher->injectSecurityContextHolder($securityContextHolder);
 
 		$securityContextHolder->expects($this->any())->method('initializeContext');
@@ -166,12 +164,12 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theDispatcherCallsTheFirewallWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Controller::@controllerController');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$firewall = $this->getMock('F3::FLOW3::Security::Authorization::FirewallInterface');
+		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$this->dispatcher->injectFirewall($firewall);
 
 		$firewall->expects($this->any())->method('blockIllegalRequests');

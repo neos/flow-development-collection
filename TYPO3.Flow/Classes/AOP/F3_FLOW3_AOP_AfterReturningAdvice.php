@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::AfterReturningAdvice.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\AfterReturningAdvice.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AfterReturningAdvice implements F3::FLOW3::AOP::AdviceInterface {
+class AfterReturningAdvice implements \F3\FLOW3\AOP\AdviceInterface {
 
 	/**
 	 * @var string Holds the name of the aspect object containing the advice
@@ -42,7 +42,7 @@ class AfterReturningAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	protected $adviceMethodName;
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface A reference to the Object Manager
+	 * @var \F3\FLOW3\Object\ManagerInterface A reference to the Object Manager
 	 */
 	protected $objectManager;
 
@@ -51,11 +51,11 @@ class AfterReturningAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	 *
 	 * @param string $aspectObjectName: Name of the aspect object containing the advice
 	 * @param string $adviceMethodName: Name of the advice method
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager: A reference to the object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectObjectName, $adviceMethodName, F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->aspectObjectName = $aspectObjectName;
 		$this->adviceMethodName = $adviceMethodName;
 		$this->objectManager = $objectManager;
@@ -64,11 +64,11 @@ class AfterReturningAdvice implements F3::FLOW3::AOP::AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invoke(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$adviceObject = $this->objectManager->getObject($this->aspectObjectName);
 		$methodName = $this->adviceMethodName;
 		$adviceObject->$methodName($joinPoint);

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Configuration;
+namespace F3\FLOW3\Configuration;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Configuration;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,17 +26,17 @@ namespace F3::FLOW3::Configuration;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ContainerTest extends F3::Testing::BaseTestCase {
+class ContainerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function simpleOptionCanBeAddedThroughSimpleAssignment() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->newOption = 'testValue';
 		$this->assertEquals('testValue', $configuration->newOption);
 	}
@@ -46,7 +46,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cascadedOptionCanBeCreatedOnTheFly() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->parentOption->childOption = 'the child';
 		$this->assertEquals('the child', $configuration->parentOption->childOption);
 	}
@@ -56,7 +56,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cascadedOptionCanBeCreatedOnTheFlyOnThirdLevel() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->parentOption->childOption->grandChildOption = 'the grand child';
 		$this->assertEquals('the grand child', $configuration->parentOption->childOption->grandChildOption);
 	}
@@ -66,7 +66,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function optionValuesCanBeArrays() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->someOption = array(1, 2, 3);
 		$configuration->firstLevel->anotherOption = array(4, 5, 6);
 		$this->assertEquals(array(1, 2, 3), $configuration->someOption, 'The retrieved value was not as expected.');
@@ -78,7 +78,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function containerCanBeLocked() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->lock();
 		$this->assertTrue($configuration->isLocked(), 'Container could not be locked.');
 	}
@@ -88,7 +88,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function lockingTheContainerAlsoLocksAllSubContainers() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->subConfiguration->subSubConfiguration;
 		$configuration->otherOption = array('x' => 'y');
 
@@ -102,7 +102,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function gettingOptionsFromLockedContainerIsAllowed() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->someOption = 'some value';
 		$configuration->lock();
 		$this->assertEquals('some value', $configuration->someOption, 'Could not retrieve the option.');
@@ -113,12 +113,12 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function introducingNewOptionsOnLockedContainerResultsInException() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->lock();
 		try {
 			$configuration->someNewOption = 'some value';
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Configuration::Exception::ContainerIsLocked $exception) {
+		} catch (\F3\FLOW3\Configuration\Exception\ContainerIsLocked $exception) {
 		}
 	}
 
@@ -127,7 +127,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modifyingExistingOptionsOnLockedContainerIsAllowed() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->existingOption = 'old';
 		$configuration->lock();
 		$configuration->existingOption = 'new';
@@ -140,7 +140,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function foreachCanTraverseOverFirstLevelOptions() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->firstOption = '1';
 		$configuration->secondOption = '2';
 		$configuration->thirdOption = '3';
@@ -160,7 +160,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function issetReturnsTheCorrectResult() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->someOption = 'some value';
 		$this->assertTrue(isset($configuration->someOption), 'isset() did not return TRUE.');
 		$this->assertFalse(isset($configuration->otherOption), 'isset() did not return FALSE.');
@@ -171,7 +171,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unsetReallyUnsetsOption() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->someOption = 'some value';
 		unset($configuration->someOption);
 		$this->assertFalse(isset($configuration->someOption), 'isset() returned TRUE.');
@@ -182,12 +182,12 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mergeJustAddsNonConflictingOptionsToTheExistingContainer() {
-		$configurationA = new F3::FLOW3::Configuration::Container();
+		$configurationA = new \F3\FLOW3\Configuration\Container();
 		$configurationA->firstOption = 'firstValue';
-		$configurationB = new F3::FLOW3::Configuration::Container();
+		$configurationB = new \F3\FLOW3\Configuration\Container();
 		$configurationB->secondOption = 'secondValue';
 
-		$expectedConfiguration = new F3::FLOW3::Configuration::Container();
+		$expectedConfiguration = new \F3\FLOW3\Configuration\Container();
 		$expectedConfiguration->firstOption = 'firstValue';
 		$expectedConfiguration->secondOption = 'secondValue';
 
@@ -199,14 +199,14 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mergeAlsoMergesNonConflictingOptionsOfSubContainers() {
-		$configurationA = new F3::FLOW3::Configuration::Container();
+		$configurationA = new \F3\FLOW3\Configuration\Container();
 		$configurationA->a->aSub = 'aaSub';
 		$configurationA->c = 'c';
-		$configurationB = new F3::FLOW3::Configuration::Container();
+		$configurationB = new \F3\FLOW3\Configuration\Container();
 		$configurationB->a->bSub = 'abSub';
 		$configurationB->d = 'd';
 
-		$expectedConfiguration = new F3::FLOW3::Configuration::Container();
+		$expectedConfiguration = new \F3\FLOW3\Configuration\Container();
 		$expectedConfiguration->a->aSub = 'aaSub';
 		$expectedConfiguration->c = 'c';
 		$expectedConfiguration->a->bSub = 'abSub';
@@ -220,15 +220,15 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mergeCanMergeTwoContainersRecursivelyWithConflictingOptions() {
-		$configurationA = new F3::FLOW3::Configuration::Container();
+		$configurationA = new \F3\FLOW3\Configuration\Container();
 		$configurationA->a->aSub = 'oldA';
 		$configurationA->a->aSubB = 'oldSubB';
 		$configurationA->b = 'oldB';
-		$configurationB = new F3::FLOW3::Configuration::Container();
+		$configurationB = new \F3\FLOW3\Configuration\Container();
 		$configurationB->a->aSub = 'newA';
 		$configurationB->b = 'newB';
 
-		$expectedConfiguration = new F3::FLOW3::Configuration::Container();
+		$expectedConfiguration = new \F3\FLOW3\Configuration\Container();
 		$expectedConfiguration->a->aSub = 'newA';
 		$expectedConfiguration->a->aSubB = 'oldSubB';
 		$expectedConfiguration->b = 'newB';
@@ -241,17 +241,17 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mergeCanHandleNestedContainersWithMoreThanTwoLevels() {
-		$configurationA = new F3::FLOW3::Configuration::Container();
+		$configurationA = new \F3\FLOW3\Configuration\Container();
 		$configurationA->a->aa->aaa = 'oldAAA';
 		$configurationA->a->ab = 'oldAB';
 		$configurationA->a->aa->aab->aaba->aabaa = 'oldAABAA';
 		$configurationA->b = 'oldB';
 
-		$configurationB = new F3::FLOW3::Configuration::Container();
+		$configurationB = new \F3\FLOW3\Configuration\Container();
 		$configurationB->a->aa->aaa = 'newAAA';
 		$configurationB->a->aa->aab->aabb = 'newAABB';
 
-		$expectedConfiguration = new F3::FLOW3::Configuration::Container();
+		$expectedConfiguration = new \F3\FLOW3\Configuration\Container();
 		$expectedConfiguration->a->aa->aaa = 'newAAA';
 		$expectedConfiguration->a->ab = 'oldAB';
 		$expectedConfiguration->a->aa->aab->aaba->aabaa = 'oldAABAA';
@@ -266,13 +266,13 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mergeDoesNotTryToMergeAContainerWithAnArray() {
-		$configurationA = new F3::FLOW3::Configuration::Container();
+		$configurationA = new \F3\FLOW3\Configuration\Container();
 		$configurationA->parent->children = array('a' => 'A');
 
-		$configurationB = new F3::FLOW3::Configuration::Container();
+		$configurationB = new \F3\FLOW3\Configuration\Container();
 		$configurationB->parent->children->a = 'A';
 
-		$expectedConfiguration = new F3::FLOW3::Configuration::Container();
+		$expectedConfiguration = new \F3\FLOW3\Configuration\Container();
 		$expectedConfiguration->parent->children->a = 'A';
 
 		$this->assertEquals($expectedConfiguration, $configurationA->mergeWith($configurationB), 'The merge result is not as expected.');
@@ -283,11 +283,11 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function callingNonExistingMethodResultsInException() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		try {
 			$configuration->nonExistingMethod();
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Configuration::Exception $exception) {
+		} catch (\F3\FLOW3\Configuration\Exception $exception) {
 		}
 	}
 
@@ -296,11 +296,11 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passingNoArgumentToMagicSetterResultsInException() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		try {
 			$configuration->setOption();
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Configuration::Exception $exception) {
+		} catch (\F3\FLOW3\Configuration\Exception $exception) {
 		}
 	}
 
@@ -309,11 +309,11 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function passingTwoArgumentToMagicSetterResultsInException() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		try {
 			$configuration->setOption('argument1', 'argument2');
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Configuration::Exception $exception) {
+		} catch (\F3\FLOW3\Configuration\Exception $exception) {
 		}
 	}
 
@@ -322,7 +322,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function simpleOptionCanBeAddedThroughMagicSetter() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->setNewOption('testValue');
 		$this->assertEquals('testValue', $configuration->newOption);
 	}
@@ -332,7 +332,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function cascadedOptionCanBeCreatedOnTheFlyThroughMagicSetter() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->parentOption->setChildOption('the child');
 		$this->assertEquals('the child', $configuration->parentOption->childOption);
 	}
@@ -342,7 +342,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function cascadedOptionCanBeCreatedOnTheFlyOnThirdLevelThroughMagicSetter() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->parentOption->childOption->setGrandChildOption('the grand child');
 		$this->assertEquals('the grand child', $configuration->parentOption->childOption->grandChildOption);
 	}
@@ -352,7 +352,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function magicSetterReturnsItself() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$this->assertSame($configuration, $configuration->setNewOption('testValue'));
 	}
 
@@ -361,7 +361,7 @@ class ContainerTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function optionsCanBeAddedThroughChainingSyntax() {
-		$configuration = new F3::FLOW3::Configuration::Container();
+		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration
 			->setOption1('value1')
 			->setOption2('value2')

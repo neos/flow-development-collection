@@ -107,7 +107,7 @@
 
             <literallayout>&lt;?php
 declare(ENCODING = 'utf-8');
-namespace F3::Your::Stuff::Here;
+namespace F3\Your\Stuff\Here;
 
 /*                                                                         *
  * This script is part of the TYPO3 project - inspiring people to share!   *
@@ -240,27 +240,27 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Object</classname></para>
+              <para><classname>\F3\FLOW3\Object</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Object::Manager</classname></para>
+              <para><classname>\F3\FLOW3\Object\Manager</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::MySubObject</classname></para>
+              <para><classname>F3\MyPackage\MyObject\MySubObject</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::MyHTMLParser</classname></para>
+              <para><classname>F3\MyPackage\MyObject\MyHTMLParser</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::Foo::Controller::DefaultController</classname></para>
+              <para><classname>F3\Foo\Controller\DefaultController</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::AbstractLogger</classname></para>
+              <para><classname>F3\MyPackage\MyObject\AbstractLogger</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -274,7 +274,7 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3::Urlwrapper</classname></para>
+              <para><classname>F3\Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
@@ -282,7 +282,7 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObjectMySubObject</classname></para>
+              <para><classname>F3\MyPackage\MyObjectMySubObject</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -304,19 +304,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Object::ObjectInterface</classname></para>
+              <para><classname>\F3\FLOW3\Object\ObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Object::ManagerInterface</classname></para>
+              <para><classname>\F3\FLOW3\Object\ManagerInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::MySubObjectInterface</classname></para>
+              <para><classname>F3\MyPackage\MyObject\MySubObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::MyHTMLParserInterface</classname></para>
+              <para><classname>F3\MyPackage\MyObject\MyHTMLParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -330,7 +330,7 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3::Urlwrapper</classname></para>
+              <para><classname>F3\Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
@@ -338,7 +338,7 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Object::Manager::Interface</classname></para>
+              <para><classname>\F3\FLOW3\Object\Manager\Interface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -359,19 +359,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>F3::FLOW3::Object::Exception</classname></para>
+              <para><classname>\F3\FLOW3\Object\Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::FLOW3::Object::Exception::InvalidClassName</classname></para>
+              <para><classname>\F3\FLOW3\Object\Exception\InvalidClassName</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::Exception</classname></para>
+              <para><classname>F3\MyPackage\MyObject\Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3::MyPackage::MyObject::Exception::OutOfCoffee</classname></para>
+              <para><classname>F3\MyPackage\MyObject\Exception\OutOfCoffee</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -555,40 +555,40 @@ public‧function‧getContext()‧{
                   <para><filename>F3_TemplateEngine_TemplateEngineInterface.php</filename></para>
 
                   <para>Contains the interface
-                  <classname>F3::TemplateEngine::TemplateEngineInterface</classname>
+                  <classname>F3\TemplateEngine\TemplateEngineInterface</classname>
                   which is part of the package
-                  <package>F3::TemplateEngine</package></para>
+                  <package>F3\TemplateEngine</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_Error_RuntimeException.php</filename></para>
 
                   <para>Contains the
-                  <classname>F3::Error::RuntimeException</classname> being a
-                  part of the package <package>F3::Error</package></para>
+                  <classname>F3\Error\RuntimeException</classname> being a
+                  part of the package <package>F3\Error</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_DataAccess_Manager.php</filename></para>
 
                   <para>Contains class
-                  <classname>F3::DataAccess::Manager</classname> which is part
-                  of the package <package>F3::DataAccess</package></para>
+                  <classname>F3\DataAccess\Manager</classname> which is part
+                  of the package <package>F3\DataAccess</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_FLOW3_Package_Manager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>F3::FLOW3::Package::Manager</classname> which is
-                  part of the package <package>F3::FLOW3</package></para>
+                  <classname>\F3\FLOW3\Package\Manager</classname> which is
+                  part of the package <package>\F3\FLOW3</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_FLOW3_Package_ManagerTest.php</filename></para>
 
                   <para>Contains the class
-                  <classname>F3::FLOW3::Package::ManagerTest</classname> which
+                  <classname>\F3\FLOW3\Package\ManagerTest</classname> which
                   is a test case for PHPUnit.</para>
                 </listitem>
               </itemizedlist></para>
@@ -666,7 +666,7 @@ $message = "Hey $name, you look $look today!";</literallayout>
         <para>...<example>
             <title>Classes</title>
 
-            <literallayout>namespace F3::MyPackage;
+            <literallayout>namespace F3\MyPackage;
 
 class MyObject {
 
@@ -865,7 +865,7 @@ interface SomeInterface {
  * @version    $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SomeException extends ::Exception {
+class SomeException extends \Exception {
  ...</literallayout>
         </example>
 
@@ -906,12 +906,12 @@ protected $title = 'Untitled';</literallayout>
  *
  * Paragraphs are seperated by a empty line.
  *
- * @param F3::FLOW3::Log::LoggerInterface $logger A logger
+ * @param \F3\FLOW3\Log\LoggerInterface $logger A logger
  * @param string $someString This parameter should contain some string
  * @return void
  * @author Your Name &lt;your@email.here&gt;
  */
-public function __construct(F3::FLOW3::Log::LoggerInterface $logger, $someString) {
+public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) {
  ...</literallayout>
         </example>
 
@@ -1099,7 +1099,7 @@ public function __construct(F3::FLOW3::Log::LoggerInterface $logger, $someString
 
             <literallayout>&lt;?php
 declare(ENCODING = 'utf-8');
-namespace F3::Your::Stuff::Here;
+namespace F3\Your\Stuff\Here;
 
 ...</literallayout>
           </example>
@@ -1161,9 +1161,9 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       an even more general <classname>FLOW3</classname> exception). This all
       works because we have the following hierarchy:</para>
 
-      <literallayout>+ F3::FLOW3::Exception
-  + F3::FLOW3::Object::Exception
-    + F3::FLOW3::Object::Exception::InvalidObjectName</literallayout>
+      <literallayout>+ \F3\FLOW3\Exception
+  + \F3\FLOW3\Object\Exception
+    + \F3\FLOW3\Object\Exception\InvalidObjectName</literallayout>
     </section>
 
     <section>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,11 +26,11 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class MockBackend extends F3::FLOW3::Cache::Backend::Null {
+class MockBackend extends \F3\FLOW3\Cache\Backend\Null {
 
 	/**
 	 * @var mixed

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property;
+namespace F3\FLOW3\Property;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -24,7 +24,7 @@ require_once (__DIR__ . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSette
  * @version     $Id$
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MapperTest extends F3::Testing::BaseTestCase {
+class MapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Just makes sure that it's prototype
@@ -33,8 +33,8 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function test_checkIfItsPrototype() {
-		$mapper1 = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
-		$mapper2 = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper1 = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
+		$mapper2 = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$this->assertNotSame($mapper1, $mapper2, 'The Property Mapper instances are not unique - seem to be singleton.');
 	}
 
@@ -46,10 +46,10 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 */
 	public function mapperOnlyAcceptsObjectsAsTarget() {
 		try {
-			$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+			$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 			$mapper->setTarget(array());
 			$this->fail('The Property Mapper accepted a non-object as a target.');
-		} catch(F3::FLOW3::Property::Exception::InvalidTargetObject $exception) {
+		} catch(\F3\FLOW3\Property\Exception\InvalidTargetObject $exception) {
 
 		}
 	}
@@ -61,14 +61,14 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mappingWithArrayObjectTargetBasicallyWorks() {
-		$target = new ::ArrayObject();
-		$source = new ::ArrayObject(
+		$target = new \ArrayObject();
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.'
 			)
 		);
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key2'));
 		$mapper->map($source);
@@ -82,12 +82,12 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mappingWithNestedArrayObjectWorks() {
-		$target = new ::ArrayObject();
-		$source = new ::ArrayObject(
+		$target = new \ArrayObject();
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => new ::ArrayObject(
+				'key3' => new \ArrayObject(
 					array(
 						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
 					)
@@ -97,7 +97,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 				)
 			)
 		);
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
 		$mapper->map($source);
@@ -111,12 +111,12 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mappingWithSetterAccesBasicallyWorks() {
-		$target = new F3::FLOW3::Fixture::Validation::ClassWithSetters();
-		$source = new ::ArrayObject (
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
+		$source = new \ArrayObject (
 			array(
 				'property1' => 'value1',
 				'property2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'property4' => new ::ArrayObject(
+				'property4' => new \ArrayObject(
 					array(
 						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
 					)
@@ -126,7 +126,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 				)
 			)
 		);
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('property1', 'property2', 'property3', 'property4'));
 		$mapper->map($source);
@@ -142,7 +142,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function onlyCertainAllowedPropertiesAreMapped() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -153,11 +153,11 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$target = new \ArrayObject();
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1', 'key3'));
-		$expectedTarget = new ::ArrayObject(
+		$expectedTarget = new \ArrayObject(
 			array(
 				'key1' => $source['key1'],
 				'key3' => $source['key3']
@@ -172,7 +172,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function wildCardWorksForSpecifyingAllowedProperties() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -183,8 +183,8 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$target = new \ArrayObject();
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key.*'));
 		$mapper->map($source);
@@ -196,7 +196,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function noPropertyIsMappedIfNoPropertiesAreAllowed() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -207,11 +207,11 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$target = new \ArrayObject();
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array());
-		$expectedTarget = new ::ArrayObject;
+		$expectedTarget = new \ArrayObject;
 		$mapper->map($source);
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing no property at all.');
 	}
@@ -221,7 +221,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function registeredPropertyEditorsAreCalledForTheRightProperties() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -232,11 +232,11 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$propertyEditor = $this->getMock('F3::FLOW3::Property::EditorInterface');
+		$target = new \ArrayObject();
+		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
 		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value1'));
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1'));
 		$mapper->registerPropertyEditor($propertyEditor);
@@ -249,7 +249,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function registeredFiltersAreCalledForTheRightProperties() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -260,11 +260,11 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$filter = $this->getMock('F3::FLOW3::Validation::FilterInterface');
+		$target = new \ArrayObject();
+		$filter = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 		$filter->expects($this->once())->method('filter')->with($this->equalTo('value1'));
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key1'));
 		$mapper->registerFilter($filter);
@@ -277,7 +277,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function mappingAnAllowedPropertyAddsAWarningIfItIsNotAccessibleInTheTargetObject() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -288,9 +288,9 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new F3::FLOW3::Fixture::Validation::ClassWithSetters();
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->map($source);
@@ -304,7 +304,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function mappingARequiredPropertyAddsAnErrorIfItIsNotAccessibleInTheTargetObject() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -315,9 +315,9 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new F3::FLOW3::Fixture::Validation::ClassWithSetters();
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->setRequiredProperties(array('key'));
@@ -332,7 +332,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function mappingANotDefinedPropertyAddsAnWarning() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -343,9 +343,9 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new F3::FLOW3::Fixture::Validation::ClassWithSetters();
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3'));
 		$mapper->map($source);
@@ -359,7 +359,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function onlyWriteOnNoErrorsModeBasicallyWorks() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -370,10 +370,10 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new F3::FLOW3::Fixture::Validation::ClassWithSetters();
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$originalTargetCopy = clone $target;
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->setRequiredProperties(array('notExistantKey'));
@@ -388,7 +388,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function validatorIsInvokedCorrectly() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -399,13 +399,13 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$validator = $this->getMock('F3::FLOW3::Validation::ObjectValidatorInterface');
+		$target = new \ArrayObject();
+		$validator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface');
 
 		$validator->expects($this->once())->method('validate');
 		$validator->expects($this->atLeastOnce())->method('isValidProperty');
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->registerValidator($validator);
@@ -417,7 +417,7 @@ class MapperTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function propertyIsNotMappedIfValidatorReturnsFalse() {
-		$source = new ::ArrayObject(
+		$source = new \ArrayObject(
 			array(
 				'key' => 'value1',
 				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
@@ -428,19 +428,19 @@ class MapperTest extends F3::Testing::BaseTestCase {
 			)
 		);
 
-		$target = new ::ArrayObject();
-		$validator = $this->getMock('F3::FLOW3::Validation::ObjectValidatorInterface');
+		$target = new \ArrayObject();
+		$validator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface');
 
 		$validator->expects($this->once())->method('validate')->will($this->returnValue(FALSE));
 		$validator->expects($this->atLeastOnce())->method('isValidProperty')->will($this->returnValue(FALSE));
 
-		$mapper = $this->objectManager->getObject('F3::FLOW3::Property::Mapper');
+		$mapper = $this->objectManager->getObject('F3\FLOW3\Property\Mapper');
 		$mapper->setTarget($target);
 		$mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
 		$mapper->registerValidator($validator);
 		$mapper->map($source);
 
-		$this->assertEquals($target, new ::ArrayObject());
+		$this->assertEquals($target, new \ArrayObject());
 	}
 }
 ?>

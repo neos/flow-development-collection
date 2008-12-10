@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -27,13 +27,13 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::JoinPoint.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\JoinPoint.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
+class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 
 	/**
-	 * @var F3::FLOW3::AOP::ProxyInterface A reference to the proxy object
+	 * @var \F3\FLOW3\AOP\ProxyInterface A reference to the proxy object
 	 */
 	protected $proxy;
 
@@ -53,7 +53,7 @@ class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
 	protected $methodArguments;
 
 	/**
-	 * @var F3::FLOW3::AOP::AdviceChainInterface The advice chain for this join point
+	 * @var \F3\FLOW3\AOP\AdviceChainInterface The advice chain for this join point
 	 */
 	protected $adviceChain;
 
@@ -70,18 +70,18 @@ class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param F3::FLOW3::AOP::ProxyInterface $proxy: Reference to the proxy class instance of the target class
+	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy: Reference to the proxy class instance of the target class
 	 * @param string $className: Class name of the target class this join point refers to
 	 * @param string $methodName: Method name of the target method which is about to or has been invoked
 	 * @param array $methodArguments: Array of method arguments which have been passed to the target method
-	 * @param F3::FLOW3::AOP::AdviceChainInterface $adviceChain: The advice chain for this join point
+	 * @param \F3\FLOW3\AOP\AdviceChainInterface $adviceChain: The advice chain for this join point
 	 * @param mixed $result: The result of the method invocations (only used for After Returning advices)
 	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::AOP::ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
-		if ($adviceChain !== NULL && !$adviceChain instanceof F3::FLOW3::AOP::AdviceChain) throw new InvalidArgumentException('The advice chain must be an instance of F3::FLOW3::AOP::AdviceChain.', 1171482537);
+	public function __construct(\F3\FLOW3\AOP\ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
+		if ($adviceChain !== NULL && !$adviceChain instanceof \F3\FLOW3\AOP\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \F3\FLOW3\AOP\AdviceChain.', 1171482537);
 
 		$this->proxy = $proxy;
 		$this->className = $className;
@@ -95,7 +95,7 @@ class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
 	/**
 	 * Returns the reference to the proxy class instance
 	 *
-	 * @return F3::FLOW3::AOP::ProxyInterface
+	 * @return \F3\FLOW3\AOP\ProxyInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxy() {
@@ -140,7 +140,7 @@ class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethodArgument($argumentName) {
-		if (!isset($this->methodArguments[$argumentName])) throw new RuntimeException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		if (!isset($this->methodArguments[$argumentName])) throw new \RuntimeException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
 		return $this->methodArguments[$argumentName];
 	}
 
@@ -159,7 +159,7 @@ class JoinPoint implements F3::FLOW3::AOP::JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return F3::FLOW3::AOP::AdviceChainInterface The advice chain
+	 * @return \F3\FLOW3\AOP\AdviceChainInterface The advice chain
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdviceChain() {

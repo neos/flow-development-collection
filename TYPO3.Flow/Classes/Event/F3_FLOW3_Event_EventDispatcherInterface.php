@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Event;
+namespace F3\FLOW3\Event;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,17 +36,17 @@ interface EventDispatcherInterface {
 	 * Whenever an Event is dispatched, all registered listeners for the given Event type are executed.
 	 *
 	 * @param string $type The event type.
-	 * @param Closure $listener Listener method.
+	 * @param \Closure $listener Listener method.
 	 * @return void
 	 */
-	public function addEventListener($type, ::Closure $listener);
+	public function addEventListener($type, \Closure $listener);
 
 	/**
 	 * Executes all listener methods which are registered for the respective Event type.
 	 *
-	 * @param F3::FLOW3::Event::Event $event The Event to be passed on to the listeners.
+	 * @param \F3\FLOW3\Event\Event $event The Event to be passed on to the listeners.
 	 * @return void
 	 */
-	public function dispatchEvent(F3::FLOW3::Event::Event $event);
+	public function dispatchEvent(\F3\FLOW3\Event\Event $event);
 }
 ?>

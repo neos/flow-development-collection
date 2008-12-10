@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Locale;
+namespace F3\FLOW3\Locale;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,7 +32,7 @@ namespace F3::FLOW3::Locale;
 class Service {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
@@ -54,11 +54,11 @@ class Service {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
@@ -69,7 +69,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$locale = $this->objectFactory->create('F3::FLOW3::Locale::Locale', $this->settings['locale']['defaultLocaleIdentifier']);
+		$locale = $this->objectFactory->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);
 		$this->settings['locale']['defaultLocale'] = $locale;
 	}
 

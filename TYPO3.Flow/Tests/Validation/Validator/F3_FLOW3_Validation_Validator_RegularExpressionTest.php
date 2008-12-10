@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,16 +29,16 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RegularExpressionTest extends F3::Testing::BaseTestCase {
+class RegularExpressionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
-		$regularExpressionValidator = new F3::FLOW3::Validation::Validator::RegularExpression('/^simple[0-9]expression$/');
+		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpression('/^simple[0-9]expression$/');
 		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($regularExpressionValidator->isValidProperty('simple1expression', $validationErrors));
 		$this->assertFalse($regularExpressionValidator->isValidProperty('simple1expressions', $validationErrors));
@@ -49,13 +49,13 @@ class RegularExpressionTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
-		$regularExpressionValidator = new F3::FLOW3::Validation::Validator::RegularExpression('/^simple[0-9]expression$/');
+		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpression('/^simple[0-9]expression$/');
 		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$regularExpressionValidator->isValidProperty('some subject that will not match', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221565130, $validationErrors[0]->getErrorCode());
 	}
 }

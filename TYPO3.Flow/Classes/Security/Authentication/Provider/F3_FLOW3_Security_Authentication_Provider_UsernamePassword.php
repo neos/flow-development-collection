@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication::Provider;
+namespace F3\FLOW3\Security\Authentication\Provider;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,7 +22,7 @@ namespace F3::FLOW3::Security::Authentication::Provider;
  */
 
 /**
- * An authentication provider that authenticates F3::FLOW3::Security::Authentication::Token::UsernamePassword tokens.
+ * An authentication provider that authenticates \F3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
  *
  * @package FLOW3
  * @subpackage Security
@@ -30,22 +30,22 @@ namespace F3::FLOW3::Security::Authentication::Provider;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderInterface {
+class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
 
 	/**
-	 * @var F3::FLOW3::Security::Authentication::EntryPointInterface The entry point for this provider
+	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface The entry point for this provider
 	 */
 	protected $entryPoint = NULL;
 
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $token The token that should be authenticated
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(F3::FLOW3::Security::Authentication::TokenInterface $token) {
-		if ($token instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword) return TRUE;
+	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
+		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) return TRUE;
 		return FALSE;
 	}
 
@@ -56,18 +56,18 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::ProviderI
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassname() {
-		return 'F3::FLOW3::Security::Authentication::Token::UsernamePassword';
+		return 'F3\FLOW3\Security\Authentication\Token\UsernamePassword';
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken The token to be authenticated
+	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(F3::FLOW3::Security::Authentication::TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof F3::FLOW3::Security::Authentication::Token::UsernamePassword)) throw new F3::FLOW3::Security::Exception::UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
+	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
+		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
 		if ($credentials['username'] === 'admin' && $credentials['password'] === 'password') $authenticationToken->setAuthenticationStatus(TRUE);

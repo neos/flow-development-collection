@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Error;
+namespace F3\FLOW3\Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Error;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ErrorTest extends F3::Testing::BaseTestCase {
+class ErrorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,7 +37,7 @@ class ErrorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function theConstructorSetsTheErrorMessageCorrectly() {
 		$errorMessage = 'The message';
-		$error = new F3::FLOW3::Error::Error($errorMessage, 0);
+		$error = new \F3\FLOW3\Error\Error($errorMessage, 0);
 
 		$this->assertEquals($errorMessage, $error->getErrorMessage());
 	}
@@ -48,7 +48,7 @@ class ErrorTest extends F3::Testing::BaseTestCase {
 	 */
 	public function theConstructorSetsTheErrorCodeCorrectly() {
 		$errorCode = 123456789;
-		$error = new F3::FLOW3::Error::Error('', $errorCode);
+		$error = new \F3\FLOW3\Error\Error('', $errorCode);
 
 		$this->assertEquals($errorCode, $error->getErrorCode());
 	}

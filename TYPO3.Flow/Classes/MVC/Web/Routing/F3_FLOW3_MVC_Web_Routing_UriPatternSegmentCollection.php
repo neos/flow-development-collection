@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,7 +22,7 @@ namespace F3::FLOW3::MVC::Web::Routing;
  */
 
 /**
- * A type-safe collection for F3::FLOW3::MVC::Web::Routing::RoutePartCollection instances.
+ * A type-safe collection for \F3\FLOW3\MVC\Web\Routing\RoutePartCollection instances.
  *
  * @package FLOW3
  * @subpackage MVC
@@ -30,16 +30,16 @@ namespace F3::FLOW3::MVC::Web::Routing;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class UriPatternSegmentCollection extends F3::FLOW3::Utility::GenericCollection {
+class UriPatternSegmentCollection extends \F3\FLOW3\Utility\GenericCollection {
 
 	public function __construct() {
-		parent::__construct('F3::FLOW3::MVC::Web::Routing::RoutePartCollection');
+		parent::__construct('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
 	}
 
 	/**
 	 * Returns the next RoutePart in the current uriPatternSegment or NULL if there are no RouteParts left.
 	 *
-	 * @return F3::FLOW3::MVC::Web::Routing::AbstractRoutePart next RoutePart in current Segment or NULL if no RouteParts are left.
+	 * @return \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart next RoutePart in current Segment or NULL if no RouteParts are left.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getNextRoutePartInCurrentUriPatternSegment() {

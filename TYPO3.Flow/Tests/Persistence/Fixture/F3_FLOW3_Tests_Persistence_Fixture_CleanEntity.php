@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Tests::Persistence::Fixture;
+namespace F3\FLOW3\Tests\Persistence\Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Tests::Persistence::Fixture;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @entity
  */
-class CleanEntity implements F3::FLOW3::AOP::ProxyInterface {
+class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 
 	/**
 	 * Just a normal string
@@ -50,16 +50,16 @@ class CleanEntity implements F3::FLOW3::AOP::ProxyInterface {
 	 * @return string Name of the target class
 	 */
 	public function AOPProxyGetProxyTargetClassName() {
-		return 'F3::FLOW3::Tests::Persistence::Fixture::CleanEntity';
+		return 'F3\FLOW3\Tests\Persistence\Fixture\CleanEntity';
 	}
 
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param F3::FLOW3::AOP::JoinPointInterface: The join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

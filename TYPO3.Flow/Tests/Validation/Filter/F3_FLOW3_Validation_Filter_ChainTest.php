@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Filter;
+namespace F3\FLOW3\Validation\Filter;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,15 +29,15 @@ namespace F3::FLOW3::Validation::Filter;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ChainTest extends F3::Testing::BaseTestCase {
+class ChainTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addingFilterssToAValidatorChainWorks() {
-		$filterChain = new F3::FLOW3::Validation::Filter::Chain();
-		$filterObject = $this->getMock('F3::FLOW3::Validation::FilterInterface');
+		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
+		$filterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 
 		$index = $filterChain->addFilter($filterObject);
 
@@ -49,16 +49,16 @@ class ChainTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function allFiltersInTheChainAreInvocedCorrectly() {
-		$filterChain = new F3::FLOW3::Validation::Filter::Chain();
-		$filterObject = $this->getMock('F3::FLOW3::Validation::FilterInterface');
+		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
+		$filterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 		$filterObject->expects($this->once())->method('filter');
-		$secondFilterObject = $this->getMock('F3::FLOW3::Validation::FilterInterface');
+		$secondFilterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 		$secondFilterObject->expects($this->once())->method('filter');
 
 		$filterChain->addFilter($filterObject);
 		$filterChain->addFilter($secondFilterObject);
 
-		$filterChain->filter('some subject', new F3::FLOW3::Validation::Errors());
+		$filterChain->filter('some subject', new \F3\FLOW3\Validation\Errors());
 	}
 
 	/**
@@ -66,9 +66,9 @@ class ChainTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removingAFilterOfTheFilterChainWorks() {
-		$filterChain = new F3::FLOW3::Validation::Filter::Chain();
-		$filterObject = $this->getMock('F3::FLOW3::Validation::FilterInterface');
-		$secondFilterObject = $this->getMock('F3::FLOW3::Validation::FilterInterface');
+		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
+		$filterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
+		$secondFilterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 		$filterChain->addFilter($filterObject);
 		$index = $filterChain->addFilter($secondFilterObject);
 
@@ -77,7 +77,7 @@ class ChainTest extends F3::Testing::BaseTestCase {
 		try {
 			$filterChain->getFilter($index);
 			$this->fail('The filter chain did not remove the filter with the given index.');
-		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
+		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
 
 		}
 	}
@@ -87,12 +87,12 @@ class ChainTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function accessingANotExistingFilterIndexThrowsException() {
-		$filterChain = new F3::FLOW3::Validation::Filter::Chain();
+		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
 
 		try {
 			$filterChain->getFilter(100);
 			$this->fail('The filter chain did throw an error on accessing an invalid filter index.');
-		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
+		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
 
 		}
 	}
@@ -102,12 +102,12 @@ class ChainTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removingANotExistingFilterIndexThrowsException() {
-		$filterChain = new F3::FLOW3::Validation::Filter::Chain();
+		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
 
 		try {
 			$filterChain->removeFilter(100);
 			$this->fail('The filter chain did throw an error on removing an invalid filter index.');
-		} catch(F3::FLOW3::Validation::Exception::InvalidChainIndex $exception) {
+		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
 
 		}
 	}

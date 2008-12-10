@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Interceptor;
+namespace F3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RequireAuthenticationTest extends F3::Testing::BaseTestCase {
+class RequireAuthenticationTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,11 +37,11 @@ class RequireAuthenticationTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManagerToPerformAuthentication() {
-		$authenticationManager = $this->getMock('F3::FLOW3::Security::Authentication::ManagerInterface');
+		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new F3::FLOW3::Security::Authorization::Interceptor::RequireAuthentication($authenticationManager);
+		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\RequireAuthentication($authenticationManager);
 		$interceptor->invoke();
 	}
 }

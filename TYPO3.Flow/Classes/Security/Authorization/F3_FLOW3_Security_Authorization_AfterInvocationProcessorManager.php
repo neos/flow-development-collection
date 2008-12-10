@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Security::Authorization;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AfterInvocationProcessorManager implements F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface {
+class AfterInvocationProcessorManager implements \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface {
 
 	/**
 	 * Processes the given return object. May throw an security exception or filter the result depending on the current user rights.
@@ -38,14 +38,14 @@ class AfterInvocationProcessorManager implements F3::FLOW3::Security::Authorizat
 	 * The naming convention is: [InterceptedClassName]_[InterceptedMethodName]_AfterInvocationProcessor
 	 *
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
+	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param object $object The return object to be processed
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint of the returning method
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 * @todo processors must also be configurable
 	 */
-	public function process(F3::FLOW3::Security::Context $securityContext, $object, F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function process(\F3\FLOW3\Security\Context $securityContext, $object, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

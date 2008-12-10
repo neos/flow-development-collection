@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Event;
+namespace F3\FLOW3\Event;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,15 +30,15 @@ namespace F3::FLOW3::Event;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EventTest extends F3::Testing::BaseTestCase {
+class EventTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function eventIsPrototype() {
-		$event1 = $this->objectManager->getObject('F3::FLOW3::Event::Event');
-		$event2 = $this->objectManager->getObject('F3::FLOW3::Event::Event');
+		$event1 = $this->objectManager->getObject('F3\FLOW3\Event\Event');
+		$event2 = $this->objectManager->getObject('F3\FLOW3\Event\Event');
 		$this->assertNotSame($event1, $event2, 'Obviously Event is not prototype!');
 	}
 
@@ -47,7 +47,7 @@ class EventTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function eventTypeIsSet() {
-		$event = new F3::FLOW3::Event::Event('testEventType');
+		$event = new \F3\FLOW3\Event\Event('testEventType');
 		$this->assertEquals($event->getType(), 'testEventType');
 	}
 

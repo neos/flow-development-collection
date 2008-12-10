@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security;
+namespace F3\FLOW3\Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -46,7 +46,7 @@ class Context {
 	protected $authenticateAllTokens = FALSE;
 
 	/**
-	 * @var F3::FLOW3::MVC::Request
+	 * @var \F3\FLOW3\MVC\Request
 	 */
 	protected $request;
 
@@ -59,11 +59,11 @@ class Context {
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager) {
+	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$settings = $configurationManager->getSettings('FLOW3');
 		$this->authenticateAllTokens = $settings['security']['authentication']['authenticateAllTokens'];
 	}
@@ -71,7 +71,7 @@ class Context {
 	/**
 	 * Sets the authentication tokens in the context, usually called by the security context holder
 	 *
-	 * @param array $authenticationTokens Array of F3::FLOW3::Security::Authentication::TokenInterface objects
+	 * @param array $authenticationTokens Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -82,11 +82,11 @@ class Context {
 	/**
 	 * Sets the request the context is used for.
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The current request
+	 * @param \F3\FLOW3\MVC\Request $request The current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setRequest(F3::FLOW3::MVC::Request $request) {
+	public function setRequest(\F3\FLOW3\MVC\Request $request) {
 		$this->request = $request;
 	}
 
@@ -124,11 +124,11 @@ class Context {
 	}
 
 	/**
-	 * Returns all F3::FLOW3::Security::Authentication::Tokens of the security context which are
+	 * Returns all \F3\FLOW3\Security\Authentication\Tokens of the security context which are
 	 * active for the current request. If a token has a request pattern that cannot match
 	 * against the current request it is determined as not active.
 	 *
-	 * @return array Array of set F3::FLOW3::Authentication::Token objects
+	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo cache tokens active for the current request
 	 */

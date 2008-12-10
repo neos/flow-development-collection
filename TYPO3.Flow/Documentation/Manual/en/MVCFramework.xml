@@ -110,9 +110,9 @@
       <example>
         <title>Hello World! controller</title>
 
-        <programlisting language="PHP">namespace F3::Demo::Controller;
+        <programlisting language="PHP">namespace F3\Demo\Controller;
 
-class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
+class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
    public function indexAction() {
       return "Hello World!";
    }
@@ -144,9 +144,9 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
       <example>
         <title>Hello World! view</title>
 
-        <programlisting>namespace F3::Demo::View;
+        <programlisting>namespace F3\Demo\View;
 
-class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
+class DefaultView extends \F3\FLOW3\MVC\View\AbstractView {
    public function render() {
       return "Hello World!";
    }
@@ -160,9 +160,9 @@ class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
       <example>
         <title>Improved Hello World! controller</title>
 
-        <programlisting>namespace F3::Demo::Controller;
+        <programlisting>namespace F3\Demo\Controller;
 
-class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
+class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
    public function indexAction() {
       return $this-&gt;view-&gt;render();
    }
@@ -338,7 +338,7 @@ class DefaultController extends F3::FLOW3::MVC::Controller::ActionController {
 
       <para>FLOW3 supports the most important request types out of the box.
       Additional request types can easily be implemented by extending the
-      <classname>F3::FLOW3::MVC::Request</classname> class and registering a
+      <classname>\F3\FLOW3\MVC\Request</classname> class and registering a
       request handling which can handle the new request type (and takes care
       of building the request object). Here are the request types which come
       with the default FLOW3 distribution:</para>

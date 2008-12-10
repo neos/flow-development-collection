@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Error;
+namespace F3\FLOW3\Error;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -64,7 +64,7 @@ class ErrorHandler {
 	 * @param string $errorFile: Name of the file the error occurred in
 	 * @param integer $errorLine: Line number where the error occurred
 	 * @return void
-	 * @throws F3::FLOW3::Error::Exception with the data passed to this method
+	 * @throws \F3\FLOW3\Error\Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
@@ -85,7 +85,7 @@ class ErrorHandler {
 		);
 
 		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
-			throw new F3::FLOW3::Error::Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			throw new \F3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
 		}
 	}
 }

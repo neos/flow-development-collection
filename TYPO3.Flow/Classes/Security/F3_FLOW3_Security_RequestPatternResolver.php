@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security;
+namespace F3\FLOW3\Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,18 +32,18 @@ namespace F3::FLOW3::Security;
 class RequestPatternResolver {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -52,7 +52,7 @@ class RequestPatternResolver {
 	 *
 	 * @param string $name The (short) name of the pattern
 	 * @return string The class name of the request pattern, NULL if no class was found.
-	 * @throws F3::FLOW3::Security::Exception::NoRequestPatternFound
+	 * @throws \F3\FLOW3\Security\Exception\NoRequestPatternFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClass($name) {
@@ -61,12 +61,12 @@ class RequestPatternResolver {
 		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
-		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3::FLOW3::Security::RequestPattern::' . $name);
+		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\RequestPattern\\' . $name);
 		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
 		if ($resolvedClassName != '') return $resolvedClassName;
 
-		throw new F3::FLOW3::Security::Exception::NoRequestPatternFound('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \F3\FLOW3\Security\Exception\NoRequestPatternFound('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

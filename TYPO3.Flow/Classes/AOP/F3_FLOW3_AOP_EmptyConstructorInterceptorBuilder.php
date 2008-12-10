@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,22 +26,22 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::EmptyConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\EmptyConstructorInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EmptyConstructorInterceptorBuilder extends F3::FLOW3::AOP::AbstractMethodInterceptorBuilder {
+class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds interception PHP code for an empty constructor (ie. a constructor without advice)
 	 *
 	 * @param string $methodName: Name of the method to build an interceptor for
 	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3::FLOW3::Reflection::ClassReflection $targetClass: A reflection of the target class to build the interceptor for
+	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass: A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, F3::FLOW3::Reflection::ClassReflection $targetClass) {
+	static public function build($methodName, array $interceptedMethods, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
 		$constructor = $targetClass->getConstructor();
 		$callParentCode = ($constructor === NULL) ? '' : 'parent::__construct(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
 		$parametersDocumentation = '';
@@ -53,7 +53,7 @@ class EmptyConstructorInterceptorBuilder extends F3::FLOW3::AOP::AbstractMethodI
 	 * ' . $parametersDocumentation . '
 	 * @return void
 	 */
-	public function ' . $methodName . '(' . $parametersCode . (F3::PHP6::Functions::strlen($parametersCode) ? ', ' : '') . 'F3::FLOW3::Object::ManagerInterface $AOPProxyObjectManager, F3::FLOW3::Object::FactoryInterface $AOPProxyObjectFactory) {
+	public function ' . $methodName . '(' . $parametersCode . (\F3\PHP6\Functions::strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
 		$this->objectManager = $AOPProxyObjectManager;
 		$this->objectFactory = $AOPProxyObjectFactory;
 		$this->AOPProxyDeclareMethodsAndAdvices();

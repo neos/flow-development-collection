@@ -47,13 +47,13 @@
             <title>Don't use the new operator</title>
 
             <programlisting language="php">   // Avoid this:
-$myFreshObject = new F3::MyPackage::MyClassName;</programlisting>
+$myFreshObject = new F3\MyPackage\MyClassName;</programlisting>
           </example>
 
           <example>
             <title>Ask the Object Factory</title>
 
-            <programlisting language="php">namespace F3::MyPackage;
+            <programlisting language="php">namespace F3\MyPackage;
 
 /**
  * A sample class
@@ -61,16 +61,16 @@ $myFreshObject = new F3::MyPackage::MyClassName;</programlisting>
 class SomeClass {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * Constructs this sample class
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this-&gt;objectFactory = $objectFactory;
 	}
 
@@ -80,13 +80,13 @@ class SomeClass {
 	 * @return void
 	 */
 	public function someFunction() {
-		$myFreshObject = $this-&gt;objectFactory-&gt;create('F3::MyPackage::MyClassName');
+		$myFreshObject = $this-&gt;objectFactory-&gt;create('F3\MyPackage\MyClassName');
 	}
 }</programlisting>
           </example>
 
           <para>In the above example you ask the Object Factory for a fresh
-          instance of <classname>F3::MyPackage::MyClassName</classname>. In
+          instance of <classname>F3\MyPackage\MyClassName</classname>. In
           order to get the Object Factory instance, just add a parameter to
           your class constructor as seen in the example - you will
           automatically get a reference <emphasis>injected</emphasis>.</para>
@@ -252,20 +252,20 @@ class SomeClass {
       you have seen in the shortcut example before, one way of getting it is
       adding a new parameter to your class constructor method:</para>
 
-      <programlisting language="php">public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+      <programlisting language="php">public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 	$this-&gt;objectFactory = $objectFactory;
 }</programlisting>
 
       <para>To explicitly create an instance of an object use the
       <function>create()</function> method:</para>
 
-      <programlisting language="php">$myObjectInstance = $objectFactory-&gt;create('F3::MyPackage::MyClassName');</programlisting>
+      <programlisting language="php">$myObjectInstance = $objectFactory-&gt;create('F3\MyPackage\MyClassName');</programlisting>
 
       <para>It is possible to pass arguments to the constructor of the object
       class just by adding them to the <function>create()</function>
       call:</para>
 
-      <programlisting language="php">$myObjectInstance = $objectFactory-&gt;create('F3::MyPackage::MyClassName', 'first argument', 'second argument');</programlisting>
+      <programlisting language="php">$myObjectInstance = $objectFactory-&gt;create('F3\MyPackage\MyClassName', 'first argument', 'second argument');</programlisting>
     </section>
 
     <section>
@@ -281,14 +281,14 @@ class SomeClass {
       shortcut example before, one way of getting it is adding a new parameter
       to your class constructor method (constructor injection):</para>
 
-      <programlisting language="php">public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+      <programlisting language="php">public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 	$this-&gt;objectManager = $objectManager;
 }</programlisting>
 
       <para>To explicitly retrieve an object instance use the
       <function>getObject()</function> method:</para>
 
-      <programlisting language="php">$myObjectInstance = $objectManager-&gt;getObject('F3::MyPackage::MyClassName');</programlisting>
+      <programlisting language="php">$myObjectInstance = $objectManager-&gt;getObject('F3\MyPackage\MyClassName');</programlisting>
 
       <para>Like with the <classname>ObjectFactory</classname>'s
       <methodname>create</methodname> method, it is possible to pass arguments
@@ -304,7 +304,7 @@ class SomeClass {
 
       <para>By default, the name of an object is identical to the PHP class
       which implements the object's functions. A class called
-      <classname>F3::MyPackage::MyImplementation</classname> will be
+      <classname>F3\MyPackage\MyImplementation</classname> will be
       automatically available as an object with the exact same name. Every
       part of the system which asks for an object instance with a certain name
       will therefore - by default - get an instance of the class of that name.
@@ -315,11 +315,11 @@ class SomeClass {
 
       <para>If the object name is the same as the name of a PHP interface, it
       is often referred to as a <emphasis>object type</emphasis>. An interface
-      called <interfacename>F3::MyPackage::MyInterface</interfacename> will be
+      called <interfacename>F3\MyPackage\MyInterface</interfacename> will be
       available as an object name as long as there exists at least one class
       implemententing that interface.</para>
 
-      <programlisting language="php">$otherObjectInstance = $objectFactory-&gt;create('F3::SomePackage::SomeInterfaceName');</programlisting>
+      <programlisting language="php">$otherObjectInstance = $objectFactory-&gt;create('F3\SomePackage\SomeInterfaceName');</programlisting>
     </section>
   </section>
 
@@ -363,7 +363,7 @@ class SomeClass {
       <para>In the context of the previous example it means that the
       authentication object announces that it needs a logger which implements
       a certain PHP interface (eg. the
-      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename>). The
+      <interfacename>\F3\FLOW3\Log\LoggerInterface</interfacename>). The
       object itself has no control over what kind of logger (simple file
       logger, sms-logger, ...) it finally gets and it doesn't have to care
       about it anyway as long as it matches the expected API. As soon as the
@@ -404,7 +404,7 @@ class SomeClass {
 
 	protected $logger;
 
-	public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
+	public function __construct(\F3\FLOW3\Log\LoggerInterface $logger) {
 		$this-&gt;logger = $logger;
 	}
 
@@ -416,7 +416,7 @@ class SomeClass {
 
         <para>So far there's nothing special about this class, it just makes
         sure that an instance of a class implementing the
-        <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> is
+        <interfacename>\F3\FLOW3\Log\LoggerInterface</interfacename> is
         passed to the constructor. However, this is already a quite flexible
         approach because the type of logger can be determined from outside by
         just passing one or the another implementation to the
@@ -426,7 +426,7 @@ class SomeClass {
         called <firstterm>Autowiring</firstterm> all dependencies which were
         declared in a constructor will be injected automagically if the
         constructor argument provides a type definition (ie.
-        <classname>F3::FLOW3::Log::LoggerInterface</classname> in the above
+        <classname>\F3\FLOW3\Log\LoggerInterface</classname> in the above
         example). Autowiring is activated by default (but can be switched
         off), therefore all you have to do is to write your constructor
         method.</para>
@@ -441,14 +441,14 @@ class SomeClass {
 
           <programlisting language="yaml">F3_Authentication_LDAPAuthentication:
 constructorArguments:
-	1: { reference: F3::FLOW3::Log::ASpecialLogger }</programlisting>
+	1: { reference: \F3\FLOW3\Log::ASpecialLogger }</programlisting>
         </example>
 
         <para>The three lines above define that an object instance of
-        <interfacename>F3::FLOW3::Log::ASpecialLogger</interfacename> must be
+        <interfacename>\F3\FLOW3\Log::ASpecialLogger</interfacename> must be
         passed to the first argument of the constructor when an instance of
         the object
-        <classname>F3::Authentication::LDAPAuthentication</classname> is
+        <classname>F3\Authentication::LDAPAuthentication</classname> is
         created. Mind that in the configuration file the class name is written
         with underscores!</para>
       </section>
@@ -473,7 +473,7 @@ constructorArguments:
 		$this-&gt;logger-&gt;log('tried to authenticate');
 	}
 
-	public function setSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
+	public function setSomeLogger(\F3\FLOW3\Log\LoggerInterface $someLogger) {
 		$this-&gt;someLogger = $someLogger;
 	}
 }</programlisting>
@@ -490,7 +490,7 @@ constructorArguments:
 
           <programlisting language="php">F3_Authentication_LDAPAuthentication:
 properties:
-	someLogger: { reference: F3::FLOW3::Log::LoggerInterface }</programlisting>
+	someLogger: { reference: \F3\FLOW3\Log\LoggerInterface }</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -514,7 +514,7 @@ properties:
 		$this-&gt;logger-&gt;log('tried to authenticate');
 	}
 
-	public function injectSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
+	public function injectSomeLogger(\F3\FLOW3\Log\LoggerInterface $someLogger) {
 		$this-&gt;someLogger = $someLogger;
 	}
 }</programlisting>
@@ -608,7 +608,7 @@ properties:
         <programlisting language="php">public class LDAPAuthentication {
 
 	/**
-	 * @var F3::FLOW3::Log::LoggerInterface
+	 * @var \F3\FLOW3\Log\LoggerInterface
 	 */
 	protected $someLogger;
 
@@ -625,12 +625,12 @@ properties:
 	/**
 	 * Injects a logger
 	 *
-	 * @param F3::FLOW3::Log::LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
+	 * @param \F3\FLOW3\Log\LoggerInterface $someLogger A logger which is used for logging LDAP authentication events
 	 * @return void
 	 * @author Robert Lemke &lt;robert@typo3.org&gt;
 	 * @optional
 	 */
-	public function injectSomeLogger(F3::FLOW3::Log::LoggerInterface $someLogger) {
+	public function injectSomeLogger(\F3\FLOW3\Log\LoggerInterface $someLogger) {
 		$this-&gt;someLogger = $someLogger;
 	}
 }</programlisting>
@@ -746,9 +746,9 @@ properties:
 
 F3_Authentication_LDAPAuthentication:
 constructorArguments:
-	1: { reference: F3::FLOW3::Log::LoggerInterface }
+	1: { reference: \F3\FLOW3\Log\LoggerInterface }
 
-F3_Authentication_LDAPAuthentication: constructorArguments: 2: reference: F3::LDAP::LDAPServerInterface
+F3_Authentication_LDAPAuthentication: constructorArguments: 2: reference: \F3\LDAP::LDAPServerInterface
 
 F3_Authentication_LDAPAuthentication:
 constructorArguments:
@@ -783,8 +783,8 @@ declare(ENCODING = 'utf-8');
  * @version $Id: Objects.php 123 2008-01-01 12:00:00Z robert $
  */
 
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3::FLOW3::Log::LoggerInterface';
-$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3::LDAP::LDAPServerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[1]-&gt;reference = 'F3\FLOW3\Log\LoggerInterface';
+$c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[2]-&gt;reference = 'F3\LDAP::LDAPServerInterface';
 $c-&gt;F3_Authentication_LDAPAuthentication-&gt;constructorArguments[3] = 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH';
 
 ?&gt;</programlisting>
@@ -852,7 +852,7 @@ class SomeClass {
       <example>
         <title>A simple Greeter class</title>
 
-        <programlisting language="php">namespace F3::MyPackage;
+        <programlisting language="php">namespace F3\MyPackage;
 
 class Greeter {
 	public function sayHelloTo($name) {
@@ -862,15 +862,15 @@ class Greeter {
       </example>
 
       <para>During initialization above class will automatically be registered
-      as the object <classname>F3::MyPackage::Greeter</classname> and is
+      as the object <classname>F3\MyPackage\Greeter</classname> and is
       available to other objects. In the code of another object you might find
       these lines:</para>
 
       <example>
         <title>Code using the object F3_MyPackage_Greeter</title>
 
-        <programlisting language="php">   // Use setter injection for fetching an instance of the F3::MyPackage::Greeter object:
-public function injectGreeter(F3::MyPackage::Greeter $greeter) {
+        <programlisting language="php">   // Use setter injection for fetching an instance of the F3\MyPackage\Greeter object:
+public function injectGreeter(F3\MyPackage\Greeter $greeter) {
 	$this-&gt;greeter = $greeter;
 }
 
@@ -881,16 +881,16 @@ public function someAction() {
 
       <para>Great, that looks all fine and dandy but what if we want to use
       the much better object
-      <classname>F3::OtherPackage::GreeterWithCompliments</classname>? Well,
+      <classname>F3\OtherPackage\GreeterWithCompliments</classname>? Well,
       you just configure the object
-      <classname>F3::MyPackage::Greeter</classname> to use a different
+      <classname>F3\MyPackage\Greeter</classname> to use a different
       class:</para>
 
       <example>
         <title>Objects.yaml file for object replacement</title>
 
-        <programlisting language="php">   # Change the name of the class which represents the object "F3::MyPackage::Greeter":
-F3_MyPackage_Greeter: className: 'F3::OtherPackage::GreeterWithCompliments'</programlisting>
+        <programlisting language="php">   # Change the name of the class which represents the object "F3\MyPackage\Greeter":
+F3_MyPackage_Greeter: className: 'F3\OtherPackage\GreeterWithCompliments'</programlisting>
       </example>
 
       <para>Now all objects who ask for a traditional greeter will get the
@@ -903,21 +903,21 @@ F3_MyPackage_Greeter: className: 'F3::OtherPackage::GreeterWithCompliments'</pro
       <example>
         <title>The Greeter object type</title>
 
-        <programlisting>namespace F3::MyPackage;
+        <programlisting>namespace F3\MyPackage;
 
 interface GreeterInterface {
 	public function sayHelloTo($name);
 }
 
-class Greeter implements F3::MyPackage::GreeterInterface {
+class Greeter implements \F3\MyPackage\GreeterInterface {
 	public function sayHelloTo($name) {
 		echo('Hello ' . $name);
 	}
 }
 
-namespace F3::OtherPackage;
+namespace F3\OtherPackage;
 
-class GreeterWithCompliments implements F3::MyPackage::GreeterInterface{
+class GreeterWithCompliments implements \F3\MyPackage\GreeterInterface{
 	public function sayHelloTo($name) {
 		echo('Hello ' . $name . '! You look so great!');
 	}
@@ -931,10 +931,10 @@ class GreeterWithCompliments implements F3::MyPackage::GreeterInterface{
 
       <example>
         <title>Code using the object type
-        F3::MyPackage::GreeterInterface</title>
+        F3\MyPackage\GreeterInterface</title>
 
-        <programlisting>   // Use setter injection for fetching an instance of the F3::MyPackage::Greeter object:
-public function injectGreeter(F3::MyPackage::GreeterInterface $greeter) {
+        <programlisting>   // Use setter injection for fetching an instance of the F3\MyPackage\Greeter object:
+public function injectGreeter(F3\MyPackage\GreeterInterface $greeter) {
 	$this-&gt;greeter = $greeter;
 }
 
@@ -944,13 +944,13 @@ public function someAction() {
       </example>
 
       <para>Finally we have to set which implementation of the
-      <interfacename>F3::MyPackage::GreeterInterface</interfacename> should be
+      <interfacename>F3\MyPackage\GreeterInterface</interfacename> should be
       active:</para>
 
       <example>
         <title>Objects.yaml file for object type definition</title>
 
-        <para><programlisting>F3_MyPackage_GreeterInterface: className: 'F3::OtherPackage::GreeterWithCompliments'</programlisting></para>
+        <para><programlisting>F3_MyPackage_GreeterInterface: className: 'F3\OtherPackage\GreeterWithCompliments'</programlisting></para>
       </example>
     </section>
 
@@ -1017,13 +1017,13 @@ public function someAction() {
 	protected $LDAPServer;
 	protected $distinguishedName = '';
 
-	public function __construct(F3::FLOW3::Log::LoggerInterface $logger, F3::LDAP::LDAPServerInterface $LDAPServer, $distinguishedName) {
+	public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, \F3\LDAP::LDAPServerInterface $LDAPServer, $distinguishedName) {
 		$this-&gt;logger = $logger;
 		$this-&gt;LDAPServer = $LDAPServer;
 		$this-&gt;distinguishedName = $distinguishedName;
 	}
 
-	public function authenticate(F3::Authentication::CredentialsInterface $credentials) {
+	public function authenticate(F3\Authentication\CredentialsInterface $credentials) {
 		$this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
 		$this-&gt;logger-&gt;log('tried to authenticate');
 	}
@@ -1037,8 +1037,8 @@ public function someAction() {
 constructorArguments:
 
 	# Inject two object references as the first two arguments:
-	1: { reference: 'F3::FLOW3::Log::LoggerInterface' }
-	2: { reference: 'F3::LDAP::LDAPServerInterface' }
+	1: { reference: 'F3\FLOW3\Log\LoggerInterface' }
+	2: { reference: 'F3\LDAP::LDAPServerInterface' }
 
 	# Inject a straight value as the third argument:
 	3: 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH'</programlisting>
@@ -1048,8 +1048,8 @@ constructorArguments:
           <para>It is usually not necessary to configure injection of
           references explicitly. It is much more convent to just declare the
           type of the constructor arguments (like
-          <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> and
-          <interfacename>F3::LDAP::LDAPServerInterface in the above example)
+          <interfacename>\F3\FLOW3\Log\LoggerInterface</interfacename> and
+          <interfacename>\F3\LDAP::LDAPServerInterface in the above example)
           and let the Autowiring feature configure and resolve the
           dependencies for you.</interfacename></para>
         </note>
@@ -1071,16 +1071,16 @@ constructorArguments:
 	protected $LDAPServer;
 	protected $distinguishedName = '';
 
-	public function authenticate(F3::Authentication::CredentialsInterface $credentials) {
+	public function authenticate(F3\Authentication\CredentialsInterface $credentials) {
 		$this-&gt;LDAPServer-&gt;doSomeMagic($this-&gt;distinguishedName);
 		$this-&gt;logger-&gt;log('tried to authenticate');
 	}
 
-	public function injectLogger(F3::FLOW3::Log::LoggerInterface $logger) {
+	public function injectLogger(\F3\FLOW3\Log\LoggerInterface $logger) {
 		$this-&gt;logger = $logger;
 	}
 
-	public function injectLDAPServer(F3::LDAP::LDAPServerInterface $LDAPServer) {
+	public function injectLDAPServer(\F3\LDAP::LDAPServerInterface $LDAPServer) {
 		$this-&gt;LDAPServer = $LDAPServer;
 	}
 
@@ -1097,8 +1097,8 @@ constructorArguments:
 properties:
 
 	# Inject two object references:
-	logger:     { reference: 'F3::FLOW3::Log::LoggerInterface' }
-	LDAPServer: { reference: 'F3::LDAP::LDAPServerInterface' }
+	logger:     { reference: 'F3\FLOW3\Log\LoggerInterface' }
+	LDAPServer: { reference: 'F3\LDAP::LDAPServerInterface' }
 
 	# Inject a straight value:
 	distinguishedName: 'cn=John Smith,ou=TYPO3 Development,o=TYPO3 Association,c=CH'</programlisting>
@@ -1184,9 +1184,9 @@ properties:
       <example>
         <title>Sample Objects.php with different scopes</title>
 
-        <para><programlisting language="php">$c-&gt;F3_MyPackage_ASingletonClass-&gt;scope = F3::FLOW3::Object::Configuration::SCOPE_SINGLETON;
-$c-&gt;F3_MyPackage_APrototypeClass-&gt;scope = F3::FLOW3::Object::Configuration::SCOPE_PROTOTYPE;
-$c-&gt;F3_MyPackage_ASessionClass-&gt;scope = F3::FLOW3::Object::Configuration::SCOPE_SESSION;</programlisting></para>
+        <para><programlisting language="php">$c-&gt;F3_MyPackage_ASingletonClass-&gt;scope = \F3\FLOW3\Object\Configuration::SCOPE_SINGLETON;
+$c-&gt;F3_MyPackage_APrototypeClass-&gt;scope = \F3\FLOW3\Object\Configuration::SCOPE_PROTOTYPE;
+$c-&gt;F3_MyPackage_ASessionClass-&gt;scope = \F3\FLOW3\Object\Configuration::SCOPE_SESSION;</programlisting></para>
       </example>
 
       <note>
@@ -1209,17 +1209,17 @@ $c-&gt;F3_MyPackage_ASessionClass-&gt;scope = F3::FLOW3::Object::Configuration::
       <example>
         <title>A simple addressbook</title>
 
-        <programlisting language="php">namespace F3::Address;
+        <programlisting language="php">namespace F3\Address;
 
 class Adressbook {
 
 	protected $addresses = array();
 
-	public __construct(F3::iCal::iCalConnectorInterface $iCalConnector) {
+	public __construct(\F3\iCal::iCalConnectorInterface $iCalConnector) {
 		...
 	}
 
-	public addAddress(F3::Address::Address $address) {
+	public addAddress(F3\Address\Address $address) {
 		$this-&gt;addresses[] = $address;
 	}
 
@@ -1238,14 +1238,14 @@ class Address {
 
       <itemizedlist>
         <listitem>
-          <para>The class <classname>F3::Address::Addressbook</classname> is
+          <para>The class <classname>F3\Address\Addressbook</classname> is
           supposed to be a Singleton and obviously depends on a third object
-          type <classname>F3::iCal::iCalConnectorInterface</classname> which
+          type <classname>\F3\iCal::iCalConnectorInterface</classname> which
           is possibly solved by Dependency Injection.</para>
         </listitem>
 
         <listitem>
-          <para>The class <classname>F3::Address::Adress</classname>
+          <para>The class <classname>F3\Address\Adress</classname>
           represents the address entity and its instances must not be unique -
           we surely want more than one address. The Address object also
           expects a few parameters passed to its constructor.</para>
@@ -1259,13 +1259,13 @@ class Address {
         <title>Passing constructor arguments</title>
 
         <programlisting>   # Explicitly fetch a unique instance of the addressbook (but better use Dependency Injection ...):
-$myAddressbook = $objectManager-&gt;getObject('F3::Address::Addressbook');
+$myAddressbook = $objectManager-&gt;getObject('F3\Address\Addressbook');
 
 	# Create two new addresses and add them to the addressbook:
-$newAddress = $objectFactory-&gt;create('F3::Address::Address', 'Tryggevældevej', '2720', 'København', 'DK');
+$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', '2720', 'København', 'DK');
 $myAddresbook-&gt;addAddress($newAddress);
 
-$newAddress = $objectFactory-&gt;create('F3::Address::Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
+$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
 $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       </example>
     </section>
@@ -1285,14 +1285,14 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       <example>
         <title>An autowired logger</title>
 
-        <programlisting language="PHP">public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
+        <programlisting language="PHP">public function __construct(\F3\FLOW3\Log\LoggerInterface $logger) {
 	$logger-&gt;log("Hooray");
 }</programlisting>
       </example>
 
       <para>The constructor of the above example will get an instance of the
       object of type
-      <interfacename>F3::FLOW3::Log::LoggerInterface</interfacename> injected
+      <interfacename>\F3\FLOW3\Log\LoggerInterface</interfacename> injected
       and can use it for further operations.</para>
 
       <para>If, for some reason, you need to disable autowiring support, you
@@ -1379,7 +1379,7 @@ autoWiringMode: off;</programlisting>
 
 	protected $logger;
 
-	public function __construct(F3::FLOW3::Log::LoggerInterface $logger) {
+	public function __construct(\F3\FLOW3\Log\LoggerInterface $logger) {
 		$this-&gt;logger = $logger;
 	}
 

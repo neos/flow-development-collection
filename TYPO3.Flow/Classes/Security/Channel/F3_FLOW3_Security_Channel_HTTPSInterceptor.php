@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Channel;
+namespace F3\FLOW3\Security\Channel;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Channel;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Security::Channel;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class HTTPSInterceptor implements F3::FLOW3::Security::Authorization::InterceptorInterface {
+class HTTPSInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * @var boolean If set to TRUE, the HTTPS protocol will be einforced.
@@ -40,16 +40,16 @@ class HTTPSInterceptor implements F3::FLOW3::Security::Authorization::Intercepto
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current security context
-	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
-	 * @param F3::FLOW3::Log::LoggerInterface $logger A logger to log security relevant actions
+	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
+	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication Manager
+	 * @param \F3\FLOW3\Log\LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					F3::FLOW3::Security::Context $securityContext,
-					F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager,
-					F3::FLOW3::Log::LoggerInterface $logger
+					\F3\FLOW3\Security\Context $securityContext,
+					\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager,
+					\F3\FLOW3\Log\LoggerInterface $logger
 					) {
 
 	}

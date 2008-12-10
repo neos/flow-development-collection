@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation;
+namespace F3\FLOW3\Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,19 +29,19 @@ namespace F3::FLOW3::Validation;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ValidatorResolverTest extends F3::Testing::BaseTestCase {
+class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorThrowsExceptionIfNoValidatorIsAvailable() {
-		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
+		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
 
 		try {
 			$validatorResolver->resolveValidator('NotExistantClass');
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Validation::Exception::NoValidatorFound $exception) {
+		} catch (\F3\FLOW3\Validation\Exception\NoValidatorFound $exception) {
 
 		}
 	}
@@ -51,10 +51,10 @@ class ValidatorResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorReturnsTheCorrectValidator() {
-		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
-		$validator = $validatorResolver->resolveValidator('F3::TestPackage::BasicClass');
+		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
+		$validator = $validatorResolver->resolveValidator('F3\TestPackage\BasicClass');
 
-		if (!($validator instanceof F3::TestPackage::BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
+		if (!($validator instanceof \F3\TestPackage\BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
 	}
 
 	/**
@@ -62,12 +62,12 @@ class ValidatorResolverTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveValidatorThrowsExceptionIfAvailableValidatorDoesNotImplementTheValidatorInterface() {
-		$validatorResolver = $this->objectManager->getObject('F3::FLOW3::Validation::ValidatorResolver');
+		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
 
 		try {
-			$validatorResolver->resolveValidator('F3::TestPackage::SomeTest');
+			$validatorResolver->resolveValidator('F3\TestPackage\SomeTest');
 			$this->fail('No exception was thrown.');
-		} catch (F3::FLOW3::Validation::Exception::NoValidatorFound $exception) {
+		} catch (\F3\FLOW3\Validation\Exception\NoValidatorFound $exception) {
 
 		}
 	}

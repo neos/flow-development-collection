@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Utility;
+namespace F3\FLOW3\Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Utility;
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -27,12 +27,12 @@ namespace F3::FLOW3::Utility;
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
  */
-class SuperGlobalReplacement extends ::ArrayObject {
+class SuperGlobalReplacement extends \ArrayObject {
 
 	/**
 	 * @var string Name of the super global which was replaced by this object
@@ -160,7 +160,7 @@ class SuperGlobalReplacement extends ::ArrayObject {
 			$callingMethod = 'in file ' . $debugBacktrace[1]['file'];
 		}
 		$message = sprintf('You tried to access the $%s super global in %s but access to this variable has been restricted. %s', $this->replacedSuperGlobalName, $callingMethod, $this->accessHintMessage);
-		throw new F3::FLOW3::Utility::Exception($message, 1176548856);
+		throw new \F3\FLOW3\Utility\Exception($message, 1176548856);
 	}
 }
 ?>

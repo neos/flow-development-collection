@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property::Exception;
+namespace F3\FLOW3\Property\Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Property::Exception;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class InvalidDataType extends F3::FLOW3::Property::Exception {
+class InvalidDataType extends \F3\FLOW3\Property\Exception {
 
 }
 

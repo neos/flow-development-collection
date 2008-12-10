@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property::DataType;
+namespace F3\FLOW3\Property\DataType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,10 +19,10 @@ namespace F3::FLOW3::Property::DataType;
  * Testcase for the MVC URI class
  * 
  * @package		FLOW3
- * @version 	$Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class URITest extends F3::Testing::BaseTestCase {
+class URITest extends \F3\Testing\BaseTestCase {
 	
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
@@ -32,7 +32,7 @@ class URITest extends F3::Testing::BaseTestCase {
 	 */
 	public function constructorParsesAFullBlownURIStringCorrectly() {
 		$URIString = 'http://username:password@subdomain.domain.com:8080/path1/path2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchor';
-		$URI = new F3::FLOW3::Property::DataType::URI($URIString);
+		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
 
 		$check = (
 			$URI->getScheme() == 'http' &&
@@ -54,7 +54,7 @@ class URITest extends F3::Testing::BaseTestCase {
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$URIString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');
-		$URI = new F3::FLOW3::Property::DataType::URI($URIString);
+		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
 
 		$check = (
 			$URI->getScheme() == 'http' &&
@@ -74,7 +74,7 @@ class URITest extends F3::Testing::BaseTestCase {
 	 */
 	public function stringRepresentationIsCorrect() {
 		$URIString = 'http://username:password@subdomain.domain.com:1234/pathx1/pathx2/index.php?argument1=value1&argument2=value2&argument3[subargument1]=subvalue1#anchorman';
-		$URI = new F3::FLOW3::Property::DataType::URI($URIString);
+		$URI = new \F3\FLOW3\Property\DataType\URI($URIString);
 		$this->assertEquals($URIString, (string)$URI, 'The string representation of the URI is not equal to the original URI string.');
 	}
 }

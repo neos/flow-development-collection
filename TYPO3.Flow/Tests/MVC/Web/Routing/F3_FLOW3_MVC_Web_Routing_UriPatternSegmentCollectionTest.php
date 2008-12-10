@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,25 +29,25 @@ namespace F3::FLOW3::MVC::Web::Routing;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class UriPatternSegmentCollectionTest extends F3::Testing::BaseTestCase {
+class UriPatternSegmentCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function uriPatternSegmentCollectionIsPrototype() {
-		$uriPatternSegmentCollection1 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
-		$uriPatternSegmentCollection2 = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$uriPatternSegmentCollection1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
+		$uriPatternSegmentCollection2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
 		$this->assertNotSame($uriPatternSegmentCollection1, $uriPatternSegmentCollection2, 'Obviously UriPatternSegmentCollection is not prototype!');
 	}
 
 	/**
 	 * @test
-	 * @expectedException ::InvalidArgumentException
+	 * @expectedException \InvalidArgumentException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function addingStringToUriSegmentCollectionThrowsException() {
-		$uriPatternSegmentCollection = new F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection();
+		$uriPatternSegmentCollection = new \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection();
 		$uriPatternSegmentCollection->append('some string');
 	}
 
@@ -56,8 +56,8 @@ class UriPatternSegmentCollectionTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function routePartCollectionsCanBeAddedToUriSegmentCollection() {
-		$uriPatternSegmentCollection = new F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection();
-		$mockRoutePartCollection = $this->getMock('F3::FLOW3::MVC::Web::Routing::RoutePartCollection');
+		$uriPatternSegmentCollection = new \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection();
+		$mockRoutePartCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
 		$uriPatternSegmentCollection->append($mockRoutePartCollection);
 		$this->assertSame($uriPatternSegmentCollection->current(), $mockRoutePartCollection);
 	}
@@ -67,7 +67,7 @@ class UriPatternSegmentCollectionTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function nextRoutePartIsNullWhenCollectionIsEmpty() {
-		$uriPatternSegmentCollection = new F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection();
+		$uriPatternSegmentCollection = new \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection();
 		$this->assertNull($uriPatternSegmentCollection->getNextRoutePartInCurrentUriPatternSegment());
 	}
 
@@ -76,9 +76,9 @@ class UriPatternSegmentCollectionTest extends F3::Testing::BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function nextRoutePartReturnsRoutePart() {
-		$uriPatternSegmentCollection = new F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection();
-		$mockRoutePart = $this->getMock('F3::FLOW3::MVC::Web::Routing::AbstractRoutePart');
-		$mockRoutePartCollection = $this->getMock('F3::FLOW3::MVC::Web::Routing::RoutePartCollection');
+		$uriPatternSegmentCollection = new \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection();
+		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
+		$mockRoutePartCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
 		$mockRoutePartCollection->expects($this->once())->method('offsetExists')->with(1)->will($this->returnValue(TRUE));
 		$mockRoutePartCollection->expects($this->once())->method('offsetGet')->will($this->returnValue($mockRoutePart));
 		$uriPatternSegmentCollection->append($mockRoutePartCollection);

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,16 +29,16 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NumberRangeTest extends F3::Testing::BaseTestCase {
+class NumberRangeTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(10.5, $validationErrors));
 	}
@@ -48,9 +48,9 @@ class NumberRangeTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($numberRangeValidator->isValidProperty(1000.1, $validationErrors));
 	}
@@ -60,9 +60,9 @@ class NumberRangeTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(1000, 0);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1000, 0);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(100, $validationErrors));
 	}
@@ -72,9 +72,9 @@ class NumberRangeTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForAString() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($numberRangeValidator->isValidProperty('not a number', $validationErrors));
 	}
@@ -84,13 +84,13 @@ class NumberRangeTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorCreatesTheCorrectErrorObjectForANumberOutOfRange() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(1, 42);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1, 42);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberRangeValidator->isValidProperty(4711, $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221561046, $validationErrors[0]->getErrorCode());
 	}
 
@@ -99,13 +99,13 @@ class NumberRangeTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorCreatesTheCorrectErrorObjectForAStringSubject() {
-		$numberRangeValidator = new F3::FLOW3::Validation::Validator::NumberRange(1, 42);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1, 42);
 		$numberRangeValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberRangeValidator->isValidProperty('this is not between 1 an 42', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221563685, $validationErrors[0]->getErrorCode());
 	}
 }

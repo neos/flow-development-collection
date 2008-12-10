@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation;
+namespace F3\FLOW3\Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Validation;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Error extends F3::FLOW3::Error::Error {
+class Error extends \F3\FLOW3\Error\Error {
 
 	/**
 	 * @var string The default (english) error message.

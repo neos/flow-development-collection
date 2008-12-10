@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,18 +36,18 @@ namespace F3::FLOW3::Object;
 class ClassFileManipulator {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructs the class file manipulator
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -78,7 +78,7 @@ class ClassFileManipulator {
 			if (is_array($tokens[$i])) {
 				switch ($tokens[$i][0]) {
 					case T_IMPLEMENTS :
-						#$targetCode .= 'implements F3::FLOW3::Object::ManagerAwareInterface,';
+						#$targetCode .= 'implements \F3\FLOW3\Object\ManagerAwareInterface,';
 						break;
 					case T_NEW :
 						$manipulated = $this->replaceNewOperator($tokens, $i, $targetCode);

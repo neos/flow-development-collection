@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Package;
+namespace F3\FLOW3\Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::Meta.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::Meta.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Meta implements F3::FLOW3::Package::MetaInterface {
+class Meta implements \F3\FLOW3\Package\MetaInterface {
 
 	/**
 	 * @var	string The package key
@@ -37,7 +37,7 @@ class Meta implements F3::FLOW3::Package::MetaInterface {
 	protected $packageKey;
 
 	/**
-	 * @var	F3::FLOW3::Package::Version	The version number
+	 * @var	\F3\FLOW3\Package\Version	The version number
 	 */
 	protected $version;
 
@@ -50,12 +50,12 @@ class Meta implements F3::FLOW3::Package::MetaInterface {
 	 * Constructor
 	 *
 	 * @param string $packageKey The package key
-	 * @param SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
+	 * @param \SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo  Validate the $packageMetaXML as soon as we have a DTD / Schema for it
+	 * @todo Validate the $packageMetaXML as soon as we have a DTD / Schema for it
 	 */
-	public function __construct($packageKey, ::SimpleXMLElement $packageMetaXML = NULL) {
+	public function __construct($packageKey, \SimpleXMLElement $packageMetaXML = NULL) {
 		if ($packageMetaXML !== NULL) {
 			$this->packageKey = (string)$packageMetaXML->packageKey;
 			$this->version = (string)$packageMetaXML->version;

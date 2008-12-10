@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,55 +30,55 @@ namespace F3::FLOW3::Object;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Factory implements F3::FLOW3::Object::FactoryInterface {
+class Factory implements \F3\FLOW3\Object\FactoryInterface {
 
 	/**
 	 * A reference to the object manager
 	 *
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Object::RegistryInterface Holds an instance of the Object Object Cache
+	 * @var \F3\FLOW3\Object\RegistryInterface Holds an instance of the Object Object Cache
 	 */
 	protected $objectRegistry;
 
 	/**
-	 * @var F3::FLOW3::Object::Builder Holds an instance of the Object Object Builder
+	 * @var \F3\FLOW3\Object\Builder Holds an instance of the Object Object Builder
 	 */
 	protected $objectBuilder;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Injects the object builder
 	 *
-	 * @param F3::FLOW3::Object::Builder $objectBuilder
+	 * @param \F3\FLOW3\Object\Builder $objectBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectBuilder(F3::FLOW3::Object::Builder $objectBuilder) {
+	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
 	}
 
 	/**
 	 * Injects the object registry
 	 *
-	 * @param F3::FLOW3::Object::RegistryInterface $objectRegistry
+	 * @param \F3\FLOW3\Object\RegistryInterface $objectRegistry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectRegistry(F3::FLOW3::Object::RegistryInterface $objectRegistry) {
+	public function injectRegistry(\F3\FLOW3\Object\RegistryInterface $objectRegistry) {
 		$this->objectRegistry = $objectRegistry;
 	}
 
@@ -97,15 +97,16 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 	 *
 	 * @param string $objectName The name of the object to create
 	 * @return object The new object instance
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if an object with the given name does not exist
-	 * @throws F3::FLOW3::Object::Exception::WrongScope if the specified object is not configured as Prototype
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\WrongScope if the specified object is not configured as Prototype
 	 * @author Robert Lemke <robert@typo3.org>
  	 */
 	public function create($objectName) {
-		if (!$this->objectManager->isObjectRegistered($objectName)) throw new F3::FLOW3::Object::Exception::UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
+###		$objectName = ltrim($objectName, '\\');
+		if (!$this->objectManager->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
 
 		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);
-		if ($objectConfiguration->getScope() != 'prototype') throw new F3::FLOW3::Object::Exception::WrongScope('Object "' . $objectName . '" is of scope ' . $objectConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
+		if ($objectConfiguration->getScope() != 'prototype') throw new \F3\FLOW3\Object\Exception\WrongScope('Object "' . $objectName . '" is of scope ' . $objectConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
 
 		$arguments = array_slice(func_get_args(), 1);
 		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
@@ -114,17 +115,17 @@ class Factory implements F3::FLOW3::Object::FactoryInterface {
 
 	/**
 	 * Returns straight-value constructor arguments for an object by creating appropriate
-	 * F3::FLOW3::Object::ConfigurationArgument objects.
+	 * \F3\FLOW3\Object\ConfigurationArgument objects.
 	 *
 	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of F3::FLOW3::Object::ConfigurationArgument which can be passed to the object builder
+	 * @return array An array of \F3\FLOW3\Object\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
 	 */
 	protected function getOverridingConstructorArguments(array $arguments) {
 		$constructorArguments = array();
 		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new F3::FLOW3::Object::ConfigurationArgument($index + 1, $value, F3::FLOW3::Object::ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+			$constructorArguments[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
 		return $constructorArguments;
 	}

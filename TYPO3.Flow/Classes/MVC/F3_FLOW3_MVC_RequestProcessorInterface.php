@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC;
+namespace F3\FLOW3\MVC;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -36,10 +36,10 @@ interface RequestProcessorInterface {
 	/**
 	 * Processes the given request (ie. analyzes and modifies if necessary).
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request
+	 * @param \F3\FLOW3\MVC\Request $request The request
 	 * @return void
 	 */
-	public function processRequest(F3::FLOW3::MVC::Request $request);
+	public function processRequest(\F3\FLOW3\MVC\Request $request);
 }
 
 ?>

@@ -29,10 +29,10 @@
         <title>The Blog's addPost() method</title>
 
         <para><programlisting>/**
- * @param F3::Blog::Domain::Post $post
+ * @param F3\Blog\Domain\Post $post
  * @return void
  */
-public function addPost(F3::Blog::Domain::Post $post) {
+public function addPost(F3\Blog\Domain\Post $post) {
     $this-&gt;posts[] = $post;
 }</programlisting></para>
       </example></para>
@@ -106,7 +106,7 @@ class Blog {
  *
  * @package Blog
  */
-class BlogRepository extends F3::FLOW3::Persistence::Repository {
+class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
     /**
      * Finds Blogs with a matching name.
@@ -122,8 +122,54 @@ class BlogRepository extends F3::FLOW3::Persistence::Repository {
       </example>As you can see we get away with very little code by simply
     extending the FLOW3-provided repository class. Nice, eh? If you like to do
     things the hard way you can get away with implementing
-    <interfacename>F3::FLOW3::Persistence::RepositoryInterface</interfacename>
+    <interfacename>\F3\FLOW3\Persistence\RepositoryInterface</interfacename>
     yourself.</para>
+  </section>
+
+  <section>
+    <title>On the priciples of DDD</title>
+
+    <para>From Evans, the rules we need to enforce include:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>The root Entity has global identity and is ultimately
+        responsible for checking invariants.</para>
+      </listitem>
+
+      <listitem>
+        <para>Root Entities have global identity. Entities inside the boundary
+        have local identity, unique only within the Aggregate.</para>
+      </listitem>
+
+      <listitem>
+        <para>Nothing outside the Aggregate boundary can hold a reference to
+        anything inside, except to the root Entity. The root Entity can hand
+        references to the internal Entities to other objects, but they can
+        only use them transiently (within a single method or block).</para>
+      </listitem>
+
+      <listitem>
+        <para>Only Aggregate Roots can be obtained directly with database
+        queries. Everything else must be done through traversal.</para>
+      </listitem>
+
+      <listitem>
+        <para>Objects within the Aggregate can hold references to other
+        Aggregate roots.</para>
+      </listitem>
+
+      <listitem>
+        <para>A delete operation must remove everything within the Aggregate
+        boundary all at once.</para>
+      </listitem>
+
+      <listitem>
+        <para>When a change to any object within the Aggregate boundary is
+        committed, all invariants of the whole Aggregate must be
+        satisfied.</para>
+      </listitem>
+    </itemizedlist>
   </section>
 
   <section>

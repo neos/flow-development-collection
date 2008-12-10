@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::View::Helper;
+namespace F3\FLOW3\MVC\View\Helper;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,21 +29,21 @@ namespace F3::FLOW3::MVC::View::Helper;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class URIHelper extends F3::FLOW3::MVC::View::Helper::AbstractHelper {
+class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 
 	/**
-	 * @var F3::FLOW3::MVC::Web::Routing::RouterInterface
+	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
 	 */
 	protected $router;
 
 	/**
 	 * Injects the Router
 	 * 
-	 * @param F3::FLOW3::MVC::Web::Routing::RouterInterface $router
+	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectRouter(F3::FLOW3::MVC::Web::Routing::RouterInterface $router) {
+	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
 	}
 

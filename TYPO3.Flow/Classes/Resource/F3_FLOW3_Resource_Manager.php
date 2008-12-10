@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -40,17 +40,17 @@ class Manager {
 	const CACHE_STRATEGY_FILE = 3;
 
 	/**
-	 * @var F3::FLOW3::Resource::ClassLoader Instance of the class loader
+	 * @var \F3\FLOW3\Resource\ClassLoader Instance of the class loader
 	 */
 	protected $classLoader;
 
 	/**
-	 * @var F3::FLOW3::Object::Factory
+	 * @var \F3\FLOW3\Object\Factory
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Resource::Publisher
+	 * @var \F3\FLOW3\Resource\Publisher
 	 */
 	protected $resourcePublisher;
 
@@ -66,7 +66,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Resource::ClassLoader $classLoader, F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Resource\ClassLoader $classLoader, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->classLoader = $classLoader;
 		$this->objectFactory = $objectFactory;
 	}
@@ -74,11 +74,11 @@ class Manager {
 	/**
 	 * Injects the resource publisher
 	 *
-	 * @param F3::FLOW3::Resource::Publisher $resourcePublisher
+	 * @param \F3\FLOW3\Resource\Publisher $resourcePublisher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectResourcePublisher(F3::FLOW3::Resource::Publisher $resourcePublisher) {
+	public function injectResourcePublisher(\F3\FLOW3\Resource\Publisher $resourcePublisher) {
 		$this->resourcePublisher = $resourcePublisher;
 	}
 
@@ -89,26 +89,26 @@ class Manager {
 	 * @param  string $className: Name of the class to register
 	 * @param  string $classFilePathAndName: Absolute path and file name of the file holding the class implementation
 	 * @return void
-	 * @throws InvalidArgumentException if $className is not a valid string
-	 * @throws F3::FLOW3::Resource::Exception::FileDoesNotExist if the specified file does not exist
+	 * @throws \InvalidArgumentException if $className is not a valid string
+	 * @throws \F3\FLOW3\Resource\Exception\FileDoesNotExist if the specified file does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerClassFile($className, $classFilePathAndName) {
-		if (!is_string($className)) throw new InvalidArgumentException('Class name must be a valid string.', 1187009929);
-		if (!file_exists($classFilePathAndName)) throw new F3::FLOW3::Resource::Exception::FileDoesNotExist('The specified class file does not exist.', 1187009987);
+		if (!is_string($className)) throw new \InvalidArgumentException('Class name must be a valid string.', 1187009929);
+		if (!file_exists($classFilePathAndName)) throw new \F3\FLOW3\Resource\Exception\FileDoesNotExist('The specified class file does not exist.', 1187009987);
 		$this->classLoader->setSpecialClassNameAndPath($className, $classFilePathAndName);
 	}
 
 	/**
 	 * Returns a file resource if found using the supplied URI
 	 *
-	 * @param F3::FLOW3::Property::DataType::URI|string $URI
-	 * @return F3::FLOW3::Resource::ResourceInterface
+	 * @param \F3\FLOW3\Property\DataType\URI|string $URI
+	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResource($URI) {
 		if (is_string($URI)) {
-			$URI = $this->objectFactory->create('F3::FLOW3::Property::DataType::URI', $URI);
+			$URI = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $URI);
 		}
 		$URIString = (string)$URI;
 
@@ -126,16 +126,16 @@ class Manager {
 	 * Instantiates a resource based on the given metadata
 	 *
 	 * @param array $metadata
-	 * @return F3::FLOW3::Resource::ResourceInterface
+	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {
 			case 'text/html':
-				$resource = $this->objectFactory->create('F3::FLOW3::Resource::HTMLResource');
+				$resource = $this->objectFactory->create('F3\FLOW3\Resource\HTMLResource');
 				break;
 			default:
-				throw new F3::FLOW3::Resource::Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);
+				throw new \F3\FLOW3\Resource\Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);
 		}
 		$resource->setMetaData($metadata);
 		return $resource;

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache::Backend;
+namespace F3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Cache::Backend;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MemcachedTest extends F3::Testing::BaseTestCase {
+class MemcachedTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Sets up this testcase
@@ -55,13 +55,13 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::FLOW3::Cache::Exception
+	 * @expectedException \F3\FLOW3\Cache\Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
 		$context = $this->objectManager->getContext();
-		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
+		$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context, $backendOptions);
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
@@ -79,7 +79,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			try {
 				$backend->set($entryIdentifier, $data);
 				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
-			} catch (InvalidArgumentException $exception) {
+			} catch (\InvalidArgumentException $exception) {
 			}
 		}
 	}
@@ -91,15 +91,15 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
 		$context = $this->objectManager->getContext();
 		try {
-			$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context);
+			$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context);
 			$this->fail('initializeObject() did not throw exception on missing configuration of servers');
-		} catch (F3::FLOW3::Cache::Exception  $exception) {
+		} catch (\F3\FLOW3\Cache\Exception  $exception) {
 		}
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3::FLOW3::Cache::Exception
+	 * @expectedException \F3\FLOW3\Cache\Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
@@ -121,7 +121,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend->set($identifier, $data);
 			$inCache = $backend->has($identifier);
 			$this->assertTrue($inCache,'Memcache failed to set and check entry');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -138,7 +138,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend->set($identifier, $data);
 			$fetchedData = $backend->get($identifier);
 			$this->assertEquals($data,$fetchedData,'Memcache failed to set and retrieve data');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -156,7 +156,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend->remove($identifier);
 			$inCache = $backend->has($identifier);
 			$this->assertFalse($inCache,'Failed to set and remove data from Memcache');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -175,7 +175,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backend->set($identifier, $otherData);
 			$fetchedData = $backend->get($identifier);
 			$this->assertEquals($otherData, $fetchedData, 'Memcache failed to overwrite and retrieve data');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -197,7 +197,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
 			$this->assertEquals($entryIdentifier, $retrieved[0], 'Could not retrieve expected entry by tag.');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -217,7 +217,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 
 			$retrieved = $backend->findIdentifiersByTag('UnitTestTag%tag2');
 			$this->assertEquals(array(), $retrieved, 'Found entry which should no longer exist.');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -251,7 +251,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	 */
 	public function flushByTagRejectsInvalidTags() {
 		$backend = $this->setUpBackend();
-		$backend->flushByTag('SomeInvalid::Tag');
+		$backend->flushByTag('SomeInvalid\Tag');
 	}
 
 	/**
@@ -273,7 +273,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$this->assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
 			$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
 			$this->assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -296,7 +296,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$this->assertFalse($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
 			$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
 			$this->assertFalse($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
-		} catch (F3::FLOW3::Cache::Exception $e) {
+		} catch (\F3\FLOW3\Cache\Exception $e) {
 			$this->markTestSkipped('memcached was not reachable');
 		}
 	}
@@ -304,18 +304,18 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 	/**
 	 * Creates a cache mock
 	 *
-	 * @return F3::FLOW3::Cache::AbstractCache mock
+	 * @return \F3\FLOW3\Cache\AbstractCache mock
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function getMockCache() {
-		return $this->getMock('F3::FLOW3::Cache::AbstractCache', array(), array(), '', FALSE);
+		return $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
 	}
 
 	/**
 	 * Sets up the memcached backend used for testing
 	 *
 	 * @param array $backendOptions Options for the memcache backend
-	 * @return F3::FLOW3::Cache::Backend::Memcached
+	 * @return \F3\FLOW3\Cache\Backend\Memcached
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -325,7 +325,7 @@ class MemcachedTest extends F3::Testing::BaseTestCase {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
 		$context = $this->objectManager->getContext();
-		$backend = $this->objectManager->getObject('F3::FLOW3::Cache::Backend::Memcached', $context, $backendOptions);
+		$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context, $backendOptions);
 		$backend->setCache($cache);
 		return $backend;
 	}

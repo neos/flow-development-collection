@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Session;
+namespace F3\FLOW3\Session;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Session;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PHP implements F3::FLOW3::Session::SessionInterface {
+class PHP implements \F3\FLOW3\Session\SessionInterface {
 
 	/**
 	 * The session Id
@@ -52,7 +52,7 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct() {
-		if (ini_get('session.auto_start') != 0) throw new F3::FLOW3::Session::Exception::SessionAutostartIsEnabled('PHP\'s session.auto_start must be disabled.', 1219848292);
+		if (ini_get('session.auto_start') != 0) throw new \F3\FLOW3\Session\Exception\SessionAutostartIsEnabled('PHP\'s session.auto_start must be disabled.', 1219848292);
 	}
 
 	/**
@@ -73,11 +73,11 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 * Returns the current session ID.
 	 *
 	 * @return string The current session ID
-	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getID() {
-		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043307);
+		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStarted('The session has not been started yet.', 1218043307);
 		return $this->sessionId;
 	}
 
@@ -86,11 +86,11 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 *
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return mixed The contents associated with the given key
-	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getData($key) {
-		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043308);
+		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStarted('The session has not been started yet.', 1218043308);
 		return (array_key_exists($key, $_SESSION)) ? $_SESSION[$key] : NULL;
 	}
 
@@ -100,12 +100,12 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @param mixed $data The data to be stored
 	 * @return void
-	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putData($key, $data) {
-		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043309);
-		if (is_resource($data)) throw new F3::FLOW3::Session::Exception::DataNotSerializeable('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
+		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStarted('The session has not been started yet.', 1218043309);
+		if (is_resource($data)) throw new \F3\FLOW3\Session\Exception\DataNotSerializeable('The given data cannot be stored in a session, because it is of type "' . gettype($data) . '".', 1218475324);
 		$_SESSION[$key] = $data;
 	}
 
@@ -113,15 +113,15 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 * Explicitly writes and closes the session
 	 *
 	 * @return void
-	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function close() {
-		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043310);
+		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStarted('The session has not been started yet.', 1218043310);
 		try {
 			session_write_close();
-		} catch (::Exception $exception) {
-			throw new F3::FLOW3::Session::Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
+		} catch (\Exception $exception) {
+			throw new \F3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474911);
 		}
 		unset($_SESSION);
 	}
@@ -130,15 +130,15 @@ class PHP implements F3::FLOW3::Session::SessionInterface {
 	 * Explicitly destroys all session data
 	 *
 	 * @return void
-	 * @throws F3::FLOW3::Session::Exception::SessionNotStarted
+	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function destroy() {
-		if ($this->started !== TRUE) throw new F3::FLOW3::Session::Exception::SessionNotStarted('The session has not been started yet.', 1218043311);
+		if ($this->started !== TRUE) throw new \F3\FLOW3\Session\Exception\SessionNotStarted('The session has not been started yet.', 1218043311);
 		try {
 			session_destroy();
-		} catch (::Exception $exception) {
-			throw new F3::FLOW3::Session::Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
+		} catch (\Exception $exception) {
+			throw new \F3\FLOW3\Session\Exception('The PHP session handler issued an error: ' . $exception->getMessage() . ' in ' . $exception->getFile() . ' in line ' . $exception->getLine() . '.', 1218474912);
 		}
 		unset($_SESSION);
 	}

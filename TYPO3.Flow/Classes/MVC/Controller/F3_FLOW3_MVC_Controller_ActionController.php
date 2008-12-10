@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Controller;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\ActionController.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,13 +26,13 @@ namespace F3::FLOW3::MVC::Controller;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::ActionController.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\ActionController.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingController {
+class ActionController extends \F3\FLOW3\MVC\Controller\RequestHandlingController {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
@@ -42,30 +42,30 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	protected $initializeView = TRUE;
 
 	/**
-	 * @var F3::FLOW3::MVC::View::AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
+	 * @var \F3\FLOW3\MVC\View\AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
 	 */
 	protected $view = NULL;
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
 	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request object
-	 * @param F3::FLOW3::MVC::Response $response The response, modified by this handler
+	 * @param \F3\FLOW3\MVC\Request $request The request object
+	 * @param \F3\FLOW3\MVC\Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(F3::FLOW3::MVC::Request $request, F3::FLOW3::MVC::Response $response) {
+	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		parent::processRequest($request, $response);
 		$this->callActionMethod();
 	}
@@ -76,16 +76,16 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::MVC::Exception::NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 */
 	protected function callActionMethod() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
 
-		if (!method_exists($this, $actionMethodName)) throw new F3::FLOW3::MVC::Exception::NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
 		if ($this->initializeView) $this->initializeView();
 		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
-		if (is_string($actionResult) && F3::PHP6::Functions::strlen($actionResult) > 0) {
+		if (is_string($actionResult) && \F3\PHP6\Functions::strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}
 	}
@@ -101,7 +101,7 @@ class ActionController extends F3::FLOW3::MVC::Controller::RequestHandlingContro
 	protected function initializeView() {
 		$viewObjectName = $this->request->getViewObjectName();
 		if ($viewObjectName === FALSE) {
-			$viewObjectName = 'F3::FLOW3::MVC::View::EmptyView';
+			$viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 		}
 		$this->view = $this->objectManager->getObject($viewObjectName);
 		$this->view->setRequest($this->request);

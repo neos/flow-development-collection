@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -20,13 +20,13 @@ namespace F3::FLOW3::Object;
  * Testcase for the object configuration class
  *
  * @package     FLOW3
- * @version     $Id:F3::FLOW3::Object::ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version     $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ConfigurationTest extends F3::Testing::BaseTestCase {
+class ConfigurationTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::Object::Configuration
+	 * @var \F3\FLOW3\Object\Configuration
 	 */
 	protected $objectConfiguration;
 
@@ -36,7 +36,7 @@ class ConfigurationTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectConfiguration = new F3::FLOW3::Object::Configuration('F3::TestPackage::BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/F3::TestPackage::BasicClass.php');
+		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\TestPackage\BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/F3\TestPackage\BasicClass.php');
 	}
 
 	/**
@@ -50,13 +50,13 @@ class ConfigurationTest extends F3::Testing::BaseTestCase {
 			$this->objectConfiguration->setScope('singleton');
 			$this->objectConfiguration->setScope('prototype');
 			$this->objectConfiguration->setScope('session');
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			$this->fail('setScope throwed an exception although the values were valid.');
 		}
 
 		try {
 			$this->objectConfiguration->setScope(-1);
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			return;
 		}
 		$this->fail('setScope throwed no exception although the value was invalid.');
@@ -70,12 +70,12 @@ class ConfigurationTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
 		$invalidProperties = array (
-			'validProperty' => new F3::FLOW3::Object::ConfigurationProperty('validProperty', 'simple string'),
+			'validProperty' => new \F3\FLOW3\Object\ConfigurationProperty('validProperty', 'simple string'),
 			'invalidProperty' => 'foo'
 		);
 		try {
 			$this->objectConfiguration->setProperties($invalidProperties);
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			$this->assertEquals(1167935337, $exception->getCode(), 'setProperties() throwed an exception but with an unexpected error code.');
 			return;
 		}
@@ -90,12 +90,12 @@ class ConfigurationTest extends F3::Testing::BaseTestCase {
 	 */
 	public function setConstructorArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
-			1 => new F3::FLOW3::Object::ConfigurationArgument(1, 'simple string'),
+			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'simple string'),
 			2 => 'foo'
 		);
 		try {
 			$this->objectConfiguration->setConstructorArguments($invalidArguments);
-		} catch (::Exception $exception) {
+		} catch (\Exception $exception) {
 			$this->assertEquals(1168004160, $exception->getCode(), 'setConstructorArguments() throwed an exception but with an unexpected error code.');
 			return;
 		}
@@ -108,8 +108,8 @@ class ConfigurationTest extends F3::Testing::BaseTestCase {
 	 */
 	public function passingAnEmptyArrayToSetConstructorArgumentsRemovesAllExistingArguments() {
 		$someArguments = array (
-			1 => new F3::FLOW3::Object::ConfigurationArgument(1, 'simple string'),
-			2 => new F3::FLOW3::Object::ConfigurationArgument(2, 'another string')
+			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'simple string'),
+			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, 'another string')
 		);
 		$this->objectConfiguration->setConstructorArguments($someArguments);
 		$this->assertEquals($someArguments, $this->objectConfiguration->getConstructorArguments(), 'The set arguments could not be retrieved again.');

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security;
+namespace F3\FLOW3\Security;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Security;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AuthenticationTest extends F3::Testing::BaseTestCase {
+class AuthenticationTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test

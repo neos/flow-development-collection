@@ -12,7 +12,7 @@
 
 FLOW3_Fallback:
   uriPattern: ''
-  controllerObjectNamePattern: 'F3::@package::MVC::Controller::@controllerController'
+  controllerObjectNamePattern: 'F3\@package\MVC\Controller\@controllerController'
   defaults:
     @package:    FLOW3
     @controller: Default

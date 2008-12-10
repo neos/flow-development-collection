@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,16 +29,16 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NotEmptyTest extends F3::Testing::BaseTestCase {
+class NotEmptyTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
 		$notEmptyValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
 	}
@@ -48,9 +48,9 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
 		$notEmptyValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
 	}
@@ -60,9 +60,9 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForANullValue() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
 		$notEmptyValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
 	}
@@ -72,13 +72,13 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
 		$notEmptyValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty('', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221560718, $validationErrors[0]->getErrorCode());
 	}
 
@@ -87,13 +87,13 @@ class NotEmptyTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
-		$notEmptyValidator = new F3::FLOW3::Validation::Validator::NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
 		$notEmptyValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty(NULL, $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221560910, $validationErrors[0]->getErrorCode());
 	}
 }

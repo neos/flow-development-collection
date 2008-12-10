@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -40,12 +40,12 @@ interface AccessDecisionVoterInterface {
 	/**
 	 * Votes if access should be granted on the given object in the current security context
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The current securit context
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied If access is not granted
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 */
-	public function vote(F3::FLOW3::Security::Context $securityContext, F3::FLOW3::AOP::JoinPointInterface $joinPoint);
+	public function vote(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 }
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication::Token;
+namespace F3\FLOW3\Security\Authentication\Token;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,15 +31,15 @@ namespace F3::FLOW3::Security::Authentication::Token;
  * @scope prototype
  * @todo here we also need a user details service and an authentication entry point
  */
-class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInterface {
+class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Utility::Environment
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -56,29 +56,29 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var F3::FLOW3::Security::RequestPatternInterface The set request pattern
+	 * @var \F3\FLOW3\Security\RequestPatternInterface The set request pattern
 	 */
 	protected $requestPattern = NULL;
 
 	/**
 	 * Injects the object factory
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory The object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 
 	/**
 	 * Injects the environment
 	 *
-	 * @param F3::FLOW3::Utility::Environment $environment The current environment object
+	 * @param \F3\FLOW3\Utility\Environment $environment The current environment object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -95,16 +95,16 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return F3::FLOW3::Security::Authentication::EntryPoint The configured authentication entry point, NULL if none is available
+	 * @return \F3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint() {
 
 	}
 
 	/**
-	 * Returns TRUE if a F3::FLOW3::Security::RequestPattern was set
+	 * Returns TRUE if a \F3\FLOW3\Security\RequestPattern was set
 	 *
-	 * @return boolean True if a F3::FLOW3::Security::RequestPatternInterface was set
+	 * @return boolean True if a \F3\FLOW3\Security\RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPattern() {
@@ -113,20 +113,20 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	}
 
 	/**
-	 * Sets a F3::FLOW3::Security::RequestPattern
+	 * Sets a \F3\FLOW3\Security\RequestPattern
 	 *
-	 * @param F3::FLOW3::Security::RequestPatternInterface $requestPattern A request pattern
+	 * @param \F3\FLOW3\Security\RequestPatternInterface $requestPattern A request pattern
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(F3::FLOW3::Security::RequestPatternInterface $requestPattern) {
+	public function setRequestPattern(\F3\FLOW3\Security\RequestPatternInterface $requestPattern) {
 		$this->requestPattern = $requestPattern;
 	}
 
 	/**
-	 * Returns the set F3::FLOW3::Security::RequestPatternInterface, NULL if none was set
+	 * Returns the set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
-	 * @return F3::FLOW3::Security::RequestPatternInterface The set request pattern
+	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
 	 * @see hasRequestPattern()
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -143,8 +143,9 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	 */
 	public function updateCredentials() {
 		$POSTArguments = $this->environment->getPOSTArguments();
-		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::username'];
-		if (isset($POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3::FLOW3::Security::Authentication::Token::UsernamePassword::password'];
+
+		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
 	}
 
 	/**
@@ -158,9 +159,9 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	}
 
 	/**
-	 * Might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
+	 * Might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
 	 *
-	 * @return F3::FLOW3::Security::Authentication::UserDetailsInterface A user details object
+	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface A user details object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
@@ -169,19 +170,19 @@ class UsernamePassword implements F3::FLOW3::Security::Authentication::TokenInte
 	}
 
 	/**
-	 * Returns the currently valid granted authorities. It might ask a F3::FLOW3::Security::Authentication::UserDetailsServiceInterface.
+	 * Returns the currently valid granted authorities. It might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
 	 * Note: You have to check isAuthenticated() before you call this method
 	 *
-	 * @return array Array of F3::FLOW3::Security::Authentication::GrantedAuthority objects
+	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthority objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method, otherwise everbody will be an administrator ;-)
 	 */
 	public function getGrantedAuthorities() {
-		return array($this->objectFactory->create('F3::FLOW3::Security::ACL::Role', 'ADMINISTRATOR'));
+		return array($this->objectFactory->create('F3\FLOW3\Security\ACL\Role', 'ADMINISTRATOR'));
 	}
 
 	/**
-	 * Sets the authentication status. Usually called by the responsible F3::FLOW3::Security::Authentication::ManagerInterface
+	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
 	 *
 	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
 	 * @return void

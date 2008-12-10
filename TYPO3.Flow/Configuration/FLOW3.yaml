@@ -11,13 +11,13 @@ error:
   exceptionHandler:
   
     # Defines the global, last-resort exception handler.
-    # The specified class must implement F3::FLOW3::Error::ExceptionHandlerInterface
-    className: F3::FLOW3::Error::DebugExceptionHandler
+    # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
+    className: F3\FLOW3\Error\DebugExceptionHandler
 
   errorHandler:
   
     # Defines the global, last-resort error handler.
-    className: F3::FLOW3::Error::ErrorHandler
+    className: F3\FLOW3\Error\ErrorHandler
 
     # Defines which errors should result in an exception thrown - all other error
     # levels will be silently ignored.
@@ -40,7 +40,7 @@ cache:
     # It is suggested that all other sub packages and packages refer to this
     # configuration by default if they have no special requirements in terms
     # of the caching backend.
-    backend: F3::FLOW3::Cache::Backend::File
+    backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
 
   # The Class Alteration Monitoring detects changes in class files and automatically
@@ -56,14 +56,14 @@ object:
     # Enable or disable caching of the object configurations. If caching is
     # enabled, a cache backend must be properly configured.
     enable: y
-    backend: F3::FLOW3::Cache::Backend::File
+    backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
   
 mvc:
   
   # Defines the available request handlers. Each of them must implement the
-  # F3::FLOW3::MVC::RequestHandlerInterface.
-  availableRequestHandlers: [F3::FLOW3::MVC::Web::RequestHandler, F3::FLOW3::MVC::CLI::RequestHandler]
+  # \F3\FLOW3\MVC\RequestHandlerInterface.
+  availableRequestHandlers: [F3\FLOW3\MVC\Web\RequestHandler, F3\FLOW3\MVC\CLI\RequestHandler]
 
 aop:
   
@@ -77,7 +77,7 @@ aop:
   # the AOP Framework.
   cache:
     enable: y
-    backend: F3::FLOW3::Cache::Backend::File
+    backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
 
 reflection:
@@ -86,7 +86,7 @@ reflection:
   # by the reflection service.
   cache:
     enable: y
-    backend: F3::FLOW3::Cache::Backend::File
+    backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
     
     # If class changes detected by the Class Alteration Monitoring should also be detected
@@ -98,7 +98,7 @@ resource:
   # Settings for the resource caching mechanism
   cache:
     enable: y
-    backend: F3::FLOW3::Cache::Backend::File
+    backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
 
     # The path for the public resources mirror
@@ -113,7 +113,7 @@ session:
     
     # Defines the backend which is used for storing the session data.
     # If no session functionality is needed / wanted, just use the "Transient" session.
-    className: F3::FLOW3::Session::PHP
+    className: F3\FLOW3\Session\PHP
 
 persistence:
   
@@ -140,7 +140,7 @@ security:
     #     patternValue: /some/url/blocked.*
     #     interceptor:  AccessDeny
     #
-    # If the objects are in the namespace "F3::FLOW3::Security" it is enough to specify
+    # If the objects are in the namespace "\F3\FLOW3\Security" it is enough to specify
     # the last name of the classname, e.g. AccessGrant
     filters: []
 
@@ -149,7 +149,7 @@ security:
     # Array of authentication providers that should be used for authentication.
     # If you define a request pattern, the provider will only be called if the pattern
     # matches the current request. If the objects are in the namespace
-    # "F3::FLOW3::Security" it is sufficient to specify the last name of the classname,
+    # "\F3\FLOW3\Security" it is sufficient to specify the last name of the classname,
     # e.g. UsernamePassword
     # Note: Authentication will be performed in the given order of the providers.
     # So make sure, that the primary authentication method is the first array entry.
@@ -164,7 +164,7 @@ security:
     authenticateAllTokens: FALSE
 
   # An array of access decision voters that should vote when access decisions are made
-  accessDecisionVoters: [F3::FLOW3::Security::Authorization::Voter::ACL]
+  accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL]
 
   # If this is set to TRUE access will be granted even if all voters abstain
   allowAccessIfAllVotersAbstain: FALSE
@@ -174,8 +174,8 @@ security:
     # The security policy resources configuration. Here is an example configuration array:
     #
     # resources:
-    #   theOneAndOnlyResource:  "method(F3::TestPackage::BasicClass->setSomeProperty())"
-    #   theOtherLonelyResource: "method(F3::TestPackage::BasicClassValidator->.*())"
+    #   theOneAndOnlyResource:  "method(F3\TestPackage\BasicClass->setSomeProperty())"
+    #   theOtherLonelyResource: "method(F3\TestPackage\BasicClassValidator->.*())"
     #   theIntegrativeResource: "theOneAndOnlyResource || theOtherLonelyResource"
     #
     resources: []
@@ -205,7 +205,7 @@ security:
     
     # Settings for caching the security policy ACLs.
     aclCache:
-      backend: F3::FLOW3::Cache::Backend::File
+      backend: F3\FLOW3\Cache\Backend\File
       backendOptions: {}
 
   # This is a very dirty and not recommended playground option.

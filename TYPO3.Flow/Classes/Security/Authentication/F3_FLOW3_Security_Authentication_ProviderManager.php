@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authentication;
+namespace F3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -22,7 +22,7 @@ namespace F3::FLOW3::Security::Authentication;
  */
 
 /**
- * The default authentication manager, which uses different F3::FLOW3::Security::Authentication::Providers
+ * The default authentication manager, which uses different \F3\FLOW3\Security\Authentication\Providers
  * to authenticate the tokens stored in the security context.
  *
  * @package FLOW3
@@ -30,53 +30,53 @@ namespace F3::FLOW3::Security::Authentication;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInterface {
+class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Security::Authentication::ProviderResolver The provider resolver
+	 * @var \F3\FLOW3\Security\Authentication\ProviderResolver The provider resolver
 	 */
 	protected $providerResolver;
 
 	/**
 	 * The security context of the current request
-	 * @var F3::FLOW3::Security::Context
+	 * @var \F3\FLOW3\Security\Context
 	 */
 	protected $securityContext;
 
 	/**
-	 * @var F3::FLOW3::Security::RequestPatternResolver The request pattern resolver
+	 * @var \F3\FLOW3\Security\RequestPatternResolver The request pattern resolver
 	 */
 	protected $requestPatternResolver;
 
 	/**
-	 * @var array Array of F3::FLOW3::Security::Authentication::ProviderInterface objects
+	 * @var array Array of \F3\FLOW3\Security\Authentication\ProviderInterface objects
 	 */
 	protected $providers = array();
 
 	/**
-	 * @var array Array of F3::FLOW3::Security::Authentication::TokenInterface objects
+	 * @var array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 */
 	protected $tokens = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
-	 * @param F3::FLOW3::Object::Manager $objectManager The object manager
-	 * @param F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver The provider resolver
-	 * @param F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
+	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param \F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver The provider resolver
+	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Configuration::Manager $configurationManager,
-			F3::FLOW3::Object::ManagerInterface $objectManager,
-			F3::FLOW3::Security::Authentication::ProviderResolver $providerResolver,
-			F3::FLOW3::Security::RequestPatternResolver $requestPatternResolver) {
+	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager,
+			\F3\FLOW3\Object\ManagerInterface $objectManager,
+			\F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver,
+			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
 
 		$this->objectManager = $objectManager;
 		$this->providerResolver = $providerResolver;
@@ -88,7 +88,7 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	/**
 	 * Sets the providers
 	 *
-	 * @param array Array of providers (F3::FLOW3::Security::Authentication::ProviderInterface)
+	 * @param array Array of providers (\F3\FLOW3\Security\Authentication\ProviderInterface)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -99,11 +99,11 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	/**
 	 * Sets the security context
 	 *
-	 * @param F3::FLOW3::Security::Context $securityContext The security context of the current request
+	 * @param \F3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setSecurityContext(F3::FLOW3::Security::Context $securityContext) {
+	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
 	}
 
@@ -121,7 +121,7 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	 * Returns clean tokens this manager is responsible for.
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
-	 * @return array Array of F3::FLOW3::Security::Authentication::TokenInterface An array of tokens this manager is responsible for
+	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokens() {
@@ -135,7 +135,7 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 	 * otherwise there has to be at least one authenticated token to have a valid authentication.
 	 *
 	 * @return void
-	 * @throws F3::FLOW3::Security::Exception::AuthenticationRequired
+	 * @throws \F3\FLOW3\Security\Exception\AuthenticationRequired
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate() {
@@ -149,14 +149,14 @@ class ProviderManager implements F3::FLOW3::Security::Authentication::ManagerInt
 			}
 
 			if ($token->isAuthenticated() && !$this->securityContext->authenticateAllTokens()) return;
-			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) throw new F3::FLOW3::Security::Exception::AuthenticationRequired('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
+			if (!$token->isAuthenticated() && $this->securityContext->authenticateAllTokens()) throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate all tokens, but authenticateAllTokens was set to TRUE.', 1222203912);
 			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
 
 		$this->securityContext->setAuthenticationPerformed(TRUE);
 		if ($allTokensAreAuthenticated) return;
 
-		throw new F3::FLOW3::Security::Exception::AuthenticationRequired('Could not authenticate any token.', 1222204027);
+		throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate any token.', 1222204027);
 	}
 
 	/**

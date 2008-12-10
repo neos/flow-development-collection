@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Interceptor;
+namespace F3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,21 +34,21 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RequireAuthentication implements F3::FLOW3::Security::Authorization::InterceptorInterface {
+class RequireAuthentication implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var F3::FLOW3::Security::Authentication::ManagerInterface The authentication manager
+	 * @var \F3\FLOW3\Security\Authentication\ManagerInterface The authentication manager
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager The authentication Manager
+	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Security::Authentication::ManagerInterface $authenticationManager) {
+	public function __construct(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
 	}
 

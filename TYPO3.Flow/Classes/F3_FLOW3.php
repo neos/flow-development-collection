@@ -20,11 +20,11 @@ namespace F3;
  * @version $Id$
  */
 
-if (version_compare(phpversion(), F3::FLOW3::MINIMUM_PHP_VERSION, '<')) {
-	die('FLOW3 requires PHP version ' . F3::FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+if (version_compare(phpversion(), \F3\FLOW3::MINIMUM_PHP_VERSION, '<')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 }
-if (version_compare(PHP_VERSION, F3::FLOW3::MAXIMUM_PHP_VERSION, '>')) {
-	die('FLOW3 requires PHP version ' . F3::FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+if (version_compare(PHP_VERSION, \F3\FLOW3::MAXIMUM_PHP_VERSION, '>')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 }
 
 /**
@@ -32,10 +32,10 @@ if (version_compare(PHP_VERSION, F3::FLOW3::MAXIMUM_PHP_VERSION, '>')) {
  */
 require(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
 
-define('FLOW3_PATH_FLOW3', F3::FLOW3::Utility::Files::getUnixStylePath(__DIR__ . '/'));
-define('FLOW3_PATH_PACKAGES', F3::FLOW3::Utility::Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
-define('FLOW3_PATH_CONFIGURATION', F3::FLOW3::Utility::Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
-define('FLOW3_PATH_DATA', F3::FLOW3::Utility::Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Data/') . '/'));
+define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(__DIR__ . '/'));
+define('FLOW3_PATH_PACKAGES', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
+define('FLOW3_PATH_CONFIGURATION', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
+define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Data/') . '/'));
 
 /**
  * General purpose central core hyper FLOW3 class
@@ -63,48 +63,48 @@ final class FLOW3 {
 	/**
 	 * The configuration manager
 	 *
-	 * @var F3::FLOW3::Configuration::Manager
+	 * @var \F3\FLOW3\Configuration\Manager
 	 */
 	protected $configurationManager;
 
 	/**
 	 * An instance of the object manager
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * A reference to the object factory
 	 *
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * A reference to the package manager
 	 *
-	 * @var F3::FLOW3::Package::ManagerInterface
+	 * @var \F3\FLOW3\Package\ManagerInterface
 	 */
 	protected $packageManager;
 
 	/**
 	 * Instance of the class loader
 	 *
-	 * @var F3::FLOW3::Resource::ClassLoader
+	 * @var \F3\FLOW3\Resource\ClassLoader
 	 */
 	protected $classLoader;
 
 	/**
 	 * Instance of the reflection service
 	 *
-	 * @var F3::FLOW3::Reflection::Service
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;
 
 	/**
 	 * Instance of the cache factory
 	 *
-	 * @var F3::FLOW3::Cache::Factory
+	 * @var \F3\FLOW3\Cache\Factory
 	 */
 	protected $cacheFactory;
 
@@ -113,16 +113,16 @@ final class FLOW3 {
 	 * @var array
 	 */
 	protected $objectRegistrationClassBlacklist = array(
-		'F3::FLOW3::AOP::.*',
-		'F3::FLOW3::Object.*',
-		'F3::FLOW3::Package.*',
-		'F3::FLOW3::Reflection.*',
-		'F3::FLOW3::Session.*'
+		'F3\FLOW3\AOP\.*',
+		'F3\FLOW3\Object.*',
+		'F3\FLOW3\Package.*',
+		'F3\FLOW3\Reflection.*',
+		'F3\FLOW3\Session.*'
 	);
 
 	/**
 	 * The settings for the FLOW3 package
-	 * @var F3::FLOW3::Configuration::Container
+	 * @var \F3\FLOW3\Configuration\Container
 	 */
 	protected $settings;
 
@@ -147,7 +147,7 @@ final class FLOW3 {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see run()
-	 * @throws F3::FLOW3::Exception if the framework has already been initialized.
+	 * @throws \F3\FLOW3\Exception if the framework has already been initialized.
 	 */
 	public function initialize() {
 		$this->initializeClassLoader();
@@ -175,10 +175,10 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
-		if (!class_exists('F3::FLOW3::Resource::ClassLoader')) {
+		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
 			require(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
 		}
-		$this->classLoader = new F3::FLOW3::Resource::ClassLoader(FLOW3_PATH_PACKAGES);
+		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 	}
 
@@ -191,10 +191,10 @@ final class FLOW3 {
 	 */
 	public function initializeConfiguration() {
 		$configurationSources = array(
-			new F3::FLOW3::Configuration::Source::PHP(),
-			new F3::FLOW3::Configuration::Source::YAML()
+			new \F3\FLOW3\Configuration\Source\PHP(),
+			new \F3\FLOW3\Configuration\Source\YAML()
 		);
-		$this->configurationManager = new F3::FLOW3::Configuration::Manager($this->context, $configurationSources);
+		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context, $configurationSources);
 		$this->configurationManager->loadFLOW3Settings();
 		$this->settings = $this->configurationManager->getSettings('FLOW3');
 	}
@@ -220,19 +220,19 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeObjectFramework() {
-		$this->reflectionService = new F3::FLOW3::Reflection::Service();
-		$this->objectFactory = new F3::FLOW3::Object::Factory();
+		$this->reflectionService = new \F3\FLOW3\Reflection\Service();
+		$this->objectFactory = new \F3\FLOW3\Object\Factory();
 
-		$this->objectManager = new F3::FLOW3::Object::Manager();
+		$this->objectManager = new \F3\FLOW3\Object\Manager();
 		$this->objectManager->injectReflectionService($this->reflectionService);
-		$this->objectManager->injectObjectRegistry(new F3::FLOW3::Object::TransientRegistry);
-		$this->objectManager->injectObjectBuilder(new F3::FLOW3::Object::Builder);
+		$this->objectManager->injectObjectRegistry(new \F3\FLOW3\Object\TransientRegistry);
+		$this->objectManager->injectObjectBuilder(new \F3\FLOW3\Object\Builder);
 		$this->objectManager->injectObjectFactory($this->objectFactory);
 		$this->objectManager->setContext($this->context);
 		$this->objectManager->initialize();
 
-		$this->objectManager->registerObject('F3::FLOW3::Resource::ClassLoader', NULL, $this->classLoader);
-		$this->objectManager->registerObject('F3::FLOW3::Configuration::Manager', NULL, $this->configurationManager);
+		$this->objectManager->registerObject('F3\FLOW3\Resource\ClassLoader', NULL, $this->classLoader);
+		$this->objectManager->registerObject('F3\FLOW3\Configuration\Manager', NULL, $this->configurationManager);
 	}
 
 	/**
@@ -243,8 +243,8 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeEnvironment() {
-		$environment = new F3::FLOW3::Utility::Environment;
-		$this->objectManager->registerObject('F3::FLOW3::Utility::Environment', NULL, $environment);
+		$environment = new \F3\FLOW3\Utility\Environment;
+		$this->objectManager->registerObject('F3\FLOW3\Utility\Environment', NULL, $environment);
 		$environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
 	}
 
@@ -256,28 +256,27 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeCache() {
-		$this->objectManager->registerObject('F3::FLOW3::Cache::Factory');
-		$this->objectManager->registerObject('F3::FLOW3::Cache::Manager');
-		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::File');
-		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::Memcached');
-		$this->objectManager->registerObject('F3::FLOW3::Cache::VariableCache');
-		$this->objectManager->registerObject('F3::FLOW3::Cache::StringCache');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Factory');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Manager');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\File');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\Memcached');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\VariableCache');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\StringCache');
 
-		$property = new F3::FLOW3::Object::ConfigurationProperty('environment', 'F3::FLOW3::Utility::Environment', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
-		$configuration = $this->objectManager->getObjectConfiguration('F3::FLOW3::Cache::Backend::File');
+		$property = new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+		$configuration = $this->objectManager->getObjectConfiguration('F3\FLOW3\Cache\Backend\File');
 		$configuration->setProperty($property);
 		$this->objectManager->setObjectConfiguration($configuration);
 
-		$this->cacheManager = $this->objectManager->getObject('F3::FLOW3::Cache::Manager');
-		$this->cacheFactory = $this->objectManager->getObject('F3::FLOW3::Cache::Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
+		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
+		$this->cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
 
-		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
-		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
-		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3::FLOW3::Cache::StringCache', 'F3::FLOW3::Cache::Backend::File');
+		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3\FLOW3\Cache\VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Reflection', 'F3\FLOW3\Cache\VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3\FLOW3\Cache\StringCache', 'F3\FLOW3\Cache\Backend\File');
 	}
-
 
 	/**
 	 * Initializes the package system and loads the package configuration and settings
@@ -288,16 +287,16 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
-		$this->objectManager->registerObject('F3::FLOW3::Resource::Publisher');
-		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
+		$this->objectManager->registerObject('F3\FLOW3\Resource\Publisher');
+		$this->objectManager->registerObject('F3\FLOW3\Resource\Manager');
 
-		$this->objectManager->registerObject('F3::FLOW3::Package::ManagerInterface', 'F3::FLOW3::Package::Manager');
-		$this->packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
+		$this->objectManager->registerObject('F3\FLOW3\Package\ManagerInterface', 'F3\FLOW3\Package\Manager');
+		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
 
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(F3::FLOW3::Configuration::Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
+			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 
@@ -401,19 +400,19 @@ final class FLOW3 {
 	public function initializeAOP() {
 		if ($this->settings['aop']['enable'] === TRUE) {
 
-			$this->objectManager->registerObject('F3::FLOW3::AOP::Framework');
-			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::FLOW3::AOP::Framework');
+			$this->objectManager->registerObject('F3\FLOW3\AOP\Framework');
+			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3\FLOW3\AOP\Framework');
 			$properties = array(
-				'reflectionService' => new F3::FLOW3::Object::ConfigurationProperty('reflectionService', 'F3::FLOW3::Reflection::Service', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'pointcutExpressionParser' => new F3::FLOW3::Object::ConfigurationProperty('pointcutExpressionParser', 'F3::FLOW3::AOP::PointcutExpressionParser', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'cacheFactory' => new F3::FLOW3::Object::ConfigurationProperty('cacheFactory', 'F3::FLOW3::Cache::Factory', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'configurationManager' => new F3::FLOW3::Object::ConfigurationProperty('configurationManager', 'F3::FLOW3::Configuration::Manager', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE)
+				'reflectionService' => new \F3\FLOW3\Object\ConfigurationProperty('reflectionService', 'F3\FLOW3\Reflection\Service', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'pointcutExpressionParser' => new \F3\FLOW3\Object\ConfigurationProperty('pointcutExpressionParser', 'F3\FLOW3\AOP\PointcutExpressionParser', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'cacheFactory' => new \F3\FLOW3\Object\ConfigurationProperty('cacheFactory', 'F3\FLOW3\Cache\Factory', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+				'configurationManager' => new \F3\FLOW3\Object\ConfigurationProperty('configurationManager', 'F3\FLOW3\Configuration\Manager', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE)
 			);
 			$objectConfiguration->setProperties($properties);
 			$this->objectManager->setObjectConfiguration($objectConfiguration);
 
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
-			$AOPFramework = $this->objectManager->getObject('F3::FLOW3::AOP::Framework', $this->objectManager, $this->objectFactory);
+			$AOPFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework', $this->objectManager, $this->objectFactory);
 			$AOPFramework->initialize($objectConfigurations);
 			$this->objectManager->setObjectConfigurations($objectConfigurations);
 		}
@@ -427,7 +426,7 @@ final class FLOW3 {
 	 * @see intialize()
 	 */
 	public function initializeLocale() {
-		$this->objectManager->getObject('F3::FLOW3::Locale::Service', $this->settings)->initialize();
+		$this->objectManager->getObject('F3\FLOW3\Locale\Service', $this->settings)->initialize();
 	}
 
 	/**
@@ -437,10 +436,10 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSession() {
-		if (!$this->objectManager->isObjectRegistered('F3::FLOW3::Session::SessionInterface')) {
-			$this->objectManager->registerObject('F3::FLOW3::Session::SessionInterface', $this->settings['session']['backend']['className']);
+		if (!$this->objectManager->isObjectRegistered('F3\FLOW3\Session\SessionInterface')) {
+			$this->objectManager->registerObject('F3\FLOW3\Session\SessionInterface', $this->settings['session']['backend']['className']);
 		}
-		$session = $this->objectManager->getObject('F3::FLOW3::Session::SessionInterface');
+		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->start();
 	}
 
@@ -453,10 +452,10 @@ final class FLOW3 {
 	 */
 	public function initializePersistence() {
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$repository = $this->objectManager->getObject('F3::PHPCR::RepositoryInterface');
+			$repository = $this->objectManager->getObject('F3\PHPCR\RepositoryInterface');
 			$session = $repository->login();
-			$persistenceBackend = $this->objectManager->getObject('F3::FLOW3::Persistence::BackendInterface', $session);
-			$persistenceManager = $this->objectManager->getObject('F3::FLOW3::Persistence::Manager');
+			$persistenceBackend = $this->objectManager->getObject('F3\FLOW3\Persistence\BackendInterface', $session);
+			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\Manager');
 			$persistenceManager->initialize();
 		}
 
@@ -472,10 +471,10 @@ final class FLOW3 {
 		$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
 		$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
 
-		$environment = $this->objectManager->getObject('F3::FLOW3::Utility::Environment');
+		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
-		$resourcePublisher = $this->objectManager->getObject('F3::FLOW3::Resource::Publisher');
+		$resourcePublisher = $this->objectManager->getObject('F3\FLOW3\Resource\Publisher');
 		$resourcePublisher->initializeMirrorDirectory($this->settings['resource']['cache']['publicPath'] . $requestType . '/');
 		$resourcePublisher->setMetadataCache($metadataCache);
 		$resourcePublisher->setStatusCache($statusCache);
@@ -495,15 +494,15 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function run() {
-		$requestHandlerResolver = $this->objectManager->getObject('F3::FLOW3::MVC::RequestHandlerResolver', $this->settings);
+		$requestHandlerResolver = $this->objectManager->getObject('F3\FLOW3\MVC\RequestHandlerResolver', $this->settings);
 		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
 		$requestHandler->handleRequest();
 
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$this->objectManager->getObject('F3::FLOW3::Persistence::Manager')->persistAll();
+			$this->objectManager->getObject('F3\FLOW3\Persistence\Manager')->persistAll();
 		}
 
-		$session = $this->objectManager->getObject('F3::FLOW3::Session::SessionInterface');
+		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->close();
 	}
 
@@ -512,7 +511,7 @@ final class FLOW3 {
 	 * be used by unit tests and special cases. In almost any other case, a reference to the
 	 * object manager can be injected.
 	 *
-		* @return F3::FLOW3::Object::ManagerInterface
+		* @return \F3\FLOW3\Object\ManagerInterface
 		* @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManager() {
@@ -531,9 +530,9 @@ final class FLOW3 {
 			die('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
 
-		if (!extension_loaded('Reflection')) throw new F3::FLOW3::Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
-		$method = new ReflectionMethod(__CLASS__, 'checkEnvironment');
-		if ($method->getDocComment() == '') throw new F3::FLOW3::Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+		if (!extension_loaded('Reflection')) throw new \F3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
+		$method = new \ReflectionMethod(__CLASS__, 'checkEnvironment');
+		if ($method->getDocComment() == '') throw new \F3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
 
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');
@@ -593,14 +592,14 @@ final class FLOW3 {
 
 		$objectConfigurations = $this->objectManager->getObjectConfigurations();
 		foreach ($packages as $packageKey => $package) {
-			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(F3::FLOW3::Configuration::Manager::CONFIGURATION_TYPE_COMPONENTS, $packageKey);
+			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_COMPONENTS, $packageKey);
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
-				$objectName = str_replace('_', '::', $objectName);
+				$objectName = str_replace('_', '\\', $objectName);
 				if (!$this->objectManager->isObjectRegistered($objectName)) {
-					throw new F3::FLOW3::Object::Exception::InvalidObjectConfiguration('Tried to configure unknown object "' . $objectName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
+					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Tried to configure unknown object "' . $objectName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
 				}
 				$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
-				$objectConfigurations[$objectName] = F3::FLOW3::Object::ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+				$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
 			}
 		}
 
@@ -622,7 +621,7 @@ final class FLOW3 {
 	 */
 	protected function classNameIsBlacklisted($className) {
 		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
-			if ($className == $blacklistedClassName || preg_match('/^' . $blacklistedClassName . '$/', $className)) {
+			if ($className == $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
 				return TRUE;
 			}
 		}
@@ -632,16 +631,16 @@ final class FLOW3 {
 	/**
 	 * (For now) evaluates the package configuration
 	 *
-	 * @param F3::FLOW3::Package::Package $package The package
+	 * @param \F3\FLOW3\Package\Package $package The package
 	 * @param array The configuration to evaluate
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
 	 */
-	protected function evaluatePackageConfiguration(F3::FLOW3::Package::Package $package, array $packageConfiguration) {
+	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\Package $package, array $packageConfiguration) {
 		if (isset($packageConfiguration['resourceManager'])) {
 			if (isset($packageConfiguration['resourceManager']['specialClassNameAndPaths'])) {
-				$resourceManager = $this->objectManager->getObject('F3::FLOW3::Resource::Manager');
+				$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\Manager');
 				foreach ($packageConfiguration['resourceManager']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
 					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);

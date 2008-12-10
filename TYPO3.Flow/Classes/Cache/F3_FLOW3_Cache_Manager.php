@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Manager {
@@ -44,14 +44,14 @@ class Manager {
 	/**
 	 * Registers a cache so it can be retrieved at a later point.
 	 *
-	 * @param F3::FLOW3::Cache::AbstractCache $cache The cache to be registered
+	 * @param \F3\FLOW3\Cache\AbstractCache $cache The cache to be registered
 	 * @return void
-	 * @throws F3::FLOW3::Cache::DuplicateIdentifier if a cache with the given identifier has already been registered.
+	 * @throws \F3\FLOW3\Cache\DuplicateIdentifier if a cache with the given identifier has already been registered.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerCache(F3::FLOW3::Cache::AbstractCache $cache) {
+	public function registerCache(\F3\FLOW3\Cache\AbstractCache $cache) {
 		$identifier = $cache->getIdentifier();
-		if (isset($this->caches[$identifier])) throw new F3::FLOW3::Cache::Exception::DuplicateIdentifier('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
+		if (isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\DuplicateIdentifier('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		$this->caches[$identifier] = $cache;
 	}
 
@@ -59,11 +59,11 @@ class Manager {
 	 * Returns the cache specified by $identifier
 	 *
 	 * @param string $identifier Identifies which cache to return
-	 * @return F3::FLOW3::Cache::AbstractCache The specified cache
-	 * @throws F3::FLOW3::Cache::Exception::NoSuchCache
+	 * @return \F3\FLOW3\Cache\AbstractCache The specified cache
+	 * @throws \F3\FLOW3\Cache\Exception\NoSuchCache
 	 */
 	public function getCache($identifier) {
-		if (!isset($this->caches[$identifier])) throw new F3::FLOW3::Cache::Exception::NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
+		if (!isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
 		return $this->caches[$identifier];
 	}
 

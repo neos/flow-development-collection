@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Interceptor;
+namespace F3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,20 +26,20 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AccessDeny implements F3::FLOW3::Security::Authorization::InterceptorInterface {
+class AccessDeny implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
 	 * Invokes nothing, always throws an AccessDenied Exception.
 	 *
 	 * @return boolean Always returns FALSE
-	 * @throws F3::FLOW3::Security::Exception::AccessDenied
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		throw new F3::FLOW3::Security::Exception::AccessDenied('You are not allowed to perform this action.', 1216919280);
+		throw new \F3\FLOW3\Security\Exception\AccessDenied('You are not allowed to perform this action.', 1216919280);
 
 		return FALSE;
 	}

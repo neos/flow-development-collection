@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Configuration.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Configuration.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Configuration.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
@@ -73,8 +73,8 @@ class ConfigurationArgument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
-		if (!is_integer($index)) throw new RuntimeException('$index must be of type integer', 1168003692);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new RuntimeException('$type is not valid', 1168003693);
+		if (!is_integer($index)) throw new \RuntimeException('$index must be of type integer', 1168003692);
+		if (!is_integer($type) || $type < 0 || $type > 1) throw new \RuntimeException('$type is not valid', 1168003693);
 		$this->index = $index;
 		$this->value = $value;
 		$this->type = $type;

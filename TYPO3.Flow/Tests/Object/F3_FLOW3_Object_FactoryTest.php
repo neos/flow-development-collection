@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,10 +27,10 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Object::ManagerTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ManagerTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class FactoryTest extends F3::Testing::BaseTestCase {
+class FactoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Checks if create() returns the expected class type
@@ -39,8 +39,8 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function createReturnsCorrectClassType() {
-		$testObjectInstance = $this->objectManager->getObject('F3::TestPackage::BasicClass');
-		$this->assertTrue($testObjectInstance instanceof F3::TestPackage::BasicClass, 'Object instance is no instance of our basic test class!');
+		$testObjectInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
+		$this->assertTrue($testObjectInstance instanceof \F3\TestPackage\BasicClass, 'Object instance is no instance of our basic test class!');
 	}
 
 	/**
@@ -51,8 +51,8 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 */
 	public function createFailsOnNonExistentObject() {
 		try {
-			$this->objectManager->getObject('F3::TestPackage::ThisClassDoesNotExist');
-		} catch (F3::FLOW3::Object::Exception::UnknownObject $exception) {
+			$this->objectManager->getObject('F3\TestPackage\ThisClassDoesNotExist');
+		} catch (\F3\FLOW3\Object\Exception\UnknownObject $exception) {
 			return;
 		}
 		$this->fail('create() did not throw an exception although it has been asked for a non-existent object.');
@@ -65,8 +65,8 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function createReturnsUniqueInstanceByDefault() {
-		$firstInstance = $this->objectManager->getObject('F3::TestPackage::BasicClass');
-		$secondInstance = $this->objectManager->getObject('F3::TestPackage::BasicClass');
+		$firstInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
+		$secondInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
 		$this->assertSame($secondInstance, $firstInstance, 'create() did not return a truly unique instance when asked for a non-configured object.');
 	}
 
@@ -77,8 +77,8 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function createReturnsPrototypeInstanceIfConfigured() {
-		$firstInstance = $this->objectManager->getObject('F3::TestPackage::PrototypeClass');
-		$secondInstance = $this->objectManager->getObject('F3::TestPackage::PrototypeClass');
+		$firstInstance = $this->objectManager->getObject('F3\TestPackage\PrototypeClass');
+		$secondInstance = $this->objectManager->getObject('F3\TestPackage\PrototypeClass');
 		$this->assertNotSame($secondInstance, $firstInstance, 'create() did not return a fresh prototype instance when asked for an object configured as prototype.');
 	}
 
@@ -89,8 +89,8 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function createReturnsCorrectClassIfDifferentFromObjectName() {
-		$object = $this->objectManager->getObject('F3::TestPackage::ClassToBeReplaced');
-		$this->assertTrue($object instanceof F3::TestPackage::ReplacingClass, 'create() did not return a the replacing class.');
+		$object = $this->objectManager->getObject('F3\TestPackage\ClassToBeReplaced');
+		$this->assertTrue($object instanceof \F3\TestPackage\ReplacingClass, 'create() did not return a the replacing class.');
 	}
 
 	/**
@@ -100,7 +100,7 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function createPassesArgumentsToObjectClassConstructor() {
-		$object = $this->objectManager->getObject('F3::TestPackage::ClassWithOptionalConstructorArguments', 'test1', 'test2', 'test3');
+		$object = $this->objectManager->getObject('F3\TestPackage\ClassWithOptionalConstructorArguments', 'test1', 'test2', 'test3');
 		$checkSucceeded = (
 			$object->argument1 == 'test1' &&
 			$object->argument2 == 'test2' &&
@@ -114,7 +114,7 @@ class FactoryTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorArgumentsPassedToCreateAreNotAddedToRealObjectConfiguration() {
-		$objectName = 'F3::TestPackage::ClassWithOptionalConstructorArguments';
+		$objectName = 'F3\TestPackage\ClassWithOptionalConstructorArguments';
 		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);
 		$objectConfiguration->setConstructorArguments(array());
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\ConfigurationProperty.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ConfigurationProperty {
@@ -72,8 +72,8 @@ class ConfigurationProperty {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE) {
-		if (!is_string($name)) throw new RuntimeException('$name must be of type string', 1168003690);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new RuntimeException('$type is not valid', 1168003691);
+		if (!is_string($name)) throw new \RuntimeException('$name must be of type string', 1168003690);
+		if (!is_integer($type) || $type < 0 || $type > 1) throw new \RuntimeException('$type is not valid', 1168003691);
 		$this->name = $name;
 		$this->value = $value;
 		$this->type = $type;

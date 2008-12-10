@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Package;
+namespace F3\FLOW3\Package;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package::.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3::FLOW3::Package::.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:\F3\FLOW3\Package::.php 203 2007-03-30 13:17:37Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Package implements PackageInterface {
@@ -53,7 +53,7 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var F3::FLOW3::Package::Meta Meta information about this package
+	 * @var \F3\FLOW3\Package\Meta Meta information about this package
 	 */
 	protected $packageMeta;
 
@@ -67,24 +67,24 @@ class Package implements PackageInterface {
 	 *
 	 * @param string $packageKey Key of this package
 	 * @param string $packagePath Absolute path to the package's main directory
-	 * @throws F3::FLOW3::Package::Exception::InvalidPackageKey if an invalid package key was passed
-	 * @throws F3::FLOW3::Package::Exception::InvalidPackagePath if an invalid package path was passed
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKey if an invalid package key was passed
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($packageKey, $packagePath) {
-		if (!preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new F3::FLOW3::Package::Exception::InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
-		if (!@is_dir($packagePath)) throw new F3::FLOW3::Package::Exception::InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
-		if (substr($packagePath, -1, 1) != '/') throw new F3::FLOW3::Package::Exception::InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
+		if (!preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
+		if (!@is_dir($packagePath)) throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('Package path does not exist or is no directory.', 1166631889);
+		if (substr($packagePath, -1, 1) != '/') throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('Package path has no trailing forward slash.', 1166633720);
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
-		$this->packageMeta = new F3::FLOW3::Package::Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
+		$this->packageMeta = new \F3\FLOW3\Package\Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
 	}
 
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return F3::FLOW3::Package::Meta
+	 * @return \F3\FLOW3\Package\Meta
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMeta() {
@@ -161,17 +161,17 @@ class Package implements PackageInterface {
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Package::Exception if recursion into directories was too deep or another error occurred
+	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
 	 */
 	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
 		$classFiles = array();
 		$currentPath = $this->packagePath . self::DIRECTORY_CLASSES . $subDirectory;
 
 		if (!is_dir($currentPath)) return array();
-		if ($recursionLevel > 100) throw new F3::FLOW3::Package::Exception('Recursion too deep.', 1166635495);
+		if ($recursionLevel > 100) throw new \F3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
 
 		try {
-			$classesDirectoryIterator = new DirectoryIterator($currentPath);
+			$classesDirectoryIterator = new \DirectoryIterator($currentPath);
 			while ($classesDirectoryIterator->valid()) {
 				$filename = $classesDirectoryIterator->getFilename();
 				if ($filename{0} != '.') {
@@ -179,7 +179,7 @@ class Package implements PackageInterface {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {
 						if (substr($filename, 0, 3) == 'F3_' && substr($filename, -4, 4) == '.php') {
-							$classFiles[str_replace('_', '::', substr($filename, 0, -4))] = $subDirectory . $filename;
+							$classFiles[str_replace('_', '\\', substr($filename, 0, -4))] = $subDirectory . $filename;
 						}
 					}
 				}
@@ -187,7 +187,7 @@ class Package implements PackageInterface {
 			}
 
 		} catch(Exception $exception) {
-			throw new F3::FLOW3::Package::Exception($exception->getMessage(), 1166633720);
+			throw new \F3\FLOW3\Package\Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;
 	}

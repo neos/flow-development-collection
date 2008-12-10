@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object::Exception;
+namespace F3\FLOW3\Object\Exception;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Object::Exception;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class InvalidObject extends F3::FLOW3::Object::Exception {
+class InvalidObject extends \F3\FLOW3\Object\Exception {
 
 }
 

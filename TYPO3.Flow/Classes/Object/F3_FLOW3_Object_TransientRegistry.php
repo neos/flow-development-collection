@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Object;
 /**
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -27,10 +27,10 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistry.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class TransientRegistry implements F3::FLOW3::Object::RegistryInterface {
+class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 
 	/**
 	 * @var array Location where objects are stored
@@ -46,7 +46,7 @@ class TransientRegistry implements F3::FLOW3::Object::RegistryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
+		if (!$this->objectExists($objectName)) throw new \RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
 		return $this->objects[$objectName];
 	}
 
@@ -59,8 +59,8 @@ class TransientRegistry implements F3::FLOW3::Object::RegistryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putObject($objectName, $object) {
-		if (!is_string($objectName) || strlen($objectName) == 0) throw new RuntimeException('No valid object name specified.', 1167919564);
-		if (!is_object($object)) throw new RuntimeException('$object must be of type Object', 1167917199);
+		if (!is_string($objectName) || strlen($objectName) == 0) throw new \RuntimeException('No valid object name specified.', 1167919564);
+		if (!is_object($object)) throw new \RuntimeException('$object must be of type Object', 1167917199);
 		$this->objects[$objectName] = $object;
 	}
 
@@ -72,7 +72,7 @@ class TransientRegistry implements F3::FLOW3::Object::RegistryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
+		if (!$this->objectExists($objectName)) throw new \RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
 		unset ($this->objects[$objectName]);
 	}
 

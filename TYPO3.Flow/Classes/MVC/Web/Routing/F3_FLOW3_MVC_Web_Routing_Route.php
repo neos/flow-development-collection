@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -97,38 +97,38 @@ class Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Container for RoutePartCollections. Each element represents one URI segment and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 * Container for RoutePartCollections. Each element represents one URI segment and contains one or more \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart object(s)
 	 *
-	 * @var F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection
+	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
 	 */
 	protected $uriPatternSegments;
 
 	/**
-	 * Container for RoutePartCollections. Each element represents one Query parameter and contains one or more F3::FLOW3::MVC::Web::Routing::AbstractRoutePart object(s)
+	 * Container for RoutePartCollections. Each element represents one Query parameter and contains one or more \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart object(s)
 	 *
-	 * @var F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection
+	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
 	 */
 	protected $uriPatternQueryParameters;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
 		$this->objectManager = $objectManager;
 	}
@@ -174,7 +174,7 @@ class Route {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setUriPattern($uriPattern) {
-		if (!is_string($uriPattern)) throw new InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
+		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
 		$this->uriPattern = trim($uriPattern, '/ ');
 		$this->isParsed = FALSE;
 	}
@@ -185,7 +185,7 @@ class Route {
 	 *
 	 * @param string $pattern A pattern which may contain placeholders
 	 * @return void
-	 * @see F3::FLOW3::MVC::Web::Request
+	 * @see \F3\FLOW3\MVC\Web\Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setControllerObjectNamePattern($pattern) {
@@ -196,7 +196,7 @@ class Route {
 	 * Returns the custom controller object name pattern.
 	 *
 	 * @return string The pattern or NULL if none was defined
-	 * @see F3::FLOW3::MVC::Web::Request
+	 * @see \F3\FLOW3\MVC\Web\Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerObjectNamePattern() {
@@ -209,7 +209,7 @@ class Route {
 	 *
 	 * @param string $pattern A pattern which may contain placeholders
 	 * @return void
-	 * @see F3::FLOW3::MVC::Web::Request
+	 * @see \F3\FLOW3\MVC\Web\Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setViewObjectNamePattern($pattern) {
@@ -220,7 +220,7 @@ class Route {
 	 * Returns the custom view object name pattern.
 	 *
 	 * @return string The pattern or NULL if none was defined
-	 * @see F3::FLOW3::MVC::Web::Request
+	 * @see \F3\FLOW3\MVC\Web\Request
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getViewObjectNamePattern() {
@@ -228,10 +228,10 @@ class Route {
 	}
 
 	/**
-	 * By default all Dynamic Route Parts are resolved by F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
+	 * By default all Dynamic Route Parts are resolved by \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
-	 * Note: Route Part handler must inherit from F3::FLOW3::MVC::Web::Routing::DynamicRoutePart.
-	 * Usage: setRoutePartHandlers(array('@controller' => 'F3::Package::Subpackage::MyRoutePartHandler'));
+	 * Note: Route Part handler must inherit from \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
+	 * Usage: setRoutePartHandlers(array('@controller' => 'F3\Package\Subpackage\MyRoutePartHandler'));
 	 *
 	 * @param array $routePartHandlers Route Part handler classnames
 	 * @return void
@@ -245,7 +245,7 @@ class Route {
 	 * Returns an array with the Route match results.
 	 *
 	 * @return array An array of Route Parts and their values for further handling by the Router
-	 * @see F3::FLOW3::MVC::Web::Routing::Router
+	 * @see \F3\FLOW3\MVC\Web\Routing\Router
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMatchResults() {
@@ -349,7 +349,7 @@ class Route {
 				if (!$routePart->resolve($routeValues)) {
 					return FALSE;
 				}
-				$uri.= F3::PHP6::Functions::strtolower($routePart->getValue());
+				$uri.= \F3\PHP6\Functions::strtolower($routePart->getValue());
 			}
 			$uri.= '/';
 		}
@@ -362,7 +362,7 @@ class Route {
 					if (!$routePart->resolve($routeValues)) {
 						return FALSE;
 					}
-					$uri.= F3::PHP6::Functions::strtolower($routePart->getValue());
+					$uri.= \F3\PHP6\Functions::strtolower($routePart->getValue());
 				}
 				$uri.= '&';
 			}
@@ -394,7 +394,7 @@ class Route {
 		if ($this->isParsed) {
 			return;
 		}
-		$this->uriPatternSegments = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+		$this->uriPatternSegments = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
 		$this->uriPatternQueryParameters = NULL;
 
 		$splittedUriPattern = explode('?', $this->uriPattern);
@@ -412,7 +412,7 @@ class Route {
 
 		if ($uriPatternQuery !== NULL) {
 			$uriPatternQueryParameters = explode('&', $uriPatternQuery);
-			$this->uriPatternQueryParameters = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection');
+			$this->uriPatternQueryParameters = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
 			foreach ($uriPatternQueryParameters as $uriPatternQueryParameter) {
 				$this->uriPatternQueryParameters->append($this->createRoutePartsFromUriPatternPart($uriPatternQueryParameter, $this->uriPatternQueryParameters));
 			}
@@ -425,12 +425,12 @@ class Route {
 	 * One segment can contain more than one Dynamic Route Part, but they have to be separated by Static Route Parts.
 	 *
 	 * @param string $uriPatternPart one segment or one query parameter (name and value) of the URI pattern including brackets.
-	 * @param F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection $uriPatternSegments current collection of uriPattern parts.
-	 * @return F3::FLOW3::MVC::Web::Routing::RoutePartCollection corresponding Route Part instances
+	 * @param \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments current collection of uriPattern parts.
+	 * @return \F3\FLOW3\MVC\Web\Routing\RoutePartCollection corresponding Route Part instances
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function createRoutePartsFromUriPatternPart($uriPatternPart, F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection &$uriPatternSegments) {
-		$routePartCollection = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::RoutePartCollection');
+	protected function createRoutePartsFromUriPatternPart($uriPatternPart, \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection &$uriPatternSegments) {
+		$routePartCollection = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
 		$matches = array();
 		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $uriPatternPart, $matches, PREG_SET_ORDER);
 
@@ -440,7 +440,7 @@ class Route {
 			$routePartName = $match['content'];
 			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
 				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
-					throw new F3::FLOW3::MVC::Exception::SuccessiveDynamicRouteParts('two succesive Dynamic Route Parts are not allowed!', 1218446975);
+					throw new \F3\FLOW3\MVC\Exception\SuccessiveDynamicRouteParts('two succesive Dynamic Route Parts are not allowed!', 1218446975);
 				}
 			}
 
@@ -449,18 +449,18 @@ class Route {
 				case self::ROUTEPART_TYPE_DYNAMIC:
 					if (isset($this->routePartHandlers[$routePartName])) {
 						$routePart = $this->objectManager->getObject($this->routePartHandlers[$routePartName]);
-						if (!$routePart instanceof F3::FLOW3::MVC::Web::Routing::DynamicRoutePart) {
-							throw new F3::FLOW3::MVC::Exception::InvalidRoutePartHandler('routePart handlers must inherit from "F3::FLOW3::MVC::Web::Routing::DynamicRoutePart"', 1218480972);
+						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart) {
+							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must inherit from "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePart"', 1218480972);
 						}
 					} else {
-						$routePart = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::DynamicRoutePart');
+						$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
 					}
 					if (isset($this->defaults[$routePartName])) {
 						$routePart->setDefaultValue($this->defaults[$routePartName]);
 					}
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
-					$routePart = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::StaticRoutePart');
+					$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
 			}
 			$routePart->setName($routePartName);
 			$routePart->setUriPatternSegments($uriPatternSegments);

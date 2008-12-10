@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,90 +34,90 @@ class Manager {
 	/**
 	 * The reflection service
 	 *
-	 * @var F3::FLOW3::Reflection::Service
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;
 
 	/**
 	 * The class schema builder
 	 *
-	 * @var F3::FLOW3::Persistence::ClassSchemataBuilder
+	 * @var \F3\FLOW3\Persistence\ClassSchemataBuilder
 	 */
 	protected $classSchemataBuilder;
 
 	/**
-	 * @var F3::FLOW3::Persistence::BackendInterface
+	 * @var \F3\FLOW3\Persistence\BackendInterface
 	 */
 	protected $backend;
 
 	/**
-	 * @var F3::FLOW3::Persistence::Session
+	 * @var \F3\FLOW3\Persistence\Session
 	 */
 	protected $session;
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
 	 * Schemata of all classes which need to be persisted
 	 *
-	 * @var array of F3::FLOW3::Persistence::ClassSchema
+	 * @var array of \F3\FLOW3\Persistence\ClassSchema
 	 */
 	protected $classSchemata = array();
 
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Persistence::BackendInterface $backend the backend to use for persistence
+	 * @param \F3\FLOW3\Persistence\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Persistence::BackendInterface $backend) {
+	public function __construct(\F3\FLOW3\Persistence\BackendInterface $backend) {
 		$this->backend = $backend;
 	}
 
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3::FLOW3::Reflection::Service $reflectionService The reflection service
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectReflectionService(F3::FLOW3::Reflection::Service $reflectionService) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
 	}
 
 	/**
 	 * Injects the class schemata builder
 	 *
-	 * @param F3::FLOW3::Persistence::ClassSchemataBuilder $classSchemataBuilder The class schemata builder
+	 * @param \F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder The class schemata builder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectClassSchemataBuilder(F3::FLOW3::Persistence::ClassSchemataBuilder $classSchemataBuilder) {
+	public function injectClassSchemataBuilder(\F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder) {
 		$this->classSchemataBuilder = $classSchemataBuilder;
 	}
 
 	/**
 	 * Injects the persistence session
 	 *
-	 * @param F3::FLOW3::Persistence::Session $session The persistence session
+	 * @param \F3\FLOW3\Persistence\Session $session The persistence session
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSession(F3::FLOW3::Persistence::Session $session) {
+	public function injectSession(\F3\FLOW3\Persistence\Session $session) {
 		$this->session = $session;
 	}
 
 	/**
 	 * Injects the object manager
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -128,7 +128,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		if (!$this->backend instanceof F3::FLOW3::Persistence::BackendInterface) throw new F3::FLOW3::Persistence::Exception::MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
+		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
 		$classNames = array_merge($this->reflectionService->getClassNamesByTag('entity'),
 			$this->reflectionService->getClassNamesByTag('valueobject'));
 
@@ -139,7 +139,7 @@ class Manager {
 	/**
 	 * Returns the current persistence session
 	 *
-	 * @return F3::FLOW3::Persistence::Session
+	 * @return \F3\FLOW3\Persistence\Session
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSession() {
@@ -149,7 +149,7 @@ class Manager {
 	/**
 	 * Returns the persistence backend
 	 *
-	 * @return F3::FLOW3::Persistence::Backend
+	 * @return \F3\FLOW3\Persistence\Backend
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBackend() {
@@ -160,7 +160,7 @@ class Manager {
 	 * Returns the class schema for the given class
 	 *
 	 * @param string $className
-	 * @return F3::FLOW3::Persistence::ClassSchema
+	 * @return \F3\FLOW3\Persistence\ClassSchema
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getClassSchema($className) {
@@ -180,7 +180,7 @@ class Manager {
 		$removedObjects = array();
 
 			// fetch and inspect objects from all known repositories
-		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3::FLOW3::Persistence::RepositoryInterface');
+		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
 			$aggregateRootObjects = array_merge($aggregateRootObjects, $repository->getObjects());

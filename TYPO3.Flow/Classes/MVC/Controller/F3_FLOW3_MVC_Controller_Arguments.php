@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Controller;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::Arguments.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\Arguments.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,14 +26,14 @@ namespace F3::FLOW3::MVC::Controller;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::Controller::Arguments.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\Controller\Arguments.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Arguments extends ::ArrayObject {
+class Arguments extends \ArrayObject {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface A reference to the object factory
+	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the object factory
 	 */
 	protected $objectFactory;
 
@@ -47,7 +47,7 @@ class Arguments extends ::ArrayObject {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 		parent::__construct();
 	}
@@ -59,11 +59,11 @@ class Arguments extends ::ArrayObject {
 	 * @param mixed $offset Offset - not used here
 	 * @param mixed $value The argument.
 	 * @return void
-	 * @throws InvalidArgumentException if the argument is not a valid Controller Argument object
+	 * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function offsetSet($offset, $value) {
-		if (!$value instanceof F3::FLOW3::MVC::Controller::Argument) throw new InvalidArgumentException('Controller arguments must be valid F3::FLOW3::MVC::Controller::Argument objects.', 1187953786);
+		if (!$value instanceof \F3\FLOW3\MVC\Controller\Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
 
 		$argumentName = $value->getName();
 		parent::offsetSet($argumentName, $value);
@@ -75,11 +75,11 @@ class Arguments extends ::ArrayObject {
 	 *
 	 * @param mixed $value The value
 	 * @return void
-	 * @throws InvalidArgumentException if the argument is not a valid Controller Argument object
+	 * @throws \InvalidArgumentException if the argument is not a valid Controller Argument object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function append($value) {
-		if (!$value instanceof F3::FLOW3::MVC::Controller::Argument) throw new InvalidArgumentException('Controller arguments must be valid F3::FLOW3::MVC::Controller::Argument objects.', 1187953786);
+		if (!$value instanceof \F3\FLOW3\MVC\Controller\Argument) throw new \InvalidArgumentException('Controller arguments must be valid \F3\FLOW3\MVC\Controller\Argument objects.', 1187953786);
 		$this->offsetSet(NULL, $value);
 	}
 
@@ -117,13 +117,13 @@ class Arguments extends ::ArrayObject {
 	 * Returns the value at the specified index
 	 *
 	 * @param mixed $offset Offset
-	 * @return F3::FLOW3::MVC::Controller::Argument The requested argument object
-	 * @throws F3::FLOW3::MVC::Exception::NoSuchArgument if the argument does not exist
+	 * @return \F3\FLOW3\MVC\Controller\Argument The requested argument object
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if the argument does not exist
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
-		if ($translatedOffset === '') throw new F3::FLOW3::MVC::Exception::NoSuchArgument('The argument "' . $offset . '" does not exist.', 1216909923);
+		if ($translatedOffset === '') throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('The argument "' . $offset . '" does not exist.', 1216909923);
 		return parent::offsetGet($translatedOffset);
 	}
 
@@ -135,11 +135,11 @@ class Arguments extends ::ArrayObject {
 	 * @param string $name Name of the argument
 	 * @param string $dataType Name of one of the built-in data types
 	 * @param boolean $isRequired TRUE if this argument should be marked as required
-	 * @return F3::FLOW3::MVC::Controller::Argument The new argument
+	 * @return \F3\FLOW3\MVC\Controller\Argument The new argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
-		$argument = $this->objectFactory->create('F3::FLOW3::MVC::Controller::Argument', $name, $dataType);
+		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 		$this->addArgument($argument);
 		return $argument;
@@ -152,11 +152,11 @@ class Arguments extends ::ArrayObject {
 	 *
 	 * Note that the argument will be cloned, not referenced.
 	 *
-	 * @param F3::FLOW3::MVC::Controller::Argument $argument: The argument to add
+	 * @param \F3\FLOW3\MVC\Controller\Argument $argument: The argument to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addArgument(F3::FLOW3::MVC::Controller::Argument $argument) {
+	public function addArgument(\F3\FLOW3\MVC\Controller\Argument $argument) {
 		$this->offsetSet(NULL, $argument);
 	}
 
@@ -164,12 +164,12 @@ class Arguments extends ::ArrayObject {
 	 * Returns an argument specified by name
 	 *
 	 * @param string $argumentName: Name of the argument to retrieve
-	 * @return F3::FLOW3::MVC::Controller::Argument
-	 * @throws F3::FLOW3::MVC::Exception::NoSuchArgument
+	 * @return \F3\FLOW3\MVC\Controller\Argument
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgument($argumentName) {
-		if (!$this->offsetExists($argumentName)) throw new F3::FLOW3::MVC::Exception::NoSuchArgument('An argument "' . $argumentName . '" does not exist.', 1195815178);
+		if (!$this->offsetExists($argumentName)) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $argumentName . '" does not exist.', 1195815178);
 		return $this->offsetGet($argumentName);
 	}
 
@@ -220,10 +220,10 @@ class Arguments extends ::ArrayObject {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __call($methodName, array $arguments) {
-		if (F3::PHP6::Functions::substr($methodName, 0, 3) !== 'set') throw new LogicException('Unknown method "' . $methodName . '".', 1210858451);
+		if (\F3\PHP6\Functions::substr($methodName, 0, 3) !== 'set') throw new LogicException('Unknown method "' . $methodName . '".', 1210858451);
 
-		$firstLowerCaseArgumentName = $this->translateToLongArgumentName(F3::PHP6::Functions::strtolower($methodName{3}) . F3::PHP6::Functions::substr($methodName, 4));
-		$firstUpperCaseArgumentName = $this->translateToLongArgumentName(F3::PHP6::Functions::ucfirst(F3::PHP6::Functions::substr($methodName, 3)));
+		$firstLowerCaseArgumentName = $this->translateToLongArgumentName(\F3\PHP6\Functions::strtolower($methodName{3}) . \F3\PHP6\Functions::substr($methodName, 4));
+		$firstUpperCaseArgumentName = $this->translateToLongArgumentName(\F3\PHP6\Functions::ucfirst(\F3\PHP6\Functions::substr($methodName, 3)));
 
 		if (in_array($firstLowerCaseArgumentName, $this->getArgumentNames())) {
 			$argument = parent::offsetGet($firstLowerCaseArgumentName);

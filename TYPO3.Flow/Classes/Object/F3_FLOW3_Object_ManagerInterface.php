@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Object;
+namespace F3\FLOW3\Object;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Object;
  *
  * @package FLOW3
  * @subpackage Object
- * @version $Id:F3::FLOW3::Object::Manager.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\Manager.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 interface ManagerInterface {
@@ -58,7 +58,7 @@ interface ManagerInterface {
 	/**
 	 * Returns a reference to the object factory used by the object manager.
 	 *
-	 * @return F3::FLOW3::Object::FactoryInterface
+	 * @return \F3\FLOW3\Object\FactoryInterface
 	 */
 	public function getObjectFactory();
 
@@ -73,7 +73,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
-	 * @throws F3::FLOW3::Object::Exception::UnknownObject if an object with the given name does not exist
+	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 */
 	public function getObject($objectName);
 
@@ -120,7 +120,7 @@ interface ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered objects.
 	 *
-	 * @return arrray Array of F3::FLOW3::Object::Configuration objects, indexed by object name
+	 * @return arrray Array of \F3\FLOW3\Object\Configuration objects, indexed by object name
 	 */
 	public function getObjectConfigurations();
 
@@ -128,7 +128,7 @@ interface ManagerInterface {
 	 * Returns the configuration object of a certain object
 	 *
 	 * @param string $objectName: Name of the object to fetch the configuration for
-	 * @return F3::FLOW3::Object::Configuration The object configuration
+	 * @return \F3\FLOW3\Object\Configuration The object configuration
 	 */
 	public function getObjectConfiguration($objectName);
 
@@ -140,7 +140,7 @@ interface ManagerInterface {
 	 *       configured. Trying to configure an unregistered object will
 	 *       result in an exception thrown.
 	 *
-	 * @param array $newObjectConfigurations: Array of $objectName => F3::FLOW3::Object::configuration
+	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
 	 * @return void
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations);
@@ -152,10 +152,10 @@ interface ManagerInterface {
 	 *       configured. Trying to configure an unregistered object will
 	 *       result in an exception thrown.
 	 *
-	 * @param F3::FLOW3::Object::Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
 	 */
-	public function setObjectConfiguration(F3::FLOW3::Object::Configuration $newObjectConfiguration);
+	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration $newObjectConfiguration);
 
 	/**
 	 * Sets the name of the class implementing the specified object.

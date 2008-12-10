@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Persistence;
+namespace F3\FLOW3\Persistence;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,14 +32,14 @@ namespace F3::FLOW3::Persistence;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class ClassSchemaTest extends F3::Testing::BaseTestCase {
+class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
-		$classSchema = new F3::FLOW3::Persistence::ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
 		$classSchema->setProperty('a', 'string');
 		$classSchema->setProperty('b', 'integer');
 

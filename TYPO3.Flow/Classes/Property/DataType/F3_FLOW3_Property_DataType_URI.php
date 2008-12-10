@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Property::DataType;
+namespace F3\FLOW3\Property\DataType;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Property::DataType;
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3::FLOW3::Property::DataType::URI.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Property\DataType\URI.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Property::DataType;
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id:F3::FLOW3::Property::DataType::URI.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Property\DataType\URI.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  *
  * @scope prototype
@@ -94,7 +94,7 @@ class URI {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($URIString) {
-		if (!is_string($URIString)) throw new InvalidArgumentException('The URI must be a valid string.', 1176550571);
+		if (!is_string($URIString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
 
 		$URIParts = parse_url($URIString);
 		if (is_array($URIParts)) {
@@ -130,9 +130,9 @@ class URI {
 	 */
 	public function setScheme($scheme) {
 		if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) === 1) {
-			$this->scheme = F3::PHP6::Functions::strtolower($scheme);
+			$this->scheme = \F3\PHP6\Functions::strtolower($scheme);
 		} else {
-			throw new InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
+			throw new \InvalidArgumentException('"' . $scheme . '" is not a valid scheme.', 1184071237);
 		}
 	}
 
@@ -157,7 +157,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_USERNAME, $username) === 1) {
 			$this->username = $username;
 		} else {
-			throw new InvalidArgumentException('"' . $username . '" is not a valid username.', 1184071238);
+			throw new \InvalidArgumentException('"' . $username . '" is not a valid username.', 1184071238);
 		}
 	}
 
@@ -182,7 +182,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_PASSWORD, $password) === 1) {
 			$this->password = $password;
 		} else {
-			throw new InvalidArgumentException('The specified password is not valid as part of a URI.', 1184071239);
+			throw new \InvalidArgumentException('The specified password is not valid as part of a URI.', 1184071239);
 		}
 	}
 
@@ -207,7 +207,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_HOST, $host) === 1) {
 			$this->host = $host;
 		} else {
-			throw new InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
+			throw new \InvalidArgumentException('"' . $host . '" is not valid host as part of a URI.', 1184071240);
 		}
 	}
 
@@ -232,7 +232,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_PORT, $port) === 1) {
 			$this->port = $port;
 		} else {
-			throw new InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
+			throw new \InvalidArgumentException('"' . $port . '" is not valid port number as part of a URI.', 1184071241);
 		}
 	}
 
@@ -257,7 +257,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_PATH, $path) === 1) {
 			$this->path = $path;
 		} else {
-			throw new InvalidArgumentException('"' . $path . '" is not valid path as part of a URI.', 1184071242);
+			throw new \InvalidArgumentException('"' . $path . '" is not valid path as part of a URI.', 1184071242);
 		}
 	}
 
@@ -313,7 +313,7 @@ class URI {
 		if (preg_match(self::PATTERN_MATCH_FRAGMENT, $fragment) === 1) {
 			$this->fragment = $fragment;
 		} else {
-			throw new InvalidArgumentException('"' . $fragment . '" is not valid fragment as part of a URI.', 1184071252);
+			throw new \InvalidArgumentException('"' . $fragment . '" is not valid fragment as part of a URI.', 1184071252);
 		}
 	}
 

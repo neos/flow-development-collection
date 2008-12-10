@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Interceptor;
+namespace F3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -34,10 +34,10 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AfterInvocation implements F3::FLOW3::Security::Authorization::InterceptorInterface {
+class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * @var F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface The after invocation manager
+	 * @var \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface The after invocation manager
 	 */
 	protected $afterInvocationManager = NULL;
 
@@ -50,14 +50,14 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3_Security::ContextHolderInterface $securityContextHolder The current security context
-	 * @param F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
+	 * @param \F3\FLOW3_Security\ContextHolderInterface $securityContextHolder The current security context
+	 * @param \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-		F3::FLOW3::Security::ContextHolderInterface $securityContextHolder,
-		F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface $afterInvocationManager
+		\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder,
+		\F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager
 		) {
 
 	}
@@ -65,11 +65,11 @@ class AfterInvocation implements F3::FLOW3::Security::Authorization::Interceptor
 	/**
 	 * Sets the current joinpoint for this interception
 	 *
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The current joinpoint
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setJoinPoint(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function setJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 

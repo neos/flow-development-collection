@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -38,7 +38,7 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::AspectContainer.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\AspectContainer.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class AspectContainer {
@@ -49,17 +49,17 @@ class AspectContainer {
 	protected $className;
 
 	/**
-	 * @var array An array of F3::FLOW3::AOP::Advisor objects
+	 * @var array An array of \F3\FLOW3\AOP\Advisor objects
 	 */
 	protected $advisors = array();
 
 	/**
-	 * @var array An array of F3::FLOW3::AOP::Introduction objects
+	 * @var array An array of \F3\FLOW3\AOP\Introduction objects
 	 */
 	protected $introductions = array();
 
 	/**
-	 * @var array An array of explicitly declared F3::FLOW3::Pointcut objects
+	 * @var array An array of explicitly declared \F3\FLOW3\Pointcut objects
 	 */
 	protected $pointcuts = array();
 
@@ -87,7 +87,7 @@ class AspectContainer {
 	/**
 	 * Returns the advisors which were defined in the aspect
 	 *
-	 * @return array Array of F3::FLOW3::AOP::Advisor objects
+	 * @return array Array of \F3\FLOW3\AOP\Advisor objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvisors() {
@@ -97,7 +97,7 @@ class AspectContainer {
 	/**
 	 * Returns the introductions which were defined in the aspect
 	 *
-	 * @return array Array of F3::FLOW3::AOP::Introduction objects
+	 * @return array Array of \F3\FLOW3\AOP\Introduction objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getIntroductions() {
@@ -109,7 +109,7 @@ class AspectContainer {
 	 * does not contain the pointcuts which were made out of the pointcut
 	 * expressions for the advisors!
 	 *
-	 * @return array Array of F3::FLOW3::AOP::Pointcut objects
+	 * @return array Array of \F3\FLOW3\AOP\Pointcut objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcuts() {
@@ -119,33 +119,33 @@ class AspectContainer {
 	/**
 	 * Adds an advisor to this aspect container
 	 *
-	 * @param F3::FLOW3::AOP::AdvisorInterface $advisor: The advisor to add
+	 * @param \F3\FLOW3\AOP\AdvisorInterface $advisor: The advisor to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addAdvisor(F3::FLOW3::AOP::AdvisorInterface $advisor) {
+	public function addAdvisor(\F3\FLOW3\AOP\AdvisorInterface $advisor) {
 		$this->advisors[] = $advisor;
 	}
 
 	/**
 	 * Adds an introduction declaration to this aspect container
 	 *
-	 * @param F3::FLOW3::AOP::Introduction $introduction
+	 * @param \F3\FLOW3\AOP\Introduction $introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addIntroduction(F3::FLOW3::AOP::Introduction $introduction) {
+	public function addIntroduction(\F3\FLOW3\AOP\Introduction $introduction) {
 		$this->introductions[] = $introduction;
 	}
 
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param F3::FLOW3::AOP::PointcutInterface $pointcut: The poincut to add
+	 * @param \F3\FLOW3\AOP\PointcutInterface $pointcut: The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addPointcut(F3::FLOW3::AOP::PointcutInterface $pointcut) {
+	public function addPointcut(\F3\FLOW3\AOP\PointcutInterface $pointcut) {
 		$this->pointcuts[] = $pointcut;
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::CLI;
+namespace F3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::CLI;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\Request.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,11 +26,11 @@ namespace F3::FLOW3::MVC::CLI;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::CLI::Request.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\CLI\Request.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Request extends F3::FLOW3::MVC::Request {
+class Request extends \F3\FLOW3\MVC\Request {
 
 	/**
 	 * Arguments given to a CLI request (i.e. anything not specifying command or options)

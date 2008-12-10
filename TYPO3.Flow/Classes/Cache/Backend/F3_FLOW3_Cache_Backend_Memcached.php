@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache::Backend;
+namespace F3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -49,7 +49,7 @@ namespace F3::FLOW3::Cache::Backend;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Memcached extends F3::FLOW3::Cache::AbstractBackend {
+class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 
 	/**
 	 * Instance of the PHP Memcache class
@@ -80,7 +80,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	protected $identifierPrefix;
 
 	/**
-	 * @var F3::FLOW3::Utility::Environment
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -92,18 +92,18 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($context, $options = array()) {
-		if (!extension_loaded('memcache')) throw new F3::FLOW3::Cache::Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
+		if (!extension_loaded('memcache')) throw new \F3\FLOW3\Cache\Exception('The PHP extension "memcached" must be installed and loaded in order to use the Memcached backend.', 1213987706);
 		parent::__construct($context, $options);
 	}
 
 	/**
 	 * Injects the environment utility
 	 *
-	 * @param F3::FLOW3::Utility::Environment $environment
+	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectEnvironment(F3::FLOW3::Utility::Environment $environment) {
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
 	}
 
@@ -126,9 +126,9 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Dmitry Dulepov
 	 */
 	public function initializeObject() {
-		if (!count($this->servers)) throw new F3::FLOW3::Cache::Exception('No servers were given to Memcache', 1213115903);
+		if (!count($this->servers)) throw new \F3\FLOW3\Cache\Exception('No servers were given to Memcache', 1213115903);
 
-		$this->memcache = new Memcache();
+		$this->memcache = new \Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 
 		foreach ($this->servers as $server) {
@@ -164,36 +164,36 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws F3::FLOW3::Cache::Exception if no cache frontend has been set.
-	 * @throws InvalidArgumentException if the identifier is not valid
-	 * @throws F3::FLOW3::Cache::Exception::InvalidData if $data is not a string
+	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \InvalidArgumentException if the identifier is not valid
+	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
-		if (!$this->cache instanceof F3::FLOW3::Cache::AbstractCache) throw new F3::FLOW3::Cache::Exception('No cache frontend has been set yet via setCache().', 1207149215);
-		if (!is_string($data)) throw new F3::FLOW3::Cache::Exception::InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
+		if (!$this->cache instanceof \F3\FLOW3\Cache\AbstractCache) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
+			if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
 		}
 
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
 			$this->remove($entryIdentifier);
 			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompression, $expiration);
-			if (!$success) throw new F3::FLOW3::Cache::Exception('Memcache was unable to connect to any server.', 1207165277);
+			if (!$success) throw new \F3\FLOW3\Cache\Exception('Memcache was unable to connect to any server.', 1207165277);
 			$this->addTagsToTagIndex($tags);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
-		} catch(F3::FLOW3::Error::Exception $exception) {
-			throw new F3::FLOW3::Cache::Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
+		} catch(\F3\FLOW3\Error\Exception $exception) {
+			throw new \F3\FLOW3\Cache\Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
 		}
 	}
 
 	/**
 	 * Loads data from the cache.
 	 *
-	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -205,7 +205,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
-	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -219,7 +219,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * Usually this only affects one entry but if - for what reason ever -
 	 * old entries for the identifier still exist, they are removed as well.
 	 *
-	 * @param string $entryIdentifier: Specifies the cache entry to remove
+	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -242,7 +242,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @todo implement wildcard support
 	 */
 	public function findIdentifiersByTag($tag) {
-		if (!$this->isValidTag($tag))  throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
+		if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
 
 		return $this->findIdentifiersTaggedWith($tag);
 	}
@@ -283,7 +283,7 @@ class Memcached extends F3::FLOW3::Cache::AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496752);
+		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496752);
 		$identifiers = $this->findIdentifiersTaggedWith($tag);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);

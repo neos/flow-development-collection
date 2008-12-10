@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Fixture::Controller;
+namespace F3\FLOW3\MVC\Fixture\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::MVC::Fixture::Controller;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MockExceptionThrowingController extends F3::FLOW3::MVC::Controller::ActionController {
+class MockExceptionThrowingController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	protected $initializeView = FALSE;
 
@@ -38,7 +38,7 @@ class MockExceptionThrowingController extends F3::FLOW3::MVC::Controller::Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stopActionAction() {
-		throw new F3::FLOW3::MVC::Exception::StopAction();
+		throw new \F3\FLOW3\MVC\Exception\StopAction();
 	}
 
 	/**
@@ -46,7 +46,7 @@ class MockExceptionThrowingController extends F3::FLOW3::MVC::Controller::Action
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwGeneralExceptionAction() {
-		throw new F3::FLOW3::MVC::Exception();
+		throw new \F3\FLOW3\MVC\Exception();
 	}
 }
 

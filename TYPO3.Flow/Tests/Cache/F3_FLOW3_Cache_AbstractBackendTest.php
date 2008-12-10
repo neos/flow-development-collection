@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Cache;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -26,13 +26,13 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AbstractBackendTest extends F3::Testing::BaseTestCase {
+class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractBackend
+	 * @var \F3\FLOW3\Cache\AbstractBackend
 	 */
 	protected $backend;
 
@@ -43,7 +43,7 @@ class AbstractBackendTest extends F3::Testing::BaseTestCase {
 	public function setUp() {
 		$className = uniqid('ConcreteBackend_');
 		eval('
-			class ' . $className. ' extends F3::FLOW3::Cache::AbstractBackend {
+			class ' . $className. ' extends \F3\FLOW3\Cache\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

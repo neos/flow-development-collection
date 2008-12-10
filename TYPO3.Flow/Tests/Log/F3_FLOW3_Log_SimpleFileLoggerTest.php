@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Log;
+namespace F3\FLOW3\Log;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Log;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SimpleFileLoggerTest extends F3::Testing::BaseTestCase {
+class SimpleFileLoggerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var Directory used for testing.
@@ -41,7 +41,7 @@ class SimpleFileLoggerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->objectManager->getObject('F3::FLOW3::Utility::Environment');
+		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
 		$this->testDirectory = $environment->getPathToTemporaryDirectory();
 	}
 
@@ -61,7 +61,7 @@ class SimpleFileLoggerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function logMessagesAreWrittenIntoAFile() {
-		$fileLogger = new F3::FLOW3::Log::SimpleFileLogger($this->testDirectory . 'simplefileloggertest.log');
+		$fileLogger = new \F3\FLOW3\Log\SimpleFileLogger($this->testDirectory . 'simplefileloggertest.log');
 		$message = 'Test Message' . microtime();
 		$fileLogger->log($message, 0, array('testkey' => 'testvalue'));
 

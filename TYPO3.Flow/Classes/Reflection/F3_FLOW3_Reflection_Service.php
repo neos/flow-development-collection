@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Reflection;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -39,7 +39,7 @@ class Service {
 	protected $initialized = FALSE;
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractCache
+	 * @var \F3\FLOW3\Cache\AbstractCache
 	 */
 	protected $cache;
 
@@ -144,11 +144,11 @@ class Service {
 	/**
 	 * Sets the cache
 	 *
-	 * @param F3::FLOW3::Cache::AbstractCache $cache Cache for the reflection service
+	 * @param \F3\FLOW3\Cache\AbstractCache $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCache(F3::FLOW3::Cache::AbstractCache $cache) {
+	public function setCache(\F3\FLOW3\Cache\AbstractCache $cache) {
 		$this->cache = $cache;
 	}
 
@@ -160,7 +160,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDetectClassAlterations($detectClassAlterations) {
-		if (!is_bool($detectClassAlterations)) throw ::InvalidArgumentException('Boolean expected', 1228909024);
+		if (!is_bool($detectClassAlterations)) throw \InvalidArgumentException('Boolean expected', 1228909024);
 		$this->detectClassAlterations = $detectClassAlterations ? TRUE : FALSE;
 	}
 
@@ -187,7 +187,7 @@ class Service {
 
 		if (is_object($this->cache) && $this->detectClassAlterations === TRUE) {
 			foreach ($this->reflectedClassNames as $className) {
-				if (!$this->cache->has(str_replace('::', '_', $className))) {
+				if (!$this->cache->has(str_replace('\\', '_', $className))) {
 					$this->forgetClass($className);
 				}
 			}
@@ -201,7 +201,7 @@ class Service {
 			foreach ($newClassNames as $className) {
 				$this->reflectClass($className);
 				$this->reflectedClassNames[] = $className;
-				$this->cache->set(str_replace('::', '_', $className), '', array($this->cache->getClassTag($className)));
+				$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
 			}
 
 			sort($this->reflectedClassNames);
@@ -229,7 +229,7 @@ class Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return mixed Either the class name of the default implementation for the object type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownInterface if the specified interface does not exist.
+	 * @throws \F3\FLOW3\Object\Exception\UnknownInterface if the specified interface does not exist.
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
@@ -243,7 +243,7 @@ class Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return array An array of class names of the default implementation for the object type
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws F3::FLOW3::Object::Exception::UnknownInterface if the given interface does not exist
+	 * @throws \F3\FLOW3\Object\Exception\UnknownInterface if the given interface does not exist
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
@@ -355,7 +355,7 @@ class Service {
 		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
 			return (isset($this->classConstructorMethodNames[$className])) ? $this->classConstructorMethodNames[$className] : NULL;
 		} else {
-			$class = new ReflectionClass($className);
+			$class = new \ReflectionClass($className);
 			$constructor = $class->getConstructor();
 			return ($constructor !== NULL) ? $constructor->getName() : NULL;
 		}
@@ -399,7 +399,7 @@ class Service {
 			if (!isset($this->methodParameters[$className])) return array();
 			$parametersInformation = (isset($this->methodParameters[$className][$methodName])) ? $this->methodParameters[$className][$methodName] : array();
 		} else {
-			$method = new ReflectionMethod($className, $methodName);
+			$method = new \ReflectionMethod($className, $methodName);
 			$parametersInformation = array();
 			foreach($method->getParameters() as $parameter) {
 				$parametersInformation[$parameter->getName()] = $this->convertParameterReflectionToArray($parameter);
@@ -478,13 +478,13 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectClass($className) {
-		$class = new F3::FLOW3::Reflection::ClassReflection($className);
+		$class = new \F3\FLOW3\Reflection\ClassReflection($className);
 
 		if ($class->isAbstract()) $this->abstractClasses[$className] = TRUE;
 		if ($class->isFinal()) $this->finalClasses[$className] = TRUE;
 
 		$constructor = $class->getConstructor();
-		if ($constructor instanceof ::ReflectionMethod) {
+		if ($constructor instanceof \ReflectionMethod) {
 			$this->classConstructorMethodNames[$className] = $constructor->getName();
 		}
 		foreach ($class->getInterfaces() as $interface) {
@@ -531,7 +531,7 @@ class Service {
 	 * @return array Parameter information array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function convertParameterReflectionToArray(::ReflectionParameter $parameter) {
+	protected function convertParameterReflectionToArray(\ReflectionParameter $parameter) {
 		$parameterInformation = array(
 			'position' => $parameter->getPosition(),
 			'byReference' => $parameter->isPassedByReference() ? TRUE : FALSE,

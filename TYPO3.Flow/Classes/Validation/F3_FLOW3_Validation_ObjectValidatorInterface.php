@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation;
+namespace F3\FLOW3\Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -48,11 +48,11 @@ interface ObjectValidatorInterface {
 	 * least one error occurred, the result is FALSE.
 	 *
 	 * @param  object $object: The object which is supposed to be validated.
-	 * @param  F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
+	 * @param  \F3\FLOW3\Validation\Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if validation succeeded completely, FALSE if at least one error occurred.
-	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function validate($object, F3::FLOW3::Validation::Errors &$errors);
+	public function validate($object, \F3\FLOW3\Validation\Errors &$errors);
 
 	/**
 	 * Validates a specific property ($propertyName) of the given object. Any errors will be stored
@@ -60,11 +60,11 @@ interface ObjectValidatorInterface {
 	 *
 	 * @param  object $object: The object of which the property should be validated
 	 * @param  string $propertyName: The name of the property that should be validated
-	 * @param  F3::FLOW3::Validation::Errors $errors: Here any occured validation error is stored
+	 * @param  \F3\FLOW3\Validation\Errors $errors: Here any occured validation error is stored
 	 * @return boolean TRUE if the property could be validated, FALSE if an error occured
-	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function validateProperty($object, $propertyName, F3::FLOW3::Validation::Errors &$errors);
+	public function validateProperty($object, $propertyName, \F3\FLOW3\Validation\Errors &$errors);
 
 	/**
 	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid value for the property ($propertyName) of the class ($className).
@@ -74,9 +74,9 @@ interface ObjectValidatorInterface {
 	 * @param  string $propertyName: The name of the property for wich the value should be validated
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
-	 * @throws F3::FLOW3::Validation::Exception::InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
-	public function isValidProperty($className, $propertyName, $propertyValue, F3::FLOW3::Validation::Errors &$errors);
+	public function isValidProperty($className, $propertyName, $propertyValue, \F3\FLOW3\Validation\Errors &$errors);
 }
 
 ?>

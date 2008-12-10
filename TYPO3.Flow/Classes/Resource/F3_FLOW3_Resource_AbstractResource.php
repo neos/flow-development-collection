@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Resource;
+namespace F3\FLOW3\Resource;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,14 +26,14 @@ namespace F3::FLOW3::Resource;
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class AbstractResource implements F3::FLOW3::Resource::ResourceInterface {
+abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface {
 
 	/**
-	 * @var F3::FLOW3::Property::DataType::URI
+	 * @var \F3\FLOW3\Property\DataType\URI
 	 */
 	protected $URI;
 
@@ -60,11 +60,11 @@ abstract class AbstractResource implements F3::FLOW3::Resource::ResourceInterfac
 	/**
 	 * Imports content from an URI
 	 *
-	 * @param F3::FLOW3::Property::DataType::URI $URI
+	 * @param \F3\FLOW3\Property\DataType\URI $URI
 	 * @return boolean TRUE or FALSE depending on import success
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function importFromURI(F3::FLOW3::Property::DataType::URI $URI) {
+	public function importFromURI(\F3\FLOW3\Property\DataType\URI $URI) {
 		return FALSE;
 	}
 
@@ -81,7 +81,7 @@ abstract class AbstractResource implements F3::FLOW3::Resource::ResourceInterfac
 	/**
 	 * The URI representing
 	 *
-	 * @return F3::FLOW3::Property::DataType::URI
+	 * @return \F3\FLOW3\Property\DataType\URI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getURI() {
@@ -115,7 +115,7 @@ abstract class AbstractResource implements F3::FLOW3::Resource::ResourceInterfac
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getPathAndFileName() {
-		return F3::FLOW3::Utility::Files::concatenatePaths(array($this->path, $this->name));
+		return \F3\FLOW3\Utility\Files::concatenatePaths(array($this->path, $this->name));
 	}
 
 	/**

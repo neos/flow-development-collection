@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::View;
+namespace F3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::View;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::View::Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\View\Default.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,13 +26,13 @@ namespace F3::FLOW3::MVC::View;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::MVC::View::Default.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\MVC\View\Default.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
+class DefaultView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var F3::FLOW3::MVC::Request
+	 * @var \F3\FLOW3\MVC\Request
 	 */
 	protected $request;
 
@@ -41,15 +41,15 @@ class DefaultView extends F3::FLOW3::MVC::View::AbstractView {
 	 *
 	 * @return string The rendered view
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws F3::FLOW3::MVC::Exception if no request has been set
+	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
 	 */
 	public function render() {
-		if (!is_object($this->request)) throw new F3::FLOW3::MVC::Exception('Can\'t render view without request object.', 1192450280);
+		if (!is_object($this->request)) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
 
-		$template = $this->objectFactory->create('F3::FLOW3::MVC::View::Template');
+		$template = $this->objectFactory->create('F3\FLOW3\MVC\View\Template');
 		$template->setTemplateResource($this->resourceManager->getResource('file://FLOW3/Public/MVC/DefaultView_Template.html')->getContent());
 
-		if ($this->request instanceof F3::FLOW3::MVC::Web::Request) {
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
 			$template->setMarkerContent('baseuri', $this->request->getBaseURI());
 		}
 		return $template->render();

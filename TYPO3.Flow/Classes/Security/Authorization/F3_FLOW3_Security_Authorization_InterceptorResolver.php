@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization;
+namespace F3\FLOW3\Security\Authorization;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -32,18 +32,18 @@ namespace F3::FLOW3::Security::Authorization;
 class InterceptorResolver {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
 	 */
 	protected $objectManager;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 
@@ -52,7 +52,7 @@ class InterceptorResolver {
 	 *
 	 * @param string $name The (short) name of the interceptor
 	 * @return string The class name of the security interceptor, NULL if no class was found.
-	 * @throws F3::FLOW3::Security::Exception::NoInterceptorFound
+	 * @throws \F3\FLOW3\Security\Exception\NoInterceptorFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorClass($name) {
@@ -61,12 +61,12 @@ class InterceptorResolver {
 		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
 		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
 
-		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3::FLOW3::Security::Authorization::Interceptor::' . $name);
+		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authorization\Interceptor\\' . $name);
 		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
 
 		if ($resolvedClassName != '') return $resolvedClassName;
 
-		throw new F3::FLOW3::Security::Exception::NoInterceptorFound('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \F3\FLOW3\Security\Exception\NoInterceptorFound('A security interceptor with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

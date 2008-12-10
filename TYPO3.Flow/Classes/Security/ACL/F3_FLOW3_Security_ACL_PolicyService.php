@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::ACL;
+namespace F3\FLOW3\Security\ACL;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,10 +30,10 @@ namespace F3::FLOW3::Security::ACL;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
+class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface $objectManager The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 */
 	protected $objectManager = NULL;
 
@@ -44,12 +44,12 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	protected $settings = NULL;
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractCache A reference to the cache factory
+	 * @var \F3\FLOW3\Cache\AbstractCache A reference to the cache factory
 	 */
 	protected $cacheFactory;
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractCache The cached acl entries
+	 * @var \F3\FLOW3\Cache\AbstractCache The cached acl entries
 	 */
 	protected $aclCache;
 
@@ -71,14 +71,14 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Constructor.
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager The object manager
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager The configuration manager
-	 * @param F3::FLOW3::Cache::Factory $cacheFactory The cache factory
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
+	 * @param \F3\FLOW3\Cache\Factory $cacheFactory The cache factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo cache the whole thing, if aop proxy cache is enabled
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Configuration::Manager $configurationManager, F3::FLOW3::Cache::Factory $cacheFactory) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Configuration\Manager $configurationManager, \F3\FLOW3\Cache\Factory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
 		$this->objectManager = $objectManager;
 		$this->settings = $configurationManager->getSettings('FLOW3');
@@ -86,7 +86,7 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 		$this->roles = $this->settings['security']['policy']['roles'];
 
 		if ($this->settings['aop']['cache']['enable']) {
-			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3::FLOW3::Cache::VariableCache', $this->settings['security']['policy']['aclCache']['backend'], $this->settings['security']['policy']['aclCache']['backendOptions']);
+			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3\FLOW3\Cache\VariableCache', $this->settings['security']['policy']['aclCache']['backend'], $this->settings['security']['policy']['aclCache']['backendOptions']);
 			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) {
 				$this->acls = $this->aclCache->get('FLOW3_Security_Policy_ACLs');
 			}
@@ -116,16 +116,16 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
 	 * This method also creates a cache entry for every method, to cache the associated roles and privileges.
 	 *
-	 * @param F3::FLOW3::Reflection::ClassReflection $class The class to check the name of
-	 * @param F3::FLOW3::Reflection::MethodReflection $method The method to check the name of
+	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check the name of
+	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check the name of
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
 	 */
-	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		$matches = FALSE;
 
 		if (count($this->filters) === 0) {
-			$policyExpressionParser = $this->objectManager->getObject('F3::FLOW3::Security::ACL::PolicyExpressionParser');
+			$policyExpressionParser = $this->objectManager->getObject('F3\FLOW3\Security\ACL\PolicyExpressionParser');
 			$policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
 			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) $this->filters[$role][$resource] = $policyExpressionParser->parse($resource);
@@ -148,14 +148,14 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Returns the configured roles for the given joinpoint
 	 *
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @return array Array of roles
-	 * @throws F3::FLOW3::Security::Exception::NoEntryInPolicy
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicy
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRoles(F3::FLOW3::AOP::JoinPointInterface $joinPoint) {
+	public function getRoles(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
-		if (!isset($this->acls[$methodIdentifier])) throw new F3::FLOW3::Security::Exception::NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
+		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
 		$resultRoles = array();
 		foreach ($this->acls[$methodIdentifier] as $roleIdentifier => $notNeededEntry) {
@@ -168,15 +168,15 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Returns the privileges a specific role has for the given joinpoint
 	 *
-	 * @param F3::FLOW3::Security::ACL::Role The role for which the privileges should be returned
-	 * @param F3::FLOW3::AOP::JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
+	 * @param \F3\FLOW3\Security\ACL\Role The role for which the privileges should be returned
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the roles should be returned
 	 * @param string $privilegeType If set we check only for this type of privilege
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivileges(F3::FLOW3::Security::ACL::Role $role, F3::FLOW3::AOP::JoinPointInterface $joinPoint, $privilegeType = '') {
+	public function getPrivileges(\F3\FLOW3\Security\ACL\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint, $privilegeType = '') {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
-		if (!isset($this->acls[$methodIdentifier])) throw new F3::FLOW3::Security::Exception::NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
+		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 
 		$privileges = array();
 
@@ -217,11 +217,11 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * Returns a new role object
 	 *
 	 * @param string $roleIdentifier The identifier for the new role
-	 * @return F3::FLOW3::Security::ACL::Role A new role object
+	 * @return \F3\FLOW3\Security\ACL\Role A new role object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewRole($roleIdentifier) {
-		return $this->objectManager->getObject('F3::FLOW3::Security::ACL::Role', $roleIdentifier);
+		return $this->objectManager->getObject('F3\FLOW3\Security\ACL\Role', $roleIdentifier);
 	}
 
 	/**
@@ -229,11 +229,11 @@ class PolicyService implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 *
 	 * @param string $privilegeIdentifier The identifier for the new privilege
 	 * @param boolean $isGrant The isGrant flag of the privilege
-	 * @return F3::FLOW3::Security::ACL::Privilege A new role object
+	 * @return \F3\FLOW3\Security\ACL\Privilege A new role object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function createNewPrivilege($privilegeIdentifier, $isGrant = FALSE) {
-		return $this->objectManager->getObject('F3::FLOW3::Security::ACL::Privilege', $privilegeIdentifier, $isGrant);
+		return $this->objectManager->getObject('F3\FLOW3\Security\ACL\Privilege', $privilegeIdentifier, $isGrant);
 	}
 }
 

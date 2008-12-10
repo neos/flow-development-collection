@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation;
+namespace F3\FLOW3\Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,20 +29,20 @@ namespace F3::FLOW3::Validation;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class AbstractValidator implements F3::FLOW3::Validation::ValidatorInterface {
+abstract class AbstractValidator implements \F3\FLOW3\Validation\ValidatorInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface The object factory
+	 * @var \F3\FLOW3\Object\FactoryInterface The object factory
 	 */
 	protected $objectFactory;
 
 	/**
 	 * Injector for the object factory
 	 *
-	 * @param F3::FLOW3::Object::FactoryInterface $objectFactory A object factory implementation
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectObjectFactory(F3::FLOW3::Object::FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

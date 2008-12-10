@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,7 +30,7 @@ namespace F3::FLOW3::Validation::Validator;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class Chain implements F3::FLOW3::Validation::ValidatorInterface {
+class Chain implements \F3\FLOW3\Validation\ValidatorInterface {
 
 	/**
 	 * @var array
@@ -46,7 +46,7 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValidProperty($propertyValue, F3::FLOW3::Validation::Errors &$errors) {
+	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 
 		$subjectIsValid = TRUE;
 
@@ -60,11 +60,11 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 *
-	 * @param F3::FLOW3::Validation::ValidatorInterface $validator The validator that should be added
+	 * @param \F3\FLOW3\Validation\ValidatorInterface $validator The validator that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addValidator(F3::FLOW3::Validation::ValidatorInterface $validator) {
+	public function addValidator(\F3\FLOW3\Validation\ValidatorInterface $validator) {
 		$this->validators[] = $validator;
 		return count($this->validators) - 1;
 	}
@@ -73,12 +73,12 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	 * Returns the validator with the given index of the chain.
 	 *
 	 * @param integer $index The index of the validator that should be returned
-	 * @return F3::FLOW3::Validation::ValidatorInterface The requested validator
-	 * @throws F3::FLOW3::Validation::Exception::InvalidChainIndex
+	 * @return \F3\FLOW3\Validation\ValidatorInterface The requested validator
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getValidator($index) {
-		if (!isset($this->validators[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207215864);
+		if (!isset($this->validators[$index])) throw new \F3\FLOW3\Validation\Exception\InvalidChainIndex('Invalid chain index.', 1207215864);
 		return $this->validators[$index];
 	}
 
@@ -89,7 +89,7 @@ class Chain implements F3::FLOW3::Validation::ValidatorInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function removeValidator($index) {
-		if (!isset($this->validators[$index])) throw new F3::FLOW3::Validation::Exception::InvalidChainIndex('Invalid chain index.', 1207020177);
+		if (!isset($this->validators[$index])) throw new \F3\FLOW3\Validation\Exception\InvalidChainIndex('Invalid chain index.', 1207020177);
 		unset($this->validators[$index]);
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::RequestPattern;
+namespace F3\FLOW3\Security\RequestPattern;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,20 +18,20 @@ namespace F3::FLOW3::Security::RequestPattern;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
- * This class holds an URL pattern an decides, if a F3::FLOW3::MVC::Web::Request object matches against this pattern
+ * This class holds an URL pattern an decides, if a \F3\FLOW3\MVC\Web\Request object matches against this pattern
  * Note: This pattern can only be used for web requests.
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class URL implements F3::FLOW3::Security::RequestPatternInterface {
+class URL implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
 	 * @var string The preg_match() styled URL pattern
@@ -41,12 +41,12 @@ class URL implements F3::FLOW3::Security::RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(F3::FLOW3::MVC::Request $request) {
-		if ($request instanceof F3::FLOW3::MVC::Web::Request) return TRUE;
+	public function canMatch(\F3\FLOW3\MVC\Request $request) {
+		if ($request instanceof \F3\FLOW3\MVC\Web\Request) return TRUE;
 		return FALSE;
 	}
 
@@ -72,15 +72,15 @@ class URL implements F3::FLOW3::Security::RequestPatternInterface {
 	}
 
 	/**
-	 * Matches a F3::FLOW3::MVC::Request against its set URL pattern rules
+	 * Matches a \F3\FLOW3\MVC\Request against its set URL pattern rules
 	 *
-	 * @param F3::FLOW3::MVC::Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws F3::FLOW3::Security::Exception::RequestTypeNotSupported
+	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(F3::FLOW3::MVC::Request $request) {
-		if (!($request instanceof F3::FLOW3::MVC::Web::Request)) throw new F3::FLOW3::Security::Exception::RequestTypeNotSupported('The given request type is not supported.', 1216903641);
+	public function matchRequest(\F3\FLOW3\MVC\Request $request) {
+		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('The given request type is not supported.', 1216903641);
 
 		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->URLPattern) . '$/', $request->getRequestURI()->getPath());
 	}

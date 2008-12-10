@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\PointcutFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PointcutFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
+class PointcutFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	/**
 	 * @var string Name of the aspect class where the pointcut was declared
@@ -42,7 +42,7 @@ class PointcutFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 	protected $pointcutMethodName;
 
 	/**
-	 * @var F3::FLOW3::AOP::Framework A reference to the AOP Framework
+	 * @var \F3\FLOW3\AOP\Framework A reference to the AOP Framework
 	 */
 	protected $aopFramework;
 
@@ -52,7 +52,7 @@ class PointcutFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectClassName, $pointcutMethodName, F3::FLOW3::AOP::Framework $aopFramework) {
+	public function __construct($aspectClassName, $pointcutMethodName, \F3\FLOW3\AOP\Framework $aopFramework) {
 		$this->aspectClassName = $aspectClassName;
 		$this->pointcutMethodName = $pointcutMethodName;
 		$this->aopFramework = $aopFramework;
@@ -61,15 +61,15 @@ class PointcutFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 	/**
 	 * Checks if the specified class and method matches with the pointcut
 	 *
-	 * @param F3::FLOW3::Reflection::ClassReflection $class The class to check against
-	 * @param F3::FLOW3::Reflection::MethodReflection $method The method to check against
+	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check against
+	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check against
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class and method matches the pointcut, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		$pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
-		if ($pointcut === FALSE) throw new RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		if ($pointcut === FALSE) throw new \RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
 		return $pointcut->matches($class, $method, $pointcutQueryIdentifier);
 	}
 
@@ -89,8 +89,8 @@ class PointcutFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __wakeup() {
-		if (isset($GLOBALS['FLOW3']['F3::FLOW3::AOP::Framework'])) {
-			$this->aopFramework = $GLOBALS['FLOW3']['F3::FLOW3::AOP::Framework'];
+		if (isset($GLOBALS['FLOW3']['F3\FLOW3\AOP\Framework'])) {
+			$this->aopFramework = $GLOBALS['FLOW3']['F3\FLOW3\AOP\Framework'];
 		}
 	}
 }

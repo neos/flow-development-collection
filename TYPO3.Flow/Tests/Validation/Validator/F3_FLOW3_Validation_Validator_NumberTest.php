@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Validation::Validator;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Validation::Validator::NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
+ * @version $Id:\F3\FLOW3\Validation\Validator\NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
  */
 
 /**
@@ -26,19 +26,19 @@ namespace F3::FLOW3::Validation::Validator;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::Validation::Validator::NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
+ * @version $Id:\F3\FLOW3\Validation\Validator\NumberTest.php 845 2008-05-17 16:04:59Z k-fish $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class NumberTest extends F3::Testing::BaseTestCase {
+class NumberTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorReturnsTrueForASimpleInteger() {
-		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
+		$numberValidator = new \F3\FLOW3\Validation\Validator\Number();
 		$numberValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($numberValidator->isValidProperty(1029437, $validationErrors));
 	}
@@ -48,9 +48,9 @@ class NumberTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorReturnsFalseForAString() {
-		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
+		$numberValidator = new \F3\FLOW3\Validation\Validator\Number();
 		$numberValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($numberValidator->isValidProperty('not a number', $validationErrors));
 	}
@@ -60,13 +60,13 @@ class NumberTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$numberValidator = new F3::FLOW3::Validation::Validator::Number();
+		$numberValidator = new \F3\FLOW3\Validation\Validator\Number();
 		$numberValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberValidator->isValidProperty('this is not a number', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221563685, $validationErrors[0]->getErrorCode());
 	}
 }

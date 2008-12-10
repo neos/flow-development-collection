@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EmailAddressTest extends F3::Testing::BaseTestCase {
+class EmailAddressTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Data provider with valid email addresses
@@ -55,9 +55,9 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @dataProvider validAddresses
 	 */
 	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
 		$emailAddressValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($emailAddressValidator->isValidProperty($address, $validationErrors));
 	}
@@ -84,9 +84,9 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @dataProvider invalidAddresses
 	 */
 	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
 		$emailAddressValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($emailAddressValidator->isValidProperty($address, $validationErrors));
 	}
@@ -96,13 +96,13 @@ class EmailAddressTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
-		$emailAddressValidator = new F3::FLOW3::Validation::Validator::EmailAddress();
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
 		$emailAddressValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221559976, $validationErrors[0]->getErrorCode());
 	}
 

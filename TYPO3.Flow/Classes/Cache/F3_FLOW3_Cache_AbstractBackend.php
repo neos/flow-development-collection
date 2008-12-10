@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Cache;
+namespace F3\FLOW3\Cache;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:F3::FLOW3::AOP::Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 abstract class AbstractBackend {
@@ -42,7 +42,7 @@ abstract class AbstractBackend {
 	const PATTERN_TAG = '/^[a-zA-Z0-9_%]{1,250}$/';
 
 	/**
-	 * @var F3::FLOW3::Cache::AbstractCache Reference to the cache which uses this backend
+	 * @var \F3\FLOW3\Cache\AbstractCache Reference to the cache which uses this backend
 	 */
 	protected $cache;
 
@@ -78,10 +78,10 @@ abstract class AbstractBackend {
 	/**
 	 * Sets a reference to the cache which uses this backend
 	 *
-	 * @param F3::FLOW3::Cache::AbstractCache $cache The frontend for this backend
+	 * @param \F3\FLOW3\Cache\AbstractCache $cache The frontend for this backend
 	 * @return void
 	 */
-	public function setCache(F3::FLOW3::Cache::AbstractCache $cache) {
+	public function setCache(\F3\FLOW3\Cache\AbstractCache $cache) {
 		$this->cache = $cache;
 	}
 
@@ -93,9 +93,9 @@ abstract class AbstractBackend {
 	 * @param array $tags: Tags to associate with this cache entry
 	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
-	 * @throws F3::FLOW3::Cache::Exception if no cache frontend has been set.
-	 * @throws InvalidArgumentException if the identifier is not valid
-	 * @throws F3::FLOW3::Cache::Exception::InvalidData if $data is not a string
+	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
+	 * @throws \InvalidArgumentException if the identifier is not valid
+	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 */
 	abstract public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL);
 

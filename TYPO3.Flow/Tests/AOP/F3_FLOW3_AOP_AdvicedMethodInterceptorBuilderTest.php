@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -19,10 +19,10 @@ namespace F3::FLOW3::AOP;
  * Testcase for the AOP Adviced Method Interceptor Builder
  *
  * @package		FLOW3
- * @version 	$Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version 	$Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AdvicedMethodInterceptorBuilderTest extends F3::Testing::BaseTestCase {
+class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * checkIfParameterOfTypeArrayIsReflectedCorrectly
@@ -31,10 +31,10 @@ class AdvicedMethodInterceptorBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function checkIfParameterOfTypeArrayIsReflectedCorrectly() {
-		$targetClass = new F3::FLOW3::Reflection::ClassReflection('F3::TestPackage::BasicClass');
+		$targetClass = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
 		$targetMethod = $targetClass->getMethod('methodWhichExpectsAnArrayArgument');
 
-		$builder = new F3::FLOW3::AOP::AdvicedMethodInterceptorBuilder();
+		$builder = new \F3\FLOW3\AOP\AdvicedMethodInterceptorBuilder();
 		$parameterCode = $builder->buildMethodParametersCode($targetMethod, TRUE);
 
 		$this->assertEquals('array $someArray', $parameterCode, 'The parameters code for an array-type argument is not as expected.');

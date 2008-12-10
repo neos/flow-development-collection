@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -26,10 +26,10 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::PointcutClassTypeFilter.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\PointcutClassTypeFilter.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class PointcutClassTypeFilter implements F3::FLOW3::AOP::PointcutFilterInterface {
+class PointcutClassTypeFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	/**
 	 * @var string A regular expression to match class types
@@ -44,24 +44,24 @@ class PointcutClassTypeFilter implements F3::FLOW3::AOP::PointcutFilterInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($classTypeFilterExpression) {
-		$this->classTypeFilterExpression = $classTypeFilterExpression;
+		$this->classTypeFilterExpression = str_replace('\\', '\\\\', $classTypeFilterExpression);
 	}
 
 	/**
 	 * Checks if the specified class matches with the class type filter pattern
 	 *
-	 * @param F3::FLOW3::Reflection::ClassReflection $class The class to check against
-	 * @param F3::FLOW3::Reflection::MethodReflection $method The method - not used here
+	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check against
+	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(F3::FLOW3::Reflection::ClassReflection $class, F3::FLOW3::Reflection::MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		$matches = FALSE;
 		foreach ($class->getInterfaceNames() as $interfaceName) {
 			$matchResult =  @preg_match('/^' . $this->classTypeFilterExpression . '$/', $interfaceName);
 			if ($matchResult === FALSE) {
-				throw new RuntimeException('Error in regular expression "' . $this->classTypeFilterExpression . '" in pointcut class type filter', 1172483343);
+				throw new \RuntimeException('Error in regular expression "' . $this->classTypeFilterExpression . '" in pointcut class type filter', 1172483343);
 			}
 			if ($matchResult === 1) {
 				$matches = TRUE;

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation;
+namespace F3\FLOW3\Validation;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -37,7 +37,7 @@ interface FilterInterface {
 	 *
 	 * @param object The subject that should be filtered
 	 */
-	public function filter($subject, F3::FLOW3::Validation::Errors &$errors);
+	public function filter($subject, \F3\FLOW3\Validation\Errors &$errors);
 }
 
 ?>

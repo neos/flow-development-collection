@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::View::Helper;
+namespace F3\FLOW3\MVC\View\Helper;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,17 +29,17 @@ namespace F3::FLOW3::MVC::View::Helper;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-abstract class AbstractHelper implements F3::FLOW3::MVC::View::Helper::HelperInterface {
+abstract class AbstractHelper implements \F3\FLOW3\MVC\View\Helper\HelperInterface {
 
 	/**
-	 * @var F3::FLOW3::MVC::Web::Request
+	 * @var \F3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
 	/**
 	 * Sets the current request
 	 */
-	public function setRequest(F3::FLOW3::MVC::Web::Request $request) {
+	public function setRequest(\F3\FLOW3\MVC\Web\Request $request) {
 		$this->request = $request;
 	}
 }

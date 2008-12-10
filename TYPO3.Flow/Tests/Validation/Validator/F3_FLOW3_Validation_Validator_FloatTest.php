@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Validation::Validator;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::Validation::Validator;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class FloatTest extends F3::Testing::BaseTestCase {
+class FloatTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Data provider with valid email addresses
@@ -54,9 +54,9 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @dataProvider validFloats
 	 */
 	public function floatValidatorReturnsTrueForAValidFloat($address) {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
 		$floatValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
 	}
@@ -81,9 +81,9 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @dataProvider invalidFloats
 	 */
 	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
 		$floatValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($floatValidator->isValidProperty($address, $validationErrors));
 	}
@@ -93,13 +93,13 @@ class FloatTest extends F3::Testing::BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$floatValidator = new F3::FLOW3::Validation::Validator::Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
 		$floatValidator->injectObjectFactory($this->objectFactory);
-		$validationErrors = new F3::FLOW3::Validation::Errors();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$floatValidator->isValidProperty(123456, $validationErrors);
 
-		$this->assertType('F3::FLOW3::Validation::Error', $validationErrors[0]);
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221560288, $validationErrors[0]->getErrorCode());
 	}
 

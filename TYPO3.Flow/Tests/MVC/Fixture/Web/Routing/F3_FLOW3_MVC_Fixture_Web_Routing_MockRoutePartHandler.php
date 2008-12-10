@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Fixture::Web::Routing;
+namespace F3\FLOW3\MVC\Fixture\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -29,7 +29,7 @@ namespace F3::FLOW3::MVC::Fixture::Web::Routing;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class MockRoutePartHandler extends F3::FLOW3::MVC::Web::Routing::DynamicRoutePart {
+class MockRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	protected function matchValue($value) {
 		$this->value = '_match_invoked_';

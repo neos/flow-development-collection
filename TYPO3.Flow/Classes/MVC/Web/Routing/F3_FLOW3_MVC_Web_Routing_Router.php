@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -30,25 +30,25 @@ namespace F3::FLOW3::MVC::Web::Routing;
  * @copyright Copyright belongs to the respective authors
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
+class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
-	 * @var F3::FLOW3::Object::ManagerInterface $objectManager: A reference to the Object Manager
+	 * @var \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the Object Manager
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var F3::FLOW3::Object::FactoryInterface $objectFactory
+	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var F3::FLOW3::Utility::Environment
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $utilityEnvironment;
 
 	/**
-	 * @var F3::FLOW3::Configuration::Container The FLOW3 configuration
+	 * @var \F3\FLOW3\Configuration\Container The FLOW3 configuration
 	 */
 	protected $configuration;
 
@@ -61,13 +61,13 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param F3::FLOW3::Object::ManagerInterface $objectManager A reference to the object manager
-	 * @param F3::FLOW3::Utility::Environment $utilityEnvironment A reference to the environment
-	 * @param F3::FLOW3::Configuration::Manager $configurationManager A reference to the configuration manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(F3::FLOW3::Object::ManagerInterface $objectManager, F3::FLOW3::Object::FactoryInterface $objectFactory, F3::FLOW3::Utility::Environment $utilityEnvironment) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $utilityEnvironment) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
@@ -82,7 +82,7 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 */
 	public function setRoutesConfiguration(array $routesConfiguration) {
 		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
-			$route = $this->objectFactory->create('F3::FLOW3::MVC::Web::Routing::Route');
+			$route = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
 			$route->setName($routeName);
 			$route->setUriPattern($routeConfiguration['uriPattern']);
 			if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
@@ -97,14 +97,14 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 * Routes the specified web request by setting the controller name, action and possible
 	 * parameters. If the request could not be routed, it will be left untouched.
 	 *
-	 * @param F3::FLOW3::MVC::Web::Request $request The web request to be analyzed. Will be modified by the router.
+	 * @param \F3\FLOW3\MVC\Web\Request $request The web request to be analyzed. Will be modified by the router.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function route(F3::FLOW3::MVC::Web::Request $request) {
-		$requestPath = F3::PHP6::Functions::substr($request->getRequestURI()->getPath(), F3::PHP6::Functions::strlen((string)$request->getBaseURI()->getPath()));
-		if (F3::PHP6::Functions::substr($requestPath, 0, 9) == 'index.php' || F3::PHP6::Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
+	public function route(\F3\FLOW3\MVC\Web\Request $request) {
+		$requestPath = \F3\PHP6\Functions::substr($request->getRequestURI()->getPath(), \F3\PHP6\Functions::strlen((string)$request->getBaseURI()->getPath()));
+		if (\F3\PHP6\Functions::substr($requestPath, 0, 9) == 'index.php' || \F3\PHP6\Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}
 		$requestQuery = $request->getRequestURI()->getQuery();
@@ -167,21 +167,21 @@ class Router implements F3::FLOW3::MVC::Web::Routing::RouterInterface {
 	 * can be retrieved by the getArgument(s) method, no matter if they
 	 * have been GET, POST or PUT arguments before.
 	 *
-	 * @param F3::FLOW3::MVC::Web::Request $request The web request which will contain the arguments
+	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function setArgumentsFromRawRequestData(F3::FLOW3::MVC::Web::Request $request) {
+	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
 		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
 			$request->setArgument($argumentName, $argumentValue);
 		}
 		switch ($request->getMethod()) {
-			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_POST:
+			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST:
 				foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;
-			case F3::FLOW3::Utility::Environment::REQUEST_METHOD_PUT:
+			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT:
 				$putArguments = array();
 				parse_str(file_get_contents("php://input"), $putArguments);
 				foreach ($putArguments as $argumentName => $argumentValue) {

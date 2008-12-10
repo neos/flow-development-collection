@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::CLI;
+namespace F3\FLOW3\MVC\CLI;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::CLI;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,18 +27,18 @@ namespace F3::FLOW3::MVC::CLI;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RequestBuilderTest extends F3::Testing::BaseTestCase {
+class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var F3::FLOW3::MVC::CLI::RequestBuilder
+	 * @var \F3\FLOW3\MVC\CLI\RequestBuilder
 	 */
 	protected $requestBuilder;
 
 	/**
-	 * @var F3::FLOW3::Utility::MockEnvironment
+	 * @var \F3\FLOW3\Utility\MockEnvironment
 	 */
 	protected $environment;
 
@@ -49,11 +49,11 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$settings = $this->objectManager->getObject('F3::FLOW3::Configuration::Manager')->getSettings('FLOW3');
-		$this->environment = new F3::FLOW3::Utility::MockEnvironment($settings['utility']['environment']);
+		$settings = $this->objectManager->getObject('F3\FLOW3\Configuration\Manager')->getSettings('FLOW3');
+		$this->environment = new \F3\FLOW3\Utility\MockEnvironment($settings['utility']['environment']);
 		$this->environment->SERVER['argc'] = 0;
 		$this->environment->SERVER['argv'] = array();
-		$this->requestBuilder = new F3::FLOW3::MVC::CLI::RequestBuilder($this->objectManager, $this->objectFactory, $this->environment);
+		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($this->objectManager, $this->objectFactory, $this->environment);
 	}
 
 	/**
@@ -67,7 +67,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::FLOW3::MVC::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
+		$this->assertEquals('F3\FLOW3\MVC\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
 	}
 
 	/**
@@ -81,7 +81,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
 		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
 	}
 
@@ -90,7 +90,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @expectedException F3::FLOW3::MVC::Exception::InvalidFormat
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidFormat
 	 */
 	public function CLIAccessWithPackageAndControllerNameThrowsInvalidFormatException() {
 		$this->environment->SERVER['argc'] = 3;
@@ -115,7 +115,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
 		$this->assertEquals('list', $request->getControllerActionName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
 	}
 
@@ -276,7 +276,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][5] = 'run';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::@package::Sub::Package::Controller::@controllerController', $request->getControllerObjectNamePattern());
+		$this->assertEquals('F3\@package\Sub\Package\Controller\@controllerController', $request->getControllerObjectNamePattern());
 	}
 
 	/**
@@ -293,7 +293,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][5] = 'file2';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
 		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
 		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
 	}
@@ -313,7 +313,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][6] = 'file2';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
 		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
 		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
 	}
@@ -331,7 +331,7 @@ class RequestBuilderTest extends F3::Testing::BaseTestCase {
 		$this->environment->SERVER['argv'][5] = 'file2';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3::TestPackage::Controller::DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
+		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
 		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
 		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
 	}

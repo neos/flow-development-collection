@@ -19,7 +19,7 @@ namespace F3;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
@@ -27,10 +27,10 @@ namespace F3;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:F3::FLOW3::AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class FLOW3Test extends F3::Testing::BaseTestCase {
+class FLOW3Test extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Checks the method getObjectManager() and the magic getter
@@ -39,12 +39,12 @@ class FLOW3Test extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManagerReturnsObjectManager() {
-		$FLOW3 = new F3::FLOW3;
+		$FLOW3 = new \F3\FLOW3;
 		$FLOW3->initializeClassLoader();
 		$FLOW3->initializeConfiguration();
 		$FLOW3->initializeError();
 		$FLOW3->initializeObjectFramework();
-		$this->assertTrue($FLOW3->getObjectManager() instanceof F3::FLOW3::Object::ManagerInterface, 'getObjectManager did not deliver an object implementing F3::FLOW3::Object::ManagerInterface!');
+		$this->assertTrue($FLOW3->getObjectManager() instanceof \F3\FLOW3\Object\ManagerInterface, 'getObjectManager did not deliver an object implementing \F3\FLOW3\Object\ManagerInterface!');
 	}
 }
 ?>

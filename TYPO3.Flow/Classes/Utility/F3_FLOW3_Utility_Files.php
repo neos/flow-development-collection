@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Utility;
+namespace F3\FLOW3\Utility;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Utility;
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::Files.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\Files.php 467 2008-02-06 19:34:56Z robert $
  */
 
 /**
@@ -26,7 +26,7 @@ namespace F3::FLOW3::Utility;
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:F3::FLOW3::Utility::Files.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id:\F3\FLOW3\Utility\Files.php 467 2008-02-06 19:34:56Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class Files {
@@ -79,14 +79,14 @@ class Files {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public static function readDirectoryRecursively($path, &$files = array()) {
-		if (!is_dir($path)) throw new F3::FLOW3::Utility::Exception('"' . $path . '" is no directory.', 1207253462);
+		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
 
-		$directoryIterator = new DirectoryIterator($path);
+		$directoryIterator = new \DirectoryIterator($path);
 		foreach ($directoryIterator as $file) {
-			if ($file->isFile() && F3::PHP6::Functions::substr($file->getFilename(),0,1) != '.') {
-				$files[] = F3::FLOW3::Utility::Files::getUnixStylePath($file->getPathname());
+			if ($file->isFile() && \F3\PHP6\Functions::substr($file->getFilename(),0,1) != '.') {
+				$files[] = \F3\FLOW3\Utility\Files::getUnixStylePath($file->getPathname());
 			}
-			if ($file->isDir() && F3::PHP6::Functions::substr($file->getFilename(),0,1) != '.') {
+			if ($file->isDir() && \F3\PHP6\Functions::substr($file->getFilename(),0,1) != '.') {
 				self::readDirectoryRecursively($file->getPathname(), $files);
 			}
 		}
@@ -103,12 +103,12 @@ class Files {
 	 * @see removeDirectoryRecursively()
 	 */
 	public static function emptyDirectoryRecursively($path) {
-		if (!is_dir($path)) throw new F3::FLOW3::Utility::Exception('"' . $path . '" is no directory.', 1169047616);
+		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
-		$directoryIterator = new RecursiveDirectoryIterator($path);
-		foreach ($fileIterator = new RecursiveIteratorIterator($directoryIterator) as $filename) {
+		$directoryIterator = new \RecursiveDirectoryIterator($path);
+		foreach ($fileIterator = new \RecursiveIteratorIterator($directoryIterator) as $filename) {
 			if (!$fileIterator->isDot() && @unlink($filename) === FALSE) {
-				throw new F3::FLOW3::Utility::Exception('Cannot unlink file "' . $filename . '".', 1169047619);
+				throw new \F3\FLOW3\Utility\Exception('Cannot unlink file "' . $filename . '".', 1169047619);
 			}
 		}
 		foreach ($directoryIterator as $subDirectoryName) {
@@ -145,11 +145,11 @@ class Files {
 		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
-		if (!is_dir($path) && F3::PHP6::Functions::strlen($path) > 0) {
+		if (!is_dir($path) && \F3\PHP6\Functions::strlen($path) > 0) {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);
-			if (!is_dir($path)) throw new F3::FLOW3::Utility::Exception('Could not create directory "' . $path . '"!', 1170251400);
+			if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
 		}
 	}
 }

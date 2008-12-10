@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Controller;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::MVC::Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  */
 
 require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController.php');
@@ -28,25 +28,25 @@ require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_M
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id:F3::FLOW3::Object::TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
+class RequestHandlingControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function onlySupportedRequestTypesAreAccepted() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
-		$controller = new F3::FLOW3::MVC::Fixture::Controller::MockRequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->supportedRequestTypes = array('F3::Something::Request');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$controller = new \F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->supportedRequestTypes = array('F3\Something\Request');
 
 		try {
 			$controller->processRequest($request, $response);
 			$this->fail('The request handling controller accepted an unsupported request type.');
-		} catch (F3::FLOW3::MVC::Exception::UnsupportedRequestType $exception) {
+		} catch (\F3\FLOW3\MVC\Exception\UnsupportedRequestType $exception) {
 
 		}
 	}
@@ -56,13 +56,13 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgumentsReturnsAnArgumentsObject() {
-		$mockArguments = $this->getMock('F3::FLOW3::MVC::Controller::Arguments', array(), array(), '', FALSE);
-		$mockObjectFactory = $this->getMock('F3::FLOW3::Object::FactoryInterface', array('create'));
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'));
 		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockArguments));
-		$mockPackageManager = $this->getMock('F3::FLOW3::Package::ManagerInterface');
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($mockObjectFactory, $mockPackageManager);
-		$this->assertType('F3::FLOW3::MVC::Controller::Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($mockObjectFactory, $mockPackageManager);
+		$this->assertType('F3\FLOW3\MVC\Controller\Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
 	}
 
 	/**
@@ -70,11 +70,11 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$this->assertFalse($request->isDispatched());
 		$controller->processRequest($request, $response);
@@ -83,15 +83,15 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::FLOW3::MVC::Exception::StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardThrowsAStopActionException() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$controller->processRequest($request, $response);
 		$controller->forward('index');
@@ -102,17 +102,17 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardResetsTheDispatchedFlagOfTheRequest() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$controller->processRequest($request, $response);
 		$this->assertTrue($request->isDispatched());
 		try {
 			$controller->forward('index');
-		} catch(F3::FLOW3::MVC::Exception::StopAction $exception) {
+		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
 		}
 		$this->assertFalse($request->isDispatched());
 	}
@@ -122,16 +122,16 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardSetsTheSpecifiedControllerActionAndArgumentsInToTheRequest() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$controller->processRequest($request, $response);
 		try {
 			$controller->forward('some', 'Alternative', 'TestPackage');
-		} catch(F3::FLOW3::MVC::Exception::StopAction $exception) {
+		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
 		}
 
 		$this->assertEquals('some', $request->getControllerActionName());
@@ -141,15 +141,15 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3::FLOW3::MVC::Exception::StopAction
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function redirectThrowsAStopActionException() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$controller->processRequest($request, $response);
 		$controller->redirect('http://typo3.org');
@@ -160,17 +160,17 @@ class RequestHandlingControllerTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new F3::FLOW3::MVC::Controller::RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3::FLOW3::Property::Mapper'));
+		$controller = new \F3\FLOW3\MVC\Controller\RequestHandlingController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
 
 		$controller->processRequest($request, $response);
 		try {
 			$controller->throwStatus(404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
 			$this->fail('The exception was not thrown.');
-		} catch (F3::FLOW3::MVC::Exception::StopAction $exception) {
+		} catch (\F3\FLOW3\MVC\Exception\StopAction $exception) {
 		}
 
 		$expectedHeaders = array(

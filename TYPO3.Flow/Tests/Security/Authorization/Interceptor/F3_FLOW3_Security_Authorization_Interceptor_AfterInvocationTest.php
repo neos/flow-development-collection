@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::Security::Authorization::Interceptor;
+namespace F3\FLOW3\Security\Authorization\Interceptor;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -18,7 +18,7 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -26,10 +26,10 @@ namespace F3::FLOW3::Security::Authorization::Interceptor;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class AfterInvocationTest extends F3::Testing::BaseTestCase {
+class AfterInvocationTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -37,12 +37,12 @@ class AfterInvocationTest extends F3::Testing::BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function invokeReturnsTheResultPreviouslySetBySetResultIfTheMethodIsNotIntercepted() {
-		$mockSecurityContextHolder = $this->getMock('F3::FLOW3::Security::ContextHolderInterface');
-		$mockAfterInvocationManager = $this->getMock('F3::FLOW3::Security::Authorization::AfterInvocationManagerInterface');
+		$mockSecurityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
+		$mockAfterInvocationManager = $this->getMock('F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface');
 
-		$theResult = new ArrayObject(array('some' => 'stuff'));
+		$theResult = new \ArrayObject(array('some' => 'stuff'));
 
-		$interceptor = new F3::FLOW3::Security::Authorization::Interceptor::AfterInvocation($mockSecurityContextHolder, $mockAfterInvocationManager);
+		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation($mockSecurityContextHolder, $mockAfterInvocationManager);
 		$interceptor->setResult($theResult);
 		$this->assertSame($theResult, $interceptor->invoke());
 	}

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::MVC::Web::Routing;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -55,7 +55,7 @@ abstract class AbstractRoutePart {
 	/**
 	 * Reference of the UriPatternSegmentCollection this Route Part belongs to.
 	 *
-	 * @var F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection
+	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
 	 */
 	protected $uriPatternSegments;
 
@@ -104,18 +104,18 @@ abstract class AbstractRoutePart {
 	/**
 	 * Sets a reference to the UriPatternSegmentCollection this Route Part belongs to.
 	 * 
-	 * @param F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection $uriPatternSegments
+	 * @param \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setUriPatternSegments(F3::FLOW3::MVC::Web::Routing::UriPatternSegmentCollection $uriPatternSegments) {
+	public function setUriPatternSegments(\F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments) {
 		$this->uriPatternSegments = $uriPatternSegments;
 	}
 
 	/**
 	 * Returns the next Route Part instance in the current URI Pattern Segment Collection.
 	 * 
-	 * @return F3::FLOW3::MVC::Web::Routing::AbstractRoutePart the next Route Part or NULL if this is the last Route Part in the current collection.
+	 * @return \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart the next Route Part or NULL if this is the last Route Part in the current collection.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function getNextRoutePartInCurrentUriPatternSegment() {

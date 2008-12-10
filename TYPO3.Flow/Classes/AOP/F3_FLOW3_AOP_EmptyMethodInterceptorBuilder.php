@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3::FLOW3::AOP;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -28,23 +28,23 @@ namespace F3::FLOW3::AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id:F3::FLOW3::AOP::EmptyMethodInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id:\F3\FLOW3\AOP\EmptyMethodInterceptorBuilder.php 201 2007-03-30 11:18:30Z robert $
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class EmptyMethodInterceptorBuilder extends F3::FLOW3::AOP::AbstractMethodInterceptorBuilder {
+class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterceptorBuilder {
 
 	/**
 	 * Builds PHP code for an empty method
 	 *
 	 * @param string $methodName Name of the method to build an interceptor for
 	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
-	 * @param F3::FLOW3::Reflection::ClassReflection $targetClass A reflection of the target class to build the interceptor for
+	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass A reflection of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, F3::FLOW3::Reflection::ClassReflection $targetClass) {
-		if ($methodName === '__construct') throw new RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);
+	static public function build($methodName, array $interceptedMethods, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
+		if ($methodName === '__construct') throw new \RuntimeException('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);
 
 		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
 		$method = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
