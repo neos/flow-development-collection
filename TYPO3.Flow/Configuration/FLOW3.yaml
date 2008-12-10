@@ -88,6 +88,10 @@ reflection:
     enable: y
     backend: F3::FLOW3::Cache::Backend::File
     backendOptions: {}
+    
+    # If class changes detected by the Class Alteration Monitoring should also be detected
+    # by the Reflection Service (only makes sense during development)
+    detectClassAlterations: no
 
 resource:
   

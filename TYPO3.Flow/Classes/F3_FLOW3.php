@@ -81,6 +81,13 @@ final class FLOW3 {
 	protected $objectFactory;
 
 	/**
+	 * A reference to the package manager
+	 *
+	 * @var F3::FLOW3::Package::ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * Instance of the class loader
 	 *
 	 * @var F3::FLOW3::Resource::ClassLoader
@@ -254,6 +261,7 @@ final class FLOW3 {
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::File');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::Backend::Memcached');
 		$this->objectManager->registerObject('F3::FLOW3::Cache::VariableCache');
+		$this->objectManager->registerObject('F3::FLOW3::Cache::StringCache');
 
 		$property = new F3::FLOW3::Object::ConfigurationProperty('environment', 'F3::FLOW3::Utility::Environment', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
 		$configuration = $this->objectManager->getObjectConfiguration('F3::FLOW3::Cache::Backend::File');
@@ -266,6 +274,8 @@ final class FLOW3 {
 		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
 		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
 		$this->cacheFactory->create('FLOW3_Reflection', 'F3::FLOW3::Cache::VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
+		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3::FLOW3::Cache::StringCache', 'F3::FLOW3::Cache::Backend::File');
 	}
 
 
@@ -282,9 +292,9 @@ final class FLOW3 {
 		$this->objectManager->registerObject('F3::FLOW3::Resource::Manager');
 
 		$this->objectManager->registerObject('F3::FLOW3::Package::ManagerInterface', 'F3::FLOW3::Package::Manager');
-		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
-		$packageManager->initialize();
-		$activePackages = $packageManager->getActivePackages();
+		$this->packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
+		$this->packageManager->initialize();
+		$activePackages = $this->packageManager->getActivePackages();
 
 		foreach ($activePackages as $packageKey => $package) {
 			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(F3::FLOW3::Configuration::Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
@@ -306,12 +316,11 @@ final class FLOW3 {
 	public function detectAlteredClasses() {
 		if ($this->settings['cache']['classAlterationMonitoring']['enable'] !== TRUE) return;
 
-		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
 		$classFileCache = $this->cacheManager->getCache('FLOW3_Package_ClassFiles');
 		$classFileModificationTimes = ($classFileCache->has('classFileModificationTimes')) ? $classFileCache->get('classFileModificationTimes') : array();
 		$classFileModificationTimesWereModified = FALSE;
 
-		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
 			foreach($package->getClassFiles() as $className => $classFileName) {
 				$fullClassFileName = $package->getClassesPath() . $classFileName;
 				if (file_exists($fullClassFileName)) {
@@ -343,10 +352,10 @@ final class FLOW3 {
 	 */
 	public function initializeReflection() {
 		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
+		$this->reflectionService->setDetectClassAlterations($this->settings['reflection']['cache']['detectClassAlterations']);
 
 		$availableClassNames = array();
-		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
-		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
 				$availableClassNames[] = $className;
 			}
@@ -372,8 +381,7 @@ final class FLOW3 {
 		}
 
 		if ($objectConfigurations === NULL) {
-			$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
-			$this->registerAndConfigureAllPackageObjects($packageManager->getActivePackages());
+			$this->registerAndConfigureAllPackageObjects($this->packageManager->getActivePackages());
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
 			if ($this->settings['object']['configurationCache']['enable']) {
 				$objectConfigurationsCache->set('baseObjectConfigurations', $objectConfigurations);
@@ -458,14 +466,12 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws F3::FLOW3::Exception if the resource system has already been initialized.
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
+		$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
+		$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
 
-		$metadataCache = $this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
-		$statusCache = $this->cacheFactory->create('FLOW3_Resource_Status', 'F3::FLOW3::Cache::StringCache', 'F3::FLOW3::Cache::Backend::File');
 		$environment = $this->objectManager->getObject('F3::FLOW3::Utility::Environment');
 		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
 
@@ -475,7 +481,7 @@ final class FLOW3 {
 		$resourcePublisher->setStatusCache($statusCache);
 		$resourcePublisher->setCacheStrategy($this->settings['resource']['cache']['strategy']);
 
-		$activePackages = $packageManager->getActivePackages();
+		$activePackages = $this->packageManager->getActivePackages();
 		foreach (array_keys($activePackages) as $packageKey) {
 			$resourcePublisher->mirrorPublicPackageResources($packageKey);
 		}

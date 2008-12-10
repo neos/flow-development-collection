@@ -62,29 +62,6 @@ class DispatcherTest extends F3::Testing::BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invalidControllersResultInException() {
-		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
-		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Response');
-
-		if (!class_exists('F3::FLOW3::MVC::Fixture::Controller::Invalid')) $this->getMock('stdclass', array(), array(), 'F3::FLOW3::MVC::Fixture::Controller::Invalid');
-		$this->objectManager->registerObject('F3::FLOW3::MVC::Fixture::Controller::Invalid');
-
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3::@package::MVC::Fixture::Controller::@controller');
-		$request->setControllerName('Invalid');
-
-		try {
-			$this->dispatcher->dispatch($request, $response);
-			$this->fail('The dispatcher accepted an invalid controller.');
-		} catch (F3::FLOW3::MVC::Exception $exception) {
-		}
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function aStopActionExceptionThrownByTheControllerIsCatchedByTheDispatcherAndBreaksTheDispatchLoop() {
 		$request = $this->objectManager->getObject('F3::FLOW3::MVC::Web::Request');
 		$request->injectObjectManager($this->objectManager);

@@ -44,6 +44,13 @@ class Service {
 	protected $cache;
 
 	/**
+	 * If class alterations should be detected on each initialization
+	 *
+	 * @var boolean
+	 */
+	protected $detectClassAlterations = FALSE;
+
+	/**
 	 * All available class names to consider
 	 *
 	 * @var array
@@ -146,6 +153,18 @@ class Service {
 	}
 
 	/**
+	 * Injects the FLOW3 settings
+	 *
+	 * @param array $settings Settings of the FLOW3 package
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setDetectClassAlterations($detectClassAlterations) {
+		if (!is_bool($detectClassAlterations)) throw ::InvalidArgumentException('Boolean expected', 1228909024);
+		$this->detectClassAlterations = $detectClassAlterations ? TRUE : FALSE;
+	}
+
+	/**
 	 * Returns TRUE if the reflection service has been initialized or data has been
 	 * imported.
 	 *
@@ -166,10 +185,11 @@ class Service {
 	public function initialize(array $classNamesToReflect) {
 		$this->loadFromCache();
 
-// @todo skip the following check in production context
-		foreach ($this->reflectedClassNames as $className) {
-			if (!$this->cache->has(str_replace('::', '_', $className))) {
-				$this->forgetClass($className);
+		if (is_object($this->cache) && $this->detectClassAlterations === TRUE) {
+			foreach ($this->reflectedClassNames as $className) {
+				if (!$this->cache->has(str_replace('::', '_', $className))) {
+					$this->forgetClass($className);
+				}
 			}
 		}
 

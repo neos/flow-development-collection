@@ -215,7 +215,7 @@ class Framework {
 
 		foreach ($proxyBuildResults as $targetClassName => $proxyBuildResult) {
 			$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
-			if (!class_exists($proxyBuildResult['proxyClassName'])) {
+			if (!class_exists($proxyBuildResult['proxyClassName'], FALSE)) {
 				eval($proxyBuildResult['proxyClassCode']);
 			}
 			$objectConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);

@@ -104,7 +104,6 @@ class Builder {
 		try {
 			$this->objectsBeingBuilt[$objectName] = TRUE;
 			$className = $objectConfiguration->getClassName();
-			if (!class_exists($className, TRUE)) throw new F3::FLOW3::Object::Exception::CannotBuildObject('No valid implementation class for object "' . $objectName . '" found while building the object (Class "' . $className . '" does not exist).', 1173184871);
 
 			$constructorArguments = $objectConfiguration->getConstructorArguments();
 			foreach ($overridingConstructorArguments as $index => $value) {
