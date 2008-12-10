@@ -151,6 +151,7 @@ final class FLOW3 {
 		$this->initializeCache();
 		$this->initializePackages();
 		$this->detectAlteredClasses();
+		$this->initializeReflection();
 		$this->initializeObjects();
 		$this->initializeAOP();
 		$this->initializeSession();
@@ -259,8 +260,8 @@ final class FLOW3 {
 		$configuration->setProperty($property);
 		$this->objectManager->setObjectConfiguration($configuration);
 
-		$this->cacheFactory = $this->objectManager->getObject('F3::FLOW3::Cache::Factory');
 		$this->cacheManager = $this->objectManager->getObject('F3::FLOW3::Cache::Manager');
+		$this->cacheFactory = $this->objectManager->getObject('F3::FLOW3::Cache::Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
 
 		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3::FLOW3::Cache::VariableCache', 'F3::FLOW3::Cache::Backend::File');
 		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3::FLOW3::Cache::VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
@@ -334,6 +335,26 @@ final class FLOW3 {
 	}
 
 	/**
+	 * Initializes the Reflection Service
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeReflection() {
+		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
+
+		$availableClassNames = array();
+		$packageManager = $this->objectManager->getObject('F3::FLOW3::Package::ManagerInterface');
+		foreach ($packageManager->getActivePackages() as $packageKey => $package) {
+			foreach (array_keys($package->getClassFiles()) as $className) {
+				$availableClassNames[] = $className;
+			}
+		}
+		$this->reflectionService->initialize($availableClassNames);
+	}
+
+	/**
 	 * Initializes the object framework and loads the object configuration
 	 *
 	 * @return void
@@ -374,7 +395,6 @@ final class FLOW3 {
 
 			$this->objectManager->registerObject('F3::FLOW3::AOP::Framework');
 			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3::FLOW3::AOP::Framework');
-
 			$properties = array(
 				'reflectionService' => new F3::FLOW3::Object::ConfigurationProperty('reflectionService', 'F3::FLOW3::Reflection::Service', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
 				'pointcutExpressionParser' => new F3::FLOW3::Object::ConfigurationProperty('pointcutExpressionParser', 'F3::FLOW3::AOP::PointcutExpressionParser', F3::FLOW3::Object::ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
@@ -385,10 +405,8 @@ final class FLOW3 {
 			$this->objectManager->setObjectConfiguration($objectConfiguration);
 
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
-
-			$AOPFramework = $this->objectManager->getObject('F3::FLOW3::AOP::Framework');
+			$AOPFramework = $this->objectManager->getObject('F3::FLOW3::AOP::Framework', $this->objectManager, $this->objectFactory);
 			$AOPFramework->initialize($objectConfigurations);
-
 			$this->objectManager->setObjectConfigurations($objectConfigurations);
 		}
 	}
@@ -545,7 +563,6 @@ final class FLOW3 {
 				}
 			}
 		}
-		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
 		$this->reflectionService->initialize($availableClassNames);
 
 		foreach ($availableClassNames as $className) {

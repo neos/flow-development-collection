@@ -35,11 +35,11 @@ interface MetaInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param	string				The package key
-	 * @param   [SimpleXMLElement]	If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
-	 * @return  void
+	 * @param string $packageKey The package key
+	 * @param SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
+	 * @return void
 	 */
-	public function __construct($packageKey, SimpleXMLElement $packageMetaXML = NULL);
+	public function __construct($packageKey, ::SimpleXMLElement $packageMetaXML = NULL);
 
 }
 ?>

@@ -115,7 +115,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 * @param string $entryIdentifier: An identifier for this specific cache entry
 	 * @param string $data: The data to be stored
 	 * @param array $tags: Tags to associate with this cache entry
-	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws F3::FLOW3::Cache::Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -134,8 +134,7 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
 			$expiryTime = new ::DateTime('now +' . $lifetime . ' seconds', new DateTimeZone('UTC'));
 		}
-		$entryIdentifierHash = sha1($entryIdentifier);
-		$cacheEntryPath = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/';
+		$cacheEntryPath = $this->renderCacheEntryPath($entryIdentifier);
 		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
 
 		if (!is_writable($cacheEntryPath)) {
@@ -176,11 +175,9 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	public function get($entryIdentifier) {
 		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
-
 		if ($pathsAndFilenames === FALSE) return FALSE;
-		if ($this->isLifetimeExceeded($pathsAndFilenames)) return FALSE;
-
-		return file_get_contents(array_pop($pathsAndFilenames));
+		$pathAndFilename = array_pop($pathsAndFilenames);
+		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : file_get_contents($pathAndFilename);
 	}
 
 	/**
@@ -193,11 +190,8 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	public function has($entryIdentifier) {
 		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
-
 		if ($pathsAndFilenames === FALSE) return FALSE;
-		if ($this->isLifetimeExceeded($pathsAndFilenames)) return FALSE;
-
-		return TRUE;
+		return !$this->isCacheFileExpired(array_pop($pathsAndFilenames));
 	}
 
 	/**
@@ -291,20 +285,16 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	}
 
 	/**
-	 * Checks if the given files are still valid.
+	 * Checks if the given cache entry files are still valid or if their
+	 * lifetime has exceeded.
 	 *
-	 * @param array $cacheFiles
+	 * @param string $cacheFilename
 	 * @return boolean
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function isLifetimeExceeded(array $cacheFiles) {
-		foreach ($cacheFiles as $cacheFile) {
-			$splitFilename = explode(self::SEPARATOR, basename($cacheFile), 2);
-			if ($splitFilename[0] < gmdate('YmdHis')) {
-				return TRUE;
-			}
-		}
-		return FALSE;
+	protected function isCacheFileExpired($cacheFilename) {
+		list($timestamp) = explode(self::SEPARATOR, basename($cacheFilename), 2);
+		return $timestamp < gmdate('YmdHis');
 	}
 
 	/**
@@ -329,14 +319,27 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	/**
 	 * Renders a file name for the specified cache entry
 	 *
-	 * @param string $identifier: Identifier for the cache entry
-	 * @param DateTime $expiry: Date and time specifying the expiration of the entry. Must be a UTC time.
+	 * @param string $identifier Identifier for the cache entry
+	 * @param DateTime $expiry Date and time specifying the expiration of the entry. Must be a UTC time.
 	 * @return string Filename of the cache data file
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function renderCacheFilename($identifier, ::DateTime $expiryTime) {
 		$filename = $expiryTime->format(self::FILENAME_EXPIRYTIME_FORMAT) . self::SEPARATOR . $identifier;
 		return $filename;
+	}
+
+	/**
+	 * Renders the full path (excluding file name) leading to the given cache entry.
+	 * Doesn't check if such a cache entry really exists.
+	 *
+	 * @param string $identifier Identifier for the cache entry
+	 * @return string Absolute path leading to the directory containing the cache entry
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function renderCacheEntryPath($identifier) {
+		$identifierHash = sha1($identifier);
+		return $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $identifierHash{0} . '/' . $identifierHash{1} . '/';
 	}
 
 	/**
@@ -351,8 +354,8 @@ class File extends F3::FLOW3::Cache::AbstractBackend {
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!is_object($this->cache)) throw new F3::FLOW3::Cache::Exception('Yet no cache frontend has been set via setCache().', 1204111376);
-		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
-		$pattern = $path . '*/*/' . self::FILENAME_EXPIRYTIME_GLOB . self::SEPARATOR . $entryIdentifier;
+
+		$pattern = $this->renderCacheEntryPath($entryIdentifier) . self::FILENAME_EXPIRYTIME_GLOB . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;

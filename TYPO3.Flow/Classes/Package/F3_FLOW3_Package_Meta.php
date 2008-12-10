@@ -49,20 +49,19 @@ class Meta implements F3::FLOW3::Package::MetaInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param	string				The package key
-	 * @param   [SimpleXMLElement]	If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
-	 * @return  void
-	 * @author  Robert Lemke <robert@typo3.org>
-	 * @todo    Validate the $packageMetaXML as soon as we have a DTD / Schema for it
+	 * @param string $packageKey The package key
+	 * @param SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @todo  Validate the $packageMetaXML as soon as we have a DTD / Schema for it
 	 */
-	public function __construct($packageKey, SimpleXMLElement $packageMetaXML = NULL) {
+	public function __construct($packageKey, ::SimpleXMLElement $packageMetaXML = NULL) {
 		if ($packageMetaXML !== NULL) {
 			$this->packageKey = (string)$packageMetaXML->packageKey;
 			$this->version = (string)$packageMetaXML->version;
 			$this->title = (string)$packageMetaXML->title;
 		}
 	}
-
 
 }
 

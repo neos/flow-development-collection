@@ -166,6 +166,7 @@ class Service {
 	public function initialize(array $classNamesToReflect) {
 		$this->loadFromCache();
 
+// @todo skip the following check in production context
 		foreach ($this->reflectedClassNames as $className) {
 			if (!$this->cache->has(str_replace('::', '_', $className))) {
 				$this->forgetClass($className);
