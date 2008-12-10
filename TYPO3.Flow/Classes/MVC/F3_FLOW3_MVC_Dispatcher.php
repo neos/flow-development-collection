@@ -110,8 +110,11 @@ class Dispatcher {
 			$dispatchLoopCount ++;
 			if ($dispatchLoopCount > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
 
-			$this->securityContextHolder->initializeContext($request);
-			$this->firewall->blockIllegalRequests($request);
+			$settings = $this->configurationManager->getSettings('FLOW3');
+			if ($settings['security']['enable'] === TRUE) {
+				$this->securityContextHolder->initializeContext($request);
+				$this->firewall->blockIllegalRequests($request);
+			}
 
 			try {
 				$controller = $this->getPreparedController($request, $response);

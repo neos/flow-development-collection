@@ -124,6 +124,8 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
 		$matches = FALSE;
 
+		if ($this->settings['security']['enable'] === FALSE) return FALSE;
+
 		if (count($this->filters) === 0) {
 			$policyExpressionParser = $this->objectManager->getObject('F3\FLOW3\Security\ACL\PolicyExpressionParser');
 			$policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);

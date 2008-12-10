@@ -42,6 +42,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$settings = array(
 			'aop' => array('cache' => array('enable' => FALSE)),
 			'security' => array(
+				'enable' => TRUE,
 				'policy' => array(
 					'roles' => array('EXAMPLE_ROLE' => array()),
 					'resources' => array('theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())'),
@@ -68,6 +69,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = FALSE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
 		$settings['security']['policy']['resources'] = array(
 			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
@@ -96,10 +98,39 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function matchesAlwaysReturnsFalseIfSecurityIsDisabled() {
+		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array(), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$settings = array(
+			'aop' => array('cache' => array('enable' => FALSE)),
+			'security' => array(
+				'enable' => FALSE,
+				'policy' => array(
+					'roles' => array('EXAMPLE_ROLE' => array()),
+					'resources' => array('theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())'),
+					'acls' => array('EXAMPLE_ROLE' => array('theOneAndOnlyResource' => 'ACCESS_GRANT'))
+				)
+			)
+		);
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
+
+		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
+		$method = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClass', 'setSomeProperty');
+
+		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
+		$this->assertFalse($policyService->matches($class, $method, 1));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function matchesCreatesTheCorrectACLCacheArray() {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
@@ -143,6 +174,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array();
@@ -192,6 +224,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array();
@@ -237,6 +270,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array(
@@ -296,6 +330,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array(
@@ -350,6 +385,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['aop']['cache']['enable'] = TRUE;
+		$settings['security']['enable'] = TRUE;
 		$settings['security']['policy']['aclCache']['backend'] = '';
 		$settings['security']['policy']['aclCache']['backendOptions'] = array();
 		$settings['security']['policy']['roles'] = array();

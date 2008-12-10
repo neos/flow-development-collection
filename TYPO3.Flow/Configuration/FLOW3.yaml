@@ -122,6 +122,8 @@ persistence:
 
 security:
 
+  enable: n
+
   firewall:
     
     # If set to yes, the firewall will reject any request that is not
