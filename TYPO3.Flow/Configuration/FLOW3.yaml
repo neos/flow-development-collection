@@ -105,7 +105,7 @@ resource:
     publicPath: Resources/
     
     # The strategy to use when caching files for public resources. Specify either
-    # "package" or "file"
+    # "none", "package" or "file"
     strategy: package
 
 session:

@@ -35,9 +35,9 @@ class Manager {
 	/**
 	 * Constants reflecting the file caching strategies
 	 */
-	const CACHE_STRATEGY_NONE = 1;
-	const CACHE_STRATEGY_PACKAGE = 2;
-	const CACHE_STRATEGY_FILE = 3;
+	const CACHE_STRATEGY_NONE = 'none';
+	const CACHE_STRATEGY_PACKAGE = 'package';
+	const CACHE_STRATEGY_FILE = 'file';
 
 	/**
 	 * @var \F3\FLOW3\Resource\ClassLoader Instance of the class loader

@@ -140,7 +140,6 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function mirrorPublicPackageResources($packageName) {
-
 		if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($packageName)) {
 			return;
 		} elseif ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE) {
