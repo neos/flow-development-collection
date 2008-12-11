@@ -186,7 +186,7 @@ class Package implements PackageInterface {
 				$classesDirectoryIterator->next();
 			}
 
-		} catch(Exception $exception) {
+		} catch(\Exception $exception) {
 			throw new \F3\FLOW3\Package\Exception($exception->getMessage(), 1166633720);
 		}
 		return $classFiles;

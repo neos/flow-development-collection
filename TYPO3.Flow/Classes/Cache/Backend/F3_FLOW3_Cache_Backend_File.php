@@ -140,7 +140,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 		if (!is_writable($cacheEntryPath)) {
 			try {
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheEntryPath);
-			} catch(Exception $exception) {
+			} catch(\Exception $exception) {
 			}
 			if (!is_writable($cacheEntryPath)) throw new \F3\FLOW3\Cache\Exception('The cache directory "' . $cacheEntryPath . '" could not be created.', 1204026250);
 		}

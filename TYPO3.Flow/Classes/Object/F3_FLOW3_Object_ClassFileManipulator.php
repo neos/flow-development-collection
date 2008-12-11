@@ -112,7 +112,7 @@ class ClassFileManipulator {
 	 * @return boolean Returns TRUE if the new operator really has been replaced, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function replaceNewOperator(Array $tokens, &$index, &$targetCode) {
+	protected function replaceNewOperator(array $tokens, &$index, &$targetCode) {
 		$index++;
 		$newOperatorHasBeenReplaced = FALSE;
 
@@ -159,7 +159,7 @@ class ClassFileManipulator {
 	 * @return string returns the content between the parentheses
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function parseConstructorArguments(Array $tokens, &$index) {
+	protected function parseConstructorArguments(array $tokens, &$index) {
 		$index++;
 		$argumentsCode = '';
 		while ($tokens[$index][0] != ')') {

@@ -402,7 +402,7 @@ class Framework {
 							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
 						}
 					}
-				} catch (ReflectionException $exception) {
+				} catch (\ReflectionException $exception) {
 					throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $targetClassName . '" does not exist.', 1187348208);
 				}
 			}
