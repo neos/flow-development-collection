@@ -127,7 +127,7 @@ namespace F3\Your\Stuff\Here;
 
         <listitem>
           <para>Code lines are of arbitrary length, no limitations to 80
-          characters or something similar (wake up, graphical displays has
+          characters or something similar (wake up, graphical displays have
           been available for decades now...)</para>
         </listitem>
 
@@ -220,6 +220,26 @@ public‧function‧getContext()‧{
       </section>
 
       <section>
+        <title>Namespace names</title>
+
+        <para>Only the characters a-z, A-Z and 0-9 are allowed for namespace
+        names – don't use special characters. All namespace names are written
+        in <classname>UpperCamelCase</classname>, all uppercase names are
+        allowed for well established abbreviations.</para>
+
+        <note>
+          <para>When specifying class names to PHP, always reference the
+          global namespace inside namespaced code by using a leading
+          backslash. When referencing a class name inside a string (e.g. given
+          to the <methodname>create</methodname>-Method of the
+          <classname>ObjectFactory</classname>, in pointcut expressions or in
+          YAML files), never use a leading backslash. This follows the native
+          PHP notion of names in strings always being seen as fully
+          qualified.</para>
+        </note>
+      </section>
+
+      <section>
         <title>Class names</title>
 
         <para>Only the characters a-z, A-Z and 0-9 are allowed for class names
@@ -248,19 +268,19 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\MySubObject</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\MySubObject</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\MyHTMLParser</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\MyHTMLParser</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\Foo\Controller\DefaultController</classname></para>
+              <para><classname>\F3\Foo\Controller\DefaultController</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\AbstractLogger</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\AbstractLogger</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -270,19 +290,19 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>myClass</classname></para>
+              <para><classname>\myClass</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\Urlwrapper</classname></para>
+              <para><classname>\F3\Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>someObject::classname</classname></para>
+              <para><classname>\someObject\classname</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObjectMySubObject</classname></para>
+              <para><classname>\F3\MyPackage\MyObjectMySubObject</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -312,11 +332,11 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\MySubObjectInterface</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\MySubObjectInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\MyHTMLParserInterface</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\MyHTMLParserInterface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -326,15 +346,15 @@ public‧function‧getContext()‧{
 
           <itemizedlist>
             <listitem>
-              <para><classname>myInterface</classname></para>
+              <para><classname>\myInterface</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\Urlwrapper</classname></para>
+              <para><classname>\F3\Urlwrapper</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>IsomeObject::classname</classname></para>
+              <para><classname>\IsomeObject\classname</classname></para>
             </listitem>
 
             <listitem>
@@ -367,11 +387,11 @@ public‧function‧getContext()‧{
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\Exception</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\Exception</classname></para>
             </listitem>
 
             <listitem>
-              <para><classname>F3\MyPackage\MyObject\Exception\OutOfCoffee</classname></para>
+              <para><classname>\F3\MyPackage\MyObject\Exception\OutOfCoffee</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -555,25 +575,25 @@ public‧function‧getContext()‧{
                   <para><filename>F3_TemplateEngine_TemplateEngineInterface.php</filename></para>
 
                   <para>Contains the interface
-                  <classname>F3\TemplateEngine\TemplateEngineInterface</classname>
+                  <classname>\F3\TemplateEngine\TemplateEngineInterface</classname>
                   which is part of the package
-                  <package>F3\TemplateEngine</package></para>
+                  <package>\F3\TemplateEngine</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_Error_RuntimeException.php</filename></para>
 
                   <para>Contains the
-                  <classname>F3\Error\RuntimeException</classname> being a
-                  part of the package <package>F3\Error</package></para>
+                  <classname>\F3\Error\RuntimeException</classname> being a
+                  part of the package <package>\F3\Error</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>F3_DataAccess_Manager.php</filename></para>
 
                   <para>Contains class
-                  <classname>F3\DataAccess\Manager</classname> which is part
-                  of the package <package>F3\DataAccess</package></para>
+                  <classname>\F3\DataAccess\Manager</classname> which is part
+                  of the package <package>\F3\DataAccess</package></para>
                 </listitem>
 
                 <listitem>
@@ -1151,14 +1171,14 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       them bubble up until a place where more general exceptions are catched.
       Consider the following example:</para>
 
-      <para>Some method tried to retrieve an object from the object
-      manager. However, instead of providing a string containing the object
-      name, the method passed an object (of course not on purpose - something
-      went wrong). The object manager now throws an
+      <para>Some method tried to retrieve an object from the object manager.
+      However, instead of providing a string containing the object name, the
+      method passed an object (of course not on purpose - something went
+      wrong). The object manager now throws an
       <classname>InvalidObjectName</classname> exception. In order to catch
       this exception you can, of course, catch it specifically - or only
-      consider a more general <classname>Object</classname> exception (or
-      an even more general <classname>FLOW3</classname> exception). This all
+      consider a more general <classname>Object</classname> exception (or an
+      even more general <classname>FLOW3</classname> exception). This all
       works because we have the following hierarchy:</para>
 
       <literallayout>+ \F3\FLOW3\Exception

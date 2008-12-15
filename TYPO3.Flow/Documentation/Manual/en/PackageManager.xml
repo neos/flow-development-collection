@@ -115,6 +115,26 @@
                   resources in the <filename>Private</filename> directory
                   remain protected.</para>
 
+                  <variablelist>
+                    <varlistentry>
+                      <term><filename>Private</filename></term>
+
+                      <listitem>
+                        <para>Contains private resources for the
+                        package.</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>Public</filename></term>
+
+                      <listitem>
+                        <para>Contains private resources for the
+                        package.</para>
+                      </listitem>
+                    </varlistentry>
+                  </variablelist>
+
                   <para>Although it is up to the package author to name the
                   directories, we suggest the following conventions for
                   directories below <filename>Private</filename> and
@@ -191,9 +211,9 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     classname as well as the file name. An example for a valid class name is
-    <classname>F3\MyPackage\Controller\Default</classname> while the file
-    containing this class would be named
-    <filename>F3_MyPackage_Controller_Default.php</filename>.</para>
+    <classname>\F3\MyPackage\Controller\DefaultController</classname> while
+    the file containing this class would be named
+    <filename>F3_MyPackage_Controller_DefaultController.php</filename>.</para>
 
     <para>All details about naming files, classes, methods and variables
     correctly can be found in the FLOW3 Coding Guidelines. You're highly

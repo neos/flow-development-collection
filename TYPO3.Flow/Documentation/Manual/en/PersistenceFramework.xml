@@ -29,10 +29,10 @@
         <title>The Blog's addPost() method</title>
 
         <para><programlisting>/**
- * @param F3\Blog\Domain\Post $post
+ * @param \F3\Blog\Domain\Post $post
  * @return void
  */
-public function addPost(F3\Blog\Domain\Post $post) {
+public function addPost(\F3\Blog\Domain\Post $post) {
     $this-&gt;posts[] = $post;
 }</programlisting></para>
       </example></para>

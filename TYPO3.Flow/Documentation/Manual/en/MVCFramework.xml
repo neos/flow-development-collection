@@ -136,8 +136,7 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       Controller/
         F3_Demo_Controller_DefaultController.php
       View/
-        Default/
-          F3_Demo_View_Default_DefaultView.php</literallayout>
+        F3_Demo_View_DefaultIndex.php</literallayout>
 
       <para>The view's code is equally trivial:</para>
 
@@ -146,7 +145,7 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
         <programlisting>namespace F3\Demo\View;
 
-class DefaultView extends \F3\FLOW3\MVC\View\AbstractView {
+class DefaultIndex extends \F3\FLOW3\MVC\View\AbstractView {
    public function render() {
       return "Hello World!";
    }
@@ -191,10 +190,9 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
         <listitem>
           <para><emphasis>View</emphasis> classes are situated below a
-          <filename>View</filename> directory. They are grouped by controllers
-          and named by their actions: Directories below the
-          <filename>View</filename> folder are named after the controller and
-          the view's class name refers to the action.</para>
+          <filename>View</filename> directory. The classname of the view is a
+          combination of the name of the controller and the name of the
+          action.</para>
         </listitem>
       </itemizedlist>
 
@@ -211,20 +209,56 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
         F3_Demo_Controller_CustomerController.php
         F3_Demo_Controller_OrderController.php
       View/
-        Default/
-          F3_Demo_View_Default_DefaultView.php
-        Customer/
-          F3_Demo_View_Customer_DefaultView.php
-          F3_Demo_View_Customer_ListView.php
-          F3_Demo_View_Customer_DetailsView.php
-        Order/
-          F3_Demo_View_Order_ListView.php</literallayout>
+        F3_Demo_View_DefaultIndex.php
+        F3_Demo_View_CustomerIndex.php
+        F3_Demo_View_CustomerList.php
+        F3_Demo_View_CustomerDetails.php
+        F3_Demo_View_OrderList.php</literallayout>
       </example>
 
-      <para>Adhering to these conventions has the advantage that views for
-      example are resolved automatically. However it is possible (and not
-      really difficult) to deviate from this layout and have a completely
-      different structure.</para>
+      <para>Adhering to these conventions has the advantage that the classname
+      of the view for example is resolved automatically. However it is
+      possible (and not really difficult) to deviate from this layout and have
+      a completely different structure.</para>
+    </section>
+
+    <section>
+      <title>From the URI to the view</title>
+
+      <caution>
+        <para>For the example URIs we assume that the web root directory of
+        your local server points to FLOW3's <filename>public/</filename>
+        directory. If that's not the case you have to extend the URI
+        accordingly.</para>
+      </caution>
+
+      <para>FLOW3 provides a standard way of resolving the URI to your
+      MVC-Objects.</para>
+
+      <para>Say, you want to see the list of customers (based on the
+      file-structure-example above). The URI to get the list would be:
+      <uri>http://localhost/demo/customer/list.html</uri> or just
+      <uri>http://localhost/demo/customer/list</uri>.</para>
+
+      <para>This URI will be resolved into the package-name
+      (<emphasis>Demo</emphasis>), controller-name
+      (<emphasis>Customer</emphasis>), action-name(<emphasis>list</emphasis>)
+      and format-name (<emphasis>html</emphasis> - which is the default
+      format).</para>
+
+      <para>Depending on that, the controller
+      <classname>\F3\Demo\Controller\CustomerController</classname> (Pattern:
+      '<code>F3\@package\Controller\@controllerController'</code>) and its
+      method <methodname>listAction()</methodname> will be used. The
+      corresponding view is <classname>\F3\Demo\View\CustomerList</classname>
+      (Pattern:
+      <code>'F3\@package\View\@controller@action@format'</code>).</para>
+
+      <para>If you have a look at the view pattern, you see, that you can
+      easily add a view that creates an xml-output by creating the class
+      <classname>\F3\Demo\View\CustomerListXML</classname>. You will get the
+      xml-output by calling the URI
+      <uri>http://localhost/demo/customer/list.xml</uri>.</para>
     </section>
   </section>
 

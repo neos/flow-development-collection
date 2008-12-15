@@ -151,7 +151,7 @@
       which come with the FLOW3 distribution for getting more examples.</para>
 
       <example>
-        <title>.Example for a package-level Settings.yaml</title>
+        <title>Example for a package-level Settings.yaml</title>
 
         <programlisting language="yaml">#                                                                        #
 # Settings Configuration for the TYPO3CR Package                         #
@@ -163,7 +163,7 @@ TYPO3CR:
 
   # The storage backend configuration
   storage:
-    backend: 'F3\TYPO3CR\Storage\Backend::PDO'
+    backend: 'F3\TYPO3CR\Storage\Backend\PDO'
     backendOptions:
       dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
       username: 
@@ -207,7 +207,7 @@ declare(ENCODING="utf-8");
  *
  * @var F3_TYPO3CR_Storage_BackendInterface
  */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3\TYPO3CR\Storage\Backend::PDO';
+$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3\TYPO3CR\Storage\Backend\PDO';
 
 /**
  * Options which are passed to the storage backend used by TYPO3CR
@@ -262,7 +262,7 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
  *
  * @var \F3\TYPO3CR\Storage\BackendInterface
  */
-$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend::PDO';</literal></programlisting></para>
+$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</literal></programlisting></para>
       </example>
 
       <para>Finally you may even call virtual setter methods in order to get a
@@ -298,8 +298,8 @@ $c-&gt;Demo-&gt;administrator-&gt;
       manager.</para>
 
       <caution>
-        <para>This is certainly a temporary solution which will surely change
-        as soon as the resource manager and the package manager become more
+        <para>This might be a temporary solution which will surely change as
+        soon as the resource manager and the package manager become more
         mature.</para>
       </caution>
 
@@ -366,8 +366,7 @@ $c-&gt;Demo-&gt;administrator-&gt;
 Smarty:
   resourceManager:
     specialClassNameAndPaths:
-      Smarty: %PATH_PACKAGE_RESOURCES%/PHP/Smarty/Smarty.class.php
-</programlisting>
+      Smarty: %PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php</programlisting>
       </example>
 
       <example>
@@ -385,7 +384,7 @@ declare(ENCODING="utf-8");
  * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
  */
 
-$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%/PHP/Smarty/Smarty.class.php';
+$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
 
 ?&gt;</literal></programlisting>
       </example>

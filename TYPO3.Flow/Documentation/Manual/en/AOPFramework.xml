@@ -294,9 +294,8 @@
       object. They are true subclasses of the original and override adviced
       methods by implementing a interceptor method. The proxy classes are
       generated automatically by the AOP framework and cached for further use.
-      If a class has been adviced by some aspect, the Object Manager will
-      only deliver instances of the proxy class instead of the
-      original.</para>
+      If a class has been adviced by some aspect, the Object Manager will only
+      deliver instances of the proxy class instead of the original.</para>
 
       <para>The approach of storing generated proxy classes in files provides
       the whole advantage of dynamic weaving with a minimum performance hit.
@@ -332,7 +331,7 @@ class FooSecurityAspect {
     </example>
 
     <para>As you can see,
-    <classname>F3\MySecurityPackage\FooSecurityAspect</classname> is just a
+    <classname>\F3\MySecurityPackage\FooSecurityAspect</classname> is just a
     regular PHP class which may (actually must) contain methods and
     properties. What it makes it an aspect is solely the
     <markup>@aspect</markup> annotation mentioned the class comment. The AOP
@@ -426,7 +425,8 @@ class FooSecurityAspect {
             <para>Internally, PHP's <function>preg_match()</function> function
             is used to match the method name. The regular expression will be
             enclosed by <literal>/^<replaceable>...</replaceable>$/</literal>
-            (without the dots of course).</para>
+            (without the dots of course). Backslashes will be escaped to make
+            namespace use possible without further hassle.</para>
           </footnote>. It follows the following scheme:</para>
 
         <synopsis>method(public|protected|private ClassName-&gt;methodName())</synopsis>
@@ -441,7 +441,7 @@ class FooSecurityAspect {
             <title>method() pointcut designator</title>
 
             <para>Matches all public methods in class
-            <classname>F3\MyPackage\MyObject</classname>:</para>
+            <classname>\F3\MyPackage\MyObject</classname>:</para>
 
             <para><code>method(public
             F3\MyPackage\MyObject-&gt;.*())</code></para>
@@ -449,7 +449,7 @@ class FooSecurityAspect {
             <para>Matches all delete methods (even protected and private ones)
             in any class of the package <package>MyPackage</package>:</para>
 
-            <para><code>method(F3\MyPackage::.*-&gt;delete.*())</code></para>
+            <para><code>method(F3\MyPackage\.*-&gt;delete.*())</code></para>
           </example><note>
             <para>In other AOP frameworks, incuding
             <trademark>AspectJ</trademark> and <trademark>Spring</trademark>,
@@ -623,7 +623,7 @@ class PointcutTestingAspect {
    /**
     * A pointcut which matches any method from the BasicClass and all classes from the service layer
     *
-    * @pointcut method(F3\TestPackage\Basic.*-&gt;.*()) || within(\F3\FLOW3\Service.*)
+    * @pointcut method(F3\TestPackage\Basic.*-&gt;.*()) || within(F3\FLOW3\Service.*)
     */
    public function basicClassOrServiceLayerClasses() {}
 }</programlisting></para>
@@ -661,7 +661,7 @@ class PointcutTestingAspect {
           <para><programlisting language="php">   /**
     * Before advice which is invoked before any method call within the News package
     *
-    * @before class(F3\News::.*-&gt;.*())
+    * @before class(F3\News\.*-&gt;.*())
     */
    public function myBeforeAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
    }</programlisting></para>
@@ -761,9 +761,9 @@ class PointcutTestingAspect {
     <para>The final step after declaring aspects, pointcuts and advices is to
     fill the advices with life. The implementation of an advice is located in
     the same method it has been declared. In that regard, an aspect class
-    behaves like any other object in FLOW3 – you therefore can take
-    advantage of dependency injection in case you need other objects to
-    fullfil the task of your advice.</para>
+    behaves like any other object in FLOW3 – you therefore can take advantage
+    of dependency injection in case you need other objects to fullfil the task
+    of your advice.</para>
 
     <section>
       <title>Accessing join points</title>
@@ -840,7 +840,7 @@ class LoggingAspect {
     *
     * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point
     * @return void
-    * @before method(F3\MyPackage::.*-&gt;.*())
+    * @before method(F3\MyPackage\.*-&gt;.*())
     */
    public function logMethodExecution(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
       $logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . $joinPoint-&gt;getClassName() . ' has been called.';
@@ -879,7 +879,7 @@ class LastNameRejectionAspect {
    /**
     * A pointcut which matches all guestbook submission method invocations
     *
-    * @pointcut method(F3\Guestbook\SubmissionHandlingThingy-&gt;submit())
+    * @pointcut method(\F3\Guestbook\SubmissionHandlingThingy-&gt;submit())
     */
    public function guestbookSubmissionPointcut() {}
 
@@ -955,7 +955,7 @@ class LastNameRejectionAspect {
 class IntroductionAspect {
 
    /**
-    * Introduces F3\MyPackage\NewInterface to the class F3\MyPackage\OldClass:
+    * Introduces \F3\MyPackage\NewInterface to the class \F3\MyPackage\OldClass:
     *
     * @introduce F3\MyPackage\NewInterface, class(F3\MyPackage\OldClass)
     */
