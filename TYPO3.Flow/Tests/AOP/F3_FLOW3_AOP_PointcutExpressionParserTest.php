@@ -131,6 +131,18 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function methodTaggedWithDesignatorIsParsedCorrectly() {
+		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter('someTag'));
+
+		$actualPointcutFilterComposite = $this->parser->parse('methodTaggedWith(someTag)');
+		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function customFilterDesignatorIsParsedCorrectly() {
 		$parser = new \F3\FLOW3\AOP\MockPointcutExpressionParser($this->objectManager);
 

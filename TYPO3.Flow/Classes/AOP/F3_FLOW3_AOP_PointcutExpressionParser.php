@@ -35,7 +35,7 @@ namespace F3\FLOW3\AOP;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|method|within|filter)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
@@ -92,6 +92,9 @@ class PointcutExpressionParser {
 					case 'class' :
 						$this->parseDesignatorClass($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
+					case 'methodTaggedWith' :
+						$this->parseDesignatorMethodTaggedWith($operator, $signaturePattern, $pointcutFilterComposite);
+					break;
 					case 'method' :
 						$this->parseDesignatorMethod($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
@@ -135,6 +138,20 @@ class PointcutExpressionParser {
 	 */
 	protected function parseDesignatorClass($operator, $classPattern, \F3\FLOW3\AOP\PointcutFilterComposite &$pointcutFilterComposite) {
 		$pointcutFilterComposite->addFilter($operator, new \F3\FLOW3\AOP\PointcutClassFilter($classPattern));
+	}
+
+	/**
+	 * Takes a method tag filter pattern and adds a so configured method tag filter to the
+	 * filter composite object.
+	 *
+	 * @param string $operator The operator
+	 * @param string $methodTagPattern The pattern expression as configuration for the method tag filter
+	 * @param \F3\FLOW3\AOP\PointcutFilterComposite &$pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the method tag filter) will be added to this composite object.
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function parseDesignatorMethodTaggedWith($operator, $methodTagPattern, \F3\FLOW3\AOP\PointcutFilterComposite &$pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter($methodTagPattern));
 	}
 
 	/**

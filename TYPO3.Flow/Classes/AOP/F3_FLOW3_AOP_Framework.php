@@ -222,7 +222,13 @@ class Framework {
 		}
 
 		if ($this->settings['aop']['cache']['enable'] === TRUE && !$loadedFromCache) {
-			$tags = array('F3_FLOW3_AOP', \F3\FLOW3\Cache\Manager::TAG_PACKAGES_CODE);
+			$tags = array();
+			foreach (array_keys($this->aspectContainers) as $aspectClassName) {
+				$tags[] = $configurationCache->getClassTag($aspectClassName);
+			}
+			foreach (array_keys($proxyBuildResults) as $targetClassName) {
+				$tags[] = $configurationCache->getClassTag($targetClassName);
+			}
 			$configurationCache->set('advicedMethodsInformationByTargetClass', $this->advicedMethodsInformationByTargetClass, $tags);
 			$configurationCache->set('aspectContainers', $this->aspectContainers, $tags);
 			$proxyCache->set('proxyBuildResults', $proxyBuildResults, $tags);
@@ -393,18 +399,16 @@ class Framework {
 		$proxyBuildResults = array();
 
 		foreach ($classNames as $targetClassName) {
-			if (array_search($targetClassName, $this->objectProxyBlacklist) === FALSE && substr($targetClassName, 0, 13) != 'F3\FLOW3\\') {
-				try {
-					if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
-						$proxyBuildResult = \F3\FLOW3\AOP\ProxyClassBuilder::buildProxyClass(new \F3\FLOW3\Reflection\ClassReflection($targetClassName), $aspectContainers, $context, $this->reflectionService);
-						if ($proxyBuildResult !== FALSE) {
-							$proxyBuildResults[$targetClassName] = $proxyBuildResult;
-							$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
-						}
+			try {
+				if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
+					$proxyBuildResult = \F3\FLOW3\AOP\ProxyClassBuilder::buildProxyClass(new \F3\FLOW3\Reflection\ClassReflection($targetClassName), $aspectContainers, $context, $this->reflectionService);
+					if ($proxyBuildResult !== FALSE) {
+						$proxyBuildResults[$targetClassName] = $proxyBuildResult;
+						$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
 					}
-				} catch (\ReflectionException $exception) {
-					throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $targetClassName . '" does not exist.', 1187348208);
 				}
+			} catch (\ReflectionException $exception) {
+				throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $targetClassName . '" does not exist.', 1187348208);
 			}
 		}
 		return $proxyBuildResults;
