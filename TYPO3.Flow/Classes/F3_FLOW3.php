@@ -511,8 +511,8 @@ final class FLOW3 {
 	 * be used by unit tests and special cases. In almost any other case, a reference to the
 	 * object manager can be injected.
 	 *
-		* @return \F3\FLOW3\Object\ManagerInterface
-		* @author Robert Lemke <robert@typo3.org>
+	 * @return \F3\FLOW3\Object\ManagerInterface
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectManager() {
 		return $this->objectManager;

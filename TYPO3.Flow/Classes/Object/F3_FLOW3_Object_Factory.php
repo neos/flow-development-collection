@@ -102,7 +102,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
  	 */
 	public function create($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!$this->objectManager->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
 
 		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);

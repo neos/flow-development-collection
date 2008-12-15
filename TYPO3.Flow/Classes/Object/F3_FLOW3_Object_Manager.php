@@ -199,7 +199,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 */
 	public function getObject($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
 
 		switch ($this->objectConfigurations[$objectName]->getScope()) {
@@ -235,12 +234,9 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\InvalidObject if the passed $object is not a valid instance of $className
 	 */
 	public function registerObject($objectName, $className = NULL, $object = NULL) {
-###		$objectName = ltrim($objectName, '\\');
 		if ($this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\ObjectAlreadyRegistered('The object ' . $objectName . ' is already registered.', 1184160573);
 		if ($className === NULL) {
 			$className = $objectName;
-		} else {
-###			$className = ltrim($className, '\\');
 		}
 		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
 		$useReflectionService = $this->reflectionService->isInitialized();
@@ -276,7 +272,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectType($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($objectName);
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
 		if ($className !== FALSE) {
@@ -299,7 +294,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered before
 	 */
 	public function unregisterObject($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167473433);
 		if ($this->objectRegistry->objectExists($objectName)) {
 			$this->objectRegistry->removeObject($objectName);
@@ -318,7 +312,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \InvalidArgumentException if $objectName is not a valid string
 	 */
 	public function isObjectRegistered($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!is_string($objectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($objectName) . ' given.', 1181907931);
 		return isset($this->registeredObjects[$objectName]);
 	}
@@ -339,7 +332,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \InvalidArgumentException if $caseInsensitiveObjectName is not a valid string
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
-###		$caseInsensitiveObjectName = ltrim($caseInsensitiveObjectName, '\\');
 		if (!is_string($caseInsensitiveObjectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
 		return array_search(strtolower($caseInsensitiveObjectName), $this->registeredObjects);
 	}
@@ -375,7 +367,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered
 	 */
 	public function getObjectConfiguration($objectName) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167993004);
 		return clone $this->objectConfigurations[$objectName];
 	}
@@ -424,7 +415,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownClass if the class does not exist
 	 */
 	public function setObjectClassName($objectName, $className) {
-###		$objectName = ltrim($objectName, '\\');
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Tried to set class name of non existent object "' . $objectName . '"', 1185524488);
 		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClass('Tried to set the class name of object "' . $objectName . '" but a class "' . $className . '" does not exist.', 1185524499);
 		$objectConfiguration = $this->getObjectConfiguration($objectName);

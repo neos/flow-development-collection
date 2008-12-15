@@ -185,7 +185,7 @@ class Service {
 	public function initialize(array $classNamesToReflect) {
 		$this->loadFromCache();
 
-		if (is_object($this->cache) && $this->detectClassAlterations === TRUE) {
+		if ($this->detectClassAlterations === TRUE) {
 			foreach ($this->reflectedClassNames as $className) {
 				if (!$this->cache->has(str_replace('\\', '_', $className))) {
 					$this->forgetClass($className);
@@ -196,7 +196,7 @@ class Service {
 		sort($classNamesToReflect);
 		$classNamesToReflect = array_unique($classNamesToReflect);
 
-		if ($this->reflectedClassNames != $classNamesToReflect) {
+		if ($this->reflectedClassNames !== $classNamesToReflect) {
 			$newClassNames = array_diff($classNamesToReflect, $this->reflectedClassNames);
 			foreach ($newClassNames as $className) {
 				$this->reflectClass($className);
