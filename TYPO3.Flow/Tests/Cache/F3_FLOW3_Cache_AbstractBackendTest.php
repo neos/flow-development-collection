@@ -52,9 +52,25 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 				public function flushByTag($tag) {}
 				public function findIdentifiersByTag($tag) {}
 				public function collectGarbage() {}
+				public function setSomeOption($value) {
+					$this->someOption = $value;
+				}
+				public function getSomeOption() {
+					return $this->someOption;
+				}
 			}
 		');
 		$this->backend = new $className($this->objectManager->getContext());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
+		$className = get_class($this->backend);
+		$backend = new $className($this->objectManager->getContext(), array('someOption' => 'someValue'));
+		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 
 	/**

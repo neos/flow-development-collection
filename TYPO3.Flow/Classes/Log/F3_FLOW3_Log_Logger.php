@@ -16,36 +16,33 @@ namespace F3\FLOW3\Log;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Log
+ * @package Log
  * @version $Id$
  */
 
 /**
- * Contract for a basic logger interface
+ * A general purpose default Logger
  *
- * @package FLOW3
- * @subpackage Log
- * @version $Id$
+ * @package
+ * @version $Id:$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @author Robert Lemke <robert@typo3.org>
  */
-interface LoggerInterface {
-
-	const SEVERITY_DEBUG = -1;
-	const SEVERITY_OK = 0;
-	const SEVERITY_INFO = 1;
-	const SEVERITY_NOTICE = 2;
-	const SEVERITY_WARNING = 3;
-	const SEVERITY_FATAL = 4;
+class Logger implements \F3\FLOW3\Log\LoggerInterface {
 
 	/**
-	 * Adds a backend to which the logger sends the logging data
+	 * @var array
+	 */
+	protected $backends = array();
+
+	/**
+	 * Adds the backend to which the logger sends the logging data
 	 *
 	 * @param BackendInterface $backend A backend implementation
 	 * @return void
 	 */
-	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend);
+	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend) {
+		$this->backends[spl_object_hash($backend)] = $backend;
+	}
 
 	/**
 	 * Runs the close() method of a backend and removes the backend
@@ -54,8 +51,13 @@ interface LoggerInterface {
 	 * @param BackendInterface $backend The backend to remove
 	 * @return void
 	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function removeBackend(\F3\FLOW3\Log\BackendInterface $backend);
+	public function removeBackend(\F3\FLOW3\Log\BackendInterface $backend) {
+		if (!isset($this->backends[spl_object_hash($backend)])) throw new \F3\FLOW3\Log\Exception\NoSuchBackend('Backend is unknown to this logger.', 1229430381);
+		$backend->close();
+		unset($this->backends[spl_object_hash($backend)]);
+	}
 
 	/**
 	 * Writes the given message along with the additional information into the log.
@@ -67,8 +69,24 @@ interface LoggerInterface {
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+		foreach ($this->backends as $backend) {
+			$backend->append($message, $severity, $additionalData, $packageKey, $className, $methodName);
+		}
+	}
 
+	/**
+	 * Cleanly closes all registered backends before destructing this Logger
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __destruct() {
+		foreach ($this->backends as $backend) {
+			$backend->close();
+		}
+	}
 }
 ?>

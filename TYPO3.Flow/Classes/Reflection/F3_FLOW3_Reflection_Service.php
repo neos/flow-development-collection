@@ -233,7 +233,7 @@ class Service {
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
-		return (count($classNamesFound) == 1 ? $classNamesFound[0] : FALSE);
+		return (count($classNamesFound) == 1 ? current($classNamesFound) : FALSE);
 	}
 
 	/**

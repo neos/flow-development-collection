@@ -82,12 +82,6 @@ class Framework {
 	protected $targetAndProxyClassNames = array();
 
 	/**
-	 * List of object names which must not be proxied. The blacklist must be complete before calling initialize()!
-	 * @var array
-	 */
-	protected $objectProxyBlacklist = array();
-
-	/**
 	 * Flag which signals if this class has already been initialized.
 	 * @var boolean
 	 */
@@ -151,19 +145,6 @@ class Framework {
 	}
 
 	/**
-	 * Adds a registered object to the proxy blacklist to prevent the object class
-	 * from being proxied by the AOP framework.
-	 *
-	 * @param string $objectName: Name of the object to add to the blacklist
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function addObjectNameToProxyBlacklist($objectName) {
-		if ($this->isInitialized) throw new \RuntimeException('Cannot add objects to the proxy blacklist after the AOP framework has been initialized!', 1169550998);
-		$this->objectProxyBlacklist[$objectName] = $objectName;
-	}
-
-	/**
 	 * Initializes the AOP framework.
 	 *
 	 * During initialization the specified configuration of objects is searched for possible
@@ -205,9 +186,11 @@ class Framework {
 			foreach ($objectConfigurations as $objectConfiguration) {
 				$className = $objectConfiguration->getClassName();
 				$allAvailableClasses[] = $className;
-				if (substr($className, 0, 9) != 'F3\FLOW3\\') {
+				$blacklistedSubPackages = array('F3\FLOW3\AOP', 'F3\FLOW3\Cac', 'F3\FLOW3\Con', 'F3\FLOW3\Err', 'F3\FLOW3\Eve', 'F3\FLOW3\Loc', 'F3\FLOW3\Log', 'F3\FLOW3\Obj', 'F3\FLOW3\Pac', 'F3\FLOW3\Per', 'F3\FLOW3\Pro', 'F3\FLOW3\Ref', 'F3\FLOW3\Res', 'F3\FLOW3\Sec', 'F3\FLOW3\Uti', 'F3\FLOW3\Val');
+				if (!in_array(substr($className, 0, 12), $blacklistedSubPackages)) {
 					$proxyableClasses[] = $className;
 				}
+
 			}
 			$this->aspectContainers = $this->buildAspectContainersFromClasses($allAvailableClasses);
 			$proxyBuildResults = $this->buildProxyClasses($proxyableClasses, $this->aspectContainers, $context);
@@ -217,8 +200,15 @@ class Framework {
 			$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
 			if (!class_exists($proxyBuildResult['proxyClassName'], FALSE)) {
 				eval($proxyBuildResult['proxyClassCode']);
+			} else {
+				throw new \F3\FLOW3\AOP\Exception('Class ' . $proxyBuildResult['proxyClassName'] . ' already exists.', 1229361833);
 			}
-			$objectConfigurations[$targetClassName]->setClassName($proxyBuildResult['proxyClassName']);
+
+			foreach ($objectConfigurations as $objectName => $objectConfiguration) {
+				if ($objectConfiguration->getClassName() == $targetClassName) {
+					$objectConfigurations[$objectName]->setClassName($proxyBuildResult['proxyClassName']);
+				}
+			}
 		}
 
 		if ($this->settings['aop']['cache']['enable'] === TRUE && !$loadedFromCache) {

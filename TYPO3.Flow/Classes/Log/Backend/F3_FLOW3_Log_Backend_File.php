@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Log;
+namespace F3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -31,25 +31,44 @@ namespace F3\FLOW3\Log;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SimpleFileLogger implements \F3\FLOW3\Log\LoggerInterface {
+class File extends \F3\FLOW3\Log\AbstractBackend {
 
 	/**
-	 * @var array An array of severity labels, indexed by their integer constant
+	 * An array of severity labels, indexed by their integer constant
+	 * @var array
 	 */
-	private $severityLabels;
+	protected $severityLabels;
 
 	/**
-	 * @var string Contains the full path and filename of the log file
+	 * @var string
 	 */
-	private $logDirectoryAndFilename;
+	protected $logFileURL;
 
 	/**
-	 * Constructor
+	 * @var resource
+	 */
+	protected $fileHandle;
+
+	/**
+	 * Sets URL pointing to the log file. Usually the full directory and
+	 * the filename, however any valid stream URL is possible.
+	 *
+	 * @param string $logFileURL URL pointing to the log file
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setLogFileURL($logFileURL) {
+		$this->logFileURL = $logFileURL;
+	}
+
+	/**
+	 * Carries out all actions necessary to prepare the logging backend, such as opening
+	 * the log file or opening a database connection.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($logDirectoryAndFilename = NULL) {
+	public function open() {
 		$this->severityLabels = array(
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG => 'DEBUG   ',
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO  => 'INFO    ',
@@ -58,11 +77,11 @@ class SimpleFileLogger implements \F3\FLOW3\Log\LoggerInterface {
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_FATAL => 'FATAL   ',
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_OK => 'OK      ',
 		);
-		$this->logDirectoryAndFilename = ($logDirectoryAndFilename === NULL) ? FLOW3_PATH_PUBLIC . 'flow3.log' : $logDirectoryAndFilename;
+		$this->fileHandle = fopen($this->logFileURL, 'at');
 	}
 
 	/**
-	 * Writes the given message along with the additional information into the log.
+	 * Appends the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
 	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
@@ -72,19 +91,23 @@ class SimpleFileLogger implements \F3\FLOW3\Log\LoggerInterface {
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
-
+	public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $this->severityLabels[$severity] . ' ' . str_pad($packageKey, 20) . ' ' . $message . chr(10);
 		if (!empty($additionalData)) {
 			$output .= $this->getFormattedVarDump($additionalData) . chr(10);
 		}
-		$fh = fopen($this->logDirectoryAndFilename, 'at');
-		if ($fh) {
-			fputs($fh, $output);
-			fclose($fh);
-		}
+		fputs($this->fileHandle, $output);
+	}
+
+	/**
+	 * Carries out all actions necessary to cleanly close the logging backend, such as
+	 * closing the log file or disconnecting from a database.
+	 *
+	 * @return void
+	 */
+	public function close() {
+		fclose($fileHandle);
 	}
 
 	/**

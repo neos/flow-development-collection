@@ -1,6 +1,7 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Log;
+
+namespace F3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -21,56 +22,49 @@ namespace F3\FLOW3\Log;
  * @version $Id$
  */
 
+require_once('vfs/vfsStream.php');
+
 /**
- * Testcase for the Simple File Logger
+ * Testcase for the File Backend
  *
  * @package FLOW3
  * @subpackage Log
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
-class SimpleFileLoggerTest extends \F3\Testing\BaseTestCase {
+class FileTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var Directory used for testing.
-	 */
-	protected $testDirectory;
-
-	/**
-	 * Sets up this testcase
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		$this->testDirectory = $environment->getPathToTemporaryDirectory();
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 	}
 
 	/**
-	 * Cleans up after testing ...
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function tearDown() {
-		if (file_exists($this->testDirectory . 'simplefileloggertest.log')) unlink ($this->testDirectory . 'simplefileloggertest.log');
-	}
-
-	/**
-	 * Checks if log messages are written to the right file
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function logMessagesAreWrittenIntoAFile() {
-		$fileLogger = new \F3\FLOW3\Log\SimpleFileLogger($this->testDirectory . 'simplefileloggertest.log');
-		$message = 'Test Message' . microtime();
-		$fileLogger->log($message, 0, array('testkey' => 'testvalue'));
-
-		$this->assertFileExists($this->testDirectory . 'simplefileloggertest.log', 'Log file simplefileloggertest.log not found!');
-
-		$content = file_get_contents ($this->testDirectory . 'simplefileloggertest.log');
-		$stringFound = strstr ($content, $message);
-		$this->assertTrue((strlen($stringFound) > 0), 'Didn\'t find the test string in the log file!');
+	public function theLogFileIsOpenedWithOpen() {
+		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\File($this->objectManager->getContext(), array('logFileURL' => $logFileURL));
+		$backend->open();
+		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('test.log'));
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
+		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\File($this->objectManager->getContext(), array('logFileURL' => $logFileURL));
+		$backend->open();
+
+		$backend->append('foo');
+
+		$this->assertSame(52, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+	}
 }
 ?>

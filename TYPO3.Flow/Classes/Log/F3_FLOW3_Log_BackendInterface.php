@@ -22,43 +22,25 @@ namespace F3\FLOW3\Log;
  */
 
 /**
- * Contract for a basic logger interface
+ * Contract for a logger backend interface
  *
  * @package FLOW3
  * @subpackage Log
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @author Robert Lemke <robert@typo3.org>
  */
-interface LoggerInterface {
-
-	const SEVERITY_DEBUG = -1;
-	const SEVERITY_OK = 0;
-	const SEVERITY_INFO = 1;
-	const SEVERITY_NOTICE = 2;
-	const SEVERITY_WARNING = 3;
-	const SEVERITY_FATAL = 4;
+interface BackendInterface {
 
 	/**
-	 * Adds a backend to which the logger sends the logging data
+	 * Carries out all actions necessary to prepare the logging backend, such as opening
+	 * the log file or opening a database connection.
 	 *
-	 * @param BackendInterface $backend A backend implementation
 	 * @return void
 	 */
-	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend);
+	public function open();
 
 	/**
-	 * Runs the close() method of a backend and removes the backend
-	 * from the logger.
-	 *
-	 * @param BackendInterface $backend The backend to remove
-	 * @return void
-	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
-	 */
-	public function removeBackend(\F3\FLOW3\Log\BackendInterface $backend);
-
-	/**
-	 * Writes the given message along with the additional information into the log.
+	 * Appends the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
 	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
@@ -68,7 +50,14 @@ interface LoggerInterface {
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 */
-	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
+	/**
+	 * Carries out all actions necessary to cleanly close the logging backend, such as
+	 * closing the log file or disconnecting from a database.
+	 *
+	 * @return void
+	 */
+	public function close();
 }
 ?>
