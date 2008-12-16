@@ -22,9 +22,7 @@ namespace F3\FLOW3\Log\Backend;
  */
 
 /**
- * A simple file logger based on the TYPO3 4.x extension rlmp_filedevlog.
- * This has been just a quick development to at least have some logging
- * at all. Enough room for improvement ..
+ * A log backend which writes log entries into a file
  *
  * @package FLOW3
  * @subpackage Log
