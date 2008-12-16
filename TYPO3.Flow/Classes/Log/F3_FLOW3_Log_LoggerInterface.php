@@ -29,6 +29,7 @@ namespace F3\FLOW3\Log;
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @author Robert Lemke <robert@typo3.org>
+ * @scope prototype
  */
 interface LoggerInterface {
 

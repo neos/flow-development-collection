@@ -34,12 +34,10 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\BackendInterface {
 	/**
 	 * Constructs this log backend
 	 *
-	 * @param string $context FLOW3's application context
 	 * @param mixed $options Configuration options - depends on the actual backend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($context, $options = array()) {
-		$this->context = $context;
+	public function __construct($options = array()) {
 		if (is_array($options) || $options instanceof ArrayAccess) {
 			foreach ($options as $optionKey => $optionValue) {
 				$methodName = 'set' . ucfirst($optionKey);

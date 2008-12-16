@@ -65,6 +65,18 @@ class LoggerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function addBackendRunsTheBackendsOpenMethod() {
+		$mockBackend = $this->getMock('F3\FLOW3\Log\BackendInterface', array('open', 'append', 'close'));
+		$mockBackend->expects($this->once())->method('open');
+
+		$logger = new \F3\FLOW3\Log\Logger();
+		$logger->addBackend($mockBackend);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function removeBackendRunsTheBackendsCloseMethodAndRemovesItFromTheLogger() {
 		$mockBackend = $this->getMock('F3\FLOW3\Log\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend->expects($this->once())->method('close');

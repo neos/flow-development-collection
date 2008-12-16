@@ -34,16 +34,16 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\Log\AbstractBackend
 	 */
-	protected $backend;
+	protected $this->backendClassName;
 
 	/**
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$className = uniqid('ConcreteBackend_');
+		$this->backendClassName = uniqid('ConcreteBackend_');
 		eval('
-			class ' . $className. ' extends \F3\FLOW3\Log\AbstractBackend {
+			class ' . $this->backendClassName . ' extends \F3\FLOW3\Log\AbstractBackend {
 				public function open() {}
 				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
 				public function close() {}
@@ -55,7 +55,6 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 				}
 			}
 		');
-		$this->backend = new $className($this->objectManager->getContext());
 	}
 
 	/**
@@ -63,8 +62,8 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
-		$className = get_class($this->backend);
-		$backend = new $className($this->objectManager->getContext(), array('someOption' => 'someValue'));
+		$className = $this->backendClassName;
+		$backend = new $className(array('someOption' => 'someValue'));
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 

@@ -28,6 +28,7 @@ namespace F3\FLOW3\Log\Backend;
  * @subpackage Log
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class File extends \F3\FLOW3\Log\AbstractBackend {
 
@@ -40,7 +41,7 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 	/**
 	 * @var string
 	 */
-	protected $logFileURL;
+	protected $logFileURL = '';
 
 	/**
 	 * @var resource
@@ -75,7 +76,9 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_FATAL => 'FATAL   ',
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_OK => 'OK      ',
 		);
+
 		$this->fileHandle = fopen($this->logFileURL, 'at');
+		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1229448440);
 	}
 
 	/**

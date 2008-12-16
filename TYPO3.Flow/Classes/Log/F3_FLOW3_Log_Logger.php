@@ -24,8 +24,9 @@ namespace F3\FLOW3\Log;
  * A general purpose default Logger
  *
  * @package
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
 class Logger implements \F3\FLOW3\Log\LoggerInterface {
 
@@ -42,6 +43,7 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 */
 	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend) {
 		$this->backends[spl_object_hash($backend)] = $backend;
+		$backend->open();
 	}
 
 	/**
