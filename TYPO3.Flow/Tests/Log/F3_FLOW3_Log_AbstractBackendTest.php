@@ -34,7 +34,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @var \F3\FLOW3\Log\AbstractBackend
 	 */
-	protected $this->backendClassName;
+	protected $backendClassName;
 
 	/**
 	 * @return void

@@ -48,7 +48,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theLogFileIsOpenedWithOpen() {
 		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\File($this->objectManager->getContext(), array('logFileURL' => $logFileURL));
+		$backend = new \F3\FLOW3\Log\Backend\File(array('logFileURL' => $logFileURL));
 		$backend->open();
 		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('test.log'));
 	}
@@ -59,7 +59,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
 		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
-		$backend = new \F3\FLOW3\Log\Backend\File($this->objectManager->getContext(), array('logFileURL' => $logFileURL));
+		$backend = new \F3\FLOW3\Log\Backend\File(array('logFileURL' => $logFileURL));
 		$backend->open();
 
 		$backend->append('foo');

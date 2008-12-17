@@ -136,7 +136,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 				$pattern = $route->getViewObjectNamePattern();
 				if ($pattern !== NULL) $request->setViewObjectNamePattern($pattern);
-				$this->notifyRouteMatched($route->getName(), $matchResults);
+				$this->emitRouteMatched($route->getName(), $matchResults);
 				break;
 			}
 		}
@@ -163,7 +163,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	}
 
 	/**
-	 * Notifies listeners that a route matched and was chosen
+	 * Emits the signal that a route matched and was chosen
 	 *
 	 * @param string $routeName Name of the route which matched
 	 * @param array $arguments an array with evaluated arguments
@@ -171,7 +171,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
 	 */
-	public function notifyRouteMatched($routeName, array $arguments) {
+	public function emitRouteMatched($routeName, array $arguments) {
 	}
 
 	/**

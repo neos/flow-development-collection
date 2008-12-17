@@ -16,31 +16,48 @@ namespace F3\FLOW3\Event;
  *                                                                        */
 
 /**
- * @package Event
+ * @package FLOW3
+ * @subpackage Event
  * @version $Id$
  */
 
 /**
+ * Aspect which connects signal methods with the Signal Dispatcher
  *
- *
- * @package
- * @subpackage
- * @version $Id:$
+ * @package FLOW3
+ * @subpackage Event
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @aspect
  */
-class SignalAspect{
+class SignalAspect {
 
 	/**
-	 * Notifies slots
+	 * @var \F3\FLOW3\Event\SignalDispatcher
+	 */
+	protected $signalDispatcher;
+
+	/**
+	 * Injects the Signal Dispatcher
+	 *
+	 * @param \F3\FLOW3\Event\SignalDispatcher $signalDispatcher
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSignalDispatcher(\F3\FLOW3\Event\SignalDispatcher $signalDispatcher) {
+		$this->signalDispatcher = $signalDispatcher;
+	}
+
+	/**
+	 * Passes the signal over to the Signal Dispatcher
 	 *
 	 * @afterreturning methodTaggedWith(signal)
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function notifySlots(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-#		echo ('Signal triggered: ' . $joinPoint->getClassName() . '->' . $joinPoint->getMethodName());
+	public function forwardSignalToDispatcher(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$this->signalDispatcher->dispatch($joinPoint->getClassName(), $joinPoint->getMethodName(), $joinPoint->getMethodArguments());
 	}
 }
 ?>

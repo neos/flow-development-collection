@@ -17,48 +17,36 @@ namespace F3\FLOW3\Event;
 
 /**
  * @package FLOW3
- * @subpackage Event
+ * @subpackage Tests
  * @version $Id$
  */
+
 
 /**
- * Event base class
+ * Testcase for the Signal Aspect
  *
  * @package FLOW3
- * @subpackage Event
+ * @subpackage Tests
  * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
- * @scope prototype
  */
-class Event {
-	
-	/**
-	 * The event type.
-	 * This should be a string-based constant which resides in the respective Event subclass.
-	 *
-	 * @var string Event type
-	 */
-	protected $type;
+class SignalAspectTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Constructor
-	 *
-	 * @param string $type Event type
-	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($type) {
-		$this->type = $type;
-	}
+	public function forwardSignalToDispatcherForwardsTheSignalsMethodArgumentsToTheDispatcher() {
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPoint', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->any())->method('getMethodName')->will($this->returnValue('sampleSignal'));
+		$mockJoinPoint->expects($this->any())->method('getMethodArguments')->will($this->returnValue(array('arg1' => 'val1', 'arg2' => array('val2'))));
 
-	/**
-	 * Returns the type of this Event.
-	 *
-	 * @return string The event type
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function getType() {
-		return $this->type;
+		$mockDispatcher = $this->getMock('F3\FLOW3\Event\SignalDispatcher');
+		$mockDispatcher->expects($this->once())->method('dispatch')->with('sampleSignal', array('arg1' => 'val1', 'arg2' => array('val2')));
+
+		$aspect = new \F3\FLOW3\Event\SignalAspect();
+		$aspect->injectSignalDispatcher($mockDispatcher);
+		$aspect->forwardSignalToDispatcher($mockJoinPoint);
 	}
 }
 ?>
