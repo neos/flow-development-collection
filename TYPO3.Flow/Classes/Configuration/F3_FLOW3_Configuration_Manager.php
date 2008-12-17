@@ -33,9 +33,10 @@ class Manager {
 
 	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
 	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
-	const CONFIGURATION_TYPE_COMPONENTS = 'Objects';
+	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
+	const CONFIGURATION_TYPE_SIGNALSSLOTS = 'SignalsSlots';
 
 	/**
 	 * @var string The application context of the configuration to manage
@@ -203,7 +204,8 @@ class Manager {
 			case self::CONFIGURATION_TYPE_ROUTES :
 				return $this->routes;
 			case self::CONFIGURATION_TYPE_PACKAGES :
-			case self::CONFIGURATION_TYPE_COMPONENTS :
+			case self::CONFIGURATION_TYPE_OBJECTS :
+			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				break;
 			default:
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
@@ -222,7 +224,8 @@ class Manager {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_PACKAGES :
 				return (isset($configuration[$packageKey])) ? $configuration[$packageKey] : array();
-			case self::CONFIGURATION_TYPE_COMPONENTS :
+			case self::CONFIGURATION_TYPE_OBJECTS :
+			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				return $configuration;
 		}
 	}

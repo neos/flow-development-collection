@@ -94,10 +94,10 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$dispatcher->connect('Foo', 'emitBar', $mockSlot);
+		$dispatcher->connect('Foo', 'bar', $mockSlot);
 		$dispatcher->injectObjectManager($mockObjectManager);
 
-		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
+		$dispatcher->dispatch('Foo', 'bar', array('foo' => 'bar', 'baz' => 'quux'));
 		$this->assertSame(array('bar', 'quux'), $arguments);
 	}
 

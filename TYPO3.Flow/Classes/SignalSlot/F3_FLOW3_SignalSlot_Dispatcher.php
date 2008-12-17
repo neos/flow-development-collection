@@ -77,6 +77,7 @@ class Dispatcher {
 			$object = $slotClassNameOrObject;
 			$method = ($slotClassNameOrObject instanceof \Closure) ? '__invoke' : $slotMethodName;
 		} else {
+			if ($slotMethodName === '') throw new InvalidArgumentException('The slot method name must not be empty if a slot class name was specified.', 1229531659);
 			$class = $slotClassNameOrObject;
 			$method = $slotMethodName;
 		}

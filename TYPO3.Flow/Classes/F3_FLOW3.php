@@ -157,10 +157,10 @@ final class FLOW3 {
 		$this->initializeEnvironment();
 		$this->initializeCache();
 		$this->initializePackages();
-		$this->detectAlteredClasses();
 		$this->initializeReflection();
 		$this->initializeObjects();
 		$this->initializeAOP();
+		$this->initializeSignalsSlots();
 		$this->initializeSession();
 		$this->initializePersistence();
 		$this->initializeResources();
@@ -271,7 +271,8 @@ final class FLOW3 {
 		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
 		$this->cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
 
-		$this->cacheFactory->create('FLOW3_Package_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Cache_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Cache_ResourceFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
 		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3\FLOW3\Cache\VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
 		$this->cacheFactory->create('FLOW3_Reflection', 'F3\FLOW3\Cache\VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
 		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
@@ -313,9 +314,9 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function detectAlteredClasses() {
-		if ($this->settings['cache']['classAlterationMonitoring']['enable'] !== TRUE) return;
+		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] !== TRUE) return;
 
-		$classFileCache = $this->cacheManager->getCache('FLOW3_Package_ClassFiles');
+		$classFileCache = $this->cacheManager->getCache('FLOW3_Cache_ClassFiles');
 		$classFileModificationTimes = ($classFileCache->has('classFileModificationTimes')) ? $classFileCache->get('classFileModificationTimes') : array();
 		$classFileModificationTimesWereModified = FALSE;
 
@@ -350,6 +351,8 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeReflection() {
+		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] === TRUE) $this->detectAlteredClasses();
+
 		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
 		$this->reflectionService->setDetectClassAlterations($this->settings['reflection']['cache']['detectClassAlterations']);
 
@@ -419,6 +422,36 @@ final class FLOW3 {
 	}
 
 	/**
+	 * Initializes the Signals and Slots mechanism
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see intialize()
+	 */
+	public function initializeSignalsSlots() {
+		$dispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+
+		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+			$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $packageKey);
+			foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
+				if (is_array($signalSubConfiguration)) {
+					foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
+						$signalMethodName = 'emit' . ucfirst($signalMethodName);
+						if (is_array($slotConfigurations)) {
+							foreach ($slotConfigurations as $slotConfiguration) {
+								if (is_array($slotConfiguration) && count($slotConfiguration) === 2) {
+									list ($className, $methodName) = $slotConfiguration;
+									$dispatcher->connect($signalClassName, $signalMethodName, $className, $methodName);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
 	 * Initializes the Locale service
 	 *
 	 * @return void
@@ -460,6 +493,48 @@ final class FLOW3 {
 		}
 
 	}
+
+	/**
+	 * Checks if resources (ie. files in the Resource directory of a package) have been altered and if so flushes
+	 * the related caches.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function detectAlteredResources() {
+		$resourceFileCache = $this->cacheManager->getCache('FLOW3_Cache_ResourceFiles');
+		$resourceFileModificationTimes = ($resourceFileCache->has('resourceFileModificationTimes')) ? $resourceFileCache->get('resourceFileModificationTimes') : array();
+		$resourceFileModificationTimesWereModified = FALSE;
+
+		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+			$publicResourcesPath = $package->getResourcesPath() . 'Public/';
+			if (file_exists($publicResourcesPath)) {
+				$resourceFilenames = \F3\FLOW3\Utility\Files::readDirectoryRecursively($publicResourcesPath);
+/*				foreach($resourceFilenames as $filename) {
+					$fullClassFileName = $package->getClassesPath() . $resourceFileName;
+					if (file_exists($fullClassFileName)) {
+						$currentFileModificationTime = filemtime($fullClassFileName);
+						$cachedFileModificationTime = isset($resourceFileModificationTimes[$fullClassFileName]) ? $resourceFileModificationTimes[$fullClassFileName] : NULL;
+						if ($cachedFileModificationTime === NULL || $currentFileModificationTime > $cachedFileModificationTime) {
+							$resourceFileModificationTimes[$fullClassFileName] = $currentFileModificationTime;
+							$tag = $resourceFileCache->getClassTag($className);
+							$this->cacheManager->flushCachesByTag($tag);
+							$resourceFileModificationTimesWereModified = TRUE;
+						}
+					} else {
+						$this->cacheManager->flushCachesByTag($resourceFileCache->getClassTag($className));
+						unset($resourceFileModificationTimes[$deletedClassFileName]);
+						$resourceFileModificationTimesWereModified = TRUE;
+					}
+				}
+*/
+			}
+		}
+
+		if ($resourceFileModificationTimesWereModified) $resourceFileCache->set('resourceFileModificationTimes', $resourceFileModificationTimes);
+	}
+
 	/**
 	 * Publishes the public resources of all found packages
 	 *
@@ -468,6 +543,8 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
+		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] === TRUE) $this->detectAlteredResources();
+
 		$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
 		$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
 
@@ -592,7 +669,7 @@ final class FLOW3 {
 
 		$objectConfigurations = $this->objectManager->getObjectConfigurations();
 		foreach ($packages as $packageKey => $package) {
-			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_COMPONENTS, $packageKey);
+			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $packageKey);
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
 				if (!$this->objectManager->isObjectRegistered($objectName)) {

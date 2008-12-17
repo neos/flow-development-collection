@@ -43,11 +43,11 @@ cache:
     backend: F3\FLOW3\Cache\Backend\File
     backendOptions: {}
 
-  # The Class Alteration Monitoring detects changes in class files and automatically
-  # flushes the dependent caches (such as the reflection cache).
+  # The File Alteration Monitoring detects changes in class and resource files and 
+  # automatically flushes the dependent caches (such as the reflection cache).
   # This mechanism comes with a speed penalty and should therefore be disabled in
   # production context.
-  classAlterationMonitoring:
+  fileAlterationMonitoring:
     enable: n
 
 object:
