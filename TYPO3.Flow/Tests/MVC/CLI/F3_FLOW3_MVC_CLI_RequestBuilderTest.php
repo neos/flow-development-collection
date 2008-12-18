@@ -49,11 +49,17 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$settings = $this->objectManager->getObject('F3\FLOW3\Configuration\Manager')->getSettings('FLOW3');
-		$this->environment = new \F3\FLOW3\Utility\MockEnvironment($settings['utility']['environment']);
+		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\CLI\Request')->will($this->returnValue($this->mockRequest));
+
+		$this->environment = new \F3\FLOW3\Utility\MockEnvironment();
 		$this->environment->SERVER['argc'] = 0;
 		$this->environment->SERVER['argv'] = array();
-		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($this->objectManager, $this->objectFactory, $this->environment);
+
+		$this->requestBuilder = new \F3\FLOW3\MVC\CLI\RequestBuilder($mockObjectManager, $mockObjectFactory, $this->environment);
 	}
 
 	/**
@@ -63,11 +69,12 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function simpleCLIAccessBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerObjectNamePattern')->with('F3\FLOW3\MVC\Controller\DefaultController');
+
 		$this->environment->SERVER['argc'] = 1;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\FLOW3\MVC\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request without any arguments did not return a request object pointing to the default controller.');
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -77,12 +84,13 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function CLIAccessWithPackageNameBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+
 		$this->environment->SERVER['argc'] = 2;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name did not return a request object pointing to the expected controller.');
-		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
+
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -108,6 +116,10 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function checkIfCLIAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+
 		$this->environment->SERVER['argc'] = 4;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -115,8 +127,6 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request specifying a package name and controller did not return a request object pointing to the expected controller.');
-		$this->assertEquals('list', $request->getControllerActionName(), 'The CLI request specifying a package, controller and action name did not return a request object pointing to the expected action.');
 	}
 
 	/**
@@ -126,6 +136,13 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+		$this->mockRequest->expects($this->exactly(2))->method('setArgument');
+		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
+		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
+
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -134,11 +151,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=value2';
 
-		$request = $this->requestBuilder->build();
-		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
-		$this->assertEquals($request->getArgument('testArgument'), 'value', 'The "testArgument" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument2'), 'value2', 'The "testArgument2" had not the given value.');
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -148,6 +161,15 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+		$this->mockRequest->expects($this->exactly(4))->method('setArgument');
+		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
+		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
+		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('testArgument3', 'value3');
+		$this->mockRequest->expects($this->at(6))->method('setArgument')->with('testArgument4', 'value4');
+
 		$this->environment->SERVER['argc'] = 12;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -162,15 +184,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][10] = 'value3';
 		$this->environment->SERVER['argv'][11] = '--test-argument4=value4';
 
-		$request = $this->requestBuilder->build();
-		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument3'), 'The given "testArgument3" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument4'), 'The given "testArgument4" was not found in the built request.');
-		$this->assertEquals($request->getArgument('testArgument'), 'value', 'The "testArgument" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument2'), 'value2', 'The "testArgument2" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument3'), 'value3', 'The "testArgument3" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument4'), 'value4', 'The "testArgument4" had not the given value.');
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -180,6 +194,14 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+		$this->mockRequest->expects($this->exactly(3))->method('setArgument');
+		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('d', 'valued');
+		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('f', 'valuef');
+		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('a', 'valuea');
+
 		$this->environment->SERVER['argc'] = 10;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -192,21 +214,35 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][8] = '=';
 		$this->environment->SERVER['argv'][9] = 'valuea';
 
-		$request = $this->requestBuilder->build();
-		$this->assertTrue($request->hasArgument('d'), 'The given "d" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('f'), 'The given "f" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('a'), 'The given "a" was not found in the built request.');
-		$this->assertEquals($request->getArgument('d'), 'valued', 'The "d" had not the given value.');
-		$this->assertEquals($request->getArgument('f'), 'valuef', 'The "f" had not the given value.');
-		$this->assertEquals($request->getArgument('a'), 'valuea', 'The "a" had not the given value.');
+		$this->requestBuilder->build();
 	}
 
 	/**
 	 * Checks if a CLI request specifying some mixed "console style" (-c or --my-argument -f=value) arguments with and without values results in the expected request object
 	 *
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+		$this->mockRequest->expects($this->exactly(14))->method('setArgument');
+		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
+		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
+		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('k', NULL);
+		$this->mockRequest->expects($this->at(6))->method('setArgument')->with('testArgument3', 'value3');
+		$this->mockRequest->expects($this->at(7))->method('setArgument')->with('testArgument4', 'value4');
+		$this->mockRequest->expects($this->at(8))->method('setArgument')->with('f', 'valuef');
+		$this->mockRequest->expects($this->at(9))->method('setArgument')->with('d', 'valued');
+		$this->mockRequest->expects($this->at(10))->method('setArgument')->with('a', 'valuea');
+		$this->mockRequest->expects($this->at(11))->method('setArgument')->with('c', NULL);
+		$this->mockRequest->expects($this->at(12))->method('setArgument')->with('testArgument7', NULL);
+		$this->mockRequest->expects($this->at(13))->method('setArgument')->with('testArgument5', 5);
+		$this->mockRequest->expects($this->at(14))->method('setArgument')->with('testArgument6', NULL);
+		$this->mockRequest->expects($this->at(15))->method('setArgument')->with('j', 'kjk');
+		$this->mockRequest->expects($this->at(16))->method('setArgument')->with('m', NULL);
+
 		$this->environment->SERVER['argc'] = 27;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -236,30 +272,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][25] = 'kjk';
 		$this->environment->SERVER['argv'][26] = '-m';
 
-		$request = $this->requestBuilder->build();
-		$this->assertTrue($request->hasArgument('testArgument'), 'The given "testArgument" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument2'), 'The given "testArgument2" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('k'), 'The given "k" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument3'), 'The given "testArgument3" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument4'), 'The given "testArgument4" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('f'), 'The given "f" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('d'), 'The given "d" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('a'), 'The given "a" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('c'), 'The given "d" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument7'), 'The given "testArgument7" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument5'), 'The given "testArgument5" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('testArgument6'), 'The given "testArgument6" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('j'), 'The given "j" was not found in the built request.');
-		$this->assertTrue($request->hasArgument('m'), 'The given "m" was not found in the built request.');
-		$this->assertEquals($request->getArgument('testArgument'), 'value', 'The "testArgument" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument2'), 'value2', 'The "testArgument2" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument3'), 'value3', 'The "testArgument3" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument4'), 'value4', 'The "testArgument4" had not the given value.');
-		$this->assertEquals($request->getArgument('f'), 'valuef', 'The "f" had not the given value.');
-		$this->assertEquals($request->getArgument('d'), 'valued', 'The "d" had not the given value.');
-		$this->assertEquals($request->getArgument('a'), 'valuea', 'The "a" had not the given value.');
-		$this->assertEquals($request->getArgument('testArgument5'), '5', 'The "testArgument4" had not the given value.');
-		$this->assertEquals($request->getArgument('j'), 'kjk', 'The "j" had not the given value.');
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -267,6 +280,11 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function requestContainsCorrectControllerObjectNamePatternForCLIAccessWithSubpackage() {
+		$this->mockRequest->expects($this->once())->method('setControllerObjectNamePattern')->with('F3\@package\Sub\Package\Controller\@controllerController');
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Test');
+		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('run');
+
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -275,8 +293,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][4] = 'Test';
 		$this->environment->SERVER['argv'][5] = 'run';
 
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\@package\Sub\Package\Controller\@controllerController', $request->getControllerObjectNamePattern());
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -284,6 +301,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedAfterOptions() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -292,10 +312,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][4] = 'file1';
 		$this->environment->SERVER['argv'][5] = 'file2';
 
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
-		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
-		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -303,6 +320,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedIfNoOptionsAreGivenWithFullCommand() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+
 		$this->environment->SERVER['argc'] = 7;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -312,10 +332,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][5] = 'file1';
 		$this->environment->SERVER['argv'][6] = 'file2';
 
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
-		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
-		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+		$this->requestBuilder->build();
 	}
 
 	/**
@@ -323,6 +340,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function argumentsAreDetectedIfNoOptionsAreGiven() {
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
+		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
@@ -330,10 +350,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argv'][4] = 'file1';
 		$this->environment->SERVER['argv'][5] = 'file2';
 
-		$request = $this->requestBuilder->build();
-		$this->assertEquals('F3\TestPackage\Controller\DefaultController', $request->getControllerObjectName(), 'The CLI request did not return a request object pointing to the expected controller.');
-		$this->assertEquals('index', $request->getControllerActionName(), 'The CLI request did not return a request object pointing to the expected action.');
-		$this->assertEquals(array('file1', 'file2'), $request->getCLIArguments());
+		$this->requestBuilder->build();
 	}
 
 }

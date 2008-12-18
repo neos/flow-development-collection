@@ -33,16 +33,6 @@ class RoutePartCollectionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routePartCollectionIsPrototype() {
-		$routePartCollection1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
-		$routePartCollection2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
-		$this->assertNotSame($routePartCollection1, $routePartCollection2, 'Obviously RoutePartCollection is not prototype!');
-	}
-
-	/**
-	 * @test
 	 * @expectedException \InvalidArgumentException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

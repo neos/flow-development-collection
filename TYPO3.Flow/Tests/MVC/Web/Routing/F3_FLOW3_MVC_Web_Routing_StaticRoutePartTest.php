@@ -35,16 +35,6 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function staticRoutePartIsPrototype() {
-		$routePart1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
-		$routePart2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
-		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Static Route Part is not prototype!');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function staticRoutePartDoesNotMatchIfUriSegmentIsEmptyOrNull() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
@@ -181,7 +171,7 @@ class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\StaticRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array();
-		
+
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals('foo', $routePart->getValue(), 'Static Route Part should resolve empty routeValues-array');
 	}

@@ -41,13 +41,10 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array('getPackage'), array(), '', FALSE);
 		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
 
-		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array(), array($this->objectFactory, $mockPackageManager), 'F3\\' . $packageKey . '\Controller', TRUE);
-		$controllerReflection = new \F3\FLOW3\Reflection\ClassReflection('F3\FLOW3\MVC\Controller\AbstractController');
-		$packageKeyPropertyReflection = $controllerReflection->getProperty('packageKey');
-		$packagePropertyReflection = $controllerReflection->getProperty('package');
+		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array(), array($this->getMock('F3\FLOW3\Object\FactoryInterface'), $mockPackageManager), 'F3\\' . $packageKey . '\Controller', TRUE);
 
-		$this->assertEquals($packageKey, $packageKeyPropertyReflection->getValue($controller), 'The package key is not as expected.');
-		$this->assertEquals($package, $packagePropertyReflection->getValue($controller), 'The package is not the one we injected.');
+		$this->assertEquals($packageKey, $this->readAttribute($controller, 'packageKey'), 'The package key is not as expected.');
+		$this->assertEquals($package, $this->readAttribute($controller, 'package'), 'The package is not the one we injected.');
 	}
 }
 ?>

@@ -100,11 +100,11 @@ class RequestProcessorChainManagerTest extends \F3\Testing\BaseTestCase {
 		$manager = new \F3\FLOW3\MVC\RequestProcessorChainManager;
 		$manager->registerRequestProcessor(new \F3\FLOW3\Fixture\MVC\MockRequestProcessor, 'F3\FLOW3\MVC\Web\Request');
 
-		$webRequest = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$webRequest = new \F3\FLOW3\MVC\Web\Request();
 		$manager->processRequest($webRequest);
 		$this->assertTrue($webRequest->hasArgument('F3\FLOW3\Fixture\MVC\MockRequestProcessor'), 'Seems like the Dummy Request Processor has not been called.');
 
-		$cliRequest = $this->objectManager->getObject('F3\FLOW3\MVC\CLI\Request');
+		$cliRequest = new \F3\FLOW3\MVC\CLI\Request();
 		$manager->processRequest($cliRequest);
 		$this->assertFalse($cliRequest->hasArgument('F3\FLOW3\Fixture\MVC\MockRequestProcessor'), 'Seems like the Dummy Request Processor has been called although it was not registered for CLI requests.');
 	}

@@ -35,16 +35,6 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartIsPrototype() {
-		$routePart1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
-		$routePart2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
-		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Dynamic Route Part is not prototype!');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function dynamicRoutePartDoesNotMatchIfUriSegmentIsEmptyOrNullAndNoDefaultValueIsSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
@@ -180,7 +170,7 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
 		$uriSegments = array('foo-bar', 'test');
 		$this->assertTrue($routePart->match($uriSegments));
-		
+
 		$this->assertSame(array('-bar', 'test'), $uriSegments,  'Dynamic Route Part should cut off first part of matching string until splitString.');
 	}
 
@@ -254,7 +244,7 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 		$routeValues = array('foo' => 'bar');
-		
+
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should resolve if an element with the same name exists in $routeValues.');
 	}
@@ -268,7 +258,7 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('defaultValue');
 		$routeValues = array();
-		
+
 		$this->assertTrue($routePart->resolve($routeValues));
 		$this->assertEquals('defaultValue', $routePart->getValue(), 'Dynamic Route Part should resolve if a default value is set.');
 	}
@@ -320,9 +310,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('defaultValue');
 		$routeValues = array();
-		
+
 		$this->assertTrue($routePart->resolve($routeValues));
-		
+
 		$routePart->setDefaultValue(NULL);
 		$this->assertFalse($routePart->resolve($routeValues));
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
