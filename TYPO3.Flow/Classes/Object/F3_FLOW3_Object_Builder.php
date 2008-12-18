@@ -71,7 +71,7 @@ class Builder {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectManager(\F3\FLOW3\Object\Manager $objectManager) {
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
 	}
 

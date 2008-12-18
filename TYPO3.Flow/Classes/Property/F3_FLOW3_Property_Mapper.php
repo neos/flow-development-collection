@@ -114,6 +114,16 @@ class Mapper {
 	}
 
 	/**
+	 * This is a factory method to get the validator resolver
+	 *
+	 * @return \F3\FLOW3\Validation\ValidatorResolver The validator resolver
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+		$this->validatorResolver = $validatorResolver;
+	}
+
+	/**
 	 * Sets the target object for this Property Mapper
 	 *
 	 * @param  object $target: The target object the Property Values are bound to
@@ -527,15 +537,6 @@ class Mapper {
 		return $this->objectFactory->create('F3\FLOW3\Property\MappingWarning', $message, $code);
 	}
 
-	/**
-	 * This is a factory method to get the validator resolver
-	 *
-	 * @return \F3\FLOW3\Validation\ValidatorResolver The validator resolver
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
-	}
 }
 
 ?>

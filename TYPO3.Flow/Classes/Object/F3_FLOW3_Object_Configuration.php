@@ -200,15 +200,14 @@ class Configuration {
 	/**
 	 * Setter function for injection properties
 	 *
-	 * @param  array $properties: Array of \F3\FLOW3\Object\ConfigurationProperty
+	 * @param array $properties Array of \F3\FLOW3\Object\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setProperties(array $properties) {
-		foreach ($properties as $name => $value) {
-			if (!$value instanceof \F3\FLOW3\Object\ConfigurationProperty) throw new \RuntimeException('Properties must be of type \F3\FLOW3ObjectConfigurationProperty', 1167935337);
+		foreach ($properties as $value) {
+			$this->setProperty($value);
 		}
-		$this->properties = $properties;
 	}
 
 	/**
@@ -224,7 +223,7 @@ class Configuration {
 	/**
 	 * Setter function for a single injection property
 	 *
-	 * @param  array	$property: A \F3\FLOW3\Object\ConfigurationProperty
+	 * @param array $property A \F3\FLOW3\Object\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -236,17 +235,17 @@ class Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param  array	$constructorArguments: Array of \F3\FLOW3\Object\ConfigurationArgument
+	 * @param array $constructorArguments Array of \F3\FLOW3\Object\ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setConstructorArguments(array $constructorArguments) {
 		if ($constructorArguments === array()) {
 			$this->constructorArguments = array();
 		} else {
 			foreach ($constructorArguments as $constructorArgument) {
-				if (!$constructorArgument instanceof \F3\FLOW3\Object\ConfigurationArgument) throw new \RuntimeException('Properties must be of type \F3\FLOW3ObjectConfigurationProperty', 1168004160);
-				$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
+				$this->setConstructorArgument($constructorArgument);
 			}
 		}
 	}
@@ -254,7 +253,7 @@ class Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param  array	$constructorArgument: A \F3\FLOW3\Object\ConfigurationArgument
+	 * @param array $constructorArgument A \F3\FLOW3\Object\ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
