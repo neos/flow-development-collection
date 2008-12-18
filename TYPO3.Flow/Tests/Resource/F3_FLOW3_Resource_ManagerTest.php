@@ -42,15 +42,19 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$metaData = array(
 			'mimeType' => 'text/html',
 			'mediaType' => 'html',
-			'URI' => 'file://TestPackage/Public/TestTemplate.html',
+			'URI' => 'file://FLOW3/Public/TestTemplate.html',
 			'name' => 'TestTemplate.html',
-			'path' => '', 
+			'path' => '',
 		);
-		
+
 		$mockClassLoader = $this->getMock('F3\FLOW3\Resource\ClassLoader', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\DataType\URI')->will($this->returnValue(new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html')));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\HTMLResource')->will($this->returnValue(new \F3\FLOW3\Resource\HTMLResource()));
 		$mockResourcePublisher = $this->getMock('F3\FLOW3\Resource\Publisher', array(), array(), '', FALSE);
 		$mockResourcePublisher->expects($this->any())->method('getMetadata')->will($this->returnValue($metaData));
-		$this->manager = new \F3\FLOW3\Resource\Manager($mockClassLoader, $this->objectFactory);
+
+		$this->manager = new \F3\FLOW3\Resource\Manager($mockClassLoader, $mockObjectFactory);
 		$this->manager->injectResourcePublisher($mockResourcePublisher);
 	}
 
@@ -59,7 +63,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResourceReturnsAResourceImplementation() {
-		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
+		$resource = $this->manager->getResource('file://FLOW3/Public/TestTemplate.html');
 		$this->assertType('F3\FLOW3\Resource\ResourceInterface', $resource);
 	}
 
@@ -68,7 +72,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResourceReturnsRequestedResource() {
-		$resource = $this->manager->getResource('file://TestPackage/Public/TestTemplate.html');
+		$resource = $this->manager->getResource('file://FLOW3/Public/TestTemplate.html');
 		$this->assertType('F3\FLOW3\Resource\HTMLResource', $resource);
 		$this->assertEquals('TestTemplate.html', $resource->getName());
 		$this->assertEquals('text/html', $resource->getMIMEType());

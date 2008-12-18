@@ -33,14 +33,46 @@ namespace F3\FLOW3\Object;
 class FactoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Checks if create() returns the expected class type
+	 * @var \F3\FLOW3\Object\ManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
+	 * @var \F3\FLOW3\Object\Builder
+	 */
+	protected $mockObjectBuilder;
+
+	/**
+	 * @var \F3\FLOW3\Object\Factory
+	 */
+	protected $mockObjectFactory;
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setUp() {
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
+		$this->objectFactory = new \F3\FLOW3\Object\Factory();
+		$this->objectFactory->injectObjectManager($this->mockObjectManager);
+		$this->objectFactory->injectObjectBuilder($this->mockObjectBuilder);
+	}
+
+	/**
+	 * Checks if create() calls the object builder as expected
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createReturnsCorrectClassType() {
-		$testObjectInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$this->assertTrue($testObjectInstance instanceof \F3\TestPackage\BasicClass, 'Object instance is no instance of our basic test class!');
+	public function createCallsObjectBuilderAsExpected() {
+		$objectName = 'F3\Virtual\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setScope('prototype');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
+		$this->mockObjectBuilder->expects($this->once())->method('createObject')->with($objectName, $objectConfiguration, array());
+
+		$this->objectFactory->create($objectName);
 	}
 
 	/**
@@ -48,86 +80,49 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
 	 */
 	public function createFailsOnNonExistentObject() {
-		try {
-			$this->objectManager->getObject('F3\TestPackage\ThisClassDoesNotExist');
-		} catch (\F3\FLOW3\Object\Exception\UnknownObject $exception) {
-			return;
-		}
-		$this->fail('create() did not throw an exception although it has been asked for a non-existent object.');
+		$this->objectFactory->create('F3\TestPackage\ThisClassDoesNotExist');
 	}
 
 	/**
-	 * Checks if create() delivers a unique instance of the object with the default configuration
+	 * Checks if create() only delivers prototypes
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \F3\FLOW3\Object\Exception\WrongScope
 	 */
-	public function createReturnsUniqueInstanceByDefault() {
-		$firstInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$secondInstance = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$this->assertSame($secondInstance, $firstInstance, 'create() did not return a truly unique instance when asked for a non-configured object.');
+	public function createThrowsExceptionWhenAskedForNonPrototype() {
+		$objectName = 'F3\Virtual\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
+
+		$this->objectFactory->create($objectName);
 	}
 
 	/**
-	 * Checks if create() delivers a prototype of an object which is configured as a prototype
+	 * Checks if create() passes arguments to the object builder
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createReturnsPrototypeInstanceIfConfigured() {
-		$firstInstance = $this->objectManager->getObject('F3\TestPackage\PrototypeClass');
-		$secondInstance = $this->objectManager->getObject('F3\TestPackage\PrototypeClass');
-		$this->assertNotSame($secondInstance, $firstInstance, 'create() did not return a fresh prototype instance when asked for an object configured as prototype.');
-	}
-
-	/**
-	 * Checks if create() delivers the correct class if the class name is different from the object name
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function createReturnsCorrectClassIfDifferentFromObjectName() {
-		$object = $this->objectManager->getObject('F3\TestPackage\ClassToBeReplaced');
-		$this->assertTrue($object instanceof \F3\TestPackage\ReplacingClass, 'create() did not return a the replacing class.');
-	}
-
-	/**
-	 * Checks if create() passes arguments to the constructor of an object class
-	 *
-	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function createPassesArgumentsToObjectClassConstructor() {
-		$object = $this->objectManager->getObject('F3\TestPackage\ClassWithOptionalConstructorArguments', 'test1', 'test2', 'test3');
-		$checkSucceeded = (
-			$object->argument1 == 'test1' &&
-			$object->argument2 == 'test2' &&
-			$object->argument3 == 'test3'
+	public function createPassesArgumentsToObjectBuilder() {
+		$objectName = 'F3\Virtual\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setScope('prototype');
+		$overridingConstructorArguments = array(
+			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'test1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, 'test2', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			3 => new \F3\FLOW3\Object\ConfigurationArgument(3, 'test3', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 		);
-		$this->assertTrue($checkSucceeded, 'create() did not instantiate the object with the specified constructor parameters.');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
+		$this->mockObjectBuilder->expects($this->once())->method('createObject')->with($objectName, $objectConfiguration, $overridingConstructorArguments);
+
+		$this->objectFactory->create($objectName, 'test1', 'test2', 'test3');
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function constructorArgumentsPassedToCreateAreNotAddedToRealObjectConfiguration() {
-		$objectName = 'F3\TestPackage\ClassWithOptionalConstructorArguments';
-		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);
-		$objectConfiguration->setConstructorArguments(array());
-
-		$this->objectManager->setObjectConfiguration($objectConfiguration);
-
-		$object1 = $this->objectManager->getObject($objectName, 'theFirstArgument');
-		$this->assertEquals('theFirstArgument', $object1->argument1, 'The constructor argument has not been set.');
-
-		$object2 = $this->objectManager->getObject($objectName);
-
-		$this->assertEquals('', $object2->argument1, 'The constructor argument1 is still not empty although no argument was passed to create().');
-		$this->assertEquals('', $object2->argument2, 'The constructor argument2 is still not empty although no argument was passed to create().');
-		$this->assertEquals('', $object2->argument3, 'The constructor argument3 is still not empty although no argument was passed to create().');
-	}
 }
 ?>

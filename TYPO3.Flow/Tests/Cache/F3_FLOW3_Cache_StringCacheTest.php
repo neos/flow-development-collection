@@ -78,7 +78,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(TRUE));
 
 		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
-		$this->assertTRUE($cache->has('StringCacheTest'), 'has() did not return TRUE.');
+		$this->assertTrue($cache->has('StringCacheTest'), 'has() did not return TRUE.');
 	}
 
 	/**
@@ -92,7 +92,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
 
 		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
-		$this->assertTRUE($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+		$this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
 	}
 
 	/**

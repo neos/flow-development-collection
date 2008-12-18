@@ -36,7 +36,7 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\TestPackage\BasicClass', FLOW3_PATH_PACKAGES . 'TestPackage/Classes/F3\TestPackage\BasicClass.php');
+		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\TestPackage\BasicClass');
 	}
 
 	/**
@@ -67,19 +67,15 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \Exception
 	 */
 	public function setPropertiesOnlyAcceptsValidValues() {
 		$invalidProperties = array (
 			'validProperty' => new \F3\FLOW3\Object\ConfigurationProperty('validProperty', 'simple string'),
 			'invalidProperty' => 'foo'
 		);
-		try {
-			$this->objectConfiguration->setProperties($invalidProperties);
-		} catch (\Exception $exception) {
-			$this->assertEquals(1167935337, $exception->getCode(), 'setProperties() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('setProperties throwed no exception although the values were invalid.');
+
+		$this->objectConfiguration->setProperties($invalidProperties);
 	}
 
 	/**
@@ -87,19 +83,15 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \Exception
 	 */
 	public function setConstructorArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
 			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'simple string'),
 			2 => 'foo'
 		);
-		try {
-			$this->objectConfiguration->setConstructorArguments($invalidArguments);
-		} catch (\Exception $exception) {
-			$this->assertEquals(1168004160, $exception->getCode(), 'setConstructorArguments() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('setConstructorArguments() throwed no exception although the values were invalid.');
+
+		$this->objectConfiguration->setConstructorArguments($invalidArguments);
 	}
 
 	/**

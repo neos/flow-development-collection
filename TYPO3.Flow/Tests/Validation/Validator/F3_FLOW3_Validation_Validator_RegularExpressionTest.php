@@ -36,8 +36,12 @@ class RegularExpressionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpression('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
+		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($regularExpressionValidator->isValidProperty('simple1expression', $validationErrors));
@@ -49,8 +53,12 @@ class RegularExpressionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpression('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectObjectFactory($this->objectFactory);
+		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$regularExpressionValidator->isValidProperty('some subject that will not match', $validationErrors);

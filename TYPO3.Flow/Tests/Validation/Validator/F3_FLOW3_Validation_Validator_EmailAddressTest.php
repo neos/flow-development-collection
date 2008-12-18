@@ -56,7 +56,6 @@ class EmailAddressTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
-		$emailAddressValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($emailAddressValidator->isValidProperty($address, $validationErrors));
@@ -84,8 +83,12 @@ class EmailAddressTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider invalidAddresses
 	 */
 	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
+		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
-		$emailAddressValidator->injectObjectFactory($this->objectFactory);
+		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($emailAddressValidator->isValidProperty($address, $validationErrors));
@@ -96,8 +99,12 @@ class EmailAddressTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddress();
-		$emailAddressValidator->injectObjectFactory($this->objectFactory);
+		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);

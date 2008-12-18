@@ -55,7 +55,6 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function floatValidatorReturnsTrueForAValidFloat($address) {
 		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
-		$floatValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
@@ -81,8 +80,12 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider invalidFloats
 	 */
 	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560288);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
-		$floatValidator->injectObjectFactory($this->objectFactory);
+		$floatValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($floatValidator->isValidProperty($address, $validationErrors));
@@ -93,8 +96,12 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560288);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
-		$floatValidator->injectObjectFactory($this->objectFactory);
+		$floatValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$floatValidator->isValidProperty(123456, $validationErrors);

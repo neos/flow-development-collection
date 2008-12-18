@@ -32,6 +32,11 @@ namespace F3\FLOW3\Cache\Backend;
 class MemcachedTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * Sets up this testcase
 	 *
 	 * @return void
@@ -41,27 +46,21 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 		if (!extension_loaded('memcache')) {
 			$this->markTestSkipped('memcache extension was not available');
 		}
+
+		$this->environment = new \F3\FLOW3\Utility\Environment();
+		$this->environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isPrototype() {
-		$backend1 = $this->setUpBackend();
-		$backend2 = $this->setUpBackend();
-		$this->assertNotSame($backend1, $backend2, 'Memcached Backend seems to be singleton!');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\Cache\Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
-		$context = $this->objectManager->getContext();
-		$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context, $backendOptions);
+		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$backend->injectEnvironment($this->environment);
+		$backend->initializeObject();
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
@@ -87,20 +86,17 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
-		$context = $this->objectManager->getContext();
-		try {
-			$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context);
-			$this->fail('initializeObject() did not throw exception on missing configuration of servers');
-		} catch (\F3\FLOW3\Cache\Exception  $exception) {
-		}
+		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing');
+		$backend->initializeObject();
 	}
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Cache\Exception
 	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function setThrowsExceptionIfConfiguredServersAreUnreachable() {
 		$backend = $this->setUpBackend(array('servers' => array('julle.did.this:1234')));
@@ -302,16 +298,6 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Creates a cache mock
-	 *
-	 * @return \F3\FLOW3\Cache\AbstractCache mock
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 */
-	protected function getMockCache() {
-		return $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-	}
-
-	/**
 	 * Sets up the memcached backend used for testing
 	 *
 	 * @param array $backendOptions Options for the memcache backend
@@ -320,13 +306,14 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
-		$cache = $this->getMockCache();
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
-		$context = $this->objectManager->getContext();
-		$backend = $this->objectManager->getObject('F3\FLOW3\Cache\Backend\Memcached', $context, $backendOptions);
+		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$backend->injectEnvironment($this->environment);
 		$backend->setCache($cache);
+		$backend->initializeObject();
 		return $backend;
 	}
 

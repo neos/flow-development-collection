@@ -64,6 +64,7 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function removingAFilterOfTheFilterChainWorks() {
 		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
@@ -74,42 +75,29 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 
 		$filterChain->removeFilter($index);
 
-		try {
-			$filterChain->getFilter($index);
-			$this->fail('The filter chain did not remove the filter with the given index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$filterChain->getFilter($index);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function accessingANotExistingFilterIndexThrowsException() {
 		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
 
-		try {
-			$filterChain->getFilter(100);
-			$this->fail('The filter chain did throw an error on accessing an invalid filter index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$filterChain->getFilter(100);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function removingANotExistingFilterIndexThrowsException() {
 		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
 
-		try {
-			$filterChain->removeFilter(100);
-			$this->fail('The filter chain did throw an error on removing an invalid filter index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$filterChain->removeFilter(100);
 	}
 }
 

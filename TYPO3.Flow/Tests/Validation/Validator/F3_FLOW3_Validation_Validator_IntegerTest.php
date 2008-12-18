@@ -53,7 +53,6 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function integerValidatorReturnsTrueForAValidInteger($integer) {
 		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
-		$integerValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($integerValidator->isValidProperty($integer, $validationErrors));
@@ -79,8 +78,12 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider invalidIntegers
 	 */
 	public function integerValidatorReturnsTrueForAnInvalidInteger($integer) {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560494);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
-		$integerValidator->injectObjectFactory($this->objectFactory);
+		$integerValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($integerValidator->isValidProperty($integer, $validationErrors));
@@ -91,8 +94,12 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560494);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
-		$integerValidator->injectObjectFactory($this->objectFactory);
+		$integerValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$integerValidator->isValidProperty('not a number', $validationErrors);

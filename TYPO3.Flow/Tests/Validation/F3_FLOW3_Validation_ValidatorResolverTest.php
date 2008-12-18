@@ -34,42 +34,51 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException F3\FLOW3\Validation\Exception\NoValidatorFound
 	 */
 	public function resolveValidatorThrowsExceptionIfNoValidatorIsAvailable() {
-		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
-
-		try {
-			$validatorResolver->resolveValidator('NotExistantClass');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Validation\Exception\NoValidatorFound $exception) {
-
-		}
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
+		$validatorResolver->resolveValidator('NotExistantClass');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveValidatorReturnsTheCorrectValidator() {
-		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
-		$validator = $validatorResolver->resolveValidator('F3\TestPackage\BasicClass');
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface', array(), array(), 'F3\Virtual\BasicClassValidator');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockValidator));
 
-		if (!($validator instanceof \F3\TestPackage\BasicClassValidator)) $this->fail('The validator resolver did not return the correct validator object.');
+		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
+		$validator = $validatorResolver->resolveValidator('F3\Virtual\BasicClass');
+
+		if (!($validator instanceof \F3\Virtual\BasicClassValidator)) {
+			$this->fail('The validator resolver did not return the correct validator object.');
+		}
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException F3\FLOW3\Validation\Exception\NoValidatorFound
 	 */
 	public function resolveValidatorThrowsExceptionIfAvailableValidatorDoesNotImplementTheValidatorInterface() {
-		$validatorResolver = $this->objectManager->getObject('F3\FLOW3\Validation\ValidatorResolver');
+		$className = uniqid('Test');
+		$validatorName = $className . 'Validator';
+		eval('class ' . $className . 'Validator {}');
+		$mockValidator = new $validatorName;
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockValidator));
 
-		try {
-			$validatorResolver->resolveValidator('F3\TestPackage\SomeTest');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Validation\Exception\NoValidatorFound $exception) {
-
-		}
+		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
+		$validatorResolver->resolveValidator($className);
 	}
 }
 

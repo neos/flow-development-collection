@@ -42,7 +42,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
-		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
+		$this->packageManager = new \F3\FLOW3\Package\Manager();
+		$this->packageManager->initialize();
 	}
 
 	/**
@@ -61,17 +62,13 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackageReturnsPackagesAndThrowsExcpetions() {
 		$package = $this->packageManager->getPackage('FLOW3');
 		$this->assertType('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
-		try {
-			$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
-		} catch (\Exception $exception) {
-			$this->assertEquals(1166546734, $exception->getCode(), 'getPackage() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('getPackage() did not throw an exception while asking for the path to a non existent package.');
+
+		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**
@@ -99,39 +96,29 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 *
 	 * @test
 	 * @author  Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackagePathReturnsTheCorrectPathOfTheTestPackage() {
 		$actualPackagePath = $this->packageManager->getPackagePath('TestPackage');
 		$expectedPackagePath = FLOW3_PATH_PACKAGES . 'TestPackage/';
 		$this->assertEquals($expectedPackagePath, $actualPackagePath, 'getPackagePath() did not return the correct path for package "TestPackage".');
 
-		try {
-			$this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
-		} catch (\Exception $exception) {
-			$this->assertEquals(1166543253, $exception->getCode(), 'getPackagePath() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('getPackagePath() did not throw an exception while asking for the path to a non existent package.');
+		$this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**
 	 * Checks the method getPackageClassesPath()
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackageClassesPathReturnsClassesPathOfTestPackage() {
 		$actualPackageClassesPath = $this->packageManager->getPackageClassesPath('TestPackage');
 		$expectedPackageClassesPath = FLOW3_PATH_PACKAGES . 'TestPackage/Classes/';
 		$this->assertEquals($expectedPackageClassesPath, $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
 
-		try {
-			$this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
-		} catch (\Exception $exception) {
-			$this->assertEquals(1167574237, $exception->getCode(), 'getPackageClassesPath() throwed an exception but with an unexpected error code.');
-			return;
-		}
-		$this->fail('getPackageClassesPath() did not throw an exception while asking for the path to a non existent package.');
+		$this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**

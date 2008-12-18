@@ -132,6 +132,7 @@ class ObjectValidatorChainTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function removingAValidatorOfTheObjectValidatorChainWorks() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChain();
@@ -142,42 +143,29 @@ class ObjectValidatorChainTest extends \F3\Testing\BaseTestCase {
 
 		$validatorChain->removeValidator($index);
 
-		try {
-			$validatorChain->getValidator($index);
-			$this->fail('The validator chain did not remove the validator with the given index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$validatorChain->getValidator($index);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function accessingANotExistingObjectValidatorIndexThrowsException() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChain();
 
-		try {
-			$validatorChain->getValidator(100);
-			$this->fail('The validator chain did throw an error on accessing an invalid validator index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$validatorChain->getValidator(100);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 */
 	public function removingANotExistingObjectValidatorIndexThrowsException() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChain();
 
-		try {
-			$validatorChain->removeValidator(100);
-			$this->fail('The validator chain did throw an error on removing an invalid validator index.');
-		} catch(\F3\FLOW3\Validation\Exception\InvalidChainIndex $exception) {
-
-		}
+		$validatorChain->removeValidator(100);
 	}
 }
 

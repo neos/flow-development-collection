@@ -92,8 +92,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
 	 */
 	public function getObjectThrowsAnExceptionIfTheSpecifiedObjectIsNotRegistered() {
 		$objectManager = new \F3\FLOW3\Object\Manager();
@@ -135,7 +135,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function getObjectCreatesANewInstanceOfSingletonObjectsAndStoresThemInTheRegistryIfAnInstanceDoesntExistYet() {
 		$className = 'SomeClass' . uniqid();
 		eval('class ' . $className . ' {}');
-#$className = '\\' . $className;
 
 		$expectedObject = new $className();
 
@@ -218,7 +217,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectRegistersTheGivenObjectNameForFurtherUsage() {
 		$mockObject = $this->getMock('stdclass');
@@ -237,7 +236,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectAssumesThatTheClassNameEqualsTheGivenObjectNameIfNoClassNameIsSpecified() {
 		$mockObject = $this->getMock('stdclass');
@@ -256,7 +255,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectAssignsTheClassNameToTheObjectConfigurationIfOneWasSpecified() {
 		$mockObject = $this->getMock('stdclass');
@@ -275,7 +274,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectDetectsScopeAnnotationsAndSetsTheScopeInItsObjectConfigurationAccordingly() {
 		$className1 = 'SomeClass' . uniqid();
@@ -318,7 +317,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectPutsTheObjectIntoTheRegistryIfOneWasGiven() {
 		$mockObject = $this->getMock('stdclass');
@@ -338,8 +337,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\Object\Exception\InvalidClass
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Object\Exception\InvalidClass
 	 */
 	public function registerObjectRejectsAbstractClasses() {
 		$className = 'AbstractClass' . uniqid();
@@ -381,7 +380,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectTypeDetectsTheScopeAnnotationOfTheDefaultImplementationClassAndSetsTheScopeInItsObjectConfigurationAccordingly() {
 		$interfaceName = 'SomeInterface' . uniqid();
@@ -423,7 +422,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unregisterObjectUnregistersPreviouslyRegisteredObjects() {
 		$className = 'SomeClass' . uniqid();
@@ -441,7 +440,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function unregisterObjectAlsoRemovesTheObjectInstanceFromTheObjectRegistryIfOneExists() {
 		$className = 'SomeClass' . uniqid();
@@ -479,8 +478,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
-	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function unregisterObjectThrowsAnExceptionOnTryingToUnregisterNotRegisteredObjects() {
 		$objectManager = new \F3\FLOW3\Object\Manager();
@@ -512,8 +511,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException InvalidArgumentException
-	 * @author  Robert Lemke <robert@typo3.org>
 	 */
 	public function setObjectConfigurationsThrowsAnExceptionIfTheGivenArrayDoesNotContainConfigurationObjects() {
 		$objectManager = new \F3\FLOW3\Object\Manager();

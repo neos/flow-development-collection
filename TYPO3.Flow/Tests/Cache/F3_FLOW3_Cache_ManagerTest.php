@@ -34,6 +34,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Cache\Exception\DuplicateIdentifier
 	 */
 	public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier() {
 		$manager = new \F3\FLOW3\Cache\Manager();
@@ -46,11 +47,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$cache2->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue('test'));
 
 		$manager->registerCache($cache1);
-		try {
-			$manager->registerCache($cache2);
-			$this->fail('The cache manager did not throw an exception.');
-		} catch (\F3\FLOW3\Cache\Exception\DuplicateIdentifier $exception) {
-		}
+		$manager->registerCache($cache2);
 	}
 
 	/**
@@ -76,6 +73,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Cache\Exception\NoSuchCache
 	 */
 	public function getCacheThrowsExceptionForNonExistingIdentifier() {
 		$manager = new \F3\FLOW3\Cache\Manager();
@@ -85,11 +83,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$manager->registerCache($cache);
 		$manager->getCache('someidentifier');
-		try {
-			$manager->getCache('doesnotexist');
-			$this->fail('The cache manager did not throw an exception.');
-		} catch (\F3\FLOW3\Cache\Exception\NoSuchCache $exception) {
-		}
+
+		$manager->getCache('doesnotexist');
 	}
 
 	/**

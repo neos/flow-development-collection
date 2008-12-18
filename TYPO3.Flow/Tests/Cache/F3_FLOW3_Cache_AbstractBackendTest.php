@@ -60,7 +60,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 				}
 			}
 		');
-		$this->backend = new $className($this->objectManager->getContext());
+		$this->backend = new $className('Testing');
 	}
 
 	/**
@@ -69,7 +69,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
 		$className = get_class($this->backend);
-		$backend = new $className($this->objectManager->getContext(), array('someOption' => 'someValue'));
+		$backend = new $className('Testing', array('someOption' => 'someValue'));
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 

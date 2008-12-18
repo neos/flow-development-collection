@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -16,36 +16,33 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
- */
-
-/**
- * Testcase for the HTMLResource
+ * Fixture class for various unit tests (mainly the package- and object
+ * manager)
  *
  * @package FLOW3
- * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @subpackage Tests
+ * @version $Id$
+ * @author Robert Lemke <robert@typo3.org>
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @scope prototype
  */
-class HTMLResourceTest extends \F3\Testing\BaseTestCase {
+class ClassWithOptionalConstructorArguments {
+
+	public $argument1;
+	public $argument2;
+	public $argument3;
 
 	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * Dummy constructor which accepts up to three arguments
+	 *
+	 * @param mixed $argument1
+	 * @param mixed $argument2
+	 * @param mixed $argument3
 	 */
-	public function canReturnContent() {
-		$HTMLResource = new \F3\FLOW3\Resource\HTMLResource();
-		$HTMLResource->setMetadata(array(
-			'URI' => 'file://FLOW3/Public/TestTemplate.html',
-			'path' => FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Public',
-			'name' => 'TestTemplate.html',
-			'mediaType' => 'text',
-			'mimeType' => 'text/html',
-		));
-
-		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Public/TestTemplate.html'));
+	public function __construct($argument1 = NULL, $argument2 = NULL, $argument3 = NULL) {
+		$this->argument1 = $argument1;
+		$this->argument2 = $argument2;
+		$this->argument3 = $argument3;
 	}
 }
-
 ?>

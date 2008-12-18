@@ -37,7 +37,6 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
-		$notEmptyValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
@@ -48,8 +47,12 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
-		$notEmptyValidator->injectObjectFactory($this->objectFactory);
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
@@ -60,8 +63,12 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsFalseForANullValue() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
-		$notEmptyValidator->injectObjectFactory($this->objectFactory);
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
@@ -72,8 +79,12 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
-		$notEmptyValidator->injectObjectFactory($this->objectFactory);
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty('', $validationErrors);
@@ -87,8 +98,12 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
-		$notEmptyValidator->injectObjectFactory($this->objectFactory);
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty(NULL, $validationErrors);

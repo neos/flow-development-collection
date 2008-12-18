@@ -73,7 +73,7 @@ class ProcessorTest extends \F3\Testing\BaseTestCase {
 		<a href="#samePage">nor that link</a>
 	</body>
 </html>';
-		$processor = $this->objectManager->getObject('F3\FLOW3\Resource\Processor');
+		$processor = new \F3\FLOW3\Resource\Processor();
 		$processedHTML = $processor->prefixRelativePathsInHTML($originalHTML, 'test/prefix/to/insert/');
 		$this->assertEquals($processedHTML, $expectedHTML, 'The processed HTML was not changed as expected.');
 	}

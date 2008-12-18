@@ -21,9 +21,6 @@ namespace F3\FLOW3\Utility;
  * @version $Id$
  */
 
-require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_DummyClass.php');
-require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_SecondDummyClass.php');
-
 /**
  * Testcase for the Utility GenericCollection class
  *
@@ -34,14 +31,10 @@ require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_Secon
  */
 class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function genericCollectionIsPrototype() {
-		$collection1 = $this->objectFactory->create('F3\FLOW3\Utility\GenericCollection', 'F3\FLOW3\Fixture\DummyClass');
-		$collection2 = $this->objectFactory->create('F3\FLOW3\Utility\GenericCollection', 'F3\FLOW3\Fixture\DummyClass');
-		$this->assertNotSame($collection1, $collection2, 'Obviously GenericCollection is not prototype!');
+	public function setUp() {
+		if (!class_exists('F3\Virtual\DummyClass', FALSE)) {
+			eval('namespace F3\Virtual; class DummyClass {} class SecondDummyClass {}');
+		}
 	}
 
 	/**
@@ -49,7 +42,7 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countReturnsZeroIfCollectionIsEmpty() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
 		$this->assertEquals(0, $collection->count());
 	}
 
@@ -58,9 +51,9 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countReturnsCorrectValueIfCollectionContainsElements() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
-		$collection->append(new \F3\FLOW3\Fixture\DummyClass());
-		$collection->append(new \F3\FLOW3\Fixture\DummyClass());
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
+		$collection->append(new \F3\Virtual\DummyClass());
+		$collection->append(new \F3\Virtual\DummyClass());
 		$this->assertEquals(2, $collection->count());
 	}
 
@@ -69,10 +62,10 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countReturnsCorrectValueAfterReplacingAnElement() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
-		$collection[0] = new \F3\FLOW3\Fixture\DummyClass();
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
+		$collection[0] = new \F3\Virtual\DummyClass();
 		$this->assertEquals(1, $collection->count());
-		$collection[0] = new \F3\FLOW3\Fixture\DummyClass();
+		$collection[0] = new \F3\Virtual\DummyClass();
 		$this->assertEquals(1, $collection->count());
 	}
 
@@ -81,9 +74,9 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function countReturnsCorrectValueAfterUnsettingAnElement() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
-		$collection[0] = new \F3\FLOW3\Fixture\DummyClass();
-		$collection[1] = new \F3\FLOW3\Fixture\DummyClass();
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
+		$collection[0] = new \F3\Virtual\DummyClass();
+		$collection[1] = new \F3\Virtual\DummyClass();
 		$this->assertEquals(2, $collection->count());
 		unset($collection[0]);
 		$this->assertEquals(1, $collection->count());
@@ -94,7 +87,7 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function currentReturnsFalseIfCollectionIsEmpty() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
 		$this->assertFalse($collection->current());
 	}
 
@@ -103,10 +96,10 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function currentReturnsFirstElement() {
-		$someObject = new \F3\FLOW3\Fixture\DummyClass();
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
+		$someObject = new \F3\Virtual\DummyClass();
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
 		$collection->append($someObject);
-		$collection->append(new \F3\FLOW3\Fixture\DummyClass());
+		$collection->append(new \F3\Virtual\DummyClass());
 		$this->assertSame($someObject, $collection->current());
 	}
 
@@ -116,8 +109,8 @@ class GenericCollectionTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function appendingObjectOfDifferentTypeThrowsException() {
-		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\FLOW3\Fixture\DummyClass');
-		$collection->append(new \F3\FLOW3\Fixture\SecondDummyClass());
+		$collection = new \F3\FLOW3\Utility\GenericCollection('F3\Virtual\DummyClass');
+		$collection->append(new \F3\Virtual\SecondDummyClass());
 	}
 
 }

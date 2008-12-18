@@ -35,17 +35,6 @@ class LocaleTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aLocaleIsPrototype() {
-		$locale1 = $this->objectManager->getObject('F3\FLOW3\Locale\Locale', 'de_DE');
-		$locale2 = $this->objectManager->getObject('F3\FLOW3\Locale\Locale', 'de_DE');
-
-		$this->assertNotSame($locale1, $locale2);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function theConstructorThrowsAnExceptionOnPassingAInvalidLocaleIdentifiers() {
 		try {
 			new \F3\FLOW3\Locale\Locale('');

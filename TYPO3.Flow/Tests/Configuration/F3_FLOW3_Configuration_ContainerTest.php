@@ -111,15 +111,13 @@ class ContainerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Configuration\Exception\ContainerIsLocked
 	 */
 	public function introducingNewOptionsOnLockedContainerResultsInException() {
 		$configuration = new \F3\FLOW3\Configuration\Container();
 		$configuration->lock();
-		try {
-			$configuration->someNewOption = 'some value';
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Configuration\Exception\ContainerIsLocked $exception) {
-		}
+
+		$configuration->someNewOption = 'some value';
 	}
 
 	/**
@@ -281,40 +279,34 @@ class ContainerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \F3\FLOW3\Configuration\Exception
 	 */
 	public function callingNonExistingMethodResultsInException() {
 		$configuration = new \F3\FLOW3\Configuration\Container();
-		try {
-			$configuration->nonExistingMethod();
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Configuration\Exception $exception) {
-		}
+
+		$configuration->nonExistingMethod();
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \F3\FLOW3\Configuration\Exception
 	 */
 	public function passingNoArgumentToMagicSetterResultsInException() {
 		$configuration = new \F3\FLOW3\Configuration\Container();
-		try {
-			$configuration->setOption();
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Configuration\Exception $exception) {
-		}
+
+		$configuration->setOption();
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @expectedException \F3\FLOW3\Configuration\Exception
 	 */
 	public function passingTwoArgumentToMagicSetterResultsInException() {
 		$configuration = new \F3\FLOW3\Configuration\Container();
-		try {
-			$configuration->setOption('argument1', 'argument2');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Configuration\Exception $exception) {
-		}
+
+		$configuration->setOption('argument1', 'argument2');
 	}
 
 	/**

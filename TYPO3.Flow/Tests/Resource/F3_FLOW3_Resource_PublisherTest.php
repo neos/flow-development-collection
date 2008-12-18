@@ -44,15 +44,14 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
+		$environment = new \F3\FLOW3\Utility\Environment();
+		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
 		$this->publicResourcePath = $environment->getPathToTemporaryDirectory() . uniqid() . '/';
-
 		$metadataCache = $this->getMock('F3\FLOW3\Cache\VariableCache', array(), array(), '', FALSE);
 
 		$this->publisher = new \F3\FLOW3\Resource\Publisher();
-		$this->publisher->injectObjectFactory($this->objectFactory);
-		$this->publisher->initializeMirrorDirectory($this->publicResourcePath);
 		$this->publisher->setMetadataCache($metadataCache);
+		$this->publisher->initializeMirrorDirectory($this->publicResourcePath);
 	}
 
 	/**
@@ -68,10 +67,10 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canExtractResourceMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('file://TestPackage/Public/TestTemplate.html');
+		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => $this->publicResourcePath . 'TestPackage/Public',
+			'path' => $this->publicResourcePath . 'FLOW3/Public',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
@@ -85,23 +84,20 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo Due to no metadata caching the check for subsequent calls is somewhat bogus. Needs to be fixed.
 	 */
 	public function canGetMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('file://TestPackage/Public/TestTemplate.html');
+		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => $this->publicResourcePath . 'TestPackage/Public',
+			'path' => $this->publicResourcePath . 'FLOW3/Public',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
 		);
 
-		$extractedMetadata1 = $this->publisher->getMetadata($URI);
-		$extractedMetadata2 = $this->publisher->getMetadata($URI);
+		$extractedMetadata = $this->publisher->getMetadata($URI);
 
-		$this->assertEquals($expectedMetadata, $extractedMetadata1, 'The returned metadata was not as expected.');
-		$this->assertEquals($extractedMetadata1, $extractedMetadata2, 'The metadata returned in subsequent calls was not equal.');
+		$this->assertEquals($expectedMetadata, $extractedMetadata, 'The returned metadata was not as expected.');
 	}
 
 	/**

@@ -99,6 +99,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function loadRoutesSettingsLoadsRoutesOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
+		$someSettings = array();
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
+		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
+
+		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
+
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
+		$manager->loadRoutesSettings($packageKeys);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function loadGlobalSettingsMergesAllLoadedSettingsWhichThenCanBeRetrievedWithGetSettings() {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
@@ -111,21 +126,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$actualSettings = $manager->getSettings('PackageA');
 		$this->assertEquals('A', $actualSettings['foo']);
 		$this->assertEquals('C', $actualSettings['bar']);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function loadRoutesSettingsLoadsRoutesOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
-		$someSettings = array();
-		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
-		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
-
-		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
-
-		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadRoutesSettings($packageKeys);
 	}
 
 	/**

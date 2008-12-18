@@ -37,7 +37,6 @@ class TextTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function textValidatorReturnsTrueForASimpleString() {
 		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
-		$textValidator->injectObjectFactory($this->objectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($textValidator->isValidProperty('this is a very simple string', $validationErrors));
@@ -48,8 +47,12 @@ class TextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorReturnsFalseForAStringWithHTMLEntities() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
-		$textValidator->injectObjectFactory($this->objectFactory);
+		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
@@ -60,8 +63,12 @@ class TextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
 		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
-		$textValidator->injectObjectFactory($this->objectFactory);
+		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);

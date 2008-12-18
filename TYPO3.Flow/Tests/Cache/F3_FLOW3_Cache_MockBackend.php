@@ -24,6 +24,8 @@ namespace F3\FLOW3\Cache;
 /**
  * A caching backend which forgets everything immediately
  *
+ * Used in \F3\FLOW3\Cache\FactoryTest
+ *
  * @package FLOW3
  * @subpackage Cache
  * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
