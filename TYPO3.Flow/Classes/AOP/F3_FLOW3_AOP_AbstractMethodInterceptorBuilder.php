@@ -137,8 +137,8 @@ abstract class AbstractMethodInterceptorBuilder {
 	static protected function buildAdvicesCode(array $groupedAdvices, $methodName, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
 		$advicesCode = '';
 
-		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice'])) {
-			$advicesCode .= "\n\t\t\$result = NULL;\n\t\ttry {\n";
+		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
+			$advicesCode .= "\n\t\t\$result = NULL;\n\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";
 		}
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\BeforeAdvice'])) {
@@ -175,17 +175,51 @@ abstract class AbstractMethodInterceptorBuilder {
 ';
 		}
 
+		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
+			$advicesCode .= '
+			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterAdvice\'];
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
+			$afterAdviceInvoked = TRUE;
+			foreach ($advices as $advice) {
+				$advice->invoke($joinPoint);
+			}
+';
+		}
+
+		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
+			$advicesCode .= '
+			} catch (\Exception $exception) {
+';
+		}
+
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice'])) {
 			$advicesCode .= '
-		} catch (\Exception $exception) {
 			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterThrowingAdvice\'];
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
+';
+		}
+
+		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
+			$advicesCode .= '
+			if (!$afterAdviceInvoked) {
+				$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterAdvice\'];
+				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
+				foreach ($advices as $advice) {
+					$advice->invoke($joinPoint);
+				}
+			}
+';
+		}
+
+		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
+			$advicesCode .= '
 		}
 ';
 		}
+
 		return $advicesCode;
 	}
 

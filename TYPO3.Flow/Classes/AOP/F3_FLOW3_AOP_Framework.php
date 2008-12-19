@@ -348,6 +348,12 @@ class Framework {
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
+						case 'after' :
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\AfterAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName);
+							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
+							$aspectContainer->addAdvisor($advisor);
+						break;
 						case 'pointcut' :
 							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $this->pointcutExpressionParser, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
@@ -420,6 +426,7 @@ class Framework {
 		$this->objectManager->registerObject('F3\FLOW3\AOP\Advisor');
 		$this->objectManager->registerObject('F3\FLOW3\AOP\AfterReturningAdvice');
 		$this->objectManager->registerObject('F3\FLOW3\AOP\AfterThrowingAdvice');
+		$this->objectManager->registerObject('F3\FLOW3\AOP\AfterAdvice');
 		$this->objectManager->registerObject('F3\FLOW3\AOP\AroundAdvice');
 		$this->objectManager->registerObject('F3\FLOW3\AOP\BeforeAdvice');
 		$this->objectManager->registerObject('F3\FLOW3\AOP\Introduction');
@@ -432,6 +439,7 @@ class Framework {
 		$objectConfigurations['F3\FLOW3\AOP\Advisor']->setScope('prototype');
 		$objectConfigurations['F3\FLOW3\AOP\AfterReturningAdvice']->setScope('prototype');
 		$objectConfigurations['F3\FLOW3\AOP\AfterThrowingAdvice']->setScope('prototype');
+		$objectConfigurations['F3\FLOW3\AOP\AfterAdvice']->setScope('prototype');
 		$objectConfigurations['F3\FLOW3\AOP\AroundAdvice']->setScope('prototype');
 		$objectConfigurations['F3\FLOW3\AOP\BeforeAdvice']->setScope('prototype');
 		$objectConfigurations['F3\FLOW3\AOP\Introduction']->setScope('prototype');

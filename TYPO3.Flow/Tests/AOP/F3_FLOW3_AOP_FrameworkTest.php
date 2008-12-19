@@ -117,6 +117,23 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Checks if an after returning advice is not executed if an exception was thrown
+	 *
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function afterReturningAdviceIsNotExecutedIfAnExceptionWasThrown() {
+		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
+		$time = 'afterReturning' . microtime();
+		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
+		try {
+			$target->throwAnException('RuntimeException', $time);
+		} catch (\Exception $exception) {
+		}
+		$this->assertNotEquals($time, $aspect->getFlags('afterReturning'), 'The After Returning Advice has been executed, although an exception was thrown.');
+	}
+
+	/**
 	 * Checks if an after throwing advice basically works.
 	 *
 	 * @test
@@ -131,6 +148,38 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		} catch (\Exception $exception) {
 		}
 		$this->assertEquals($time, $aspect->getFlags('afterThrowing'), 'The internal flag of the aspect did not contain the expected value after testing the After Throwing advice.');
+	}
+
+	/**
+	 * Checks if an after advice basically works.
+	 *
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function afterAdviceBasicallyWorks() {
+		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
+		$time = 'after' . microtime();
+		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
+		$target->setSomeProperty($time);
+		$target->getSomeProperty();
+		$this->assertEquals($time, $aspect->getFlags('after'), 'The internal flag of the aspect did not contain the expected value after testing the After advice.');
+	}
+
+	/**
+	 * Checks if an after advice works if an exception was thrown.
+	 *
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function afterAdviceWorksIfAnExceptionWasThrown() {
+		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
+		$time = 'after' . microtime();
+		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
+		try {
+			$target->throwAnException('RuntimeException', $time);
+		} catch (\Exception $exception) {
+		}
+		$this->assertEquals($time, $aspect->getFlags('after'), 'The internal flag of the aspect did not contain the expected value after testing the After advice.');
 	}
 
 	/**
