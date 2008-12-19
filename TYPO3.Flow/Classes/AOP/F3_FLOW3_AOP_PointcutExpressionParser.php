@@ -35,7 +35,7 @@ namespace F3\FLOW3\AOP;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|configuration)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
@@ -61,6 +61,7 @@ class PointcutExpressionParser {
 	 * @return \F3\FLOW3\AOP\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression) {
 		if (!is_string($pointcutExpression) || \F3\PHP6\Functions::strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
@@ -103,6 +104,9 @@ class PointcutExpressionParser {
 					break;
 					case 'filter' :
 						$this->parseDesignatorFilter($operator, $signaturePattern, $pointcutFilterComposite);
+					break;
+					case 'configuration' :
+						$this->parseDesignatorConfiguration($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
 					default :
 						throw new \RuntimeException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet).', 1168874740);
@@ -225,6 +229,19 @@ class PointcutExpressionParser {
 	}
 
 	/**
+	 * Adds a configuration filter to the poincut filter composite
+	 *
+	 * @param string $operator The operator
+	 * @param string $configurationPath The path to the configuration option, that should be used
+	 * @param \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function parseDesignatorConfiguration($operator, $configurationPath, \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, new \F3\FLOW3\AOP\PointcutConfigurationFilter($this->objectManager->getObject('F3\FLOW3\Configuration\Manager'), $configurationPath));
+	}
+
+	/**
 	 * Returns the substring of $string which is enclosed by parentheses
 	 * of the first level.
 	 *
@@ -273,7 +290,7 @@ class PointcutExpressionParser {
 	/**
 	 * Factory method for creating custom filter instances
 	 *
-	 * @param string Object name of the filter
+	 * @param string $filterObjectName Object name of the filter
 	 * @return object An instance of the filter object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

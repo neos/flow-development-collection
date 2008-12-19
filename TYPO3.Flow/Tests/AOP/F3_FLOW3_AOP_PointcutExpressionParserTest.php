@@ -155,6 +155,22 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function configurationFilterDesignatorIsParsedCorrectly() {
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
+		$parser = new \F3\FLOW3\AOP\MockPointcutExpressionParser($this->objectManager);
+
+		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutConfigurationFilter($mockConfigurationManager, 'custom: package: my: configuration: option'));
+
+		$actualPointcutFilterComposite = $parser->parse('configuration(custom: package: my: configuration: option)');
+		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifACustomFilterDoesNotImplementThePointcutFilterInterfaceAnExceptionIsThrown() {
