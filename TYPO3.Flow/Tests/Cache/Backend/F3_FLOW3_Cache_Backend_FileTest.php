@@ -44,9 +44,11 @@ class FileTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
+		$mockSignalDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher');
 
 		$this->backend = new \F3\FLOW3\Cache\Backend\File('Testing');
 		$this->backend->injectEnvironment($environment);
+		$this->backend->injectSignalDispatcher($mockSignalDispatcher);
 		$this->backend->initializeObject();
 	}
 
@@ -287,7 +289,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound) && count($filesFound) > 0, 'The cache entry does not exist.');
 
-		sleep(3);
+		sleep(2);
 
 		$this->backend->collectGarbage($entryIdentifier);
 		$filesFound = glob($pattern);
@@ -318,7 +320,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound) && count($filesFound) > 0, 'The cache entries do not exist.');
 
-		sleep(3);
+		sleep(2);
 
 		$this->backend->collectGarbage();
 		$filesFound = glob($pattern);
@@ -457,7 +459,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$expiredData = 'some old data' . microtime();
 		$this->backend->set($expiredEntryIdentifier, $expiredData, array(), 1);
 
-		sleep(3);
+		sleep(2);
 
 		$this->assertFalse($this->backend->has($expiredEntryIdentifier), 'has() did not return FALSE.');
 	}
@@ -480,7 +482,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$expiredData = 'some old data' . microtime();
 		$this->backend->set($expiredEntryIdentifier, $expiredData, array(), 1);
 
-		sleep(3);
+		sleep(2);
 
 		$this->assertEquals($data, $this->backend->get($entryIdentifier), 'The original and the retrieved data don\'t match.');
 		$this->assertFalse($this->backend->get($expiredEntryIdentifier), 'The expired entry could be loaded.');
@@ -498,7 +500,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 
 		$this->backend->set('BackendFileTest', 'some data', array('UnitTestTag%special'), 1);
 
-		sleep(3);
+		sleep(2);
 
 		$this->assertEquals(array(), $this->backend->findIdentifiersByTag('UnitTestTag%special'));
 	}

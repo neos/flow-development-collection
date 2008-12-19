@@ -320,7 +320,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 				$this->remove($splitFilename[1]);
 			}
 		}
-		$this->emitCollectedGarbage($this->cache->getIdentifier);
+		$this->emitGarbageCollected($this->cache->getIdentifier());
 	}
 
 	/**
