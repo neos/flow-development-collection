@@ -47,6 +47,11 @@ abstract class AbstractBackend {
 	protected $cache;
 
 	/**
+	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $signalDispatcher;
+
+	/**
 	 * @var string The current application context
 	 */
 	protected $context;
@@ -73,6 +78,21 @@ abstract class AbstractBackend {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Injects the Signal Dispatcher.
+	 *
+	 * This is necessary because the classes of the Cache subpackage cannot be proxied
+	 * by the AOP framework because AOP itself requires caching and therefore is not
+	 * available at the time caching is initialized.
+	 *
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
+		$this->signalDispatcher = $signalDispatcher;
 	}
 
 	/**

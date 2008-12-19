@@ -155,12 +155,12 @@ final class FLOW3 {
 		$this->initializeError();
 		$this->initializeObjectFramework();
 		$this->initializeEnvironment();
-		$this->initializeCache();
 		$this->initializePackages();
+		$this->initializeSignalsSlots();
+		$this->initializeCache();
 		$this->initializeReflection();
 		$this->initializeObjects();
 		$this->initializeAOP();
-		$this->initializeSignalsSlots();
 		$this->initializeSession();
 		$this->initializePersistence();
 		$this->initializeResources();
@@ -249,37 +249,6 @@ final class FLOW3 {
 	}
 
 	/**
-	 * Initializes the cache framework
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 */
-	public function initializeCache() {
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Factory');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Manager');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\File');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\Memcached');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\VariableCache');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\StringCache');
-
-		$property = new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
-		$configuration = $this->objectManager->getObjectConfiguration('F3\FLOW3\Cache\Backend\File');
-		$configuration->setProperty($property);
-		$this->objectManager->setObjectConfiguration($configuration);
-
-		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
-		$this->cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
-
-		$this->cacheFactory->create('FLOW3_Cache_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Cache_ResourceFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3\FLOW3\Cache\VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Reflection', 'F3\FLOW3\Cache\VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3\FLOW3\Cache\StringCache', 'F3\FLOW3\Cache\Backend\File');
-	}
-
-	/**
 	 * Initializes the package system and loads the package configuration and settings
 	 * provided by the packages.
 	 *
@@ -303,6 +272,68 @@ final class FLOW3 {
 
 		$this->configurationManager->loadGlobalSettings(array_keys($activePackages));
 		$this->configurationManager->loadRoutesSettings(array_keys($activePackages));
+	}
+
+	/**
+	 * Initializes the Signals and Slots mechanism
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see intialize()
+	 */
+	public function initializeSignalsSlots() {
+		$this->objectManager->registerObject('F3\FLOW3\SignalSlot\Dispatcher');
+		$dispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+
+		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+			$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $packageKey);
+			foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
+				if (is_array($signalSubConfiguration)) {
+					foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
+						$signalMethodName = 'emit' . ucfirst($signalMethodName);
+						if (is_array($slotConfigurations)) {
+							foreach ($slotConfigurations as $slotConfiguration) {
+								if (is_array($slotConfiguration) && count($slotConfiguration) === 2) {
+									list ($className, $methodName) = $slotConfiguration;
+									$dispatcher->connect($signalClassName, $signalMethodName, $className, $methodName);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Initializes the cache framework
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeCache() {
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Factory');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Manager');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\File');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\Memcached');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\VariableCache');
+		$this->objectManager->registerObject('F3\FLOW3\Cache\StringCache');
+
+		$configuration = $this->objectManager->getObjectConfiguration('F3\FLOW3\Cache\Backend\File');
+		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
+		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('signalDispatcher', 'F3\FLOW3\SignalSlot\Dispatcher', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
+		$this->objectManager->setObjectConfiguration($configuration);
+
+		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
+		$this->cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
+
+		$this->cacheFactory->create('FLOW3_Cache_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Cache_ResourceFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3\FLOW3\Cache\VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Reflection', 'F3\FLOW3\Cache\VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
+		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
+		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3\FLOW3\Cache\StringCache', 'F3\FLOW3\Cache\Backend\File');
 	}
 
 	/**
@@ -418,36 +449,6 @@ final class FLOW3 {
 			$AOPFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework', $this->objectManager, $this->objectFactory);
 			$AOPFramework->initialize($objectConfigurations);
 			$this->objectManager->setObjectConfigurations($objectConfigurations);
-		}
-	}
-
-	/**
-	 * Initializes the Signals and Slots mechanism
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see intialize()
-	 */
-	public function initializeSignalsSlots() {
-		$dispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
-
-		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
-			$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $packageKey);
-			foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
-				if (is_array($signalSubConfiguration)) {
-					foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
-						$signalMethodName = 'emit' . ucfirst($signalMethodName);
-						if (is_array($slotConfigurations)) {
-							foreach ($slotConfigurations as $slotConfiguration) {
-								if (is_array($slotConfiguration) && count($slotConfiguration) === 2) {
-									list ($className, $methodName) = $slotConfiguration;
-									$dispatcher->connect($signalClassName, $signalMethodName, $className, $methodName);
-								}
-							}
-						}
-					}
-				}
-			}
 		}
 	}
 

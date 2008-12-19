@@ -98,13 +98,14 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo could also be trigered by a hook/event after AOP initialization is finished. That would seem cleaner than using the destructor.
+	 * @todo RL: Disabled the aclCache->set() call because the caching framework is in an undefined state during destruction (signal dispatcher doesn't exist for example)
 	 * @todo make sure that exceptions are handled properly in the destructor - or better remove the destructor alltogether
 	 */
 	public function __destruct() {
 		if ($this->settings['aop']['cache']['enable'] === TRUE) {
 			$tags = array('F3_FLOW3_AOP');
 			try {
-				$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
+#				$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
 			} catch (Exception $exception) {
 				echo ('<br />Exception thrown in ' . __FILE__ . ' in line ' . __LINE__ . ':<br />');
 				var_dump($exception);

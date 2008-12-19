@@ -121,7 +121,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
+	if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 		foreach ($tags as $tag) {
@@ -163,6 +163,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			}
 			touch($tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier);
 		}
+		$this->emitCacheEntrySet($this->cache->getIdentifier(), $entryIdentifier, $tags, $lifetime);
 	}
 
 	/**
@@ -218,6 +219,8 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			$result = unlink ($pathAndFilename);
 			if ($result === FALSE) return FALSE;
 		}
+
+		$this->emitCacheEntryRemoved($this->cache->getIdentifier(), $entryIdentifier);
 		return TRUE;
 	}
 
@@ -267,6 +270,8 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
 			$this->remove($entryIdentifier);
 		}
+
+		$this->emitCacheFlushed($this->cache->getIdentifier());
 	}
 
 	/**
@@ -282,6 +287,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
+		$this->emitCacheFlushedByTag($this->cache->getIdentifier(), $tag);
 	}
 
 	/**
@@ -314,6 +320,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 				$this->remove($splitFilename[1]);
 			}
 		}
+		$this->emitCollectedGarbage($this->cache->getIdentifier);
 	}
 
 	/**
@@ -377,6 +384,72 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;
+	}
+
+	/**
+	 * Signals that a cache entry has been set
+	 *
+	 * @param string $cacheIdentifier The cache identifier
+	 * @param string $entryIdentifier Identifier of the entry which has been set
+	 * @param array $tags The tags attached to the cache entry (if any)
+	 * @param integer $lifetime The specified lifetime
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	public function emitCacheEntrySet($cacheIdentifier, $entryIdentifier, array $tags, $lifetime) {
+		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
+	}
+
+	/**
+	 * Signals that a cache entry has been removed
+	 *
+	 * @param string $cacheIdentifier The cache identifier
+	 * @param string $entryIdentifier Identifier of the entry which has been removed
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	public function emitCacheEntryRemoved($cacheIdentifier, $entryIdentifier) {
+		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
+	}
+
+	/**
+	 * Signals that the whole cache has been flushed
+	 *
+	 * @param string $cacheIdentifier The cache identifier
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	public function emitCacheFlushed($cacheIdentifier) {
+		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
+	}
+
+	/**
+	 * Signals that all cache entries with the specified tag have been flushed
+	 *
+	 * @param string $cacheIdentifier The cache identifier
+	 * @param string $tag The tag
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	public function emitCacheFlushedByTag($cacheIdentifier, $tag) {
+		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
+	}
+
+
+	/**
+	 * Signals that a garbage collection has been carried out for the specified cache
+	 *
+	 * @param string $cacheIdentifier The cache identifier
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 */
+	public function emitGarbageCollected($cacheIdentifier) {
+		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
 	}
 
 }
