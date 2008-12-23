@@ -155,22 +155,6 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function configurationFilterDesignatorIsParsedCorrectly() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-
-		$parser = new \F3\FLOW3\AOP\MockPointcutExpressionParser($this->objectManager);
-
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutConfigurationFilter($mockConfigurationManager, 'custom: package: my: configuration: option'));
-
-		$actualPointcutFilterComposite = $parser->parse('configuration(custom: package: my: configuration: option)');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function ifACustomFilterDoesNotImplementThePointcutFilterInterfaceAnExceptionIsThrown() {
@@ -185,6 +169,27 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 		} catch (\Exception  $exception) {
 
 		}
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function settingFilterDesignatorIsParsedCorrectly() {
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$settings['custom']['package']['my']['configuration']['option'] = TRUE;
+		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Configuration\Manager')->will($this->returnValue($mockConfigurationManager));
+
+		$parser = new \F3\FLOW3\AOP\PointcutExpressionParser($mockObjectManager);
+
+		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
+		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutSettingFilter($mockConfigurationManager, 'custom: package: my: configuration: option'));
+
+		$actualPointcutFilterComposite = $parser->parse('setting(custom: package: my: configuration: option)');
+		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
 	}
 }
 ?>

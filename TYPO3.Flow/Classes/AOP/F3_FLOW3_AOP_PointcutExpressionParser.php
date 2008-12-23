@@ -35,7 +35,7 @@ namespace F3\FLOW3\AOP;
 class PointcutExpressionParser {
 
 	const PATTERN_SPLITBYOPERATOR = '/\s*(\&\&|\|\|)\s*/';
-	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|configuration)/';
+	const PATTERN_MATCHPOINTCUTDESIGNATOR = '/^\s*(classTaggedWith|class|methodTaggedWith|method|within|filter|setting)/';
 	const PATTERN_MATCHVISIBILITYMODIFIER = '/(public|protected|private)/';
 
 	/**
@@ -105,8 +105,8 @@ class PointcutExpressionParser {
 					case 'filter' :
 						$this->parseDesignatorFilter($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
-					case 'configuration' :
-						$this->parseDesignatorConfiguration($operator, $signaturePattern, $pointcutFilterComposite);
+					case 'setting' :
+						$this->parseDesignatorSetting($operator, $signaturePattern, $pointcutFilterComposite);
 					break;
 					default :
 						throw new \RuntimeException('Support for pointcut designator "' . $pointcutDesignator . '" has not been implemented (yet).', 1168874740);
@@ -229,16 +229,16 @@ class PointcutExpressionParser {
 	}
 
 	/**
-	 * Adds a configuration filter to the poincut filter composite
+	 * Adds a setting filter to the poincut filter composite
 	 *
 	 * @param string $operator The operator
-	 * @param string $configurationPath The path to the configuration option, that should be used
+	 * @param string $configurationPath The path to the settings option, that should be used
 	 * @param \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function parseDesignatorConfiguration($operator, $configurationPath, \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite) {
-		$pointcutFilterComposite->addFilter($operator, new \F3\FLOW3\AOP\PointcutConfigurationFilter($this->objectManager->getObject('F3\FLOW3\Configuration\Manager'), $configurationPath));
+	protected function parseDesignatorSetting($operator, $configurationPath, \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite) {
+		$pointcutFilterComposite->addFilter($operator, new \F3\FLOW3\AOP\PointcutSettingFilter($this->objectManager->getObject('F3\FLOW3\Configuration\Manager'), $configurationPath));
 	}
 
 	/**
