@@ -87,7 +87,6 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 		$this->configurationOption = $settings;
 
 		$configurationExpression = split(' *= *', $configurationExpression);
-		print_r($configurationExpression);
 		if (isset($configurationExpression[1])) {
 			$matches = array();
 			preg_match(self::PATTERN_MATCHVALUEINQUOTES, $configurationExpression[1], $matches);
