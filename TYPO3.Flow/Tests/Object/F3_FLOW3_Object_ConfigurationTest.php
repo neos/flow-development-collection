@@ -15,13 +15,19 @@ namespace F3\FLOW3\Object;
  * Public License for more details.                                       *
  *                                                                        */
 
+/**
+ * @package FLOW3
+ * @subpackage Object
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ */
 
 /**
  * Testcase for the object configuration class
  *
- * @package     FLOW3
- * @version     $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Object
+ * @version $Id:\F3\FLOW3\Object\ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ConfigurationTest extends \F3\Testing\BaseTestCase {
 
@@ -79,35 +85,78 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks if setConstructorArguments accepts only valid values
+	 * Checks if setArguments accepts only valid values
 	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \Exception
 	 */
-	public function setConstructorArgumentsOnlyAcceptsValidValues() {
+	public function setArgumentsOnlyAcceptsValidValues() {
 		$invalidArguments = array (
 			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'simple string'),
 			2 => 'foo'
 		);
 
-		$this->objectConfiguration->setConstructorArguments($invalidArguments);
+		$this->objectConfiguration->setArguments($invalidArguments);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function passingAnEmptyArrayToSetConstructorArgumentsRemovesAllExistingArguments() {
+	public function passingAnEmptyArrayToSetArgumentsRemovesAllExistingArguments() {
 		$someArguments = array (
 			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'simple string'),
 			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, 'another string')
 		);
-		$this->objectConfiguration->setConstructorArguments($someArguments);
-		$this->assertEquals($someArguments, $this->objectConfiguration->getConstructorArguments(), 'The set arguments could not be retrieved again.');
+		$this->objectConfiguration->setArguments($someArguments);
+		$this->assertEquals($someArguments, $this->objectConfiguration->getArguments(), 'The set arguments could not be retrieved again.');
 
-		$this->objectConfiguration->setConstructorArguments(array());
-		$this->assertEquals(array(), $this->objectConfiguration->getConstructorArguments(), 'The constructor arguments have not been cleared.');
+		$this->objectConfiguration->setArguments(array());
+		$this->assertEquals(array(), $this->objectConfiguration->getArguments(), 'The constructor arguments have not been cleared.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFactoryClassNameAcceptsValidClassNames() {
+		$this->objectConfiguration->setFactoryClassName(__CLASS__);
+		$this->assertSame(__CLASS__, $this->objectConfiguration->getFactoryClassName());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidClass
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFactoryClassNameRejectsNamesOfNonExistingNlasses() {
+		$this->objectConfiguration->setFactoryClassName('F3\Virtual\NonExistingClass');
+	}
+
+	/**
+	 * @test
+	 */
+	public function setFactoryMethodNameAcceptsValidStrings() {
+		$this->objectConfiguration->setFactoryMethodName('someMethodName');
+		$this->assertSame('someMethodName', $this->objectConfiguration->getFactoryMethodName());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFactoryMethodNameRejectsAnythingElseThanAString() {
+		$this->objectConfiguration->setFactoryMethodName(array());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theDefaultFactoryMethodNameIsCreate() {
+		$this->assertSame('create', $this->objectConfiguration->getFactoryMethodName());
 	}
 }
 ?>

@@ -38,7 +38,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorsOfProxiedClassesAreStillIntact() {
-		$objectWithConstructor = $this->objectManager->getObject('F3\TestPackage\ClassWithOptionalConstructorArguments', 'modified argument1', 'modified argument2', 'modified argument3');
+		$objectWithConstructor = $this->objectManager->getObject('F3\TestPackage\ClassWithOptionalArguments', 'modified argument1', 'modified argument2', 'modified argument3');
 		$this->assertEquals('modified argument1', $objectWithConstructor->argument1, 'The property set through the first constructor argument does not contain the expected value.');
 		$this->assertEquals('modified argument2', $objectWithConstructor->argument2, 'The property set through the second constructor argument does not contain the expected value.');
 		$this->assertEquals('modified argument3', $objectWithConstructor->argument3, 'The property set through the third constructor argument does not contain the expected value.');
@@ -215,7 +215,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function mandatoryArgumentInNonAdvisedConstructorStaysIntact() {
-		$target = $this->objectManager->getObject('F3\TestPackage\ClassWithOneConstructorArgument');
+		$target = $this->objectManager->getObject('F3\TestPackage\ClassWithOneArgument');
 		$this->assertType('F3\TestPackage\InjectedClass', $target->getInjectedObject(), 'The injected class is not of the expected type or has not been injected at all.');
 	}
 

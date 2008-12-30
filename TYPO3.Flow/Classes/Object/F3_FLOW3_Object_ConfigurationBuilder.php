@@ -55,37 +55,42 @@ class ConfigurationBuilder {
 				case 'properties':
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $propertyName => $propertyValue) {
-							if (is_array($propertyValue) && isset($propertyValue['reference'])) {
-								$propertyType = \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE;
-								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue['reference'], $propertyType);
-							} else {
+							if (isset($propertyValue['value'])) {
 								$propertyType = \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE;
-								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue, $propertyType);
+								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue['value'], $propertyType);
+							} elseif (isset($propertyValue['object'])) {
+								$property = self::parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $configurationSourceHint);
+							} elseif (isset($propertyValue['setting'])) {
+
+							} else {
+								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
 							$objectConfiguration->setProperty($property);
 						}
 					}
 				break;
-				case 'constructorArguments':
+				case 'arguments':
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $argumentName => $argumentValue) {
-							if (is_array($argumentValue) && isset($argumentValue->reference)) {
-								$argumentType = \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE;
-								$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName, $argumentValue['reference'], $argumentType);
+							if (isset($argumentValue['value'])) {
+								$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName, $argumentValue['value'], \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+							} elseif (isset($argumentValue['object'])) {
+								$argument = self::parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $configurationSourceHint);
+							} elseif (isset($argumentValue['setting'])) {
+
 							} else {
-								$argumentType = \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE;
-								$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName, $argumentValue, $argumentType);
+								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
 							}
-							$objectConfiguration->setConstructorArgument($argument);
+							$objectConfiguration->setArgument($argument);
 						}
 					}
 				break;
 				case 'className':
-				case 'lifecycleInitializationMethod':
+				case 'factoryClassName' :
+				case 'factoryMethodName' :
+				case 'lifecycleInitializationMethodName':
 					$methodName = 'set' . ucfirst($optionName);
 					$objectConfiguration->$methodName(trim($optionValue));
-				break;
-				case 'AOPAddToProxyBlacklist':
 				break;
 				case 'autoWiringMode':
 					$methodName = 'set' . ucfirst($optionName);
@@ -101,7 +106,7 @@ class ConfigurationBuilder {
 	/**
 	 * Parses the value of the option "scope"
 	 *
-	 * @param  string $value: Value of the option
+	 * @param  string $value Value of the option
 	 * @return integer The scope translated into a scope constant
 	 * @throws \F3\FLOW3\Object\Exception\InvalidObjectConfiguration if an invalid scope has been specified
 	 * @author Robert Lemke <robert@typo3.org>
@@ -110,5 +115,52 @@ class ConfigurationBuilder {
 		if (!in_array($value, array('singleton', 'prototype', 'session'))) throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid scope', 1167574991);
 		return $value;
 	}
+
+	/**
+	 * Parses the configuration for properties of type OBJECT
+	 *
+	 * @param string $propertyName Name of the property
+	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the property configuration - either a string or an array
+	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+	 * @return \F3\FLOW3\Object\ConfigurationProperty A configuration property of type object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static protected function parsePropertyOfTypeObject($propertyName, $objectNameOrConfiguration, $configurationSourceHint) {
+		if (is_array($objectNameOrConfiguration)) {
+			if (isset($objectNameOrConfiguration['name'])) {
+				$objectName = $objectNameOrConfiguration['name'];
+				unset($objectNameOrConfiguration['name']);
+			} else {
+				$objectName = NULL;
+			}
+			$objectConfiguration = self::buildFromConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ' / property "' . $propertyName .'"');
+			$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName,  $objectConfiguration, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+		} else {
+			$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName,  $objectNameOrConfiguration, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+		}
+		return $property;
+	}
+
+	/**
+	 * Parses the configuration for arguments of type OBJECT
+	 *
+	 * @param string $argumentName Name of the argument
+	 * @param mixed $objectNameOrConfiguration Value of the "object" section of the argument configuration - either a string or an array
+	 * @param string configurationSourceHint A human readable hint on the original source of the configuration (for troubleshooting)
+	 * @return \F3\FLOW3\Object\ConfigurationArgument A configuration argument of type object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	static protected function parseArgumentOfTypeObject($argumentName, $objectNameOrConfiguration, $configurationSourceHint) {
+		if (is_array($objectNameOrConfiguration)) {
+			$objectName = $objectNameOrConfiguration['name'];
+			unset($objectNameOrConfiguration['name']);
+			$objectConfiguration = self::buildFromConfigurationArray($objectName, $objectNameOrConfiguration, $configurationSourceHint . ' / argument "' . $argumentName .'"');
+			$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName,  $objectConfiguration, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+		} else {
+			$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName,  $objectNameOrConfiguration, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
+		}
+		return $argument;
+	}
+
 }
 ?>

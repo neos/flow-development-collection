@@ -41,42 +41,62 @@ class Configuration {
 	const SCOPE_SESSION = 'session';
 
 	/**
-	 * @var string $objectName: Unique identifier of the object
+	 * Name of the object
+	 * @var string $objectName
 	 */
 	protected $objectName;
 
 	/**
-	 * @var string $className: Name of the class the object is based on
+	 * Name of the class the object is based on
+	 * @var string $className
 	 */
 	protected $className;
 
 	/**
-	 * @var string $scope: Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
+	 * If set, specifies the factory class used to create this object
+	 * @var string
+	 */
+	protected $factoryClassName;
+
+	/**
+	 * Name of the factory method. Only used if $factoryClassName is set.
+	 * @var string
+	 */
+	protected $factoryMethodName = 'create';
+
+	/**
+	 * Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
+	 * @var string $scope
 	 */
 	protected $scope = 'singleton';
 
 	/**
-	 * @var array $constructorArguments: Arguments of the constructor detected by reflection
+	 * Arguments of the constructor detected by reflection
+	 * @var array $arguments
 	 */
-	protected $constructorArguments = array();
+	protected $arguments = array();
 
 	/**
-	 * @var array $properties: Array of properties which are injected into the object
+	 * Array of properties which are injected into the object
+	 * @var array $properties
 	 */
 	protected $properties = array();
 
 	/**
-	 * @var integer $autoWiringMode: Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
+	 * Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
+	 * @var integer $autoWiringMode
 	 */
 	protected $autoWiringMode = self::AUTOWIRING_MODE_ON;
 
 	/**
-	 * @var string $lifecycleInitializationMethod: Name of the method to call during the initialization of the object (after dependencies are injected)
+	 * Name of the method to call during the initialization of the object (after dependencies are injected)
+	 * @var string $lifecycleInitializationMethodName
 	 */
-	protected $lifecycleInitializationMethod = 'initializeObject';
+	protected $lifecycleInitializationMethodName = 'initializeObject';
 
 	/**
-	 * @var string Information about where this configuration has been created. Used in error messages to make debugging easier.
+	 * Information about where this configuration has been created. Used in error messages to make debugging easier.
+	 * @var string
 	 */
 	protected $configurationSourceHint = '< unknown >';
 
@@ -132,6 +152,49 @@ class Configuration {
 	}
 
 	/**
+	 * Sets the class name of a factory which is in charge of instantiating this object
+	 *
+	 * @param string $className Valid class name of a factory
+	 * @return void
+	 */
+	public function setFactoryClassName($className) {
+		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClass('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
+		$this->factoryClassName= $className;
+	}
+
+	/**
+	 * Returns the class name of the factory for this object, if any
+	 *
+	 * @return string The factory class name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getFactoryClassName() {
+		return $this->factoryClassName;
+	}
+
+	/**
+	 * Sets the name of the factory method
+	 *
+	 * @param string $methodName The factory method name
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setFactoryMethodName($methodName) {
+		if (!is_string($methodName) || $methodName === '') throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
+		$this->factoryMethodName = $methodName;
+	}
+
+	/**
+	 * Returns the factory method name
+	 *
+	 * @return string The factory method name
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getFactoryMethodName() {
+		return $this->factoryMethodName;
+	}
+
+	/**
 	 * Setter function for property "scope"
 	 *
 	 * @param string $scope: Name of the scope
@@ -161,7 +224,7 @@ class Configuration {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setAutoWiringMode($autoWiringMode) {
-		if ($autoWiringMode < 0 || $autoWiringMode > 1)  throw new \RuntimeException('Invalid auto wiring mode', 1167824101);
+		if ($autoWiringMode < 0 || $autoWiringMode > 1)  throw new \InvalidArgumentException('Invalid auto wiring mode', 1167824101);
 		$this->autoWiringMode = $autoWiringMode;
 	}
 
@@ -176,15 +239,15 @@ class Configuration {
 	}
 
 	/**
-	 * Setter function for property "lifecycleInitializationMethod"
+	 * Setter function for property "lifecycleInitializationMethodName"
 	 *
-	 * @param string $lifecycleInitializationMethod: Name of the method to call after setter injection
+	 * @param string $lifecycleInitializationMethodName: Name of the method to call after setter injection
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setLifecycleInitializationMethod($lifecycleInitializationMethod) {
-		if (!is_string($lifecycleInitializationMethod))  throw new \RuntimeException('Invalid lifecycle initialization method name.', 1172047877);
-		$this->lifecycleInitializationMethod = $lifecycleInitializationMethod;
+	public function setLifecycleInitializationMethodName($lifecycleInitializationMethodName) {
+		if (!is_string($lifecycleInitializationMethodName))  throw new \InvalidArgumentException('Invalid lifecycle initialization method name.', 1172047877);
+		$this->lifecycleInitializationMethodName = $lifecycleInitializationMethodName;
 	}
 
 	/**
@@ -193,8 +256,8 @@ class Configuration {
 	 * @return string The name of the intialization method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getLifecycleInitializationMethod() {
-		return $this->lifecycleInitializationMethod;
+	public function getLifecycleInitializationMethodName() {
+		return $this->lifecycleInitializationMethodName;
 	}
 
 	/**
@@ -235,17 +298,17 @@ class Configuration {
 	 * Setter function for injection constructor arguments. If an empty array is passed to this
 	 * method, all (possibly) defined constructor arguments are removed from the configuration.
 	 *
-	 * @param array $constructorArguments Array of \F3\FLOW3\Object\ConfigurationArgument
+	 * @param array $arguments Array of \F3\FLOW3\Object\ConfigurationArgument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setConstructorArguments(array $constructorArguments) {
-		if ($constructorArguments === array()) {
-			$this->constructorArguments = array();
+	public function setArguments(array $arguments) {
+		if ($arguments === array()) {
+			$this->arguments = array();
 		} else {
-			foreach ($constructorArguments as $constructorArgument) {
-				$this->setConstructorArgument($constructorArgument);
+			foreach ($arguments as $argument) {
+				$this->setArgument($argument);
 			}
 		}
 	}
@@ -253,37 +316,37 @@ class Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param array $constructorArgument A \F3\FLOW3\Object\ConfigurationArgument
+	 * @param A \F3\FLOW3\Object\ConfigurationArgument $argument The argument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setConstructorArgument(\F3\FLOW3\Object\ConfigurationArgument $constructorArgument) {
-		$this->constructorArguments[$constructorArgument->getIndex()] = $constructorArgument;
+	public function setArgument(\F3\FLOW3\Object\ConfigurationArgument $argument) {
+		$this->arguments[$argument->getIndex()] = $argument;
 	}
 
 	/**
 	 * Returns a sorted array of constructor arguments indexed by position (starting with "1")
 	 *
-	 * @return array	A sorted array of \F3\FLOW3\Object\ConfigurationArgument objects with the argument position as index
+	 * @return array A sorted array of \F3\FLOW3\Object\ConfigurationArgument objects with the argument position as index
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getConstructorArguments() {
-		if (count($this->constructorArguments) < 1 ) return array();
+	public function getArguments() {
+		if (count($this->arguments) < 1 ) return array();
 
-		asort($this->constructorArguments);
-		$lastConstructorArgument = end($this->constructorArguments);
-		$argumentsCount = $lastConstructorArgument->getIndex();
-		$sortedConstructorArguments = array();
+		asort($this->arguments);
+		$lastArgument = end($this->arguments);
+		$argumentsCount = $lastArgument->getIndex();
+		$sortedArguments = array();
 		for ($index = 1; $index <= $argumentsCount; $index++) {
-			$sortedConstructorArguments[$index] = isset($this->constructorArguments[$index]) ? $this->constructorArguments[$index] : NULL;
+			$sortedArguments[$index] = isset($this->arguments[$index]) ? $this->arguments[$index] : NULL;
 		}
-		return $sortedConstructorArguments;
+		return $sortedArguments;
 	}
 
 	/**
 	 * Sets some information (hint) about where this configuration has been created.
 	 *
-	 * @param string $hint: The hint - e.g. the file name of the configuration file
+	 * @param string $hint The hint - e.g. the file name of the configuration file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

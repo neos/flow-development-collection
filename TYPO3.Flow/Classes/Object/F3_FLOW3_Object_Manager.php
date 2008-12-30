@@ -210,8 +210,8 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 					$object = $this->objectRegistry->getObject($objectName);
 				} else {
 					$arguments = array_slice(func_get_args(), 1);
-					$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
-					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingConstructorArguments);
+					$overridingArguments = $this->getOverridingArguments($arguments);
+					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingArguments);
 					$this->objectRegistry->putObject($objectName, $object);
 				}
 				break;
@@ -426,17 +426,17 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * Returns straight-value constructor arguments for an object by creating appropriate
 	 * \F3\FLOW3\Object\ConfigurationArgument objects.
 	 *
-	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @param array $argumentValues: Array of argument values. Index must start at "0" for parameter "1" etc.
 	 * @return array An array of \F3\FLOW3\Object\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see getObject()
+	 * @see create()
 	 */
-	protected function getOverridingConstructorArguments(array $arguments) {
-		$constructorArguments = array();
-		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+	protected function getOverridingArguments(array $argumentValues) {
+		$argumentObjects = array();
+		foreach ($argumentValues as $index => $value) {
+			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
-		return $constructorArguments;
+		return $argumentObjects;
 	}
 
 	/**

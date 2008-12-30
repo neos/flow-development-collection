@@ -94,34 +94,44 @@ class Builder {
 	 *
 	 * @param string $objectName: Name of the object to create an object for
 	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration: The object configuration
-	 * @param array $overridingConstructorArguments: An array of \F3\FLOW3\Object\Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
+	 * @param array $overridingArguments: An array of \F3\FLOW3\Object\Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
 	 * @return object
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration, array $overridingConstructorArguments) {
+	public function createObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration, array $overridingArguments = array()) {
 		if (isset ($this->objectsBeingBuilt[$objectName])) throw new \F3\FLOW3\Object\Exception\CannotBuildObject('Circular object dependency for object "' . $objectName . '".', 1168505928);
 		try {
 			$this->objectsBeingBuilt[$objectName] = TRUE;
 			$className = $objectConfiguration->getClassName();
+			$customFactoryClassName = $objectConfiguration->getFactoryClassName();
+			if (class_exists($className) === FALSE && $customFactoryClassName === NULL) throw new \F3\FLOW3\Object\Exception\UnknownClass('Class "' . $className . '" which was specified in the object configuration of object "' . $objectName . '" does not exist.', 1229967561);
 
-			$constructorArguments = $objectConfiguration->getConstructorArguments();
-			foreach ($overridingConstructorArguments as $index => $value) {
-				$constructorArguments[$index] = $value;
+			$arguments = $objectConfiguration->getArguments();
+			foreach ($overridingArguments as $index => $value) {
+				$arguments[$index] = $value;
 			}
 
 			$setterProperties = $objectConfiguration->getProperties();
 
-			if ($objectConfiguration->getAutoWiringMode() == \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON) {
-				$constructorArguments = $this->autoWireConstructorArguments($constructorArguments, $className);
+			if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
+				$arguments = $this->autoWireArguments($arguments, $className);
 				$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
 			}
-
 			$preparedArguments = array();
-			$this->injectConstructorArguments($constructorArguments, $preparedArguments);
+			$this->injectArguments($arguments, $preparedArguments);
 
-			$class = new \F3\FLOW3\Reflection\ClassReflection($className);
-			$object = (count($preparedArguments) > 0) ? $class->newInstanceArgs($preparedArguments) : $class->newInstance();
+			if ($customFactoryClassName !== NULL) {
+				$customFactory = $this->objectManager->getObject($customFactoryClassName);
+				$object = call_user_func_array(array($customFactory, $objectConfiguration->getFactoryMethodName()), $preparedArguments);
+			} else {
+				if (count($preparedArguments) > 0) {
+					$class = new \ReflectionClass($className);
+					$object = $class->newInstanceArgs($preparedArguments);
+				} else {
+					$object = new $className();
+				}
+			}
 
 			if (!is_object($object)) {
 				$errorMessage = error_get_last();
@@ -148,7 +158,7 @@ class Builder {
 	 * @throws \F3\FLOW3\Object\Exception\CannotReconstituteObject if the class cannot be reconstituted or a circular dependency ocurred.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reconstituteObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration, array $properties) {
+	public function reconstituteObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration, array $properties = array()) {
 		if (isset ($this->objectsBeingBuilt[$objectName])) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Circular object dependency for object "' . $objectName . '".', 1216742543);
 		$this->objectsBeingBuilt[$objectName] = TRUE;
 
@@ -170,24 +180,24 @@ class Builder {
 	 * If mandatory constructor arguments have not been defined yet, this function tries to autowire
 	 * them if possible.
 	 *
-	 * @param array $constructorArguments Array of \F3\FLOW3\Object\ConfigurationArgument for the current object
+	 * @param array $arguments Array of \F3\FLOW3\Object\ConfigurationArgument for the current object
 	 * @param string $className Class name of the object object which contains the methods supposed to be analyzed
 	 * @return array The modified array of \F3\FLOW3\Object\ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireConstructorArguments(array $constructorArguments, $className) {
+	protected function autoWireArguments(array $arguments, $className) {
 		$constructorName = $this->reflectionService->getClassConstructorName($className);
 		if ($constructorName !== NULL) {
 			foreach ($this->reflectionService->getMethodParameters($className, $constructorName) as $parameterName => $parameterInformation) {
 				$index = $parameterInformation['position'] + 1;
-				if (!isset($constructorArguments[$index])) {
+				if (!isset($arguments[$index])) {
 					if ($parameterInformation['optional'] === TRUE) {
 						$defaultValue = (isset($parameterInformation['defaultValue'])) ? $parameterInformation['defaultValue'] : NULL;
-						$constructorArguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+						$arguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, $defaultValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 					} elseif ($parameterInformation['class'] !== NULL) {
-						$constructorArguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, $parameterInformation['class'], \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE);
+						$arguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, $parameterInformation['class'], \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT);
 					} elseif ($parameterInformation['allowsNull'] === TRUE) {
-						$constructorArguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, NULL, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+						$arguments[$index] = new \F3\FLOW3\Object\ConfigurationArgument($index, NULL, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 					} else {
 						$this->debugMessages[] = 'Tried everything to autowire parameter $' . $parameterName . ' in ' . $className . '::' . $constructorName . '() but I saw no way.';
 					}
@@ -198,7 +208,7 @@ class Builder {
 		} else {
 			$this->debugMessages[] = 'Autowiring for class ' . $className . ' disabled because no constructor was found.';
 		}
-		return $constructorArguments;
+		return $arguments;
 	}
 
 
@@ -227,13 +237,9 @@ class Builder {
 				$methodParameter = array_pop($methodParameters);
 				if ($methodParameter['class'] === NULL) {
 					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
-					if (!$this->reflectionService->isMethodTaggedWith('optional')) {
-						$class = new \ReflectionClass($className);
-						$method = $class->getMethod($methodName);
-					}
 					continue;
 				}
-				$setterProperties[$propertyName] = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE);
+				$setterProperties[$propertyName] = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 			}
 		}
 		return $setterProperties;
@@ -243,23 +249,27 @@ class Builder {
 	 * Checks and resolves dependencies of the constructor arguments (objects) and prepares an array of constructor
 	 * arguments (strings) which can be used in a "new" statement to instantiate the object.
 	 *
-	 * @param array $constructorArguments Array of \F3\FLOW3\Object\ConfigurationArgument for the current object
+	 * @param array $arguments Array of \F3\FLOW3\Object\ConfigurationArgument for the current object
 	 * @param array &$preparedArguments An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function injectConstructorArguments($constructorArguments, &$preparedArguments) {
-		foreach ($constructorArguments as $constructorArgument) {
-			if (is_object($constructorArgument)) {
-				if (gettype($constructorArgument->getValue()) == 'integer') {
-					$preparedArguments[] = $constructorArgument->getValue();
-				} else {
-					if ($constructorArgument->getType() === \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE) {
-						$value = $this->objectManager->getObject($constructorArgument->getValue());
-					} else {
-						$value = $constructorArgument->getValue();
-					}
-					$preparedArguments[] = $value;
+	protected function injectArguments($arguments, &$preparedArguments) {
+		foreach ($arguments as $argument) {
+			if ($argument !== NULL) {
+				switch ($argument->getType()) {
+					case \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
+						$objectConfiguration = $argument->getValue();
+						if ($objectConfiguration instanceof \F3\FLOW3\Object\Configuration) {
+							$preparedArguments[] = $this->createObject($objectConfiguration->getObjectName(), $objectConfiguration);
+						} else {
+							$preparedArguments[] = $this->objectManager->getObject($objectConfiguration);
+						}
+					break;
+					case \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
+						$preparedArguments[] = $argument->getValue();
+					break;
+					default:
 				}
 			} else {
 				$preparedArguments[] = NULL;
@@ -278,8 +288,13 @@ class Builder {
 	protected function injectSetterProperties($setterProperties, $object) {
 		foreach ($setterProperties as $propertyName => $property) {
 			switch ($property->getType()) {
-				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE:
-					$propertyValue = $this->objectManager->getObject($property->getValue());
+				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT:
+					$objectConfiguration = $property->getValue();
+					if ($objectConfiguration instanceof \F3\FLOW3\Object\Configuration) {
+						$propertyValue = $this->createObject($objectConfiguration->getObjectName(), $objectConfiguration);
+					} else {
+						$propertyValue = $this->objectManager->getObject($objectConfiguration);
+					}
 				break;
 				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
 					$propertyValue = $property->getValue();
@@ -306,9 +321,9 @@ class Builder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function callLifecycleInitializationMethod($object, \F3\FLOW3\Object\Configuration $objectConfiguration) {
-		$lifecycleInitializationMethod = $objectConfiguration->getLifecycleInitializationMethod();
-		if (method_exists($object, $lifecycleInitializationMethod)) {
-			$object->$lifecycleInitializationMethod();
+		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();
+		if (method_exists($object, $lifecycleInitializationMethodName)) {
+			$object->$lifecycleInitializationMethodName();
 		}
 	}
 }

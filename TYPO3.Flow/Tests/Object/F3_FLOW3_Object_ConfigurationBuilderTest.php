@@ -35,29 +35,83 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function allValidOptionsAreSetCorrectly() {
+	public function allBasicOptionsAreSetCorrectly() {
+		$factoryClassName = uniqid('ConfigurationBuilderTest');
+		eval('class ' . $factoryClassName . ' { public function manufacture() {} } ');
+
 		$configurationArray = array();
 		$configurationArray['scope'] = 'prototype';
-		$configurationArray['properties']['firstProperty'] = 'straightValue';
-		$configurationArray['properties']['secondProperty']['reference'] = 'F3\FLOW3\Object\ManagerInterface';
-		$configurationArray['constructorArguments'][1] = 'straightConstructorValue';
-		$configurationArray['constructorArguments'][2]['reference'] = 'F3\FLOW3\Configuration\Manager';
 		$configurationArray['className'] = __CLASS__;
-		$configurationArray['lifecycleInitializationMethod'] = 'initializationMethod';
+		$configurationArray['factoryClassName'] = $factoryClassName;
+		$configurationArray['factoryMethodName'] = 'manufacture';
+		$configurationArray['lifecycleInitializationMethodName'] = 'initializationMethod';
 		$configurationArray['autoWiringMode'] = FALSE;
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', __CLASS__);
 		$objectConfiguration->setScope(\F3\FLOW3\Object\Configuration::SCOPE_PROTOTYPE);
-		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('firstProperty', 'straightValue'));
-		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('secondProperty', 'F3\FLOW3\Object\ManagerInterface', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
-		$objectConfiguration->setConstructorArgument(new \F3\FLOW3\Object\ConfigurationArgument(1, 'straightConstructorValue'));
-		$objectConfiguration->setConstructorArgument(new \F3\FLOW3\Object\ConfigurationArgument(2, 'F3\FLOW3\Configuration\Manager', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
 		$objectConfiguration->setClassName(__CLASS__);
-		$objectConfiguration->setLifecycleInitializationMethod('initializationMethod');
+		$objectConfiguration->setFactoryClassName($factoryClassName);
+		$objectConfiguration->setFactoryMethodName('manufacture');
+		$objectConfiguration->setLifecycleInitializationMethodName('initializationMethod');
 		$objectConfiguration->setAutoWiringMode(FALSE);
 
 		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
 		$this->assertEquals($objectConfiguration, $builtObjectConfiguration, 'The manually created and the built object configuration don\'t match.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function argumentsOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions() {
+		$configurationArray = array();
+		$configurationArray['arguments'][1]['object']['name'] = 'Foo';
+		$configurationArray['arguments'][1]['object']['className'] = __CLASS__;
+
+		$argumentObjectConfiguration = new \F3\FLOW3\Object\Configuration('Foo', __CLASS__);
+		$argumentObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ' / argument "1"');
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', 'TestObject');
+		$objectConfiguration->setArgument(new \F3\FLOW3\Object\ConfigurationArgument(1, $argumentObjectConfiguration, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT));
+
+		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function propertiesOfTypeObjectCanSpecifyAdditionalObjectConfigurationOptions() {
+		$configurationArray = array();
+		$configurationArray['properties']['theProperty']['object']['name'] = 'Foo';
+		$configurationArray['properties']['theProperty']['object']['className'] = __CLASS__;
+
+		$propertyObjectConfiguration = new \F3\FLOW3\Object\Configuration('Foo', __CLASS__);
+		$propertyObjectConfiguration->setConfigurationSourceHint(__CLASS__ . ' / property "theProperty"');
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', 'TestObject');
+		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('theProperty', $propertyObjectConfiguration, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
+
+		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function itIsPossibleToPassArraysAsStraightArgumentOrPropertyValues() {
+		$configurationArray = array();
+		$configurationArray['properties']['straightValueProperty']['value'] = array('foo' => 'bar', 'object' => 'nö');
+		$configurationArray['arguments'][1]['value'] = array('foo' => 'bar', 'object' => 'nö');
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', 'TestObject');
+		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('straightValueProperty', array('foo' => 'bar', 'object' => 'nö')));
+		$objectConfiguration->setArgument(new \F3\FLOW3\Object\ConfigurationArgument(1, array('foo' => 'bar', 'object' => 'nö')));
+
+		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
 	}
 
 	/**

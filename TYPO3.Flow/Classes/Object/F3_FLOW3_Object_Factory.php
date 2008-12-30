@@ -100,33 +100,33 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 * @throws \F3\FLOW3\Object\Exception\WrongScope if the specified object is not configured as Prototype
 	 * @author Robert Lemke <robert@typo3.org>
- 	 */
+	 */
 	public function create($objectName) {
 		if (!$this->objectManager->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1166550023);
 
 		$objectConfiguration = $this->objectManager->getObjectConfiguration($objectName);
 		if ($objectConfiguration->getScope() != 'prototype') throw new \F3\FLOW3\Object\Exception\WrongScope('Object "' . $objectName . '" is of scope ' . $objectConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
 
-		$arguments = array_slice(func_get_args(), 1);
-		$overridingConstructorArguments = $this->getOverridingConstructorArguments($arguments);
-		return $this->objectBuilder->createObject($objectName, $objectConfiguration, $overridingConstructorArguments);
+		$overridingArguments = self::convertArgumentValuesToArgumentObjects(array_slice(func_get_args(), 1));
+		return $this->objectBuilder->createObject($objectName, $objectConfiguration, $overridingArguments);
 	}
 
 	/**
-	 * Returns straight-value constructor arguments for an object by creating appropriate
+	 * Returns straight-value constructor arguments by creating appropriate
 	 * \F3\FLOW3\Object\ConfigurationArgument objects.
 	 *
-	 * @param array $arguments: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @param array $argumentValues: Array of argument values. Index must start at "0" for parameter "1" etc.
 	 * @return array An array of \F3\FLOW3\Object\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
+	 * @internal
 	 */
-	protected function getOverridingConstructorArguments(array $arguments) {
-		$constructorArguments = array();
-		foreach ($arguments as $index => $value) {
-			$constructorArguments[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+	static public function convertArgumentValuesToArgumentObjects(array $argumentValues) {
+		$argumentObjects = array();
+		foreach ($argumentValues as $index => $value) {
+			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
-		return $constructorArguments;
+		return $argumentObjects;
 	}
 
 	/**

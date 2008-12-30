@@ -67,10 +67,12 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @return void
 	 */
 	public function initializeObject() {
-		$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
-		try {
-			$this->setCacheDirectory($cacheDirectory);
-		} catch(\F3\FLOW3\Cache\Exception $exception) {
+		if ($this->cacheDirectory === '') {
+			$cacheDirectory = $this->environment->getPathToTemporaryDirectory() . 'Cache/';
+			try {
+				$this->setCacheDirectory($cacheDirectory);
+			} catch(\F3\FLOW3\Cache\Exception $exception) {
+			}
 		}
 	}
 

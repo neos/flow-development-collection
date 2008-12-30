@@ -30,12 +30,7 @@ namespace F3\FLOW3\Cache;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-abstract class AbstractCache {
-
-	/**
-	 * Pattern a cache identifer must match.
-	 */
-	const PATTERN_IDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 
 	const TAG_CLASS = '%CLASS%';
 
@@ -53,11 +48,11 @@ abstract class AbstractCache {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \F3\FLOW3\Cache\AbstractBackend $backend Backend to be used for this cache
+	 * @param \F3\FLOW3\Cache\BackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
 	 */
-	public function __construct($identifier, \F3\FLOW3\Cache\AbstractBackend $backend) {
+	public function __construct($identifier, \F3\FLOW3\Cache\BackendInterface $backend) {
 		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
@@ -83,50 +78,6 @@ abstract class AbstractCache {
 	public function getBackend() {
 		return $this->backend;
 	}
-
-	/**
-	 * Saves data in the cache.
-	 *
-	 * @param string $entryIdentifier Something which identifies the data - depends on concrete cache
-	 * @param mixed $data The data to cache - also depends on the concrete cache implementation
-	 * @param array $tags Tags to associate with this cache entry
-	 * @return void
-	 */
-	abstract public function set($entryIdentifier, $data, $tags = array());
-
-	/**
-	 * Finds and returns data from the cache.
-	 *
-	 * @param string $entryIdentifier Something which identifies the cache entry - depends on concrete cache
-	 * @return mixed
-	 */
-	abstract public function get($entryIdentifier);
-
-	/**
-	 * Finds and returns all cache entries which are tagged by the specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
-	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
-	 * @return array An array with the content of all matching entries. An empty array if no entries matched
-	 */
-	abstract public function getByTag($tag);
-
-	/**
-	 * Checks if a cache entry with the specified identifier exists.
-	 *
-	 * @param string $entryIdentifier An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 */
-	abstract public function has($entryIdentifier);
-
-	/**
-	 * Removes the given cache entry from the cache.
-	 *
-	 * @param string $entryIdentifier An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 */
-	abstract public function remove($entryIdentifier);
 
 	/**
 	 * Removes all cache entries of this cache.

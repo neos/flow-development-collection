@@ -75,7 +75,7 @@ class ClassLoader {
 				$classFilePathAndName .= str_replace('\\', '_', $className) . '.php';
 			}
 		}
-		if (isset($classFilePathAndName)) require($classFilePathAndName);
+		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);
 	}
 
 	/**

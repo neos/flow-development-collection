@@ -33,10 +33,11 @@ namespace F3\FLOW3\Object;
 class ConfigurationArgument {
 
 	const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
-	const ARGUMENT_TYPES_REFERENCE = 1;
+	const ARGUMENT_TYPES_OBJECT = 1;
 
 	/**
-	 * @var integer	The position of the constructor argument. Counting starts at "1".
+	 * The position of the constructor argument. Counting starts at "1".
+	 * @var integer
 	 */
 	protected $index;
 
@@ -46,16 +47,17 @@ class ConfigurationArgument {
 	protected $value;
 
 	/**
-	 * @var integer Argument type, one of the ARGUMENT_TYPES_* constants
+	 * Argument type, one of the ARGUMENT_TYPES_* constants
+	 * @var integer
 	 */
 	protected $type;
 
 	/**
-	 * Constructor - sets the index, type and value of the argument
+	 * Constructor - sets the index, value and type of the argument
 	 *
-	 * @param string $index: Index of the argument
-	 * @param mixed $value: Value of the argument
-	 * @param integer $type: Type of the argument - one of the argument_TYPE_* constants
+	 * @param string $index Index of the argument
+	 * @param mixed $value Value of the argument
+	 * @param integer $type Type of the argument - one of the argument_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -64,17 +66,17 @@ class ConfigurationArgument {
 	}
 
 	/**
-	 * Sets the index, type and value of the argument
+	 * Sets the index, value, type of the argument and object configuration
 	 *
-	 * @param integer $index: Index of the argument (counting starts at "1")
-	 * @param mixed $value: Value of the argument
-	 * @param integer $type: Type of the argument - one of the ARGUMENT_TYPE_* constants
+	 * @param integer $index Index of the argument (counting starts at "1")
+	 * @param mixed $value Value of the argument
+	 * @param integer $type Type of the argument - one of the ARGUMENT_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
-		if (!is_integer($index)) throw new \RuntimeException('$index must be of type integer', 1168003692);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new \RuntimeException('$type is not valid', 1168003693);
+		if (!is_integer($index)) throw new \InvalidArgumentException('$index must be of type integer', 1168003692);
+		if (!is_integer($type) || $type < 0 || $type > 1) throw new \InvalidArgumentException('$type is not valid', 1168003693);
 		$this->index = $index;
 		$this->value = $value;
 		$this->type = $type;

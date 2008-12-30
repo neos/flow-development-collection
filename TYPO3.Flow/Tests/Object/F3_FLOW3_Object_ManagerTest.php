@@ -163,7 +163,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getObjectPassesAdditionalArgumentsToTheObjectBuilder() {
 		$someObject = new \ArrayObject();
-		$constructorArguments = array(
+		$arguments = array(
 			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'arg1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, $someObject, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		);
@@ -175,7 +175,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration->setConfigurationSourceHint('F3\FLOW3\Object\Manager');
 
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
-		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className, $objectConfiguration, $constructorArguments)->will($this->returnValue(new $className));
+		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className, $objectConfiguration, $arguments)->will($this->returnValue(new $className));
 
 		$mockObjectRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
 		$mockObjectRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));

@@ -1,0 +1,10 @@
+#                                                                          #
+# Object Configuration for the FLOW3 Framework                             #
+#                                                                          #
+# This file contains the default object configuration for the FLOW3        #
+# Framework. Don't modify this file but add configuration options to       #
+# the Objects.yaml file in the in global Configuration/ directory instead. #
+#                                                                          #
+
+# @package FLOW3
+# @version $Id$

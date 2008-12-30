@@ -112,14 +112,14 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 		$objectName = 'F3\Virtual\BasicClass';
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
 		$objectConfiguration->setScope('prototype');
-		$overridingConstructorArguments = array(
+		$overridingArguments = array(
 			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'test1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, 'test2', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			3 => new \F3\FLOW3\Object\ConfigurationArgument(3, 'test3', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 		);
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
-		$this->mockObjectBuilder->expects($this->once())->method('createObject')->with($objectName, $objectConfiguration, $overridingConstructorArguments);
+		$this->mockObjectBuilder->expects($this->once())->method('createObject')->with($objectName, $objectConfiguration, $overridingArguments);
 
 		$this->objectFactory->create($objectName, 'test1', 'test2', 'test3');
 	}

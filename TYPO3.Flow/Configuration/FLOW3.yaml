@@ -6,6 +6,9 @@
 # the FLOW3.yaml file in the in global Configuration/ directory instead. #
 #                                                                        #
 
+# @package FLOW3
+# @version $Id:  $
+
 error:
 
   exceptionHandler:

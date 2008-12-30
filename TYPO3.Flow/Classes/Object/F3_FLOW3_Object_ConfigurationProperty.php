@@ -32,22 +32,28 @@ namespace F3\FLOW3\Object;
 class ConfigurationProperty {
 
 	const PROPERTY_TYPES_STRAIGHTVALUE = 0;
-	const PROPERTY_TYPES_REFERENCE = 1;
+	const PROPERTY_TYPES_OBJECT = 1;
 
 	/**
 	 * @var string Name of the property
 	 */
-	private $name;
+	protected $name;
 
 	/**
 	 * @var mixed Value of the property
 	 */
-	private $value;
+	protected $value;
 
 	/**
 	 * @var integer Type of the property - one of the PROPERTY_TYPE_* constants
 	 */
-	private $type;
+	protected $type;
+
+	/**
+	 * If specified, this configuration is used for instantiating / retrieving an property of type object
+	 * @var \F3\FLOW3\Object\Configuration
+	 */
+	protected $objectConfiguration = NULL;
 
 	/**
 	 * Constructor - sets the name, type and value of the property
@@ -55,28 +61,31 @@ class ConfigurationProperty {
 	 * @param  string $name Name of the property
 	 * @param  mixed $value Value of the property
 	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
-	 * @return void
+	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE) {
-		$this->set($name, $value, $type);
+	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
+		$this->set($name, $value, $type, $objectConfiguration);
 	}
 
 	/**
 	 * Sets the name, type and value of the property
 	 *
-	 * @param  string $name Name of the property
-	 * @param  mixed $value Value of the property
-	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param string $name Name of the property
+	 * @param mixed $value Value of the property
+	 * @param integer $type Type of the property - one of the PROPERTY_TYPE_* constants
+	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE) {
-		if (!is_string($name)) throw new \RuntimeException('$name must be of type string', 1168003690);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new \RuntimeException('$type is not valid', 1168003691);
+	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
+		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string', 1168003690);
+		if (!is_integer($type) || $type < 0 || $type > 1) throw new \InvalidArgumentException('$type is not valid', 1168003691);
+		if ($objectConfiguration !== NULL && $type !== self::PROPERTY_TYPES_OBJECT) throw new InvalidArgumentException('A custom object configuration has been specified for property "' . $name . '" but the proeprty type is not object.', 1230549771);
 		$this->name = $name;
 		$this->value = $value;
 		$this->type = $type;
+		$this->objectConfiguration = $objectConfiguration;
 	}
 
 	/**
@@ -107,6 +116,16 @@ class ConfigurationProperty {
 	 */
 	public function getType() {
 		return $this->type;
+	}
+
+	/**
+	 * Returns the (optional) object configuration which may be defined for properties of type OBJECT
+	 *
+	 * @return \F3\FLOW3\Object\Configuration The object configuration or NULL
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getObjectConfiguration() {
+		return $this->objectConfiguration;
 	}
 }
 

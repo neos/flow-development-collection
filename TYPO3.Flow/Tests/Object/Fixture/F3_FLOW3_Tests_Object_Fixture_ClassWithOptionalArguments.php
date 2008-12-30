@@ -26,7 +26,7 @@ namespace F3\FLOW3\Tests\Object\Fixture;
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  * @scope prototype
  */
-class ClassWithOptionalConstructorArguments {
+class ClassWithOptionalArguments {
 
 	public $argument1;
 	public $argument2;

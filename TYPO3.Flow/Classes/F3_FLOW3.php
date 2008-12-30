@@ -321,8 +321,8 @@ final class FLOW3 {
 		$this->objectManager->registerObject('F3\FLOW3\Cache\StringCache');
 
 		$configuration = $this->objectManager->getObjectConfiguration('F3\FLOW3\Cache\Backend\File');
-		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
-		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('signalDispatcher', 'F3\FLOW3\SignalSlot\Dispatcher', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE));
+		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
+		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('signalDispatcher', 'F3\FLOW3\SignalSlot\Dispatcher', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
 		$this->objectManager->setObjectConfiguration($configuration);
 
 		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
@@ -437,10 +437,10 @@ final class FLOW3 {
 			$this->objectManager->registerObject('F3\FLOW3\AOP\Framework');
 			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3\FLOW3\AOP\Framework');
 			$properties = array(
-				'reflectionService' => new \F3\FLOW3\Object\ConfigurationProperty('reflectionService', 'F3\FLOW3\Reflection\Service', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'pointcutExpressionParser' => new \F3\FLOW3\Object\ConfigurationProperty('pointcutExpressionParser', 'F3\FLOW3\AOP\PointcutExpressionParser', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'cacheFactory' => new \F3\FLOW3\Object\ConfigurationProperty('cacheFactory', 'F3\FLOW3\Cache\Factory', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-				'configurationManager' => new \F3\FLOW3\Object\ConfigurationProperty('configurationManager', 'F3\FLOW3\Configuration\Manager', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE)
+				'reflectionService' => new \F3\FLOW3\Object\ConfigurationProperty('reflectionService', 'F3\FLOW3\Reflection\Service', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
+				'pointcutExpressionParser' => new \F3\FLOW3\Object\ConfigurationProperty('pointcutExpressionParser', 'F3\FLOW3\AOP\PointcutExpressionParser', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
+				'cacheFactory' => new \F3\FLOW3\Object\ConfigurationProperty('cacheFactory', 'F3\FLOW3\Cache\Factory', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
+				'configurationManager' => new \F3\FLOW3\Object\ConfigurationProperty('configurationManager', 'F3\FLOW3\Configuration\Manager', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT)
 			);
 			$objectConfiguration->setProperties($properties);
 			$this->objectManager->setObjectConfiguration($objectConfiguration);
@@ -676,8 +676,10 @@ final class FLOW3 {
 				if (!$this->objectManager->isObjectRegistered($objectName)) {
 					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Tried to configure unknown object "' . $objectName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
 				}
-				$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
-				$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+				if (is_array($rawObjectConfiguration)) {
+					$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
+					$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+				}
 			}
 		}
 

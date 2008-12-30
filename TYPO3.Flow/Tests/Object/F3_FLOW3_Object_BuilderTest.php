@@ -16,7 +16,7 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_BasicClass.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithOptionalConstructorArguments.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithOptionalArguments.php');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_SomeInterface.php');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_SomeImplementation.php');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithSomeImplementationInjected.php');
@@ -90,14 +90,14 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
-		$objectConfiguration->setLifecycleInitializationMethod('initializeAfterPropertiesSet');
+		$objectConfiguration->setLifecycleInitializationMethodName('initializeAfterPropertiesSet');
 		$objectConfiguration->setProperties(array(
-			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-			new \F3\FLOW3\Object\ConfigurationProperty('secondDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
+			new \F3\FLOW3\Object\ConfigurationProperty('secondDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
 			new \F3\FLOW3\Object\ConfigurationProperty('injectOrSetMethod', 'dummy', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 
 		$this->assertSame($object->getFirstDependency(), $injectedClass, 'The class ' . $injectedClassName . ' (first dependency) has not been setter-injected although it should have been.' . get_class($object->getFirstDependency()));
 	}
@@ -114,7 +114,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
 		$objectConfiguration->setProperty($someConfigurationProperty);
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 		$this->assertEquals($time, $object->getSomeProperty(), 'The straight value has not been setter-injected although it should have been.');
 	}
 
@@ -134,7 +134,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
 		$objectConfiguration->setProperty($someConfigurationProperty);
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 		$this->assertEquals($someArray, $object->getSomeProperty(), 'The array has not been setter-injected although it should have been.');
 	}
 
@@ -151,14 +151,14 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
-		$objectConfiguration->setLifecycleInitializationMethod('initializeAfterPropertiesSet');
+		$objectConfiguration->setLifecycleInitializationMethodName('initializeAfterPropertiesSet');
 		$objectConfiguration->setProperties(array(
-			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
-			new \F3\FLOW3\Object\ConfigurationProperty('secondDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
+			new \F3\FLOW3\Object\ConfigurationProperty('secondDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
 			new \F3\FLOW3\Object\ConfigurationProperty('injectOrSetMethod', 'dummy', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 
 		$this->assertSame($object->getSecondDependency(), $injectedClass, 'The class ' . $injectedClassName . ' (second dependency) has not been setter-injected although it should have been.');
 	}
@@ -174,8 +174,92 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 			new \F3\FLOW3\Object\ConfigurationProperty('injectOrSetMethod', 'dummy', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 		$this->assertEquals('inject', $object->injectOrSetMethod, 'Setter inject was done via the set* method but inject* should have been preferred!');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheValueOfAnObjectPropertyIsOfTypeStringItSpecifiesTheObjectToInject() {
+		$injectedClassName = uniqid('Injected');
+		eval('namespace F3\Virtual; class ' . $injectedClassName . '{}');
+		$injectedClassName = 'F3\Virtual\\' . $injectedClassName;
+		$injectedClass = new $injectedClassName();
+		$this->mockObjectManager->expects($this->any())->method('getObject')->with($injectedClassName)->will($this->returnValue($injectedClass));
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setProperties(array(
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+		$this->assertSame($object->getFirstDependency(), $injectedClass);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheValueOfAnObjectPropertyIsAnObjectConfigurationObjectItSpecifiesTheObjectToInjectAndOverridesItsObjectConfiguration() {
+		$injectedClassName = uniqid('Injected');
+		eval('namespace F3\Virtual; class ' . $injectedClassName . '{}');
+		$injectedClassName = 'F3\Virtual\\' . $injectedClassName;
+
+		$injectedObjectConfiguration = new \F3\FLOW3\Object\Configuration('InjectedObject', $injectedClassName);
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setProperties(array(
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedObjectConfiguration, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+		$this->assertType($injectedClassName, $object->getFirstDependency());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheValueOfAnObjectArgumentIsOfTypeStringItSpecifiesTheObjectToInject() {
+		$injectedClassName = uniqid('Injected');
+		eval('namespace F3\Virtual; class ' . $injectedClassName . '{}');
+		$injectedClassName = 'F3\Virtual\\' . $injectedClassName;
+		$injectedClass = new $injectedClassName();
+		$this->mockObjectManager->expects($this->any())->method('getObject')->with($injectedClassName)->will($this->returnValue($injectedClass));
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, $injectedClassName, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
+		$this->assertSame($object->argument1, $injectedClass);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheValueOfAnObjectArgumentIsAnObjectConfigurationObjectItSpecifiesTheObjectToInjectAndOverridesItsObjectConfiguration() {
+		$injectedClassName = uniqid('Injected');
+		eval('namespace F3\Virtual; class ' . $injectedClassName . '{}');
+		$injectedClassName = 'F3\Virtual\\' . $injectedClassName;
+
+		$injectedObjectConfiguration = new \F3\FLOW3\Object\Configuration('InjectedObject', $injectedClassName);
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, $injectedObjectConfiguration, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
+		$this->assertType($injectedClassName, $object->argument1);
 	}
 
 	/**
@@ -191,14 +275,14 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$injectedClass = new $injectedClassName();
 		$this->mockObjectManager->expects($this->once())->method('getObject')->with($injectedClassName)->will($this->returnValue($injectedClass));
 
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments');
-		$objectConfiguration->setConstructorArguments(array(
-			new \F3\FLOW3\Object\ConfigurationArgument(1, $injectedClassName, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE),
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, $injectedClassName, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT),
 			new \F3\FLOW3\Object\ConfigurationArgument(2, 42, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			new \F3\FLOW3\Object\ConfigurationArgument(3, 'Foo Bar Skårhøj', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
 
 		$injectionSucceeded = (
 			$object->argument1 === $injectedClass &&
@@ -206,25 +290,6 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 			$object->argument3 === 'Foo Bar Skårhøj'
 		);
 		$this->assertTrue($injectionSucceeded, 'The class Injected class has not been (correctly) constructor-injected although it should have been.');
-	}
-
-	/**
-	 * Checks if createObject does a constructor injection with a third dependency correctly
-	 *
-	 * @ test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function createObjectCanDoConstructorInjectionWithThirdDependency() {
-			// load and modify the configuration a bit:
-			// ClassWithOptionalConstructorArguments depends on InjectedClassWithDependencies which depends on InjectedClass
-		$objectConfigurations = $this->objectManager->getObjectConfigurations();
-		$objectConfigurations['F3\TestPackage\ClassWithOptionalConstructorArguments']->setConstructorArgument(new \F3\FLOW3\Object\ConfigurationArgument(1, 'F3\TestPackage\InjectedClassWithDependencies', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE));
-		$this->objectManager->setObjectConfigurations($objectConfigurations);
-		$objectConfiguration = $objectConfigurations['F3\TestPackage\ClassWithOptionalConstructorArguments'];
-
-		$object = $this->objectBuilder->createObject('F3\TestPackage\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
-
-		$this->assertTrue($object->argument1->injectedDependency instanceof \F3\TestPackage\InjectedClass, 'Constructor injection with multiple dependencies failed.');
 	}
 
 	/**
@@ -239,12 +304,12 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 			199 => 837,
 			'doo' => TRUE
 		);
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments');
-		$objectConfiguration->setConstructorArguments(array(
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
 			new \F3\FLOW3\Object\ConfigurationArgument(1, $someArray, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
 		$this->assertEquals($someArray, $object->argument1, 'The array has not been constructor-injected although it should have been.');
 	}
 
@@ -257,13 +322,13 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function createObjectCanDoConstructorInjectionWithNumericValues() {
 		$secondValue = 99;
 		$thirdValue = 3.14159265359;
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments');
-		$objectConfiguration->setConstructorArguments(array(
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
 			new \F3\FLOW3\Object\ConfigurationArgument(2, $secondValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			new \F3\FLOW3\Object\ConfigurationArgument(3, $thirdValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
 		$this->assertEquals($secondValue, $object->argument2, 'The second straight numeric value has not been constructor-injected although it should have been.');
 		$this->assertEquals($thirdValue, $object->argument3, 'The third straight numeric value has not been constructor-injected although it should have been.');
 	}
@@ -277,13 +342,13 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function createObjectCanDoConstructorInjectionWithBooleanValuesAndObjects() {
 		$firstValue = TRUE;
 		$thirdValue = new \ArrayObject(array('foo' => 'bar'));
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments');
-		$objectConfiguration->setConstructorArguments(array(
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
 			new \F3\FLOW3\Object\ConfigurationArgument(1, $firstValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			new \F3\FLOW3\Object\ConfigurationArgument(3, $thirdValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
 		$this->assertEquals($firstValue, $object->argument1, 'The first value (boolean) has not been constructor-injected although it should have been.');
 		$this->assertEquals($thirdValue, $object->argument3, 'The third argument (an object) has not been constructor-injected although it should have been.');
 	}
@@ -298,13 +363,13 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$firstValue = "Hir hier deser d'Sonn am, fu dem Ierd d'Liewen, ze schéinste Kirmesdag hannendrun déi.";
 		$secondValue = 'Oho ha halo\' maksimume, "io fari jeso naŭ plue" om backslash (\\)nea komo triliono postpostmorgaŭ.';
 
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments');
-		$objectConfiguration->setConstructorArguments(array(
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
 			new \F3\FLOW3\Object\ConfigurationArgument(1, $firstValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 			new \F3\FLOW3\Object\ConfigurationArgument(2, $secondValue, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalConstructorArguments', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
 		$this->assertEquals($firstValue, $object->argument1, 'The first value (string with quotes) has not been constructor-injected although it should have been.');
 		$this->assertEquals($secondValue, $object->argument2, 'The second value (string with double quotes and backslashes) has not been constructor-injected although it should have been.');
 	}
@@ -315,7 +380,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createObjectCallsLifecycleInitializationMethod() {
+	public function createObjectCallsLifecycleInitializationMethodName() {
 		$injectedClassName = uniqid('Injected');
 		eval('namespace F3\Virtual; class ' . $injectedClassName . ' {}');
 		$injectedClassName = 'F3\Virtual\\' .$injectedClassName;
@@ -324,13 +389,44 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
-		$objectConfiguration->setLifecycleInitializationMethod('initializeAfterPropertiesSet');
+		$objectConfiguration->setLifecycleInitializationMethodName('initializeAfterPropertiesSet');
 		$objectConfiguration->setProperties(array(
-			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_REFERENCE),
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', $injectedClassName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
 		));
 
-		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 		$this->assertTrue($object->hasBeenInitialized(), 'Obviously the lifecycle initialization method of \F3\TestPackage\BasicClass has not been called after setter injection!');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createObjectUsesACustomFactoryForInstantiatingTheObjectIfOneWasSpecifiedInTheObjectConfiguration() {
+		$className = uniqid('Foo');
+		eval('namespace F3\Virtual; class ' . $className . ' {}');
+		$fullClassName = 'F3\Virtual\\' .$className;
+
+		$expectedObject = new \ArrayObject();
+
+		$mockFactory = $this->getMock('MockFactory', array('createTheThing'));
+		$mockFactory->expects($this->once())
+			->method('createTheThing')
+			->with('Argument No. 1', 'Argument No. 2')
+			->will($this->returnValue($expectedObject));
+
+		$this->mockObjectManager->expects($this->once())->method('getObject')->with(get_class($mockFactory))->will($this->returnValue($mockFactory));
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($fullClassName);
+		$objectConfiguration->setFactoryClassName(get_class($mockFactory));
+		$objectConfiguration->setFactoryMethodName('createTheThing');
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, 'Argument No. 1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			new \F3\FLOW3\Object\ConfigurationArgument(2, 'Argument No. 2', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
+		));
+
+		$actualObject = $this->objectBuilder->createObject($fullClassName, $objectConfiguration);
+		$this->assertSame($expectedObject, $actualObject);
 	}
 
 	/**
@@ -365,7 +461,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockReflectionService->expects($this->at(1))->method('getMethodParameters')->with($objectName, '__construct')->will($this->returnValue($constructorParameters));
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithSomeImplementationInjected');
 
-		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration);
 		$this->assertType('F3\FLOW3\Tests\Object\Fixture\SomeImplementation', $object->argument1, 'Autowiring didn\'t work out for ' . $objectName);
 	}
 
@@ -404,11 +500,11 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$injectedClass = new $injectedClassName();
 		$this->mockObjectManager->expects($this->at(1))->method('getObject')->with($injectedClassName)->will($this->returnValue($injectedClass));
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithSomeImplementationInjected');
-		$objectConfiguration->setConstructorArguments(array(
-			new \F3\FLOW3\Object\ConfigurationArgument(2, $injectedClassName, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_REFERENCE)
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(2, $injectedClassName, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT)
 		));
 
-		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration);
 		$this->assertSame($object->argument2, $injectedClass, 'Autowiring didn\'t respect that the second constructor argument was already set in the object configuration!');
 	}
 
@@ -453,7 +549,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockReflectionService->expects($this->at(2))->method('getMethodParameters')->with($objectName, 'injectOptionalSetterArgument')->will($this->returnValue($setterParameters));
 		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Tests\Object\Fixture\SomeInterface')->will($this->returnValue(new \F3\FLOW3\Tests\Object\Fixture\SomeImplementation));
 
-		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration, array());
+		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration);
 		$this->assertType('F3\FLOW3\Tests\Object\Fixture\SomeImplementation', $object->optionalSetterArgument , 'Autowiring didn\'t work for the optional setter injection via the inject*() method.');
 	}
 
@@ -476,7 +572,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockReflectionService->expects($this->at(1))->method('getMethodParameters')->with($objectName, 'injectRequiredSetterArgument')->will($this->returnValue($setterParameters));
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
 
-		$this->objectBuilder->createObject($objectName, $objectConfiguration, array());
+		$this->objectBuilder->createObject($objectName, $objectConfiguration);
 	}
 
 	/**
@@ -486,7 +582,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteObjectReturnsAnObjectOfTheSpecifiedType() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
+		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertType('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $object);
 	}
 
@@ -498,7 +594,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteObjectRejectsObjectTypesWhichAreNotPersistable() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
 
-		$this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration, array());
+		$this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 	}
 
 	/**
@@ -508,7 +604,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteObjectPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
+		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertFalse($object->constructorHasBeenCalled);
 	}
 
@@ -519,7 +615,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	public function reconstituteObjectCallsTheTargetObjectsWakeupMethod() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration, array());
+		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertTrue($object->wakeupHasBeenCalled);
 	}
 
