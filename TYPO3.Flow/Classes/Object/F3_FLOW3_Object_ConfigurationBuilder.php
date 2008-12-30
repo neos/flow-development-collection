@@ -56,12 +56,11 @@ class ConfigurationBuilder {
 					if (is_array($optionValue)) {
 						foreach ($optionValue as $propertyName => $propertyValue) {
 							if (isset($propertyValue['value'])) {
-								$propertyType = \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE;
-								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue['value'], $propertyType);
+								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue['value'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE);
 							} elseif (isset($propertyValue['object'])) {
 								$property = self::parsePropertyOfTypeObject($propertyName, $propertyValue['object'], $configurationSourceHint);
 							} elseif (isset($propertyValue['setting'])) {
-
+								$property = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $propertyValue['setting'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING);
 							} else {
 								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for property "' . $propertyName . '", instead found "' . (is_array($propertyValue) ? implode(', ', array_keys($propertyValue)) : $propertyValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563249);
 							}
@@ -77,7 +76,7 @@ class ConfigurationBuilder {
 							} elseif (isset($argumentValue['object'])) {
 								$argument = self::parseArgumentOfTypeObject($argumentName, $argumentValue['object'], $configurationSourceHint);
 							} elseif (isset($argumentValue['setting'])) {
-
+								$argument = new \F3\FLOW3\Object\ConfigurationArgument($argumentName, $argumentValue['setting'], \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_SETTING);
 							} else {
 								throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration syntax. Expecting "value", "object" or "setting" as value for argument "' . $argumentName . '", instead found "' . (is_array($argumentValue) ? implode(', ', array_keys($argumentValue)) : $argumentValue) . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1230563250);
 							}

@@ -118,6 +118,23 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function settingsCanBeInjectedAsArgumentOrProperty() {
+		$configurationArray = array();
+		$configurationArray['arguments'][1]['setting'] = 'F3.Foo.Bar';
+		$configurationArray['properties']['someProperty']['setting'] = 'F3.Bar.Baz';
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', 'TestObject');
+		$objectConfiguration->setArgument(new \F3\FLOW3\Object\ConfigurationArgument(1, 'F3.Foo.Bar', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING));
+		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('someProperty', 'F3.Bar.Baz', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING));
+
+		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);
+		$this->assertEquals($objectConfiguration, $builtObjectConfiguration);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function existingObjectConfigurationIsUsedIfSpecified() {
 		$configurationArray = array();
 		$configurationArray['scope'] = 'prototype';

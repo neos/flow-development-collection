@@ -263,6 +263,48 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theValueOfSettingsCanBeInjectedThroughArgumentsOfTypeSetting() {
+		$settings = array('Bar' => array('Baz' => 'TheValue'));
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('Foo')->will($this->returnValue($settings));
+
+		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, 'Foo.Bar.Baz', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_SETTING)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
+		$this->assertSame($object->argument1, 'TheValue');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function theValueOfSettingsCanBeInjectedThroughPropertiesOfTypeSetting() {
+		$settings = array('Bar' => array('Baz' => 'TheValue'));
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('Foo')->will($this->returnValue($settings));
+
+		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setProperties(array(
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', 'Foo.Bar.Baz', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+		$this->assertSame('TheValue', $object->getFirstDependency());
+	}
+
+	/**
 	 * Checks if createObject does a simple constructor injection correctly
 	 *
 	 * @test

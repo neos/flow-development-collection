@@ -33,6 +33,7 @@ class ConfigurationProperty {
 
 	const PROPERTY_TYPES_STRAIGHTVALUE = 0;
 	const PROPERTY_TYPES_OBJECT = 1;
+	const PROPERTY_TYPES_SETTING = 2;
 
 	/**
 	 * @var string Name of the property
@@ -80,7 +81,7 @@ class ConfigurationProperty {
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string', 1168003690);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new \InvalidArgumentException('$type is not valid', 1168003691);
+		if (!is_integer($type) || $type < 0 || $type > 2) throw new \InvalidArgumentException('$type is not valid', 1168003691);
 		if ($objectConfiguration !== NULL && $type !== self::PROPERTY_TYPES_OBJECT) throw new InvalidArgumentException('A custom object configuration has been specified for property "' . $name . '" but the proeprty type is not object.', 1230549771);
 		$this->name = $name;
 		$this->value = $value;

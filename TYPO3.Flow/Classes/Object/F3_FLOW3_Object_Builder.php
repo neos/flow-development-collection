@@ -34,9 +34,20 @@ namespace F3\FLOW3\Object;
 class Builder {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterfac A reference to the object manager - used for fetching other objects while solving dependencies
+	 * A reference to the object manager - used for fetching other objects while solving dependencies
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
+
+	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $objectFactory;
+
+	/**
+	 * @var \F3\FLOW3\Configuration\Manager
+	 */
+	protected $configurationManager;
 
 	/**
 	 * @var \F3\FLOW3\Reflection\Service A reference to the reflection service
@@ -44,7 +55,8 @@ class Builder {
 	protected $reflectionService;
 
 	/**
-	 * @var array A little registry of object names which are currently being built. Used to prevent endless loops due to circular dependencies.
+	 * A little registry of object names which are currently being built. Used to prevent endless loops due to circular dependencies.
+	 * @var array
 	 */
 	protected $objectsBeingBuilt = array();
 
@@ -86,6 +98,17 @@ class Builder {
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the configuration manager
+	 *
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+		$this->configurationManager = $configurationManager;
 	}
 
 	/**
@@ -257,19 +280,28 @@ class Builder {
 	protected function injectArguments($arguments, &$preparedArguments) {
 		foreach ($arguments as $argument) {
 			if ($argument !== NULL) {
+				$argumentValue = $argument->getValue();
 				switch ($argument->getType()) {
 					case \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT:
-						$objectConfiguration = $argument->getValue();
-						if ($objectConfiguration instanceof \F3\FLOW3\Object\Configuration) {
-							$preparedArguments[] = $this->createObject($objectConfiguration->getObjectName(), $objectConfiguration);
+						if ($argumentValue instanceof \F3\FLOW3\Object\Configuration) {
+							$preparedArguments[] = $this->createObject($argumentValue->getObjectName(), $argumentValue);
 						} else {
-							$preparedArguments[] = $this->objectManager->getObject($objectConfiguration);
+							$preparedArguments[] = $this->objectManager->getObject($argumentValue);
 						}
 					break;
 					case \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE:
-						$preparedArguments[] = $argument->getValue();
+						$preparedArguments[] = $argumentValue;
 					break;
-					default:
+					case \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_SETTING:
+						if (strpos($argumentValue, '.') !== FALSE) {
+							$settingPath = explode('.', $argumentValue);
+							$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+							$value = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
+						} else {
+							$value = $this->configurationManager->getSettings($argumentValue);
+						}
+						$preparedArguments[] = $value;
+					break;
 				}
 			} else {
 				$preparedArguments[] = NULL;
@@ -287,26 +319,37 @@ class Builder {
 	 */
 	protected function injectSetterProperties($setterProperties, $object) {
 		foreach ($setterProperties as $propertyName => $property) {
+			$propertyValue = $property->getValue();
 			switch ($property->getType()) {
 				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT:
-					$objectConfiguration = $property->getValue();
-					if ($objectConfiguration instanceof \F3\FLOW3\Object\Configuration) {
-						$propertyValue = $this->createObject($objectConfiguration->getObjectName(), $objectConfiguration);
+					if ($propertyValue instanceof \F3\FLOW3\Object\Configuration) {
+						$preparedValue = $this->createObject($propertyValue->getObjectName(), $propertyValue);
 					} else {
-						$propertyValue = $this->objectManager->getObject($objectConfiguration);
+						$preparedValue = $this->objectManager->getObject($propertyValue);
 					}
 				break;
 				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE:
-					$propertyValue = $property->getValue();
+					$preparedValue = $propertyValue;
 				break;
+				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING:
+					if (strpos($propertyValue, '.') !== FALSE) {
+						$settingPath = explode('.', $propertyValue);
+						$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+						$preparedValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
+					} else {
+						$preparedValue = $this->configurationManager->getSettings($propertyValue);
+					}
+				break;
+				default:
+					var_dump($propertyValue);
 			}
 			$setterMethodName = 'inject' . ucfirst($propertyName);
 			if (method_exists($object, $setterMethodName)) {
-				$object->$setterMethodName($propertyValue);
+				$object->$setterMethodName($preparedValue);
 			} else {
 				$setterMethodName = 'set' . ucfirst($propertyName);
 				if (method_exists($object, $setterMethodName)) {
-					$object->$setterMethodName($propertyValue);
+					$object->$setterMethodName($preparedValue);
 				}
 			}
 		}

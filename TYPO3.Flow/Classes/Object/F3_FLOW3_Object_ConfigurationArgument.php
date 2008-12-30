@@ -34,6 +34,7 @@ class ConfigurationArgument {
 
 	const ARGUMENT_TYPES_STRAIGHTVALUE = 0;
 	const ARGUMENT_TYPES_OBJECT = 1;
+	const ARGUMENT_TYPES_SETTING = 2;
 
 	/**
 	 * The position of the constructor argument. Counting starts at "1".
@@ -76,7 +77,7 @@ class ConfigurationArgument {
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		if (!is_integer($index)) throw new \InvalidArgumentException('$index must be of type integer', 1168003692);
-		if (!is_integer($type) || $type < 0 || $type > 1) throw new \InvalidArgumentException('$type is not valid', 1168003693);
+		if (!is_integer($type) || $type < 0 || $type > 2) throw new \InvalidArgumentException('$type is not valid', 1168003693);
 		$this->index = $index;
 		$this->value = $value;
 		$this->type = $type;

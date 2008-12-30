@@ -63,5 +63,31 @@ class ArraysTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue(\F3\FLOW3\Utility\Arrays::containsMultipleTypes(array(1, 'string', 1.25, new \stdClass())), 'An array with mixed contents was not seen as containing multiple types');
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath() {
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		$this->assertSame('the value', \F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 2)));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getValueByPathReturnsNullIfTheSegementsOfThePathDontExist() {
+		$array = array('Foo' => array('Bar' => array('Baz' => array(2 => 'the value'))));
+		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Bax', 2)));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getValueByPathReturnsNullIfThePathHasMoreSegmentsThanTheGivenArray() {
+		$array = array('Foo' => array('Bar' => array('Baz' => 'the value')));
+		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
+	}
 }
 ?>
