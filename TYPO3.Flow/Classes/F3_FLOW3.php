@@ -223,10 +223,13 @@ final class FLOW3 {
 		$this->reflectionService = new \F3\FLOW3\Reflection\Service();
 		$this->objectFactory = new \F3\FLOW3\Object\Factory();
 
+		$objectBuilder = new \F3\FLOW3\Object\Builder;
+		$objectBuilder->injectConfigurationManager($this->configurationManager);
+
 		$this->objectManager = new \F3\FLOW3\Object\Manager();
 		$this->objectManager->injectReflectionService($this->reflectionService);
 		$this->objectManager->injectObjectRegistry(new \F3\FLOW3\Object\TransientRegistry);
-		$this->objectManager->injectObjectBuilder(new \F3\FLOW3\Object\Builder);
+		$this->objectManager->injectObjectBuilder($objectBuilder);
 		$this->objectManager->injectObjectFactory($this->objectFactory);
 		$this->objectManager->setContext($this->context);
 		$this->objectManager->initialize();
