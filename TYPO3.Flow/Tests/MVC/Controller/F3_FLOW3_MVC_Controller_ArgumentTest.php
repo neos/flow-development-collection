@@ -25,22 +25,31 @@ namespace F3\FLOW3\MVC\Controller;
 class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
-	public function argumentScopeIsPrototype() {
-		$argument1 = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'test');
-		$argument2 = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'test');
-		$this->assertNotSame($argument1, $argument2, 'Arguments seem to be identical.');
+	protected $mockObjectManager;
+
+	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $mockObjectFactory;
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setUp() {
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->mockObjectManager->expects($this->any())->method('getObjectFactory')->will($this->returnValue($this->mockObjectFactory));
 	}
 
 	/**
 	 * @test
-	 * @expectedException InvalidArgumentException
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \InvalidArgumentException
 	 */
 	public function constructingArgumentWithoutNameThrowsException() {
-		$this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument');
+		new \F3\FLOW3\MVC\Controller\Argument(NULL, 'Text', $this->mockObjectManager);
 	}
 
 	/**
@@ -49,7 +58,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructingArgumentWithInvalidNameThrowsException() {
-		$this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', new \ArrayObject());
+		new \F3\FLOW3\MVC\Controller\Argument(new \ArrayObject(), 'Text', $this->mockObjectManager);
 	}
 
 	/**
@@ -57,7 +66,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function passingDataTypeToConstructorReallySetsTheDataType() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy', 'Number');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Number', $this->mockObjectManager);
 		$this->assertEquals('Number', $argument->getDataType(), 'The specified data type has not been set correctly.');
 	}
 
@@ -66,7 +75,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setShortNameProvidesFluentInterface() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$returnedArgument = $argument->setShortName('x');
 		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
 	}
@@ -76,7 +85,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueProvidesFluentInterface() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$returnedArgument = $argument->setValue('x');
 		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
 	}
@@ -86,7 +95,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setShortHelpMessageProvidesFluentInterface() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$returnedArgument = $argument->setShortHelpMessage('x');
 		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
 	}
@@ -96,7 +105,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function toStringReturnsTheStringVersionOfTheArgumentsValue() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$argument->setValue(123);
 
 		$this->assertSame((string)$argument, '123', 'The returned argument is not a string.');
@@ -108,7 +117,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function dataTypeValidatorCanBeAFullClassname() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'SomeArgument', 'F3\FLOW3\Validation\Validator\Text');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\Text')));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', 'F3\FLOW3\Validation\Validator\Text', $this->mockObjectManager);
 
 		$this->assertType('F3\FLOW3\Validation\Validator\Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
 	}
@@ -118,7 +130,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function dataTypeValidatorCanBeAShortName() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'SomeArgument', 'Text');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('Text')->will($this->returnValue(FALSE));
+		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\Text')));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', 'Text', $this->mockObjectManager);
 
 		$this->assertType('F3\FLOW3\Validation\Validator\Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
 	}
@@ -128,7 +143,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function defaultDataTypeIsText() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'SomeArgument');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('Text')->will($this->returnValue(FALSE));
+		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\Text')));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', NULL, $this->mockObjectManager);
 
 		$this->assertType('F3\FLOW3\Validation\Validator\Text', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
 	}
@@ -138,8 +156,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewValidatorChainCreatesANewValidatorChainObject() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
-		$argument->setNewValidatorChain(array('F3\FLOW3\Validation\Validator\Text', 'F3\FLOW3\Validation\Validator\EmailAddress'));
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\Chain')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\Chain')));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
+		$argument->setNewValidatorChain(array());
 
 		$this->assertType('F3\FLOW3\Validation\Validator\Chain', $argument->getValidator(), 'The returned validator is not a chain as expected.');
 	}
@@ -149,7 +169,13 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewValidatorChainAddsThePassedValidatorsToTheCreatedValidatorChain() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Chain()));
+		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->onConsecutiveCalls(FALSE, TRUE, TRUE));
+		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Validator\EmailAddress')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\EmailAddress()));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$argument->setNewValidatorChain(array('F3\FLOW3\Validation\Validator\Text', 'F3\FLOW3\Validation\Validator\EmailAddress'));
 
 		$validatorChain = $argument->getValidator();
@@ -162,7 +188,13 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewValidatorChainCanHandleShortValidatorNames() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Chain()));
+		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->onConsecutiveCalls(FALSE));
+		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Validator\EmailAddress')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\EmailAddress()));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$argument->setNewValidatorChain(array('Text', 'EmailAddress'));
 
 		$validatorChain = $argument->getValidator();
@@ -175,8 +207,10 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewFilterChainCreatesANewFilterChainObject() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
-		$argument->setNewFilterChain(array('F3\FLOW3\Validation\Filter\Chain', 'F3\FLOW3\Validation\Filter\Chain'));
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Filter\Chain')));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
+		$argument->setNewFilterChain(array());
 
 		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $argument->getFilter(), 'The returned filter is not a chain as expected.');
 	}
@@ -186,7 +220,13 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewFilterChainAddsThePassedFiltersToTheCreatedFilterChain() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->onConsecutiveCalls(FALSE, TRUE, TRUE));
+		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$argument->setNewFilterChain(array('F3\FLOW3\Validation\Filter\Chain', 'F3\FLOW3\Validation\Filter\Chain'));
 
 		$filterChain = $argument->getFilter();
@@ -199,7 +239,13 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewFilterChainCanHandleShortFilterNames() {
-		$argument = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Argument', 'dummy');
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->returnValue(FALSE));
+		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\Text()));
+		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
+
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
 		$argument->setNewFilterChain(array('Chain', 'Chain'));
 
 		$filterChain = $argument->getFilter();

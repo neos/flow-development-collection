@@ -35,7 +35,8 @@ namespace F3\FLOW3\Property;
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper = $objectFactory->create('F3\FLOW3\Property\Mapper', $target);
+ * $mapper = $objectFactory->create('F3\FLOW3\Property\Mapper');
+ * $mapper->setTarget($target);
  * $mapper->map($source);
  *
  * Now the target object equals the source object.
