@@ -7,13 +7,15 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>FLOW3 Bootstrap</title>
 
-  <para>This section is work in progress and only contains some bullet points
-  for the later documenation.</para>
+  <para><note>
+      <para>This section is work in progress and only contains some bullet
+      points for the later documentation.</para>
+    </note></para>
 
   <section>
     <title>Application Context</title>
 
-    <para>The FLOW3 Framework can be started in different application
+    <para>The FLOW3 Framework can be launched in different application
     contexts. An application context basically is a set of configuration which
     has been defined for a certain context. By default, FLOW3 provides
     configuration for the <literal>Production</literal>,
@@ -22,16 +24,22 @@
     adding configuration for it accordingly (refer to the Configuration
     section to learn more about configuration).</para>
 
-    <para>The FLOW3 boot strap is always instantiated in a certain application
-    context. By default (when calling the <filename>index.php</filename> file)
-    the context is <literal>Production</literal>. In the standard distribution
-    a file <filename>index_dev.php</filename> exists which runs FLOW3 in the
+    <para>The FLOW3 boot strap (i.e. the class
+    <classname>\F3\FLOW3\FLOW3</classname>) is always instantiated in a single
+    application context. By default (when calling the
+    <filename>index.php</filename> file) the context is
+    <literal>Production</literal>. In the standard distribution a file
+    <filename>index_dev.php</filename> exists which runs FLOW3 in the
     <literal>Development</literal> context.</para>
   </section>
 
   <section>
     <title>Boot Sequence</title>
 
-    <para></para>
+    <para>At the time of this writing, the sequence in which the various
+    modules of FLOW3 are initialized is hardcoded into the bootstrap. The
+    solution we aim for is, however, a more flexible and cleaner approach
+    which is allows the modules to register themselves for
+    initialization.</para>
   </section>
 </section>

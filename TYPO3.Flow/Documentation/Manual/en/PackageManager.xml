@@ -9,15 +9,16 @@
 
   <para>FLOW3 is a package-based system. In fact, FLOW3 itself is just a
   package as well - but obviously an important one. Packages act as a
-  container for many different purposes: Most of them contain PHP code which
-  adds certain functionality, others only contain documentation and yet other
-  packages consist of templates, images or other resources. The TYPO3 project
-  hosts a package repository which acts as a convenient hub for interchanging
-  FLOW3 based packages with other community members.</para>
+  container for different matters: Most of them contain PHP code which adds
+  certain functionality, others only contain documentation and yet other
+  packages consist of templates, images or other resources. The <link
+  ns6:href="???">TYPO3 project</link> hosts a package repository which acts as
+  a convenient hub for interchanging FLOW3 based packages with other community
+  members.</para>
 
   <note>
-    <para>At the time of this writing the package repository is still in the
-    planning phase.</para>
+    <para>At the time of this writing the package repository for FLOW3 is
+    still in the planning phase.</para>
   </note>
 
   <section>
@@ -28,8 +29,8 @@
     package-related configuration. If you put your files into the right
     directories, everything will just work.</para>
 
-    <para>The suggested directory layout of a FLOW3 package is shown
-    below:</para>
+    <para>The suggested directory layout of a FLOW3 package is as
+    follows:</para>
 
     <para><variablelist>
         <varlistentry>
@@ -46,9 +47,9 @@
                   interface files directly to this directory or add
                   subdirectories to organize the content if necessary. All
                   classes or interfaces below this directory are handled by
-                  the autolading mechanism and will be registered at the
+                  the autoloading mechanism and will be registered at the
                   object manager automatically (and will thus be considered
-                  "objects").</para>
+                  "registered objects").</para>
                 </listitem>
               </varlistentry>
 
@@ -71,9 +72,10 @@
                 <term><filename>Documentation</filename></term>
 
                 <listitem>
-                  <para>Holds the package documentation. The english (DocBook)
-                  manual for example must be located in a subdirectory called
-                  <filename>Manual/en/</filename>. Please refer to the
+                  <para>Holds the package documentation. The English manual
+                  must be located in a subdirectory called
+                  <filename>Manual/en/</filename>. The format for manuals is
+                  <link ns6:href="???">DocBook</link>. Please refer to the
                   Documentor's Guide for more details about the directories
                   and files within this directory.</para>
                 </listitem>
@@ -210,7 +212,7 @@
     <para>As already mentioned, all classes which are found in the
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
-    classname as well as the file name. An example for a valid class name is
+    class name as well as the file name. An example for a valid class name is
     <classname>\F3\MyPackage\Controller\DefaultController</classname> while
     the file containing this class would be named
     <filename>F3_MyPackage_Controller_DefaultController.php</filename>.</para>
@@ -227,7 +229,7 @@
     with a namespace for different purposes. They save you from conflicts
     between packages which were provided by different parties.</para>
 
-    <para>Any public package needs to have a unique packge key which you need
+    <para>Any public package needs to have a unique package key which you need
     to register at <link ns6:href="http://typo3.org">forge.typo3.org</link>
     prior to use. But even if you develop a package for private use only, it's
     clever to register a package key for it.</para>
@@ -237,7 +239,7 @@
     <title>Importing and Installing Packages</title>
 
     <para>At this time the features for import and installation of packages
-    have not been implemented. The current behaviour is that all directories
+    have not been implemented. The current behavior is that all directories
     which are found below the <filename>Packages</filename> folder are assumed
     to be packages and are active by default. Just make sure that you created
     a <filename>Package.xml</filename> file in the <filename>Meta</filename>
@@ -265,11 +267,6 @@
     <para>Just create the package folder and subdirectories manually and copy
     &amp; adapt a <filename>Package.xml</filename> file from one of the other
     packages. Apart from that no further steps are necessary.</para>
-
-    <para>An alternative is to install <link
-    ns6:href="http://www.dev3.org/">DEV3</link> for Eclipse and use it's
-    wizard to create a package. It provides a nice editor for
-    <filename>Package.xml</filename> files as well.</para>
   </section>
 
   <section>
@@ -359,7 +356,7 @@
 
     <note>
       <para>If you are working with Eclipse, you might want to install the
-      <link ns6:href="http://dev3.org">DEV3 Plugin</link> which - among other
+      <link ns6:href="http://dev3.org">DEV3 plug-in</link> which - among other
       tools - provides you with a convenient Package.xml editor</para>
     </note>
   </section>
