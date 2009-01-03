@@ -214,7 +214,7 @@ class Mapper {
 	/**
 	 * Registers the given Property Editor for use with the specified property and with the given source format.
 	 * If no property is specified, it will be used for all. If no format is specified the default format will be used.
-	 * Note: You can only use one editor that is not set for a specific property. Use a editorChain, if you need more.
+	 * Note: You can only use one editor that is not set for a specific property. Use a composite editor, if you need more.
 	 *
 	 * @param  \F3\FLOW3\Property\EditorInterface $propertyEditor The property editor
 	 * @param  string $property The editor should only be used for this property
@@ -261,6 +261,7 @@ class Mapper {
 	 * @param  \ArrayObject $properties: Properties to map to the target object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function map(\ArrayObject $properties) {
 		$this->mappingResults = $this->createNewMappingResults();
@@ -422,17 +423,17 @@ class Mapper {
 		try {
 			if (isset($this->propertyEditors[$propertyName])) {
 				if ($this->propertyEditors[$propertyName]['format'] == 'default') {
-					$this->propertyEditors[$propertyName]->setProperty($propertyValue);
+					$this->propertyEditors[$propertyName]['propertyEditor']->setProperty($propertyValue);
 				} else {
-					$this->propertyEditors[$propertyName]->setAs($propertyValue, $this->propertyEditors[$propertyName]['format']);
+					$this->propertyEditors[$propertyName]['propertyEditor']->setAs($propertyValue, $this->propertyEditors[$propertyName]['format']);
 				}
-				$propertyValue = $this->propertyEditors[$propertyName]->getProperty();
+				$propertyValue = $this->propertyEditors[$propertyName]['propertyEditor']->getProperty();
 
 			} elseif (isset($this->propertyEditors['all'])) {
 				if ($this->propertyEditors['all']['format'] == 'default') {
 					$this->propertyEditors['all']['propertyEditor']->setProperty($propertyValue);
 				} else {
-					$this->propertyEditors['all']->setAs($propertyValue, $this->propertyEditors['all']['format']);
+					$this->propertyEditors['all']['propertyEditor']->setAs($propertyValue, $this->propertyEditors['all']['format']);
 				}
 				$propertyValue = $this->propertyEditors['all']['propertyEditor']->getProperty();
 			}

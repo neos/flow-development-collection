@@ -240,7 +240,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registeredPropertyEditorsAreCalledForTheRightProperties() {
+	public function aPropertyEditorRegisteredForAllPropertiesIsCalledCorrectly() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -259,6 +259,87 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1'));
 		$this->mapper->registerPropertyEditor($propertyEditor);
+
+		$this->mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function aPropertyEditorRegisteredForAllPropertiesWithASpecificFormatIsCalledCorrectly() {
+		$source = new \ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new \ArrayObject();
+		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
+		$propertyEditor->expects($this->once())->method('setAs')->with($this->equalTo('value1'), $this->equalTo('customFormat'));
+
+		$this->mapper->setTarget($target);
+		$this->mapper->setAllowedProperties(array('key1'));
+		$this->mapper->registerPropertyEditor($propertyEditor, 'all', 'customFormat');
+
+		$this->mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function aPropertyEditorRegisteredForASinglePropertyIsCalledCorrectly() {
+		$source = new \ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new \ArrayObject();
+		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
+		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value3'));
+
+		$this->mapper->setTarget($target);
+		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
+		$this->mapper->registerPropertyEditor($propertyEditor, 'key3');
+
+		$this->mapper->map($source);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function aPropertyEditorRegisteredForASinglePropertyWithASpecificFormatIsCalledCorrectly() {
+		$source = new \ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new \ArrayObject();
+		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
+		$propertyEditor->expects($this->once())->method('setAs')->with($this->equalTo('value3'), $this->equalTo('customFormat'));
+
+		$this->mapper->setTarget($target);
+		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
+		$this->mapper->registerPropertyEditor($propertyEditor, 'key3', 'customFormat');
 
 		$this->mapper->map($source);
 	}
