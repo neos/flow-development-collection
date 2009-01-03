@@ -254,7 +254,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$target = new \ArrayObject();
 		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value1'));
+		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1'));
@@ -281,7 +281,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$target = new \ArrayObject();
 		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAs')->with($this->equalTo('value1'), $this->equalTo('customFormat'));
+		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1'));
@@ -308,7 +308,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$target = new \ArrayObject();
 		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setProperty')->with($this->equalTo('value3'));
+		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
@@ -335,7 +335,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$target = new \ArrayObject();
 		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAs')->with($this->equalTo('value3'), $this->equalTo('customFormat'));
+		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));

@@ -77,10 +77,10 @@ abstract class AbstractCompositeEditor implements \F3\FLOW3\Property\EditorInter
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setAs($format, $property) {
+	public function setAsFormat($format, $property) {
 		if (!isset($this->propertyEditors[$format])) throw new \F3\FLOW3\Property\Exception\InvalidFormat('Format not supported.', 1210858950);
 
-		$this->propertyEditors[$format]->setAs($format, $property);
+		$this->propertyEditors[$format]->setAsFormat($format, $property);
 	}
 
 	/**
@@ -91,10 +91,10 @@ abstract class AbstractCompositeEditor implements \F3\FLOW3\Property\EditorInter
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getAs($format) {
+	public function getAsFormat($format) {
 		if (!isset($this->propertyEditors[$format])) throw new \F3\FLOW3\Property\Exception\InvalidFormat('Format not supported.', 1210858967);
 
-		return $this->propertyEditors[$format]->getAs($format);
+		return $this->propertyEditors[$format]->getAsFormat($format);
 	}
 }
 

@@ -422,22 +422,12 @@ class Mapper {
 	protected function invokePropertyEditor($propertyName, $propertyValue) {
 		try {
 			if (isset($this->propertyEditors[$propertyName])) {
-				if ($this->propertyEditors[$propertyName]['format'] == 'default') {
-					$this->propertyEditors[$propertyName]['propertyEditor']->setProperty($propertyValue);
-				} else {
-					$this->propertyEditors[$propertyName]['propertyEditor']->setAs($propertyValue, $this->propertyEditors[$propertyName]['format']);
-				}
+				$this->propertyEditors[$propertyName]['propertyEditor']->setAsFormat($this->propertyEditors[$propertyName]['format'], $propertyValue);
 				$propertyValue = $this->propertyEditors[$propertyName]['propertyEditor']->getProperty();
-
 			} elseif (isset($this->propertyEditors['all'])) {
-				if ($this->propertyEditors['all']['format'] == 'default') {
-					$this->propertyEditors['all']['propertyEditor']->setProperty($propertyValue);
-				} else {
-					$this->propertyEditors['all']['propertyEditor']->setAs($propertyValue, $this->propertyEditors['all']['format']);
-				}
+				$this->propertyEditors['all']['propertyEditor']->setAsFormat($this->propertyEditors['all']['format'], $propertyValue);
 				$propertyValue = $this->propertyEditors['all']['propertyEditor']->getProperty();
 			}
-
 		} catch (\F3\FLOW3\Property\Exception $exception) {
 			$this->mappingResults->addError($this->createNewValidationErrorObject('The property editor could not handle the given value in the given format.', 1210368164), $propertyName);
 		}
