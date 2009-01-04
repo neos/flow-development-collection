@@ -433,7 +433,11 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setPropertyEditor($className) {
-		$this->propertyEditor = $this->objectFactory->create($className);
+		if (is_string($className)) {
+			$this->propertyEditor = $this->objectFactory->create($className);
+		} else {
+			$this->propertyEditor = $className;
+		}
 		return $this;
 	}
 

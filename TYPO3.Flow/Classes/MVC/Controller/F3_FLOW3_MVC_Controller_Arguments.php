@@ -151,9 +151,9 @@ class Arguments extends \ArrayObject {
 		$argument->setRequired($isRequired);
 		
 		if ($this->objectManager->isObjectRegistered($dataType)) {
-			$propertyEditor = $this->objectFactory->create('F3\FLOW3\Property\Editor\DomainObjectPropertyEditor', $dataType);
+			$propertyEditor = $this->objectFactory->create('F3\FLOW3\Property\Editor\DomainObjectEditor', $dataType);
 			$argument->setPropertyEditor($propertyEditor)
-			         ->setPropertyInputFormat('array');
+			         ->setPropertyEditorInputFormat('array');
 		}
 		$this->addArgument($argument);
 		return $argument;

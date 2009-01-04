@@ -183,5 +183,17 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', TRUE);
 		$this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
 	}
+	
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function addNewArgumentCreatesDefaultPropertyEditor() {
+		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$addedArgument = $arguments->addNewArgument('dummyName', 'F3\TestPackage\BasicClass');
+		$this->assertEquals('F3\FLOW3\Property\Editor\DomainObjectEditor', get_class($addedArgument->getPropertyEditor()), 'Default property editor is not of type DomainObjectEditor.');
+		$this->assertEquals('array', $addedArgument->getPropertyEditorInputFormat(), 'Property editor not correctly initialized');
+		
+	}
 }
 ?>
