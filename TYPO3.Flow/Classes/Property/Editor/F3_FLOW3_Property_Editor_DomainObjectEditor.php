@@ -121,7 +121,7 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 			throw new \F3\FLOW3\Property\Exception\InvalidFormat('Only array format expected, ' . $format . ' given.', 1231017916);
 		}
 		
-		$targetObject = $this->objectFactory->create($this->domainObjectName);
+		$targetObject = $this->retrieveTargetObject();
 		$this->propertyMapper->setTarget($targetObject);
 		$this->propertyMapper->map(new \ArrayObject($property));
 		$this->domainObject = $targetObject;
@@ -148,6 +148,16 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 	 */
 	public function getSupportedFormats() {
 		return array('array');
+	}
+	
+	/**
+	 * Retrieve a new target object. Can use a repository or some special logic to retrieve/create the target object.
+	 * 
+	 * @return object The target object.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function retrieveTargetObject() {
+		return $this->objectFactory->create($this->domainObjectName);
 	}
 }
 ?>
