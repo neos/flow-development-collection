@@ -42,7 +42,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('someArgument'));
 		$argument->expects($this->any())->method('getValidator')->will($this->returnValue($customValidator));
 		$argument->expects($this->atLeastOnce())->method('getDatatypeValidator')->will($this->returnValue($datatypeValidator));
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory);
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory, $this->objectManager);
 		$arguments->addArgument($argument);
 
 		$argumentsValidator = new ArgumentsValidator($arguments, $this->objectFactory);
@@ -66,7 +66,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('someArgument'));
 		$argument->expects($this->atLeastOnce())->method('getValidator')->will($this->returnValue($customValidator));
 		$argument->expects($this->any())->method('getDatatypeValidator')->will($this->returnValue($datatypeValidator));
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory);
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory, $this->objectManager);
 		$arguments->addArgument($argument);
 
 		$argumentsValidator = new ArgumentsValidator($arguments, $this->objectFactory);
@@ -88,7 +88,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('someArgument'));
 		$argument->expects($this->atLeastOnce())->method('getValidator')->will($this->returnValue($mockValidator));
 		$argument->expects($this->any())->method('getDatatypeValidator')->will($this->returnValue($validatorAddingAnError));
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory);
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory, $this->objectManager);
 		$arguments->addArgument($argument);
 
 		$argumentsValidator = new ArgumentsValidator($arguments, $this->objectFactory);
@@ -114,7 +114,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$argument->expects($this->any())->method('getName')->will($this->returnValue('someArgument'));
 		$argument->expects($this->atLeastOnce())->method('getValidator')->will($this->returnValue($validatorAddingAnError));
 		$argument->expects($this->any())->method('getDatatypeValidator')->will($this->returnValue($mockValidator));
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory);
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->objectFactory, $this->objectManager);
 		$arguments->addArgument($argument);
 
 		$argumentsValidator = new ArgumentsValidator($arguments, $this->objectFactory);
