@@ -38,6 +38,11 @@ class Arguments extends \ArrayObject {
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\Object\ManagerInterface A reference to the object manager
+	 */
+	protected $objectManager;
+	
+	/**
 	 * @var array Names of the arguments contained by this object
 	 */
 	protected $argumentNames = array();
@@ -47,8 +52,9 @@ class Arguments extends \ArrayObject {
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
+		$this->objectManager = $objectManager;
 		parent::__construct();
 	}
 
@@ -132,6 +138,8 @@ class Arguments extends \ArrayObject {
 	 * If an argument with the same name exists already, it will be replaced by the
 	 * new argument object.
 	 *
+	 * If $dataType is an object registered at the Object Manager, it sets the default property editor to map this property.
+	 *
 	 * @param string $name Name of the argument
 	 * @param string $dataType Name of one of the built-in data types
 	 * @param boolean $isRequired TRUE if this argument should be marked as required
@@ -141,6 +149,12 @@ class Arguments extends \ArrayObject {
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
 		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
+		
+		if ($this->objectManager->isObjectRegistered($dataType)) {
+			$propertyEditor = $this->objectFactory->create('F3\FLOW3\Property\Editor\DomainObjectPropertyEditor', $dataType);
+			$argument->setPropertyEditor($propertyEditor)
+			         ->setPropertyInputFormat('array');
+		}
 		$this->addArgument($argument);
 		return $argument;
 	}
