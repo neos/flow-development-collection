@@ -22,6 +22,7 @@ require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Ob
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithSomeImplementationInjected.php');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ReconstitutableClassWithSimpleProperties.php');
 require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithUnmatchedRequiredSetterDependency.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithInjectSettingsMethod.php');
 
 /**
  * @package FLOW3
@@ -176,6 +177,22 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 		$this->assertEquals('inject', $object->injectOrSetMethod, 'Setter inject was done via the set* method but inject* should have been preferred!');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function autowiringDetectsInjectSettingsMethodAndInjectsTheSettingsOfTheObjectsPackage() {
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('the settings')));
+		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
+
+		$objectName = 'F3\FLOW3\Tests\Object\Fixture\ClassWithInjectSettingsMethod';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+
+		$object = $this->objectBuilder->createObject($objectName, $objectConfiguration);
+		$this->assertSame(array('the settings'), $object->settings);
 	}
 
 	/**

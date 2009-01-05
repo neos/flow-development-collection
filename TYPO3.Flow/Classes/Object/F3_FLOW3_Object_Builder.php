@@ -248,21 +248,28 @@ class Builder {
 		foreach (get_class_methods($className) as $methodName) {
 			if (substr($methodName, 0, 6) === 'inject') {
 				$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
-				if (array_key_exists($propertyName, $setterProperties)) {
-					$this->debugMessages[] = 'Did not try to autowire property $' . $propertyName . ' in ' . $className .  ' because it was already set.';
-					continue;
+				if ($methodName === 'injectSettings') {
+					$classNameParts = explode('\\', $className);
+					if (count($classNameParts) > 1) {
+						$setterProperties[$propertyName] = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $classNameParts[1], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_SETTING);
+					}
+				} else {
+					if (array_key_exists($propertyName, $setterProperties)) {
+						$this->debugMessages[] = 'Did not try to autowire property $' . $propertyName . ' in ' . $className .  ' because it was already set.';
+						continue;
+					}
+					$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+					if (count($methodParameters) != 1) {
+						$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because it had not exactly one parameter.';
+						continue;
+					}
+					$methodParameter = array_pop($methodParameters);
+					if ($methodParameter['class'] === NULL) {
+						$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
+						continue;
+					}
+					$setterProperties[$propertyName] = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 				}
-				$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-				if (count($methodParameters) != 1) {
-					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because it had not exactly one parameter.';
-					continue;
-				}
-				$methodParameter = array_pop($methodParameters);
-				if ($methodParameter['class'] === NULL) {
-					$this->debugMessages[] = 'Could not autowire property $' . $propertyName . ' in ' . $className .  ' because I could not determine the class of the setter\'s parameter.';
-					continue;
-				}
-				$setterProperties[$propertyName] = new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $methodParameter['class'], \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 			}
 		}
 		return $setterProperties;

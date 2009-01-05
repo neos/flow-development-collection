@@ -136,7 +136,7 @@ class ASingletonClass {
 
       <para>The scope of an object is determined from its configuration (see
       also: Configuring Objects). The recommended way to specify the scope is
-      the <varname>@scope</varname> annotation: </para>
+      the <varname>@scope</varname> annotation:</para>
 
       <programlisting>namespace F3\MyPackage;
 
@@ -743,6 +743,41 @@ class Foo {
             </listitem>
           </itemizedlist>
         </sidebar>
+      </section>
+
+      <section>
+        <title>Settings Injection</title>
+
+        <para>No, this headline is not misspelled. FLOW3 offers some
+        convenient feature which allows for automagically injecting the
+        settings of the current package without the need to configure the
+        injection. If a class contains a method called
+        <methodname>injectSettings</methodname> and autowiring is not disabled
+        for that object, the Object Builder will retrieve the settings of the
+        package the object belongs to and pass it to the injectSettings
+        method.</para>
+
+        <example>
+          <title>Example for the magic injectSettings method</title>
+
+          <programlisting language="php">namespace F3\MyPackage;
+
+class Foo {
+
+	protected $settings = array();
+
+	public function injectSettings(array $settings) {
+		$this-&gt;settings = $settings;
+	}
+
+	public function doSomething() {
+		var_dump($this-&gt;settings);
+	}
+}</programlisting>
+        </example>
+
+        <para>The <methodname>doSomething</methodname> method will output the
+        settings of the <package>MyPackage</package> package.</para>
       </section>
     </section>
 
