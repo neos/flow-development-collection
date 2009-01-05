@@ -148,15 +148,46 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('property1', 'property2', 'property3', 'property4'));
 		$this->mapper->map($source);
 
 		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
-		$this->assertEquals(NULL, $target->property2, 'Property 2 has been set although no setter method exists.');
+		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
 		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
-		$this->assertEquals(NULL, $target->property4, 'Property 4 has been set although the setter method is protected.');
+		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
 	}
 
+	/**
+	 * Checks if mapping to a non-array target object via setter methods works if the shorthand syntax is used
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function mappingWithSetterAccessBasicallyWorksWithShortSyntax() {
+		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
+		$source = new \ArrayObject (
+			array(
+				'property1' => 'value1',
+				'property2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'property4' => new \ArrayObject(
+					array(
+						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
+					)
+				),
+				'property3' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$this->mapper->map($source, $target);
+
+		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
+		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
+		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
+		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
+	}
+	
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -184,6 +215,35 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 		$this->mapper->map($source);
+		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function onlyCertainAllowedPropertiesAreMappedWithAlternativeSyntax() {
+		$source = new \ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new \ArrayObject();
+
+		$expectedTarget = new \ArrayObject(
+			array(
+				'key1' => $source['key1'],
+				'key3' => $source['key3']
+			)
+		);
+		$this->mapper->map($source, $target, array('key1', 'key3'));
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
 	}
 
@@ -236,6 +296,20 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing no property at all.');
 	}
 
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function objectCanBeMappedToOtherObject() {
+		$source = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
+		$source->setProperty1('Hallo');
+		$source->setProperty3('It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ');
+		
+		$destination = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
+		$this->mapper->map($source, $destination);
+		$this->assertEquals($source, $destination, 'Complex objects cannot be mapped to each other.');
+	}
+	
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

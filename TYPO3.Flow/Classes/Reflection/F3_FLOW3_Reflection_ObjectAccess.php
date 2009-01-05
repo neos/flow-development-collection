@@ -39,6 +39,7 @@ class ObjectAccess {
 	 * Tries to get the property by the following ways:
 	 * - if public getter method exists, call it.
 	 * - if public property exists, return the value of it.
+	 * - if the target object is an instance of ArrayAccess, it gets the property on it if it exists.
 	 * - else, throw exception
 	 * 
 	 * @param object $object: Object to get the property from
@@ -57,6 +58,8 @@ class ObjectAccess {
 			return call_user_func(array($object, $getterMethodName));
 		} elseif (self::isPropertyAccessible($object, $property, self::ACCESS_PUBLIC)) {
 			return $object->$property;
+		} elseif ($object instanceof \ArrayAccess && isset($object[$property])) {
+			return $object[$property];
 		} else {
 			throw new \F3\FLOW3\Reflection\Exception('The property "' . $property . '" on class "' . get_class($object) . '" is not read accessible.', 1231176209); //'
 		}
@@ -67,6 +70,7 @@ class ObjectAccess {
 	 * Tries to set the property by the following ways:
 	 * - if public setter method exists, call it.
 	 * - if public property exists, set it directly.
+	 * - if the target object is an instance of ArrayAccess, it sets the property on it without checking if it existed.
 	 * - else, throw exception
 	 * 
 	 * @param object $object: Object to get the property from
@@ -86,6 +90,8 @@ class ObjectAccess {
 			call_user_func(array($object, $setterMethodName), $propertyValue);
 		} elseif (self::isPropertyAccessible($object, $property, self::ACCESS_PUBLIC)) {
 			$object->$property = $propertyValue;
+		} elseif ($object instanceof \ArrayAccess) {
+			$object[$property] = $propertyValue;
 		} else {
 			throw new \F3\FLOW3\Reflection\Exception('The property "' . $property . '" on class "' . get_class($object) . '" is not write accessible.', 1231179088); //'
 		}
@@ -94,10 +100,14 @@ class ObjectAccess {
 	/**
 	 * Get declared property names for a given object.
 	 * Returns an array of properties which can be get/set with the getProperty and setProperty methods.
+	 * Includes the following properties:
+	 * - which can be set through a public setter method.
+	 * - public properties which can be directly set.
 	 * 
 	 * @param object $object: Object to receive property names for
 	 * @return array Array of all declared property names
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @todo: What to do with ArrayAccess
 	 */
 	static public function getDeclaredPropertyNames($object) {
 		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
@@ -113,10 +123,17 @@ class ObjectAccess {
 		return $properties;
 	}
 	
+	/**
+	 * Get all properties (names and their current values) of the current $object.
+	 * 
+	 * @param object $object: Object to get all properties from.
+	 * @return array Associative array of all properties.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @todo: What to do with ArrayAccess 
+	 */
 	static public function getAllProperties($object) {
 		$properties = array();
 		foreach (self::getDeclaredPropertyNames($object) as $property) {
-			echo $property;
 			$properties[$property] = self::getProperty($object, $property);
 		}
 		return $properties;
@@ -157,9 +174,24 @@ class ObjectAccess {
 		return FALSE;
 	}
 	
+	/**
+	 * Build the getter method name for a given property by capitalizing the first letter of the property, and prepending it with "get".
+	 * 
+	 * @param string $property: Name of the property
+	 * @return string Name of the getter method name
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
 	static protected function buildGetterMethodName($property) {
 		return 'get' . ucfirst($property);
 	}
+	
+	/**
+	 * Build the setter method name for a given property by capitalizing the first letter of the property, and prepending it with "set".
+	 * 
+	 * @param string $property: Name of the property
+	 * @return string Name of the setter method name
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
 	static protected function buildSetterMethodName($property) {
 		return 'set' . ucfirst($property);
 	}

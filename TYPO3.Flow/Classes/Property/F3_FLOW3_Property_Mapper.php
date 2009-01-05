@@ -143,7 +143,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTarget() {
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187977962);
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187977962); //'
 		return $this->target;
 	}
 
@@ -258,15 +258,32 @@ class Mapper {
 	 * Maps the given properties to the target object.
 	 * After mapping the results can be retrieved with getMappingResult.
 	 *
-	 * @param  \ArrayObject $properties: Properties to map to the target object
+	 * @param  object $properties: Properties to map to the target object
+	 * @param  object $target: Optional. The target object. Will be used instead of this->setTarget(), if it is set.
+	 * @param array $allowedProperties: Optional. An array of allowed property names. Each entry in this array may be a regular expression. Will be used instead of this->setAllowedProperties, if it is set.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function map(\ArrayObject $properties) {
+	public function map($properties, $target = NULL, $allowedProperties = NULL) {
 		$this->mappingResults = $this->createNewMappingResults();
-
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187978014);
+		
+		if ($target) {
+			$this->setTarget($target);
+			unset($target);
+		}
+		
+		if ($allowedProperties) {
+			$this->setAllowedProperties($allowedProperties);
+			unset($allowedProperties);
+		}
+		
+		if (!$properties instanceof \ArrayAccess) {
+			$properties = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAllProperties($properties));
+		}
+		
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187978014); //'
 		if ($this->onlyWriteOnNoErrors) $this->originalTarget = clone $this->target;
 		if ($this->validator === NULL) $this->resolveValidator();
 
@@ -302,7 +319,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMappingResults() {
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);//'
 		return $this->mappingResults;
 	}
 
@@ -346,13 +363,14 @@ class Mapper {
 
 	/**
 	 * Sets the given value of the specified property at the target object.
-	 * If the target object is an \ArrayObject, the values are set directly
-	 * through Array access, else a setter method is called (if one exists).
+	 * 
+	 * Uses \F3\FLOW3\Reflection\ObjectAccess::setProperty(). See its documentation for details.
 	 *
 	 * @param  string $propertyName: Name of the property to set
 	 * @param  string $propertyValue: Value of the property
 	 * @return boolean Returns TRUE, if the setting was successfull
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @see    map()
 	 * @todo   Implement error logging into MappingResult
 	 */
@@ -374,19 +392,11 @@ class Mapper {
 			}
 		}
 
-		$setterMethodName = 'set' . ucfirst($propertyName);
 		try {
-			if (is_callable(array($this->target, $setterMethodName))) {
-				$this->target->$setterMethodName($propertyValue);
-			} elseif ($this->target instanceof \ArrayObject) {
-				$this->target[$propertyName] = $propertyValue;
-			} else {
-				return FALSE;
-			}
+			\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->target, $propertyName, $propertyValue);
 		} catch (\Exception $exception) {
 			return FALSE;
 		}
-
 		return TRUE;
 	}
 

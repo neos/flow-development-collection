@@ -32,7 +32,7 @@ class ClassWithSetters {
 	/**
 	 * @var mixed
 	 */
-	public $property2;
+	protected $property2;
 
 	/**
 	 * @var mixed
@@ -54,6 +54,10 @@ class ClassWithSetters {
 
 	protected function setProperty4($value) {
 		$this->property4 = $value;
+	}
+	
+	public function getProperty2() {
+		return $this->property2;
 	}
 }
 ?>

@@ -115,6 +115,26 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'publicProperty', 4242);
 		$this->assertEquals($this->dummyObject->publicProperty, 4242, 'setProperty does not work with public property.');
 	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setPropertyWorksWithArrayObject() {
+		$arrayObject = new \ArrayObject();
+		\F3\FLOW3\Reflection\ObjectAccess::setProperty($arrayObject, 'publicProperty', 4242);
+		$this->assertEquals($arrayObject['publicProperty'], 4242, 'setProperty does not work with ArrayObject property.');
+	}
+	
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getPropertyWorksWithArrayObject() {
+		$arrayObject = new \ArrayObject(array('key' => 'value'));
+		$expected = \F3\FLOW3\Reflection\ObjectAccess::getProperty($arrayObject, 'key');
+		$this->assertEquals($expected, 'value', 'getProperty does not work with ArrayObject property.');
+	}
 	
 	/**
 	 * @test
