@@ -60,9 +60,10 @@ class DocCommentParser {
 			if (strlen($line) > 0 && strpos($line, '@') !== FALSE) {
 				$this->parseTag(substr($line, strpos($line, '@')));
 			} else if (count($this->tags) == 0) {
-				$this->description .= $line . chr(10);
+				$this->description .= preg_replace('/\s*\\/?[\\\\*]*(.*)$/', '$1', $line) . chr(10);
 			}
 		}
+		$this->description = trim($this->description);
 	}
 
 	/**
@@ -98,6 +99,16 @@ class DocCommentParser {
 	 */
 	public function isTaggedWith($tagName) {
 		return (isset($this->tags[$tagName]));
+	}
+
+	/**
+	 * Returns the description which has been previously parsed
+	 * 
+	 * @return string The description which has been parsed
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getDescription() {
+		return $this->description;
 	}
 
 	/**
