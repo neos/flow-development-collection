@@ -20,6 +20,7 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  * @subpackage Tests
  * @version $Id:$
  */
+
 /**
  * [Enter description here]
  *
@@ -31,34 +32,34 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
 class DummyClassWithGettersAndSetters {
 	protected $property;
 	protected $anotherProperty;
-	
+
 	protected $protectedProperty;
-	
+
 	public $publicProperty;
 	public $publicProperty2 = 42;
-	
+
 	public function setProperty($property) {
 		$this->property = $property;
 	}
-	
+
 	public function getProperty() {
 		return $this->property;
 	}
-	
+
 	public function setAnotherProperty($anotherProperty) {
 		$this->anotherProperty = $anotherProperty;
 	}
-	
+
 	public function getAnotherProperty() {
 		return $this->anotherProperty;
 	}
-	
+
 	protected function getProtectedProperty() {
 		return '42';
 	}
-	
+
 	protected function setProtectedProperty($bla) {
-		
+
 	}
 	protected function getPrivateProperty() {
 		return '21';

@@ -143,7 +143,7 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getTarget() {
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187977962); //'
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187977962);
 		return $this->target;
 	}
 
@@ -258,9 +258,9 @@ class Mapper {
 	 * Maps the given properties to the target object.
 	 * After mapping the results can be retrieved with getMappingResult.
 	 *
-	 * @param  object $properties: Properties to map to the target object
-	 * @param  object $target: Optional. The target object. Will be used instead of this->setTarget(), if it is set.
-	 * @param array $allowedProperties: Optional. An array of allowed property names. Each entry in this array may be a regular expression. Will be used instead of this->setAllowedProperties, if it is set.
+	 * @param object $properties Properties to map to the target object
+	 * @param object $target Optional. The target object. Will be used instead of this->setTarget(), if it is set.
+	 * @param array $allowedProperties Optional. An array of allowed property names. Each entry in this array may be a regular expression. Will be used instead of this->setAllowedProperties, if it is set.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -268,22 +268,22 @@ class Mapper {
 	 */
 	public function map($properties, $target = NULL, $allowedProperties = NULL) {
 		$this->mappingResults = $this->createNewMappingResults();
-		
-		if ($target) {
-			$this->setTarget($target);
-			unset($target);
-		}
-		
-		if ($allowedProperties) {
-			$this->setAllowedProperties($allowedProperties);
-			unset($allowedProperties);
-		}
-		
+
 		if (!$properties instanceof \ArrayAccess) {
 			$properties = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAllProperties($properties));
 		}
-		
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187978014); //'
+
+		if ($target !== NULL) {
+			$this->setTarget($target);
+			unset($target);
+		}
+
+		if ($allowedProperties !== NULL) {
+			$this->setAllowedProperties($allowedProperties);
+			unset($allowedProperties);
+		}
+
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet.', 1187978014);
 		if ($this->onlyWriteOnNoErrors) $this->originalTarget = clone $this->target;
 		if ($this->validator === NULL) $this->resolveValidator();
 
@@ -319,14 +319,14 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMappingResults() {
-		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);//'
+		if (!is_object($this->target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('No target object has been defined yet, so no mapping result exists.', 1187978053);
 		return $this->mappingResults;
 	}
 
 	/**
 	 * Checks if the give property is among the allowed properties.
 	 *
-	 * @param string $propertyName: Property name to check for
+	 * @param string $propertyName Property name to check for
 	 * @return boolean TRUE if the property is allowed, else FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see map()
@@ -345,7 +345,7 @@ class Mapper {
 	/**
 	 * Checks if the give property is among the required properties.
 	 *
-	 * @param string $propertyName: Property name to check for
+	 * @param string $propertyName Property name to check for
 	 * @return boolean TRUE if the property is required, else FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @see map()
@@ -366,13 +366,13 @@ class Mapper {
 	 * 
 	 * Uses \F3\FLOW3\Reflection\ObjectAccess::setProperty(). See its documentation for details.
 	 *
-	 * @param  string $propertyName: Name of the property to set
-	 * @param  string $propertyValue: Value of the property
+	 * @param string $propertyName Name of the property to set
+	 * @param string $propertyValue Value of the property
 	 * @return boolean Returns TRUE, if the setting was successfull
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @see    map()
-	 * @todo   Implement error logging into MappingResult
+	 * @see map()
+	 * @todo Implement error logging into MappingResult
 	 */
 	protected function setPropertyValue($propertyName, $propertyValue) {
 
@@ -397,14 +397,15 @@ class Mapper {
 		} catch (\Exception $exception) {
 			return FALSE;
 		}
+
 		return TRUE;
 	}
 
 	/**
 	 * Invokes all registered filters for a given property.
 	 *
-	 * @param string $propertyName: Property name to invoke the filter for
-	 * @param object $propertyValue: The property value to filter
+	 * @param string $propertyName Property name to invoke the filter for
+	 * @param object $propertyValue The property value to filter
 	 * @return object the filtered value
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -424,8 +425,8 @@ class Mapper {
 	/**
 	 * Invokes all registered property editors for a given property.
 	 *
-	 * @param string $propertyName: Property name to invoke the editors for
-	 * @param object $propertyValue: The property value to set for the editor
+	 * @param string $propertyName Property name to invoke the editors for
+	 * @param object $propertyValue The property value to set for the editor
 	 * @return object the edited value
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

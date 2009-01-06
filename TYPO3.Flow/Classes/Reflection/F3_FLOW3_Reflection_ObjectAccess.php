@@ -18,177 +18,186 @@ namespace F3\FLOW3\Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:$
+ * @version $Id$
  */
 /**
- * [Enter description here]
+ * Provides methods to call appropriate getter/setter on an object given the
+ * property name. It does this following these rules:
+ * - if the target object is an instance of ArrayAccess, it gets/sets the property
+ * - if public getter/setter method exists, call it.
+ * - if public property exists, return/set the value of it.
+ * - else, throw exception
  *
  * @package
  * @subpackage
- * @version $Id:$
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class ObjectAccess {
-	
+
 	const ACCESS_GET = 0;
 	const ACCESS_SET = 1;
 	const ACCESS_PUBLIC = 2;
-	
+
 	/**
 	 * Get a property of a given object.
-	 * Tries to get the property by the following ways:
+	 * Tries to get the property the following ways:
+	 * - if the target object is an instance of ArrayAccess, it gets the property
+	 *   on it if it exists.
 	 * - if public getter method exists, call it.
 	 * - if public property exists, return the value of it.
-	 * - if the target object is an instance of ArrayAccess, it gets the property on it if it exists.
 	 * - else, throw exception
-	 * 
-	 * @param object $object: Object to get the property from
-	 * @param string $property: Property to retrieve
+	 *
+	 * @param object $object Object to get the property from
+	 * @param string $propertyName name of the property to retrieve
 	 * @return object Value of the property.
-	 * @throws F3\FLOW3\Reflection\Exception if property was not found or was no string
+	 * @throws \F3\FLOW3\Reflection\Exception if property was not found or was no string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static public function getProperty($object, $property) {
-		if (!is_string($property)) {
-			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178303); //'
+	static public function getProperty($object, $propertyName) {
+		if (!is_string($propertyName)) {
+			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178303);
 		}
-		
-		if (self::isPropertyAccessible($object, $property, self::ACCESS_GET)) {
-			$getterMethodName = self::buildGetterMethodName($property);
+
+		if ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
+			return $object[$propertyName];
+		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_GET)) {
+			$getterMethodName = self::buildGetterMethodName($propertyName);
 			return call_user_func(array($object, $getterMethodName));
-		} elseif (self::isPropertyAccessible($object, $property, self::ACCESS_PUBLIC)) {
-			return $object->$property;
-		} elseif ($object instanceof \ArrayAccess && isset($object[$property])) {
-			return $object[$property];
+		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
+			return $object->$propertyName;
 		} else {
-			throw new \F3\FLOW3\Reflection\Exception('The property "' . $property . '" on class "' . get_class($object) . '" is not read accessible.', 1231176209); //'
+			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not read accessible.', 1231176209);
 		}
 	}
-	
+
 	/**
 	 * Set a property for a given object.
-	 * Tries to set the property by the following ways:
+	 * Tries to set the property the following ways:
+	 * - if the target object is an instance of ArrayAccess, it sets the property
+	 *   on it without checking if it existed.
 	 * - if public setter method exists, call it.
 	 * - if public property exists, set it directly.
-	 * - if the target object is an instance of ArrayAccess, it sets the property on it without checking if it existed.
 	 * - else, throw exception
-	 * 
-	 * @param object $object: Object to get the property from
-	 * @param string $property: Property to retrieve
+	 *
+	 * @param object $object Object to get the property from
+	 * @param string $propertyName Name of the property to retrieve
 	 * @param object $propertyValue Value of the property which should be set.
 	 * @return void
-	 * @throws F3\FLOW3\Reflection\Exception if property was not found or was no string
+	 * @throws \F3\FLOW3\Reflection\Exception if property was not found or was no string
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static public function setProperty($object, $property, $propertyValue) {
-		if (!is_string($property)) {
-			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178878); //'
+	static public function setProperty($object, $propertyName, $propertyValue) {
+		if (!is_string($propertyName)) {
+			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178878);
 		}
-		
-		if (self::isPropertyAccessible($object, $property, self::ACCESS_SET)) {
-			$setterMethodName = self::buildSetterMethodName($property);
+
+		if ($object instanceof \ArrayAccess) {
+			$object[$propertyName] = $propertyValue;
+		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_SET)) {
+			$setterMethodName = self::buildSetterMethodName($propertyName);
 			call_user_func(array($object, $setterMethodName), $propertyValue);
-		} elseif (self::isPropertyAccessible($object, $property, self::ACCESS_PUBLIC)) {
-			$object->$property = $propertyValue;
-		} elseif ($object instanceof \ArrayAccess) {
-			$object[$property] = $propertyValue;
+		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
+			$object->$propertyName = $propertyValue;
 		} else {
-			throw new \F3\FLOW3\Reflection\Exception('The property "' . $property . '" on class "' . get_class($object) . '" is not write accessible.', 1231179088); //'
+			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not write accessible.', 1231179088);
 		}
 	}
-	
+
 	/**
-	 * Get declared property names for a given object.
-	 * Returns an array of properties which can be get/set with the getProperty and setProperty methods.
+	 * Returns an array of properties which can be get/set with the getProperty
+	 * and setProperty methods.
 	 * Includes the following properties:
 	 * - which can be set through a public setter method.
 	 * - public properties which can be directly set.
-	 * 
-	 * @param object $object: Object to receive property names for
+	 *
+	 * @param object $object Object to receive property names for
 	 * @return array Array of all declared property names
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @todo: What to do with ArrayAccess
+	 * @todo What to do with ArrayAccess
 	 */
-	static public function getDeclaredPropertyNames($object) {
+	static public function getAccessiblePropertyNames($object) {
 		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
-		
-		foreach (get_class_methods($object) as $singleMethod) {
-			if (substr($singleMethod, 0, 3) == 'get') {
-				$declaredPropertyNames[] = lcfirst(substr($singleMethod, 3));
+
+		foreach (get_class_methods($object) as $methodName) {
+			if (substr($methodName, 0, 3) === 'get') {
+				$declaredPropertyNames[] = lcfirst(substr($methodName, 3));
 			}
 		}
-		
-		$properties = array_unique($declaredPropertyNames);
-		sort($properties);
-		return $properties;
+
+		$propertyNames = array_unique($declaredPropertyNames);
+		sort($propertyNames);
+		return $propertyNames;
 	}
-	
+
 	/**
 	 * Get all properties (names and their current values) of the current $object.
-	 * 
-	 * @param object $object: Object to get all properties from.
+	 *
+	 * @param object $object Object to get all properties from.
 	 * @return array Associative array of all properties.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @todo: What to do with ArrayAccess 
+	 * @todo What to do with ArrayAccess
 	 */
 	static public function getAllProperties($object) {
 		$properties = array();
-		foreach (self::getDeclaredPropertyNames($object) as $property) {
-			$properties[$property] = self::getProperty($object, $property);
+		foreach (self::getAccessiblePropertyNames($object) as $propertyName) {
+			$properties[$propertyName] = self::getProperty($object, $propertyName);
 		}
 		return $properties;
 	}
-	
+
 	/**
-	 * Checks if a $property on an $object is accessible by $type.
+	 * Checks if a $property on an $object is accessible by $type. For ACCESS_PUBLIC
+	 * on ArrayObject instances this only returns TRUE if the property is already set.
 	 *
-	 * @param object $object: The object to do the check on
-	 * @param string $property: Name of the property
-	 * @param int $type: either self::ACCESS_GET, self::ACCESS_SET or self::ACCESS_PUBLIC.
+	 * @param object $object The object to do the check on
+	 * @param string $propertyName Name of the property
+	 * @param int $type either self::ACCESS_GET, self::ACCESS_SET or self::ACCESS_PUBLIC.
 	 * @return boolean TRUE if property is accessible, FALSE otherwise; FALSE if property does not exist.
 	 * @throws F3\FLOW3\Reflection\Exception if called with the wrong $type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	static public function isPropertyAccessible($object, $property, $type) {
+	static public function isPropertyAccessible($object, $propertyName, $type) {
 		switch ($type) {
 			case self::ACCESS_GET:
-				if (is_callable(array($object, self::buildGetterMethodName($property)))) {
+				if (is_callable(array($object, self::buildGetterMethodName($propertyName)))) {
 					return TRUE;
 				}
 				break;
 			case self::ACCESS_SET:
-				if (is_callable(array($object, self::buildSetterMethodName($property)))) {
+				if (is_callable(array($object, self::buildSetterMethodName($propertyName)))) {
 					return TRUE;
 				}
 				break;
 			case self::ACCESS_PUBLIC:
-				//if (property_exists($object, $property)) {
-				if (array_key_exists($property, get_class_vars(get_class($object)))) {
+				if (($object instanceof \ArrayObject && isset($object[$propertyName])) || array_key_exists($propertyName, get_object_vars($object))) {
 					return TRUE;
 				}
 				break;
 			default:
-				throw new \F3\FLOW3\Reflection\Exception('isPropertyAccessible called with wrong $type!', 1231176210); //'
+				throw new \F3\FLOW3\Reflection\Exception('isPropertyAccessible called with wrong $type!', 1231176210);
 		}
-		
+
 		return FALSE;
 	}
-	
+
 	/**
-	 * Build the getter method name for a given property by capitalizing the first letter of the property, and prepending it with "get".
-	 * 
-	 * @param string $property: Name of the property
+	 * Build the getter method name for a given property by capitalizing the
+	 * first letter of the property, and prepending it with "get".
+	 *
+	 * @param string $property Name of the property
 	 * @return string Name of the getter method name
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static protected function buildGetterMethodName($property) {
 		return 'get' . ucfirst($property);
 	}
-	
+
 	/**
-	 * Build the setter method name for a given property by capitalizing the first letter of the property, and prepending it with "set".
-	 * 
-	 * @param string $property: Name of the property
+	 * Build the setter method name for a given property by capitalizing the
+	 * first letter of the property, and prepending it with "set".
+	 *
+	 * @param string $property Name of the property
 	 * @return string Name of the setter method name
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */

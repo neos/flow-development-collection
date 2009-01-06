@@ -18,7 +18,7 @@ namespace F3\FLOW3\Reflection;
 /**
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:\F3\FLOW3\Reflection\DocCommentParser.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 
@@ -27,7 +27,7 @@ namespace F3\FLOW3\Reflection;
  *
  * @package FLOW3
  * @subpackage Reflection
- * @version $Id:\F3\FLOW3\Reflection\DocCommentParser.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
  */
 class DocCommentParser {
@@ -47,7 +47,7 @@ class DocCommentParser {
 	 * tags) in the parser's object. They can be retrieved by the
 	 * getTags() getTagValues() and getDescription() methods.
 	 *
-	 * @param  string $docComment: A doc comment as returned by the reflection getDocComment() method
+	 * @param string $docComment A doc comment as returned by the reflection getDocComment() method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -81,7 +81,7 @@ class DocCommentParser {
 	 * must be parsed with parseDocComment() before tags are
 	 * available.
 	 *
-	 * @param string $tagName: The tag name to retrieve the values for
+	 * @param string $tagName The tag name to retrieve the values for
 	 * @return array The tag's values
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -93,7 +93,7 @@ class DocCommentParser {
 	/**
 	 * Checks if a tag with the given name exists
 	 *
-	 * @param  string $tagName: The tag name to check for
+	 * @param string $tagName The tag name to check for
 	 * @return boolean TRUE the tag exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -113,9 +113,9 @@ class DocCommentParser {
 
 	/**
 	 * Parses a line of a doc comment for a tag and its value.
-	 * The result is stored in the
+	 * The result is stored in the interal tags array.
 	 *
-	 * @param  string $line: A line of a doc comment which starts with an @-sign
+	 * @param string $line A line of a doc comment which starts with an @-sign
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
