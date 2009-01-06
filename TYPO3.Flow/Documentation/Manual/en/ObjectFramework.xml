@@ -264,7 +264,10 @@ class SampleClass {
 
         <programlisting language="php">namespace F3\Address;
 
-class Adressbook {
+/**
+ * A simple address book
+ */
+class AddressBook {
 
 	protected $addresses = array();
 
@@ -277,6 +280,11 @@ class Adressbook {
 	}
 }
 
+/**
+ * An address
+ *
+ * @scope prototype
+ */
 class Address {
 
 	public __construct($street, $zip, $town, $country) {
@@ -290,7 +298,7 @@ class Address {
 
       <itemizedlist>
         <listitem>
-          <para>The class <classname>\F3\Address\Addressbook</classname> is
+          <para>The class <classname>\F3\Address\AddressBook</classname> is
           supposed to be a Singleton and obviously depends on a third object
           type <classname>\F3\iCal\iCalConnectorInterface</classname> which is
           possibly solved by Dependency Injection (will be explained in a
@@ -298,10 +306,10 @@ class Address {
         </listitem>
 
         <listitem>
-          <para>The class <classname>\F3\Address\Adress</classname> represents
-          the address entity and its instances must not be unique - we surely
-          want more than one address. The Address object also expects a few
-          parameters passed to its constructor.</para>
+          <para>The class <classname>\F3\Address\Address</classname>
+          represents the address entity and its instances must not be unique -
+          we surely want more than one address. The Address object also
+          expects a few parameters passed to its constructor.</para>
         </listitem>
       </itemizedlist>
 
@@ -311,10 +319,10 @@ class Address {
       <example>
         <title>Passing constructor arguments</title>
 
-        <programlisting>	# Explicitly fetch a unique instance of the addressbook (but better use Dependency Injection ...):
-$myAddressbook = $objectManager-&gt;getObject('F3\Address\Addressbook');
+        <programlisting>	# Explicitly fetch a unique instance of the address book (but better use Dependency Injection ...):
+$myAddressBook = $objectManager-&gt;getObject('F3\Address\AddressBook');
 
-	# Create two new addresses and add them to the addressbook:
+	# Create two new addresses and add them to the address book:
 $newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', '2720', 'København', 'DK');
 $myAddresbook-&gt;addAddress($newAddress);
 
@@ -386,7 +394,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       </orderedlist>
 
       <para>As you can see from the above list, there is only one special
-      method which is provided by PHP's own means and that is the
+      method which is not provided by PHP's own means and that is the
       initialization method. Here's a simple example:</para>
 
       <example>
@@ -441,7 +449,7 @@ $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       which contains the object's code. A class called
       <classname>F3\MyPackage\MyImplementation</classname> will be
       automatically available as an object with the exact same name. Every
-      part of the system which asks for a object with a certain name will
+      part of the system which asks for an object with a certain name will
       therefore - by default - get an instance of the class of that name. It
       is possible to replace the original implementation of an object by
       another one. In that case the class name of the new implementation will
@@ -594,11 +602,11 @@ class Foo {
 
           <programlisting language="yaml">F3\MyPackage\Foo:
   arguments:
-    1: { object: F3\MyPackage\Baz }</programlisting>
+    1: { object: F3\MyPackage\Bar }</programlisting>
         </example>
 
         <para>The three lines above define that an object instance of
-        <interfacename>\F3\MyPackage\Baz</interfacename> must be passed to the
+        <interfacename>\F3\MyPackage\Bar</interfacename> must be passed to the
         first argument of the constructor when an instance of the object
         <classname>F3\MyPackage\Foo</classname> is created.</para>
       </section>
@@ -644,7 +652,7 @@ class Foo {
 
           <programlisting language="php">F3\MyPackage\Foo:
   properties:
-    someLogger: { object: F3\MyPackage\BarInterface }</programlisting>
+    bar: { object: F3\MyPackage\BarInterface }</programlisting>
         </example>
 
         <para>Unlike constructor injection, setter injection like in the above
@@ -1220,7 +1228,7 @@ class Foo {
 
           <programlisting language="yaml">F3\MyPackage\Foo:
   arguments:
-    1: { object: F3\MyPackage\Baz }
+    1: { object: F3\MyPackage\Bar }
     2: { value: "some string" }
     3: { setting: "MyPackage.Cache.enable" }</programlisting>
         </example>
@@ -1276,7 +1284,7 @@ class Foo {
 
           <programlisting language="php">F3\MyPackage\Foo:
   properties:
-    bar: { object: F3\MyPackage\Baz }
+    bar: { object: F3\MyPackage\Bar }
     identifier: { value: "some string" }
     enableCache: { setting: "MyPackage.Cache.enable" }</programlisting>
         </example>
@@ -1401,7 +1409,7 @@ class Foo {
       <classname>F3\FLOW3\Object\Factory</classname>. The argument with the
       value <literal>MyCache</literal> is passed to the Cache Factory as the
       first parameter. The required second and third argument and the optional
-      fourth parameter is automatically built from the values defined in the
+      fourth parameter are automatically built from the values defined in the
       object configuration.</para>
     </section>
 

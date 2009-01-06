@@ -149,11 +149,7 @@
                       <listitem>
                         <para>This directory holds images, PDF, Flash, CSS and
                         other files that will be delivered to the client
-                        directly without further processing. The content of
-                        the <filename>Media/Public/</filename> directory will
-                        be automatically mirrored to the public file cache
-                        directory by the resource manager. You're free to
-                        create subdirectories as they become necessary.</para>
+                        directly without further processing.</para>
                       </listitem>
                     </varlistentry>
 
