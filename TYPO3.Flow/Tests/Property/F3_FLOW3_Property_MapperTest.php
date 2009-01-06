@@ -187,7 +187,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
 		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -297,6 +297,31 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Needed for multiple invocations of $this->propertyMapper->map(..., ...);
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function allowedPropertiesAreResetIfThirdParameterOfMapIsNotSet() {
+		$source = new \ArrayObject(
+			array(
+				'key1' => 'value1',
+				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+				'key3' => 'value3',
+				'key4' => array(
+					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+				)
+			)
+		);
+
+		$target = new \ArrayObject();
+		$this->mapper->setAllowedProperties(array());
+
+		$expectedTarget = $source;
+		$this->mapper->map($source, $target);
+		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content. Thus, the allowed properties have not been reset.');
+	}
+
+	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -304,12 +329,12 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$source = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$source->setProperty1('Hallo');
 		$source->setProperty3('It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ');
-		
+
 		$destination = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$this->mapper->map($source, $destination);
 		$this->assertEquals($source, $destination, 'Complex objects cannot be mapped to each other.');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

@@ -258,6 +258,8 @@ class Mapper {
 	 * Maps the given properties to the target object.
 	 * After mapping the results can be retrieved with getMappingResult.
 	 *
+	 * In case the $target object is directly given to this method, it modifies the given $target object.
+	 *
 	 * @param object $properties Properties to map to the target object
 	 * @param object $target Optional. The target object. Will be used instead of this->setTarget(), if it is set.
 	 * @param array $allowedProperties Optional. An array of allowed property names. Each entry in this array may be a regular expression. Will be used instead of this->setAllowedProperties, if it is set.
@@ -276,6 +278,8 @@ class Mapper {
 		if ($target !== NULL) {
 			$this->setTarget($target);
 			unset($target);
+			$this->validator = NULL;
+			$this->setAllowedProperties(array('.*'));
 		}
 
 		if ($allowedProperties !== NULL) {
