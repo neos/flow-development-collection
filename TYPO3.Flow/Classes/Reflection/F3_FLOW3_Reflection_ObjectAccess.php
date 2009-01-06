@@ -59,13 +59,13 @@ class ObjectAccess {
 			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178303);
 		}
 
-		if ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
-			return $object[$propertyName];
-		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_GET)) {
+		if (self::isPropertyAccessible($object, $propertyName, self::ACCESS_GET)) {
 			$getterMethodName = self::buildGetterMethodName($propertyName);
 			return call_user_func(array($object, $getterMethodName));
 		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
 			return $object->$propertyName;
+		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
+			return $object[$propertyName];
 		} else {
 			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not read accessible.', 1231176209);
 		}
@@ -92,13 +92,13 @@ class ObjectAccess {
 			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178878);
 		}
 
-		if ($object instanceof \ArrayAccess) {
-			$object[$propertyName] = $propertyValue;
-		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_SET)) {
+		if (self::isPropertyAccessible($object, $propertyName, self::ACCESS_SET)) {
 			$setterMethodName = self::buildSetterMethodName($propertyName);
 			call_user_func(array($object, $setterMethodName), $propertyValue);
 		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
 			$object->$propertyName = $propertyValue;
+		} elseif ($object instanceof \ArrayAccess) {
+			$object[$propertyName] = $propertyValue;
 		} else {
 			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not write accessible.', 1231179088);
 		}

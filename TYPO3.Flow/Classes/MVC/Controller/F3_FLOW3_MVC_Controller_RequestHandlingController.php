@@ -223,7 +223,7 @@ class RequestHandlingController extends \F3\FLOW3\MVC\Controller\AbstractControl
 		$argumentsValidator = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentsValidator', $this->arguments);
 		$this->propertyMapper->registerValidator($argumentsValidator);
 		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
-		$this->propertyMapper->map(new \ArrayObject($this->request->getArguments()));
+		$this->propertyMapper->map($this->request->getArguments());
 
 		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
 

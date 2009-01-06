@@ -363,7 +363,7 @@ class Mapper {
 
 	/**
 	 * Sets the given value of the specified property at the target object.
-	 * 
+	 *
 	 * Uses \F3\FLOW3\Reflection\ObjectAccess::setProperty(). See its documentation for details.
 	 *
 	 * @param string $propertyName Name of the property to set

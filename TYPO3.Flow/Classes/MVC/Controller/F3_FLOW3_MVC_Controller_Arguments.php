@@ -41,7 +41,7 @@ class Arguments extends \ArrayObject {
 	 * @var \F3\FLOW3\Object\ManagerInterface A reference to the object manager
 	 */
 	protected $objectManager;
-	
+
 	/**
 	 * @var array Names of the arguments contained by this object
 	 */
@@ -50,6 +50,8 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Constructs this Arguments object
 	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
@@ -77,7 +79,7 @@ class Arguments extends \ArrayObject {
 	}
 
 	/**
-	 * Sets an argument
+	 * Sets an argument, aliased to offsetSet()
 	 *
 	 * @param mixed $value The value
 	 * @return void
@@ -149,7 +151,7 @@ class Arguments extends \ArrayObject {
 	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
 		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
-		
+
 		if ($this->objectManager->isObjectRegistered($dataType)) {
 			$propertyEditor = $this->objectFactory->create('F3\FLOW3\Property\Editor\DomainObjectEditor', $dataType);
 			$argument->setPropertyEditor($propertyEditor)
@@ -166,7 +168,7 @@ class Arguments extends \ArrayObject {
 	 *
 	 * Note that the argument will be cloned, not referenced.
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\Argument $argument: The argument to add
+	 * @param \F3\FLOW3\MVC\Controller\Argument $argument The argument to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -177,7 +179,7 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Returns an argument specified by name
 	 *
-	 * @param string $argumentName: Name of the argument to retrieve
+	 * @param string $argumentName Name of the argument to retrieve
 	 * @return \F3\FLOW3\MVC\Controller\Argument
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument
 	 * @author Robert Lemke <robert@typo3.org>
@@ -190,7 +192,7 @@ class Arguments extends \ArrayObject {
 	/**
 	 * Checks if an argument with the specified name exists
 	 *
-	 * @param string $argumentName: Name of the argument to check for
+	 * @param string $argumentName Name of the argument to check for
 	 * @return boolean TRUE if such an argument exists, otherwise FALSE
 	 * @see offsetExists()
 	 * @author Robert Lemke <robert@typo3.org>
@@ -227,8 +229,8 @@ class Arguments extends \ArrayObject {
 	 * Magic setter method for the argument values. Each argument
 	 * value can be set by just calling the setArgumentName() method.
 	 *
-	 * @param string $methodName: Name of the method
-	 * @param array $arguments: Method arguments
+	 * @param string $methodName Name of the method
+	 * @param array $arguments Method arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
