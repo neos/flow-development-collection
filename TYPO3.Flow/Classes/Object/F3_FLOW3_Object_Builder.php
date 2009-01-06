@@ -293,6 +293,11 @@ class Builder {
 						if ($argumentValue instanceof \F3\FLOW3\Object\Configuration) {
 							$preparedArguments[] = $this->createObject($argumentValue->getObjectName(), $argumentValue);
 						} else {
+							if (strpos($argumentValue, '.') !== FALSE) {
+								$settingPath = explode('.', $argumentValue);
+								$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+								$argumentValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
+							}
 							$preparedArguments[] = $this->objectManager->getObject($argumentValue);
 						}
 					break;
@@ -332,6 +337,11 @@ class Builder {
 					if ($propertyValue instanceof \F3\FLOW3\Object\Configuration) {
 						$preparedValue = $this->createObject($propertyValue->getObjectName(), $propertyValue);
 					} else {
+						if (strpos($propertyValue, '.') !== FALSE) {
+							$settingPath = explode('.', $propertyValue);
+							$settings = $this->configurationManager->getSettings(array_shift($settingPath));
+							$propertyValue = \F3\FLOW3\Utility\Arrays::getValueByPath($settings, $settingPath);
+						}
 						$preparedValue = $this->objectManager->getObject($propertyValue);
 					}
 				break;

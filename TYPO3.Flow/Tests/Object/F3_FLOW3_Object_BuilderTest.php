@@ -434,6 +434,44 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheNameOfAnObjectToBeInjectedAsConstructorArgumentContainsDotsItIsConsideredToBeAPathToASettingContainingTheActualObjectName() {
+		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Virtual\Foo')->will($this->returnValue(new \stdClass));
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
+		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments');
+		$objectConfiguration->setArguments(array(
+			new \F3\FLOW3\Object\ConfigurationArgument(1, 'FLOW3.foo', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\ClassWithOptionalArguments', $objectConfiguration);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function ifTheNameOfAnObjectToBeInjectedAsPropertyContainsDotsItIsConsideredToBeAPathToASettingContainingTheActualObjectName() {
+		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Virtual\Foo')->will($this->returnValue(new \stdClass));
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getSettings')->with('FLOW3')->will($this->returnValue(array('foo' => 'F3\Virtual\Foo')));
+		$this->objectBuilder->injectConfigurationManager($mockConfigurationManager);
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
+		$objectConfiguration->setProperties(array(
+			new \F3\FLOW3\Object\ConfigurationProperty('firstDependency', 'FLOW3.foo', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT)
+		));
+
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+	}
+
+	/**
 	 * Checks if the object builder calls the lifecycle initialization method after injecting properties
 	 *
 	 * @test

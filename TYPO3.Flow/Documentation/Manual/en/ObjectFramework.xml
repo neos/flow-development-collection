@@ -1298,6 +1298,30 @@ class Foo {
       </section>
 
       <section>
+        <title>Injection of Objects Specified in Settings</title>
+
+        <para>In some cases it might be convenient to specify the name of the
+        object to be injected in the <emphasis>settings</emphasis> rather than
+        in the objects configuration. This can be achieved by specifying the
+        settings path instead of the object name: </para>
+
+        <example>
+          <title>Injecting an object specified in the settings</title>
+
+          <programlisting language="php">F3\MyPackage\Foo:
+  properties:
+    bar: { object: MyPackage.fooStuff.barImplementation }</programlisting>
+        </example>
+
+        <example>
+          <title>Example Settings.yaml of MyPackage</title>
+
+          <programlisting language="php">fooStuff:
+  barImplementation: F3\MyPackage\Bars\ASpecialBar</programlisting>
+        </example>
+      </section>
+
+      <section>
         <title>Nested Object Configuration</title>
 
         <para>While autowiring and automatic dependency injection offers a
