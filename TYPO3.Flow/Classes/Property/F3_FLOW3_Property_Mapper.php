@@ -270,7 +270,7 @@ class Mapper {
 		$this->mappingResults = $this->createNewMappingResults();
 
 		if (!$properties instanceof \ArrayAccess) {
-			$properties = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAllProperties($properties));
+			$properties = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($properties));
 		}
 
 		if ($target !== NULL) {

@@ -151,8 +151,8 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getAllPropertiesReturnsTheCorrectValuesForAllProperties() {
-		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getAllProperties($this->dummyObject);
+	public function getAccessiblePropertiesReturnsTheCorrectValuesForAllProperties() {
+		$allProperties = \F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($this->dummyObject);
 		$expectedProperties = array(
 			'anotherProperty' => 42,
 			'property' => 'string1',

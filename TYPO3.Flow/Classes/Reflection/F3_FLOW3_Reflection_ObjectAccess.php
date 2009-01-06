@@ -131,14 +131,15 @@ class ObjectAccess {
 	}
 
 	/**
-	 * Get all properties (names and their current values) of the current $object.
+	 * Get all properties (names and their current values) of the current
+	 * $object that are accessible through this class.
 	 *
 	 * @param object $object Object to get all properties from.
 	 * @return array Associative array of all properties.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @todo What to do with ArrayAccess
 	 */
-	static public function getAllProperties($object) {
+	static public function getAccessibleProperties($object) {
 		$properties = array();
 		foreach (self::getAccessiblePropertyNames($object) as $propertyName) {
 			$properties[$propertyName] = self::getProperty($object, $propertyName);
@@ -148,7 +149,7 @@ class ObjectAccess {
 
 	/**
 	 * Checks if a $property on an $object is accessible by $type. For ACCESS_PUBLIC
-	 * on ArrayObject instances this only returns TRUE if the property is already set.
+	 * on ArrayObject instances this returns FALSE.
 	 *
 	 * @param object $object The object to do the check on
 	 * @param string $propertyName Name of the property
@@ -170,7 +171,7 @@ class ObjectAccess {
 				}
 				break;
 			case self::ACCESS_PUBLIC:
-				if (($object instanceof \ArrayObject && isset($object[$propertyName])) || array_key_exists($propertyName, get_object_vars($object))) {
+				if (!($object instanceof \ArrayObject) && array_key_exists($propertyName, get_object_vars($object))) {
 					return TRUE;
 				}
 				break;
