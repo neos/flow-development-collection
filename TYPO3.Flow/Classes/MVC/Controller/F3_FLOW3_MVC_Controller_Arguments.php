@@ -147,7 +147,7 @@ class Arguments extends \ArrayObject {
 	 * If an argument with the same name exists already, it will be replaced by the
 	 * new argument object.
 	 *
-	 * If $dataType is an object registered at the Object Manager, it sets the default property editor to map this property.
+	 * If $dataType is an object registered at the Object Manager, it sets the default property converter to map this property.
 	 *
 	 * @param string $name Name of the argument
 	 * @param string $dataType Name of one of the built-in data types
@@ -160,9 +160,9 @@ class Arguments extends \ArrayObject {
 		$argument->setRequired($isRequired);
 
 		if ($this->objectManager->isObjectRegistered($dataType)) {
-			$propertyEditor = $this->objectFactory->create('F3\FLOW3\Property\Editor\DomainObjectEditor', $dataType);
-			$argument->setPropertyEditor($propertyEditor)
-			         ->setPropertyEditorInputFormat('array');
+			$propertyConverter = $this->objectFactory->create('F3\FLOW3\Property\Converter\DomainObjectConverter', $dataType);
+			$argument->setPropertyConverter($propertyConverter)
+			         ->setPropertyConverterInputFormat('array');
 		}
 		$this->addArgument($argument);
 		return $argument;

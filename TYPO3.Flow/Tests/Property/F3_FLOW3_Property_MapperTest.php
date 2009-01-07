@@ -345,7 +345,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function aPropertyEditorRegisteredForAllPropertiesIsCalledCorrectly() {
+	public function aPropertyConverterRegisteredForAllPropertiesIsCalledCorrectly() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -358,12 +358,12 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value1'));
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1'));
-		$this->mapper->registerPropertyEditor($propertyEditor);
+		$this->mapper->registerPropertyConverter($propertyConverter);
 
 		$this->mapper->map($source);
 	}
@@ -372,7 +372,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function aPropertyEditorRegisteredForAllPropertiesWithASpecificFormatIsCalledCorrectly() {
+	public function aPropertyConverterRegisteredForAllPropertiesWithASpecificFormatIsCalledCorrectly() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -385,12 +385,12 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value1'));
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1'));
-		$this->mapper->registerPropertyEditor($propertyEditor, 'all', 'customFormat');
+		$this->mapper->registerPropertyConverter($propertyConverter, 'all', 'customFormat');
 
 		$this->mapper->map($source);
 	}
@@ -399,7 +399,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function aPropertyEditorRegisteredForASinglePropertyIsCalledCorrectly() {
+	public function aPropertyConverterRegisteredForASinglePropertyIsCalledCorrectly() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -412,12 +412,12 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value3'));
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
-		$this->mapper->registerPropertyEditor($propertyEditor, 'key3');
+		$this->mapper->registerPropertyConverter($propertyConverter, 'key3');
 
 		$this->mapper->map($source);
 	}
@@ -426,7 +426,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function aPropertyEditorRegisteredForASinglePropertyWithASpecificFormatIsCalledCorrectly() {
+	public function aPropertyConverterRegisteredForASinglePropertyWithASpecificFormatIsCalledCorrectly() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -439,12 +439,12 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyEditor = $this->getMock('F3\FLOW3\Property\EditorInterface');
-		$propertyEditor->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value3'));
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);
 		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
-		$this->mapper->registerPropertyEditor($propertyEditor, 'key3', 'customFormat');
+		$this->mapper->registerPropertyConverter($propertyConverter, 'key3', 'customFormat');
 
 		$this->mapper->map($source);
 	}

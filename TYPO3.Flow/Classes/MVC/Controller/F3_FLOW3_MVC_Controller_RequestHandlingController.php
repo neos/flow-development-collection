@@ -224,7 +224,7 @@ class RequestHandlingController extends \F3\FLOW3\MVC\Controller\AbstractControl
 		$this->propertyMapper->setTarget($this->arguments);
 		foreach ($this->arguments as $argument) {
 			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter(), $argument->getName());
-			if ($argument->getPropertyEditor() != NULL) $this->propertyMapper->registerPropertyEditor($argument->getPropertyEditor(), $argument->getName(), $argument->getPropertyEditorInputFormat());
+			if ($argument->getPropertyConverter() != NULL) $this->propertyMapper->registerPropertyConverter($argument->getPropertyConverter(), $argument->getName(), $argument->getPropertyConverterInputFormat());
 		}
 
 		$argumentsValidator = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentsValidator', $this->arguments);

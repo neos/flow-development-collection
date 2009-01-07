@@ -199,7 +199,7 @@ class RequestHandlingControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentPropertyEditors() {
+	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentPropertyConverters() {
 		$this->markTestIncomplete();
 	}
 

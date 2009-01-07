@@ -1,0 +1,78 @@
+<?php
+declare(ENCODING = 'utf-8');
+namespace F3\FLOW3\Property\Editor;
+
+/*                                                                        *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
+ *                                                                        *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
+ *                                                                        */
+
+include_once( __DIR__ . '/Fixture/ExampleDomainObject_BlogPosting.php');
+
+/**
+ * @package
+ * @subpackage
+ * @version $Id:$
+ */
+class DomainObjectConverterTest extends \F3\Testing\BaseTestCase {
+
+	/**
+	 * @var F3\FLOW3\Property\Converter\DomainObjectConverter
+	 */
+	protected $domainObjectConverter;
+
+	/**
+	 * Set testcases up
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setUp() {
+		$exampleDomainObject = 'F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting';
+		$this->domainObjectConverter = new \F3\FLOW3\Property\Converter\DomainObjectConverter($exampleDomainObject);
+
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$this->domainObjectConverter->injectObjectFactory($this->mockObjectFactory);
+
+		$this->mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$this->domainObjectConverter->injectPropertyMapper($this->mockPropertyMapper);
+	}
+
+	/**
+	 * If you call "setAsFormat" with another argument than array, throw an exception.
+	 *
+	 * @expectedException F3\FLOW3\Property\Exception\InvalidFormat
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @test
+	 */
+	public function setAsFormatThrowsExceptionIfWrongFormatGiven() {
+		$this->domainObjectConverter->setAsFormat('text', '');
+	}
+
+	/**
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @test
+	 */
+	public function setAsFormatCallsPropertyMapperCorrectly() {
+		$blogPosting = new \F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting();
+
+		$arrayToMap = array(
+			'title' => 'Hallo',
+			'contents' => 'These are my contents'
+		);
+
+		$this->mockObjectFactory->expects($this->once())->method('create')->with($this->equalTo('F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting'))->will($this->returnValue($blogPosting));
+		$this->mockPropertyMapper->expects($this->once())->method('setTarget')->with($this->equalTo($blogPosting));
+		$this->mockPropertyMapper->expects($this->once())->method('map')->with($this->equalTo(new \ArrayObject($arrayToMap)));
+
+		$this->domainObjectConverter->setAsFormat('array', $arrayToMap);
+	}
+}
+
+?>

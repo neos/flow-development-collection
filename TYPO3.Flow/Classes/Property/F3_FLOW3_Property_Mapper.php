@@ -102,9 +102,9 @@ class Mapper {
 	protected $validator = NULL;
 
 	/**
-	 * @var array An array which stores the registered property editors
+	 * @var array An array which stores the registered property converters
 	 */
-	protected $propertyEditors = array();
+	protected $propertyConverters = array();
 
 	/**
 	 * @var array An array which stores the registered filters
@@ -220,25 +220,25 @@ class Mapper {
 	}
 
 	/**
-	 * Registers the given Property Editor for use with the specified property
+	 * Registers the given Property Converter for use with the specified property
 	 * and with the given source format.
 	 *
 	 * If no property is specified, it will be used for all. If no format is
 	 * specified the default format will be used.
-	 *
-	 * Note: You can only use one editor that is not set for a specific property.
+	 * 
+	 * Note: You can only use one converter that is not set for a specific property.
 	 * Use a composite editor, if you need more.
 	 *
-	 * @param  \F3\FLOW3\Property\EditorInterface $propertyEditor The property editor
-	 * @param  string $property The editor should only be used for this property
-	 * @param  string $format The source format the editor should be used with.
+	 * @param  \F3\FLOW3\Property\ConverterInterface $propertyConverter The property editor
+	 * @param  string $property The converter should only be used for this property
+	 * @param  string $format The source format the converter should be used with.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registerPropertyEditor(\F3\FLOW3\Property\EditorInterface $propertyEditor, $property = 'all', $format = 'default') {
-		$this->propertyEditors[$property] = array(
+	public function registerPropertyConverter(\F3\FLOW3\Property\ConverterInterface $propertyConverter, $property = 'all', $format = 'default') {
+		$this->propertyConverters[$property] = array(
 			'format' => $format,
-			'propertyEditor' => $propertyEditor
+			'propertyConverter' => $propertyConverter
 		);
 	}
 
@@ -315,7 +315,7 @@ class Mapper {
 			if ($this->isAllowedProperty($propertyName)) {
 
 				$propertyValue = $this->invokeFilter($propertyName, $propertyValue);
-				$propertyValue = $this->invokePropertyEditor($propertyName, $propertyValue);
+				$propertyValue = $this->invokePropertyConverter($propertyName, $propertyValue);
 
 				if (!$this->setPropertyValue($propertyName, $propertyValue)) {
 					if ($this->isRequiredProperty($propertyName)) {
@@ -450,21 +450,21 @@ class Mapper {
 	}
 
 	/**
-	 * Invokes all registered property editors for a given property.
+	 * Invokes all registered property converters for a given property.
 	 *
-	 * @param string $propertyName Property name to invoke the editors for
-	 * @param object $propertyValue The property value to set for the editor
-	 * @return object the edited value
+	 * @param string $propertyName Property name to invoke the converters for
+	 * @param object $propertyValue The property value to set for the converter
+	 * @return object the converted value
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function invokePropertyEditor($propertyName, $propertyValue) {
+	protected function invokePropertyConverter($propertyName, $propertyValue) {
 		try {
-			if (isset($this->propertyEditors[$propertyName])) {
-				$this->propertyEditors[$propertyName]['propertyEditor']->setAsFormat($this->propertyEditors[$propertyName]['format'], $propertyValue);
-				$propertyValue = $this->propertyEditors[$propertyName]['propertyEditor']->getProperty();
-			} elseif (isset($this->propertyEditors['all'])) {
-				$this->propertyEditors['all']['propertyEditor']->setAsFormat($this->propertyEditors['all']['format'], $propertyValue);
-				$propertyValue = $this->propertyEditors['all']['propertyEditor']->getProperty();
+			if (isset($this->propertyConverters[$propertyName])) {
+				$this->propertyConverters[$propertyName]['propertyConverter']->setAsFormat($this->propertyConverters[$propertyName]['format'], $propertyValue);
+				$propertyValue = $this->propertyConverters[$propertyName]['propertyConverter']->getProperty();
+			} elseif (isset($this->propertyConverters['all'])) {
+				$this->propertyConverters['all']['propertyConverter']->setAsFormat($this->propertyConverters['all']['format'], $propertyValue);
+				$propertyValue = $this->propertyConverters['all']['propertyConverter']->getProperty();
 			}
 		} catch (\F3\FLOW3\Property\Exception $exception) {
 			$this->mappingResults->addError($this->createNewValidationErrorObject('The property editor could not handle the given value in the given format.', 1210368164), $propertyName);

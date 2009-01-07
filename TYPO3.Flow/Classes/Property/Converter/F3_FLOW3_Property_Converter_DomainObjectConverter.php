@@ -1,25 +1,18 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property\Editor;
+namespace F3\FLOW3\Property\Converter;
 
 /*                                                                        *
- * This script belongs to the FLOW3 framework.                            *
+ * This script is part of the TYPO3 project - inspiring people to share!  *
  *                                                                        *
- * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or (at your *
- * option) any later version.                                             *
+ * TYPO3 is free software; you can redistribute it and/or modify it under *
+ * the terms of the GNU General Public License version 2 as published by  *
+ * the Free Software Foundation.                                          *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
- * General Public License for more details.                               *
- *                                                                        *
- * You should have received a copy of the GNU Lesser General Public       *
- * License along with the script.                                         *
- * If not, see http://www.gnu.org/licenses/lgpl.html                      *
- *                                                                        *
- * The TYPO3 project - inspiring people to share!                         *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
  *                                                                        */
 
 /**
@@ -28,49 +21,49 @@ namespace F3\FLOW3\Property\Editor;
  * @version $Id:$
  */
 /**
- * Domain Object editor. Used to automatically bind arrays to objects when validating input arguments.
+ * Domain Object converter. Used to automatically bind arrays to objects when validating input arguments.
  *
  * @scope prototype
  */
-class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
+class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface {
 
 	/**
 	 * The domain object which is processed.
 	 * @var object
 	 */
 	protected $domainObject;
-	
+
 	/**
 	 * Name of the domain object.
 	 * @var string
 	 */
 	protected $domainObjectName;
-	
+
 	/**
 	 * Property Mapper used to map this complex object.
 	 * @var F3\FLOW3\Property\Mapper
 	 */
 	protected $propertyMapper;
-	
+
 	/**
 	 * Object factory.
 	 * @var F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
-	
+
 	/**
 	 * Constructor.
-	 * 
-	 * @param string $objectName: Object name which is the native property for this Domain Object editor.
+	 *
+	 * @param string $objectName: Object name which is the native property for this Domain Object converter.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function __construct($objectName) {
 		$this->domainObjectName = $objectName;
 	}
-	
+
 	/**
 	 * Inject the property mapper.
-	 * 
+	 *
 	 * @param F3\FLOW3\Property\Mapper $propertyMapper
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -78,10 +71,10 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
 	}
-	
+
 	/**
 	 * Inject an object factory.
-	 * 
+	 *
 	 * @param F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -89,7 +82,7 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
-	
+
 	/**
 	 * Sets the domain object, which is the native representation of a property.
 	 *
@@ -104,8 +97,8 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 
 	/**
 	 * Get the domain object, which is the native representation of a property.
-	 * 
-	 * @return object The edited property
+	 *
+	 * @return object The native property
 	 * @throws \F3\FLOW3\Property\Exception\InvalidProperty if no property has been set yet
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -121,18 +114,17 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @todo Use custom factory which creates the instance of the object.
 	 */
 	public function setAsFormat($format, $property) {
 		if ($format !== 'array') {
 			throw new \F3\FLOW3\Property\Exception\InvalidFormat('Only array format expected, ' . $format . ' given.', 1231017916);
 		}
-		
+
 		$targetObject = $this->retrieveTargetObject($property);
 		$this->propertyMapper->setTarget($targetObject);
 		$this->propertyMapper->map(new \ArrayObject($property));
 		$this->domainObject = $targetObject;
-	
+
 	}
 
 	/**
@@ -156,10 +148,10 @@ class DomainObjectEditor implements \F3\FLOW3\Property\EditorInterface {
 	public function getSupportedFormats() {
 		return array('array');
 	}
-	
+
 	/**
-	 * Retrieve a new target object. Can use a repository or some special logic to retrieve/create the target object.
-	 * 
+	 * Retrieve a new target object.
+	 *
 	 * @return object The target object.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */

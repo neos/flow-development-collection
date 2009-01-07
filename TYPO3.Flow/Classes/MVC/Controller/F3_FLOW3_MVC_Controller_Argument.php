@@ -110,14 +110,14 @@ class Argument {
 	protected $filter = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Property\EditorInterface The property editor for this argument
+	 * @var \F3\FLOW3\Property\ConverterInterface The property converter for this argument
 	 */
-	protected $propertyEditor = NULL;
+	protected $propertyConverter = NULL;
 
 	/**
-	 * @var string The property editor's input format for this argument
+	 * @var string The property converter's input format for this argument
 	 */
-	protected $propertyEditorInputFormat = 'string';
+	protected $propertyConverterInputFormat = 'string';
 
 	/**
 	 * Constructs this controller argument
@@ -433,51 +433,51 @@ class Argument {
 	}
 
 	/**
-	 * Set a property editor
+	 * Set a property converter
 	 *
-	 * @param string Class name of a property editor
+	 * @param string Class name of a property converter
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setPropertyEditor($className) {
+	public function setPropertyConverter($className) {
 		if (is_string($className)) {
-			$this->propertyEditor = $this->objectFactory->create($className);
+			$this->propertyConverter = $this->objectFactory->create($className);
 		} else {
-			$this->propertyEditor = $className;
+			$this->propertyConverter = $className;
 		}
 		return $this;
 	}
 
 	/**
-	 * Returns the set property editor
+	 * Returns the set property converter
 	 *
-	 * @return \F3\FLOW3\Property\EditorInterface The set property editor, NULL if none was set
+	 * @return \F3\FLOW3\Property\ConverterInterface The set property convertr, NULL if none was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPropertyEditor() {
-		return $this->propertyEditor;
+	public function getPropertyConverter() {
+		return $this->propertyConverter;
 	}
 
 	/**
-	 * Set a property editor input format
+	 * Set a property converter input format
 	 *
-	 * @param string Input format the property editor should use
+	 * @param string Input format the property converter should use
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setPropertyEditorInputFormat($format) {
-		$this->propertyEditorInputFormat = $format;
+	public function setPropertyConverterInputFormat($format) {
+		$this->propertyConverterInputFormat = $format;
 		return $this;
 	}
 
 	/**
-	 * Returns the set property editor input format
+	 * Returns the set property converter input format
 	 *
-	 * @return string The set property editor input format
+	 * @return string The set property converter input format
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPropertyEditorInputFormat() {
-		return $this->propertyEditorInputFormat;
+	public function getPropertyConverterInputFormat() {
+		return $this->propertyConverterInputFormat;
 	}
 
 	/**
