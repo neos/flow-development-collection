@@ -3,22 +3,29 @@ declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Property;
 
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
 /**
  * @package FLOW3
  * @subpackage Property
- * @version $Id:\F3\FLOW3\Property\Mapper.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  */
 
 /**
@@ -43,8 +50,8 @@ namespace F3\FLOW3\Property;
  *
  * @package FLOW3
  * @subpackage Property
- * @version $Id:\F3\FLOW3\Property\Mapper.php 467 2008-02-06 19:34:56Z robert $
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
 class Mapper {
@@ -148,7 +155,8 @@ class Mapper {
 	}
 
 	/**
-	 * Set the mapping mode, wether the target object should be touched on mapping errors
+	 * Set the mapping mode, wether the target object should be touched on
+	 * mapping errors
 	 *
 	 * @param  string $doNotMapOnErrors: If set to TRUE, the target object will be untouched, if there are any errors. Default is FALSE.
 	 * @return void
@@ -212,9 +220,14 @@ class Mapper {
 	}
 
 	/**
-	 * Registers the given Property Editor for use with the specified property and with the given source format.
-	 * If no property is specified, it will be used for all. If no format is specified the default format will be used.
-	 * Note: You can only use one editor that is not set for a specific property. Use a composite editor, if you need more.
+	 * Registers the given Property Editor for use with the specified property
+	 * and with the given source format.
+	 *
+	 * If no property is specified, it will be used for all. If no format is
+	 * specified the default format will be used.
+	 *
+	 * Note: You can only use one editor that is not set for a specific property.
+	 * Use a composite editor, if you need more.
 	 *
 	 * @param  \F3\FLOW3\Property\EditorInterface $propertyEditor The property editor
 	 * @param  string $property The editor should only be used for this property
@@ -230,8 +243,11 @@ class Mapper {
 	}
 
 	/**
-	 * Registers the given Filter for use with the specified property. If no property is specified, it will be used for all.
-	 * Note: You can only use one filter that is not set for a specific property. Use a filterChain, if you need more.
+	 * Registers the given Filter for use with the specified property. If no
+	 * property is specified, it will be used for all.
+	 *
+	 * Note: You can only use one filter that is not set for a specific property.
+	 * Use a filterChain, if you need more.
 	 *
 	 * @param  \F3\FLOW3\Validation\FilterInterface $filter: The filter
 	 * @param  string $property: The filter should only be used for this property
@@ -244,6 +260,7 @@ class Mapper {
 
 	/**
 	 * Registers the given Validator to validate the target object.
+	 *
 	 * Note: You can only use one validator. Use a validatorChain, if you need more.
 	 *
 	 * @param  \F3\FLOW3\Validation\ObjectValidatorInterface $validator: The validator
@@ -258,7 +275,9 @@ class Mapper {
 	 * Maps the given properties to the target object.
 	 * After mapping the results can be retrieved with getMappingResult.
 	 *
-	 * In case the $target object is directly given to this method, it modifies the given $target object.
+	 * In case the $target object is directly given to this method, it modifies
+	 * the given $target object and the validator and allowedProperties are
+	 * reset to their default values.
 	 *
 	 * @param object $properties Properties to map to the target object
 	 * @param object $target Optional. The target object. Will be used instead of this->setTarget(), if it is set.
@@ -312,7 +331,9 @@ class Mapper {
 
 		$this->validateTarget();
 
-		if ($this->onlyWriteOnNoErrors && $this->mappingResults->hasErrors()) $this->target = $this->originalTarget;
+		if ($this->onlyWriteOnNoErrors && $this->mappingResults->hasErrors()) {
+			$this->target = $this->originalTarget;
+		}
 	}
 
 	/**
@@ -336,6 +357,8 @@ class Mapper {
 	 * @see map()
 	 */
 	protected function isAllowedProperty($propertyName) {
+		if (current($this->allowedProperties) === '.*') return TRUE;
+
 		$isAllowed = FALSE;
 		foreach ($this->allowedProperties as $allowedProperty) {
 			if (preg_match('/^' . $allowedProperty . '$/', $propertyName) === 1) {
