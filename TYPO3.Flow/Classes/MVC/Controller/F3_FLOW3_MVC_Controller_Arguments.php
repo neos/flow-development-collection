@@ -161,8 +161,7 @@ class Arguments extends \ArrayObject {
 
 		if ($this->objectManager->isObjectRegistered($dataType)) {
 			$propertyConverter = $this->objectFactory->create('F3\FLOW3\Property\Converter\DomainObjectConverter', $dataType);
-			$argument->setPropertyConverter($propertyConverter)
-			         ->setPropertyConverterInputFormat('array');
+			$argument->setPropertyConverter($propertyConverter)->setPropertyConverterInputFormat('array');
 		}
 		$this->addArgument($argument);
 		return $argument;

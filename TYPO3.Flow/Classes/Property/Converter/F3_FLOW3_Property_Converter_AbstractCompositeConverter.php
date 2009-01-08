@@ -3,16 +3,23 @@ declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Property\Converter;
 
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
 /**
@@ -28,7 +35,7 @@ namespace F3\FLOW3\Property\Converter;
  * @package FLOW3
  * @subpackage Property
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\ConverterInterface {
 
@@ -45,8 +52,8 @@ abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converte
 	/**
 	 * Register a new format, the converter will support in the future
 	 *
-	 * @param string The name of the format
-	 * @param \F3\FLOW3\Property\ConverterInterface The property Converter that can do the conversion to and from the given format.
+	 * @param string $name The name of the format
+	 * @param \F3\FLOW3\Property\ConverterInterface $propertyConverter The property Converter that can do the conversion to and from the given format.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo this should be just a setter used by the configuration
@@ -58,7 +65,7 @@ abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converte
 	/**
 	 * Remove a previously registered format from the converter. Note: Built in formats can't be removed.
 	 *
-	 * @param string The name of the format that should be removed
+	 * @param string $name The name of the format that should be removed
 	 * @return void
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the given format can't be removed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -71,8 +78,8 @@ abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converte
 	/**
 	 * Sets the property using the given format.
 	 *
-	 * @param string The format the property currently has.
-	 * @param object The property to be set.
+	 * @param string $format The format the property currently has.
+	 * @param object $property The property to be set.
 	 * @return void
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property converter does not support the given format
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -86,7 +93,7 @@ abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converte
 	/**
 	 * Get the property in the given format.
 	 *
-	 * @param string The format in which the property should be returned.
+	 * @param string $format The format in which the property should be returned.
 	 * @return object The property in the given format.
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property converter does not support the given format
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

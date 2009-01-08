@@ -21,14 +21,22 @@ namespace F3\FLOW3\Property;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
 require_once (__DIR__ . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSetters.php');
 
 /**
  * Testcase for the Property Mapper
  *
- * @package     FLOW3
- * @version     $Id$
- * @license     http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class MapperTest extends \F3\Testing\BaseTestCase {
 

@@ -3,16 +3,23 @@ declare(ENCODING = 'utf-8');
 namespace F3\FLOW3\Property;
 
 /*                                                                        *
- * This script is part of the TYPO3 project - inspiring people to share!  *
+ * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
- * TYPO3 is free software; you can redistribute it and/or modify it under *
- * the terms of the GNU General Public License version 2 as published by  *
- * the Free Software Foundation.                                          *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
- * Public License for more details.                                       *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
 /**
@@ -31,14 +38,14 @@ namespace F3\FLOW3\Property;
  * @package FLOW3
  * @subpackage Property
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 interface ConverterInterface {
 
 	/**
 	 * Sets the native representation of a property.
 	 *
-	 * @param  object $property: The property
+	 * @param object $property The property
 	 * @return void
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the value of this property object type can't be edited by this editor
 	 */
@@ -47,7 +54,7 @@ interface ConverterInterface {
 	/**
 	 * Get the native representation of a property.
 	 *
-	 * @return object The native0 property
+	 * @return object The native property
 	 * @throws \F3\FLOW3\Property\Exception\InvalidProperty if no property has been set yet
 	 */
 	public function getProperty();
@@ -55,8 +62,8 @@ interface ConverterInterface {
 	/**
 	 * Sets the property using the given format.
 	 *
-	 * @param string The format the property currently has. Must be in the array which is returned by getSupportedFormats().
-	 * @param object The property to be set.
+	 * @param string $format The format the property currently has. Must be in the array which is returned by getSupportedFormats().
+	 * @param object $property The property to be set.
 	 * @return void
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 */
@@ -65,7 +72,7 @@ interface ConverterInterface {
 	/**
 	 * Get the property in the given format.
 	 *
-	 * @param string The format in which the property should be returned. Must be in the array which is returned by getSupportedFormats().
+	 * @param string $format The format in which the property should be returned. Must be in the array which is returned by getSupportedFormats().
 	 * @return object The property in the given format.
 	 * @throws \F3\FLOW3\Property\Exception\InvalidFormat if the property editor does not support the given format
 	 */
