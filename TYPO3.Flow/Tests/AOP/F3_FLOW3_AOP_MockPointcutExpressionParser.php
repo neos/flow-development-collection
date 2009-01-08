@@ -24,7 +24,7 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Tests
  * @version $Id$
  */
 
@@ -32,7 +32,7 @@ namespace F3\FLOW3\AOP;
  * A mock pointcut expression parser - used to test the real pointcut expression parser
  *
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Tests
  * @version $Id:\F3\FLOW3\AOP\PointcutExpressionParser.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

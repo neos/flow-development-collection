@@ -23,11 +23,18 @@ namespace F3\FLOW3\Fixture\Validation;
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * A dummy class with setters for testing data mapping
  *
- * @package		FLOW3
- * @version 	$Id$
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ClassWithSetters {
 
@@ -62,7 +69,7 @@ class ClassWithSetters {
 	protected function setProperty4($value) {
 		$this->property4 = $value;
 	}
-	
+
 	public function getProperty2() {
 		return $this->property2;
 	}

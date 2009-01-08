@@ -23,11 +23,18 @@ namespace F3\FLOW3\AOP;
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id$
+ */
+
+/**
  * Testcase for the Pointcut Method Name Filter
  *
- * @package		FLOW3
- * @version 	$Id:\F3\FLOW3\AOP\PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\AOP\PointcutClassFilterTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class PointcutMethodNameFilterTest extends \F3\Testing\BaseTestCase {
 

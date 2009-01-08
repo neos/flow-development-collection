@@ -23,11 +23,18 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\MVC\Controller\ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
+ */
+
+/**
  * Testcase for the MVC Controller Argument
  *
- * @package		FLOW3
- * @version 	$Id:\F3\FLOW3\MVC\Controller\ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\MVC\Controller\ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ArgumentTest extends \F3\Testing\BaseTestCase {
 

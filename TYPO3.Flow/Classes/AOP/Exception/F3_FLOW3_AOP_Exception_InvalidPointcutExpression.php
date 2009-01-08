@@ -31,10 +31,10 @@ namespace F3\FLOW3\AOP\Exception;
 /**
  * A "Invalid Pointcut Expression" Exception
  *
- * @package  FLOW3
+ * @package FLOW3
  * @subpackage AOP
  * @version $Id$
- * @license  http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class InvalidPointcutExpression extends \F3\FLOW3\AOP\Exception {
 

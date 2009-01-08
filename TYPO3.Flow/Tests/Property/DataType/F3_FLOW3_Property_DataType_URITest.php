@@ -23,14 +23,21 @@ namespace F3\FLOW3\Property\DataType;
  *                                                                        */
 
 /**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
+/**
  * Testcase for the MVC URI class
- * 
- * @package		FLOW3
- * @version 	$Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
- * @license		http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ *
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\Object\TransientRegistryTest.php 201 2007-03-30 11:18:30Z robert $
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class URITest extends \F3\Testing\BaseTestCase {
-	
+
 	/**
 	 * Checks if a complete URI with all parts is transformed into an object correctly.
 	 *
@@ -57,7 +64,7 @@ class URITest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org> 
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function constructorParsesArgumentsWithSpecialCharactersCorrectly() {
 		$URIString = 'http://www.typo3.com/path1/?argumentäöü1=' . urlencode('valueåø€œ');

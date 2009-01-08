@@ -21,6 +21,13 @@ namespace F3\FLOW3\AOP;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
+
+/**
+ * @package FLOW3
+ * @subpackage Tests
+ * @version $Id:\F3\FLOW3\AOP\PointcutExpressionParserTest.php 201 2007-03-30 11:18:30Z robert $
+ */
+
 require_once('F3_FLOW3_AOP_MockPointcutExpressionParser.php');
 require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_CustomFilter.php');
 require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_EmptyClass.php');
@@ -29,7 +36,7 @@ require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_EmptyClass.php');
  * Testcase for the default AOP Pointcut Expression Parser implementation
  *
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Tests
  * @version $Id:\F3\FLOW3\AOP\PointcutExpressionParserTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

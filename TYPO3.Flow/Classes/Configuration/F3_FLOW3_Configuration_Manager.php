@@ -34,7 +34,7 @@ namespace F3\FLOW3\Configuration;
  * @package FLOW3
  * @subpackage Configuration
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class Manager {
 
