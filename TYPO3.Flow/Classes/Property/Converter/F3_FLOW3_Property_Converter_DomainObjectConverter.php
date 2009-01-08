@@ -37,7 +37,7 @@ namespace F3\FLOW3\Property\Converter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
-class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface {
+class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface, \F3\FLOW3\Property\Converter\IdentifierAwareInterface {
 
 	/**
 	 * The domain object which is processed.
@@ -50,6 +50,12 @@ class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface {
 	 * @var string
 	 */
 	protected $domainObjectName;
+
+	/**
+	 * Identifier for current domain object, if set
+	 * @var string
+	 */
+	protected $identifier = NULL;
 
 	/**
 	 * Property Mapper used to map this complex object.
@@ -132,11 +138,11 @@ class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface {
 			throw new \F3\FLOW3\Property\Exception\InvalidFormat('Only array format expected, ' . $format . ' given.', 1231017916);
 		}
 
-		$targetObject = $this->objectFactory->create($this->domainObjectName);
-		$this->propertyMapper->setTarget($targetObject);
-		$this->propertyMapper->map(new \ArrayObject($property));
-		$this->domainObject = $targetObject;
-
+		$this->domainObject = $this->objectFactory->create($this->domainObjectName);
+		$this->propertyMapper->map(new \ArrayObject($property), $this->domainObject);
+		if (array_key_exists('identifier', $property)) {
+			$this->identifier = $property['identifier'];
+		}
 	}
 
 	/**
@@ -149,6 +155,15 @@ class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface {
 	 */
 	public function getAsFormat($format) {
 		throw new \F3\FLOW3\Property\Exception\InvalidFormat('This property editor currently does not support bidirectional conversions.', 1231017919);
+	}
+
+	/**
+	 * Get identifier of the last converted object, if it has one.
+	 *
+	 * @return string The string representation of the identifier of the last converted object.
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 	/**

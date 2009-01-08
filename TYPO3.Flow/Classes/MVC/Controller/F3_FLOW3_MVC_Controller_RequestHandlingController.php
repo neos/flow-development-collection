@@ -244,6 +244,10 @@ class RequestHandlingController extends \F3\FLOW3\MVC\Controller\AbstractControl
 		foreach ($this->argumentMappingResults->getWarnings() as $propertyName => $warning) {
 			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->addWarning($warning);
 		}
+
+		foreach ($this->argumentMappingResults->getIdentifiers() as $propertyName => $identifier) {
+			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->setIdentifier($identifier);
+		}
 	}
 }
 

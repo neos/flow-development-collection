@@ -82,10 +82,32 @@ class DomainObjectConverterTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$this->mockObjectFactory->expects($this->once())->method('create')->with($this->equalTo('F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting'))->will($this->returnValue($blogPosting));
-		$this->mockPropertyMapper->expects($this->once())->method('setTarget')->with($this->equalTo($blogPosting));
-		$this->mockPropertyMapper->expects($this->once())->method('map')->with($this->equalTo(new \ArrayObject($arrayToMap)));
+		$this->mockPropertyMapper->expects($this->once())->method('map')->with($this->equalTo(new \ArrayObject($arrayToMap)), $this->equalTo($blogPosting));
 
 		$this->domainObjectConverter->setAsFormat('array', $arrayToMap);
+	}
+
+	/**
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @test
+	 */
+	public function setAsFormatSetsIdentifier() {
+		$blogPosting = new \F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting();
+
+		$identifier = '550e8400-e29b-11d4-a716-446655440091';
+
+		$arrayToMap = array(
+			'identifier' => $identifier,
+			'title' => 'Hallo',
+			'contents' => 'These are my contents'
+		);
+
+		$this->mockObjectFactory->expects($this->once())->method('create')->with($this->equalTo('F3\FLOW3\Property\Converter\ExampleDomainObject_BlogPosting'))->will($this->returnValue($blogPosting));
+		$this->mockPropertyMapper->expects($this->once())->method('map')->with($this->equalTo(new \ArrayObject($arrayToMap)), $this->equalTo($blogPosting));
+
+		$this->domainObjectConverter->setAsFormat('array', $arrayToMap);
+
+		$this->assertEquals($identifier, $this->domainObjectConverter->getIdentifier(), 'Identiifer was not extracted');
 	}
 }
 

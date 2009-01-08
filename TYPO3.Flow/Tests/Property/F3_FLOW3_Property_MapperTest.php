@@ -351,6 +351,28 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function propertyMapperCallsGetIdentifierIfPropertyEditorIsRegistered() {
+		$identifier = '550e8400-e29b-11d4-a716-446655441234';
+		$source = new \ArrayObject(array(
+			'property1' => 'bla',
+			'property2' => 'blubb'
+		));
+
+		$destination = new \ArrayObject();
+		$this->mapper->setTarget($destination);
+		$mockDomainObjectConverter = $this->getMock('F3\FLOW3\Property\Converter\DomainObjectConverter', array('getIdentifier', 'setAsFormat'), array(), '', FALSE);
+		$mockDomainObjectConverter->expects($this->once())->method('getIdentifier')->will($this->returnValue($identifier));
+		$this->mapper->registerPropertyConverter($mockDomainObjectConverter, 'property1');
+		$this->mapper->map($source);
+
+		$identifiers = $this->mapper->getMappingResults()->getIdentifiers();
+		$this->assertEquals(array('property1' => $identifier), $identifiers, 'Identifiers not correctly set');
+	}
+
+	/**
+	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function aPropertyConverterRegisteredForAllPropertiesIsCalledCorrectly() {

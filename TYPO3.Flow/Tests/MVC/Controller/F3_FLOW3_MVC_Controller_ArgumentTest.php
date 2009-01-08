@@ -266,5 +266,16 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(0), 'The returned filter is not a filter chain as expected.');
 		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(1), 'The returned filter is not a filter chain as expected.');
 	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function identifierCanBeSetAndRetrievedFromArgument() {
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text', $this->mockObjectManager);
+		$identifier = '550e8400-e29b-11d4-a716-446655440000';
+		$argument->setIdentifier($identifier);
+		$this->assertEquals($identifier, $argument->getIdentifier(), 'Identifier not retrieved correctly.');
+	}
 }
 ?>

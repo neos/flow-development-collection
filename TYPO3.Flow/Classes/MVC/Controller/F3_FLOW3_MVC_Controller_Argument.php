@@ -50,74 +50,94 @@ class Argument {
 	protected $objectFactory;
 
 	/**
-	 * @var string Name of this argument
+	 * Name of this argument
+	 * @var string
 	 */
 	protected $name = '';
 
 	/**
-	 * @var string Short name of this argument
+	 * Short name of this argument
+	 * @var string
 	 */
 	protected $shortName = NULL;
 
 	/**
-	 * @var string Data type of this argument's value
+	 * Data type of this argument's value
+	 * @var string
 	 */
 	protected $dataType = 'Text';
 
 	/**
-	 * @var boolean TRUE if this argument is required
+	 * TRUE if this argument is required
+	 * @var boolean
 	 */
 	protected $isRequired = FALSE;
 
 	/**
-	 * @var object Actual value of this argument
+	 * Actual value of this argument
+	 * @var object
 	 */
 	protected $value = NULL;
 
 	/**
+	 * Short help message for this argument
 	 * @var string Short help message for this argument
 	 */
 	protected $shortHelpMessage = NULL;
 
 	/**
-	 * @var boolean The argument is valid
+	 * The argument is valid
+	 * @var boolean
 	 */
 	protected $isValid = TRUE;
 
 	/**
-	 * @var array Any error (\F3\FLOW3\Error\Error) that occured while initializing this argument (e.g. a mapping error)
+	 * Any error (\F3\FLOW3\Error\Error) that occured while initializing this argument (e.g. a mapping error)
+	 * @var array
 	 */
 	protected $errors = array();
 
 	/**
-	 * @var array Any warning (\F3\FLOW3\Error\Warning) that occured while initializing this argument (e.g. a mapping warning)
+	 * Any warning (\F3\FLOW3\Error\Warning) that occured while initializing this argument (e.g. a mapping warning)
+	 * @var array
 	 */
 	protected $warnings = array();
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorInterface The property validator for this argument
+	 * The property validator for this argument
+	 * @var \F3\FLOW3\Validation\ValidatorInterface
 	 */
 	protected $validator = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorInterface The property validator for this arguments datatype
+	 * The property validator for this arguments datatype
+	 * @var \F3\FLOW3\Validation\ValidatorInterface
 	 */
 	protected $datatypeValidator = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Validation\FilterInterface The filter for this argument
+	 * The filter for this argument
+	 * @var \F3\FLOW3\Validation\FilterInterface
 	 */
 	protected $filter = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Property\ConverterInterface The property converter for this argument
+	 * The property converter for this argument
+	 * @var \F3\FLOW3\Property\ConverterInterface
 	 */
 	protected $propertyConverter = NULL;
 
 	/**
-	 * @var string The property converter's input format for this argument
+	 * The property converter's input format for this argument
+	 * @var string
 	 */
 	protected $propertyConverterInputFormat = 'string';
+
+	/**
+	 * Identifier for the argument, if it has one
+	 * @var string
+	 */
+	protected $identifier = NULL;
 
 	/**
 	 * Constructs this controller argument
@@ -478,6 +498,27 @@ class Argument {
 	 */
 	public function getPropertyConverterInputFormat() {
 		return $this->propertyConverterInputFormat;
+	}
+
+	/**
+	 * Set the identifier for the argument.
+	 *
+	 * @param string The identifier for the argument.
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setIdentifier($identifier) {
+		$this->identifier = $identifier;
+	}
+
+	/**
+	 * Get the identifier of the argument, if it has one.
+	 *
+	 * @return string Identifier of the argument. If none set, returns NULL.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getIdentifier() {
+		return $this->identifier;
 	}
 
 	/**

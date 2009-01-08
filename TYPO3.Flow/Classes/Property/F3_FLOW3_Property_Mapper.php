@@ -225,7 +225,7 @@ class Mapper {
 	 *
 	 * If no property is specified, it will be used for all. If no format is
 	 * specified the default format will be used.
-	 * 
+	 *
 	 * Note: You can only use one converter that is not set for a specific property.
 	 * Use a composite editor, if you need more.
 	 *
@@ -459,12 +459,22 @@ class Mapper {
 	 */
 	protected function invokePropertyConverter($propertyName, $propertyValue) {
 		try {
+			$propertyConverterToUse = NULL;
 			if (isset($this->propertyConverters[$propertyName])) {
-				$this->propertyConverters[$propertyName]['propertyConverter']->setAsFormat($this->propertyConverters[$propertyName]['format'], $propertyValue);
-				$propertyValue = $this->propertyConverters[$propertyName]['propertyConverter']->getProperty();
+				$propertyConverterToUse = $this->propertyConverters[$propertyName];
 			} elseif (isset($this->propertyConverters['all'])) {
-				$this->propertyConverters['all']['propertyConverter']->setAsFormat($this->propertyConverters['all']['format'], $propertyValue);
-				$propertyValue = $this->propertyConverters['all']['propertyConverter']->getProperty();
+				$propertyConverterToUse = $this->propertyConverters['all'];
+			}
+
+			if ($propertyConverterToUse != NULL) {
+				$propertyConverterToUse['propertyConverter']->setAsFormat($propertyConverterToUse['format'], $propertyValue);
+				$propertyValue = $propertyConverterToUse['propertyConverter']->getProperty();
+
+				if ($propertyConverterToUse['propertyConverter'] instanceof \F3\FLOW3\Property\Converter\IdentifierAwareInterface) {
+					if ($identifier = $propertyConverterToUse['propertyConverter']->getIdentifier()) {
+						$this->mappingResults->addIdentifier($propertyName, $identifier);
+					}
+				}
 			}
 		} catch (\F3\FLOW3\Property\Exception $exception) {
 			$this->mappingResults->addError($this->createNewValidationErrorObject('The property editor could not handle the given value in the given format.', 1210368164), $propertyName);
