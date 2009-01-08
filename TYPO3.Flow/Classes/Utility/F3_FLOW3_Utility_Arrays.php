@@ -184,15 +184,15 @@ class Arrays {
 	 * @param array $path The path to follow, ie. a simple array of keys
 	 * @return mixed The value found, NULL if the path didn't exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	static public function getValueByPath(array $array, array $path) {
 		$key = array_shift($path);
 		if (isset($array[$key])) {
-			if (count($path) > 1) {
+			if (count($path) > 0) {
 				return (is_array($array[$key])) ? self::getValueByPath($array[$key], $path) : NULL;
 			} else {
-				$subKey = array_shift($path);
-				return (is_array($array[$key]) && isset($array[$key][$subKey])) ? $array[$key][$subKey] : NULL;
+				return $array[$key];
 			}
 		} else {
 			return NULL;

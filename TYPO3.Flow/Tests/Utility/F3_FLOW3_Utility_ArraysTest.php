@@ -72,6 +72,15 @@ class ArraysTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenSimplePath() {
+		$array = array('Foo' => 'the value');
+		$this->assertSame('the value', \F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo')));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getValueByPathReturnsTheValueOfANestedArrayByFollowingTheGivenPath() {
