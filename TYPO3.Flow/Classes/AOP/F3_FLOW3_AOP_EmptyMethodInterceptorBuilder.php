@@ -29,9 +29,8 @@ namespace F3\FLOW3\AOP;
  */
 
 /**
- * A AOP method interceptor code builder which generates an empty method as used
- * for introductions without advices delivering the implementation of the introduced
- * method.
+ * A AOP method interceptor code builder which generates an empty method as used for
+ * introductions without advices delivering the implementation of the introduced method.
  *
  * @package FLOW3
  * @subpackage AOP
