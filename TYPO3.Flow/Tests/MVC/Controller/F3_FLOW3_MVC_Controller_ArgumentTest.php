@@ -25,7 +25,7 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\MVC\Controller\ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\MVC\Controller;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\MVC\Controller\ArgumentsTest.php 201 2007-09-10 23:58:30Z Andi $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ArgumentTest extends \F3\Testing\BaseTestCase {

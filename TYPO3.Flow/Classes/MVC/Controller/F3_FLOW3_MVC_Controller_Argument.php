@@ -503,7 +503,7 @@ class Argument {
 	/**
 	 * Set the identifier for the argument.
 	 *
-	 * @param string The identifier for the argument.
+	 * @param string $identifier The identifier for the argument.
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */

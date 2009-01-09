@@ -60,10 +60,11 @@ class MappingResults {
 	protected $identifiers = array();
 
 	/**
-	 * Adds an error to the mapping results. This might be for example a validation or mapping error
+	 * Adds an error to the mapping results. This might be for example a
+	 * validation or mapping error
 	 *
-	 * @param \F3\FLOW3\Error\Error The occured error
-	 * @param string The name of the property which caused the error
+	 * @param \F3\FLOW3\Error\Error $error The occured error
+	 * @param string $propertyName The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addError(\F3\FLOW3\Error\Error $error, $propertyName) {
@@ -91,10 +92,11 @@ class MappingResults {
 	}
 
 	/**
-	 * Adds a warning to the mapping results. This might be for example a property that could not be mapped but wasn't marked as required.
+	 * Adds a warning to the mapping results. This might be for example a
+	 * property that could not be mapped but wasn't marked as required.
 	 *
-	 * @param \F3\FLOW3\Error\Warning The occured warning
-	 * @param string The name of the property which caused the error
+	 * @param \F3\FLOW3\Error\Warning $warning The occured warning
+	 * @param string $propertyName The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function addWarning(\F3\FLOW3\Error\Warning $warning, $propertyName) {
@@ -114,20 +116,20 @@ class MappingResults {
 	/**
 	 * Add an $identifier for a $property to the mapping results.
 	 *
-	 * @param string $property Name of the property
+	 * @param string $propertyName Name of the property
 	 * @param string $identifier Identifier of the property
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function addIdentifier($property, $identifier) {
-		$this->identifiers[$property] = $identifier;
+	public function addIdentifier($propertyName, $identifier) {
+		$this->identifiers[$propertyName] = $identifier;
 	}
 
 	/**
 	 * Get properties which have identifiers assigned, including the identifiers.
 	 *
-	 * Returns an associative array. The key is the property name, and the associated
-	 * value is the identifier for this property.
+	 * Returns an associative array. The key is the property name, and the
+	 * associated value is the identifier for this property.
 	 *
 	 * @return array Associative identifier array. Key: Property Name; Value: Identifier for the property
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
@@ -137,9 +139,9 @@ class MappingResults {
 	}
 
 	/**
-	 * Returns true if any warning was recognized
+	 * Returns TRUE if any warning was recognized
 	 *
-	 * @return boolean True if a warning occured
+	 * @return boolean TRUE if a warning occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasWarnings() {

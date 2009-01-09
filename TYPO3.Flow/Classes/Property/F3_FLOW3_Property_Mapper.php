@@ -456,22 +456,23 @@ class Mapper {
 	 * @param object $propertyValue The property value to set for the converter
 	 * @return object the converted value
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function invokePropertyConverter($propertyName, $propertyValue) {
 		try {
-			$propertyConverterToUse = NULL;
+			$propertyConverter = NULL;
 			if (isset($this->propertyConverters[$propertyName])) {
-				$propertyConverterToUse = $this->propertyConverters[$propertyName];
+				$propertyConverter = $this->propertyConverters[$propertyName];
 			} elseif (isset($this->propertyConverters['all'])) {
-				$propertyConverterToUse = $this->propertyConverters['all'];
+				$propertyConverter = $this->propertyConverters['all'];
 			}
 
-			if ($propertyConverterToUse != NULL) {
-				$propertyConverterToUse['propertyConverter']->setAsFormat($propertyConverterToUse['format'], $propertyValue);
-				$propertyValue = $propertyConverterToUse['propertyConverter']->getProperty();
+			if ($propertyConverter !== NULL) {
+				$propertyConverter['propertyConverter']->setAsFormat($propertyConverter['format'], $propertyValue);
+				$propertyValue = $propertyConverter['propertyConverter']->getProperty();
 
-				if ($propertyConverterToUse['propertyConverter'] instanceof \F3\FLOW3\Property\Converter\IdentifierAwareInterface) {
-					if ($identifier = $propertyConverterToUse['propertyConverter']->getIdentifier()) {
+				if ($propertyConverter['propertyConverter'] instanceof \F3\FLOW3\Property\Converter\IdentifierAwareInterface) {
+					if ($identifier = $propertyConverter['propertyConverter']->getIdentifier()) {
 						$this->mappingResults->addIdentifier($propertyName, $identifier);
 					}
 				}
