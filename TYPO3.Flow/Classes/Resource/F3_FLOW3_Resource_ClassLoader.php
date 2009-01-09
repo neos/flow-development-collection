@@ -25,7 +25,7 @@ namespace F3\FLOW3\Resource;
 /**
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:\F3\FLOW3\Object\ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  */
 
 require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
@@ -37,7 +37,7 @@ require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
  *
  * @package FLOW3
  * @subpackage Resource
- * @version $Id:\F3\FLOW3\Object\ClassLoader.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ClassLoader {

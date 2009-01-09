@@ -33,7 +33,7 @@ namespace F3\FLOW3\AOP;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\AOP::FLOW3Test.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {

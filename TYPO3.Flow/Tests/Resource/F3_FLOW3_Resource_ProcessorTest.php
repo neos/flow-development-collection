@@ -25,14 +25,14 @@ namespace F3\FLOW3\Resource;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  */
 
 /**
  * Testcase for the resource processor
  *
  * @package FLOW3
- * @version $Id:\F3\FLOW3\Object\ClassLoaderTest.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ProcessorTest extends \F3\Testing\BaseTestCase {

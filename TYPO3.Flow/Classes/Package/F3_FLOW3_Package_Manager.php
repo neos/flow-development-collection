@@ -25,7 +25,7 @@ namespace F3\FLOW3\Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id:\F3\FLOW3\Package\Manager.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 
@@ -34,7 +34,7 @@ namespace F3\FLOW3\Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:\F3\FLOW3\Package\Manager.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class Manager implements \F3\FLOW3\Package\ManagerInterface {

@@ -33,7 +33,7 @@ namespace F3\FLOW3\Cache;
  *
  * @package FLOW3
  * @subpackage Cache
- * @version $Id:\F3\FLOW3\AOP\Framework.php 201 2007-03-30 11:18:30Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 abstract class AbstractBackend implements \F3\FLOW3\Cache\BackendInterface {

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\Validation\Validator\ChainTest.php 845 2008-05-17 16:04:59Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:\F3\FLOW3\Validation\Validator\ChainTest.php 845 2008-05-17 16:04:59Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class ChainTest extends \F3\Testing\BaseTestCase {

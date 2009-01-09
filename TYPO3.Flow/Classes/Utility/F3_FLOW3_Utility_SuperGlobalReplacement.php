@@ -25,7 +25,7 @@ namespace F3\FLOW3\Utility;
 /**
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:\F3\FLOW3\Utility\SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ namespace F3\FLOW3\Utility;
  *
  * @package FLOW3
  * @subpackage Utility
- * @version $Id:\F3\FLOW3\Utility\SuperGlobalReplacement.php 467 2008-02-06 19:34:56Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  *
  * @scope prototype
