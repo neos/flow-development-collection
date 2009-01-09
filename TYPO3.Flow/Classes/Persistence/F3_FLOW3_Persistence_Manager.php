@@ -181,22 +181,33 @@ class Manager {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo eventually replace foreach/attach with a merge method if added to PHP
 	 */
 	public function persistAll() {
-		$aggregateRootObjects = array();
-		$removedObjects = array();
+		$aggregateRootObjects = new \SplObjectStorage();
+		$removedObjects = new \SplObjectStorage();
 
 			// fetch and inspect objects from all known repositories
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
-			$aggregateRootObjects = array_merge($aggregateRootObjects, $repository->getObjects());
-			$removedObjects = array_merge($removedObjects, $repository->getRemovedObjects());
+			$objects = $repository->getObjects();
+			foreach ($objects as $object) {
+				$aggregateRootObjects->attach($object);
+			}
+			$removedObjects = $repository->getRemovedObjects();
+			foreach ($removedObjects as $removedObject) {
+				$removedObjects->attach($removedObject);
+			}
+		}
+		$reconstitutedObjects = $this->session->getReconstitutedObjects();
+		foreach ($reconstitutedObjects as $reconstitutedObject) {
+			$aggregateRootObjects->attach($reconstitutedObject);
 		}
 
 			// hand in only aggregate roots, leaving handling of subobjects to
 			// the underlying storage layer
-		$this->backend->setAggregateRootObjects(array_merge($aggregateRootObjects, $this->session->getReconstitutedObjects()));
+		$this->backend->setAggregateRootObjects($aggregateRootObjects);
 		$this->backend->setDeletedObjects($removedObjects);
 		$this->backend->commit();
 

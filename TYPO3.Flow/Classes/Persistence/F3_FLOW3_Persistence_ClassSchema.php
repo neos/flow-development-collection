@@ -38,9 +38,8 @@ namespace F3\FLOW3\Persistence;
  */
 class ClassSchema {
 
-	const MODELTYPE_REPOSITORY = 1;
-	const MODELTYPE_ENTITY = 2;
-	const MODELTYPE_VALUEOBJECT = 3;
+	const MODELTYPE_ENTITY = 1;
+	const MODELTYPE_VALUEOBJECT = 2;
 
 	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
 

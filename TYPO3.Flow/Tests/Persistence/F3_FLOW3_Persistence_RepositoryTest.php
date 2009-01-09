@@ -55,7 +55,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$someObject = new \stdClass();
 		$repository = new \F3\FLOW3\Persistence\Repository();
 		$repository->add($someObject);
-		$this->assertAttributeSame(array(spl_object_hash($someObject) => $someObject), 'objects', $repository);
+
+		$this->assertTrue($repository->getObjects()->contains($someObject));
 	}
 
 	/**
@@ -73,7 +74,10 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->add($object3);
 
 		$repository->remove($object2);
-		$this->assertAttributeSame(array(spl_object_hash($object1) => $object1, spl_object_hash($object3) => $object3), 'objects', $repository);
+
+		$this->assertTrue($repository->getObjects()->contains($object1));
+		$this->assertFalse($repository->getObjects()->contains($object2));
+		$this->assertTrue($repository->getObjects()->contains($object3));
 	}
 
 	/**
@@ -94,7 +98,10 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object3['val'] = '2';
 
 		$repository->remove($object2);
-		$this->assertAttributeSame(array(spl_object_hash($object1) => $object1, spl_object_hash($object3) => $object3), 'objects', $repository);
+
+		$this->assertTrue($repository->getObjects()->contains($object1));
+		$this->assertFalse($repository->getObjects()->contains($object2));
+		$this->assertTrue($repository->getObjects()->contains($object3));
 	}
 
 	/**
@@ -108,7 +115,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object = new \ArrayObject(array('val' => '1'));
 		$repository = new \F3\FLOW3\Persistence\Repository();
 		$repository->remove($object);
-		$this->assertEquals(array(spl_object_hash($object) => $object), $repository->getRemovedObjects());
+
+		$this->assertTrue($repository->getRemovedObjects()->contains($object));
 	}
 }
 

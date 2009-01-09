@@ -38,9 +38,13 @@ namespace F3\FLOW3\Log;
 class Logger implements \F3\FLOW3\Log\LoggerInterface {
 
 	/**
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $backends = array();
+	protected $backends;
+
+	public function __construct() {
+		$this->backends = new \SplObjectStorage();
+	}
 
 	/**
 	 * Adds the backend to which the logger sends the logging data
@@ -49,7 +53,7 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 * @return void
 	 */
 	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend) {
-		$this->backends[spl_object_hash($backend)] = $backend;
+		$this->backends->attach($backend);
 		$backend->open();
 	}
 
@@ -63,9 +67,9 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeBackend(\F3\FLOW3\Log\BackendInterface $backend) {
-		if (!isset($this->backends[spl_object_hash($backend)])) throw new \F3\FLOW3\Log\Exception\NoSuchBackend('Backend is unknown to this logger.', 1229430381);
+		if (!$this->backends->contains($backend)) throw new \F3\FLOW3\Log\Exception\NoSuchBackend('Backend is unknown to this logger.', 1229430381);
 		$backend->close();
-		unset($this->backends[spl_object_hash($backend)]);
+		$this->backends->detach($backend);
 	}
 
 	/**

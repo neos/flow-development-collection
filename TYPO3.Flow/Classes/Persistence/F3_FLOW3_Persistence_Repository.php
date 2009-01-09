@@ -41,21 +41,31 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Objects of this repository
 	 *
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $objects = array();
+	protected $objects;
 
 	/**
 	 * Objects removed but not found in $this->objects at removal time
 	 *
-	 * @var array
+	 * @var \SplObjectStorage
 	 */
-	protected $removedObjects = array();
+	protected $removedObjects;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
 	 */
 	protected $queryFactory;
+
+	/**
+	 * Constructs a new Repository
+	 *
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function __construct() {
+		$this->objects = new \SplObjectStorage();
+		$this->removedObjects = new \SplObjectStorage();
+	}
 
 	/**
 	 * Injects a QueryFactory instance
@@ -77,11 +87,8 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function add($object) {
-		$objectHash = spl_object_hash($object);
-		$this->objects[$objectHash] = $object;
-		if (array_key_exists($objectHash, $this->removedObjects)) {
-			unset ($this->removedObjects[$objectHash]);
-		}
+		$this->objects->attach($object);
+		$this->removedObjects->detach($object);
 	}
 
 	/**
@@ -97,11 +104,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove($object) {
-		$objectHash = spl_object_hash($object);
-		if (array_key_exists($objectHash, $this->objects)) {
-			unset ($this->objects[$objectHash]);
+		if ($this->objects->contains($object)) {
+			$this->objects->detach($object);
 		} else {
-			$this->removedObjects[$objectHash] = $object;
+			$this->removedObjects->attach($object);
 		}
 	}
 
@@ -112,7 +118,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * added to the repository. Those are only objects *added*, not objects
 	 * fetched from the underlying storage.
 	 *
-	 * @return array An array of the objects, the spl_object_hash is the key
+	 * @return \SplObjectStorage the objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjects() {
@@ -120,10 +126,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Returns an array with objects remove()d from the repository that
-	 * had been persisted to the storage layer before.
+	 * Returns an \SplObjectStorage with objects remove()d from the repository
+	 * that had been persisted to the storage layer before.
 	 *
-	 * @return array An array of the objects, the spl_object_hash is the key
+	 * @return \SplObjectStorage the objects
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRemovedObjects() {

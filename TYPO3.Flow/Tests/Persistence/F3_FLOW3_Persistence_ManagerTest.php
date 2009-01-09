@@ -105,7 +105,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$session = new \F3\FLOW3\Persistence\Session();
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 			// this is the really important assertion!
-		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with(array(spl_object_hash($entity2) => $entity2));
+		$objectStorage = new \SplObjectStorage();
+		$objectStorage->attach($entity2);
+		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
@@ -130,11 +132,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 			// this is the really important assertion!
-		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with(
-			array(
-				spl_object_hash($dirtyEntity) => $dirtyEntity
-			)
-		);
+		$objectStorage = new \SplObjectStorage();
+		$objectStorage->attach($dirtyEntity);
+		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
@@ -149,8 +149,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllFetchesRemovedObjects() {
-		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity;
-		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity;
+		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity();
+		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity();
 
 		$repository = new \F3\FLOW3\Persistence\Repository;
 		$repository->remove($entity1);
@@ -166,11 +166,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 			// this is the really important assertion!
-		$mockBackend->expects($this->once())->method('setDeletedObjects')->with(
-			array(
-				spl_object_hash($entity1) => $entity1
-			)
-		);
+		$deletedObjectStorage = new \SplObjectStorage();
+		$deletedObjectStorage->attach($entity1);
+		$mockBackend->expects($this->once())->method('setDeletedObjects')->with($deletedObjectStorage);
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
@@ -180,7 +178,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$manager->persistAll();
 
-		$this->assertSame(array(spl_object_hash($entity3) => $entity3), $session->getReconstitutedObjects());
+		$this->assertTrue($session->getReconstitutedObjects()->contains($entity3));
 	}
 
 }

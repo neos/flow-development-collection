@@ -48,7 +48,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$session->registerReconstitutedObject($someObject);
 
 		$reconstitutedObjects = $session->getReconstitutedObjects();
-		$this->assertSame($someObject, array_pop($reconstitutedObjects));
+		$this->assertTrue($reconstitutedObjects->contains($someObject));
 	}
 
 	/**
@@ -62,7 +62,7 @@ class SessionTest extends \F3\Testing\BaseTestCase {
 		$session->unregisterReconstitutedObject($someObject);
 
 		$reconstitutedObjects = $session->getReconstitutedObjects();
-		$this->assertSame(array(), $reconstitutedObjects);
+		$this->assertFalse($reconstitutedObjects->contains($someObject));
 	}
 
 

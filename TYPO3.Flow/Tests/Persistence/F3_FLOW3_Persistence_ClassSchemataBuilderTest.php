@@ -108,16 +108,6 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function modelTypeRepositoryIsRecognizedByRepositoryAnnotation() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Repository1'));
-		$builtClassSchema = array_pop($builtClassSchemata);
-		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_REPOSITORY);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function modelTypeEntityIsRecognizedByValueObjectAnnotation() {
 		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);

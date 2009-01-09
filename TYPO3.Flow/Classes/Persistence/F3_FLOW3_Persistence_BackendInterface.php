@@ -49,18 +49,18 @@ interface BackendInterface {
 	/**
 	 * Sets the aggregate root objects
 	 *
-	 * @param array $objects
+	 * @param \SplObjectStorage $objects
 	 * @return void
 	 */
-	public function setAggregateRootObjects(array $objects);
+	public function setAggregateRootObjects(\SplObjectStorage $objects);
 
 	/**
 	 * Sets the deleted objects
 	 *
-	 * @param array $objects
+	 * @param \SplObjectStorage $objects
 	 * @return void
 	 */
-	public function setDeletedObjects(array $objects);
+	public function setDeletedObjects(\SplObjectStorage $objects);
 
 	/**
 	 * Commits the current persistence session
