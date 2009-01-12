@@ -73,6 +73,13 @@ class Request {
 	protected $controllerPackageKey = 'FLOW3\MVC';
 
 	/**
+	 * Subpackage key of the controller which is supposed to handle this request.
+	 *
+	 * @var string
+	 */
+	protected $controllerSubpackageKey;
+
+	/**
 	 * @var string Object name of the controller which is supposed to handle this request.
 	 */
 	protected $controllerName = 'Default';
@@ -162,6 +169,7 @@ class Request {
 	 */
 	public function getControllerObjectName() {
 		$lowercaseObjectName = str_replace('@package', $this->controllerPackageKey, $this->controllerObjectNamePattern);
+		$lowercaseObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $lowercaseObjectName);
 		$lowercaseObjectName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseObjectName));
 		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
 		if ($objectName === FALSE) throw new \F3\FLOW3\MVC\Exception\NoSuchController('The controller object "' . $lowercaseObjectName . '" does not exist.', 1220884009);
@@ -227,6 +235,7 @@ class Request {
 	public function getViewObjectName() {
 		$possibleViewName = $this->viewObjectNamePattern;
 		$possibleViewName = str_replace('@package', $this->controllerPackageKey, $possibleViewName);
+		$possibleViewName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleViewName);
 		$possibleViewName = str_replace('@controller', $this->controllerName, $possibleViewName);
 		$possibleViewName = str_replace('@action', $this->controllerActionName, $possibleViewName);
 
@@ -259,6 +268,27 @@ class Request {
 	 */
 	public function getControllerPackageKey() {
 		return $this->controllerPackageKey;
+	}
+
+	/**
+	 * Sets the subpackage key of the controller.
+	 *
+	 * @param string $subpackageKey The subpackage key.
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setControllerSubpackageKey($subpackageKey) {
+		$this->controllerSubpackageKey = $subpackageKey;
+	}
+
+	/**
+	 * Returns the subpackage key of the specified controller.
+	 *
+	 * @return string The subpackage key
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getControllerSubpackageKey() {
+		return $this->controllerSubpackageKey;
 	}
 
 	/**

@@ -62,13 +62,14 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	 * @param array $arguments Additional arguments
 	 * @param string $controllerName Name of the target controller. If not set, current controller is used
 	 * @param string $packageKey Name of the target package. If not set, current package is used
+	 * @param string $subpackageKey Name of the target subpackage. If not set, current subpackage is used
 	 * @param array $options Further options
 	 * @return string the HTML code for the generated link
 	 * @see UIRFor()
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function linkTo($label, $actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $options = array()) {
-		$link = '<a href="' . $this->URIFor($actionName, $arguments, $controllerName, $packageKey, $options) . '">' . htmlspecialchars($label) . '</a>';
+	public function linkTo($label, $actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $options = array()) {
+		$link = '<a href="' . $this->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey, $options) . '">' . htmlspecialchars($label) . '</a>';
 		return $link;
 	}
 
@@ -79,15 +80,22 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	 * @param array $arguments Additional arguments
 	 * @param string $controllerName Name of the target controller. If not set, current controller is used
 	 * @param string $packageKey Name of the target package. If not set, current package is used
+	 * @param string $subpackageKey Name of the target subpackage. If not set, current subpackage is used
 	 * @param array $options Further options
 	 * @return string the HTML code for the generated link
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function URIFor($actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $options = array()) {
+	public function URIFor($actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $options = array()) {
 		$routeValues = $arguments;
 		$routeValues['@action'] = $actionName;
 		$routeValues['@controller'] = ($controllerName === NULL) ? $this->request->getControllerName() : $controllerName;
 		$routeValues['@package'] = ($packageKey === NULL) ? $this->request->getControllerPackageKey() : $packageKey;
+		$currentSubpackageKey = $this->request->getControllerSubpackageKey();
+		if ($subpackageKey === NULL && \F3\PHP6\Functions::strlen($currentSubpackageKey)) {
+			$routeValues['@subpackage'] = $currentSubpackageKey;
+		} else if (\F3\PHP6\Functions::strlen($subpackageKey)) {
+			$routeValues['@subpackage'] = $subpackageKey;
+		}
 
 		$URIString = $this->router->resolve($routeValues);
 		return $URIString;

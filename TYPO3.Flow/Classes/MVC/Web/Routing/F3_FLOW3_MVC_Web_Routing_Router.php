@@ -124,6 +124,9 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 							case '@package' :
 								$request->setControllerPackageKey($argumentValue);
 							break;
+							case '@subpackage' :
+								$request->setControllerSubpackageKey($argumentValue);
+							break;
 							case '@controller' :
 								$request->setControllerName($argumentValue);
 							break;
