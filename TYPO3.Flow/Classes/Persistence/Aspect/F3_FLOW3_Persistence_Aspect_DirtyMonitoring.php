@@ -129,7 +129,7 @@ class DirtyMonitoring {
 
 	/**
 	 * Register an object's clean state, e.g. after it has been reconstituted
-				from the FLOW3 persistence layer
+	 * from the FLOW3 persistence layer
 	 *
 	 * @before method(.*->memorizeCleanState())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint

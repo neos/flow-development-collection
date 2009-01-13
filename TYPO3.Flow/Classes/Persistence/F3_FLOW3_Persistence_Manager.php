@@ -36,7 +36,7 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class Manager {
+class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 
 	/**
 	 * The reflection service
@@ -156,7 +156,7 @@ class Manager {
 	/**
 	 * Returns the persistence backend
 	 *
-	 * @return \F3\FLOW3\Persistence\Backend
+	 * @return \F3\FLOW3\Persistence\BackendInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getBackend() {
