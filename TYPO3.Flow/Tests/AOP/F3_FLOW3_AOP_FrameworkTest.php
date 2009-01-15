@@ -28,6 +28,9 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  */
 
+require_once ('Fixture/F3_FLOW3_Tests_AOP_Fixture_AspectClassWithAllAdviceTypes.php');
+require_once ('Fixture/F3_FLOW3_Tests_AOP_Fixture_InterfaceForIntroduction.php');
+
 /**
  * Testcase for the AOP Framework class
  *
@@ -39,223 +42,129 @@ namespace F3\FLOW3\AOP;
 class FrameworkTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Checks if constructor parameters still work after an object class has been proxied.
+	 * @var string
+	 */
+	protected $accessibleFrameworkClassName;
+
+	/**
+	 * @var \F3\FLOW3\Object\ManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $mockObjectFactory;
+
+	/**
+	 * Set up this testcase
 	 *
-	 * @test
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function constructorsOfProxiedClassesAreStillIntact() {
-		$objectWithConstructor = $this->objectManager->getObject('F3\TestPackage\ClassWithOptionalArguments', 'modified argument1', 'modified argument2', 'modified argument3');
-		$this->assertEquals('modified argument1', $objectWithConstructor->argument1, 'The property set through the first constructor argument does not contain the expected value.');
-		$this->assertEquals('modified argument2', $objectWithConstructor->argument2, 'The property set through the second constructor argument does not contain the expected value.');
-		$this->assertEquals('modified argument3', $objectWithConstructor->argument3, 'The property set through the third constructor argument does not contain the expected value.');
-	}
+	public function setUp() {
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
-	/**
-	 * Checks if the "chinese advice" is active when calling the getSomeProperty method of the BasicClass
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function aroundAdviceBasicallyworks() {
-		$basicObject = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$this->assertType('F3\FLOW3\AOP\ProxyInterface', $basicObject, 'The basic object seems not to be a proxy object!');
-		$this->assertEquals('四十二', $basicObject->getSomeProperty(), 'The chinese advice seems not to be active - getSomeProperty() did not return the expected result.');
-		$basicObject->setSomeProperty(100);
-		$this->assertEquals(100, $basicObject->getSomeProperty(), 'The chinese advice intercepts the getSomeProperty() method although the property is not 42.');
-	}
-
-	/**
-	 * Checks if a before advice basically works
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function beforeAdviceBasicallyWorks() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'before' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$target->setSomeProperty($time);
-		$this->assertEquals($time, $aspect->getFlags('before'), 'The internal flag of the aspect did not contain the expected value after testing the before advice.');
-	}
-
-	/**
-	 * Checks if an after returning advice basically works. Note that the after returning is triggered on the getSomeProperty() method (that's why we call it)
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function afterReturningAdviceBasicallyWorks() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'afterReturning' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$target->setSomeProperty($time);
-		$target->getSomeProperty();
-		$this->assertEquals($time, $aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the After Returning advice.');
-	}
-
-	/**
-	 * Checks if an after returning advice works even on constructors for classes not having a constructor.
-	 *
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function afterReturningAdviceOnConstructorWorksEvenIfTargetClassHasNoConstructor() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\AfterNonExistingConstructorAspect');
-		$this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the constructor advice.');
-	}
-
-	/**
-	 * Checks if an after returning advice on __wakeup works even on classes not having __wakeup.
-	 *
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function afterReturningAdviceOnWakeupWorksEvenIfTargetClassHasNoWakeup() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\AfterNonExistingWakeupAspect');
-		$target = $this->objectManager->getObject('F3\TestPackage\EmptyClass');
-		$GLOBALS['reconstituteObject']['objectFactory'] = $this->objectFactory;
-		$GLOBALS['reconstituteObject']['objectManager'] = $this->objectManager;
-		$GLOBALS['reconstituteObject']['properties'] = array();
-		$target = unserialize(serialize($target));
-		unset($GLOBALS['reconstituteObject']);
-		$this->assertTrue($aspect->getFlags('afterReturning'), 'The internal flag of the aspect did not contain the expected value after testing the wakeup advice.');
-	}
-
-	/**
-	 * Checks if an after returning advice is not executed if an exception was thrown
-	 *
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function afterReturningAdviceIsNotExecutedIfAnExceptionWasThrown() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'afterReturning' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		try {
-			$target->throwAnException('RuntimeException', $time);
-		} catch (\Exception $exception) {
-		}
-		$this->assertNotEquals($time, $aspect->getFlags('afterReturning'), 'The After Returning Advice has been executed, although an exception was thrown.');
-	}
-
-	/**
-	 * Checks if an after throwing advice basically works.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function afterThrowingAdviceBasicallyWorks() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'afterThrowing' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		try {
-			$target->throwAnException('RuntimeException', $time);
-		} catch (\Exception $exception) {
-		}
-		$this->assertEquals($time, $aspect->getFlags('afterThrowing'), 'The internal flag of the aspect did not contain the expected value after testing the After Throwing advice.');
-	}
-
-	/**
-	 * Checks if an after advice basically works.
-	 *
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function afterAdviceBasicallyWorks() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'after' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		$target->setSomeProperty($time);
-		$target->getSomeProperty();
-		$this->assertEquals($time, $aspect->getFlags('after'), 'The internal flag of the aspect did not contain the expected value after testing the After advice.');
-	}
-
-	/**
-	 * Checks if an after advice works if an exception was thrown.
-	 *
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function afterAdviceWorksIfAnExceptionWasThrown() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\GetSomeChinesePropertyAspect');
-		$time = 'after' . microtime();
-		$target = $this->objectManager->getObject('F3\TestPackage\BasicClass');
-		try {
-			$target->throwAnException('RuntimeException', $time);
-		} catch (\Exception $exception) {
-		}
-		$this->assertEquals($time, $aspect->getFlags('after'), 'The internal flag of the aspect did not contain the expected value after testing the After advice.');
-	}
-
-	/**
-	 * Checks if an introduction declaration basically works.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function introductionDeclarationBasicallyWorks() {
-		$aspect = $this->objectManager->getObject('F3\TestPackage\IntroductionAspect');
-		$target = $this->objectManager->getObject('F3\TestPackage\IntroductionTargetClass');
-		$this->assertTrue(method_exists($target, 'newMethod'), 'The method "newMethod" does not exist in the target class (' . get_class($target) . ').');
-
-		$time = microtime();
-		$this->assertEquals('newMethodAroundAdvice' . $time, $target->newMethod($time), 'The result of newMethod() did not return the expected result while checking the introduction declaration.');
-	}
-
-	/**
-	 * Checks if an introduction really introduces the new method(s) although no advice is defined for that method
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function introductionWithoutAdviceWorks() {
-		$target = $this->objectManager->getObject('F3\TestPackage\IntroductionTargetClass');
-		$this->assertTrue(method_exists($target, 'anotherMethod'), 'The method "anotherMethod" does not exist in the target class (' . get_class($target) . ').');
-	}
-
-	/**
-	 * Checks if a target class whose constructor has one mandatory argument used for autowiring / DI stays intact if the class is adviced with the empty contructor interceptor.
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mandatoryArgumentInNonAdvisedConstructorStaysIntact() {
-		$target = $this->objectManager->getObject('F3\TestPackage\ClassWithOneArgument');
-		$this->assertType('F3\TestPackage\InjectedClass', $target->getInjectedObject(), 'The injected class is not of the expected type or has not been injected at all.');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAdvicedMethodsInformationByTargetClassReturnsCorrectArrayOfAdviceInformation() {
-		$aopFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework');
-		$advicedMethodsInformation = $aopFramework->getAdvicedMethodsInformationByTargetClass('F3\TestPackage\BasicClass');
-		$this->assertTrue(is_array($advicedMethodsInformation), 'No array was returned.');
-		$this->assertTrue(count($advicedMethodsInformation) > 0, 'The returned array was empty.');
-		foreach ($advicedMethodsInformation as $methodName => $groupedAdvices) {
-			$this->assertTrue(is_array($groupedAdvices), 'The returned groupedAdvices values are not (all) of type array.');
-			foreach ($groupedAdvices as $adviceType => $advicesInformation) {
-				$this->assertTrue(is_string($adviceType) && class_exists($adviceType, TRUE), 'The advice type was invalid.');
-				$this->assertTrue(is_array($advicesInformation), 'advicesInformation is not an array.');
-				foreach ($advicesInformation as $adviceInformation) {
-					$this->assertTrue(is_array($adviceInformation), 'adviceInformation is not an array.');
-				}
+	public function buildAspectContainersReturnsAnArrayOfAspectContainersForThoseClassesWhichActuallyAreAspects() {
+		$classNames = array('Foo', 'Bar', 'Baz');
+		$container1 = $this->getMock('F3\FLOW3\AOP\AspectContainer', array(), array(), '', FALSE);
+		$container2 = $this->getMock('F3\FLOW3\AOP\AspectContainer', array(), array(), '', FALSE);
+		$expectedAspectContainers = array('Foo' => $container1, 'Baz' => $container2);
+
+		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('buildAspectContainer'), array(), '', FALSE);
+		$framework->expects($this->at(0))->method('buildAspectContainer')->with('Foo')->will($this->returnValue($container1));
+		$framework->expects($this->at(1))->method('buildAspectContainer')->with('Bar')->will($this->returnValue(FALSE));
+		$framework->expects($this->at(2))->method('buildAspectContainer')->with('Baz')->will($this->returnValue($container2));
+
+		$actualAspectContainers = $framework->_call('buildAspectContainers', $classNames);
+		$this->assertSame($expectedAspectContainers, $actualAspectContainers);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildAspectContainerThrowsExceptionIfTheClassIsTaggedAsAspectButContainsNoAdvice() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('isClassReflected')->with('TestAspect')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->any())->method('isClassTaggedWith')->with('TestAspect', 'aspect')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
+
+		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('dummy'), array(), '', FALSE, TRUE);
+		$framework->injectReflectionService($mockReflectionService);
+
+		$framework->_call('buildAspectContainer', 'TestAspect');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes'));
+
+		$testcase = $this;
+
+		$pointcutFilterCompositeCallBack = function() use ($testcase) {
+			return $testcase->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), func_get_args());
+		};
+
+		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\PointcutExpressionParser', array('parse'), array(), '', FALSE);
+		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack($pointcutFilterCompositeCallBack, '__invoke'));
+
+		$objectFactoryCallBack = function() use ($testcase) {
+			$arguments = array_merge(func_get_args(), array($testcase->mockObjectManager));
+			$objectName = array_shift($arguments);
+			switch ($objectName) {
+				case 'F3\FLOW3\AOP\Advisor' :
+					return new \F3\FLOW3\AOP\Advisor(current($arguments), next($arguments));
+				case 'F3\FLOW3\AOP\Pointcut' :
+				default :
+					return $testcase->getMock($objectName, array('dummy'), $arguments, '', TRUE);
 			}
-		}
-	}
+		};
+		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallBack($objectFactoryCallBack, '__invoke'));
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTargetAndProxyClassNamesReturnsANonEmptyArray() {
-		$aopFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework');
-		$targetAndProxyClassNames = $aopFramework->getTargetAndProxyClassNames();
-		$this->assertTrue(is_array($targetAndProxyClassNames), 'The returned value is not an array.');
-		$this->assertTrue(count($targetAndProxyClassNames) > 0, 'The returned array was empty.');
+		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('dummy'), array($this->mockObjectManager, $this->mockObjectFactory), '', TRUE, TRUE);
+		$framework->injectReflectionService($mockReflectionService);
+		$framework->injectPointcutExpressionParser($mockPointcutExpressionParser);
+
+		$container = $framework->_call('buildAspectContainer', 'F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes');
+		$this->assertType('F3\FLOW3\AOP\AspectContainer', $container);
+		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes', $container->getClassName());
+		$advisors = $container->getAdvisors();
+		$this->assertType('F3\FLOW3\AOP\AroundAdvice', $advisors[0]->getAdvice());
+		$this->assertSame('fooAround', $advisors[0]->getPointcut()->getPointcutExpression());
+		$this->assertType('F3\FLOW3\AOP\BeforeAdvice', $advisors[1]->getAdvice());
+		$this->assertSame('fooBefore', $advisors[1]->getPointcut()->getPointcutExpression());
+		$this->assertType('F3\FLOW3\AOP\AfterReturningAdvice', $advisors[2]->getAdvice());
+		$this->assertSame('fooAfterReturning', $advisors[2]->getPointcut()->getPointcutExpression());
+		$this->assertType('F3\FLOW3\AOP\AfterThrowingAdvice', $advisors[3]->getAdvice());
+		$this->assertSame('fooAfterThrowing', $advisors[3]->getPointcut()->getPointcutExpression());
+		$this->assertType('F3\FLOW3\AOP\AfterAdvice', $advisors[4]->getAdvice());
+		$this->assertSame('fooAfter', $advisors[4]->getPointcut()->getPointcutExpression());
+
+		$pointcuts = $container->getPointcuts();
+		$this->assertTrue(count($pointcuts) === 1);
+		$this->assertType('F3\FLOW3\AOP\Pointcut', $pointcuts[0]);
+		$this->assertSame('fooPointcut', $pointcuts[0]->getPointcutExpression());
+
+		$introductions = $container->getIntroductions();
+		$this->assertTrue(count($introductions) === 1);
+		$this->assertType('F3\FLOW3\AOP\Introduction', $introductions[0]);
+		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes', $introductions[0]->getDeclaringAspectClassName());
+		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\InterfaceForIntroduction', $introductions[0]->getInterfaceName());
+		$this->assertSame('ThePointcutExpression', $introductions[0]->getPointcut()->getPointcutExpression());
 	}
 }
 ?>

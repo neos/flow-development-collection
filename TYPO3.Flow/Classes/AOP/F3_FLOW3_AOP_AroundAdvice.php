@@ -35,6 +35,7 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class AroundAdvice implements \F3\FLOW3\AOP\AdviceInterface {
 

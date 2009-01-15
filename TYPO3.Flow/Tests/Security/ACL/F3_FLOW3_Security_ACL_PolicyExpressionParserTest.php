@@ -41,41 +41,31 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function parseThrowsAnExceptionIfAResourceReferencesAnUndefinedResource() {
+	public function xy() {
+		$this->markTestIncomplete('Policy Expression Parser Tests need to be rewritten as true unit tests.');
+
 		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
-			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
+			'theOneAndOnlyResource' => 'method(F3\Foo\BasicClass->setSomeProperty()) || theIntegrativeResource',
+			'theOtherLonelyResource' => 'method(F3\Foo\BasicClassValidator->.*())',
 			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
 		);
 
-		$parser = new PolicyExpressionParser($this->objectManager);
-		$parser->setResourcesTree($resourcesTree);
-		try {
-			$parser->parse('theIntegrativeResource');
-			$this->fail('The expected \F3\FLOW3\AOP\Exception\InvalidPointcutExpression exception has not been thrown.');
-		} catch (\F3\FLOW3\AOP\Exception\InvalidPointcutExpression $exception) {}
-	}
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutClassNameFilter = $this->getMock('F3\FLOW3\AOP\PointcutClassNameFilter', array(), array(), '', FALSE);
 
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function parseThrowsAnExceptionIfTheResourceTreeContainsCircularReferences() {
-		$resourcesTree = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty()) || theIntegrativeResource',
-			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
-			'theIntegrativeResource' => 'theOneAndOnlyResource || theLonelyResource',
-		);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
 
-		$parser = new PolicyExpressionParser($this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+
+		$parser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array('parseDesignatorPointcut'), array(), '', FALSE);
+		$parser->injectObjectFactory($mockObjectFactory);
+		$parser->injectObjectManager($mockObjectManager);
 		$parser->setResourcesTree($resourcesTree);
-		try {
-			$parser->parse('theIntegrativeResource');
-			$this->fail('The expected \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected exception has not been thrown.');
-		} catch (\F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected $exception) {}
 	}
 }
 

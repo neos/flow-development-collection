@@ -58,6 +58,11 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	protected $environment;
 
 	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Injects the environment utility
 	 *
 	 * @param \F3\FLOW3\Utility\Environment $environment
@@ -66,6 +71,17 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
+	}
+
+	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -172,7 +188,6 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			}
 			touch($tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier);
 		}
-		$this->emitCacheEntrySet($this->cache->getIdentifier(), $entryIdentifier, $tags, $lifetime);
 	}
 
 	/**
@@ -214,6 +229,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	 */
 	public function remove($entryIdentifier) {
 		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
+		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
 		if ($pathsAndFilenames === FALSE) return FALSE;
 
 		foreach ($pathsAndFilenames as $pathAndFilename) {
@@ -228,8 +244,6 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			$result = unlink ($pathAndFilename);
 			if ($result === FALSE) return FALSE;
 		}
-
-		$this->emitCacheEntryRemoved($this->cache->getIdentifier(), $entryIdentifier);
 		return TRUE;
 	}
 
@@ -279,8 +293,6 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
 			$this->remove($entryIdentifier);
 		}
-
-		$this->emitCacheFlushed($this->cache->getIdentifier());
 	}
 
 	/**
@@ -293,10 +305,12 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 	public function flushByTag($tag) {
 		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496751);
 		$identifiers = $this->findIdentifiersByTag($tag);
+		if (count($identifiers) === 0) return;
+
+		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $entryIdentifier) {
 			$this->remove($entryIdentifier);
 		}
-		$this->emitCacheFlushedByTag($this->cache->getIdentifier(), $tag);
 	}
 
 	/**
@@ -329,7 +343,7 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 				$this->remove($splitFilename[1]);
 			}
 		}
-		$this->emitGarbageCollected($this->cache->getIdentifier());
+		$this->systemLogger->log(sprintf('Cache %s: removed %s files during garbage collection', $this->cache->getIdentifier(), count($filesFound)), LOG_INFO);
 	}
 
 	/**
@@ -394,72 +408,5 @@ class File extends \F3\FLOW3\Cache\AbstractBackend {
 		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
 		return $filesFound;
 	}
-
-	/**
-	 * Signals that a cache entry has been set
-	 *
-	 * @param string $cacheIdentifier The cache identifier
-	 * @param string $entryIdentifier Identifier of the entry which has been set
-	 * @param array $tags The tags attached to the cache entry (if any)
-	 * @param integer $lifetime The specified lifetime
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitCacheEntrySet($cacheIdentifier, $entryIdentifier, array $tags, $lifetime) {
-		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
-	}
-
-	/**
-	 * Signals that a cache entry has been removed
-	 *
-	 * @param string $cacheIdentifier The cache identifier
-	 * @param string $entryIdentifier Identifier of the entry which has been removed
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitCacheEntryRemoved($cacheIdentifier, $entryIdentifier) {
-		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
-	}
-
-	/**
-	 * Signals that the whole cache has been flushed
-	 *
-	 * @param string $cacheIdentifier The cache identifier
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitCacheFlushed($cacheIdentifier) {
-		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
-	}
-
-	/**
-	 * Signals that all cache entries with the specified tag have been flushed
-	 *
-	 * @param string $cacheIdentifier The cache identifier
-	 * @param string $tag The tag
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitCacheFlushedByTag($cacheIdentifier, $tag) {
-		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
-	}
-
-
-	/**
-	 * Signals that a garbage collection has been carried out for the specified cache
-	 *
-	 * @param string $cacheIdentifier The cache identifier
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitGarbageCollected($cacheIdentifier) {
-		$this->signalDispatcher->dispatch(__CLASS__, __METHOD__, func_get_args());
-	}
-
 }
 ?>

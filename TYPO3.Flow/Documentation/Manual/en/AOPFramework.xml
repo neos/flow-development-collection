@@ -429,7 +429,7 @@ class FooSecurityAspect {
             namespace use possible without further hassle.</para>
           </footnote>. It follows the following scheme:</para>
 
-        <synopsis>method(public|protected|private ClassName-&gt;methodName())</synopsis>
+        <synopsis>method(public|protected ClassName-&gt;methodName())</synopsis>
 
         <para>Specifying the visibility modifier (public, protected or
         private) is optional - if none is specified, any visibility will

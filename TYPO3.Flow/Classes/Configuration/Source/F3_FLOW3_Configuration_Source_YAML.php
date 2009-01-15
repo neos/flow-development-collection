@@ -48,7 +48,11 @@ class YAML implements \F3\FLOW3\Configuration\SourceInterface {
 	 */
 	public function load($pathAndFilename) {
 		if (file_exists($pathAndFilename . '.yaml')) {
-			$configuration = \F3\YAML\YAML::loadFile($pathAndFilename . '.yaml');
+			try {
+				$configuration = \F3\YAML\YAML::loadFile($pathAndFilename . '.yaml');
+			} catch (\F3\FLOW3\Error\Exception $exception) {
+				throw new \F3\FLOW3\Configuration\Exception\ParseError('A parse error occurred while parsing file "' . $pathAndFilename . '.yaml". Error message: ' . $exception->getMessage(), 1232014321);
+			}
 		} else {
 			$configuration = array();
 		}

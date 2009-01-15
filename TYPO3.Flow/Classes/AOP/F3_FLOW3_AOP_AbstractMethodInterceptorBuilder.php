@@ -40,56 +40,76 @@ namespace F3\FLOW3\AOP;
 abstract class AbstractMethodInterceptorBuilder {
 
 	/**
+	 * @var F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
+
+	/**
+	 * Injects the reflection service
+	 *
+	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Builds method interception PHP code
 	 *
 	 * @param string $methodName Name of the method to build an interceptor for
 	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
-	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass A reflection of the target class to build the interceptor for
+	 * @param string $targetClassName Name of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function build($methodName, array $methodMetaInformation, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
-	}
+	abstract public function build($methodName, array $methodMetaInformation, $targetClassName);
 
 	/**
 	 * Builds the PHP code for the parameters of the specified method to be
 	 * used in a method interceptor in the proxy class
 	 *
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to create the parameters code for
+	 * @param string $className Name of the class the method is declared in
+	 * @param string $methodName Name of the method to create the parameters code for
 	 * @param boolean $addTypeAndDefaultValue Adds the type and default value for each parameters (if any)
+	 * @param string $methodParametersDocumentation Passed by reference, will contain the DocComment for the given method
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function buildMethodParametersCode(\F3\FLOW3\Reflection\MethodReflection $method = NULL, $addTypeAndDefaultValue, &$parametersDocumentation = '') {
-		$parametersCode = '';
-		$parameterTypeName = '';
+	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue, &$methodParametersDocumentation = '') {
+		$methodParametersCode = '';
+		$methodParameterTypeName = '';
 		$defaultValue = '';
 		$byReferenceSign = '';
 
-		if ($method === NULL) return '';
-		if ($method->getNumberOfParameters() > 0) {
-			$parameterCount = 0;
-			foreach ($method->getParameters() as $parameter) {
+		if ($className === NULL || $methodName === NULL) return '';
+
+		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+		if (count($methodParameters) > 0) {
+			$methodParametersCount = 0;
+			$methodParameterComments = $this->reflectionService->getMethodTagsValues($className, $methodName);
+			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
 				if ($addTypeAndDefaultValue) {
-					try {
-						if ($parameter->isArray()) {
-							$parameterTypeName = 'array';
-						} else {
-							$parameterClassReflection = $parameter->getClass();
-							if (is_object($parameterClassReflection)) {
-								$parameterTypeName = $parameterClassReflection->getName();
-								$parameterTypeName = ($parameterTypeName === 'array') ? $parameterTypeName : '\\' . $parameterTypeName;
-							} else {
-								$parameterTypeName = '';
-							}
-						}
-					} catch (\Exception $exception) {
-						throw new \F3\FLOW3\AOP\Exception\InvalidConstructorSignature('The parameter reflection for the method ' . $method->getDeclaringClass()->getName() . '::' . $method->getName() . '() declared in file "' . $method->getFileName() . '" throwed an exception. Please check if the classes of the parameters exist.', 1169420882);
+					if ($methodParameterInfo['array'] === TRUE) {
+						$methodParameterTypeName = 'array';
+					} else {
+						$methodParameterTypeName = ($methodParameterInfo['class'] === NULL) ? '' : '\\' . $methodParameterInfo['class'];
 					}
-					$parametersDocumentation .= "\n\t * @param  " . ($parameterTypeName ? $parameterTypeName . ' ' : 'unknown ' ) . "\t$" . $parameter->getName();
-					if ($parameter->isDefaultValueAvailable()) {
-						$rawDefaultValue = $parameter->getDefaultValue();
-						if (is_null($rawDefaultValue)) {
+					$methodParameterDocumentationTypeName = ($methodParameterTypeName ? $methodParameterTypeName : 'unknown_type' );
+					if (isset($methodParameterComments['param'][$methodParameterInfo['position']])) {
+						$explodedComment = explode(' ', $methodParameterComments['param'][$methodParameterInfo['position']]);
+						if ($methodParameterDocumentationTypeName === 'unknown_type') {
+							$methodParameterDocumentationTypeName = $explodedComment[0];
+						}
+						$methodParameterComment = isset($explodedComment[2]) ? ' ' . implode(' ', array_slice($explodedComment, 2)) : '';
+					} else {
+						$methodParameterComment = '';
+					}
+					$methodParametersDocumentation .= "\n\t * @param  " . $methodParameterDocumentationTypeName . " $" . $methodParameterName . $methodParameterComment;
+					if ($methodParameterInfo['optional'] === TRUE) {
+						$rawDefaultValue = $methodParameterInfo['defaultValue'];
+						if ($rawDefaultValue === NULL) {
 							$defaultValue = ' = NULL';
 						} elseif (is_bool($rawDefaultValue)) {
 							$defaultValue = ($rawDefaultValue ? ' = TRUE' : ' = FALSE');
@@ -99,14 +119,17 @@ abstract class AbstractMethodInterceptorBuilder {
 							$defaultValue = " = '" . $rawDefaultValue . "'";
 						}
 					}
-					$byReferenceSign = ($parameter->isPassedByReference() ? '&' : '');
+					$byReferenceSign = ($methodParameterInfo['byReference'] ? '&' : '');
 				}
 
-				$parametersCode .= ($parameterCount > 0 ? ', ' : '') . ($parameterTypeName ? $parameterTypeName . ' ' : '') . $byReferenceSign . '$' . $parameter->getName() . $defaultValue;
-				$parameterCount ++;
+				$methodParametersCode .= ($methodParametersCount > 0 ? ', ' : '') . ($methodParameterTypeName ? $methodParameterTypeName . ' ' : '') . $byReferenceSign . '$' . $methodParameterName . $defaultValue;
+				$methodParametersCount ++;
+			}
+			if (isset($methodParameterComments['return'])) {
+				$methodParametersDocumentation  .= "\n\t * @return " . implode(' ', $methodParameterComments['return']);
 			}
 		}
-		return $parametersCode;
+		return $methodParametersCode;
 	}
 
 	/**
@@ -114,18 +137,19 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * the constructor of a new join point. Used in the method interceptor
 	 * functions
 	 *
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to create arguments array code for
+	 * @param string $className Name of the declaring class of the method
+	 * @param string $methodName Name of the method to create arguments array code for
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function buildMethodArgumentsArrayCode(\F3\FLOW3\Reflection\MethodReflection $method = NULL) {
-		if ($method === NULL) return '';
+	protected function buildMethodArgumentsArrayCode($className, $methodName) {
+		if ($className === NULL || $methodName === NULL) return '';
 		$argumentsArrayCode = '';
-		if ($method->getNumberOfParameters() > 0) {
+		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
+		if (count($methodParameters) > 0) {
 			$argumentsArrayCode .= "\n";
-			foreach ($method->getParameters() as $parameter) {
-				$parameterName = $parameter->getName();
-				$argumentsArrayCode .= "\t\t\t\t'" . $parameterName . "' => \$" . $parameterName . ",\n";
+			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
+				$argumentsArrayCode .= "\t\t\t\t'" . $methodParameterName . "' => \$" . $methodParameterName . ",\n";
 			}
 			$argumentsArrayCode .= "\t\t\t";
 		}
@@ -137,21 +161,21 @@ abstract class AbstractMethodInterceptorBuilder {
 	 *
 	 * @param array $groupedAdvices The advices grouped by advice type
 	 * @param string $methodName Name of the method the advice applies to
-	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass Reflection of the target class
+	 * @param string $targetClassName Name of the target class
 	 * @return string PHP code to be used in the method interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static protected function buildAdvicesCode(array $groupedAdvices, $methodName, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
+	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName) {
 		$advicesCode = '';
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
-			$advicesCode .= "\n\t\t\$result = NULL;\n\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";
+			$advicesCode .= "\n\t\t\$result = NULL;\n\t\t\$afterAdviceInvoked = FALSE;\n\t\ttry {\n";
 		}
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\BeforeAdvice'])) {
 			$advicesCode .= '
 			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\BeforeAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments);
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
@@ -163,11 +187,11 @@ abstract class AbstractMethodInterceptorBuilder {
 			$adviceChains = $this->AOPProxyGetAdviceChains(\'' . $methodName . '\');
 			$adviceChain = $adviceChains[\'F3\FLOW3\AOP\AroundAdvice\'];
 			$adviceChain->rewind();
-			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, $adviceChain));
-			';
+			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, $adviceChain));
+';
 		} else {
 			$advicesCode .= '
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments);
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
 			$result = $this->AOPProxyInvokeJoinPoint($joinPoint);
 ';
 		}
@@ -175,7 +199,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterReturningAdvice'])) {
 			$advicesCode .= '
 			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterReturningAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
@@ -185,7 +209,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
 			$advicesCode .= '
 			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, $result);
 			$afterAdviceInvoked = TRUE;
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
@@ -195,14 +219,14 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice']) || isset ($groupedAdvices['F3\FLOW3\AOP\AfterAdvice'])) {
 			$advicesCode .= '
-			} catch (\Exception $exception) {
+		} catch (\Exception $exception) {
 ';
 		}
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AfterThrowingAdvice'])) {
 			$advicesCode .= '
 			$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterThrowingAdvice\'];
-			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
+			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
 			foreach ($advices as $advice) {
 				$advice->invoke($joinPoint);
 			}
@@ -213,7 +237,7 @@ abstract class AbstractMethodInterceptorBuilder {
 			$advicesCode .= '
 			if (!$afterAdviceInvoked) {
 				$advices = $this->targetMethodsAndGroupedAdvices[\'' . $methodName . '\'][\'F3\FLOW3\AOP\AfterAdvice\'];
-				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClass->getName() . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
+				$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, NULL, NULL, $exception);
 				foreach ($advices as $advice) {
 					$advice->invoke($joinPoint);
 				}
@@ -237,7 +261,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static protected function buildWakeupCode() {
+	protected function buildWakeupCode() {
 		$wakeupCode = '
 		$this->objectFactory = $GLOBALS[\'reconstituteObject\'][\'objectFactory\'];
 		$this->objectManager = $GLOBALS[\'reconstituteObject\'][\'objectManager\'];

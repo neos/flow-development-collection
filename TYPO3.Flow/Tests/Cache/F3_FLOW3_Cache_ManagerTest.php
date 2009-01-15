@@ -41,6 +41,30 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeCreatesAndRegistersAllCachesDefinedInTheCachesConfiguration() {
+		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array(), array(), '', FALSE);
+		$mockCacheFactory->expects($this->at(1))->method('create')->with('Cache1', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File', array());
+		$mockCacheFactory->expects($this->at(2))->method('create')->with('Cache2', 'F3\FLOW3\Cache\StringCache', 'F3\FLOW3\Cache\Backend\Null', array('foo' => 'bar'));
+
+		$cacheConfigurations = array(
+			'Cache1' => array(),
+			'Cache2' => array(
+				'frontend' => 'F3\FLOW3\Cache\StringCache',
+				'backend' => 'F3\FLOW3\Cache\Backend\Null',
+				'backendOptions' => array('foo' => 'bar')
+			),
+		);
+
+		$manager = new \F3\FLOW3\Cache\Manager();
+		$manager->setCacheConfigurations($cacheConfigurations);
+		$manager->injectCacheFactory($mockCacheFactory);
+		$manager->initialize();
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Cache\Exception\DuplicateIdentifier
 	 */
 	public function managerThrowsExceptionOnCacheRegistrationWithAlreadyExistingIdentifier() {
@@ -115,6 +139,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function flushCachesByTagCallsTheFlushByTagMethodOfAllRegisteredCaches() {
 		$manager = new \F3\FLOW3\Cache\Manager();
+		$manager->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
+
 		$backend = $this->getMock('F3\FLOW3\Cache\AbstractBackend', array(), array(), '', FALSE);
 
 		$cache1 = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);
@@ -135,6 +161,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function flushCachesCallsTheFlushMethodOfAllRegisteredCaches() {
 		$manager = new \F3\FLOW3\Cache\Manager();
+		$manager->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
 		$backend = $this->getMock('F3\FLOW3\Cache\AbstractBackend', array(), array(), '', FALSE);
 
 		$cache1 = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove', 'flush', 'flushByTag'), array(), '', FALSE);

@@ -113,7 +113,7 @@ class LoggerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theDestructorRunsCloseOnAllRegisteredBackends() {
+	public function theShutdownMethodRunsCloseOnAllRegisteredBackends() {
 		$mockBackend1 = $this->getMock('F3\FLOW3\Log\BackendInterface', array('open', 'append', 'close'));
 		$mockBackend1->expects($this->once())->method('close');
 
@@ -123,7 +123,7 @@ class LoggerTest extends \F3\Testing\BaseTestCase {
 		$logger = new \F3\FLOW3\Log\Logger();
 		$logger->addBackend($mockBackend1);
 		$logger->addBackend($mockBackend2);
-		unset($logger);
+		$logger->shutdownObject();
 	}
 }
 ?>

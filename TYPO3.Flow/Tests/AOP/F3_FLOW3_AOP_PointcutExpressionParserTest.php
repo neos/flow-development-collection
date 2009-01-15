@@ -28,10 +28,6 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  */
 
-require_once('F3_FLOW3_AOP_MockPointcutExpressionParser.php');
-require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_CustomFilter.php');
-require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_EmptyClass.php');
-
 /**
  * Testcase for the default AOP Pointcut Expression Parser implementation
  *
@@ -43,166 +39,263 @@ require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_EmptyClass.php');
 class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\AOP\PointcutExpressionParser
+	 * @var \F3\FLOW3\Object\FactoryInteface
 	 */
-	protected $parser;
+	protected $mockObjectFactory;
 
 	/**
-	 * Sets up this test case
+	 * @var \F3\FLOW3\Object\ManagerInterface
+	 */
+	protected $mockObjectManager;
+
+	/**
+	 * Setup
 	 *
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return void
 	 */
-	public function setUp() {
-		$this->parser = $this->objectManager->getObject('F3\FLOW3\AOP\PointcutExpressionParser');
+	public function setup() {
+		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 	}
 
 	/**
-	 * Checks if the parser throws an exception if the expression is no string
-	 *
 	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function parserThrowsExceptionIfExpressionIsNotString() {
-		try {
-			$this->parser->parse(FALSE);
-		} catch (\Exception $exception) {
-			$this->assertEquals(1168874738, $exception->getCode(), 'The pointcut expression parser throwed an exception but with the wrong error code.');
-			return;
-		}
-		$this->fail('The pointcut expression parser throwed no exception although the expression was no string.');
+	public function parseThrowsExceptionIfPointcutExpressionIsNotAString() {
+		$parser = new \F3\FLOW3\AOP\PointcutExpressionParser();
+		$parser->parse(FALSE);
 	}
 
 	/**
-	 * Checks if the parser throws an exception if the pointcut function in the second part of the expression is missing.
-	 *
 	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function missingPointcutFunctionThrowsException() {
-		try {
-			$this->parser->parse('method(F3\TestPackage\BasicClass->*(..)) || ())');
-		} catch (\Exception $exception) {
-			$this->assertEquals(1168874739, $exception->getCode(), 'The pointcut expression parser throwed an exception but with the wrong error code.');
-			return;
-		}
-		$this->fail('The pointcut expression parser throwed no exception although the expression was invalid.');
-	}
-
-	/**
-	 * Checks if the parser throws an exception if no "->" is found in the signature pattern
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function missingArrowInSignaturePatternThrowsException() {
-		try {
-			$this->parser->parse('method(F3\TestPackage\BasicClass)');
-		} catch (\Exception $exception) {
-			$this->assertEquals(1169027339, $exception->getCode(), 'The pointcut expression parser throwed an exception but with the wrong error code.');
-			return;
-		}
-		$this->fail('The pointcut expression parser throwed no exception although the expression was invalid.');
-	}
-
-	/**
-	 * Checks if the parser parses an expression with two simple classes connected by an || operator
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function simpleClassWithOrOperatorIsParsedCorrectly() {
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-
-		$firstSubComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$firstSubComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutClassFilter('F3\TestPackage\BasicClass'));
-		$firstSubComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutMethodNameFilter('*'));
-
-		$secondSubComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$secondSubComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutClassFilter('F3\TestPackage\BasicClass'));
-		$secondSubComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutMethodNameFilter('get*'));
-
-		$expectedPointcutFilterComposite->addFilter('&&', $firstSubComposite);
-		$expectedPointcutFilterComposite->addFilter('||', $secondSubComposite);
-
-		$actualPointcutFilterComposite = $this->parser->parse('method(F3\TestPackage\BasicClass->*(..)) || method(F3\TestPackage\BasicClass->get*(..))');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite, 'The filter chain while parsing a simple class expression was not correct.');
+	public function parseThrowsExceptionIfThePointcutExpressionContainsNoDesignator() {
+		$parser = new \F3\FLOW3\AOP\PointcutExpressionParser();
+		$parser->injectObjectFactory($this->mockObjectFactory);
+		$parser->parse('()');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function classTaggedWithDesignatorIsParsedCorrectly() {
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('someTag'));
+	public function parseCallsSpecializedMethodsToParseEachDesignator() {
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$actualPointcutFilterComposite = $this->parser->parse('classTaggedWith(someTag)');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
+
+		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
+		$parser = $this->getMock('F3\FLOW3\AOP\PointcutExpressionParser', $mockMethods, array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->expects($this->once())->method('parseDesignatorPointcut')->with('&&', '\Foo\Bar->baz', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorClassTaggedWith')->with('&&', 'foo', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorMethodTaggedWith')->with('&&', 'foo', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar()', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorWithin')->with('&&', 'Bar', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorFilter')->with('&&', '\Foo\Bar\Baz', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorSetting')->with('&&', 'Foo: Bar: baz', $mockPointcutFilterComposite);
+
+		$parser->parse('\Foo\Bar->baz');
+		$parser->parse('classTaggedWith(foo)');
+		$parser->parse('class(Foo)');
+		$parser->parse('methodTaggedWith(foo)');
+		$parser->parse('method(Foo->Bar())');
+		$parser->parse('within(Bar)');
+		$parser->parse('filter(\Foo\Bar\Baz)');
+		$parser->parse('setting(Foo: Bar: baz)');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function methodTaggedWithDesignatorIsParsedCorrectly() {
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter('someTag'));
+	public function parseSplitsUpTheExpressionIntoDesignatorsAndPassesTheOperatorsToTheDesginatorParseMethod() {
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
 
-		$actualPointcutFilterComposite = $this->parser->parse('methodTaggedWith(someTag)');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
+
+		$mockMethods = array('parseDesignatorPointcut', 'parseDesignatorClassTaggedWith', 'parseDesignatorClass', 'parseDesignatorMethodTaggedWith', 'parseDesignatorMethod', 'parseDesignatorWithin', 'parseDesignatorFilter', 'parseDesignatorSetting');
+		$parser = $this->getMock('F3\FLOW3\AOP\PointcutExpressionParser', $mockMethods, array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->expects($this->once())->method('parseDesignatorClassTaggedWith')->with('&&', 'foo', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorClass')->with('&&', 'Foo', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorMethod')->with('||', 'Foo->Bar()', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorWithin')->with('&&!', 'Bar', $mockPointcutFilterComposite);
+
+		$parser->parse('classTaggedWith(foo) && class(Foo) || method(Foo->Bar()) && !within(Bar)');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function customFilterDesignatorIsParsedCorrectly() {
-		$parser = new \F3\FLOW3\AOP\MockPointcutExpressionParser($this->objectManager);
+	public function parseDesignatorClassTaggedWithAddsAFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutClassTaggedWithFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
 
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\Tests\AOP\Fixture\CustomFilter());
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutClassTaggedWithFilter', 'foo')->will($this->returnValue($mockFilter));
 
-		$actualPointcutFilterComposite = $parser->parse('filter(\F3\FLOW3\Tests\AOP\Fixture\CustomFilter)');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->_call('parseDesignatorClassTaggedWith', '&&', 'foo', $mockPointcutFilterComposite);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function ifACustomFilterDoesNotImplementThePointcutFilterInterfaceAnExceptionIsThrown() {
-		$parser = new \F3\FLOW3\AOP\MockPointcutExpressionParser($this->objectManager);
+	public function parseDesignatorClassAddsAFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutClassNameFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
 
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\Tests\AOP\Fixture\CustomFilter());
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutClassNameFilter', 'Foo')->will($this->returnValue($mockFilter));
 
-		try {
-			$parser->parse('filter(\F3\FLOW3\Tests\AOP\Fixture\EmptyClass)');
-			$this->fail('No exception was thrown.');
-		} catch (\Exception  $exception) {
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
 
-		}
+		$parser->_call('parseDesignatorClass', '&&', 'Foo', $mockPointcutFilterComposite);
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function settingFilterDesignatorIsParsedCorrectly() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings['custom']['package']['my']['configuration']['option'] = TRUE;
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
+	public function parseDesignatorMethodTaggedWithAddsAFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutMethodTaggedWithFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Configuration\Manager')->will($this->returnValue($mockConfigurationManager));
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutMethodTaggedWithFilter', 'foo')->will($this->returnValue($mockFilter));
 
-		$parser = new \F3\FLOW3\AOP\PointcutExpressionParser($mockObjectManager);
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
 
-		$expectedPointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
-		$expectedPointcutFilterComposite->addFilter('&&', new \F3\FLOW3\AOP\PointcutSettingFilter($mockConfigurationManager, 'custom: package: my: configuration: option'));
+		$parser->_call('parseDesignatorMethodTaggedWith', '&&', 'foo', $mockPointcutFilterComposite);
+	}
 
-		$actualPointcutFilterComposite = $parser->parse('setting(custom: package: my: configuration: option)');
-		$this->assertEquals($expectedPointcutFilterComposite, $actualPointcutFilterComposite);
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorMethodAddsAClassNameFilterAndAMethodNameFilterToTheGivenFilterComposite() {
+		$mockClassNameFilter = $this->getMock('F3\FLOW3\AOP\PointcutClassNameFilter', array(), array(), '', FALSE);
+		$mockMethodNameFilter = $this->getMock('F3\FLOW3\AOP\PointcutMethodNameFilter', array(), array(), '', FALSE);
+
+		$mockSubComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockSubComposite->expects($this->at(0))->method('addFilter')->with('&&', $mockClassNameFilter);
+		$mockSubComposite->expects($this->at(1))->method('addFilter')->with('&&', $mockMethodNameFilter);
+
+		$mockComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockComposite->expects($this->once())->method('addFilter')->with('&&', $mockSubComposite);
+
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockSubComposite));
+		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\AOP\PointcutClassNameFilter', 'Foo')->will($this->returnValue($mockClassNameFilter));
+		$this->mockObjectFactory->expects($this->at(2))->method('create')->with('F3\FLOW3\AOP\PointcutMethodNameFilter', 'bar', 'protected')->will($this->returnValue($mockMethodNameFilter));
+
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->_call('parseDesignatorMethod', '&&', 'protected Foo->bar()', $mockComposite);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorMethodThrowsAnExceptionIfTheExpressionLacksTheClassMethodArrow() {
+		$mockComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->_call('parseDesignatorMethod', '&&', 'Foo bar', $mockComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorWithinAddsAFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutClassTypeFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
+
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutClassTypeFilter', 'Bar')->will($this->returnValue($mockFilter));
+
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->_call('parseDesignatorWithin', '&&', 'Bar', $mockPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorPointcutAddsAFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
+
+		$this->mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilter', '\Foo\Bar', 'baz')->will($this->returnValue($mockFilter));
+
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectFactory($this->mockObjectFactory);
+
+		$parser->_call('parseDesignatorPointcut', '&&', '\Foo\Bar->baz', $mockPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorPointcutThrowsAnExceptionIfTheExpressionLacksTheAspectClassMethodArrow() {
+		$mockComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->_call('parseDesignatorPointcut', '&&', '\Foo\Bar', $mockComposite);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorFilterAddsACustomFilterToTheGivenFilterComposite() {
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilter', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite->expects($this->once())->method('addFilter')->with('&&', $mockFilter);
+
+		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Foo\Custom\Filter')->will($this->returnValue($mockFilter));
+
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectManager($this->mockObjectManager);
+
+		$parser->_call('parseDesignatorFilter', '&&', 'F3\Foo\Custom\Filter', $mockPointcutFilterComposite);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function parseDesignatorFilterThrowsAnExceptionIfACustomFilterDoesNotImplementThePointcutFilterInterface() {
+		$mockFilter = new \ArrayObject();
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+
+		$this->mockObjectManager->expects($this->once())->method('getObject')->with('F3\Foo\Custom\Filter')->will($this->returnValue($mockFilter));
+
+		$parser = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\PointcutExpressionParser'), array('dummy'), array(), '', FALSE);
+		$parser->injectObjectManager($this->mockObjectManager);
+
+		$parser->_call('parseDesignatorFilter', '&&', 'F3\Foo\Custom\Filter', $mockPointcutFilterComposite);
 	}
 }
 ?>

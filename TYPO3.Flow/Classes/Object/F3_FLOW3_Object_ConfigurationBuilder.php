@@ -95,6 +95,7 @@ class ConfigurationBuilder {
 				case 'factoryClassName' :
 				case 'factoryMethodName' :
 				case 'lifecycleInitializationMethodName':
+				case 'lifecycleShutdownMethodName':
 					$methodName = 'set' . ucfirst($optionName);
 					$objectConfiguration->$methodName(trim($optionValue));
 				break;

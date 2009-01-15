@@ -43,24 +43,24 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterc
 	 *
 	 * @param string $methodName Name of the method to build an interceptor for
 	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
-	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass A reflection of the target class to build the interceptor for
+	 * @param string $targetClassName Name of the target class to build the interceptor for
+	 * @param array
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
+	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName === '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173107446);
 
 		$groupedAdvices = $interceptedMethods[$methodName]['groupedAdvices'];
-		$declaringClass = $interceptedMethods[$methodName]['declaringClass'];
-		$method = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
+		$declaringClassName = $interceptedMethods[$methodName]['declaringClassName'];
 
 		$methodInterceptorCode = '';
-		$advicesCode = self::buildAdvicesCode($groupedAdvices, $methodName, $targetClass);
+		$advicesCode = $this->buildAdvicesCode($groupedAdvices, $methodName, $targetClassName);
 
 		$methodParametersDocumentation = '';
-		$methodParametersCode = self::buildMethodParametersCode($method, TRUE, $methodParametersDocumentation);
+		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, $methodName, TRUE, $methodParametersDocumentation);
 
-		$staticKeyword = ($method !== NULL && $method->isStatic()) ? 'static ' : '';
+		$staticKeyword = $this->reflectionService->isMethodStatic($declaringClassName, $methodName) ? 'static ' : '';
 
 		$methodInterceptorCode .= '
 	/**
@@ -70,28 +70,27 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterc
 	 */
 	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {
 ';
-		if ($method !== NULL || $methodName === '__wakeup') {
+		if ($methodName !== NULL || $methodName === '__wakeup') {
 			$methodInterceptorCode .= '
 		if (isset($this->methodIsInAdviceMode[\'' . $methodName . '\'])) {
 ';
 
-			if ($declaringClass->isInterface() || $method === NULL) {
+			if ($declaringClassName === NULL || interface_exists($declaringClassName, TRUE)) {
 				$methodInterceptorCode .= '
 			$result = NULL;
 ';
 			} else {
 				$methodInterceptorCode .= '
-			$result = parent::' . $methodName . '(' . self::buildMethodParametersCode($method, FALSE) . ');
+			$result = parent::' . $methodName . '(' . $this->buildMethodParametersCode($declaringClassName, $methodName, FALSE) . ');
 ';
 			}
 			$methodInterceptorCode .= '
 		} else {';
-			if ($methodName == '__wakeup') {
-				$methodInterceptorCode .= self::buildWakeupCode();
+			if ($methodName === '__wakeup') {
+				$methodInterceptorCode .= $this->buildWakeupCode();
 			}
-			$declaringMethod = ($declaringClass !== NULL && $declaringClass->hasMethod($methodName)) ? $declaringClass->getMethod($methodName) : NULL;
 			$methodInterceptorCode .= '
-			$methodArguments = array(' . self::buildMethodArgumentsArrayCode($declaringMethod) . ');
+			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
 			' . $advicesCode . '
 			unset ($this->methodIsInAdviceMode[\'' . $methodName . '\']);
@@ -100,8 +99,8 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterc
 ';
 		} else {
 			if ($methodName == '__wakeup') {
-				$methodInterceptorCode .= self::buildWakeupCode();
-				if ($targetClass->hasMethod('__wakeup')) {
+				$methodInterceptorCode .= $this->buildWakeupCode();
+				if (method_exists($targetClassName, '__wakeup')) {
 					$methodInterceptorCode .= "\n\t\tparent::__wakeup();\n";
 				}
 			}

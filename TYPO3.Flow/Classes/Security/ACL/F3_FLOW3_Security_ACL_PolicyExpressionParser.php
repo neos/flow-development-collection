@@ -29,7 +29,7 @@ namespace F3\FLOW3\Security\ACL;
  */
 
 /**
- *
+ * A specialized pointcut expression parser tailored to policy expressions
  *
  * @package FLOW3
  * @subpackage Security
@@ -42,17 +42,6 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 	 * @var array The resources array from the configuration.
 	 */
 	protected $resourcesTree = array();
-
-	/**
-	 * Default constructor
-	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
-		parent::__construct($objectManager);
-	}
 
 	/**
 	 * Sets the resource array that should be parsed
@@ -75,9 +64,9 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression, $trace = array()) {
-		if (!is_string($pointcutExpression) || \F3\PHP6\Functions::strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		if (!is_string($pointcutExpression) || strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
-		$pointcutFilterComposite = new \F3\FLOW3\AOP\PointcutFilterComposite();
+		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {

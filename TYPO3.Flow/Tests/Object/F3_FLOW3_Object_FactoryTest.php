@@ -90,7 +90,7 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
 	 */
 	public function createFailsOnNonExistentObject() {
-		$this->objectFactory->create('F3\TestPackage\ThisClassDoesNotExist');
+		$this->objectFactory->create('F3\Foo\ThisClassDoesNotExist');
 	}
 
 	/**
@@ -131,5 +131,24 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 		$this->objectFactory->create($objectName, 'test1', 'test2', 'test3');
 	}
 
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createRegistersShutdownObjectsAtTheComponentManager() {
+		$className = 'SomeClass' . uniqid();
+		eval('class ' . $className . ' {}');
+		$object = new $className;
+
+		$objectName = 'F3\Virtual\BasicClass';
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration->setScope('prototype');
+		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
+		$this->mockObjectManager->expects($this->once())->method('registerShutdownObject')->with($object, 'shutdownObject');
+		$this->mockObjectBuilder->expects($this->once())->method('createObject')->will($this->returnValue($object));
+
+		$this->objectFactory->create($objectName);
+	}
 }
 ?>

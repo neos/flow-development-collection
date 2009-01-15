@@ -36,7 +36,7 @@ namespace F3\FLOW3\Error;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class ProductionExceptionHandler implements \F3\FLOW3\Error\ExceptionHandlerInterface {
+class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
@@ -55,6 +55,8 @@ class ProductionExceptionHandler implements \F3\FLOW3\Error\ExceptionHandlerInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function handleException(\Exception $exception) {
+		parent::handleException($exception);
+
 		switch (PHP_SAPI) {
 			case 'cli' :
 				$this->echoExceptionCLI($exception);

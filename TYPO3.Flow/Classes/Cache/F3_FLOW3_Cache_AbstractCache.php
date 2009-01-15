@@ -39,8 +39,6 @@ namespace F3\FLOW3\Cache;
  */
 abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 
-	const TAG_CLASS = '%CLASS%';
-
 	/**
 	 * @var string Identifies this cache
 	 */
@@ -122,12 +120,14 @@ abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 	 * Whenever the specified class is modified, all cache entries tagged with the
 	 * class are flushed.
 	 *
+	 * If an empty string is specified as class name, the returned tag means "depends on any class".
+	 *
 	 * @param string $className The class name
 	 * @return string Class Tag
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getClassTag($className) {
-		return self::TAG_CLASS . str_replace('\\', '_', $className);
+	public function getClassTag($className = '') {
+		return ($className === '') ? \F3\FLOW3\Cache\BackendInterface::TAG_CLASS : \F3\FLOW3\Cache\BackendInterface::TAG_CLASS . str_replace('\\', '_', $className);
 	}
 
 }

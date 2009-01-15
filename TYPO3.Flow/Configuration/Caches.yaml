@@ -1,0 +1,34 @@
+#                                                                        #
+# Caches configuration                                                   #
+#                                                                        #
+# This file contains a list of caches which are automatically registered #
+# while initializing the cache framework. If caches want to benefit from #
+# the automatic flushing mechanisms (such as garbage collection and      #
+# automatic flushing by tag) they must be registered in a Caches.yaml    #
+# file.
+#                                                                        #
+
+##
+# Default cache configuration
+#
+# If no frontend, backend or options are specified for a cache, these values
+# will be taken to create the cache.
+Default:
+  frontend: F3\FLOW3\Cache\VariableCache
+  backend: F3\FLOW3\Cache\Backend\File
+  backendOptions: { }
+
+##
+# Definition of caches used by FLOW3:
+#
+FLOW3_AOP_Proxy: []
+FLOW3_AOP_Configuration: []
+FLOW3_Cache_ClassFiles: []
+FLOW3_Cache_ResourceFiles: []
+FLOW3_Monitor_ChangeDetectionStrategy_ModificationTime: []
+FLOW3_Reflection: []
+FLOW3_Resource_MetaData: []
+FLOW3_Resource_Status:
+  frontend: F3\FLOW3\Cache\StringCache
+FLOW3_Security_Policy: []
+FLOW3_Object_Configurations: []

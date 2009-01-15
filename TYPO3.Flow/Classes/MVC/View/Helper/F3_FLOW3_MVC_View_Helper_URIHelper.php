@@ -91,9 +91,9 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 		$routeValues['@controller'] = ($controllerName === NULL) ? $this->request->getControllerName() : $controllerName;
 		$routeValues['@package'] = ($packageKey === NULL) ? $this->request->getControllerPackageKey() : $packageKey;
 		$currentSubpackageKey = $this->request->getControllerSubpackageKey();
-		if ($subpackageKey === NULL && \F3\PHP6\Functions::strlen($currentSubpackageKey)) {
+		if ($subpackageKey === NULL && strlen($currentSubpackageKey)) {
 			$routeValues['@subpackage'] = $currentSubpackageKey;
-		} else if (\F3\PHP6\Functions::strlen($subpackageKey)) {
+		} else if (strlen($subpackageKey)) {
 			$routeValues['@subpackage'] = $subpackageKey;
 		}
 

@@ -40,12 +40,19 @@ namespace F3\FLOW3\Log;
  */
 interface LoggerInterface {
 
-	const SEVERITY_DEBUG = -1;
-	const SEVERITY_OK = 0;
-	const SEVERITY_INFO = 1;
-	const SEVERITY_NOTICE = 2;
-	const SEVERITY_WARNING = 3;
-	const SEVERITY_FATAL = 4;
+	/**
+	 * Severities according to RFC3164
+	 *
+	 * @see http://www.faqs.org/rfcs/rfc3164.html
+	 */
+	const SEVERITY_EMERGENCY = LOG_EMERG; # Emergency: system is unusable
+	const SEVERITY_ALERT = LOG_ALERT;     # Alert: action must be taken immediately
+	const SEVERITY_CRITICAL = LOG_CRIT;   # Critical: critical conditions
+	const SEVERITY_ERROR = LOG_ERR;       # Error: error conditions
+	const SEVERITY_WARNING = LOG_WARNING; # Warning: warning conditions
+	const SEVERITY_NOTICE = LOG_NOTICE;   # Notice: normal but significant condition
+	const SEVERITY_INFO = LOG_INFO;       # Informational: informational messages
+	const SEVERITY_DEBUG = LOG_DEBUG;     # Debug: debug-level messages
 
 	/**
 	 * Adds a backend to which the logger sends the logging data
@@ -69,14 +76,14 @@ interface LoggerInterface {
 	 * Writes the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
+	 * @param integer $severity An integer value, one of the SEVERITY_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 */
-	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
 }
 ?>

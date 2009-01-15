@@ -498,7 +498,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		));
 
 		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
-		$this->assertTrue($object->hasBeenInitialized(), 'Obviously the lifecycle initialization method of \F3\TestPackage\BasicClass has not been called after setter injection!');
+		$this->assertTrue($object->hasBeenInitialized());
 	}
 
 	/**

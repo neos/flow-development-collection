@@ -47,6 +47,7 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class AspectContainer {
 
@@ -126,11 +127,11 @@ class AspectContainer {
 	/**
 	 * Adds an advisor to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\AdvisorInterface $advisor: The advisor to add
+	 * @param \F3\FLOW3\AOP\Advisor $advisor: The advisor to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addAdvisor(\F3\FLOW3\AOP\AdvisorInterface $advisor) {
+	public function addAdvisor(\F3\FLOW3\AOP\Advisor $advisor) {
 		$this->advisors[] = $advisor;
 	}
 
@@ -148,11 +149,11 @@ class AspectContainer {
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\PointcutInterface $pointcut: The poincut to add
+	 * @param \F3\FLOW3\AOP\Pointcut $pointcut: The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addPointcut(\F3\FLOW3\AOP\PointcutInterface $pointcut) {
+	public function addPointcut(\F3\FLOW3\AOP\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;
 	}
 }

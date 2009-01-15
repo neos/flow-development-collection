@@ -47,6 +47,17 @@ class DirtyMonitoring {
 	protected $persistenceManager;
 
 	/**
+	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isEntityOrValueObject() {}
+
+	/**
+	 * @introduce F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
+	 */
+	public $dirtyMonitoringInterface;
+
+	/**
 	 * Injects the persistence manager
 	 *
 	 * @param \F3\FLOW3\Persistence\Manager $persistenceManager
@@ -56,12 +67,6 @@ class DirtyMonitoring {
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\Manager $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
-
-	/**
-	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isEntityOrValueObject() {}
 
 	/**
 	 * Automatically call memorizeCleanState() after __wakeup()
@@ -74,11 +79,6 @@ class DirtyMonitoring {
 	public function autoMemorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getProxy()->memorizeCleanState($joinPoint);
 	}
-
-	/**
-	 * @introduce F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
-	 */
-	public $dirtyMonitoringInterface;
 
 	/**
 	 * Around advice, implements the isNew() method introduced above

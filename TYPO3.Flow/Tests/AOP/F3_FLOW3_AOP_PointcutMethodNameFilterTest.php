@@ -24,33 +24,95 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  */
+
+require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_MethodsTaggedWithSomething.php');
 
 /**
  * Testcase for the Pointcut Method Name Filter
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class PointcutMethodNameFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Checks if the method name filter ignores methods declared as final
-	 *
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function pointcutFilterDoesNotMatchFinalMethod() {
-		$targetClass = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
-		$targetMethod = $targetClass->getMethod('someFinalMethod');
+	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenMethodName() {
+		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
-		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodNameFilter('.*');
-		$matches = $methodNameFilter->matches($targetClass, $targetMethod, 1);
-		$this->assertFalse($matches, 'Method name filter matches final method although it should not.');
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter('someMethod');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($methodNameFilter->matches($className, 'someMethod', $className, 1));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter('some.*');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($methodNameFilter->matches($className, 'someMethod', $className, 1));
+		$this->assertTrue($methodNameFilter->matches($className, 'someOtherMethod', $className, 2));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodTaggedWithFilter('.*Method');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($methodNameFilter->matches($className, 'somethingCompletelyDifferent', $className, 1));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchesIgnoresFinalMethodsEvenIfTheirNameMatches() {
+		$className = uniqid('TestClass');
+		eval("
+			class $className {
+				final public function someFinalMethod() {}
+			}"
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodNameFilter('someFinalMethod');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+
+		$this->assertFalse($methodNameFilter->matches($className, 'someFinalMethod', $className, 1));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchesTakesTheVisibilityModifierIntoAccountIfOneWasSpecified() {
+		$className = uniqid('TestClass');
+		eval("
+			class $className {
+				public function somePublicMethod() {}
+				protected function someProtectedMethod() {}
+				private function somePrivateMethod() {}
+			}"
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodNameFilter('some.*', 'public');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
+
+		$methodNameFilter = new \F3\FLOW3\AOP\PointcutMethodNameFilter('some.*', 'protected');
+		$methodNameFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePublicMethod', $className, 1));
+		$this->assertTrue($methodNameFilter->matches(__CLASS__, 'someProtectedMethod', $className, 1));
+		$this->assertFalse($methodNameFilter->matches(__CLASS__, 'somePrivateMethod', $className, 1));
 	}
 }
 ?>

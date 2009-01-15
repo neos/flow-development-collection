@@ -106,7 +106,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadRoutesSettingsLoadsRoutesOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
+	public function loadSpecialConfigurationLoadsConfigurationOfAllSpecifiedPackagesByCallingTheConfigurationSource() {
 		$someSettings = array();
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
@@ -114,7 +114,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
 
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadRoutesSettings($packageKeys);
+		$manager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, $packageKeys);
 	}
 
 	/**

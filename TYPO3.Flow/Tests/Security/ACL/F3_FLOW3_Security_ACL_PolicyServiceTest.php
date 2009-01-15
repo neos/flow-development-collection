@@ -24,7 +24,7 @@ namespace F3\FLOW3\Security\ACL;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  */
 
@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\ACL;
  * Testcase for for the policy service
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
@@ -41,394 +41,85 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchesReturnsTrueForAnACLEntryReferingToAResourceRepresentedByANotNestedPointcutExpression() {
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+	public function matchesAsksThePolicyExpressionParserToBuildPointcutFiltersAndChecksIfTheyMatchTheGivenClassAndMethod() {
 		$settings = array(
-			'aop' => array('cache' => array('enable' => FALSE)),
 			'security' => array(
 				'enable' => TRUE,
 				'policy' => array(
-					'roles' => array('EXAMPLE_ROLE' => array()),
-					'resources' => array('theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())'),
-					'acls' => array('EXAMPLE_ROLE' => array('theOneAndOnlyResource' => 'ACCESS_GRANT'))
+					'roles' => array('THE_ROLE' => array()),
+					'resources' => array('theResource' => 'method(Foo->bar())'),
+					'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
 				)
 			)
 		);
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
-		$method = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClass', 'setSomeProperty');
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-		$this->assertTrue($policyService->matches($class, $method, 1));
+		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($settings['security']['policy']['resources']);
+		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
+
+		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
+		$policyService->injectSettings($settings);
+
+		$this->assertTrue($policyService->matches('Foo', 'bar', 'Baz', 1));
 	}
 
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function matchesReturnsTrueForAnACLEntryReferingToAResourceRepresentedByANestedPointcutExpression() {
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = FALSE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
-		$settings['security']['policy']['resources'] = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
-			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
-			'theIntegrativeResource' => 'theOneAndOnlyResource || theOtherLonelyResource',
-		);
-		$settings['security']['policy']['acls']['EXAMPLE_ROLE'] = array(
-			'theIntegrativeResource' => 'ACCESS_GRANT',
-		);
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
-		$method = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClass', 'setSomeProperty');
-		$class2 = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClassValidator');
-		$method2 = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClassValidator', 'validate');
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		$this->assertTrue($policyService->matches($class, $method, 1));
-		$this->assertTrue($policyService->matches($class2, $method2, 2));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesAlwaysReturnsFalseIfSecurityIsDisabled() {
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$settings = array('security' => array('enable' => FALSE));
+
+		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$policyService->injectSettings($settings);
+		$this->assertFalse($policyService->matches('Foo', 'bar', 'Baz', 1));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matchesStoresMatchedACLsInAnArrayForLaterCaching() {
 		$settings = array(
-			'aop' => array('cache' => array('enable' => FALSE)),
 			'security' => array(
-				'enable' => FALSE,
+				'enable' => TRUE,
 				'policy' => array(
-					'roles' => array('EXAMPLE_ROLE' => array()),
-					'resources' => array('theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())'),
-					'acls' => array('EXAMPLE_ROLE' => array('theOneAndOnlyResource' => 'ACCESS_GRANT'))
+					'roles' => array('THE_ROLE' => array()),
+					'resources' => array('theResource' => 'method(Foo->bar())'),
+					'acls' => array('THE_ROLE' => array('theResource' => 'ACCESS_GRANT'))
 				)
 			)
 		);
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
 
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
-		$method = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClass', 'setSomeProperty');
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-		$this->assertFalse($policyService->matches($class, $method, 1));
-	}
+		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);
+		$mockPolicyExpressionParser->expects($this->once())->method('setResourcesTree')->with($settings['security']['policy']['resources']);
+		$mockPolicyExpressionParser->expects($this->once())->method('parse')->with('theResource')->will($this->returnValue($mockFilter));
 
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function matchesCreatesTheCorrectACLCacheArray() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array('EXAMPLE_ROLE' => array());
-		$settings['security']['policy']['resources'] = array(
-			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
-			'theOtherLonelyResource' => 'method(F3\TestPackage\BasicClassValidator->.*())',
-			'theIntegrativeResource' => 'theOneAndOnlyResource || theOtherLonelyResource',
-		);
-		$settings['security']['policy']['acls']['EXAMPLE_ROLE'] = array(
-			'theIntegrativeResource' => 'ACCESS_GRANT',
+		$policyService = new \F3\FLOW3\Security\ACL\PolicyService();
+		$policyService->injectPolicyExpressionParser($mockPolicyExpressionParser);
+		$policyService->injectSettings($settings);
+
+		$policyService->matches('Foo', 'bar', 'Baz', 1);
+
+		$expectedACLs = array(
+			'Foo->bar' => array(
+				'THE_ROLE' => array('ACCESS_GRANT')
+			)
 		);
 
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$expectedACLCacheArray = array (
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'EXAMPLE_ROLE' => array('ACCESS_GRANT'),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-#		$mockCache->expects($this->once())->method('set')->with('FLOW3_Security_Policy_ACLs', $expectedACLCacheArray);
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\TestPackage\BasicClass');
-		$method = new \F3\FLOW3\Reflection\MethodReflection('F3\TestPackage\BasicClass', 'setSomeProperty');
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		$policyService->matches($class, $method, 1);
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getRolesReturnsTheCorrectRolesForAGivenJoinpoint() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array();
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$cachedPolicyArray = array(
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'ADMINISTRATOR' => array(
-					'ACCESS_GRANT'
-				),
-				'PRIVILEGED_CUSTOMER' => array(
-					'ACCESS_GRANT'
-				),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-		$mockCache->expects($this->atLeastOnce())->method('has')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->atLeastOnce())->method('get')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue($cachedPolicyArray));
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3\TestPackage\BasicClass'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		$expectedRolesStringRepresentations = array('ADMINISTRATOR', 'PRIVILEGED_CUSTOMER');
-		$resultRoles = $policyService->getRoles($mockJoinPoint);
-
-		$this->assertEquals(count($expectedRolesStringRepresentations), count($resultRoles), 'The policy service did not return the correct count of roles.');
-		foreach ($resultRoles as $role) {
-			$this->assertType('F3\FLOW3\Security\ACL\Role', $role, 'The policy service did not return role objects as expected');
-			$this->assertContains((string)$role, $expectedRolesStringRepresentations, 'The policy service did not return the expected roles for the given joinpoint');
-		}
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getRolesThrowsAnExceptionIfTheGivenJoinPointIsNotRegisteredInThePolicy() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array();
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$cachedPolicyArray = array(
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'ADMINISTRATOR' => array(
-					'ACCESS_GRANT'
-				),
-				'PRIVILEGED_CUSTOMER' => array(
-					'ACCESS_GRANT'
-				),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-		$mockCache->expects($this->atLeastOnce())->method('has')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->atLeastOnce())->method('get')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue($cachedPolicyArray));
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3\TestPackage\BasicClass'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('notExistantMethod'));
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		try {
-			$resultRoles = $policyService->getRoles($mockJoinPoint);
-			$this->fail('getRoles() did not throw an exception.');
-		} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicy $exception) {}
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getPrivilgesReturnsTheCorrectPrivilegesForAGivenJoinpoint() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array(
-			'ADMINISTRATOR' => array(),
-			'CUSTOMER' => array(),
-			'PRIVILEGED_CUSTOMER' => array('CUSTOMER'),
-		);
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$cachedPolicyArray = array(
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'ADMINISTRATOR' => array(
-					'ACCESS_GRANT'
-				),
-				'CUSTOMER' => array(
-					'ACCESS_GRANT',
-					'CUSTOMPRIVILEGE_GRANT'
-				),
-				'PRIVILEGED_CUSTOMER' => array(
-					'CUSTOMPRIVILEGE_DENY'
-				),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-		$mockCache->expects($this->atLeastOnce())->method('has')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->atLeastOnce())->method('get')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue($cachedPolicyArray));
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3\TestPackage\BasicClass'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		$expectedPrivilegesStringRepresentation = array('ACCESS', 'CUSTOMPRIVILEGE');
-		$resultPrivileges = $policyService->getPrivileges(new \F3\FLOW3\Security\ACL\Role('PRIVILEGED_CUSTOMER'), $mockJoinPoint);
-
-		$this->assertEquals(count($expectedPrivilegesStringRepresentation), count($resultPrivileges), 'The policy service did not return the correct count of privileges.');
-		foreach ($resultPrivileges as $privilege) {
-			$this->assertType('F3\FLOW3\Security\ACL\Privilege', $privilege, 'The policy service did not return privilege objects as expected');
-			if ((string)$privilege === 'ACCESS') $this->assertTrue($privilege->isGrant(), 'The access privilege was not set granting as expected');
-			elseif ((string)$privilege === 'CUSTOMPRIVILEGE') $this->assertTrue($privilege->isDeny(), 'The customprivilege privilege was not set denying as expected');
-			else $this->fail('Unexpected privilege type found: ' . (string)$privilege);
-		}
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getPrivilgesReturnsTheCorrectPrivilegeForAGivenJoinpointAndPrivilegeType() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array(
-			'ADMINISTRATOR' => array(),
-			'CUSTOMER' => array(),
-			'PRIVILEGED_CUSTOMER' => array('CUSTOMER'),
-		);
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$cachedPolicyArray = array(
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'ADMINISTRATOR' => array(
-					'ACCESS_GRANT'
-				),
-				'CUSTOMER' => array(
-					'ACCESS_GRANT',
-					'CUSTOMPRIVILEGE_GRANT'
-				),
-				'PRIVILEGED_CUSTOMER' => array(
-					'CUSTOMPRIVILEGE_DENY'
-				),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-		$mockCache->expects($this->atLeastOnce())->method('has')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->atLeastOnce())->method('get')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue($cachedPolicyArray));
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3\TestPackage\BasicClass'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('setSomeProperty'));
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		$resultPrivilege = $policyService->getPrivileges(new \F3\FLOW3\Security\ACL\Role('PRIVILEGED_CUSTOMER'), $mockJoinPoint, 'ACCESS');
-
-		$this->assertType('F3\FLOW3\Security\ACL\Privilege', $resultPrivilege[0], 'The policy service did not return a privilege object as expected');
-		$this->assertEquals((string)$resultPrivilege[0], 'ACCESS', 'The wrong privilege type was returned.');
-		$this->assertTrue($resultPrivilege[0]->isGrant(), 'The privilege was not set granting as expected');
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getPrivilegesThrowsAnExceptionIfTheGivenJoinPointIsNotRegisteredInThePolicy() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['aop']['cache']['enable'] = TRUE;
-		$settings['security']['enable'] = TRUE;
-		$settings['security']['policy']['aclCache']['backend'] = '';
-		$settings['security']['policy']['aclCache']['backendOptions'] = array();
-		$settings['security']['policy']['roles'] = array();
-
-		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->will($this->returnValue($settings));
-
-		$cachedPolicyArray = array(
-			'F3\TestPackage\BasicClass->setSomeProperty' => array(
-				'ADMINISTRATOR' => array(
-					'ACCESS_GRANT'
-				),
-				'PRIVILEGED_CUSTOMER' => array(
-					'ACCESS_GRANT'
-				),
-			),
-		);
-
-		$mockCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
-		$mockCache->expects($this->atLeastOnce())->method('has')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue(TRUE));
-		$mockCache->expects($this->atLeastOnce())->method('get')->with('FLOW3_Security_Policy_ACLs')->will($this->returnValue($cachedPolicyArray));
-
-		$mockCacheFactory = $this->getMock('F3\FLOW3\Cache\Factory', array('create'), array(), '', FALSE);
-		$mockCacheFactory->expects($this->atLeastOnce())->method('create')->will($this->returnValue($mockCache));
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getClassName')->will($this->returnValue('F3\TestPackage\BasicClass'));
-		$mockJoinPoint->expects($this->atLeastOnce())->method('getMethodName')->will($this->returnValue('notExistantMethod'));
-
-		$mockRole = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE);
-
-		$policyService = new \F3\FLOW3\Security\ACL\PolicyService($this->objectManager, $mockConfigurationManager, $mockCacheFactory);
-
-		try {
-			$resultRoles = $policyService->getPrivileges($mockRole, $mockJoinPoint);
-			$this->fail('getPrivielges() did not throw an exception.');
-		} catch (\F3\FLOW3\Security\Exception\NoEntryInPolicy $exception) {}
+		$aclsReflection = new \ReflectionProperty($policyService, 'acls');
+		$this->assertSame($expectedACLs, $aclsReflection->getValue($policyService));
 	}
 }
 ?>

@@ -50,14 +50,14 @@ interface BackendInterface {
 	 * Appends the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
+	 * @param integer $severity One of the SEVERITY_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 */
-	public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
 	/**
 	 * Carries out all actions necessary to cleanly close the logging backend, such as

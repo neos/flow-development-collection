@@ -38,12 +38,33 @@ namespace F3\FLOW3\Persistence\Aspect;
  */
 interface DirtyMonitoringInterface {
 
+	/**
+	 * If the monitored object has ever been persisted
+	 *
+	 * @return boolean TRUE if the object is new, otherwise FALSE
+	 */
 	public function isNew();
-	public function isDirty($propertyName);
-		// the $joinPoint argument here is a special case, as the introduced
-		// method is used from within an advice and "externally", thus we need
-		// to handle this specially
-	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL);
 
+	/**
+	 * If the specified property of the reconstituted object has been modified
+	 * since it woke up.
+	 *
+	 * @param string $propertyName Name of the property to check
+	 * @return boolean TRUE if the given property has been modified
+	 */
+	public function isDirty($propertyName);
+
+	/**
+	 * Resets the dirty flags of all properties to signal that the object is
+	 * clean again after being persisted.
+	 *
+	 * The $joinPoint argument here is a special case, as the introduced
+	 * method is used from within an advice and "externally", thus we need
+	 * to handle this specially
+	 *
+	 * @param JoinPointInterface $joinPoint Current joinpoint, if used from within an advice
+	 * @return void
+	 */
+	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL);
 }
 ?>

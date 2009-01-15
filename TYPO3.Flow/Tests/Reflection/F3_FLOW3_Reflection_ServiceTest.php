@@ -57,6 +57,22 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function isClassReflectedTellsIfTheReflectionServiceKnowsTheSpecfiedClass() {
+		$availableClassNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyClass',
+		);
+		$reflectionService = new \F3\FLOW3\Reflection\Service();
+		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\VariableCache', array(), array(), '', FALSE));
+		$reflectionService->initialize($availableClassNames);
+
+		$this->assertTrue($reflectionService->isClassReflected('F3\FLOW3\Tests\Reflection\Fixture\DummyClass'));
+		$this->assertFalse($reflectionService->isClassReflected('F3\Virtual\UnknownClass'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function getDefaultImplementationClassNameForInterfaceReturnsClassNameOfOnlyClassImplementingTheInterface() {
 		$classNames = array(
 			'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1',

@@ -23,25 +23,32 @@ namespace F3\FLOW3\Log;
  *                                                                        */
 
 /**
- * @package Log
+ * @package FLOW3
+ * @subpackage Log
  * @version $Id$
  */
 
 /**
  * A general purpose default Logger
  *
- * @package
+ * @package FLOW3
+ * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
-class Logger implements \F3\FLOW3\Log\LoggerInterface {
+class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 
 	/**
 	 * @var \SplObjectStorage
 	 */
 	protected $backends;
 
+	/**
+	 * Constructs the logger
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function __construct() {
 		$this->backends = new \SplObjectStorage();
 	}
@@ -51,6 +58,7 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 *
 	 * @param BackendInterface $backend A backend implementation
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend) {
 		$this->backends->attach($backend);
@@ -76,7 +84,7 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 * Writes the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
+	 * @param integer $severity An integer value, one of the SEVERITY_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -84,7 +92,14 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function log($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+		if ($packageKey === NULL) {
+			$backtrace = debug_backtrace(FALSE);
+			$className = $backtrace[1]['class'];
+			$methodName = $backtrace[1]['function'];
+			$explodedClassName = explode('\\', $className);
+			$packageKey = $explodedClassName[1];
+		}
 		foreach ($this->backends as $backend) {
 			$backend->append($message, $severity, $additionalData, $packageKey, $className, $methodName);
 		}
@@ -96,7 +111,7 @@ class Logger implements \F3\FLOW3\Log\LoggerInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __destruct() {
+	public function shutdownObject() {
 		foreach ($this->backends as $backend) {
 			$backend->close();
 		}

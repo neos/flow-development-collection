@@ -54,6 +54,5 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\BackendInterface {
 			}
 		}
 	}
-
 }
 ?>

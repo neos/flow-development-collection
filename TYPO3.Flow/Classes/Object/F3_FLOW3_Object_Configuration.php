@@ -73,33 +73,39 @@ class Configuration {
 
 	/**
 	 * Instantiation scope for this object - overrides value set via annotation in the implementation class. Options supported by FLOW3 are are "prototype", "singleton" and "session"
-	 * @var string $scope
+	 * @var string
 	 */
 	protected $scope = 'singleton';
 
 	/**
 	 * Arguments of the constructor detected by reflection
-	 * @var array $arguments
+	 * @var array
 	 */
 	protected $arguments = array();
 
 	/**
 	 * Array of properties which are injected into the object
-	 * @var array $properties
+	 * @var array
 	 */
 	protected $properties = array();
 
 	/**
 	 * Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
-	 * @var integer $autoWiringMode
+	 * @var integer
 	 */
 	protected $autoWiringMode = self::AUTOWIRING_MODE_ON;
 
 	/**
 	 * Name of the method to call during the initialization of the object (after dependencies are injected)
-	 * @var string $lifecycleInitializationMethodName
+	 * @var string
 	 */
 	protected $lifecycleInitializationMethodName = 'initializeObject';
+
+	/**
+	 * Name of the method to call during the shutdown of the framework
+	 * @var string
+	 */
+	protected $lifecycleShutdownMethodName = 'shutdownObject';
 
 	/**
 	 * Information about where this configuration has been created. Used in error messages to make debugging easier.
@@ -265,6 +271,26 @@ class Configuration {
 	 */
 	public function getLifecycleInitializationMethodName() {
 		return $this->lifecycleInitializationMethodName;
+	}
+
+	/**
+	 * Setter function for property "lifecycleShutdownMethodName"
+	 *
+	 * @param string $lifecycleDestructionMethodName Name of the method to call during shutdown of the framework
+	 * @return void
+	 */
+	public function setLifecycleShutdownMethodName($lifecycleShutdownMethodName) {
+		$this->lifecycleShutdownMethodName = $lifecycleShutdownMethodName;
+	}
+
+	/**
+	 * Returns the name of the lifecycle shutdown method for this object
+	 *
+	 * @return string The name of the shutdown method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getLifecycleShutdownMethodName() {
+		return $this->lifecycleShutdownMethodName;
 	}
 
 	/**

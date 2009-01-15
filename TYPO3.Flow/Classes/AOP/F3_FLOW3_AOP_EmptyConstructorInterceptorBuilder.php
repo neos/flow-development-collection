@@ -39,20 +39,27 @@ namespace F3\FLOW3\AOP;
 class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterceptorBuilder {
 
 	/**
-	 * Builds interception PHP code for an empty constructor (ie. a constructor without advice)
+	 * Builds interception PHP code for an empty constructor
 	 *
-	 * @param string $methodName: Name of the method to build an interceptor for
-	 * @param array $interceptedMethods: An array of method names and their meta information, including advices for the method (if any)
-	 * @param \F3\FLOW3\Reflection\ClassReflection $targetClass: A reflection of the target class to build the interceptor for
+	 * @param string $methodName Name of the method to build an interceptor for
+	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+	 * @param string $targetClassName Name of the target class to build the interceptor for
+	 * @param array
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	static public function build($methodName, array $interceptedMethods, \F3\FLOW3\Reflection\ClassReflection $targetClass) {
-		$constructor = $targetClass->getConstructor();
-		$callParentCode = ($constructor === NULL) ? '' : 'parent::__construct(' . self::buildMethodParametersCode($constructor, FALSE) . ');';
+	public function build($methodName, array $interceptedMethods, $targetClassName) {
+		if ($methodName !== '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789011);
+
+		$declaringClassName = $interceptedMethods['__construct']['declaringClassName'];
+
+		$callParentCode = '';
+		$parametersCode = '';
 		$parametersDocumentation = '';
-		$parametersCode = ($constructor === NULL) ? '' : self::buildMethodParametersCode($constructor, TRUE, $parametersDocumentation);
+		if (method_exists($declaringClassName, '__construct')) {
+			$parametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE, $parametersDocumentation);
+			$callParentCode = 'parent::__construct(' . $this->buildMethodParametersCode($declaringClassName, '__construct', FALSE) . ');';
+		}
 
 		$constructorCode = '
 	/**
@@ -60,7 +67,7 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInt
 	 * ' . $parametersDocumentation . '
 	 * @return void
 	 */
-	public function ' . $methodName . '(' . $parametersCode . (\F3\PHP6\Functions::strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
+	public function __construct(' . $parametersCode . (strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
 		$this->objectManager = $AOPProxyObjectManager;
 		$this->objectFactory = $AOPProxyObjectFactory;
 		$this->AOPProxyDeclareMethodsAndAdvices();

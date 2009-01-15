@@ -37,7 +37,8 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
- * @see \F3\FLOW3\AOP\PointcutExpressionParser, \F3\FLOW3\AOP\PointcutClassFilter, \F3\FLOW3\AOP\PointcutMethodFilter
+ * @see \F3\FLOW3\AOP\PointcutExpressionParser, \F3\FLOW3\AOP\PointcutClassNameFilter, \F3\FLOW3\AOP\PointcutMethodFilter
+ * @scope prototype
  */
 class PointcutFilterComposite implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
@@ -50,28 +51,29 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	 * Checks if the specified class and method match the registered class-
 	 * and method filter patterns.
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check against
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check against
+	 * @param string $className Name of the class to check against
+	 * @param string $method Name of the method to check against
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matches = TRUE;
 		foreach ($this->filters as $operatorAndFilter) {
 			list($operator, $filter) = $operatorAndFilter;
 			switch ($operator) {
 				case '&&' :
-					$matches = $matches && $filter->matches($class, $method, $pointcutQueryIdentifier);
+					$matches = $matches && $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 				break;
 				case '&&!' :
-					$matches = $matches && (!$filter->matches($class, $method, $pointcutQueryIdentifier));
+					$matches = $matches && (!$filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 				break;
 				case '||' :
-					$matches = $matches || $filter->matches($class, $method, $pointcutQueryIdentifier);
+					$matches = $matches || $filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 				break;
 				case '||!' :
-					$matches = $matches || (!$filter->matches($class, $method, $pointcutQueryIdentifier));
+					$matches = $matches || (!$filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier));
 				break;
 			}
 		}

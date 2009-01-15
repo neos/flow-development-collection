@@ -33,9 +33,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
-
 ###METHODS_INTERCEPTOR_CODE###
-
 	/**
 	 * Declares methods and advices
 	 *

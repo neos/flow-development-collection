@@ -49,7 +49,7 @@ class ConfigurationTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
-		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\TestPackage\BasicClass');
+		$this->objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\Foo\Bar');
 	}
 
 	/**

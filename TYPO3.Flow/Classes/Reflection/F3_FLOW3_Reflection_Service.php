@@ -55,7 +55,7 @@ class Service {
 	 *
 	 * @var boolean
 	 */
-	protected $detectClassAlterations = FALSE;
+	protected $detectClassChanges = FALSE;
 
 	/**
 	 * All available class names to consider
@@ -86,6 +86,20 @@ class Service {
 	protected $finalClasses = array();
 
 	/**
+	 * Names of methods (in the form classname::methodname) which are final
+	 *
+	 * @var array
+	 */
+	protected $finalMethods = array();
+
+	/**
+	 * Names of methods (in the form classname::methodname) which are static
+	 *
+	 * @var array
+	 */
+	protected $staticMethods = array();
+
+	/**
 	 * Array of tags and the names of classes which are tagged with them
 	 *
 	 * @var array
@@ -98,13 +112,6 @@ class Service {
 	 * @var array
 	 */
 	protected $classTagsValues = array();
-
-	/**
-	 * Array of class names and names of their methods
-	 *
-	 * @var array
-	 */
-	protected $classMethodNames = array();
 
 	/**
 	 * Array of class names and names of their constructors if they have one
@@ -126,6 +133,13 @@ class Service {
 	 * @var array
 	 */
 	protected $methodParameters = array();
+
+	/**
+	 * Array of class names, method names and their visibility (' ' = public, '*' = protected, '-' = private)
+	 *
+	 * @var array
+	 */
+	protected $methodVisibilities = array();
 
 	/**
 	 * Array of class names and names of their properties
@@ -166,9 +180,10 @@ class Service {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setDetectClassAlterations($detectClassAlterations) {
-		if (!is_bool($detectClassAlterations)) throw \InvalidArgumentException('Boolean expected', 1228909024);
-		$this->detectClassAlterations = $detectClassAlterations ? TRUE : FALSE;
+	public function injectSettings(array $settings) {
+		if (isset($settings['reflection']['detectClassChanges'])) {
+			$this->detectClassChanges = $settings['reflection']['detectClassChanges'] ? TRUE : FALSE;
+		}
 	}
 
 	/**
@@ -192,7 +207,7 @@ class Service {
 	public function initialize(array $classNamesToReflect) {
 		$this->loadFromCache();
 
-		if ($this->detectClassAlterations === TRUE) {
+		if ($this->detectClassChanges === TRUE) {
 			foreach ($this->reflectedClassNames as $className) {
 				if (!$this->cache->has(str_replace('\\', '_', $className))) {
 					$this->forgetClass($className);
@@ -208,14 +223,25 @@ class Service {
 			foreach ($newClassNames as $className) {
 				$this->reflectClass($className);
 				$this->reflectedClassNames[] = $className;
-				$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
 			}
 
 			sort($this->reflectedClassNames);
 			$reflectedClassNames = array_unique($this->reflectedClassNames);
-			$this->saveToCache();
+			$this->saveToCache($newClassNames);
 		}
 		$this->initialized = TRUE;
+	}
+
+	/**
+	 * Tells if the specified class is known to this reflection service and
+	 * reflection information is available.
+	 *
+	 * @param string $className Name of the class
+	 * @return boolean If the class is reflected by this service
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isClassReflected($className) {
+		return array_search($className, $this->reflectedClassNames) !== FALSE;
 	}
 
 	/**
@@ -240,7 +266,7 @@ class Service {
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
-		return (count($classNamesFound) == 1 ? current($classNamesFound) : FALSE);
+		return (count($classNamesFound) === 1 ? current($classNamesFound) : FALSE);
 	}
 
 	/**
@@ -254,6 +280,21 @@ class Service {
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
+	}
+
+	/**
+	 * Returns the names of all interfaces implemented by the specified class
+	 *
+	 * @param string $className Name of the class
+	 * @return array An array of interface names
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getInterfaceNamesImplementedByClass($className) {
+		$interfaceNamesFound = array();
+		foreach ($this->interfaceImplementations as $interfaceName => $classNames) {
+			if (array_search($className, $classNames) !== FALSE) $interfaceNamesFound[] = $interfaceName;
+		}
+		return $interfaceNamesFound;
 	}
 
 	/**
@@ -338,6 +379,66 @@ class Service {
 	 */
 	public function isClassFinal($className) {
 		return isset($this->finalClasses[$className]);
+	}
+
+	/**
+	 * Tells if the specified method is final or not
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @return boolean TRUE if the method is final, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isMethodFinal($className, $methodName) {
+		return isset($this->finalMethods[$className . '::' . $methodName]);
+	}
+
+	/**
+	 * Tells if the specified method is declared as static or not
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @return boolean TRUE if the method is static, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isMethodStatic($className, $methodName) {
+		return isset($this->staticMethods[$className . '::' . $methodName]);
+	}
+
+	/**
+	 * Tells if the specified method is public
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @return boolean TRUE if the method is public, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isMethodPublic($className, $methodName) {
+		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === ' ');
+	}
+
+	/**
+	 * Tells if the specified method is protected
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @return boolean TRUE if the method is protected, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isMethodProtected($className, $methodName) {
+		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '*');
+	}
+
+	/**
+	 * Tells if the specified method is private
+	 *
+	 * @param string $className Name of the class containing the method
+	 * @param string $methodName Name of the method to analyze
+	 * @return boolean TRUE if the method is private, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isMethodPrivate($className, $methodName) {
+		return (isset($this->methodVisibilities[$className][$methodName]) && $this->methodVisibilities[$className][$methodName] === '-');
 	}
 
 	/**
@@ -517,7 +618,11 @@ class Service {
 		}
 		foreach ($class->getMethods() as $method) {
 			$methodName = $method->getName();
-			$this->classMethodNames[$className][] = $methodName;
+			if ($method->isFinal()) $this->finalMethods[$className . '::' . $methodName] = TRUE;
+			if ($method->isStatic()) $this->staticMethods[$className . '::' . $methodName] = TRUE;
+			if ($method->isPublic()) $this->methodVisibilities[$className][$methodName] = ' ';
+			if ($method->isProtected()) $this->methodVisibilities[$className][$methodName] = '*';
+			if ($method->isPrivate()) $this->methodVisibilities[$className][$methodName] = '-';
 
 			foreach ($method->getTagsValues() as $tag => $values) {
 				if (array_search($tag, $this->ignoredTags) === FALSE) {
@@ -575,12 +680,14 @@ class Service {
 		$propertyNames = array(
 			'abstractClasses',
 			'classConstructorMethodNames',
-			'classMethodNames',
 			'classPropertyNames',
 			'classTagsValues',
 			'finalClasses',
+			'finalMethods',
+			'staticMethods',
 			'methodTagsValues',
 			'methodParameters',
+			'methodVisibilities',
 			'propertyTagsValues',
 		);
 		foreach ($propertyNames as $propertyName) {
@@ -611,22 +718,29 @@ class Service {
 	/**
 	 * Exports the internal reflection data into the ReflectionData cache
 	 *
+	 * @param array $newClassNames An array of new class names
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function saveToCache() {
+	protected function saveToCache(array $newClassNames) {
+		foreach ($newClassNames as $className) {
+			$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
+		}
+
 		$data = array();
 		$propertyNames = array(
 			'reflectedClassNames',
 			'abstractClasses',
 			'classConstructorMethodNames',
-			'classMethodNames',
 			'classPropertyNames',
 			'classTagsValues',
 			'finalClasses',
+			'finalMethods',
+			'staticMethods',
 			'interfaceImplementations',
 			'methodTagsValues',
 			'methodParameters',
+			'methodVisibilities',
 			'propertyTagsValues',
 			'taggedClasses'
 		);

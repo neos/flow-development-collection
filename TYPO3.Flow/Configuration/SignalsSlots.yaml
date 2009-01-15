@@ -6,3 +6,7 @@
 # Please refer to the FLOW3 manual for possible configuration options.   #
 #                                                                        #
 
+#Example:
+#F3\FLOW3\Monitor\FileMonitor:
+#  fileHasChanged:
+#    - [ F3\Package\Slot\Object\Name, slotMethodName ]

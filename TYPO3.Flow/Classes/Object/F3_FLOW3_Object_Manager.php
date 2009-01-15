@@ -52,7 +52,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * @var \F3\FLOW3\Object\RegistryInterface
 	 */
-	protected $objectRegistry;
+	protected $singletonObjectsRegistry;
 
 	/**
 	 * @var \F3\FLOW3\Object\Builder
@@ -77,25 +77,19 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	protected $objectConfigurations = array();
 
 	/**
-	 * Injects the Reflection Service
-	 *
-	 * @param \F3\FLOW3\Reflection\Service $reflectionService The Reflection Service
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * Objects whose shutdown method should be called on shutdown. Each entry is an array with an object / shutdown method name pair.
 	 */
-	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
-		$this->reflectionService = $reflectionService;
-	}
+	protected $shutdownObjects = array();
 
 	/**
-	 * Injects the object registry
+	 * Injects the singleton objects registry
 	 *
-	 * @param \F3\FLOW3\Object\RegistryInterface $objectRegistry The object registry
+	 * @param \F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry The singleton objects registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectRegistry(\F3\FLOW3\Object\RegistryInterface $objectRegistry) {
-		$this->objectRegistry = $objectRegistry;
+	public function injectSingletonObjectsRegistry(\F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry) {
+		$this->singletonObjectsRegistry = $singletonObjectsRegistry;
 	}
 
 	/**
@@ -110,8 +104,34 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	}
 
 	/**
+	 * Injects the Reflection Service
+	 *
+	 * The singleton object registry and object builder must have been injected before the Reflection Service
+	 * can be injected.
+	 *
+	 * This method will usually be called twice during one boot sequence: The first time a preliminary
+	 * reflection service is injected which is yet uninitialized and does not provide caching. After
+	 * the most important FLOW3 objects have been registered, the final reflection service is injected,
+	 * this time with caching.
+	 *
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService The Reflection Service
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		if (!is_object($this->singletonObjectsRegistry) && !is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry or Object Builder has been injected into the Object Manager', 1231252863);
+		$this->reflectionService = $reflectionService;
+		if (!isset($this->registeredObjects['F3\FLOW3\Reflection\Service'])) {
+			$this->registeredObjects['F3\FLOW3\Reflection\Service'] = 'f3\flow3\reflection\service';
+			$this->objectConfigurations['F3\FLOW3\Reflection\Service'] = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Reflection\Service');
+		}
+		$this->singletonObjectsRegistry->putObject('F3\FLOW3\Reflection\Service', $this->reflectionService);
+		$this->objectBuilder->injectReflectionService($this->reflectionService);
+	}
+
+	/**
 	 * Injects the object factory
-	 * Note that the object builder and object registry must have been injected before the object factory
+	 * Note that the object builder and singleton object registry must have been injected before the object factory
 	 * can be injected.
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
@@ -130,23 +150,36 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 */
 	public function initialize() {
 		if (!is_object($this->reflectionService)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
-		if (!is_object($this->objectRegistry)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
+		if (!is_object($this->singletonObjectsRegistry)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
 		if (!is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Builder has been injected into the Object Manager', 1226412712);
 		if (!is_object($this->objectFactory)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Factory has been injected into the Object Manager', 1226412713);
 
 		$this->registerObject('F3\FLOW3\Object\ManagerInterface', __CLASS__, $this);
-		$this->registerObject('F3\FLOW3\Reflection\Service', get_class($this->reflectionService), $this->reflectionService);
 		$this->registerObject('F3\FLOW3\Object\Builder',  get_class($this->objectBuilder), $this->objectBuilder);
 		$this->registerObject('F3\FLOW3\Object\FactoryInterface', get_class($this->objectFactory), $this->objectFactory);
-		$this->registerObject('F3\FLOW3\Object\RegistryInterface',  get_class($this->objectRegistry), $this->objectRegistry);
+		$this->registerObject('F3\FLOW3\Object\RegistryInterface',  get_class($this->singletonObjectsRegistry), $this->singletonObjectsRegistry);
 
 		$this->objectBuilder->injectObjectManager($this);
 		$this->objectBuilder->injectObjectFactory($this->objectFactory);
-		$this->objectBuilder->injectReflectionService($this->reflectionService);
 
 		$this->objectFactory->injectObjectManager($this);
 		$this->objectFactory->injectObjectBuilder($this->objectBuilder);
-		$this->objectFactory->injectRegistry($this->objectRegistry);
+	}
+
+	/**
+	 * Shuts the object manager down and calls the shutdown methods of all objects
+	 * which are configured for it.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function shutdown() {
+		foreach ($this->shutdownObjects as $objectAndMethodName) {
+			list($object, $methodName) = $objectAndMethodName;
+			if (method_exists($object, $methodName) && is_callable(array($object, $methodName))) {
+				$object->$methodName();
+			}
+		}
 	}
 
 	/**
@@ -213,13 +246,14 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 				$object = call_user_func_array(array($this->objectFactory, 'create'), func_get_args());
 				break;
 			case 'singleton' :
-				if ($this->objectRegistry->objectExists($objectName)) {
-					$object = $this->objectRegistry->getObject($objectName);
+				if ($this->singletonObjectsRegistry->objectExists($objectName)) {
+					$object = $this->singletonObjectsRegistry->getObject($objectName);
 				} else {
 					$arguments = array_slice(func_get_args(), 1);
 					$overridingArguments = $this->getOverridingArguments($arguments);
 					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingArguments);
-					$this->objectRegistry->putObject($objectName, $object);
+					$this->singletonObjectsRegistry->putObject($objectName, $object);
+					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
 				}
 				break;
 			default :
@@ -254,7 +288,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
 		if ($object !== NULL) {
 			if (!is_object($object) || !$object instanceof $className) throw new \F3\FLOW3\Object\Exception\InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
-			$this->objectRegistry->putObject($objectName, $object);
+			$this->singletonObjectsRegistry->putObject($objectName, $object);
 		}
 
 		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration($objectName, $className);
@@ -302,8 +336,8 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 */
 	public function unregisterObject($objectName) {
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167473433);
-		if ($this->objectRegistry->objectExists($objectName)) {
-			$this->objectRegistry->removeObject($objectName);
+		if ($this->singletonObjectsRegistry->objectExists($objectName)) {
+			$this->singletonObjectsRegistry->removeObject($objectName);
 		}
 		unset($this->registeredObjects[$objectName]);
 		unset($this->objectConfigurations[$objectName]);
@@ -321,6 +355,22 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	public function isObjectRegistered($objectName) {
 		if (!is_string($objectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($objectName) . ' given.', 1181907931);
 		return isset($this->registeredObjects[$objectName]);
+	}
+
+	/**
+	 * Registers an object so that its shutdown method is called when the object framework
+	 * is being shut down.
+	 *
+	 * Note that objects are registered automatically by the Object Manager and the
+	 * Object Factory and this method usually is not needed by user code.
+	 *
+	 * @param object $object The object to register
+	 * @param string $shutdownMethodName Name of the shutdown method to call
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function registerShutdownObject($object, $shutdownMethodName) {
+		$this->shutdownObjects[spl_object_hash($object)] = array($object, $shutdownMethodName);
 	}
 
 	/**
@@ -453,11 +503,10 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		$this->objectRegistry = clone $this->objectRegistry;
+		$this->singletonObjectsRegistry = clone $this->singletonObjectsRegistry;
 
 		$this->objectFactory = clone $this->objectFactory;
 		$this->objectFactory->injectObjectManager($this);
-		$this->objectFactory->injectRegistry($this->objectRegistry);
 	}
 }
 

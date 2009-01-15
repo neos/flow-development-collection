@@ -96,6 +96,16 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
+	 * For the time being this is an alias of isPackageAvailable() - until a real implemenation exists.
+	 *
+	 * @param string $packageKey The key of the package to check
+	 * @return boolean TRUE if the package is active, otherwise FALSE
+	 */
+	public function isPackageActive($packageKey) {
+		return $this->isPackageAvailable($packageKey);
+	}
+
+	/**
 	 * Returns a \F3\FLOW3\Package\PackageInterface object for the specified package.
 	 * A package is available, if the package directory contains valid meta information.
 	 *

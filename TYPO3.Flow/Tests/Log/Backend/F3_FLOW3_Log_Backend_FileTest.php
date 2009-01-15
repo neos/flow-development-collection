@@ -70,7 +70,7 @@ class FileTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(52, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$this->assertSame(53, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 }
 ?>

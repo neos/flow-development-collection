@@ -76,12 +76,14 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 	 */
 	public function open() {
 		$this->severityLabels = array(
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG => 'DEBUG   ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO  => 'INFO    ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_NOTICE => 'NOTICE  ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING  => 'WARNING ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_FATAL => 'FATAL   ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_OK => 'OK      ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_EMERGENCY => 'EMERGENCY',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_ALERT     => 'ALERT    ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_CRITICAL  => 'CRITICAL ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_ERROR     => 'ERROR    ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING   => 'WARNING  ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_NOTICE    => 'NOTICE   ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO      => 'INFO     ',
+			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG     => 'DEBUG    ',
 		);
 
 		$this->fileHandle = fopen($this->logFileURL, 'at');
@@ -92,7 +94,7 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 	 * Appends the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
+	 * @param integer $severity One of the SEVERITY_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -100,12 +102,15 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
-		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $this->severityLabels[$severity] . ' ' . str_pad($packageKey, 20) . ' ' . $message . chr(10);
+	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
+		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . chr(10);
 		if (!empty($additionalData)) {
 			$output .= $this->getFormattedVarDump($additionalData) . chr(10);
 		}
-		fputs($this->fileHandle, $output);
+		if ($this->fileHandle !== FALSE) {
+			fputs($this->fileHandle, $output);
+		}
 	}
 
 	/**
@@ -115,7 +120,8 @@ class File extends \F3\FLOW3\Log\AbstractBackend {
 	 * @return void
 	 */
 	public function close() {
-		fclose($fileHandle);
+		fclose($this->fileHandle);
+		$this->fileHandle = FALSE;
 	}
 
 	/**

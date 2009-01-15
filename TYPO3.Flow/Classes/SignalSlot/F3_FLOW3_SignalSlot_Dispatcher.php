@@ -46,6 +46,11 @@ class Dispatcher {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * Information about all slots connected a certain signal.
 	 * Indexed by [$signalClassName][$signalMethodName] and then numeric with an
 	 * array of information about the slot
@@ -65,6 +70,17 @@ class Dispatcher {
 	}
 
 	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
 	 * Connects a signal with a slot.
 	 * One slot can be connected with multiple signals by calling this method multiple times.
 	 *
@@ -72,10 +88,11 @@ class Dispatcher {
 	 * @param string $signalMethodName Method name of the signal
 	 * @param mixed $slotClassNameOrObject Name of the class containing the slot or the instantiated class or a Closure object
 	 * @param string $slotMethodName Name of the method to be used as a slot. If $slotClassNameOrObject is a Closure object, this parameter is ignored
+	 * @param boolean $omitSignalInformation If set to TRUE, the first argument passed to the slot will be the first argument of the signal instead of some information about the signal.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function connect($signalClassName, $signalMethodName, $slotClassNameOrObject, $slotMethodName = '') {
+	public function connect($signalClassName, $signalMethodName, $slotClassNameOrObject, $slotMethodName = '', $omitSignalInformation = FALSE) {
 		$class = NULL;
 		$method = NULL;
 		$object = NULL;
@@ -93,6 +110,7 @@ class Dispatcher {
 			'class' => $class,
 			'method' => $method,
 			'object' => $object,
+			'omitSignalInformation' => ($omitSignalInformation === TRUE)
 		);
 	}
 
@@ -106,11 +124,14 @@ class Dispatcher {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatch($signalClassName, $signalMethodName, array $signalArguments) {
-		if (!isset($this->slots[$signalClassName][$signalMethodName])) return;
-
+	if (!isset($this->slots[$signalClassName][$signalMethodName])) return;
+		$this->systemLogger->log(sprintf('Dispatching signal %s::%s ...', $signalClassName, $signalMethodName), LOG_DEBUG);
 		foreach ($this->slots[$signalClassName][$signalMethodName] as $slotInformation) {
 			$object = (isset($slotInformation['object'])) ? $slotInformation['object'] : $this->objectManager->getObject($slotInformation['class']);
-			call_user_func_array(array($object, $slotInformation['method']), $signalArguments);
+			$slotArguments = $signalArguments;
+			if ($slotInformation['omitSignalInformation'] !== TRUE) array_unshift($slotArguments, $signalClassName . '::' . $signalMethodName);
+			$this->systemLogger->log(sprintf('  to slot %s::%s.', get_class($object), $slotInformation['method']), LOG_DEBUG);
+			call_user_func_array(array($object, $slotInformation['method']), $slotArguments);
 		}
 	}
 

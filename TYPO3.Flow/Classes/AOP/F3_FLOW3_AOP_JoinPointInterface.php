@@ -36,6 +36,7 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 interface JoinPointInterface {
 

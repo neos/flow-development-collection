@@ -45,44 +45,44 @@ class Introduction {
 	protected $declaringAspectClassName;
 
 	/**
-	 * @var \F3\FLOW3\Reflection\ClassReflection The introduced interface
+	 * @var string Name of the introduced interface
 	 */
-	protected $interface;
+	protected $interfaceName;
 
 	/**
-	 * @var \F3\FLOW3\AOP\PointcutInterface The poincut this introduction applies to
+	 * @var \F3\FLOW3\AOP\Pointcut The poincut this introduction applies to
 	 */
 	protected $pointcut;
 
 	/**
 	 * Constructor
 	 *
-	 * @param string $declaringAspectClassName: Name of the aspect containing the declaration for this introduction
-	 * @param \F3\FLOW3\Reflection\ClassReflection $interface: Reflection of the interface to introduce
-	 * @param \F3\FLOW3\AOP\PointcutInterface $pointcut: The pointcut for this introduction
+	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
+	 * @param string $interface Name of the interface to introduce
+	 * @param \F3\FLOW3\AOP\Pointcut $pointcut The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($declaringAspectClassName, \F3\FLOW3\Reflection\ClassReflection $interface, \F3\FLOW3\AOP\PointcutInterface $pointcut) {
+	public function __construct($declaringAspectClassName, $interfaceName, \F3\FLOW3\AOP\Pointcut $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
-		$this->interface = $interface;
+		$this->interfaceName = $interfaceName;
 		$this->pointcut = $pointcut;
 	}
 
 	/**
-	 * Returns a reflection of the introduced interface
+	 * Returns the name of the introduced interface
 	 *
-	 * @return \F3\FLOW3\Reflection\ClassReflection A reflection of the introduced interface
+	 * @return string Name of the introduced interface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getInterface() {
-		return $this->interface;
+	public function getInterfaceName() {
+		return $this->interfaceName;
 	}
 
 	/**
 	 * Returns the poincut this introduction applies to
 	 *
-	 * @return \F3\FLOW3\AOP\PointcutInterface The pointcut
+	 * @return \F3\FLOW3\AOP\Pointcut The pointcut
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcut() {

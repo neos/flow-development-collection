@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\AOP\Fixture;
+namespace F3\FLOW3\AOP\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,14 +29,14 @@ namespace F3\FLOW3\Tests\AOP\Fixture;
  */
 
 /**
- * A dummy class
+ * A "unknown pointcut" Exception
  *
  * @package FLOW3
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class EmptyClass {
+class UnknownPointcut extends \F3\FLOW3\AOP\Exception {
 
 }
 ?>

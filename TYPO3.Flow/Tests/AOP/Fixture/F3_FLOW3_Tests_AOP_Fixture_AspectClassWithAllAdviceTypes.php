@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\AOP;
+namespace F3\FLOW3\Tests\AOP\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,38 +29,50 @@ namespace F3\FLOW3\AOP;
  */
 
 /**
- * An advisor is the combination of a single advice and the pointcut where the
- * advice will become active.
+ * An aspect class which contains all supported types of advice, a pointcut and an introduction
  *
  * @package FLOW3
  * @subpackage AOP
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @aspect
  */
-interface AdvisorInterface {
+class AspectClassWithAllAdviceTypes {
 
 	/**
-	 * Initializes the advisor with an advice and a pointcut
-	 *
-	 * @param  \F3\FLOW3\AOP\AdviceInterface $advice: The advice to weave in
-	 * @param  \F3\FLOW3\AOP\PointcutInterface $pointcut: The pointcut where the advice should be inserted
+	 * @introduce F3\FLOW3\Tests\AOP\Fixture\InterfaceForIntroduction, ThePointcutExpression
 	 */
-	public function __construct(\F3\FLOW3\AOP\AdviceInterface $advice, \F3\FLOW3\AOP\PointcutInterface $pointcut);
+	protected $introduction;
 
 	/**
-	 * Returns the advisor's advice
-	 *
-	 * @return \F3\FLOW3\AOP\AdviceInterface The advice
+	 * @around fooAround
 	 */
-	public function getAdvice();
+	public function aroundAdvice() {}
 
 	/**
-	 * Returns the advisor's pointcut
-	 *
-	 * @return \F3\FLOW3\AOP\Pointcut The pointcut
+	 * @before fooBefore
 	 */
-	public function getPointcut();
+	public function beforeAdvice() {}
+
+	/**
+	 * @afterreturning fooAfterReturning
+	 */
+	public function afterReturningAdvice() {}
+
+	/**
+	 * @afterthrowing fooAfterThrowing
+	 */
+	public function afterThrowingAdvice() {}
+
+	/**
+	 * @after fooAfter
+	 */
+	public function afterAdvice() {}
+
+	/**
+	 * @pointcut fooPointcut
+	 */
+	public function pointcut() {}
 
 }
 ?>

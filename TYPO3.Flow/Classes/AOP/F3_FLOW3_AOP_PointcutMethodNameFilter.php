@@ -35,10 +35,16 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class PointcutMethodNameFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
-	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected|private)/';
+	const PATTERN_MATCHVISIBILITYMODIFIER = '/(|public|protected)/';
+
+	/**
+	 * @var F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
 
 	/**
 	 * @var string The method name filter expression
@@ -65,35 +71,44 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\PointcutFilterInterface 
 	}
 
 	/**
+	 * Injects the reflection service
+	 *
+	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Checks if the specified method matches against the method name
 	 * expression.
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class - won't be checked here
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check the name of
+	 * @param string $className Ignored in this pointcut filter
+	 * @param string $methodName Name of the method to match agains
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the method name matches, otherwise FALSE
+	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $method->getName());
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);
 		if ($matchResult === FALSE) {
 			throw new \F3\FLOW3\AOP\Exception('Error in regular expression', 1168876915);
 		}
 		$methodNameMatches = ($matchResult === 1);
 		switch ($this->methodVisibility) {
 			case 'public' :
-				$visibilityMatches = $method->isPublic();
+				$visibilityMatches = $this->reflectionService->isMethodPublic($methodDeclaringClassName, $methodName);
 			break;
 			case 'protected' :
-				$visibilityMatches = $method->isProtected();
+				$visibilityMatches = $this->reflectionService->isMethodProtected($methodDeclaringClassName, $methodName);
 			break;
-			case 'private' :
-				$visibilityMatches = $method->isPrivate();
-			break;
-			default :
+			default:
 				$visibilityMatches = TRUE;
 		}
-		$isNotFinal = !$method->isFinal();
+		$isNotFinal = !$this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName);
 
 		return $methodNameMatches && $visibilityMatches && $isNotFinal;
 	}

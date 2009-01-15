@@ -52,6 +52,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 		$configurationArray['factoryClassName'] = $factoryClassName;
 		$configurationArray['factoryMethodName'] = 'manufacture';
 		$configurationArray['lifecycleInitializationMethodName'] = 'initializationMethod';
+		$configurationArray['lifecycleShutdownMethodName'] = 'shutdownMethod';
 		$configurationArray['autoWiringMode'] = FALSE;
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('TestObject', __CLASS__);
@@ -60,6 +61,7 @@ class ConfigurationBuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration->setFactoryClassName($factoryClassName);
 		$objectConfiguration->setFactoryMethodName('manufacture');
 		$objectConfiguration->setLifecycleInitializationMethodName('initializationMethod');
+		$objectConfiguration->setLifecycleShutdownMethodName('shutdownMethod');
 		$objectConfiguration->setAutoWiringMode(FALSE);
 
 		$builtObjectConfiguration = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray('TestObject', $configurationArray, __CLASS__);

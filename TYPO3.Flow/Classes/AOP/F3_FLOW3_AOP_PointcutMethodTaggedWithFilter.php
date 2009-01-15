@@ -35,8 +35,14 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
+
+	/**
+	 * @var F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
 
 	/**
 	 * @var string A regular expression to match annotations
@@ -55,16 +61,28 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\PointcutFilterInte
 	}
 
 	/**
-	 * Checks if the specified method matches with the method tag filter pattern
+	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $method The class to check against
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check against
-	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the method matches, otherwise FALSE
+	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		foreach ($method->getTagsValues() as $tag => $values) {
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Checks if the specified method matches with the method tag filter pattern
+	 *
+	 * @param string $className Name of the class to check against
+	 * @param string $methodName Name of the method - not used here
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
+	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
+	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
 			$matchResult =  @preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {
 				throw new \F3\FLOW3\AOP\Exception('Error in regular expression "' . $this->methodTagFilterExpression . '" in pointcut method tag filter', 1229343988);

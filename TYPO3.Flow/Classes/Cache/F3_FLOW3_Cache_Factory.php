@@ -66,12 +66,23 @@ class Factory {
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectFactory A reference to the object factory
-	 * @param \F3\FLOW3\Cache\Manager $cacheManager A reference to the cache manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Cache\Manager $cacheManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the cache manager.
+	 *
+	 * This is called by the cache manager itself
+	 *
+	 * @param \F3\FLOW3\Cache\Manager $cacheManager The cache manager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCacheManager(\F3\FLOW3\Cache\Manager $cacheManager) {
 		$this->cacheManager = $cacheManager;
 	}
 

@@ -48,10 +48,10 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = $this->getMock('ClassB', array('someSlotMethod'));
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod');
+		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', get_class($mockSlot), 'someSlotMethod', TRUE);
 
 		$expectedSlots = array(
-			array('class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => NULL)
+			array('class' => get_class($mockSlot), 'method' => 'someSlotMethod', 'object' => NULL, 'omitSignalInformation' => TRUE)
 		);
 		$this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'emitSomeSignal'));
 	}
@@ -65,10 +65,10 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = $this->getMock('ClassB', array('someSlotMethod'));
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', $mockSlot, 'someSlotMethod');
+		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', $mockSlot, 'someSlotMethod', TRUE);
 
 		$expectedSlots = array(
-			array('class' => NULL, 'method' => 'someSlotMethod', 'object' => $mockSlot)
+			array('class' => NULL, 'method' => 'someSlotMethod', 'object' => $mockSlot, 'omitSignalInformation' => TRUE)
 		);
 		$this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'emitSomeSignal'));
 	}
@@ -82,10 +82,10 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = function() { };
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', $mockSlot, 'foo');
+		$dispatcher->connect(get_class($mockSignal), 'emitSomeSignal', $mockSlot, 'foo', TRUE);
 
 		$expectedSlots = array(
-			array('class' => NULL, 'method' => '__invoke', 'object' => $mockSlot)
+			array('class' => NULL, 'method' => '__invoke', 'object' => $mockSlot, 'omitSignalInformation' => TRUE)
 		);
 		$this->assertSame($expectedSlots, $dispatcher->getSlots(get_class($mockSignal), 'emitSomeSignal'));
 	}
@@ -99,10 +99,12 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
-		$dispatcher->connect('Foo', 'bar', $mockSlot);
+		$dispatcher->connect('Foo', 'bar', $mockSlot, NULL, TRUE);
 		$dispatcher->injectObjectManager($mockObjectManager);
+		$dispatcher->injectSystemLogger($mockSystemLogger);
 
 		$dispatcher->dispatch('Foo', 'bar', array('foo' => 'bar', 'baz' => 'quux'));
 		$this->assertSame(array('bar', 'quux'), $arguments);
@@ -120,12 +122,36 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
 
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
 		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
 		$dispatcher->injectObjectManager($mockObjectManager);
-		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'slot');
+		$dispatcher->injectSystemLogger($mockSystemLogger);
+		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'slot', TRUE);
 
 		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
 		$this->assertSame($mockSlot->arguments, array('bar', 'quux'));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function dispatchPassesFirstArgumentContainingSlotInformationIfTheConnectionStatesSo() {
+		$arguments = array();
+		$mockSlot = function() use (&$arguments) { $arguments =  func_get_args(); };
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
+		$dispatcher->connect('SignalClassName', 'methodName', $mockSlot, NULL, FALSE);
+		$dispatcher->injectObjectManager($mockObjectManager);
+		$dispatcher->injectSystemLogger($mockSystemLogger);
+
+		$dispatcher->dispatch('SignalClassName', 'methodName', array('foo' => 'bar', 'baz' => 'quux'));
+		$this->assertSame(array('SignalClassName::methodName', 'bar', 'quux'), $arguments);
+	}
+
 }
 ?>

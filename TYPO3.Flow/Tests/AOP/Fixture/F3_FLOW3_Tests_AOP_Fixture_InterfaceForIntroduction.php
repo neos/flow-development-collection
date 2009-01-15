@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3;
+namespace F3\FLOW3\Tests\AOP\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,33 +24,32 @@ namespace F3;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  */
 
 /**
- * Testcase for the FLOW3 base class
+ * An interface which can be used for testing of the introduction feature
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class FLOW3Test extends \F3\Testing\BaseTestCase {
+interface InterfaceForIntroduction {
 
 	/**
-	 * Checks the method getObjectManager() and the magic getter
+	 * A method
 	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return void
 	 */
-	public function getObjectManagerReturnsObjectManager() {
-		$FLOW3 = new \F3\FLOW3;
-		$FLOW3->initializeClassLoader();
-		$FLOW3->initializeConfiguration();
-		$FLOW3->initializeError();
-		$FLOW3->initializeObjectFramework();
-		$this->assertTrue($FLOW3->getObjectManager() instanceof \F3\FLOW3\Object\ManagerInterface, 'getObjectManager did not deliver an object implementing \F3\FLOW3\Object\ManagerInterface!');
-	}
+	public function fooMethod();
+
+	/**
+	 * Another method
+	 *
+	 * @return void
+	 */
+	static public function staticBarMethod();
 }
 ?>

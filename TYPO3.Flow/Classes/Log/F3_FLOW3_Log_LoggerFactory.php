@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\AOP\Fixture;
+namespace F3\FLOW3\Log;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,28 +24,63 @@ namespace F3\FLOW3\Tests\AOP\Fixture;
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Log
  * @version $Id$
  */
 
 /**
- * A dummy custom pointcut filter
+ * The default "system logger" of the FLOW3 framework
  *
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class CustomFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
+class LoggerFactory {
 
 	/**
-	 * Matches always
+	 * A reference to the object factory
 	 *
-	 * @return TRUE
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $objectFactory;
+
+	/**
+	 * Constructs this factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		return TRUE;
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Factory method which creates the specified logger along with the specified backend(s).
+	 *
+	 * @param string $identifier An identifier for the logger
+	 * @param string $loggerObjectName Object name of the log frontend
+	 * @param mixed $backendObjectNames Object name (or array of object names) of the log backend(s)
+	 * @param array $backendOptions (optional) Array of backend options. If more than one backend is specified, this is an array of array.
+	 * @return \F3\FLOW3\Log\LoggerInterface The created logger frontend
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
+		$logger = $this->objectFactory->create($loggerObjectName);
+
+		$backends = array();
+		if (is_array($backendObjectNames)) {
+			foreach ($backendObjectNames as $i => $backendObjectName) {
+				if (isset($backendOptions[$i])) {
+					$backend = $this->objectFactory->create($backendObjectName, $backendOptions[$i]);
+					$logger->addBackend($backend);
+				}
+			}
+		} else {
+			$backend = $this->objectFactory->create($backendObjectNames, $backendOptions);
+			$logger->addBackend($backend);
+		}
+		return $logger;
 	}
 
 }

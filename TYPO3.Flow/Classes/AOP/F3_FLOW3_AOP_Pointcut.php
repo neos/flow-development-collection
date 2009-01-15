@@ -38,38 +38,45 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
-class Pointcut implements \F3\FLOW3\AOP\PointcutInterface {
+class Pointcut {
 
 	const MAXIMUM_RECURSIONS = 99;
 
 	/**
-	 * @var string	A pointcut expression which configures the pointcut
+	 * A pointcut expression which configures the pointcut
+	 * @var string
 	 */
 	protected $pointcutExpression;
 
 	/**
-	 * @var \F3\FLOW3\AOP\PointcutFilterComposite: The filter composite object, created from the pointcut expression
+	 * The filter composite object, created from the pointcut expression
+	 * @var \F3\FLOW3\AOP\PointcutFilterComposite
 	 */
 	protected $pointcutFilterComposite;
 
 	/**
-	 * @var string If this pointcut is based on a pointcut declaration, contains the name of the aspect class where the pointcut was declared
+	 * If this pointcut is based on a pointcut declaration, contains the name of the aspect class where the pointcut was declared
+	 * @var string
 	 */
 	protected $aspectClassName;
 
 	/**
-	 * @var string If this pointcut is based on a pointcut declaration, contains the name of the method acting as the pointcut identifier
+	 * If this pointcut is based on a pointcut declaration, contains the name of the method acting as the pointcut identifier
+	 * @var string
 	 */
 	protected $pointcutMethodName;
 
 	/**
-	 * @var mixed An identifier which is used to detect circular references between pointcuts
+	 * An identifier which is used to detect circular references between pointcuts
+	 * @var mixed
 	 */
 	protected $pointcutQueryIdentifier = NULL;
 
 	/**
-	 * @var integer Counts how often this pointcut's matches() method has been called during one query
+	 * Counts how often this pointcut's matches() method has been called during one query
+	 * @var integer
 	 */
 	protected $recursionLevel = 0;
 
@@ -83,11 +90,9 @@ class Pointcut implements \F3\FLOW3\AOP\PointcutInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($pointcutExpression, \F3\FLOW3\AOP\PointcutExpressionParser $pointcutExpressionParser, $aspectClassName, $pointcutMethodName = NULL) {
-		if (!is_string($pointcutExpression) || \F3\PHP6\Functions::strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1202902188);
-
+	public function __construct($pointcutExpression, \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = NULL) {
 		$this->pointcutExpression = $pointcutExpression;
-		$this->pointcutFilterComposite = $pointcutExpressionParser->parse($pointcutExpression);
+		$this->pointcutFilterComposite = $pointcutFilterComposite;
 		$this->aspectClassName = $aspectClassName;
 		$this->pointcutMethodName = $pointcutMethodName;
 	}
@@ -96,23 +101,25 @@ class Pointcut implements \F3\FLOW3\AOP\PointcutInterface {
 	 * Checks if the given class and method match this pointcut.
 	 * Before each match run, reset() must be called to reset the circular references guard.
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class Class to check against
-	 * @param \F3\FLOW3\Reflection\ClassReflection $method Method to check against
+	 * @param string $className Class to check against
+	 * @param string $methodName Method to check against
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
+	 * @throws F3\FLOW3\AOP\Exception\CircularPointcutReference if a circular pointcut reference was detected
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
 			$this->recursionLevel ++;
 			if ($this->recursionLevel > self::MAXIMUM_RECURSIONS) {
-				throw new \RuntimeException('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
+				throw new \F3\FLOW3\AOP\Exception\CircularPointcutReference('Circular pointcut reference detected in ' . $this->aspectClassName . '->' . $this->pointcutMethodName . ', too many recursions (Query identifier: ' . $pointcutQueryIdentifier . ').', 1172416172);
 			}
 		} else {
 			$this->pointcutQueryIdentifier = $pointcutQueryIdentifier;
 			$this->recursionLevel = 0;
 		}
-		return $this->pointcutFilterComposite->matches($class, $method, $pointcutQueryIdentifier);
+		return $this->pointcutFilterComposite->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 
 	/**

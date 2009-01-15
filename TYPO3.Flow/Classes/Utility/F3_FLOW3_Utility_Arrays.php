@@ -191,6 +191,8 @@ class Arrays {
 		if (isset($array[$key])) {
 			if (count($path) > 0) {
 				return (is_array($array[$key])) ? self::getValueByPath($array[$key], $path) : NULL;
+			} elseif (count($path) == 0) {
+				return $array[$key];
 			} else {
 				return $array[$key];
 			}

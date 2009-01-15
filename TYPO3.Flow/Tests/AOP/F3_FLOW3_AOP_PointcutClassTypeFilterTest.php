@@ -24,29 +24,39 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  */
 
 /**
- * A mock pointcut expression parser - used to test the real pointcut expression parser
+ * Testcase for the Pointcut Class Type Filter
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class MockPointcutExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
+class PointcutClassTypeFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Factory method for creating custom filter instances
-	 *
-	 * @param string Object name of the filter
-	 * @return object An instance of the filter object
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createCustomFilter($filterObjectName) {
-		return new $filterObjectName;
+	public function matchesTellsIfTheOneOfTheInterfaceNamesTheClassImplementsMatchesTheGivenRegularExpression() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('getInterfaceNamesImplementedByClass'), array(), '', FALSE, TRUE);
+		$mockReflectionService->expects($this->any())->method('getInterfaceNamesImplementedByClass')->with('Foo')->will($this->returnValue(array('Bar', 'Baz', 'Fu', 'Uta')));
+
+		$filter = new \F3\FLOW3\AOP\PointcutClassTypeFilter('.*ar');
+		$filter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($filter->matches('Foo', '', '', 1));
+
+		$filter = new \F3\FLOW3\AOP\PointcutClassTypeFilter('Fu');
+		$filter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($filter->matches('Foo', '', '', 1));
+
+		$filter = new \F3\FLOW3\AOP\PointcutClassTypeFilter('Rob');
+		$filter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($filter->matches('Foo', '', '', 1));
 	}
 }
 ?>

@@ -40,9 +40,9 @@ namespace F3\FLOW3\Security\ACL;
 class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory The object manager
 	 */
-	protected $objectManager = NULL;
+	protected $objectFactory = NULL;
 
 	/**
 	 * The FLOW3 Settings
@@ -58,7 +58,12 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	/**
 	 * @var \F3\FLOW3\Cache\AbstractCache The cached acl entries
 	 */
-	protected $aclCache;
+	protected $cache;
+
+	/**
+	 * @var F3\FLOW3\Security\ACL\PolicyExpressionParser
+	 */
+	protected $policyExpressionParser;
 
 	/**
 	 * @var array The roles tree array
@@ -76,47 +81,59 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	public $acls = array();
 
 	/**
-	 * Constructor.
+	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
-	 * @param \F3\FLOW3\Cache\Factory $cacheFactory The cache factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo cache the whole thing, if aop proxy cache is enabled
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Configuration\Manager $configurationManager, \F3\FLOW3\Cache\Factory $cacheFactory) {
-		$this->cacheFactory = $cacheFactory;
-		$this->objectManager = $objectManager;
-		$this->settings = $configurationManager->getSettings('FLOW3');
-
-		$this->roles = $this->settings['security']['policy']['roles'];
-
-		if ($this->settings['aop']['cache']['enable']) {
-			$this->aclCache = $this->cacheFactory->create('FLOW3_Security_Policy_ACLs', 'F3\FLOW3\Cache\VariableCache', $this->settings['security']['policy']['aclCache']['backend'], $this->settings['security']['policy']['aclCache']['backendOptions']);
-			if ($this->aclCache->has('FLOW3_Security_Policy_ACLs')) {
-				$this->acls = $this->aclCache->get('FLOW3_Security_Policy_ACLs');
-			}
-		}
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
-	 * Save the found matches to the cache.
+	 * Injects the FLOW3 settings
 	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo could also be trigered by a hook/event after AOP initialization is finished. That would seem cleaner than using the destructor.
-	 * @todo RL: Disabled the aclCache->set() call because the caching framework is in an undefined state during destruction (signal dispatcher doesn't exist for example)
-	 * @todo make sure that exceptions are handled properly in the destructor - or better remove the destructor alltogether
+	 * @param array $settings Settings of the FLOW3 package
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __destruct() {
-		if ($this->settings['aop']['cache']['enable'] === TRUE) {
-			$tags = array('F3_FLOW3_AOP');
-			try {
-#				$this->aclCache->set('FLOW3_Security_Policy_ACLs', $this->acls, $tags);
-			} catch (Exception $exception) {
-				echo ('<br />Exception thrown in ' . __FILE__ . ' in line ' . __LINE__ . ':<br />');
-				var_dump($exception);
-			}
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
+	 * Injects the ACL cache
+	 *
+	 * @param F3\FLOW3\Cache\VariableCache $cache The cache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectCache(\F3\FLOW3\Cache\VariableCache $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
+	 * Injects the policy expression parser
+	 *
+	 * @param F3\FLOW3\Security\ACL\PolicyExpressionParser $parser
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPolicyExpressionParser(\F3\FLOW3\Security\ACL\PolicyExpressionParser $parser) {
+		$this->policyExpressionParser = $parser;
+	}
+
+	/**
+	 * Initializes this Policy Service
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		$this->roles = $this->settings['security']['policy']['roles'];
+		if ($this->cache->has('acls')) {
+			$this->acls = $this->cache->get('acls');
 		}
 	}
 
@@ -124,28 +141,32 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	 * Checks if the specified class and method matches against the filter, i.e. if there is a policy entry to intercept this method.
 	 * This method also creates a cache entry for every method, to cache the associated roles and privileges.
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check the name of
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check the name of
+	 * @param string $className Name of the class to check the name of
+	 * @param string $methodName Name of the method to check the name of
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the names match, otherwise FALSE
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		$matches = FALSE;
-
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->settings['security']['enable'] === FALSE) return FALSE;
 
+		$matches = FALSE;
+
 		if (count($this->filters) === 0) {
-			$policyExpressionParser = $this->objectManager->getObject('F3\FLOW3\Security\ACL\PolicyExpressionParser');
-			$policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
+			$this->policyExpressionParser->setResourcesTree($this->settings['security']['policy']['resources']);
 			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
-				foreach ($acl as $resource => $privilege) $this->filters[$role][$resource] = $policyExpressionParser->parse($resource);
+				foreach ($acl as $resource => $privilege) {
+					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource);
+				}
 			}
 		}
 
 		foreach ($this->filters as $role => $filtersForRole) {
 			foreach ($filtersForRole as $resource => $filter) {
-				if ($filter->matches($class, $method, $pointcutQueryIdentifier)) {
-					$methodIdentifier = $class->getName() . '->' . $method->getName();
+				if ($filter->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier)) {
+					$methodIdentifier = $className . '->' . $methodName;
 					$this->acls[$methodIdentifier][$role][] = $this->settings['security']['policy']['acls'][$role][$resource];
 					$matches = TRUE;
 				}
@@ -167,12 +188,12 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222084767);
 
-		$resultRoles = array();
-		foreach ($this->acls[$methodIdentifier] as $roleIdentifier => $notNeededEntry) {
-			$resultRoles[] = $this->createNewRole($roleIdentifier);
+		$roles = array();
+		foreach (array_keys($this->acls[$methodIdentifier]) as $roleIdentifier) {
+			$roles[] = $this->objectFactory->create('F3\FLOW3\Security\ACL\Role', $roleIdentifier);
 		}
 
-		return $resultRoles;
+		return $roles;
 	}
 
 	/**
@@ -189,9 +210,8 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 
 		$privileges = array();
-
-		foreach ($this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType) as $privilegeString => $isGrant) {
-			$privileges[] = $this->createNewPrivilege($privilegeString, $isGrant);
+		foreach ($this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType) as $privilegeIdentifier => $isGrant) {
+			$privileges[] = $this->objectFactory->create('F3\FLOW3\Security\ACL\Privilege', $privilegeIdentifier, $isGrant);
 		}
 
 		return $privileges;
@@ -224,27 +244,16 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	}
 
 	/**
-	 * Returns a new role object
+	 * Save the found matches to the cache.
 	 *
-	 * @param string $roleIdentifier The identifier for the new role
-	 * @return \F3\FLOW3\Security\ACL\Role A new role object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function createNewRole($roleIdentifier) {
-		return $this->objectManager->getObject('F3\FLOW3\Security\ACL\Role', $roleIdentifier);
+	public function shutdownObject() {
+		$tags = array('F3_FLOW3_AOP');
+		$this->cache->set('acls', $this->acls, $tags);
 	}
 
-	/**
-	 * Returns a new privilege object
-	 *
-	 * @param string $privilegeIdentifier The identifier for the new privilege
-	 * @param boolean $isGrant The isGrant flag of the privilege
-	 * @return \F3\FLOW3\Security\ACL\Privilege A new role object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function createNewPrivilege($privilegeIdentifier, $isGrant = FALSE) {
-		return $this->objectManager->getObject('F3\FLOW3\Security\ACL\Privilege', $privilegeIdentifier, $isGrant);
-	}
 }
 
 ?>

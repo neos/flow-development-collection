@@ -39,6 +39,14 @@ namespace F3\FLOW3\Object;
 interface ManagerInterface {
 
 	/**
+	 * Shuts the object manager down and calls the shutdown methods of all objects
+	 * which are configured for it.
+	 *
+	 * @return void
+	 */
+	public function shutdown();
+
+	/**
 	 * Sets the Object Manager to a specific context. All operations related to objects
 	 * will be carried out based on the configuration for the current context.
 	 *
@@ -73,9 +81,9 @@ interface ManagerInterface {
 	 * Returns a fresh or existing instance of the object specified by $objectName.
 	 *
 	 * Important:
-	 * 
+	 *
 	 * If possible, instances of Prototype objects should always be created with the
-	 * Object Factory's create() method and Singleton objects should rather be 
+	 * Object Factory's create() method and Singleton objects should rather be
 	 * injected by some type of Dependency Injection.
 	 *
 	 * @param string $objectName The name of the object to return an instance of
@@ -109,6 +117,19 @@ interface ManagerInterface {
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 */
 	public function isObjectRegistered($objectName);
+
+	/**
+	 * Registers an object so that its shutdown method is called when the object framework
+	 * is being shut down.
+	 *
+	 * Note that objects are registered automatically by the Object Manager and the
+	 * Object Factory and this method usually is not needed by user code.
+	 *
+	 * @param object $object The object to register
+	 * @param string $shutdownMethodName Name of the shutdown method to call
+	 * @return void
+	 */
+	public function registerShutdownObject($object, $shutdownMethodName);
 
 	/**
 	 * Returns the case sensitive object name of an object specified by a

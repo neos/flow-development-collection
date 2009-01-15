@@ -42,16 +42,6 @@ namespace F3\FLOW3\AOP;
 interface AdviceInterface {
 
 	/**
-	 * Constructor
-	 *
-	 * @param  string $aspectObjectName: Name of the aspect object containing the advice
-	 * @param  string $adviceMethodName: Name of the advice method
-	 * @param  \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the object manager
-	 * @return void
-	 */
-	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ManagerInterface $objectManager);
-
-	/**
 	 * Invokes the advice method
 	 *
 	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method

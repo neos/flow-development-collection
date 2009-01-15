@@ -96,8 +96,6 @@ class Builder {
 
 	/**
 	 * Injects the object factory
-	 * Note that the object builder and object registry must have been injected before the object factory
-	 * can be injected.
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
@@ -364,8 +362,6 @@ class Builder {
 						$preparedValue = $this->configurationManager->getSettings($propertyValue);
 					}
 				break;
-				default:
-					var_dump($propertyValue);
 			}
 			$setterMethodName = 'inject' . ucfirst($propertyName);
 			if (method_exists($object, $setterMethodName)) {

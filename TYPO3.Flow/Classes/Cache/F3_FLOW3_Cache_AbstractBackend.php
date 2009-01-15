@@ -72,6 +72,8 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\BackendInterface {
 				$methodName = 'set' . ucfirst($optionKey);
 				if (method_exists($this, $methodName)) {
 					$this->$methodName($optionValue);
+				} else {
+					throw new \InvalidArgumentException('Invalid cache backend option "' . $optionKey . '" for backend of type "' . get_class($this) . '"', 1231267498);
 				}
 			}
 		}

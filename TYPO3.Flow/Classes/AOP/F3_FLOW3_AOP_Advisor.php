@@ -36,8 +36,9 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
-class Advisor implements \F3\FLOW3\AOP\AdvisorInterface {
+class Advisor {
 
 	/**
 	 * @var \F3\FLOW3\AOP\AdviceInterface: The advisor's advice
@@ -45,7 +46,7 @@ class Advisor implements \F3\FLOW3\AOP\AdvisorInterface {
 	protected $advice;
 
 	/**
-	 * @var \F3\FLOW3\AOP\PointcutInterface: The pointcut for the advice
+	 * @var \F3\FLOW3\AOP\Pointcut: The pointcut for the advice
 	 */
 	protected $pointcut;
 
@@ -53,10 +54,10 @@ class Advisor implements \F3\FLOW3\AOP\AdvisorInterface {
 	 * Initializes the advisor with an advice and a pointcut
 	 *
 	 * @param \F3\FLOW3\AOP\AdviceInterface $advice: The advice to weave in
-	 * @param \F3\FLOW3\AOP\PointcutInterface $pointcut: The pointcut where the advice should be inserted
+	 * @param \F3\FLOW3\AOP\Pointcut $pointcut: The pointcut where the advice should be inserted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\AOP\AdviceInterface $advice, \F3\FLOW3\AOP\PointcutInterface $pointcut) {
+	public function __construct(\F3\FLOW3\AOP\AdviceInterface $advice, \F3\FLOW3\AOP\Pointcut $pointcut) {
 		$this->advice = $advice;
 		$this->pointcut = $pointcut;
 	}

@@ -39,6 +39,8 @@ namespace F3\FLOW3\Cache;
  */
 interface BackendInterface {
 
+	const TAG_CLASS = '%CLASS%';
+
 	/**
 	 * Pattern an entry identifer must match.
 	 */

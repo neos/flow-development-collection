@@ -58,7 +58,7 @@ final class FLOW3 {
 	 */
 	const VERSION = '0.2.0';
 
-	const MINIMUM_PHP_VERSION = '5.3.0alpha1';
+	const MINIMUM_PHP_VERSION = '5.3.0alpha3';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
@@ -109,11 +109,14 @@ final class FLOW3 {
 	protected $reflectionService;
 
 	/**
-	 * Instance of the cache factory
-	 *
-	 * @var \F3\FLOW3\Cache\Factory
+	 * @var \F3\FLOW3\Error\ExceptionHandlerInterface
 	 */
-	protected $cacheFactory;
+	protected $exceptionHandler;
+
+	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
@@ -161,10 +164,16 @@ final class FLOW3 {
 		$this->initializeConfiguration();
 		$this->initializeError();
 		$this->initializeObjectFramework();
-		$this->initializeEnvironment();
+		$this->initializeSystemLogger();
 		$this->initializePackages();
+
+		if ($this->packageManager->isPackageActive('FirePHP')) {
+			$this->objectManager->getObject('F3\FirePHP\Core');
+		}
+
 		$this->initializeSignalsSlots();
 		$this->initializeCache();
+		$this->initializeFileMonitor();
 		$this->initializeReflection();
 		$this->initializeObjects();
 		$this->initializeAOP();
@@ -216,7 +225,7 @@ final class FLOW3 {
 	public function initializeError() {
 		$errorHandler = new $this->settings['error']['errorHandler']['className'];
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
-		new $this->settings['error']['exceptionHandler']['className'];
+		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
 	}
 
 	/**
@@ -227,35 +236,48 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeObjectFramework() {
-		$this->reflectionService = new \F3\FLOW3\Reflection\Service();
 		$this->objectFactory = new \F3\FLOW3\Object\Factory();
 
 		$objectBuilder = new \F3\FLOW3\Object\Builder;
 		$objectBuilder->injectConfigurationManager($this->configurationManager);
 
+		$singletonObjectsRegistry = new \F3\FLOW3\Object\TransientRegistry;
+
+		$preliminaryReflectionService = new \F3\FLOW3\Reflection\Service();
+
 		$this->objectManager = new \F3\FLOW3\Object\Manager();
-		$this->objectManager->injectReflectionService($this->reflectionService);
-		$this->objectManager->injectObjectRegistry(new \F3\FLOW3\Object\TransientRegistry);
+		$this->objectManager->injectSingletonObjectsRegistry($singletonObjectsRegistry);
 		$this->objectManager->injectObjectBuilder($objectBuilder);
 		$this->objectManager->injectObjectFactory($this->objectFactory);
+		$this->objectManager->injectReflectionService($preliminaryReflectionService);
 		$this->objectManager->setContext($this->context);
+
+		$objectConfigurations = array();
+		$rawFLOW3ObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
+		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
+			$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'Package FLOW3 (pre-initialization)');
+		}
+		$this->objectManager->setObjectConfigurations($objectConfigurations);
 		$this->objectManager->initialize();
 
-		$this->objectManager->registerObject('F3\FLOW3\Resource\ClassLoader', NULL, $this->classLoader);
-		$this->objectManager->registerObject('F3\FLOW3\Configuration\Manager', NULL, $this->configurationManager);
+			// Remove the preliminary reflection service and rebuild it, this time with the proper object configuration:
+		$singletonObjectsRegistry->removeObject('F3\FLOW3\Reflection\Service');
+		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
+
+		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
+		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\Manager', $this->configurationManager);
 	}
 
 	/**
-	 * Initializes the environment utility class.
+	 * Initializes the system logger
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
 	 */
-	public function initializeEnvironment() {
-		$environment = new \F3\FLOW3\Utility\Environment;
-		$this->objectManager->registerObject('F3\FLOW3\Utility\Environment', NULL, $environment);
-		$environment->setTemporaryDirectoryBase($this->settings['utility']['environment']['temporaryDirectoryBase']);
+	public function initializeSystemLogger() {
+		$this->systemLogger = $this->objectManager->getObject('F3\FLOW3\Log\SystemLoggerInterface');
+		$this->systemLogger->log(sprintf('> Launching FLOW3 in %s context.', $this->context), LOG_INFO);
+		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
 	}
 
 	/**
@@ -267,10 +289,6 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializePackages() {
-		$this->objectManager->registerObject('F3\FLOW3\Resource\Publisher');
-		$this->objectManager->registerObject('F3\FLOW3\Resource\Manager');
-
-		$this->objectManager->registerObject('F3\FLOW3\Package\ManagerInterface', 'F3\FLOW3\Package\Manager');
 		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
@@ -281,7 +299,9 @@ final class FLOW3 {
 		}
 
 		$this->configurationManager->loadGlobalSettings(array_keys($activePackages));
-		$this->configurationManager->loadRoutesSettings(array_keys($activePackages));
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, array_keys($activePackages));
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, array_keys($activePackages));
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES, array_keys($activePackages));
 	}
 
 	/**
@@ -292,20 +312,19 @@ final class FLOW3 {
 	 * @see intialize()
 	 */
 	public function initializeSignalsSlots() {
-		$this->objectManager->registerObject('F3\FLOW3\SignalSlot\Dispatcher');
 		$dispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
 
-		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
-			$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $packageKey);
-			foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
-				if (is_array($signalSubConfiguration)) {
-					foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
-						$signalMethodName = 'emit' . ucfirst($signalMethodName);
-						if (is_array($slotConfigurations)) {
-							foreach ($slotConfigurations as $slotConfiguration) {
-								if (is_array($slotConfiguration) && count($slotConfiguration) === 2) {
-									list ($className, $methodName) = $slotConfiguration;
-									$dispatcher->connect($signalClassName, $signalMethodName, $className, $methodName);
+		$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS);
+		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
+			if (is_array($signalSubConfiguration)) {
+				foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
+					$signalMethodName = 'emit' . ucfirst($signalMethodName);
+					if (is_array($slotConfigurations)) {
+						foreach ($slotConfigurations as $slotConfiguration) {
+							if (is_array($slotConfiguration)) {
+								if (isset($slotConfiguration[0]) && isset($slotConfiguration[1])) {
+									$omitSignalInformation = (isset($slotConfiguration[2])) ? $slotConfiguration[2] : FALSE;
+									$dispatcher->connect($signalClassName, $signalMethodName, $slotConfiguration[0], $slotConfiguration[1], $omitSignalInformation);
 								}
 							}
 						}
@@ -323,27 +342,23 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeCache() {
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Factory');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Manager');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\File');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\Backend\Memcached');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\VariableCache');
-		$this->objectManager->registerObject('F3\FLOW3\Cache\StringCache');
-
-		$configuration = $this->objectManager->getObjectConfiguration('F3\FLOW3\Cache\Backend\File');
-		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('environment', 'F3\FLOW3\Utility\Environment', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
-		$configuration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('signalDispatcher', 'F3\FLOW3\SignalSlot\Dispatcher', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT));
-		$this->objectManager->setObjectConfiguration($configuration);
-
 		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
-		$this->cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory', $this->objectManager, $this->objectFactory, $this->cacheManager);
+		$this->cacheManager->setCacheConfigurations($this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES));
+		$this->cacheManager->initialize();
 
-		$this->cacheFactory->create('FLOW3_Cache_ClassFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Cache_ResourceFiles', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Object_Configurations', 'F3\FLOW3\Cache\VariableCache', $this->settings['object']['configurationCache']['backend'], $this->settings['object']['configurationCache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Reflection', 'F3\FLOW3\Cache\VariableCache', $this->settings['reflection']['cache']['backend'], $this->settings['reflection']['cache']['backendOptions']);
-		$this->cacheFactory->create('FLOW3_Resource_MetaData', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File');
-		$this->cacheFactory->create('FLOW3_Resource_Status', 'F3\FLOW3\Cache\StringCache', 'F3\FLOW3\Cache\Backend\File');
+		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory');
+		$cacheFactory->setCacheManager($this->cacheManager);
+	}
+
+	/**
+	 * Initializes the file monitoring
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeFileMonitor() {
+		$this->monitorClassFiles();
 	}
 
 	/**
@@ -352,36 +367,36 @@ final class FLOW3 {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
 	 */
-	public function detectAlteredClasses() {
-		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] !== TRUE) return;
-
-		$classFileCache = $this->cacheManager->getCache('FLOW3_Cache_ClassFiles');
-		$classFileModificationTimes = ($classFileCache->has('classFileModificationTimes')) ? $classFileCache->get('classFileModificationTimes') : array();
-		$classFileModificationTimesWereModified = FALSE;
+	protected function monitorClassFiles() {
+		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_ClassFiles');
 
 		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+			$classesPath = $package->getClassesPath();
 			foreach($package->getClassFiles() as $className => $classFileName) {
-				$fullClassFileName = $package->getClassesPath() . $classFileName;
-				if (file_exists($fullClassFileName)) {
-					$currentFileModificationTime = filemtime($fullClassFileName);
-					$cachedFileModificationTime = isset($classFileModificationTimes[$fullClassFileName]) ? $classFileModificationTimes[$fullClassFileName] : NULL;
-					if ($cachedFileModificationTime === NULL || $currentFileModificationTime > $cachedFileModificationTime) {
-						$classFileModificationTimes[$fullClassFileName] = $currentFileModificationTime;
-						$tag = $classFileCache->getClassTag($className);
-						$this->cacheManager->flushCachesByTag($tag);
-						$classFileModificationTimesWereModified = TRUE;
-					}
-				} else {
-					$this->cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
-					unset($classFileModificationTimes[$deletedClassFileName]);
-					$classFileModificationTimesWereModified = TRUE;
-				}
+				$monitor->monitorFile($classesPath . $classFileName);
 			}
 		}
 
-		if ($classFileModificationTimesWereModified) $classFileCache->set('classFileModificationTimes', $classFileModificationTimes);
+		$classFileCache = $this->cacheManager->getCache('FLOW3_Cache_ClassFiles');
+		$cacheManager = $this->cacheManager;
+		$atLeastOneClassFileChanged = FALSE;
+		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager, &$atLeastOneClassFileChanged) {
+			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
+			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
+				$cacheManager->flushCachesByTag(\F3\FLOW3\Cache\BackendInterface::TAG_CLASS . basename($pathAndFilename, '.php'));
+				$atLeastOneClassFileChanged = TRUE;
+			}
+		};
+
+		$signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+		$signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+
+		$monitor->detectChanges();
+
+		if ($atLeastOneClassFileChanged) {
+			$this->cacheManager->flushCachesByTag($classFileCache->getClassTag());
+		}
 	}
 
 	/**
@@ -392,10 +407,8 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeReflection() {
-		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] === TRUE) $this->detectAlteredClasses();
-
+		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\Service');
 		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
-		$this->reflectionService->setDetectClassAlterations($this->settings['reflection']['cache']['detectClassAlterations']);
 
 		$availableClassNames = array();
 		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
@@ -416,19 +429,15 @@ final class FLOW3 {
 	public function initializeObjects() {
 		$objectConfigurations = NULL;
 
-		if ($this->settings['object']['configurationCache']['enable'] === TRUE) {
-			$objectConfigurationsCache = $this->cacheManager->getCache('FLOW3_Object_Configurations');
-			if ($objectConfigurationsCache->has('baseObjectConfigurations')) {
-				$objectConfigurations = $objectConfigurationsCache->get('baseObjectConfigurations');
-			}
+		$objectConfigurationsCache = $this->cacheManager->getCache('FLOW3_Object_Configurations');
+		if ($objectConfigurationsCache->has('baseObjectConfigurations')) {
+			$objectConfigurations = $objectConfigurationsCache->get('baseObjectConfigurations');
 		}
 
 		if ($objectConfigurations === NULL) {
 			$this->registerAndConfigureAllPackageObjects($this->packageManager->getActivePackages());
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
-			if ($this->settings['object']['configurationCache']['enable']) {
-				$objectConfigurationsCache->set('baseObjectConfigurations', $objectConfigurations);
-			}
+			$objectConfigurationsCache->set('baseObjectConfigurations', $objectConfigurations, array($objectConfigurationsCache->getClassTag()));
 		}
 
 		$this->objectManager->setObjectConfigurations($objectConfigurations);
@@ -443,18 +452,6 @@ final class FLOW3 {
 	 */
 	public function initializeAOP() {
 		if ($this->settings['aop']['enable'] === TRUE) {
-
-			$this->objectManager->registerObject('F3\FLOW3\AOP\Framework');
-			$objectConfiguration = $this->objectManager->getObjectConfiguration('F3\FLOW3\AOP\Framework');
-			$properties = array(
-				'reflectionService' => new \F3\FLOW3\Object\ConfigurationProperty('reflectionService', 'F3\FLOW3\Reflection\Service', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
-				'pointcutExpressionParser' => new \F3\FLOW3\Object\ConfigurationProperty('pointcutExpressionParser', 'F3\FLOW3\AOP\PointcutExpressionParser', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
-				'cacheFactory' => new \F3\FLOW3\Object\ConfigurationProperty('cacheFactory', 'F3\FLOW3\Cache\Factory', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT),
-				'configurationManager' => new \F3\FLOW3\Object\ConfigurationProperty('configurationManager', 'F3\FLOW3\Configuration\Manager', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT)
-			);
-			$objectConfiguration->setProperties($properties);
-			$this->objectManager->setObjectConfiguration($objectConfiguration);
-
 			$objectConfigurations = $this->objectManager->getObjectConfigurations();
 			$AOPFramework = $this->objectManager->getObject('F3\FLOW3\AOP\Framework', $this->objectManager, $this->objectFactory);
 			$AOPFramework->initialize($objectConfigurations);
@@ -513,37 +510,7 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function detectAlteredResources() {
-		$resourceFileCache = $this->cacheManager->getCache('FLOW3_Cache_ResourceFiles');
-		$resourceFileModificationTimes = ($resourceFileCache->has('resourceFileModificationTimes')) ? $resourceFileCache->get('resourceFileModificationTimes') : array();
-		$resourceFileModificationTimesWereModified = FALSE;
-
-		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
-			$publicResourcesPath = $package->getResourcesPath() . 'Public/';
-			if (file_exists($publicResourcesPath)) {
-				$resourceFilenames = \F3\FLOW3\Utility\Files::readDirectoryRecursively($publicResourcesPath);
-/*				foreach($resourceFilenames as $filename) {
-					$fullClassFileName = $package->getClassesPath() . $resourceFileName;
-					if (file_exists($fullClassFileName)) {
-						$currentFileModificationTime = filemtime($fullClassFileName);
-						$cachedFileModificationTime = isset($resourceFileModificationTimes[$fullClassFileName]) ? $resourceFileModificationTimes[$fullClassFileName] : NULL;
-						if ($cachedFileModificationTime === NULL || $currentFileModificationTime > $cachedFileModificationTime) {
-							$resourceFileModificationTimes[$fullClassFileName] = $currentFileModificationTime;
-							$tag = $resourceFileCache->getClassTag($className);
-							$this->cacheManager->flushCachesByTag($tag);
-							$resourceFileModificationTimesWereModified = TRUE;
-						}
-					} else {
-						$this->cacheManager->flushCachesByTag($resourceFileCache->getClassTag($className));
-						unset($resourceFileModificationTimes[$deletedClassFileName]);
-						$resourceFileModificationTimesWereModified = TRUE;
-					}
-				}
-*/
-			}
-		}
-
-		if ($resourceFileModificationTimesWereModified) $resourceFileCache->set('resourceFileModificationTimes', $resourceFileModificationTimes);
+	protected function detectAlteredResources() {
 	}
 
 	/**
@@ -554,7 +521,7 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		if ($this->settings['cache']['fileAlterationMonitoring']['enable'] === TRUE) $this->detectAlteredResources();
+		$this->detectAlteredResources();
 
 		$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
 		$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
@@ -592,18 +559,11 @@ final class FLOW3 {
 
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->close();
-	}
 
-	/**
-	 * Returns an instance of the active object manager. This method is and should only
-	 * be used by unit tests and special cases. In almost any other case, a reference to the
-	 * object manager can be injected.
-	 *
-	 * @return \F3\FLOW3\Object\ManagerInterface
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getObjectManager() {
-		return $this->objectManager;
+		$this->systemLogger->log(sprintf('> Shutting down FLOW3 ...', $this->context), LOG_INFO);
+
+		$this->objectManager->shutdown();
+
 	}
 
 	/**

@@ -44,6 +44,7 @@ class Manager {
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
 	const CONFIGURATION_TYPE_SIGNALSSLOTS = 'SignalsSlots';
+	const CONFIGURATION_TYPE_CACHES = 'Caches';
 
 	/**
 	 * @var string The application context of the configuration to manage
@@ -58,11 +59,15 @@ class Manager {
 	protected $settings = array();
 
 	/**
-	 * Storage of the raw routing configuration
+	 * Storage of the raw special configurations
 	 *
 	 * @var array
 	 */
-	protected $routes = array();
+	protected $configurations = array(
+		'Routes' => array(),
+		'SignalsSlots' => array(),
+		'Caches' => array()
+	);
 
 	/**
 	 * The configuration sources used for loading the raw configuration
@@ -159,37 +164,39 @@ class Manager {
 	}
 
 	/**
-	 * Loads the routing settings defined in the specified packages and merges them with
+	 * Loads special configuration defined in the specified packages and merges them with
 	 * those potentially existing in the global configuration folders.
 	 *
-	 * The result is stored in the configuration manager's routes registry
+	 * The result is stored in the configuration manager's configuration registry
 	 * and can be retrieved with the getSpecialConfiguration() method. However note
-	 * that this is only the raw information which will be further processed by the
-	 * Web Request Builder.
+	 * that this is only the raw information which will be further processed by other
+	 * parts of FLOW3
 	 *
-	 * @param array $packageKeys
+	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
+	 * @param array $packageKeys A list of packages to consider
 	 * @return void
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadRoutesSettings(array $packageKeys) {
-		sort ($packageKeys);
+	public function loadSpecialConfiguration($configurationType, array $packageKeys) {
 		$index = array_search('FLOW3', $packageKeys);
 		if ($index !== FALSE) {
 			unset ($packageKeys[$index]);
 			array_unshift($packageKeys, 'FLOW3');
 		}
+
 		foreach ($packageKeys as $packageKey) {
 			foreach ($this->configurationSources as $configurationSource) {
-				$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Routes'));
+				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Routes'));
+			$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$this->routes = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->routes, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes'));
+			$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
 		}
+		$this->postProcessSettings($this->configurations[$configurationType]);
 	}
 
 	/**
@@ -209,11 +216,12 @@ class Manager {
 	public function getSpecialConfiguration($configurationType, $packageKey = 'FLOW3') {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_ROUTES :
-				return $this->routes;
+			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
+			case self::CONFIGURATION_TYPE_CACHES :
+				return $this->configurations[$configurationType];
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_OBJECTS :
-			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
-				break;
+			break;
 			default:
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
@@ -232,7 +240,6 @@ class Manager {
 			case self::CONFIGURATION_TYPE_PACKAGES :
 				return (isset($configuration[$packageKey])) ? $configuration[$packageKey] : array();
 			case self::CONFIGURATION_TYPE_OBJECTS :
-			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 				return $configuration;
 		}
 	}

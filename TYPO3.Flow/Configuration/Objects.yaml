@@ -2,9 +2,187 @@
 # Object Configuration for the FLOW3 Framework                             #
 #                                                                          #
 # This file contains the default object configuration for the FLOW3        #
-# Framework. Don't modify this file but add configuration options to       #
-# the Objects.yaml file in the in global Configuration/ directory instead. #
+# Framework. Because it is loaded at a very early stage during ini-        #
+# tialization, this configuration cannot be overriden by other con-        #
+# figuration files.                                                        #
 #                                                                          #
 
 # @package FLOW3
 # @version $Id$
+
+#                                                                          #
+# AOP                                                                      #
+#                                                                          #
+
+F3\FLOW3\AOP\Framework:
+  properties:
+    reflectionService: object: F3\FLOW3\Reflection\Service
+    pointcutExpressionParser: object: F3\FLOW3\AOP\PointcutExpressionParser
+    proxyCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_AOP_Proxy
+    configurationCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_AOP_Configuration
+    configurationManager: object: F3\FLOW3\Configuration\Manager
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
+F3\FLOW3\AOP\AdvicedConstructorInterceptorBuilder: []
+F3\FLOW3\AOP\AdvicedMethodInterceptorBuilder: []
+F3\FLOW3\AOP\Advisor:
+  scope: prototype
+F3\FLOW3\AOP\AfterReturningAdvice:
+  scope: prototype
+F3\FLOW3\AOP\AfterThrowingAdvice:
+  scope: prototype
+F3\FLOW3\AOP\AfterAdvice:
+  scope: prototype
+F3\FLOW3\AOP\AroundAdvice:
+  scope: prototype
+F3\FLOW3\AOP\BeforeAdvice:
+  scope: prototype
+F3\FLOW3\AOP\EmptyConstructorInterceptorBuilder: []
+F3\FLOW3\AOP\EmptyMethodInterceptorBuilder: []
+F3\FLOW3\AOP\Introduction:
+  scope: prototype
+F3\FLOW3\AOP\ProxyClassBuilder: []
+F3\FLOW3\AOP\Pointcut:
+  scope: prototype
+F3\FLOW3\AOP\Pointcut:
+  className: F3\FLOW3\AOP\Pointcut
+  scope: prototype
+F3\FLOW3\AOP\PointcutClassNameFilter:
+  scope: prototype
+F3\FLOW3\AOP\PointcutClassTaggedWithFilter:
+  scope: prototype
+F3\FLOW3\AOP\PointcutClassTypeFilter:
+  scope: prototype
+F3\FLOW3\AOP\PointcutExpressionParser: []
+F3\FLOW3\AOP\PointcutFilter:
+  scope: prototype
+F3\FLOW3\AOP\PointcutFilterComposite:
+  scope: prototype
+F3\FLOW3\AOP\PointcutMethodNameFilter:
+  scope: prototype
+F3\FLOW3\AOP\PointcutMethodTaggedWithFilter:
+  scope: prototype
+
+#                                                                          #
+# Cache                                                                    #
+#                                                                          #
+
+F3\FLOW3\Cache\Manager:
+  properties: 
+    cacheFactory: object: F3\FLOW3\Cache\Factory
+F3\FLOW3\Cache\Factory:
+  arguments:
+    1: object: F3\FLOW3\Object\ManagerInterface
+    2: object: F3\FLOW3\Object\FactoryInterface
+F3\FLOW3\Cache\Backend\File:
+  scope: prototype
+  properties:
+    environment: object: F3\FLOW3\Utility\Environment
+    signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
+F3\FLOW3\Cache\Backend\Memcached:
+  scope: prototype
+F3\FLOW3\Cache\VariableCache:
+  scope: prototype
+F3\FLOW3\Cache\StringCache:
+  scope: prototype
+
+#                                                                          #
+# Configuration                                                            #
+#                                                                          #
+
+F3\FLOW3\Configuration\Manager: []
+
+#                                                                          #
+# Log                                                                      #
+#                                                                          #
+
+F3\FLOW3\Log\LoggerFactory: []
+F3\FLOW3\Log\Logger:
+  scope: prototype
+F3\FLOW3\Log\Backend\File:
+  scope: prototype
+F3\FLOW3\Log\Backend\Null:
+  scope: prototype
+F3\FLOW3\Log\SystemLoggerInterface:
+  factoryClassName: F3\FLOW3\Log\LoggerFactory
+  className: F3\FLOW3\Log\Logger
+  arguments:
+    1: value: FLOW3_System
+    2: value: F3\FLOW3\Log\Logger
+    3: setting: FLOW3.log.systemLogger.backend
+    4: setting: FLOW3.log.systemLogger.backendOptions
+
+#                                                                          #
+# Monitor                                                                  #
+#                                                                          #
+
+F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime:
+  properties:
+    cache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_Monitor_ChangeDetectionStrategy_ModificationTime
+
+F3\FLOW3\Monitor\FileMonitor:
+  scope: prototype
+  properties:
+    changeDetectionStrategy: object: FLOW3.monitor.fileMonitor.changeDetectionStrategy
+    signalSlotDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
+
+#                                                                          #
+# Package                                                                  #
+#                                                                          #
+
+F3\FLOW3\Package\ManagerInterface:
+  className: F3\FLOW3\Package\Manager
+
+#                                                                          #
+# Reflection                                                               #
+#                                                                          #
+
+#                                                                          #
+# Resource                                                                 #
+#                                                                          #
+
+F3\FLOW3\Resource\ClassLoader: []
+F3\FLOW3\Resource\Publisher: []
+F3\FLOW3\Resource\Manager: []
+
+#                                                                          #
+# Security                                                                 #
+#                                                                          #
+
+F3\FLOW3\Security\ACL\PolicyService:
+  properties:
+    cache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_Security_Policy
+
+#                                                                          #
+# SignalSlot                                                               #
+#                                                                          #
+
+F3\FLOW3\SignalSlot\Dispatcher: []
+
+#                                                                          #
+# Utility                                                                  #
+#                                                                          #
+
+F3\FLOW3\Utility\Environment:
+  properties:
+    temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase

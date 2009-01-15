@@ -33,79 +33,114 @@ namespace F3\FLOW3\AOP;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id$
+ * @version $Id: robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
 
 	/**
-	 * The value of the specified configuration option
-	 * @var boolean
+	 * The path leading to the setting to match with
+	 * @var string
 	 */
-	protected $configurationOption = FALSE;
+	protected $settingComparisonExpression;
+
+	/**
+	 * The value of the specified setting
+	 * @var mixed
+	 */
+	protected $actualSettingValue = FALSE;
 
 	/**
 	 * The condition value to match against the configuration setting
-	 * @var string
+	 * @var mixed
 	 */
 	protected $condition;
 
 	/**
 	 * The constructor - initializes the configuration filter with the path to a configuration option
 	 *
-	 * @param string $configurationExpression The configuration expression (path + optional condition)
+	 * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager, $configurationExpression) {
-		$this->parseConfigurationOptionPath($configurationExpression, $configurationManager->getSettings('FLOW3'));
+	public function __construct($settingComparisonExpression) {
+		$this->settingComparisonExpression = $settingComparisonExpression;
+	}
+
+	/**
+	 * Injects the configuration manager
+	 *
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Initializes this filter
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
+		$this->parseConfigurationOptionPath($this->settingComparisonExpression);
 	}
 
 	/**
 	 * Checks if the specified configuration option is set to TRUE or FALSE, or if it matches the specified
 	 * condition
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class Not needed in this filter
-	 * @param \F3\FLOW3\Reflection\ClassReflectionMethod $method Not needed in this filter
+	 * @param string $className Name of the class to check against
+	 * @param string $methodName Name of the method - not used here
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in - not used here
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the option is set to TRUE, otherwise FALSE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @return boolean TRUE if the class matches, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		if (is_bool($this->configurationOption)) {
-			return $this->configurationOption;
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		if (is_bool($this->actualSettingValue)) {
+			return $this->actualSettingValue;
 		} else {
-			return ($this->condition === $this->configurationOption);
+			return ($this->condition === $this->actualSettingValue);
 		}
 	}
 
 	/**
-	 * Parses the given configuration path expression and sets $this->configurationOption
+	 * Parses the given configuration path expression and sets $this->actualSettingValue
 	 * and $this->condition accordingly
 	 *
-	 * @param configurationExpression The configuration expression (path + optional condition)
-	 * @param array $settings The configuration settings array of the current configuration
+	 * @param settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function parseConfigurationOptionPath($configurationExpression, $settings) {
-		$this->configurationOption = $settings;
-
-		$configurationExpression = split(' *= *', $configurationExpression);
-		if (isset($configurationExpression[1])) {
+	protected function parseConfigurationOptionPath($settingComparisonExpression) {
+		$settingComparisonExpression = split(' *= *', $settingComparisonExpression);
+		if (isset($settingComparisonExpression[1])) {
 			$matches = array();
-			preg_match(self::PATTERN_MATCHVALUEINQUOTES, $configurationExpression[1], $matches);
-			if (isset($matches['SingleQuotedString']) && $matches['SingleQuotedString'] !== '') $this->condition = $matches['SingleQuotedString'];
-			elseif (isset($matches['DoubleQuotedString']) && $matches['DoubleQuotedString'] !== '') $this->condition = $matches['DoubleQuotedString'];
-			else throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $configurationExpression[1] . '"', 1230047529);
+			preg_match(self::PATTERN_MATCHVALUEINQUOTES, $settingComparisonExpression[1], $matches);
+			if (isset($matches['SingleQuotedString']) && $matches['SingleQuotedString'] !== '') {
+				$this->condition = $matches['SingleQuotedString'];
+			} elseif (isset($matches['DoubleQuotedString']) && $matches['DoubleQuotedString'] !== '') {
+				$this->condition = $matches['DoubleQuotedString'];
+			} else {
+				throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given condition has a syntax error (Make sure to set quotes correctly). Got: "' . $settingComparisonExpression[1] . '"', 1230047529);
+			}
 		}
 
-		$configurationKeys = split(':[ ]{0,1}', $configurationExpression[0]);
-		foreach ($configurationKeys as $currentKey) {
-			if (!isset($this->configurationOption[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $configurationExpression[0] . '"', 1230035614);
-			$this->configurationOption = $this->configurationOption[$currentKey];
+		$configurationKeys = split(':[ ]{0,1}', $settingComparisonExpression[0]);
+		if (count($configurationKeys) > 0) {
+			$settingPackageKey = array_shift($configurationKeys);
+			$settingValue = $this->configurationManager->getSettings($settingPackageKey);
+			foreach ($configurationKeys as $currentKey) {
+				if (!isset($settingValue[$currentKey])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given configuration path in the pointcut designator "setting" did not exist. Got: "' . $settingComparisonExpression[0] . '"', 1230035614);
+				$settingValue = $settingValue[$currentKey];
+			}
+			$this->actualSettingValue = $settingValue;
 		}
 	}
 }

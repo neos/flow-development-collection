@@ -35,70 +35,73 @@ namespace F3\FLOW3\AOP;
  * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
 class PointcutFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
 	/**
-	 * @var string Name of the aspect class where the pointcut was declared
+	 * Name of the aspect class where the pointcut was declared
+	 * @var string
 	 */
 	protected $aspectClassName;
 
 	/**
-	 * @var string Name of the pointcut method
+	 * Name of the pointcut method
+	 * @var string
 	 */
 	protected $pointcutMethodName;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Framework A reference to the AOP Framework
+	 * The pointcut this filter is based on
+	 * @var \F3\FLOW3\AOP\Pointcut
+	 */
+	protected $pointcut;
+
+	/**
+	 * A reference to the AOP Framework
+	 * @var \F3\FLOW3\AOP\Framewor
 	 */
 	protected $aopFramework;
 
 	/**
 	 * The constructor - initializes the pointcut filter with the name of the pointcut we're refering to
 	 *
+	 * @param string $aspectClassName Name of the aspect class containing the pointcut
+	 * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct($aspectClassName, $pointcutMethodName) {
+		$this->aspectClassName = $aspectClassName;
+		$this->pointcutMethodName = $pointcutMethodName;
+	}
+
+	/**
+	 * Injects the AOP Framework
+	 *
+	 * @param \F3\FLOW3\AOP\Framework $aopFramework
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($aspectClassName, $pointcutMethodName, \F3\FLOW3\AOP\Framework $aopFramework) {
-		$this->aspectClassName = $aspectClassName;
-		$this->pointcutMethodName = $pointcutMethodName;
+	public function injectAOPFramework(\F3\FLOW3\AOP\Framework $aopFramework) {
 		$this->aopFramework = $aopFramework;
 	}
 
 	/**
 	 * Checks if the specified class and method matches with the pointcut
 	 *
-	 * @param \F3\FLOW3\Reflection\ClassReflection $class The class to check against
-	 * @param \F3\FLOW3\Reflection\MethodReflection $method The method to check against
+	 * @param string $className Name of the class to check against
+	 * @param string $methodName Name of the method - not used here
+	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
-	 * @return boolean TRUE if the class and method matches the pointcut, otherwise FALSE
+	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matches(\F3\FLOW3\Reflection\ClassReflection $class, \F3\FLOW3\Reflection\MethodReflection $method, $pointcutQueryIdentifier) {
-		$pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
-		if ($pointcut === FALSE) throw new \RuntimeException('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
-		return $pointcut->matches($class, $method, $pointcutQueryIdentifier);
-	}
-
-	/**
-	 * Prepares this pointcut filter for sleep
-	 *
-	 * @return void
-	 */
-	public function __sleep() {
-		return array("\0*\0aspectClassName", "\0*\0pointcutMethodName");
-	}
-
-	/**
-	 * Updates the reference to the AOP framework
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __wakeup() {
-		if (isset($GLOBALS['FLOW3']['F3\FLOW3\AOP\Framework'])) {
-			$this->aopFramework = $GLOBALS['FLOW3']['F3\FLOW3\AOP\Framework'];
+	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		if ($this->pointcut === NULL) {
+			$this->pointcut = $this->aopFramework->findPointcut($this->aspectClassName, $this->pointcutMethodName);
 		}
+		if ($this->pointcut === FALSE) throw new \F3\FLOW3\AOP\Exception\UnknownPointcut('No pointcut "' . $this->pointcutMethodName . '" found in aspect class "' . $this->aspectClassName . '" .', 1172223694);
+		return $this->pointcut->matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier);
 	}
 }
 

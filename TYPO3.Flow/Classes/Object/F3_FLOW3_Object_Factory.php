@@ -49,7 +49,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	/**
 	 * @var \F3\FLOW3\Object\RegistryInterface Holds an instance of the Object Object Cache
 	 */
-	protected $objectRegistry;
+	protected $singletonObjectsRegistry;
 
 	/**
 	 * @var \F3\FLOW3\Object\Builder Holds an instance of the Object Object Builder
@@ -79,17 +79,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	}
 
 	/**
-	 * Injects the object registry
-	 *
-	 * @param \F3\FLOW3\Object\RegistryInterface $objectRegistry
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectRegistry(\F3\FLOW3\Object\RegistryInterface $objectRegistry) {
-		$this->objectRegistry = $objectRegistry;
-	}
-
-	/**
 	 * Creates a fresh instance of the object specified by $objectName.
 	 *
 	 * This factory method can only create objects of the scope prototype.
@@ -115,7 +104,9 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 		if ($objectConfiguration->getScope() != 'prototype') throw new \F3\FLOW3\Object\Exception\WrongScope('Object "' . $objectName . '" is of scope ' . $objectConfiguration->getScope() . ' but only prototype is supported by create()', 1225385285);
 
 		$overridingArguments = self::convertArgumentValuesToArgumentObjects(array_slice(func_get_args(), 1));
-		return $this->objectBuilder->createObject($objectName, $objectConfiguration, $overridingArguments);
+		$object =  $this->objectBuilder->createObject($objectName, $objectConfiguration, $overridingArguments);
+		$this->objectManager->registerShutdownObject($object, $objectConfiguration->getLifecycleShutdownMethodName());
+		return $object;
 	}
 
 	/**
@@ -143,7 +134,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __clone() {
-		$this->objectRegistry = clone $this->objectRegistry;
 		$this->objectBuilder = clone $this->objectBuilder;
 	}
 }

@@ -24,7 +24,7 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  */
 
@@ -34,7 +34,7 @@ require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething.php');
  * Testcase for the Pointcut Class-Tagged-With Filter
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
@@ -44,34 +44,23 @@ class PointcutClassTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function filterMatchesClassWithSimpleTag() {
+	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
+		$className = 'F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
 		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('something');
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething');
-		$methods = $class->getMethods();
-		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
-	}
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function filterMatchesClassWithTagWithWildcard() {
 		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('some.*');
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething');
-		$methods = $class->getMethods();
-		$this->assertTrue($classTaggedWithFilter->matches($class, $methods[0], microtime()));
-	}
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function filterCorrectlyDoesntMatchClassWithoutSpecifiedTag() {
 		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('any.*');
-		$class = new \F3\FLOW3\Reflection\ClassReflection('F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething');
-		$methods = $class->getMethods();
-		$this->assertFALSE($classTaggedWithFilter->matches($class, $methods[0], microtime()));
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($classTaggedWithFilter->matches($className, '', '', 1));
 	}
-
 }
 ?>
