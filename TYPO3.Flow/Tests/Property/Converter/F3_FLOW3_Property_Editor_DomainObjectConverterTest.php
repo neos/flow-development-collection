@@ -34,7 +34,7 @@ include_once( __DIR__ . '/Fixture/ExampleDomainObject_BlogPosting.php');
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class DomainObjectConverterTest extends \F3\Testing\BaseTestCase {
 

@@ -36,7 +36,7 @@ require_once (__DIR__ . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSette
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MapperTest extends \F3\Testing\BaseTestCase {
 

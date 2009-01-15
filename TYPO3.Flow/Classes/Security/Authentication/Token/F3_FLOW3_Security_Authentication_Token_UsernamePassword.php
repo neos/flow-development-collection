@@ -34,7 +34,7 @@ namespace F3\FLOW3\Security\Authentication\Token;
  * @package FLOW3
  * @subpackage Security
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  * @todo here we also need a user details service and an authentication entry point
  */

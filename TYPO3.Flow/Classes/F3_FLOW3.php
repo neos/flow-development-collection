@@ -49,7 +49,7 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
  *
  * @package FLOW3
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 final class FLOW3 {
 

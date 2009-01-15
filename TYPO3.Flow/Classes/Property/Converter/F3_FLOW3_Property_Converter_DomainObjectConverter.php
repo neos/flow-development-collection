@@ -34,7 +34,7 @@ namespace F3\FLOW3\Property\Converter;
  * @package FLOW3
  * @subpackage Property
  * @version $Id: F3_FLOW3_Property_ConverterInterface.php 1711 2009-01-07 21:51:23Z sebastian $
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface, \F3\FLOW3\Property\Converter\IdentifierAwareInterface {

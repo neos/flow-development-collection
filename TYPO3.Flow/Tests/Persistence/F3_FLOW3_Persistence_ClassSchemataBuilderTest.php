@@ -38,7 +38,7 @@ require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_ValueObject1.php');
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 

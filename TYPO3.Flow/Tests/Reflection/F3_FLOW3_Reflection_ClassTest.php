@@ -37,7 +37,7 @@ require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2.php');
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class ClassTest extends \F3\Testing\BaseTestCase implements \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1, \F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2 {

@@ -34,7 +34,7 @@ namespace F3\FLOW3\Utility;
  * @package FLOW3
  * @subpackage Utility
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @internal (robert) I'm not sure yet if we should use this library statically or as a singleton. The latter might be problematic if we use it from the Core classes.
  */
 class Arrays {
@@ -191,8 +191,6 @@ class Arrays {
 		if (isset($array[$key])) {
 			if (count($path) > 0) {
 				return (is_array($array[$key])) ? self::getValueByPath($array[$key], $path) : NULL;
-			} elseif (count($path) == 0) {
-				return $array[$key];
 			} else {
 				return $array[$key];
 			}

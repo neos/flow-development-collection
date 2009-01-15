@@ -37,7 +37,7 @@ require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/F3_FLOW3_Fixture_Secon
  * @package FLOW3
  * @subpackage AOP
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutClassNameFilterTest extends \F3\Testing\BaseTestCase {
 

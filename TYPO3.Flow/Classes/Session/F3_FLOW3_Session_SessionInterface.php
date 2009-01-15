@@ -35,7 +35,7 @@ namespace F3\FLOW3\Session;
  * @subpackage Session
  * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface SessionInterface {
 

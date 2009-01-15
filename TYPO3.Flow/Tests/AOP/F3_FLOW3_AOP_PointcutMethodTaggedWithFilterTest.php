@@ -36,7 +36,7 @@ require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_MethodsTaggedWithSomething.php'
  * @package FLOW3
  * @subpackage AOP
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PointcutMethodTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
 

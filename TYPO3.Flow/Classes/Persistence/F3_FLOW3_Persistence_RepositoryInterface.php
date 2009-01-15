@@ -34,13 +34,13 @@ namespace F3\FLOW3\Persistence;
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  */
 interface RepositoryInterface {
 
 	/**
-	 * Adds an object to this repository
+	 * Adds an object to this repository.
 	 *
 	 * @param object $object The object to add
 	 * @return void
@@ -48,7 +48,7 @@ interface RepositoryInterface {
 	public function add($object);
 
 	/**
-	 * Removes an object from this repository
+	 * Removes an object from this repository.
 	 *
 	 * @param object $object The object to remove
 	 * @return void

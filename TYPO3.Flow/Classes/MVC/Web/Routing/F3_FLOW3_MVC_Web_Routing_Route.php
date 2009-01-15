@@ -35,7 +35,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @subpackage MVC
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
 class Route {

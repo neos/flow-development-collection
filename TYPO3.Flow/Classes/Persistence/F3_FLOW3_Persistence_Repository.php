@@ -34,7 +34,7 @@ namespace F3\FLOW3\Persistence;
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 
@@ -139,7 +139,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns all objects of this repository
 	 *
-	 * @return array An array of objects
+	 * @return array An array of objects, empty if no objects found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -150,7 +150,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Returns a query for objects of this repository
 	 *
-	 * @return \F3\FLOW3:Persistence\QueryInterface
+	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

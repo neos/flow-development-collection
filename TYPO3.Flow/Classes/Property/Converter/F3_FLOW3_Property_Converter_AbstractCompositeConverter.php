@@ -35,7 +35,7 @@ namespace F3\FLOW3\Property\Converter;
  * @package FLOW3
  * @subpackage Property
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\ConverterInterface {
 
