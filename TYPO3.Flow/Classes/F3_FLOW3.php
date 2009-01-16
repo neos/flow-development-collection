@@ -168,6 +168,7 @@ final class FLOW3 {
 		$this->initializePackages();
 
 		if ($this->packageManager->isPackageActive('FirePHP')) {
+			$this->objectManager->registerObject('F3\FirePHP\Core');
 			$this->objectManager->getObject('F3\FirePHP\Core');
 		}
 

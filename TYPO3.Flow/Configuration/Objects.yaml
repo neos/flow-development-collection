@@ -13,7 +13,6 @@
 #                                                                          #
 # AOP                                                                      #
 #                                                                          #
-F3\FirePHP\Core: []
 
 F3\FLOW3\AOP\Framework:
   properties:
