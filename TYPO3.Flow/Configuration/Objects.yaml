@@ -13,23 +13,30 @@
 #                                                                          #
 # AOP                                                                      #
 #                                                                          #
+F3\FirePHP\Core: []
 
 F3\FLOW3\AOP\Framework:
   properties:
     reflectionService: object: F3\FLOW3\Reflection\Service
     pointcutExpressionParser: object: F3\FLOW3\AOP\PointcutExpressionParser
-    proxyCache:
+    proxyClassCodesCache:
       object:
         factoryClassName: F3\FLOW3\Cache\Manager
         factoryMethodName: getCache
         arguments:
-          1: value: FLOW3_AOP_Proxy
-    configurationCache:
+          1: value: FLOW3_AOP_ProxyClassCodes
+    targetClassInformationCache:
       object:
         factoryClassName: F3\FLOW3\Cache\Manager
         factoryMethodName: getCache
         arguments:
-          1: value: FLOW3_AOP_Configuration
+          1: value: FLOW3_AOP_TargetClassInformation
+    proxyBuildInformationCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_AOP_ProxyBuildInformation
     configurationManager: object: F3\FLOW3\Configuration\Manager
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\AOP\AdvicedConstructorInterceptorBuilder: []

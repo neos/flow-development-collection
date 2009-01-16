@@ -21,8 +21,10 @@ Default:
 ##
 # Definition of caches used by FLOW3:
 #
-FLOW3_AOP_Proxy: []
-FLOW3_AOP_Configuration: []
+FLOW3_AOP_ProxyClassCodes:
+  frontend: F3\FLOW3\Cache\StringCache
+FLOW3_AOP_ProxyBuildInformation: []
+FLOW3_AOP_TargetClassInformation: []
 FLOW3_Cache_ClassFiles: []
 FLOW3_Cache_ResourceFiles: []
 FLOW3_Monitor_ChangeDetectionStrategy_ModificationTime: []

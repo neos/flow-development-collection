@@ -276,7 +276,7 @@ final class FLOW3 {
 	 */
 	public function initializeSystemLogger() {
 		$this->systemLogger = $this->objectManager->getObject('F3\FLOW3\Log\SystemLoggerInterface');
-		$this->systemLogger->log(sprintf('> Launching FLOW3 in %s context.', $this->context), LOG_INFO);
+		$this->systemLogger->log(sprintf('--- Launching FLOW3 in %s context. ---', $this->context), LOG_INFO);
 		$this->exceptionHandler->injectSystemLogger($this->systemLogger);
 	}
 
@@ -358,7 +358,9 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeFileMonitor() {
-		$this->monitorClassFiles();
+		if ($this->settings['monitor']['fileMonitor']['enable'] === TRUE) {
+			$this->monitorClassFiles();
+		}
 	}
 
 	/**
@@ -560,7 +562,7 @@ final class FLOW3 {
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->close();
 
-		$this->systemLogger->log(sprintf('> Shutting down FLOW3 ...', $this->context), LOG_INFO);
+		$this->systemLogger->log(sprintf('Shutting down FLOW3 ...', $this->context), LOG_INFO);
 
 		$this->objectManager->shutdown();
 
@@ -616,7 +618,6 @@ final class FLOW3 {
 				}
 			}
 		}
-		$this->reflectionService->initialize($availableClassNames);
 
 		foreach ($availableClassNames as $className) {
 			if (substr($className, -9, 9) == 'Interface') {

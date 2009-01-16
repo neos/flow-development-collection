@@ -205,6 +205,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(array $classNamesToReflect) {
+		if ($this->initialized) throw new \F3\FLOW3\ReflectionException('The reflection service can only be initialized once.', 1232044696);
+
 		$this->loadFromCache();
 
 		if ($this->detectClassChanges === TRUE) {
@@ -217,7 +219,6 @@ class Service {
 
 		sort($classNamesToReflect);
 		$classNamesToReflect = array_unique($classNamesToReflect);
-
 		if ($this->reflectedClassNames !== $classNamesToReflect) {
 			$newClassNames = array_diff($classNamesToReflect, $this->reflectedClassNames);
 			foreach ($newClassNames as $className) {
@@ -606,6 +607,7 @@ class Service {
 				$this->classTagsValues[$className][$tag] = $values;
 			}
 		}
+
 		foreach ($class->getProperties() as $property) {
 			$propertyName = $property->getName();
 			$this->classPropertyNames[$className][] = $propertyName;
@@ -616,6 +618,7 @@ class Service {
 				}
 			}
 		}
+
 		foreach ($class->getMethods() as $method) {
 			$methodName = $method->getName();
 			if ($method->isFinal()) $this->finalMethods[$className . '::' . $methodName] = TRUE;
@@ -677,24 +680,17 @@ class Service {
 			if ($index !== FALSE) unset($this->taggedClasses[$tag][$index]);
 		}
 
-		$propertyNames = array(
-			'abstractClasses',
-			'classConstructorMethodNames',
-			'classPropertyNames',
-			'classTagsValues',
-			'finalClasses',
-			'finalMethods',
-			'staticMethods',
-			'methodTagsValues',
-			'methodParameters',
-			'methodVisibilities',
-			'propertyTagsValues',
-		);
-		foreach ($propertyNames as $propertyName) {
-			if (isset($this->$propertyName[$className])) {
-				unset($this->$propertyName[$className]);
-			}
-		}
+		if (isset($this->abstractClasses[$className])) unset($this->abstractClasses[$className]);
+		if (isset($this->classConstructorMethodNames[$className])) unset($this->classConstructorMethodNames[$className]);
+		if (isset($this->classPropertyNames[$className])) unset($this->classPropertyNames[$className]);
+		if (isset($this->classTagsValues[$className])) unset($this->classTagsValues[$className]);
+		if (isset($this->finalClasses[$className])) unset($this->finalClasses[$className]);
+		if (isset($this->finalMethods[$className])) unset($this->finalMethods[$className]);
+		if (isset($this->staticMethods[$className])) unset($this->staticMethods[$className]);
+		if (isset($this->methodTagsValues[$className])) unset($this->methodTagsValues[$className]);
+		if (isset($this->methodParameters[$className])) unset($this->methodParameters[$className]);
+		if (isset($this->methodVisibilities[$className])) unset($this->methodVisibilities[$className]);
+		if (isset($this->propertyTagsValues[$className])) unset($this->propertyTagsValues[$className]);
 
 		$index = array_search($className, $this->reflectedClassNames);
 		if ($index !== FALSE) unset($this->reflectedClassNames[$index]);

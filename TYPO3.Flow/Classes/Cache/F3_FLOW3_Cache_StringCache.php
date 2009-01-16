@@ -50,8 +50,7 @@ class StringCache extends \F3\FLOW3\Cache\AbstractCache {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function set($entryIdentifier, $string, $tags = array()) {
-		if (!is_string($string)) throw new \F3\FLOW3\Cache\Exception\InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
-
+		if (!is_string($string) && $string !== '') throw new \F3\FLOW3\Cache\Exception\InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
 		$this->backend->set($entryIdentifier, $string, $tags);
 	}
 

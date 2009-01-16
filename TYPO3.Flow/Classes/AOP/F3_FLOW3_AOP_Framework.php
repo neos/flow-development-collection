@@ -71,14 +71,19 @@ class Framework {
 	protected $proxyClassBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache
+	 * @var \F3\FLOW3\Cache\StringCache
 	 */
-	protected $proxyCache;
+	protected $proxyClassCodesCache;
 
 	/**
 	 * @var \F3\FLOW3\Cache\VariableCache
 	 */
-	protected $configurationCache;
+	protected $targetClassInformationCache;
+
+	/**
+	 * @var \F3\FLOW3\Cache\VariableCache
+	 */
+	protected $proxyBuildInformationCache;
 
 	/**
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
@@ -98,16 +103,10 @@ class Framework {
 	protected $aspectContainers = array();
 
 	/**
-	 * An array of all proxied class names and adviced methods with information about the advice which has been applied.
-	 * @var array
-	 */
-	protected $advicedMethodsInformationByTargetClass = array();
-
-	/**
 	 * An array target class names and their proxy class name.
 	 * @var array
 	 */
-	protected $targetAndProxyClassNames = array();
+	protected $targetAndProxyClassNames;
 
 	/**
 	 * Flag which signals if this class has already been initialized.
@@ -152,23 +151,34 @@ class Framework {
 	/**
 	 * Injects the cache for storing proxy class code
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $proxyCache
+	 * @param \F3\FLOW3\Cache\VariableCache $proxyClassCodesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyCache(\F3\FLOW3\Cache\VariableCache $proxyCache) {
-		$this->proxyCache = $proxyCache;
+	public function injectProxyClassCodesCache(\F3\FLOW3\Cache\StringCache $proxyClassCodesCache) {
+		$this->proxyClassCodesCache = $proxyClassCodesCache;
 	}
 
 	/**
-	 * Injects the cache for storing AOP configuration
+	 * Injects the cache for storing information about target classes
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $this->configurationCache
+	 * @param \F3\FLOW3\Cache\VariableCache $targetClassInformationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectConfigurationCache(\F3\FLOW3\Cache\VariableCache $configurationCache) {
-		$this->configurationCache = $configurationCache;
+	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\VariableCache $targetClassInformationCache) {
+		$this->targetClassInformationCache = $targetClassInformationCache;
+	}
+
+	/**
+	 * Injects the cache for storing information about the AOP proxy build status
+	 *
+	 * @param \F3\FLOW3\Cache\VariableCache $proxyBuildInformationCache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectProxyBuildInformationCache(\F3\FLOW3\Cache\VariableCache $proxyBuildInformationCache) {
+		$this->proxyBuildInformationCache = $proxyBuildInformationCache;
 	}
 
 	/**
@@ -221,53 +231,74 @@ class Framework {
 		if ($this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has already been initialized!', 1169550994);
 		$this->isInitialized = TRUE;
 
-		$loadedFromCache = FALSE;
-		$context = $this->objectManager->getContext();
-
-		if ($this->proxyCache->has('proxyBuildResults')) {
-			$proxyBuildResults =  $this->proxyCache->get('proxyBuildResults');
-			$loadedFromCache = TRUE;
+		if ($this->proxyBuildInformationCache->has('targetAndProxyClassNames')) {
+			$this->targetAndProxyClassNames = $this->proxyBuildInformationCache->get('targetAndProxyClassNames');
 		}
 
-		if (!$loadedFromCache) {
-			$this->systemLogger->log('No cached AOP proxy information found, building new proxy classes.', LOG_INFO);
-			$allAvailableClasses = array();
-			$proxyableClasses = array();
-			foreach ($objectConfigurations as $objectConfiguration) {
-				$className = $objectConfiguration->getClassName();
-				$allAvailableClasses[] = $className;
-				if (!in_array(substr($className, 0, 12), $this->blacklistedSubPackages)) {
-					$proxyableClasses[] = $className;
+		if (!$this->proxyBuildInformationCache->has('allProxyClassesUpToDate')) {
+			$allAvailableClassNames = $this->getAllImplementationClassesFromObjectConfigurations($objectConfigurations);
+			$cachedTargetClassNames = ($this->proxyBuildInformationCache->has('targetClassNames')) ? $this->proxyBuildInformationCache->get('targetClassNames') : array();
+			$cachedAspectClassNames = ($this->proxyBuildInformationCache->has('aspectClassNames')) ? $this->proxyBuildInformationCache->get('aspectClassNames') : array();
+			$actualTargetClassNames = $this->getProxyableClasses($allAvailableClassNames);
+			$actualAspectClassNames = $this->reflectionService->getClassNamesByTag('aspect');
+			sort($actualTargetClassNames);
+			sort($actualAspectClassNames);
+
+			$this->aspectContainers = $this->buildAspectContainers($allAvailableClassNames);
+
+			$dirtyTargetClassNames = $actualTargetClassNames;
+			if ($cachedAspectClassNames === $actualAspectClassNames) {
+				$validProxyClassesCount = 0;
+				$outdatedProxyClassesCount = 0;
+				foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
+					if ($this->proxyClassCodesCache->has(str_replace('\\', '_', $proxyClassName))) {
+						$validProxyClassesCount ++;
+						$dirtyTargetClassNames = array_diff($dirtyTargetClassNames, array($targetClassName));
+					} else {
+						$outdatedProxyClassesCount ++;
+						unset($this->targetAndProxyClassNames[$targetClassName]);
+					}
 				}
-
+				$this->systemLogger->log(sprintf('At least one target class changed, aspects unchanged. Found %s valid and %s outdated proxy classes.', $validProxyClassesCount, $outdatedProxyClassesCount), LOG_INFO);
+			} else {
+				$this->systemLogger->log(sprintf('At least one aspect changed, rebuilding proxy classes for %s target classes.', count($actualTargetClassNames)), LOG_INFO);
+				$this->proxyClassCodesCache->flush();
+				$this->targetAndProxyClassNames = array();
 			}
-			$this->aspectContainers = $this->buildAspectContainers($allAvailableClasses);
-			$proxyBuildResults = $this->buildProxyClasses($proxyableClasses, $this->aspectContainers, $context);
+
+			foreach ($dirtyTargetClassNames as $targetClassName) {
+				$proxyBuildResult = $this->proxyClassBuilder->buildProxyClass($targetClassName, $this->aspectContainers, $this->objectManager->getContext());
+				if ($proxyBuildResult !== FALSE) {
+					$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
+					$this->systemLogger->log(sprintf('Built proxy class "%s" for target class "%s".', $proxyBuildResult['proxyClassName'], $targetClassName), LOG_DEBUG);
+					$this->proxyClassCodesCache->set(str_replace('\\', '_', $proxyBuildResult['proxyClassName']), $proxyBuildResult['proxyClassCode'], array($this->proxyClassCodesCache->getClassTag($targetClassName)));
+				} else {
+					unset($this->targetAndProxyClassNames[$targetClassName]);
+				}
+			}
+
+			$aspectClassesTags = array();
+			foreach ($actualAspectClassNames as $aspectClassName) {
+				$aspectClassesTags[] = $this->proxyBuildInformationCache->getClassTag($aspectClassName);
+			}
+
+			$this->proxyBuildInformationCache->set('targetAndProxyClassNames', $this->targetAndProxyClassNames);
+			$this->proxyBuildInformationCache->set('aspectClassNames', $actualAspectClassNames, $aspectClassesTags);
+			$this->proxyBuildInformationCache->set('targetClassNames', $actualTargetClassNames);
+			$this->proxyBuildInformationCache->set('allProxyClassesUpToDate', '', array($this->proxyClassCodesCache->getClassTag()));
 		}
 
-		foreach ($proxyBuildResults as $targetClassName => $proxyBuildResult) {
-			$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
-			if (class_exists($proxyBuildResult['proxyClassName'], FALSE)) throw new \F3\FLOW3\AOP\Exception('Class ' . $proxyBuildResult['proxyClassName'] . ' already exists.', 1229361833);
+		foreach ($this->targetAndProxyClassNames as $targetClassName => $proxyClassName) {
+			if (class_exists($proxyClassName, FALSE)) throw new \F3\FLOW3\AOP\Exception('Class ' . $proxyClassName . ' already exists.', 1229361833);
+			if (!$this->proxyClassCodesCache->has(str_replace('\\', '_', $proxyClassName))) throw new \F3\FLOW3\AOP\Exception('No proxy class code for class "' . $proxyClassName . '" found in cache.', 1229362833);
 
-			eval($proxyBuildResult['proxyClassCode']);
+			eval($this->proxyClassCodesCache->get(str_replace('\\', '_', $proxyClassName)));
 
 			foreach ($objectConfigurations as $objectName => $objectConfiguration) {
 				if ($objectConfiguration->getClassName() == $targetClassName) {
-					$objectConfigurations[$objectName]->setClassName($proxyBuildResult['proxyClassName']);
+					$objectConfigurations[$objectName]->setClassName($proxyClassName);
 				}
 			}
-		}
-
-		if (!$loadedFromCache) {
-			$tags = array();
-			foreach (array_keys($this->aspectContainers) as $aspectClassName) {
-				$tags[] = $this->configurationCache->getClassTag($aspectClassName);
-			}
-			foreach (array_keys($proxyBuildResults) as $targetClassName) {
-				$tags[] = $this->configurationCache->getClassTag($targetClassName);
-			}
-			$this->systemLogger->log('Writing AOP proxy build results to cache (' . count($proxyBuildResults) . ' proxy classes)', LOG_DEBUG);
-			$this->proxyCache->set('proxyBuildResults', $proxyBuildResults, $tags);
 		}
 	}
 
@@ -279,17 +310,6 @@ class Framework {
 	 */
 	public function isInitialized() {
 		return $this->isInitialized;
-	}
-
-	/**
-	 * Returns the names of all target and their proxy classes which were affected by
-	 * at least one advice and therefore needed to be proxied.
-	 *
-	 * @return array An array of target class names and their proxy counterpart.
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getTargetAndProxyClassNames() {
-		return $this->targetAndProxyClassNames;
 	}
 
 	/**
@@ -313,6 +333,17 @@ class Framework {
 	}
 
 	/**
+	 * Returns the names of all target and their proxy classes which were affected by
+	 * at least one advice and therefore needed to be proxied.
+	 *
+	 * @return array An array of target class names and their proxy counterpart.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getTargetAndProxyClassNames() {
+		return $this->targetAndProxyClassNames;
+	}
+
+	/**
 	 * Returns an array of method names and advices which were applied to the specified class. If the
 	 * target class has no adviced methods, an empty array is returned.
 	 *
@@ -321,8 +352,45 @@ class Framework {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
+		throw new \F3\FLOW3\AOP\Exception('This method is currently not supported.');
 		if (!isset($this->advicedMethodsInformationByTargetClass[$targetClassName])) return array();
 		return $this->advicedMethodsInformationByTargetClass[$targetClassName];
+	}
+
+	/**
+	 * Extracts all implementation class names out of the given object configurations.
+	 *
+	 * @param array $objectConfigurations The object configurations to consider
+	 * @return array Class names mentioned in the "className" property of each object configuration
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getAllImplementationClassesFromObjectConfigurations(array $objectConfigurations) {
+		$implementationClasses = array();
+		foreach ($objectConfigurations as $objectConfiguration) {
+			$implementationClasses[] = $objectConfiguration->getClassName();
+		}
+		return $implementationClasses;
+	}
+
+	/**
+	 * Determines which of the given classes are potentially proxyable
+	 * and returns their names in an array.
+	 *
+	 * @param array $classNames Names of the classes to check
+	 * @return array Names of classes which can be proxied
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function getProxyableClasses(array $classNames) {
+		$proxyableClasses = array();
+		foreach ($classNames as $className) {
+			if (!in_array(substr($className, 0, 12), $this->blacklistedSubPackages)) {
+				if (!$this->reflectionService->isClassReflected($className)) throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $className . '" does not exist.', 1187348208);
+				if (!$this->reflectionService->isClassTaggedWith($className, 'aspect') && !$this->reflectionService->isClassAbstract($className) && !$this->reflectionService->isClassFinal($className)) {
+					$proxyableClasses[] = $className;
+				}
+			}
+		}
+		return $proxyableClasses;
 	}
 
 	/**
@@ -358,7 +426,6 @@ class Framework {
 		if (!$this->reflectionService->isClassTaggedWith($aspectClassName, 'aspect')) return FALSE;
 
 		$aspectContainer = new \F3\FLOW3\AOP\AspectContainer($aspectClassName);
-
 		foreach ($this->reflectionService->getClassMethodNames($aspectClassName) as $methodName) {
 			foreach ($this->reflectionService->getMethodTagsValues($aspectClassName, $methodName) as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
@@ -407,7 +474,6 @@ class Framework {
 				}
 			}
 		}
-
 		foreach ($this->reflectionService->getClassPropertyNames($aspectClassName) as $propertyName) {
 			foreach ($this->reflectionService->getPropertyTagsValues($aspectClassName, $propertyName) as $tagName => $tagValues) {
 				foreach ($tagValues as $tagValue) {
@@ -445,13 +511,9 @@ class Framework {
 	protected function buildProxyClasses(array $classNames, array $aspectContainers, $context) {
 		$proxyBuildResults = array();
 		foreach ($classNames as $targetClassName) {
-			if (!$this->reflectionService->isClassReflected($targetClassName)) throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $targetClassName . '" does not exist.', 1187348208);
-			if (!$this->reflectionService->isClassTaggedWith($targetClassName, 'aspect') && !$this->reflectionService->isClassAbstract($targetClassName) && !$this->reflectionService->isClassFinal($targetClassName)) {
-				$proxyBuildResult = $this->proxyClassBuilder->buildProxyClass($targetClassName, $aspectContainers, $context);
-				if ($proxyBuildResult !== FALSE) {
-					$proxyBuildResults[$targetClassName] = $proxyBuildResult;
-					$this->advicedMethodsInformationByTargetClass[$targetClassName] = $proxyBuildResult['advicedMethodsInformation'];
-				}
+			$proxyBuildResult = $this->proxyClassBuilder->buildProxyClass($targetClassName, $aspectContainers, $context);
+			if ($proxyBuildResult !== FALSE) {
+				$proxyBuildResults[$targetClassName] = $proxyBuildResult;
 			}
 		}
 		return $proxyBuildResults;
