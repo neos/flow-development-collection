@@ -117,8 +117,8 @@ class Framework {
 	/**
 	 * Constructor
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager: An instance of the object manager
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory: An instance of the object factory
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager An instance of the object manager
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory An instance of the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
@@ -224,6 +224,7 @@ class Framework {
 	 *
 	 * The class names of all proxied classes is stored back in the $objectConfigurations array.
 	 *
+	 * @param array &$objectConfigurations
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -347,7 +348,7 @@ class Framework {
 	 * Returns an array of method names and advices which were applied to the specified class. If the
 	 * target class has no adviced methods, an empty array is returned.
 	 *
-	 * @param string $targetClassName: Name of the target class
+	 * @param string $targetClassName Name of the target class
 	 * @return mixed An array of method names and their advices as array of \F3\FLOW3\AOP\AdviceInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
