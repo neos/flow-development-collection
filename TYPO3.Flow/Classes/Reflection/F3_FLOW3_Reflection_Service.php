@@ -165,6 +165,8 @@ class Service {
 	/**
 	 * Sets the cache
 	 *
+	 * The cache must be set before initializing the Reflection Service
+	 *
 	 * @param \F3\FLOW3\Cache\AbstractCache $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
@@ -205,7 +207,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(array $classNamesToReflect) {
-		if ($this->initialized) throw new \F3\FLOW3\ReflectionException('The reflection service can only be initialized once.', 1232044696);
+		if ($this->initialized) throw new \F3\FLOW3\Reflection\Exception('The Reflection Service can only be initialized once.', 1232044696);
+		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 
 		$this->loadFromCache();
 
