@@ -208,7 +208,6 @@ class Service {
 	 */
 	public function initialize(array $classNamesToReflect) {
 		if ($this->initialized) throw new \F3\FLOW3\Reflection\Exception('The Reflection Service can only be initialized once.', 1232044696);
-		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
 
 		$this->loadFromCache();
 
@@ -729,6 +728,8 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function saveToCache(array $newClassNames) {
+		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
+
 		foreach ($newClassNames as $className) {
 			$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
 		}
