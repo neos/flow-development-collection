@@ -21,7 +21,7 @@
     most important type of configuration are the settings, however other
     configuration types exist for special purposes.</para>
 
-    <para>The preferred configuration format is PHP and the configuration
+    <para>The preferred configuration format is YAML and the configuration
     options of each type are defined in their own dedicated file:</para>
 
     <variablelist>
@@ -30,8 +30,8 @@
 
         <listitem>
           <para>Contains user-level settings, i.e. configuration options the
-          users or administrators are meant to change. Settings usually
-          control the visible behaviour of the application.</para>
+          users or administrators are meant to change. Settings are the
+          highest level of system configuration.</para>
         </listitem>
       </varlistentry>
 
@@ -39,7 +39,7 @@
         <term><filename>FLOW3.yaml</filename></term>
 
         <listitem>
-          <para>Contains settings for FLOW3 itself.</para>
+          <para>Contains settings for the FLOW3 package.</para>
         </listitem>
       </varlistentry>
 
@@ -57,7 +57,7 @@
         <term><filename>Objects.yaml</filename></term>
 
         <listitem>
-          <para>Contains object configuration, ie. options which configure
+          <para>Contains object configuration, i.e. options which configure
           objects and the combination of those on a lower level. See the
           Object Manager section for more information.</para>
         </listitem>
@@ -67,9 +67,20 @@
         <term><filename>Packages.yaml</filename></term>
 
         <listitem>
-          <para>Contains package configuration, ie. options which define
-          certain specialities of the package such as custom autoloaders or
+          <para>Contains package configuration, i.e. options which define
+          certain specialties of the package such as custom autoloaders or
           special resources.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Caches.yaml</filename></term>
+
+        <listitem>
+          <para>Contains a list of caches which are registered automatically.
+          Caches defined in this configuration file are registered in an early
+          stage of the boot process and profit from mechanisms such as
+          automatic flushing by the File Monitor.</para>
         </listitem>
       </varlistentry>
     </variablelist>
@@ -96,7 +107,7 @@
 
             <para>Note that <filename>FLOW3.yaml</filename> files are only
             allowed in the <package>FLOW3</package> package and are ignored in
-            any other package configuration dir.</para>
+            any other package configuration directory.</para>
           </listitem>
         </varlistentry>
 
@@ -142,7 +153,7 @@
     <section>
       <title>YAML</title>
 
-      <para>YAML is a well-readable format which is espcially well-suited for
+      <para>YAML is a well-readable format which is especially well-suited for
       defining configuration. The full specification among with many examples
       can be found on the <link ns5:href="???">YAML website</link>. All
       important parts of the YAML specification are supported by the parser
@@ -153,29 +164,27 @@
       <example>
         <title>Example for a package-level Settings.yaml</title>
 
-        <programlisting language="yaml">#                                                                        #
-# Settings Configuration for the TYPO3CR Package                         #
-#                                                                        #
+        <programlisting language="yaml">#                                                                        #
+# Settings Configuration for the TYPO3CR Package                         #
+#                                                                        #
 
-# $Id: Settings.yaml 1459 2008-11-10 10:11:28Z k-fish $
+# $Id: Settings.yaml 1234 2009-01-01 12:00:00Z foobar $
 
 TYPO3CR:
 
-  # The storage backend configuration
-  storage:
-    backend: 'F3\TYPO3CR\Storage\Backend\PDO'
-    backendOptions:
-      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
-      username: 
-      password: 
+  # The storage backend configuration
+  storage:
+    backend: 'F3\TYPO3CR\Storage\Backend\PDO'
+    backendOptions:
+      dataSourceName: 'sqlite:%FLOW3_PATH_DATA%Persistent/TYPO3CR.db'
+      username: 
+      password: 
 
-  # The indexing/search backend configuration
-  search:
-    backend: 'F3\TYPO3CR\Storage\Search\Lucene'
-    backendOptions:
-      indexLocation: '%FLOW3_PATH_DATA%Persistent/Index/'
-
-</programlisting>
+  # The indexing/search backend configuration
+  search:
+    backend: 'F3\TYPO3CR\Storage\Search\Lucene'
+    backendOptions:
+      indexLocation: '%FLOW3_PATH_DATA%Persistent/Index/'</programlisting>
       </example>
     </section>
 
@@ -193,31 +202,31 @@ TYPO3CR:
         <para><programlisting><literal>&lt;?php
 declare(ENCODING="utf-8");
 
-/*                                                                        *
- * Settings Configuration for the TYPO3CR Package                         *
- *                                                                        */
+/*                                                                        *
+ * Settings Configuration for the TYPO3CR Package                         *
+ *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id: Objects.php 888 2008-05-30 16:00:05Z k-fish $
- */
+ * @package TYPO3CR
+ * @version $Id: Objects.php 1234 2009-01-10 12:00:00Z johndoe $
+ */
 
 /**
- * The storage backend to use for TYPO3CR.
- *
- * @var F3_TYPO3CR_Storage_BackendInterface
- */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3\TYPO3CR\Storage\Backend\PDO';
+ * The storage backend to use for TYPO3CR.
+ *
+ * @var F3_TYPO3CR_Storage_BackendInterface
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3\TYPO3CR\Storage\Backend\PDO';
 
 /**
- * Options which are passed to the storage backend used by TYPO3CR
- *
- * @var array
- */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
-  'dataSourceName' =&gt; 'sqlite:/tmp/TYPO3CR.db',
-  'username' =&gt; NULL,
-  'password' =&gt; NULL
+ * Options which are passed to the storage backend used by TYPO3CR
+ *
+ * @var array
+ */
+$c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
+  'dataSourceName' =&gt; 'sqlite:/tmp/TYPO3CR.db',
+  'username' =&gt; NULL,
+  'password' =&gt; NULL
 );
 
 ?&gt;</literal></programlisting></para>
@@ -258,11 +267,11 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
         syntax</title>
 
         <para><programlisting><literal>/**
- * The storage backend to use for TYPO3CR.
- *
- * @var \F3\TYPO3CR\Storage\BackendInterface
- */
-$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</literal></programlisting></para>
+ * The storage backend to use for TYPO3CR.
+ *
+ * @var \F3\TYPO3CR\Storage\BackendInterface
+ */
+$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</literal></programlisting></para>
       </example>
 
       <para>Finally you may even call virtual setter methods in order to get a
@@ -273,20 +282,18 @@ $c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</liter
         <title>Settings declaration with the object syntax and virtual
         setters</title>
 
-        <para><programlisting><literal>   // Traditional object / property syntax:
+        <para><programlisting><literal>	// Traditional object / property syntax:
 
-$c-&gt;Demo-&gt;administrator-&gt;name = 'John Doe';
-$c-&gt;Demo-&gt;administrator-&gt;email = 'johndoe@typo3.org';
-$c-&gt;Demo-&gt;administrator-&gt;country = 'DE';
+$c-&gt;Demo-&gt;administrator-&gt;name = 'John Doe';
+$c-&gt;Demo-&gt;administrator-&gt;email = 'johndoe@typo3.org';
+$c-&gt;Demo-&gt;administrator-&gt;country = 'DE';
 
-   // The same with the virtual setters syntax:
+	// The same with the virtual setters syntax:
 
 $c-&gt;Demo-&gt;administrator-&gt;
-   setName('JohnDoe')-&gt;
-   setEmail('johndoe@typo3.org')-&gt;
-   setCountry('DE');
-
-?&gt;</literal></programlisting></para>
+   setName('JohnDoe')-&gt;
+   setEmail('johndoe@typo3.org')-&gt;
+   setCountry('DE');</literal></programlisting></para>
       </example>
     </section>
 
@@ -309,7 +316,7 @@ $c-&gt;Demo-&gt;administrator-&gt;
 
           <listitem>
             <para>This can be used to register classes outside the
-            include_path and not covered by the FLOW3 class autloader.</para>
+            include_path and not covered by the FLOW3 class autoloader.</para>
           </listitem>
         </varlistentry>
 
@@ -357,16 +364,16 @@ $c-&gt;Demo-&gt;administrator-&gt;
       <example>
         <title>Example for using specialClassNameAndPaths</title>
 
-        <programlisting language="yaml">#                                                                        #
-# Package configuration of the Smarty package                            #
-#                                                                        #
+        <programlisting language="yaml">#                                                                        #
+# Package configuration of the Smarty package                            #
+#                                                                        #
 
-# @package Smarty
+# @package Smarty
 
 Smarty:
-  resourceManager:
-    specialClassNameAndPaths:
-      Smarty: %PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php</programlisting>
+  resourceManager:
+    specialClassNameAndPaths:
+      Smarty: %PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php</programlisting>
       </example>
 
       <example>
@@ -375,16 +382,16 @@ Smarty:
         <programlisting><literal>&lt;?php
 declare(ENCODING="utf-8");
 
-/*                                                                        *
- * Packages configuration of the Smarty package                           *
- *                                                                        */
+/*                                                                        *
+ * Packages configuration of the Smarty package                           *
+ *                                                                        */
 
 /**
- * @package Smarty
- * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
- */
+ * @package Smarty
+ * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
+ */
 
-$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
+$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
 
 ?&gt;</literal></programlisting>
       </example>
@@ -405,26 +412,83 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
       <title>Working with Settings</title>
 
       <para>What you usually want to work with are settings. The following
-      example demonstrates how to let FLOW3 inject an instance of the
-      configuration manager into your class, use it to retrieve the settings
-      for your package and output some option value:</para>
+      example demonstrates how to let FLOW3 inject the settings of a classes'
+      package and output some option value:</para>
+
+      <example>
+        <title>Settings Injection</title>
+
+        <programlisting>namespace F3\Demo;
+
+class SomeClass {
+
+	/**
+	 * @var array
+	 */
+	protected $settings;
+
+	/**
+	 * Inject the settings
+	 *
+	 * @param array $settings
+	 * @return void
+	 */
+	public function injectSettings(array $settings) {
+		$this-&gt;configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Outputs some settings of the "Demo" package.
+	 *
+	 * @return void
+	 */
+	public function theMethod() {
+		echo ($this-&gt;settings-&gt;administrator-&gt;name);
+		echo ($this-&gt;settings-&gt;administrator-&gt;email);
+	}
+}</programlisting>
+      </example>
+    </section>
+
+    <section>
+      <title>Manually Retrieving Settings</title>
+
+      <para>There might be situations in which you don't want to get the
+      settings injected. The Configuration Manager provides an API for these
+      cases as you can see in the next example.</para>
 
       <example>
         <title>Retrieving settings</title>
 
-        <programlisting>class SomeClass {
+        <programlisting>namespace F3\Demo;
 
-   protected $configurationManager;
+class SomeClass {
 
-   public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
-      $this-&gt;configurationManager = $configurationManager;
-   }
+	/**
+	 * @var \F3\FLOW3\Configuration\Manager
+ 	 */
+	protected $configurationManager;
 
-   public function theMethod() {
-      $mySettings = $this-&gt;configurationManager-&gt;getSettings('Demo');
-      echo ($mySettings-&gt;administrator-&gt;name);
-      echo ($mySettings-&gt;administrator-&gt;email);
-   }
+	/**
+	 * Inject the Configuration Manager
+	 *
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @return void
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+		$this-&gt;configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Output some settings of the Demo package
+	 *
+	 * @return void
+	 */
+	public function theMethod() {
+		$mySettings = $this-&gt;configurationManager-&gt;getSettings('Demo');
+		echo ($mySettings-&gt;administrator-&gt;name);
+		echo ($mySettings-&gt;administrator-&gt;email);
+	}
 }</programlisting>
       </example>
     </section>
@@ -432,17 +496,17 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PA
     <section>
       <title>Working with other configuration</title>
 
-      <para>Although seldomly necessary, it is also possible to retrieve
+      <para>Although infrequently necessary, it is also possible to retrieve
       options of the more special configuration types. The configuration
       manager provides a method called
       <methodname>getSpecialConfiguration()</methodname> for this purpose. The
       result this method returns depends on the actual configuration type you
       are requesting.</para>
 
-      <para>Bottomline is that you should be highly aware of what you're doing
-      when working with these special options. Usually there are much better
-      ways to get the desired information (eg. ask the Object Manager for
-      object configuration).</para>
+      <para>Bottom line is that you should be highly aware of what you're
+      doing when working with these special options. Usually there are much
+      better ways to get the desired information (e.g. ask the Object Manager
+      for object configuration).</para>
     </section>
   </section>
 </section>
