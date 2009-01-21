@@ -29,7 +29,7 @@ require_once('vfs/vfsStream.php');
  * @package FLOW3
  * @subpackage Monitor
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ModificationTimeTest extends \F3\Testing\BaseTestCase {
 

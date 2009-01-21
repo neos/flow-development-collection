@@ -844,7 +844,7 @@ enable-auto-props = yes
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SomeClass {
  ...</literallayout>
@@ -863,7 +863,7 @@ class SomeClass {
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Your Name &lt;your@email.here&gt;
  */
 interface SomeInterface {
@@ -883,7 +883,7 @@ interface SomeInterface {
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version    $Id$
- * @license http://opensource.org/licenses/gpl-license.php GNU Public License, version 2
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SomeException extends \Exception {
  ...</literallayout>
