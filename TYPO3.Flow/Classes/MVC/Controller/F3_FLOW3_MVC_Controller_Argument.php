@@ -149,7 +149,8 @@ class Argument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($name, $dataType = 'Text', \F3\FLOW3\Object\ManagerInterface $objectManager) {
-		if (!is_string($name) || strlen($name) < 1) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
+		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
+		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $this->objectManager->getObjectFactory();
 		$this->name = $name;
