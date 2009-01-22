@@ -40,34 +40,60 @@ namespace F3\FLOW3\Package;
 class Manager implements \F3\FLOW3\Package\ManagerInterface {
 
 	/**
-	 * @var array Array of available packages, indexed by package key
+	 * @var \F3\FLOW3\Package\Meta\WriterInterface
+	 */
+	protected $packageMetaWriter;
+
+	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $objectFactory;
+
+	/**
+	 * Array of available packages, indexed by package key
+	 * @var array
 	 */
 	protected $packages = array();
 
 	/**
-	 * @var array A translation table between lower cased and upper camel cased package keys
+	 * A translation table between lower cased and upper camel cased package keys
+	 * @var array
 	 */
 	protected $packageKeys = array();
 
 	/**
-	 * @var array List of active packages - not used yet!
+	 * Keys of active packages - not used yet!
+	 * @var array
 	 */
-	protected $arrayOfActivePackages = array();
+	protected $activePackages = array();
 
 	/**
-	 * @var array Array of packages whose classes must not be registered as objects automatically
+	 * Array of package keys that are protected and that must not be removed
+	 * @var array
 	 */
-	protected $objectRegistrationPackageBlacklist = array();
+	protected $protectedPackages = array('FLOW3', 'PHP6');
 
 	/**
-	 * @var array Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
+	 * Injects a Package Meta Writer
+	 *
+	 * @param \F3\FLOW3\Package\Meta\WriterInterface $packageMetaWriter A package meta writer instance to write package metadata
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected $objectRegistrationClassBlacklist = array(
-		'F3\FLOW3\AOP::.*',
-		'F3\FLOW3\Object.*',
-		'F3\FLOW3\Package.*',
-		'F3\FLOW3\Reflection.*',
-	);
+	public function injectPackageMetaWriter(\F3\FLOW3\Package\Meta\WriterInterface $packageMetaWriter) {
+		$this->packageMetaWriter = $packageMetaWriter;
+	}
+
+	/**
+	 * Injects the Object Factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
 
 	/**
 	 * Initializes the package manager
@@ -76,14 +102,12 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize() {
-		$this->packages = $this->scanAvailablePackages();
-		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
-			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
-		}
+		$this->scanAvailablePackages();
+		$this->activePackages = $this->packages;
 	}
 
 	/**
-	 * Returns TRUE if a package is available (the package's files exist in the pcakages directory)
+	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
 	 * or FALSE if it's not. If a package is available it doesn't mean neccessarily that it's active!
 	 *
 	 * @param string $packageKey: The key of the package to check
@@ -96,13 +120,15 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
-	 * For the time being this is an alias of isPackageAvailable() - until a real implemenation exists.
+	 * Returns TRUE if a package is activated or FALSE if it's not.
 	 *
-	 * @param string $packageKey The key of the package to check
-	 * @return boolean TRUE if the package is active, otherwise FALSE
+	 * @param string $packageKey: The key of the package to check
+	 * @return boolean TRUE if package is active, otherwise FALSE
+	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function isPackageActive($packageKey) {
-		return $this->isPackageAvailable($packageKey);
+		if (!is_string($packageKey)) throw new InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
+		return (key_exists($packageKey, $this->activePackages));
 	}
 
 	/**
@@ -140,7 +166,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @todo Implement activation / deactivation of packages
 	 */
 	public function getActivePackages() {
-		return $this->packages;
+		return $this->activePackages;
 	}
 
 	/**
@@ -185,28 +211,144 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
+	 * Check the conformance of the given package key
+	 *
+	 * @param string $packageKey The package key to validate
+	 * @return boolean If the package key is valid, returns TRUE otherwise FALSE
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function isPackageKeyValid($packageKey) {
+		return preg_match(\F3\FLOW3\Package\Package::PATTERN_MATCH_PACKAGEKEY, $packageKey) === 1;
+	}
+
+	/**
+	 * Check if the given package key is protected. Protected package keys
+	 * cannot be removed (e.g. FLOW3 can't remove FLOW3).
+	 *
+	 * @param string $packageKey The package key to check for protection
+	 * @return boolean If the package key is protected
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function isPackageKeyProtected($packageKey) {
+		return in_array($packageKey, $this->protectedPackages);
+	}
+
+	/**
+	 * Create a package, given the package key
+	 *
+	 * @param string $packageKey The package key of the new package
+	 * @param \F3\FLOW3\Package\Meta $packageMeta If specified, this package meta object is used for writing the Package.xml file
+	 * @return \F3\FLOW3\Package\Package The newly created package
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackage($packageKey, \F3\FLOW3\Package\Meta $packageMeta = NULL) {
+		if (!$this->isPackageKeyValid($packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('The package key "' . $packageKey . '" is invalid', 1220722210);
+		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExists('The package key "' . $packageKey . '" already exists', 1220722873);
+
+		if ($packageMeta === NULL) {
+			$packageMeta = $this->objectFactory->create('F3\FLOW3\Package\Meta', $packageKey);
+		}
+
+		$packagePath = FLOW3_PATH_PACKAGES . $packageKey . '/';
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
+
+		foreach (
+			array(
+				\F3\FLOW3\Package\Package::DIRECTORY_META,
+				\F3\FLOW3\Package\Package::DIRECTORY_CLASSES,
+				\F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION,
+				\F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION,
+				\F3\FLOW3\Package\Package::DIRECTORY_RESOURCES,
+				\F3\FLOW3\Package\Package::DIRECTORY_TESTS
+			) as $path) {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . $path);
+		}
+
+		$package = $this->objectFactory->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
+		$result = $this->packageMetaWriter->writePackageMeta($package, $packageMeta);
+		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta information at "' . $packagePath . '"', 1232625240);
+
+		$this->packages[$packageKey] = $package;
+		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
+			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
+		}
+		return $package;
+	}
+
+	/**
+	 * Deactivates a package if it is in the list of active packages
+	 *
+	 * @param string $packageKey The package to deactivate
+	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function deactivatePackage($packageKey) {
+		if (isset($this->activePackages[$packageKey])) {
+			unset($this->activePackages[$packageKey]);
+		} else {
+			throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available.', 1166543253);
+		}
+	}
+
+	/**
+	 * Activates a package
+	 *
+	 * @param string $packageKey The package to activate
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function activatePackage($packageKey) {
+		$package = $this->getPackage($packageKey);
+		$this->activePackages[$packageKey] = $package;
+	}
+
+	/**
+	 * Removes a package from registry and deletes it from filesystem
+	 *
+	 * @param string $packageKey package to remove
+	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function deletePackage($packageKey) {
+		if ($this->isPackageKeyProtected($packageKey)) throw new \F3\FLOW3\Package\Exception\ProtectedPackageKey('The package "' . $packageKey . '" is protected and can not be removed.', 1220722120);
+		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available and can not be removed though.', 1166543253);
+		if ($this->isPackageActive($packageKey)) {
+			$this->deactivatePackage($packageKey);
+		}
+
+		$packagePath = $this->getPackagePath($packageKey);
+		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($packagePath);
+
+		unset($this->packages[$packageKey]);
+		unset($this->packageKeys[strtolower($packageKey)]);
+	}
+
+	/**
 	 * Scans all directories in the Packages/ directory for available packages.
-	 * For each package a \F3\FLOW3\Package:: object is created and returned as
+	 * For each package a \F3\FLOW3\Package\ object is created and returned as
 	 * an array.
 	 *
-	 * @return array An array of \F3\FLOW3\Package\Package objects for all available packages
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$availablePackagesArr = array();
-
-		$availablePackagesArr['FLOW3'] = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/');
+		$availablePackages = array(
+			'FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/')
+		);
 
 		$packagesDirectoryIterator = new \DirectoryIterator(FLOW3_PATH_PACKAGES);
 		while ($packagesDirectoryIterator->valid()) {
 			$filename = $packagesDirectoryIterator->getFilename();
 			if ($filename{0} != '.' && $filename != 'FLOW3') {
 				$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
-				$availablePackagesArr[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
+				$availablePackages[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
 			}
 			$packagesDirectoryIterator->next();
 		}
-		return $availablePackagesArr;
+
+		$this->packages = $availablePackages;
+		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
+			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
+		}
 	}
 }
 

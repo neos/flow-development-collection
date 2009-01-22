@@ -245,7 +245,7 @@ class RequestBuilder {
 		$command['package'] = array_shift($rawCommand);
 		if (count($rawCommand) === 0) return $command;
 
-		$command['action'] = \F3\PHP6\Functions::strtolower(array_pop($rawCommand));
+		$command['action'] = strtolower(array_pop($rawCommand));
 		$command['controller'] = array_pop($rawCommand);
 		if (count($rawCommand) === 0) return $command;
 

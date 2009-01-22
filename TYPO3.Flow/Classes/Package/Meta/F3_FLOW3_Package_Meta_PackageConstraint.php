@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,62 +23,22 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
- * Interface for a TYPO3 Package class
+ * Package constraint meta model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+class PackageConstraint extends \F3\FLOW3\Package\Meta\AbstractConstraint {
 
 	/**
-	 * Returns the package meta object of this package.
-	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @return string The constraint scope
+	 * @see \F3\FLOW3\Package\Meta\Constraint::getConstraintScope()
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMeta();
-
-	/**
-	 * Returns the array of filenames of the class files
-	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 */
-	public function getClassFiles();
-
-	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
-	 */
-	public function getPackageKey();
-
-	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
-	 */
-	public function getPackagePath();
-
-	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
-	 */
-	public function getClassesPath();
-
-	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
-	 */
-	public function getPackageMetaPath();
+	public function getConstraintScope() {
+		return \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_PACKAGE;
+	}
 }
 ?>

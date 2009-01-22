@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,62 +23,53 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
- * Interface for a TYPO3 Package class
+ * System constraint meta model
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
+ * @version $Id:F3_FLOW3_Package_Meta.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+class SystemConstraint extends \F3\FLOW3\Package\Meta\AbstractConstraint {
 
 	/**
-	 * Returns the package meta object of this package.
+	 * The type for a system scope constraint (e.g. "Memory")
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @var string
 	 */
-	public function getPackageMeta();
+	protected $type;
 
 	/**
-	 * Returns the array of filenames of the class files
+	 * Meta system constraint constructor
 	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @param string $constraintType
+	 * @param string $type
+	 * @param string $value
+	 * @param string $minVersion
+	 * @param string $maxVersion
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getClassFiles();
+	public function __construct($constraintType, $type, $value = NULL, $minVersion = NULL, $maxVersion = NULL) {
+		if (!strlen($value)) $value = NULL;
+		parent::__construct($constraintType, $value, $minVersion, $maxVersion);
+		$this->type = $type;
+	}
 
 	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
+	 * @return string The system constraint type
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageKey();
+	public function getType() {
+		return $this->type;
+	}
 
 	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
+	 * @return string The constraint scope
+	 * @see \F3\FLOW3\Package\Meta\Constraint\getConstraintScope()
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackagePath();
-
-	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
-	 */
-	public function getClassesPath();
-
-	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
-	 */
-	public function getPackageMetaPath();
+	public function getConstraintScope() {
+		return \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_SYSTEM;
+	}
 }
 ?>

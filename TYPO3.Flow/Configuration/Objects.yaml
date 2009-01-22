@@ -153,6 +153,22 @@ F3\FLOW3\Monitor\FileMonitor:
 
 F3\FLOW3\Package\ManagerInterface:
   className: F3\FLOW3\Package\Manager
+  properties:
+    packageMetaWriter: object: F3\FLOW3\Package\Meta\WriterInterface
+
+F3\FLOW3\Package\Controller\ManagerController: []
+
+F3\FLOW3\Package\Meta:
+  scope: prototype
+
+F3\FLOW3\Package\Package:
+  scope: prototype
+
+F3\FLOW3\Package\Meta\ReaderInterface:
+  className: F3\FLOW3\Package\Meta\XMLReader
+
+F3\FLOW3\Package\Meta\WriterInterface:
+  className: F3\FLOW3\Package\Meta\XMLWriter
 
 #                                                                          #
 # Reflection                                                               #

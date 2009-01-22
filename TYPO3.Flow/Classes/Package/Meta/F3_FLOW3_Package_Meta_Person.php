@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,62 +23,69 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
- * Interface for a TYPO3 Package class
+ * Package person party meta model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+class Person extends \F3\FLOW3\Package\Meta\AbstractParty {
 
 	/**
-	 * Returns the package meta object of this package.
+	 * Company of the person
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @var string
 	 */
-	public function getPackageMeta();
+	protected $company;
 
 	/**
-	 * Returns the array of filenames of the class files
+	 * Repository user name of the person
 	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @var string
 	 */
-	public function getClassFiles();
+	protected $repositoryUserName;
 
 	/**
-	 * Returns the package key of this package.
+	 * Meta person model constructor
 	 *
-	 * @return string
+	 * @param string $role
+	 * @param string $name
+	 * @param string $email
+	 * @param string $website
+	 * @param string $company
+	 * @param string $repositoryUserName
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageKey();
+	public function __construct($role, $name, $email = NULL, $website = NULL, $company = NULL, $repositoryUserName = NULL) {
+		parent::__construct($role, $name, $email, $website);
+
+		$this->company = $company;
+		$this->repositoryUserName = $repositoryUserName;
+	}
 
 	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
+	 * @return string The company of the person
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackagePath();
+	public function getCompany() {
+		return $this->company;
+	}
 
 	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
+	 * @return string The repository username
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getClassesPath();
+	public function getRepositoryUserName() {
+		return $this->repositoryUserName;
+	}
 
 	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
+	 * @return string Party type "person"
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMetaPath();
+	public function getPartyType() {
+		return \F3\FLOW3\Package\Meta::PARTY_TYPE_PERSON;
+	}
 }
 ?>

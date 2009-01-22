@@ -46,7 +46,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Sets up this test case
 	 *
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
 		$this->packageManager = new \F3\FLOW3\Package\Manager();
@@ -57,7 +57,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * Tests the method isPackageAvailable()
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isPackageAvailableReturnsCorrectResult() {
 		$this->assertFalse($this->packageManager->isPackageAvailable('PrettyUnlikelyThatThisPackageExists'), 'isPackageAvailable() did not return FALSE although the package in question does not exist.');
@@ -68,19 +68,18 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * Tests the method getPackage()
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackageReturnsPackagesAndThrowsExcpetions() {
 		$package = $this->packageManager->getPackage('FLOW3');
 		$this->assertType('F3\FLOW3\Package\PackageInterface', $package, 'The result of getPackage() was no valid package object.');
-
 		$this->packageManager->getPackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAvailablePackagesReturnsAtLeastTheFLOW3Package() {
 		$availablePackages = $this->packageManager->getAvailablePackages();
@@ -90,7 +89,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getActivePackagesReturnsAtLeastTheFLOW3Package() {
 		$availablePackages = $this->packageManager->getActivePackages();
@@ -102,7 +101,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * Checks the method getPackagePath()
 	 *
 	 * @test
-	 * @author  Robert Lemke <robert@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackagePathReturnsTheCorrectPathOfTheTestPackage() {
@@ -136,6 +135,262 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
+	}
+
+	/**
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageCreatesPackageFolderAndReturnsPackage() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$package = $packageManager->createPackage('YetAnotherTestPackage');
+
+		$this->assertType('F3\FLOW3\Package\PackageInterface', $package);
+		$this->assertEquals('YetAnotherTestPackage', $package->getPackageKey());
+
+		$this->assertTrue($packageManager->isPackageAvailable('YetAnotherTestPackage'));
+	}
+
+	/**
+	 * Check creating a package creates the mandatory Package.xml
+	 * (this doesn't check the content of the file)
+	 *
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageCreatesPackageMetaFile() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageManager->createPackage('YetAnotherTestPackage');
+
+		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
+		$this->assertTrue(is_file($packagePath . F3\FLOW3\Package\Package::DIRECTORY_META . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO),
+			'Mandatory Package.xml was created');
+	}
+
+	/**
+	 * Check createPackage uses a meta writer to write the contents of the package meta to a file
+	 *
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageWithMetadataUsesMetaWriter() {
+
+		$metaWriter = $this->getMock('F3\FLOW3\Package\Meta\WriterInterface');
+		$metaWriter->expects($this->atLeastOnce())
+			->method('writePackageMeta')
+			->will($this->returnValue('<package/>'));
+
+		$packageManager = new \F3\FLOW3\Package\Manager($metaWriter);
+		$packageManager->initialize();
+
+		$meta = $this->getMock('F3\FLOW3\Package\Meta', array(), array('YetAnotherTestPackage'));
+
+		$packageManager->createPackage('YetAnotherTestPackage', $meta);
+
+		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
+		$this->assertStringEqualsFile($packagePath . F3\FLOW3\Package\Package::DIRECTORY_META . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO, '<package/>');
+	}
+
+	/**
+	 * Check create package creates the folders for
+	 * classes, configuration, documentation, resources and tests
+	 *
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageCreatesClassesConfigurationDocumentationResourcesAndTestsFolders() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageManager->createPackage('YetAnotherTestPackage');
+
+		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
+		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_CLASSES));
+		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION));
+		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION));
+		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_RESOURCES));
+		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_TESTS));
+	}
+
+	/**
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageThrowsExceptionForInvalidPackageKey() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		try {
+			$packageManager->createPackage('Invalid_Package_Key');
+		} catch(Exception $exception) {
+			$this->assertEquals(1220722210, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
+		}
+
+		$this->assertFalse(is_dir(FLOW3_PATH_PACKAGES . 'Invalid_Package_Key'), 'Package folder with invalid package key was created');
+	}
+
+	/**
+	 * Check handling of duplicate package keys in package creation
+	 *
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function createPackageThrowsExceptionForExistingPackageKey() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		try {
+			$packageManager->createPackage('TestPackage');
+		} catch(Exception $exception) {
+			$this->assertEquals(1220722873, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
+			return;
+		}
+		$this->fail('Create package didnt throw an exception for an existing package key');
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function createPackageCreatesDeactivatedPackage() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+		$packageManager->createPackage($packageKey);
+
+		$this->assertFalse($packageManager->isPackageActive($packageKey));
+	}
+
+
+	/**
+	 * Check package key validation accepts only valid keys
+	 *
+	 * test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageKeyValidationWorks() {
+		$this->assertFalse($this->packageManager->isPackageKeyValid('Invalid_Package_Key'));
+		$this->assertFalse($this->packageManager->isPackageKeyValid('invalidPackageKey'));
+		$this->assertFalse($this->packageManager->isPackageKeyValid('1nvalidPackageKey'));
+		$this->assertTrue($this->packageManager->isPackageKeyValid('ValidPackageKey'));
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function deacivatePackageRemovesPackageFromActivePackages() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+
+		$packageManager->createPackage($packageKey);
+		$packageManager->activatePackage($packageKey);
+		$packageManager->deactivatePackage($packageKey);
+
+		$this->assertFalse($packageManager->isPackageActive($packageKey));
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function activatePackagesAddsPackageToActivePackages() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+		$packageManager->createPackage($packageKey);
+		$packageManager->activatePackage($packageKey);
+
+		$this->assertTrue($packageManager->isPackageActive($packageKey));
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		try {
+			$packageManager->removePackage('PrettyUnlikelyThatThisPackageExists');
+		} catch (Exception $exception) {
+			$this->assertEquals(1166543253, $exception->getCode(), 'removePackage() throwed an exception.');
+			return;
+		}
+		$this->fail('removePackage() did not throw an exception while asking for the path to a non existent package.');
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function removePackageThrowsErrorIfPackageIsProtected() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+		try {
+			$packageManager->removePackage('PHP6');
+		} catch (Exception $exception) {
+			$this->assertEquals(1220722120, $exception->getCode(), 'removePackage() throwed an exception.');
+			return;
+		}
+		$this->fail('removePackage() did not throw an exception while asking for removing a protected package.');
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function removePackageRemovesPackageFromAvailablePackages() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+		$packageManager->createPackage($packageKey);
+		$packageManager->removePackage($packageKey);
+
+		$this->assertFalse($packageManager->isPackageAvailable($packageKey));
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function removePackageRemovesPackageFromActivePackages() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+		$packageManager->createPackage($packageKey);
+		$packageManager->activatePackage($packageKey);
+		$packageManager->removePackage($packageKey);
+
+		$this->assertFalse($packageManager->isPackageActive($packageKey));
+	}
+
+	/**
+	 * test
+	 * @author Thomas Hempel <thomas@typo3.org>
+	 */
+	public function removePackageRemovesPackageDirectoryFromFilesystem() {
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->initialize();
+
+		$packageKey = 'YetAnotherTestPackage';
+		$packageManager->createPackage($packageKey);
+		$packagePath = $packageManager->getPackagePath($packageKey);
+
+		$packageManager->removePackage($packageKey);
+
+		$this->assertFalse(file_exists($packagePath), $packagePath);
 	}
 }
 ?>

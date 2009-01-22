@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,56 +29,21 @@ namespace F3\FLOW3\Package;
  */
 
 /**
- * Interface for a TYPO3 Package class
+ * Testcase for the Package Manager Controller (CLI)
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Returns the package meta object of this package.
-	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @test
 	 */
-	public function getPackageMeta();
+	public function xy() {
+		$this->markTestIncomplete();
+	}
 
-	/**
-	 * Returns the array of filenames of the class files
-	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 */
-	public function getClassFiles();
-
-	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
-	 */
-	public function getPackageKey();
-
-	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
-	 */
-	public function getPackagePath();
-
-	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
-	 */
-	public function getClassesPath();
-
-	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
-	 */
-	public function getPackageMetaPath();
 }
 ?>

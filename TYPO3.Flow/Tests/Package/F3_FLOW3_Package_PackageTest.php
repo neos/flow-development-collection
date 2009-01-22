@@ -71,6 +71,36 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPackageMetaUsesMetaReader() {
+		$mockMeta = $this->getMock('F3\FLOW3\Package\MetaInterface');
+		$mockMetaReader = $this->getMock('F3\FLOW3\Package\Meta\ReaderInterface');
+
+		$package = new Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/');
+		$package->injectMetaReader($mockMetaReader);
+
+		$mockMetaReader->expects($this->once())
+			->method('readPackageMeta')
+			->will($this->returnValue($mockMeta));
+
+		$this->assertSame($mockMeta, $package->getPackageMeta());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getPackageMetaPathReturnsPathToMetaDirectory() {
+		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/');
+		$packageMetaPath = $package->getPackageMetaPath();
+
+		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_META, $packageMetaPath);
+	}
+
+	/**
 	 * Test the method getClassFiles() without initializing the package manager
 	 *
 	 * @test

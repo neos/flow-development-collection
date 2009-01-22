@@ -95,7 +95,7 @@ interface ManagerInterface {
 	/**
 	 * Returns the absolute path to the root directory of a package.
 	 *
-	 * @param string $packageKey: Name of the package to return the path of
+	 * @param string $packageKey Name of the package to return the path of
 	 * @return string Absolute path to the package's root directory, with trailing directory separator
 	 */
 	public function getPackagePath($packageKey);
@@ -103,15 +103,50 @@ interface ManagerInterface {
 	/**
 	 * Returns the absolute path to the "Classes" directory of a package.
 	 *
-	 * @param string $packageKey: Name of the package to return the "Classes" path of
+	 * @param string $packageKey Name of the package to return the "Classes" path of
 	 * @return string Absolute path to the package's "Classes" directory, with trailing directory separator
 	 */
 	public function getPackageClassesPath($packageKey);
 
-#	public function activatePackage($packageKey);
-#	public function deactivatePackage($packageKey);
-#	public function removePackage($packageKey);
-#	public function downloadPackageFromRepository($packageKey, $version);
+	/**
+	 * Check the conformance of the given package key
+	 *
+	 * @param string $packageKey The package key to validate
+	 */
+	public function isPackageKeyValid($packageKey);
+
+	/**
+	 * Create a new package, given the package key
+	 *
+	 * @param string $packageKey The package key to use for the new package
+	 * @param \F3\FLOW3\Package\Meta $packageMeta Package metadata
+	 * @return \F3\FLOW3\Package\Package The newly created package
+	 */
+	public function createPackage($packageKey, \F3\FLOW3\Package\Meta $packageMeta = null);
+
+	/**
+	 * Deactivates a packe if it is in the list of active packages
+	 *
+	 * @param string $packageKey The package to deactivate
+	 * @return void
+	 */
+	public function deactivatePackage($packageKey);
+
+	/**
+	 * Activates a package
+	 *
+	 * @param string $packageKey The package to activate
+	 * @return void
+	 */
+	public function activatePackage($packageKey);
+
+	/**
+	 * Removes a package from registry and deletes it from filesystem
+	 *
+	 * @param string $packageKey package to delete
+	 * @return void
+	 */
+	public function deletePackage($packageKey);
 
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,60 +25,28 @@ namespace F3\FLOW3\Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
- * Interface for a TYPO3 Package class
+ * An interface for a package metadata writer
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Christopher Hlubek <hlubek@networkteam.com>
  */
-interface PackageInterface {
+interface WriterInterface {
 
 	/**
-	 * Returns the package meta object of this package.
+	 * Write metadata for the given package
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
+	 * @param \F3\FLOW3\Package\MetaInterface $meta The Meta object containing the information to write
+	 * @return void
 	 */
-	public function getPackageMeta();
+	public function writePackageMeta(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaInterface $meta);
 
-	/**
-	 * Returns the array of filenames of the class files
-	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 */
-	public function getClassFiles();
-
-	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
-	 */
-	public function getPackageKey();
-
-	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
-	 */
-	public function getPackagePath();
-
-	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
-	 */
-	public function getClassesPath();
-
-	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
-	 */
-	public function getPackageMetaPath();
 }
 ?>

@@ -34,19 +34,57 @@ namespace F3\FLOW3\Package;
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
+ * @author Christopher Hlubek <hlubek@networkteam.com>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface MetaInterface {
 
 	/**
-	 * Constructor
-	 *
-	 * @param string $packageKey The package key
-	 * @param \SimpleXMLElement $packageMetaXML If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
-	 * @return void
+	 * @return string The package key
 	 */
-	public function __construct($packageKey, \SimpleXMLElement $packageMetaXML = NULL);
+	public function getPackageKey();
 
+	/**
+	 * @return string The package title
+	 */
+	public function getTitle();
+
+	/**
+	 * @return string The package version
+	 */
+	public function getVersion();
+
+	/**
+	 * @return string The package description
+	 */
+	public function getDescription();
+
+	/**
+	 * @return string The package state
+	 */
+	public function getState();
+
+	/**
+	 * @return Array of string The package categories
+	 */
+	public function getCategories();
+
+	/**
+	 * @return Array of F3\FLOW3\Package\Meta\Party The package parties
+	 */
+	public function getParties();
+
+	/**
+	 * @param string $constraintType: Type of the constraints to get: depends, conflicts, suggests
+	 * @return Array of F3\FLOW3\Package\Meta\Constraint Package constraints
+	 */
+	public function getConstraintsByType($constraintType);
+
+	/**
+	 * Get all constraints
+	 *
+	 * @return array An array of array of \F3\FLOW3\Package\Meta\Constraint Package constraints
+	 */
+	public function getConstraints();
 }
 ?>

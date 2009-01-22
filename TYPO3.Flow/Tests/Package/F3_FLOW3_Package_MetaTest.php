@@ -25,60 +25,28 @@ namespace F3\FLOW3\Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
+ * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  */
 
 /**
- * Interface for a TYPO3 Package class
+ * Testcase for the meta class
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+class MetaTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Returns the package meta object of this package.
-	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMeta();
-
-	/**
-	 * Returns the array of filenames of the class files
-	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
-	 */
-	public function getClassFiles();
-
-	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
-	 */
-	public function getPackageKey();
-
-	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
-	 */
-	public function getPackagePath();
-
-	/**
-	 * Returns the full path to this package's Classes directory
-	 *
-	 * @return string Path to this package's Classes directory
-	 */
-	public function getClassesPath();
-
-	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
-	 */
-	public function getPackageMetaPath();
+	public function settingInvalidPackageStateThrowsInvalidArgumentException() {
+		$this->markTestIncomplete();
+#		$meta = new \F3\FLOW3\Package\Meta('YetAnotherTestPackage');
+#		$meta->setState('Invalid');
+	}
 }
 ?>

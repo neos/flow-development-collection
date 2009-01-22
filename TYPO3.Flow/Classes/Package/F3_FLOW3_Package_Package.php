@@ -29,7 +29,7 @@ namespace F3\FLOW3\Package;
  */
 
 /**
- * The default TYPO3 Package implementation
+ * A Package
  *
  * @package FLOW3
  * @subpackage Package
@@ -45,19 +45,24 @@ class Package implements PackageInterface {
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
 	const DIRECTORY_META = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
-
-	const FILENAME_PACKAGEINFO = 'Package.xml';
-	const FILENAME_PACKAGECONFIGURATION = 'Package.php';
+	const DIRECTORY_TESTS = 'Tests/';
 
 	/**
-	 * @var string Unique key of this package
+	 * Unique key of this package
+	 * @var string
 	 */
 	protected $packageKey;
 
 	/**
-	 * @var string Full path to this package's main directory
+	 * Full path to this package's main directory
+	 * @var string
 	 */
 	protected $packagePath;
+
+	/**
+	 * @var \F3\FLOW3\Package\Meat\ReaderInterface
+	 */
+	protected $metaReader;
 
 	/**
 	 * @var \F3\FLOW3\Package\Meta Meta information about this package
@@ -85,7 +90,17 @@ class Package implements PackageInterface {
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
-		$this->packageMeta = new \F3\FLOW3\Package\Meta($packagePath . self::DIRECTORY_META . self::FILENAME_PACKAGEINFO);
+	}
+
+	/**
+	 * Injects a Meta file reader
+	 *
+	 * @param \F3\FLOW3\Package\Meat\ReaderInterface $metaReader
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectMetaReader(\F3\FLOW3\Package\Meta\ReaderInterface $metaReader) {
+		$this->metaReader = $metaReader;
 	}
 
 	/**
@@ -95,6 +110,9 @@ class Package implements PackageInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMeta() {
+		if ($this->packageMeta === NULL) {
+			$this->packageMeta = $this->metaReader->readPackageMeta($this);
+		}
 		return $this->packageMeta;
 	}
 
@@ -159,6 +177,16 @@ class Package implements PackageInterface {
 	 */
 	public function getConfigurationPath() {
 		return $this->packagePath . self::DIRECTORY_CONFIGURATION;
+	}
+
+	/**
+	 * Returns the full path to the package's Meta directory
+	 *
+	 * @return string Path to the package's meta information file
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageMetaPath() {
+		return $this->packagePath . self::DIRECTORY_META;
 	}
 
 	/**

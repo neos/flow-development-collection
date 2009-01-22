@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,62 +23,97 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
- * Interface for a TYPO3 Package class
+ * Party meta model for persons and companies
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+abstract class AbstractParty {
 
 	/**
-	 * Returns the package meta object of this package.
+	 * The party role
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @var string
 	 */
-	public function getPackageMeta();
+	protected $role;
 
 	/**
-	 * Returns the array of filenames of the class files
+	 * Name of the party
 	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @var string
 	 */
-	public function getClassFiles();
+	protected $name;
 
 	/**
-	 * Returns the package key of this package.
+	 * Email of the party
 	 *
-	 * @return string
+	 * @var string
 	 */
-	public function getPackageKey();
+	protected $email;
 
 	/**
-	 * Returns the full path to this package's main directory
+	 * Website of the party
 	 *
-	 * @return string Path to this package's main directory
+	 * @var string
 	 */
-	public function getPackagePath();
+	protected $website;
 
 	/**
-	 * Returns the full path to this package's Classes directory
+	 * Meta party model constructor
 	 *
-	 * @return string Path to this package's Classes directory
+	 * @param string $role
+	 * @param string $name
+	 * @param string $email
+	 * @param string $website
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getClassesPath();
+	public function __construct($role, $name, $email = NULL, $website = NULL) {
+		$this->role = $role;
+		$this->name = $name;
+		$this->email = $email;
+		$this->website = $website;
+	}
 
 	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
+	 * @return string The role of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMetaPath();
+	public function getRole() {
+		return $this->role;
+	}
+
+	/**
+	 * @return string The name of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getName() {
+		return $this->name;
+	}
+
+	/**
+	 * @return string The email of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getEmail() {
+		return $this->email;
+	}
+
+	/**
+	 * @return string The website of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getWebsite() {
+		return $this->website;
+	}
+
+	/**
+	 * Get the party type (Meta\PARTY_TYPE_PERSON, Meta\PARTY_TYPE_COMPANY)
+	 *
+	 * @return string The type of the party (person, company)
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public abstract function getPartyType();
 }
 ?>

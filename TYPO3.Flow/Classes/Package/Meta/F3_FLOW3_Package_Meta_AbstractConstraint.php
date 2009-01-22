@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\Meta;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,62 +23,89 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
- * Interface for a TYPO3 Package class
+ * Constraint meta model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface PackageInterface {
+abstract class AbstractConstraint {
 
 	/**
-	 * Returns the package meta object of this package.
+	 * One of depends, conflicts or suggests
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @var string The constraint type
 	 */
-	public function getPackageMeta();
+	protected $constraintType;
 
 	/**
-	 * Returns the array of filenames of the class files
-	 *
-	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @var string The constraint name or value
 	 */
-	public function getClassFiles();
+	protected $value;
 
 	/**
-	 * Returns the package key of this package.
-	 *
-	 * @return string
+	 * @var string The minimum version
 	 */
-	public function getPackageKey();
+	protected $minVersion;
 
 	/**
-	 * Returns the full path to this package's main directory
-	 *
-	 * @return string Path to this package's main directory
+	 * @var string The maximum version
 	 */
-	public function getPackagePath();
+	protected $maxVersion;
 
 	/**
-	 * Returns the full path to this package's Classes directory
+	 * Meta constraint constructor
 	 *
-	 * @return string Path to this package's Classes directory
+	 * @param string $constraintType
+	 * @param string $value
+	 * @param string $minVersion
+	 * @param string $maxVersion
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getClassesPath();
+	public function __construct($constraintType, $value, $minVersion = null, $maxVersion = null) {
+		$this->constraintType = $constraintType;
+		$this->value = $value;
+		$this->minVersion = $minVersion;
+		$this->maxVersion = $maxVersion;
+	}
 
 	/**
-	 * Returns the full path to this package's Package.xml file
-	 *
-	 * @return string Path to this package's Package.xml file
+	 * @return string The constraint name or value
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMetaPath();
+	public function getValue() {
+		return $this->value;
+	}
+
+	/**
+	 * @return string The minimum version
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getMinVersion() {
+		return $this->minVersion;
+	}
+
+	/**
+	 * @return string The maximum version
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getMaxVersion() {
+		return $this->maxVersion;
+	}
+
+	/**
+	 * @return string The constraint type (depends, conflicts, suggests)
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getConstraintType() {
+		return $this->constraintType;
+	}
+
+	/**
+	 * @return string The constraint scope (package, system)
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public abstract function getConstraintScope();
 }
 ?>
