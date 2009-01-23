@@ -90,7 +90,7 @@ class RequestHandlerResolver {
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}
-		if (count($suitableRequestHandlers) == 0) throw new \F3\FLOW3\MVC\Exception('No suitable request handler found.', 1205414233);
+		if (count($suitableRequestHandlers) === 0) throw new \F3\FLOW3\MVC\Exception('No suitable request handler found.', 1205414233);
 		ksort($suitableRequestHandlers);
 		return array_pop($suitableRequestHandlers);
 	}

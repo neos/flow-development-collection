@@ -49,7 +49,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\RequestHandlingControlle
 	protected $initializeView = TRUE;
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\AbstractView By default a view with the same name as the current action is provided. Contains NULL if none was found.
+	 * By default a view with the same name as the current action is provided. Contains NULL if none was found.
+	 * @var \F3\FLOW3\MVC\ViewInterface
 	 */
 	protected $view = NULL;
 

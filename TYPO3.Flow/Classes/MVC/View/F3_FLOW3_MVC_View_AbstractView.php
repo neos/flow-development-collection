@@ -36,7 +36,7 @@ namespace F3\FLOW3\MVC\View;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractView {
+abstract class AbstractView implements \F3\FLOW3\MVC\ViewInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory
@@ -136,12 +136,6 @@ abstract class AbstractView {
 	protected function initializeView() {
 	}
 
-	/**
-	 * Renders the view
-	 *
-	 * @return string The rendered view
-	 */
-	abstract public function render();
 }
 
 ?>

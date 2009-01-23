@@ -36,7 +36,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractController {
+abstract class AbstractController implements \F3\FLOW3\MVC\ControllerInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory

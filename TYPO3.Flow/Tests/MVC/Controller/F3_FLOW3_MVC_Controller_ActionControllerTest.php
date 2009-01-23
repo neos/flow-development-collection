@@ -75,7 +75,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$viewReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
-		$this->assertType('F3\FLOW3\MVC\View\AbstractView', $view, 'The view has either not been set or is not of the expected type.');
+		$this->assertType('F3\FLOW3\MVC\ViewInterface', $view, 'The view has either not been set or is not of the expected type.');
 		$this->assertEquals('F3\FLOW3\MVC\View\EmptyView', get_class($view), 'The action controller did not provide an empty view.');
 	}
 
@@ -103,7 +103,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$viewReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($mockController), 'view');
 		$view = $viewReflection->getValue($mockController);
 
-		$this->assertType('F3\FLOW3\MVC\View\AbstractView', $view, 'The view has either not been set or is not of the expected type.');
+		$this->assertType('F3\FLOW3\MVC\ViewInterface', $view, 'The view has either not been set or is not of the expected type.');
 		$this->assertEquals('F3\TestPackage\View\Some\Thing', get_class($view), 'The action controller did not select the "Some" "Thing" view.');
 	}
 }
