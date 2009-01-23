@@ -39,27 +39,35 @@ namespace F3\FLOW3\MVC;
 class RequestHandlerResolver {
 
 	/**
-	 * @var \F3\FLOW3\ObjectManagerInterface Reference to the object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * The FLOW3 settings
-	 * @var array
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
-	protected $configuration;
+	protected $reflectionService;
 
 	/**
-	 * Constructs the Request Handler Resolver
+	 * Injects the object manager
 	 *
-	 * @param array $settings The FLOW3 settings
-	 * @param \F3\FLOW3\ObjectManagerInterface $objectManager A reference to the object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(array $settings, \F3\FLOW3\Object\ManagerInterface $objectManager) {
-		$this->settings = $settings;
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the reflection service
+	 *
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -71,14 +79,14 @@ class RequestHandlerResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function resolveRequestHandler() {
-		$availableRequestHandlerClassNames = $this->settings['mvc']['availableRequestHandlers'];
+		$availableRequestHandlerClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\MVC\RequestHandlerInterface');
 
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
 			$requestHandler = $this->objectManager->getObject($requestHandlerClassName);
 			if ($requestHandler->canHandleRequest()) {
 				$priority = $requestHandler->getPriority();
-				if (isset($suitableRequestHandlers[$priority])) throw new LogicException('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
+				if (isset($suitableRequestHandlers[$priority])) throw new \F3\FLOW3\MVC\Exception('More than one request handler with the same priority can handle the request, but only one handler may be active at a time!', 1176475350);
 				$suitableRequestHandlers[$priority] = $requestHandler;
 			}
 		}

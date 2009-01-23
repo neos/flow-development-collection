@@ -303,7 +303,7 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       <para>The request handler takes the important task to handle and respond
       to a request. There exists exactly one request handler for each request
       type. By default web and command line requests are supported, but more
-      specialized request handlers can be registered, too.</para>
+      specialized request handlers can be developed, too.</para>
 
       <para>Before one of the request handlers comes to play, the framework
       needs to determine which of them is the most suitable for the current
@@ -311,6 +311,12 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       handlers to rate on a scale how well they can handle the current raw
       request. The resolver then chooses the request handler with the most
       points and passes over the control.</para>
+
+      <para>Custom request handlers for special purposes just need to
+      implement the
+      <interfacename>\F3\FLOW3\MVC\RequestHandlerInterface</interfacename>.
+      All classes implementing that interface are automatically registered and
+      will be considered while resolving a suitable request handler.</para>
     </section>
 
     <section>
