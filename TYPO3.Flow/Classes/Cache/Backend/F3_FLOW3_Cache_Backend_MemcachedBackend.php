@@ -59,7 +59,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
+class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * Max bucket size, (1024*1024)-42 bytes

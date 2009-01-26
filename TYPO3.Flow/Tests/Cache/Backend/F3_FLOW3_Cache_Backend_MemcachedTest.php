@@ -70,7 +70,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backendOptions = array('servers' => array('localhost:11211'));
-		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$backend->injectEnvironment($this->environment);
 		$backend->initializeObject();
 		$data = 'Some data';
@@ -101,7 +101,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Cache\Exception
 	 */
 	public function initializeObjectThrowsExceptionIfNoMemcacheServerIsConfigured() {
-		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing');
+		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing');
 		$backend->initializeObject();
 	}
 
@@ -287,7 +287,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 
 		$thisCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
-		$thisBackend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$thisBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$thisBackend->injectEnvironment($this->environment);
 		$thisBackend->injectSystemLogger($mockSystemLogger);
 		$thisBackend->setCache($thisCache);
@@ -295,7 +295,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
-		$thatBackend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$thatBackend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$thatBackend->injectEnvironment($this->environment);
 		$thatBackend->injectSystemLogger($mockSystemLogger);
 		$thatBackend->setCache($thatCache);
@@ -330,7 +330,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	 * Sets up the memcached backend used for testing
 	 *
 	 * @param array $backendOptions Options for the memcache backend
-	 * @return \F3\FLOW3\Cache\Backend\Memcached
+	 * @return \F3\FLOW3\Cache\Backend\MemcachedBackend
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -340,7 +340,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 		if ($backendOptions == array()) {
 			$backendOptions = array('servers' => array('localhost:11211'));
 		}
-		$backend = new \F3\FLOW3\Cache\Backend\Memcached('Testing', $backendOptions);
+		$backend = new \F3\FLOW3\Cache\Backend\MemcachedBackend('Testing', $backendOptions);
 		$backend->injectEnvironment($this->environment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($cache);

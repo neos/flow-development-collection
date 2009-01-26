@@ -28,10 +28,10 @@ namespace F3\FLOW3\Cache\Backend;
  * @version $Id$
  */
 
-// @codeCoverageIgnoreStart
-
 /**
  * A caching backend which forgets everything immediately
+ *
+ * Used in \F3\FLOW3\Cache\FactoryTest
  *
  * @package FLOW3
  * @subpackage Cache
@@ -39,92 +39,32 @@ namespace F3\FLOW3\Cache\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Null extends \F3\FLOW3\Cache\AbstractBackend {
+class MockBackend extends \F3\FLOW3\Cache\Backend\NullBackend {
 
 	/**
-	 * Acts as if it would save data
+	 * @var mixed
+	 */
+	protected $someOption;
+
+	/**
+	 * Sets some option
 	 *
-	 * @param string $entryIdentifier ignored
-	 * @param string $data ignored
-	 * @param array $tags ignored
-	 * @param integer $lifetime ignored
+	 * @param mixed $value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
+	public function setSomeOption($value) {
+		$this->someOption = $value;
 	}
 
 	/**
-	 * Returns False
+	 * Returns the option value
 	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
+	 * @return mixed
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function get($entryIdentifier) {
-		return FALSE;
-	}
-
-	/**
-	 * Returns False
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function has($entryIdentifier) {
-		return FALSE;
-	}
-
-	/**
-	 * Does nothing
-	 *
-	 * @param string $entryIdentifier ignored
-	 * @return boolean FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function remove($entryIdentifier) {
-		return FALSE;
-	}
-
-	/**
-	 * Returns an empty array
-	 *
-	 * @param string $tag ignored
-	 * @return array An empty array
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function findIdentifiersByTag($tag) {
-		return array();
-	}
-
-	/**
-	 * Does nothing
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function flush() {
-	}
-
-	/**
-	 * Does nothing
-	 *
-	 * @param string $tag ignored
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function flushByTag($tag) {
-	}
-
-	/**
-	 * Does nothing
-	 *
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function collectGarbage() {
+	public function getSomeOption() {
+		return $this->someOption;
 	}
 }
-// @codeCoverageIgnoreEnd
 ?>

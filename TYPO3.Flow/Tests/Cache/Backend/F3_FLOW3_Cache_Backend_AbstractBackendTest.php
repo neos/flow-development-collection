@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -39,7 +39,7 @@ namespace F3\FLOW3\Cache;
 class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Cache\AbstractBackend
+	 * @var \F3\FLOW3\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -50,7 +50,7 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$className = uniqid('ConcreteBackend_');
 		eval('
-			class ' . $className. ' extends \F3\FLOW3\Cache\AbstractBackend {
+			class ' . $className. ' extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {}
 				public function get($entryIdentifier) {}
 				public function has($entryIdentifier) {}

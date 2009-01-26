@@ -45,7 +45,7 @@ abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 	protected $identifier;
 
 	/**
-	 * @var \F3\FLOW3\Cache\AbstractBackend
+	 * @var \F3\FLOW3\Cache\Backend\AbstractBackend
 	 */
 	protected $backend;
 
@@ -53,11 +53,11 @@ abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 	 * Constructs the cache
 	 *
 	 * @param string $identifier A identifier which describes this cache
-	 * @param \F3\FLOW3\Cache\BackendInterface $backend Backend to be used for this cache
+	 * @param \F3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_IDENTIFIER
 	 */
-	public function __construct($identifier, \F3\FLOW3\Cache\BackendInterface $backend) {
+	public function __construct($identifier, \F3\FLOW3\Cache\Backend\BackendInterface $backend) {
 		if (!preg_match(self::PATTERN_IDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
 		$this->identifier = $identifier;
 		$this->backend = $backend;
@@ -77,7 +77,7 @@ abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \F3\FLOW3\Cache\AbstractBackend The backend used by this cache
+	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getBackend() {
@@ -127,7 +127,7 @@ abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getClassTag($className = '') {
-		return ($className === '') ? \F3\FLOW3\Cache\BackendInterface::TAG_CLASS : \F3\FLOW3\Cache\BackendInterface::TAG_CLASS . str_replace('\\', '_', $className);
+		return ($className === '') ? \F3\FLOW3\Cache\Backend\BackendInterface::TAG_CLASS : \F3\FLOW3\Cache\Backend\BackendInterface::TAG_CLASS . str_replace('\\', '_', $className);
 	}
 
 }

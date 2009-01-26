@@ -15,7 +15,7 @@
 # will be taken to create the cache.
 Default:
   frontend: F3\FLOW3\Cache\VariableCache
-  backend: F3\FLOW3\Cache\Backend\File
+  backend: F3\FLOW3\Cache\Backend\FileBackend
   backendOptions: { }
 
 ##

@@ -54,7 +54,7 @@ interface CacheInterface {
 	/**
 	 * Returns the backend used by this cache
 	 *
-	 * @return \F3\FLOW3\Cache\AbstractBackend The backend used by this cache
+	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
 	 */
 	public function getBackend();
 

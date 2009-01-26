@@ -91,12 +91,12 @@ F3\FLOW3\Cache\Factory:
   arguments:
     1: object: F3\FLOW3\Object\ManagerInterface
     2: object: F3\FLOW3\Object\FactoryInterface
-F3\FLOW3\Cache\Backend\File:
+F3\FLOW3\Cache\Backend\FileBackend:
   scope: prototype
   properties:
     environment: object: F3\FLOW3\Utility\Environment
     signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
-F3\FLOW3\Cache\Backend\Memcached:
+F3\FLOW3\Cache\Backend\MemcachedBackend:
   scope: prototype
 F3\FLOW3\Cache\VariableCache:
   scope: prototype

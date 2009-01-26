@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -28,10 +28,10 @@ namespace F3\FLOW3\Cache;
  * @version $Id$
  */
 
+// @codeCoverageIgnoreStart
+
 /**
  * A caching backend which forgets everything immediately
- *
- * Used in \F3\FLOW3\Cache\FactoryTest
  *
  * @package FLOW3
  * @subpackage Cache
@@ -39,32 +39,92 @@ namespace F3\FLOW3\Cache;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class MockBackend extends \F3\FLOW3\Cache\Backend\Null {
+class NullBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
-	 * @var mixed
-	 */
-	protected $someOption;
-
-	/**
-	 * Sets some option
+	 * Acts as if it would save data
 	 *
-	 * @param mixed $value
+	 * @param string $entryIdentifier ignored
+	 * @param string $data ignored
+	 * @param array $tags ignored
+	 * @param integer $lifetime ignored
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSomeOption($value) {
-		$this->someOption = $value;
+	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 	}
 
 	/**
-	 * Returns the option value
+	 * Returns False
 	 *
-	 * @return mixed
+	 * @param string $entryIdentifier ignored
+	 * @return boolean FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSomeOption() {
-		return $this->someOption;
+	public function get($entryIdentifier) {
+		return FALSE;
+	}
+
+	/**
+	 * Returns False
+	 *
+	 * @param string $entryIdentifier ignored
+	 * @return boolean FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function has($entryIdentifier) {
+		return FALSE;
+	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @param string $entryIdentifier ignored
+	 * @return boolean FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function remove($entryIdentifier) {
+		return FALSE;
+	}
+
+	/**
+	 * Returns an empty array
+	 *
+	 * @param string $tag ignored
+	 * @return array An empty array
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function findIdentifiersByTag($tag) {
+		return array();
+	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flush() {
+	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @param string $tag ignored
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTag($tag) {
+	}
+
+	/**
+	 * Does nothing
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function collectGarbage() {
 	}
 }
+// @codeCoverageIgnoreEnd
 ?>

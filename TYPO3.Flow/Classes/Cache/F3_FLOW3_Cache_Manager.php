@@ -61,7 +61,7 @@ class Manager {
 	protected $cacheConfigurations = array(
 		'Default' => array(
 			'frontend' => 'F3\FLOW3\Cache\VariableCache',
-			'backend' =>  'F3\FLOW3\Cache\Backend\File',
+			'backend' =>  'F3\FLOW3\Cache\Backend\FileBackend',
 			'backendOptions' => array()
 		)
 	);
@@ -132,12 +132,12 @@ class Manager {
 	/**
 	 * Registers a cache so it can be retrieved at a later point.
 	 *
-	 * @param \F3\FLOW3\Cache\AbstractCache $cache The cache to be registered
+	 * @param \F3\FLOW3\Cache\CacheInterface $cache The cache to be registered
 	 * @return void
-	 * @throws \F3\FLOW3\Cache\DuplicateIdentifier if a cache with the given identifier has already been registered.
+	 * @throws \F3\FLOW3\Cache\Exception\DuplicateIdentifier if a cache with the given identifier has already been registered.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function registerCache(\F3\FLOW3\Cache\AbstractCache $cache) {
+	public function registerCache(\F3\FLOW3\Cache\CacheInterface $cache) {
 		$identifier = $cache->getIdentifier();
 		if (isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\DuplicateIdentifier('A cache with identifier "' . $identifier . '" has already been registered.', 1203698223);
 		$this->caches[$identifier] = $cache;
@@ -147,7 +147,7 @@ class Manager {
 	 * Returns the cache specified by $identifier
 	 *
 	 * @param string $identifier Identifies which cache to return
-	 * @return \F3\FLOW3\Cache\AbstractCache The specified cache
+	 * @return \F3\FLOW3\Cache\CacheInterface The specified cache
 	 * @throws \F3\FLOW3\Cache\Exception\NoSuchCache
 	 */
 	public function getCache($identifier) {

@@ -386,7 +386,7 @@ final class FLOW3 {
 		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager, &$atLeastOneClassFileChanged) {
 			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
 			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
-				$cacheManager->flushCachesByTag(\F3\FLOW3\Cache\BackendInterface::TAG_CLASS . basename($pathAndFilename, '.php'));
+				$cacheManager->flushCachesByTag(\F3\FLOW3\Cache\Backend\BackendInterface::TAG_CLASS . basename($pathAndFilename, '.php'));
 				$atLeastOneClassFileChanged = TRUE;
 			}
 		};

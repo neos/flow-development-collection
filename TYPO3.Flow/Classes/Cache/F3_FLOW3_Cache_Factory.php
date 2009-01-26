@@ -100,9 +100,9 @@ class Factory {
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
 		$context = $this->objectManager->getContext();
 		$backend = $this->objectFactory->create($backendObjectName, $context, $backendOptions);
-		if (!$backend instanceof \F3\FLOW3\Cache\AbstractBackend) throw new \F3\FLOW3\Cache\Exception\InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
+		if (!$backend instanceof \F3\FLOW3\Cache\Backend\BackendInterface) throw new \F3\FLOW3\Cache\Exception\InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		$cache = $this->objectFactory->create($cacheObjectName, $cacheIdentifier, $backend);
-		if (!$cache instanceof \F3\FLOW3\Cache\AbstractCache) throw new \F3\FLOW3\Cache\Exception\InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
+		if (!$cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception\InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);
 		return $cache;
