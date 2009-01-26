@@ -98,6 +98,8 @@ F3\FLOW3\Cache\Backend\FileBackend:
     signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
 F3\FLOW3\Cache\Backend\MemcachedBackend:
   scope: prototype
+F3\FLOW3\Cache\Backend\APCBackend:
+  scope: prototype
 F3\FLOW3\Cache\VariableCache:
   scope: prototype
 F3\FLOW3\Cache\StringCache:
