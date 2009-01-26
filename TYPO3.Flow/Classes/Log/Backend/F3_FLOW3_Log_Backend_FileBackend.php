@@ -37,7 +37,7 @@ namespace F3\FLOW3\Log\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class File extends \F3\FLOW3\Log\AbstractBackend {
+class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 
 	/**
 	 * An array of severity labels, indexed by their integer constant

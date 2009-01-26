@@ -118,9 +118,9 @@ F3\FLOW3\Configuration\Manager: []
 F3\FLOW3\Log\LoggerFactory: []
 F3\FLOW3\Log\Logger:
   scope: prototype
-F3\FLOW3\Log\Backend\File:
+F3\FLOW3\Log\Backend\FileBackend:
   scope: prototype
-F3\FLOW3\Log\Backend\Null:
+F3\FLOW3\Log\Backend\NullBackend:
   scope: prototype
 F3\FLOW3\Log\SystemLoggerInterface:
   factoryClassName: F3\FLOW3\Log\LoggerFactory

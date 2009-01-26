@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Log;
+namespace F3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,42 +29,50 @@ namespace F3\FLOW3\Log;
  */
 
 /**
- * Contract for a logger backend interface
+ * Testcase for the abstract log backend
  *
  * @package FLOW3
  * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface BackendInterface {
+class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Carries out all actions necessary to prepare the logging backend, such as opening
-	 * the log file or opening a database connection.
-	 *
-	 * @return void
+	 * @var \F3\FLOW3\Log\Backend\AbstractBackend
 	 */
-	public function open();
+	protected $backendClassName;
 
 	/**
-	 * Appends the given message along with the additional information into the log.
-	 *
-	 * @param string $message The message to log
-	 * @param integer $severity One of the SEVERITY_* constants
-	 * @param mixed $additionalData A variable containing more information about the event to be logged
-	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
-	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
-	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function setUp() {
+		$this->backendClassName = uniqid('ConcreteBackend_');
+		eval('
+			class ' . $this->backendClassName . ' extends \F3\FLOW3\Log\Backend\AbstractBackend {
+				public function open() {}
+				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
+				public function close() {}
+				public function setSomeOption($value) {
+					$this->someOption = $value;
+				}
+				public function getSomeOption() {
+					return $this->someOption;
+				}
+			}
+		');
+	}
 
 	/**
-	 * Carries out all actions necessary to cleanly close the logging backend, such as
-	 * closing the log file or disconnecting from a database.
-	 *
-	 * @return void
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function close();
+	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
+		$className = $this->backendClassName;
+		$backend = new $className(array('someOption' => 'someValue'));
+		$this->assertSame('someValue', $backend->getSomeOption());
+	}
+
 }
 ?>

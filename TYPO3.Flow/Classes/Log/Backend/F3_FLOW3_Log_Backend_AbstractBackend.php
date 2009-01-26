@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Log;
+namespace F3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,50 +29,30 @@ namespace F3\FLOW3\Log;
  */
 
 /**
- * Testcase for the abstract log backend
+ * An abstract Log backend
  *
  * @package FLOW3
  * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractBackendTest extends \F3\Testing\BaseTestCase {
+abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface {
 
 	/**
-	 * @var \F3\FLOW3\Log\AbstractBackend
-	 */
-	protected $backendClassName;
-
-	/**
-	 * @return void
+	 * Constructs this log backend
+	 *
+	 * @param mixed $options Configuration options - depends on the actual backend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setUp() {
-		$this->backendClassName = uniqid('ConcreteBackend_');
-		eval('
-			class ' . $this->backendClassName . ' extends \F3\FLOW3\Log\AbstractBackend {
-				public function open() {}
-				public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
-				public function close() {}
-				public function setSomeOption($value) {
-					$this->someOption = $value;
-				}
-				public function getSomeOption() {
-					return $this->someOption;
+	public function __construct($options = array()) {
+		if (is_array($options) || $options instanceof ArrayAccess) {
+			foreach ($options as $optionKey => $optionValue) {
+				$methodName = 'set' . ucfirst($optionKey);
+				if (method_exists($this, $methodName)) {
+					$this->$methodName($optionValue);
 				}
 			}
-		');
+		}
 	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theConstructorCallsSetterMethodsForAllSpecifiedOptions() {
-		$className = $this->backendClassName;
-		$backend = new $className(array('someOption' => 'someValue'));
-		$this->assertSame('someValue', $backend->getSomeOption());
-	}
-
 }
 ?>

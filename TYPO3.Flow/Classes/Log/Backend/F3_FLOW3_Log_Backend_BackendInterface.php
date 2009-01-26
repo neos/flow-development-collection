@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Log;
+namespace F3\FLOW3\Log\Backend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,30 +29,42 @@ namespace F3\FLOW3\Log;
  */
 
 /**
- * An abstract Log backend
+ * Contract for a logger backend interface
  *
  * @package FLOW3
  * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractBackend implements \F3\FLOW3\Log\BackendInterface {
+interface BackendInterface {
 
 	/**
-	 * Constructs this log backend
+	 * Carries out all actions necessary to prepare the logging backend, such as opening
+	 * the log file or opening a database connection.
 	 *
-	 * @param mixed $options Configuration options - depends on the actual backend
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return void
 	 */
-	public function __construct($options = array()) {
-		if (is_array($options) || $options instanceof ArrayAccess) {
-			foreach ($options as $optionKey => $optionValue) {
-				$methodName = 'set' . ucfirst($optionKey);
-				if (method_exists($this, $methodName)) {
-					$this->$methodName($optionValue);
-				}
-			}
-		}
-	}
+	public function open();
+
+	/**
+	 * Appends the given message along with the additional information into the log.
+	 *
+	 * @param string $message The message to log
+	 * @param integer $severity One of the SEVERITY_* constants
+	 * @param mixed $additionalData A variable containing more information about the event to be logged
+	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
+	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
+	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
+	 * @return void
+	 */
+	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+
+	/**
+	 * Carries out all actions necessary to cleanly close the logging backend, such as
+	 * closing the log file or disconnecting from a database.
+	 *
+	 * @return void
+	 */
+	public function close();
 }
 ?>

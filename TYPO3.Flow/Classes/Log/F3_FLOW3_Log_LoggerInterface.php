@@ -57,20 +57,20 @@ interface LoggerInterface {
 	/**
 	 * Adds a backend to which the logger sends the logging data
 	 *
-	 * @param BackendInterface $backend A backend implementation
+	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 */
-	public function addBackend(\F3\FLOW3\Log\BackendInterface $backend);
+	public function addBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
 
 	/**
 	 * Runs the close() method of a backend and removes the backend
 	 * from the logger.
 	 *
-	 * @param BackendInterface $backend The backend to remove
+	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
 	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
 	 */
-	public function removeBackend(\F3\FLOW3\Log\BackendInterface $backend);
+	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
 
 	/**
 	 * Writes the given message along with the additional information into the log.

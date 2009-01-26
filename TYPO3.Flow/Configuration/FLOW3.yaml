@@ -38,9 +38,8 @@ log:
 
   # Settings for FLOW3's default system logger
   systemLogger:
-    backend: F3\FLOW3\Log\Backend\Null
+    backend: F3\FLOW3\Log\Backend\NullBackend
     backendOptions: {}
-#    backendOptions: { logFileURL: %FLOW3_PATH_DATA%Log/FLOW3_Production.log }
 
 locale:
   
