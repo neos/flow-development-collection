@@ -36,14 +36,14 @@ namespace F3\FLOW3\Session;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TransientTest extends \F3\Testing\BaseTestCase {
+class TransientSessionTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theTransientSessionImplementsTheSessionInterface() {
-		$session = new \F3\FLOW3\Session\Transient();
+		$session = new \F3\FLOW3\Session\TransientSession();
 		$this->assertType('F3\FLOW3\Session\SessionInterface', $session);
 	}
 
@@ -52,7 +52,7 @@ class TransientTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aSessionIdIsGeneratedOnStartingTheSession() {
-		$session = new \F3\FLOW3\Session\Transient();
+		$session = new \F3\FLOW3\Session\TransientSession();
 		$session->start();
 		$this->assertTrue(strlen($session->getID()) == 13);
 	}
@@ -63,7 +63,7 @@ class TransientTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tryingToGetTheSessionIdWithoutStartingTheSessionThrowsAnException() {
-		$session = new \F3\FLOW3\Session\Transient();
+		$session = new \F3\FLOW3\Session\TransientSession();
 		$session->getID();
 	}
 
@@ -72,7 +72,7 @@ class TransientTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function stringsCanBeStoredByCallingPutData() {
-		$session = new \F3\FLOW3\Session\Transient();
+		$session = new \F3\FLOW3\Session\TransientSession();
 		$session->start();
 		$session->putData('theKey', 'some data');
 		$this->assertEquals('some data', $session->getData('theKey'));
@@ -83,7 +83,7 @@ class TransientTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function allSessionDataCanBeFlushedByCallingDestroy() {
-		$session = new \F3\FLOW3\Session\Transient();
+		$session = new \F3\FLOW3\Session\TransientSession();
 		$session->start();
 		$session->putData('theKey', 'some data');
 		$session->destroy();

@@ -126,8 +126,7 @@ final class FLOW3 {
 		'F3\FLOW3\AOP\.*',
 		'F3\FLOW3\Object.*',
 		'F3\FLOW3\Package.*',
-		'F3\FLOW3\Reflection.*',
-		'F3\FLOW3\Session.*'
+		'F3\FLOW3\Reflection.*'
 	);
 
 	/**
@@ -556,12 +555,8 @@ final class FLOW3 {
 		if ($this->settings['persistence']['enable'] === TRUE) {
 			$this->objectManager->getObject('F3\FLOW3\Persistence\Manager')->persistAll();
 		}
-
-		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
-		$session->close();
-
+		$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 		$this->systemLogger->log(sprintf('Shutting down FLOW3 ...', $this->context), LOG_INFO);
-
 		$this->objectManager->shutdown();
 
 	}

@@ -39,7 +39,7 @@ namespace F3\FLOW3\Session;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Transient implements \F3\FLOW3\Session\SessionInterface {
+class TransientSession implements \F3\FLOW3\Session\SessionInterface {
 
 	/**
 	 * The session Id

@@ -202,7 +202,7 @@ F3\FLOW3\Security\ACL\PolicyService:
 #                                                                          #
 
 F3\FLOW3\Session\SessionInterface:
-  className: F3\FLOW3\Session\PHP
+  className: F3\FLOW3\Session\PHPSession
 
 #                                                                          #
 # SignalSlot                                                               #
