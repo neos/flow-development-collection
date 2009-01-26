@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC;
+namespace F3\FLOW3\MVC\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\MVC;
  */
 
 /**
- * Interface for controllers
+ * Marker interface for controllers
  *
  * @package FLOW3
  * @subpackage MVC
@@ -38,13 +38,5 @@ namespace F3\FLOW3\MVC;
  */
 interface ControllerInterface {
 
-	/**
-	 * Sets / injects the settings of the package this controller belongs to.
-	 *
-	 * @param array $settings Settings container of the current package
-	 * @return void
-	 */
-	public function setSettings(array $settings);
 }
-
 ?>

@@ -149,7 +149,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function updateCredentials() {
-		$POSTArguments = $this->environment->getPOSTArguments();
+		$POSTArguments = $this->environment->getRawPOSTArguments();
 
 		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
 		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];

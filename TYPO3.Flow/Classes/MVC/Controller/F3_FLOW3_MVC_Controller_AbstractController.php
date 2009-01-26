@@ -36,7 +36,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractController implements \F3\FLOW3\MVC\ControllerInterface {
+abstract class AbstractController implements \F3\FLOW3\MVC\Controller\ControllerInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory
@@ -74,13 +74,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\ControllerInterface {
 	}
 
 	/**
-	 * Sets / injects the settings of the package this controller belongs to.
+	 * Injects the settings of the package this controller belongs to.
 	 *
 	 * @param array $settings Settings container of the current package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setSettings(array $settings) {
+	public function injectSettings(array $settings) {
 		$this->settings = $settings;
 	}
 

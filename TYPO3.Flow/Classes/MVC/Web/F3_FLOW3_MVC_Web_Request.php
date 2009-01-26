@@ -48,7 +48,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * @var string Contains the request method
 	 */
-	protected $method = \F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET;
+	protected $method = 'GET';
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
@@ -79,28 +79,20 @@ class Request extends \F3\FLOW3\MVC\Request {
 	/**
 	 * Sets the request method
 	 *
-	 * @param string $method Name of the request method - one of the \F3\FLOW3\Utility\Environment::REQUEST_METHOD_* constants
+	 * @param string $method Name of the request method
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestMethod if the request method is not supported
 	 */
 	public function setMethod($method) {
-		if (array_search($method, array(
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_DELETE,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_HEAD,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_OPTIONS,
-				\F3\FLOW3\Utility\Environment::REQUEST_METHOD_UNKNOWN
-			)) === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
+		if ($method === '' || (strtoupper($method) !== $method)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
 		$this->method = $method;
 	}
 
 	/**
 	 * Returns the name of the request method
 	 *
-	 * @return string Name of the request method - one of the \F3\FLOW3\Utility\Environment::REQUEST_METHOD_* constants
+	 * @return string Name of the request method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getMethod() {

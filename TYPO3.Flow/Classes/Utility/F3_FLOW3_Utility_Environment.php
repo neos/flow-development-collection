@@ -36,6 +36,9 @@ namespace F3\FLOW3\Utility;
  * This class should be used instead of the $_SERVER/ENV_VARS to get reliable
  * values for all situations.
  *
+ * WARNING: Don't try to subclass this class except for use in unit tests. The
+ * superglobal replacement will lead to unexpected behavior (on your side).
+ *
  * @package FLOW3
  * @subpackage Utility
  * @version $Id$
@@ -43,37 +46,32 @@ namespace F3\FLOW3\Utility;
  */
 class Environment {
 
-	const REQUEST_METHOD_UNKNOWN = NULL;
-	const REQUEST_METHOD_GET = 'GET';
-	const REQUEST_METHOD_POST = 'POST';
-	const REQUEST_METHOD_HEAD = 'HEAD';
-	const REQUEST_METHOD_OPTIONS = 'OPTIONS';
-	const REQUEST_METHOD_PUT = 'PUT';
-	const REQUEST_METHOD_DELETE = 'DELETE';
-
 	/**
-	 * @var array A local copy of the _SERVER super global.
+	 * A local copy of the _SERVER super global
+	 * @var array
 	 */
 	protected $SERVER;
 
 	/**
-	 * @var array A local copy of the _GET super global.
+	 * A local copy of the _GET super global
+	 * @var array
 	 */
 	protected $GET;
 
 	/**
-	 * @var array A local copy of the _POST super global.
+	 * A local copy of the _POST super global
+	 * @var array
 	 */
 	protected $POST;
 
 	/**
-	 * @var string A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values.
+	 * A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values
+	 * @var string
 	 */
 	protected $SAPIName;
 
 	/**
 	 * The base path of $temporaryDirectory. This property can (and should) be set from outside.
-	 *
 	 * @var string
 	 */
 	protected $temporaryDirectoryBase = '/tmp/';
@@ -96,7 +94,7 @@ class Environment {
 			$this->POST = $_POST;
 			$this->SAPIName = PHP_SAPI;
 
-			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the ' . __CLASS__ . ' object instead of accessing the superglobal directly.');
+			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the API of ' . __CLASS__ . ' instead of accessing the superglobal directly.');
 			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
 		}
@@ -250,17 +248,7 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestMethod() {
-		if (!isset($this->SERVER['REQUEST_METHOD'])) return self::REQUEST_METHOD_UNKNOWN;
-
-		switch ($this->SERVER['REQUEST_METHOD']) {
-			case 'GET' : return self::REQUEST_METHOD_GET;
-			case 'POST' : return self::REQUEST_METHOD_POST;
-			case 'PUT' : return self::REQUEST_METHOD_PUT;
-			case 'DELETE' : return self::REQUEST_METHOD_DELETE;
-			case 'HEAD' : return self::REQUEST_METHOD_HEAD;
-			case 'OPTIONS' : return self::REQUEST_METHOD_OPTIONS;
-		}
-		return self::REQUEST_METHOD_UNKNOWN;
+		return (isset($this->SERVER['REQUEST_METHOD'])) ? $this->SERVER['REQUEST_METHOD'] : NULL;
 	}
 
 	/**
@@ -304,7 +292,7 @@ class Environment {
 	 * @return array Unfiltered, raw, insecure, tainted GET arguments
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getGETArguments() {
+	public function getRawGETArguments() {
 		return $this->GET;
 	}
 
@@ -314,8 +302,19 @@ class Environment {
 	 * @return array Unfiltered, raw, insecure, tainted POST arguments
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPOSTArguments() {
+	public function getRawPOSTArguments() {
 		return $this->POST;
+	}
+
+	/**
+	 * Returns the unfiltered, raw, unchecked SERVER superglobal
+	 * If available, please always use an alternative method of this API.
+	 *
+	 * @return array Unfiltered, raw, insecure, tainted SERVER environment
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRawServerEnvironment() {
+		return $this->SERVER;
 	}
 
 	/**

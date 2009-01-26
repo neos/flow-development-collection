@@ -101,5 +101,15 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$returnedURIString = (string)$environment->getRequestURI();
 		$this->assertEquals($expectedURIString, $returnedURIString, 'The URI returned did not match the expected value.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getRawServerEnvironmentJustReturnsTheSERVERVariable() {
+		$environment = new \F3\FLOW3\Utility\MockEnvironment();
+		$environment->SERVER = array('foo' => 'bar');
+		$this->assertEquals(array('foo' => 'bar'), $environment->getRawServerEnvironment());
+	}
 }
 ?>

@@ -110,8 +110,8 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
-		$requestPath = \F3\PHP6\Functions::substr($request->getRequestURI()->getPath(), \F3\PHP6\Functions::strlen((string)$request->getBaseURI()->getPath()));
-		if (\F3\PHP6\Functions::substr($requestPath, 0, 9) == 'index.php' || \F3\PHP6\Functions::substr($requestPath, 0, 13) == 'index_dev.php') {
+		$requestPath = substr($request->getRequestURI()->getPath(), strlen((string)$request->getBaseURI()->getPath()));
+		if (substr($requestPath, 0, 9) == 'index.php' || substr($requestPath, 0, 13) == 'index_dev.php') {
 			$requestPath = strstr($requestPath, '/');
 		}
 		$requestQuery = $request->getRequestURI()->getQuery();
@@ -199,12 +199,12 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 			$request->setArgument($argumentName, $argumentValue);
 		}
 		switch ($request->getMethod()) {
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST:
-				foreach ($this->utilityEnvironment->getPOSTArguments() as $argumentName => $argumentValue) {
+			case 'POST' :
+				foreach ($this->utilityEnvironment->getRawPOSTArguments() as $argumentName => $argumentValue) {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT:
+			case 'PUT' :
 				$putArguments = array();
 				parse_str(file_get_contents("php://input"), $putArguments);
 				foreach ($putArguments as $argumentName => $argumentValue) {

@@ -104,16 +104,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canHandleRequest() {
-		switch ($this->utilityEnvironment->getRequestMethod()) {
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET :
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST :
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT :
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_DELETE :
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_OPTIONS :
-			case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_HEAD :
-				return TRUE;
-		}
-		return FALSE;
+		return ($this->utilityEnvironment->getRequestMethod() !== NULL);
 	}
 
 	/**

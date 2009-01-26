@@ -52,7 +52,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		);
 		
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
-		$mockEnvironment->expects($this->once())->method('getPOSTArguments')->will($this->returnValue($POSTArguments));
+		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);		

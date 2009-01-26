@@ -79,17 +79,17 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if ($this->request->getControllerActionName() == 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
-				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET :
+				case 'GET' :
 					$actionName = ($this->arguments['id']->getValue() === NULL) ? 'list' : 'show';
 				break;
-				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST :
+				case 'POST' :
 					$actionName = 'create';
 				break;
-				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_PUT :
+				case 'PUT' :
 					if ($this->arguments['id']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
 					$actionName = 'update';
 				break;
-				case \F3\FLOW3\Utility\Environment::REQUEST_METHOD_DELETE :
+				case 'DELETE' :
 					$actionName = 'delete';
 				break;
 			}

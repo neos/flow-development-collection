@@ -134,11 +134,11 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	public function theRequestMethodCanBeSetAndRetrieved() {
 		$request = new \F3\FLOW3\MVC\Web\Request();
 
-		$request->setMethod(\F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET);
-		$this->assertEquals(\F3\FLOW3\Utility\Environment::REQUEST_METHOD_GET, $request->getMethod());
+		$request->setMethod('GET');
+		$this->assertEquals('GET', $request->getMethod());
 
-		$request->setMethod(\F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST);
-		$this->assertEquals(\F3\FLOW3\Utility\Environment::REQUEST_METHOD_POST, $request->getMethod());
+		$request->setMethod('POST');
+		$this->assertEquals('POST', $request->getMethod());
 	}
 
 	/**
@@ -146,9 +146,9 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRequestMethod
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function invalidRequestMethodsAreRejected() {
+	public function requestMethodsWhichAreNotCompletelyUpperCaseAreRejected() {
 		$request = new \F3\FLOW3\MVC\Web\Request();
-		$request->setMethod('SOMETHING');
+		$request->setMethod('sOmEtHing');
 	}
 }
 ?>
