@@ -39,7 +39,7 @@ namespace F3\FLOW3\MVC\Web;
 class RequestBuilder {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory: A reference to the Object Factory
+	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 */
 	protected $objectFactory;
 
@@ -59,12 +59,13 @@ class RequestBuilder {
 	protected $router;
 
 	/**
-	 * Constructs this Web Request Builder
+	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
 	}
 

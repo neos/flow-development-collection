@@ -39,12 +39,12 @@ namespace F3\FLOW3\MVC\Web;
 class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface Reference to the object factory
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment Reference to the environment utility object
+	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $utilityEnvironment;
 
@@ -70,7 +70,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
 	 * @param \F3\FLOW3\MVC\Dispatcher $dispatcher The request dispatcher
 	 * @param \F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder The request builder
-	 * @param \F3\FLOW3\MVC\RequestProcessorChainManager A reference to the request processor chain manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -78,13 +77,11 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 			\F3\FLOW3\Object\FactoryInterface $objectFactory,
 			\F3\FLOW3\Utility\Environment $utilityEnvironment,
 			\F3\FLOW3\MVC\Dispatcher $dispatcher,
-			\F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder,
-			\F3\FLOW3\MVC\RequestProcessorChainManager $requestProcessorChainManager) {
+			\F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder) {
 		$this->objectFactory = $objectFactory;
 		$this->utilityEnvironment = $utilityEnvironment;
 		$this->dispatcher = $dispatcher;
 		$this->requestBuilder = $requestBuilder;
-		$this->requestProcessorChainManager = $requestProcessorChainManager;
 	}
 
 	/**
@@ -95,7 +92,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
-		$this->requestProcessorChainManager->processRequest($request);
 		$response = $this->objectFactory->create('F3\FLOW3\MVC\Web\Response');
 		$this->dispatcher->dispatch($request, $response);
 		$response->send();

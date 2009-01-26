@@ -91,7 +91,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 
-		$this->builder = new \F3\FLOW3\MVC\Web\RequestBuilder($mockObjectFactory);
+		$this->builder = new \F3\FLOW3\MVC\Web\RequestBuilder();
+		$this->builder->injectObjectFactory($mockObjectFactory);
 		$this->builder->injectEnvironment($this->mockEnvironment);
 		$this->builder->injectConfigurationManager($this->mockConfigurationManager);
 		$this->builder->injectRouter($this->mockRouter);

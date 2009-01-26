@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC;
+namespace F3\FLOW3\MVC\Web;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,29 +24,42 @@ namespace F3\FLOW3\MVC;
 
 /**
  * @package FLOW3
- * @subpackage MVC
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * Contract for a Request Processor. Objects of this kind are registered
- * via the Request Processor Chain Manager.
+ * Testcase for the MVC Web Request Handler
  *
  * @package FLOW3
- * @subpackage MVC
+ * @subpackage Tests
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface RequestProcessorInterface {
+class RequestHandlerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Processes the given request (ie. analyzes and modifies if necessary).
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request
-	 * @return void
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request);
-}
+	public function handleRequestBuildsARequestAndResponseDispatchesThemByTheDispatcherAndSendsTheResponse() {
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$mockResponse->expects($this->once())->method('send');
+
+		$mockRequestBuilder = $this->getMock('F3\FLOW3\MVC\Web\RequestBuilder', array(), array(), '', FALSE);
+		$mockRequestBuilder->expects($this->once())->method('build')->will($this->returnValue($mockRequest));
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Response')->will($this->returnValue($mockResponse));
+
+		$mockDispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array(), array(), '', FALSE);
+		$mockDispatcher->expects($this->once())->method('dispatch')->with($mockRequest, $mockResponse);
+
+		$requestHandler = new \F3\FLOW3\MVC\Web\RequestHandler($mockObjectFactory, $mockEnvironment, $mockDispatcher, $mockRequestBuilder);
+		$requestHandler->handleRequest();
+	}
+}
 ?>
