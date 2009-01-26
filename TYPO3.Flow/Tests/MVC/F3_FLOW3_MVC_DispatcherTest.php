@@ -55,15 +55,8 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
 		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
-		$settings = array();
-		$settings['security']['enable'] = FALSE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 
 		$this->dispatcher = new \F3\FLOW3\MVC\Dispatcher($this->objectManager, $this->objectFactory);
-		$this->dispatcher->injectSecurityContextHolder($securityContextHolder);
-		$this->dispatcher->injectFirewall($firewall);
-		$this->dispatcher->injectConfigurationManager($configurationManager);
 	}
 
 	/**
@@ -100,7 +93,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function dispatcherCallsProcessRequestMethodOfController() {
+	public function theDispatcherCallsProcessRequestMethodOfTheControllerSpecifiedInTheRequestObject() {
 		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$request->injectObjectManager($this->objectManager);
 		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
@@ -117,130 +110,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$request->setControllerName('MockRequestHandlingController');
 
 		$this->dispatcher->dispatch($request, $response);
-		$this->assertTrue($controller->requestHasBeenProcessed, 'It seems like the controller has not been called by the dispatcher.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theDispatcherInjectsThePackageSettingsIntoTheController() {
-		$settings = array();
-		$settings['security']['enable'] = FALSE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
-
-		$this->dispatcher->injectConfigurationManager($configurationManager);
-
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
-
-		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
-		$controller = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
-		$controller->injectPropertyMapper($mockPropertyMapper);
-
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
-		$request->setControllerName('MockRequestHandlingController');
-
-		$this->dispatcher->dispatch($request, $response);
-		$this->assertSame($settings, $controller->getSettings());
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function theDispatcherInitializesTheSecurityContextWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$settings = array();
-		$settings['security']['enable'] = TRUE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
-		$this->dispatcher->injectConfigurationManager($configurationManager);
-
-		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface', array('initializeContext', 'setContext', 'getContext', 'clearContext'));
-		$this->dispatcher->injectSecurityContextHolder($securityContextHolder);
-
-		$securityContextHolder->expects($this->any())->method('initializeContext');
-		$this->dispatcher->dispatch($request, $response);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function theDispatcherDoesNotInitializeTheSecurityContextIfSecurityIsDisabled() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$settings = array();
-		$settings['security']['enable'] = FALSE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
-		$this->dispatcher->injectConfigurationManager($configurationManager);
-
-		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface', array('initializeContext', 'setContext', 'getContext', 'clearContext'));
-		$this->dispatcher->injectSecurityContextHolder($securityContextHolder);
-
-		$securityContextHolder->expects($this->any())->method('initializeContext');
-		$this->dispatcher->dispatch($request, $response);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function theDispatcherCallsTheFirewallWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$settings = array();
-		$settings['security']['enable'] = TRUE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
-		$this->dispatcher->injectConfigurationManager($configurationManager);
-
-		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
-		$this->dispatcher->injectFirewall($firewall);
-
-		$firewall->expects($this->any())->method('blockIllegalRequests');
-		$this->dispatcher->dispatch($request, $response);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function theDispatcherDoesNotCallTheFirewallIfSecurityIsDisabled() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Controller\@controllerController');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
-		$this->dispatcher->injectFirewall($firewall);
-
-		$settings = array();
-		$settings['security']['enable'] = FALSE;
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSettings'), array(), '', FALSE);
-		$configurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
-		$this->dispatcher->injectConfigurationManager($configurationManager);
-
-		$firewall->expects($this->never())->method('blockIllegalRequests');
-		$this->dispatcher->dispatch($request, $response);
+		$this->assertTrue($controller->requestHasBeenProcessed);
 	}
 }
 ?>

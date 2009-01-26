@@ -77,6 +77,8 @@ F3\FLOW3\AOP\PointcutMethodNameFilter:
   scope: prototype
 F3\FLOW3\AOP\PointcutMethodTaggedWithFilter:
   scope: prototype
+F3\FLOW3\AOP\PointcutSettingFilter:
+  scope: prototype
 
 #                                                                          #
 # Cache                                                                    #
@@ -194,6 +196,13 @@ F3\FLOW3\Security\ACL\PolicyService:
         factoryMethodName: getCache
         arguments:
           1: value: FLOW3_Security_Policy
+
+#                                                                          #
+# Session                                                                  #
+#                                                                          #
+
+F3\FLOW3\Session\SessionInterface:
+  className: F3\FLOW3\Session\PHP
 
 #                                                                          #
 # SignalSlot                                                               #

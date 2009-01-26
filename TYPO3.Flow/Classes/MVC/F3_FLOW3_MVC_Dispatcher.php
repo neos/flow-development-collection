@@ -45,21 +45,6 @@ class Dispatcher {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\ContextHolderInterface A reference to the security contextholder
-	 */
-	protected $securityContextHolder;
-
-	/**
-	 * @var \F3\FLOW3\Security\Auhtorization\FirewallInterface A reference to the firewall
-	 */
-	protected $firewall;
-
-	/**
-	 * @var \F3\FLOW3\Configuration\Manager A reference to the configuration manager
-	 */
-	protected $configurationManager;
-
-	/**
 	 * Constructs the global dispatcher
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
@@ -70,59 +55,18 @@ class Dispatcher {
 	}
 
 	/**
-	 * Injects the security context holder
-	 *
-	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSecurityContextHolder(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
-		$this->securityContextHolder = $securityContextHolder;
-	}
-
-	/**
-	 * Injects the authorization firewall
-	 *
-	 * @param \F3\FLOW3\Security\Authorization\FirewallInterface $firewall
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectFirewall(\F3\FLOW3\Security\Authorization\FirewallInterface $firewall) {
-		$this->firewall = $firewall;
-	}
-
-	/**
-	 * Injects the configuration manager
-	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
-		$this->configurationManager = $configurationManager;
-	}
-
-	/**
 	 * Dispatches a request to a controller and initializes the security framework.
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to dispatch
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function dispatch(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
 			$dispatchLoopCount ++;
 			if ($dispatchLoopCount > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
-
-			$settings = $this->configurationManager->getSettings('FLOW3');
-			if ($settings['security']['enable'] === TRUE) {
-				$this->securityContextHolder->initializeContext($request);
-				$this->firewall->blockIllegalRequests($request);
-			}
-
 			try {
 				$controller = $this->getPreparedController($request, $response);
 				$controller->processRequest($request, $response);
@@ -139,30 +83,13 @@ class Dispatcher {
 	 * @return \F3\FLOW3\MVC\Controller\RequestHandlingController The controller
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController, \F3\FLOW3\MVC\Exception\InvalidController
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Implement proper mechanism for handling authentication exceptions
 	 */
 	protected function getPreparedController(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		$controllerObjectName = $request->getControllerObjectName();
-
-		try {
-			$controller = $this->objectManager->getObject($controllerObjectName);
-		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequired $exception) {
-			if (!$request instanceof \F3\FLOW3\MVC\Web\Request) throw $exception;
-			$request->setDispatched(TRUE);
-
-			$settings = $this->configurationManager->getSettings('FLOW3');
-			$uri = (string)$request->getBaseURI() . $settings['security']['loginPageURIForDemoPurposes'];
-			$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-			$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
-			$response->setStatus(303);
-			$response->setHeader('Location', (string)$uri);
-			throw new \F3\FLOW3\MVC\Exception\StopAction();
-		}
-
+		$controller = $this->objectManager->getObject($controllerObjectName);
 		if (!$controller instanceof \F3\FLOW3\MVC\Controller\RequestHandlingController) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $controllerObjectName . '". The controller must be a valid request handling controller.', 1202921619);
-
-		$controller->setSettings($this->configurationManager->getSettings($request->getControllerPackageKey()));
 		return $controller;
 	}
+
 }
 ?>

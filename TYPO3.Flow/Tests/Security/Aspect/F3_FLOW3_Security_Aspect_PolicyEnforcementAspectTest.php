@@ -24,19 +24,19 @@ namespace F3\FLOW3\Security\Aspect;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  */
 
 /**
- * Testcase for the security interceptor invocation aspect
+ * Testcase for the security policy enforcement aspect
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Security
  * @version $Id:$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
+class PolicyEnforcementAspectTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -51,7 +51,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockPolicyEnforcementInterceptor->expects($this->once())->method('setJoinPoint')->with($mockJoinPoint);
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -68,7 +68,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockPolicyEnforcementInterceptor->expects($this->once())->method('invoke');
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -85,7 +85,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('setJoinPoint')->with($mockJoinPoint);
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -105,7 +105,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('setResult')->with($someResult);
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -122,7 +122,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('invoke');
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -139,7 +139,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockAdviceChain->expects($this->once())->method('proceed')->with($mockJoinPoint);
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor,$mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor,$mockAfterInvocationInterceptor);
 		$securityAdvice->enforcePolicy($mockJoinPoint);
 	}
 
@@ -158,7 +158,7 @@ class InterceptorInvocationTest extends \F3\Testing\BaseTestCase {
 		$mockJoinPoint->expects($this->once())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
 		$mockAfterInvocationInterceptor->expects($this->once())->method('invoke')->will($this->returnValue($someResult));
 
-		$securityAdvice = new \F3\FLOW3\Security\Aspect\InterceptorInvocation($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
+		$securityAdvice = new \F3\FLOW3\Security\Aspect\PolicyEnforcementAspect($mockPolicyEnforcementInterceptor, $mockAfterInvocationInterceptor);
 		$this->assertEquals($someResult, $securityAdvice->enforcePolicy($mockJoinPoint));
 	}
 }

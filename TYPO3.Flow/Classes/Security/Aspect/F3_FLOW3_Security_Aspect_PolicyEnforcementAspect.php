@@ -29,7 +29,7 @@ namespace F3\FLOW3\Security\Aspect;
  */
 
 /**
- * The central security aspect, that invoces the security interceptors.
+ * The central security aspect, that invokes the security interceptors.
  *
  * @package FLOW3
  * @subpackage Security
@@ -37,7 +37,7 @@ namespace F3\FLOW3\Security\Aspect;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect
  */
-class InterceptorInvocation {
+class PolicyEnforcementAspect {
 
 	/**
 	 * The policy enforcement interceptor
@@ -69,9 +69,9 @@ class InterceptorInvocation {
 	 * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
 	 * before calling the policy enforcement interceptor
 	 *
-	 * @around filter(F3\FLOW3\Security\ACL\PolicyService)
+	 * @around filter(F3\FLOW3\Security\ACL\PolicyService) && setting(FLOW3: security: enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
-	 * @return The result of the target method if it has not been intercepted
+	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function enforcePolicy(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {

@@ -480,9 +480,6 @@ final class FLOW3 {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeSession() {
-		if (!$this->objectManager->isObjectRegistered('F3\FLOW3\Session\SessionInterface')) {
-			$this->objectManager->registerObject('F3\FLOW3\Session\SessionInterface', $this->settings['session']['backend']['className']);
-		}
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->start();
 	}

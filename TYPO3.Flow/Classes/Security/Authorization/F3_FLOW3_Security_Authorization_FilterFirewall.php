@@ -70,7 +70,6 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
-	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager,
@@ -90,7 +89,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	/**
 	 * Returns the configure filters.
 	 *
-	 * @return array Array of configured filters.
+	 * @return array The configured filters
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getFilters() {
@@ -103,16 +102,15 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 *
 	 * @param \F3\FLOW3\MVC\Request $request The request to be analyzed
 	 * @return void
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied if the
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\MVC\Request $request) {
 		$filterMatched = FALSE;
-
 		foreach($this->filters as $filter) {
 			if($filter->filterRequest($request)) $filterMatched = TRUE;
 		}
-
-		if($this->rejectAll && !$filterMatched) throw new \F3\FLOW3\Security\Exception\AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
+		if ($this->rejectAll && !$filterMatched) throw new \F3\FLOW3\Security\Exception\AccessDenied('The requst was blocked, because no request filter explicitly allowed it.', 1216923741);
 	}
 
 	/**

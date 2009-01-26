@@ -147,6 +147,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 */
 	public function authenticate() {
 		$allTokensAreAuthenticated = TRUE;
+		if ($this->securityContext === NULL) throw new \F3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			foreach ($this->providers as $provider) {
 				if ($provider->canAuthenticate($token)) {
