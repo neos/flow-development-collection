@@ -50,6 +50,9 @@ namespace F3\FLOW3\Cache\Backend;
  * This prefix makes sure that keys from the different installations do not
  * conflict.
  *
+ * Note: When using the Memcached backend to store values of more than ~1 MB, the
+ * data will be split into chunks to make them fit into the memcached limits.
+ *
  * @package FLOW3
  * @subpackage Cache
  * @version $Id$
@@ -57,6 +60,12 @@ namespace F3\FLOW3\Cache\Backend;
  * @scope prototype
  */
 class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
+
+	/**
+	 * Max bucket size, (1024*1024)-42 bytes
+	 * @var int
+	 */
+	const MAX_BUCKET_SIZE = 1048534;
 
 	/**
 	 * Instance of the PHP Memcache class
@@ -73,11 +82,12 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	protected $servers = array();
 
 	/**
-	 * Indicates whether the memcache uses compression or not (requires zlib)
+	 * Indicates whether the memcache uses compression or not (requires zlib),
+	 * either 0 or MEMCACHE_COMPRESSED
 	 *
-	 * @var boolean
+	 * @var int
 	 */
-	protected $useCompression;
+	protected $flags;
 
 	/**
 	 * A prefix to seperate stored data from other data possible stored in the memcache
@@ -90,6 +100,11 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
+
+	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
 
 	/**
 	 * Constructs this backend
@@ -115,9 +130,21 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	}
 
 	/**
-	 * Setter for servers property
+	 * Injects the system logger
 	 *
-	 * @param array $servers An array of servers to add (format: "host:port")
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
+
+	/**
+	 * Setter for servers to be used. Expects an array,  the values are expected
+	 * to be formatted like "<host>[:<port>]" or "unix://<path>"
+	 *
+	 * @param array $servers An array of servers to add.
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
@@ -137,27 +164,40 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 
 		$this->memcache = new \Memcache();
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
+		$defaultPort = ini_get('memcache.default_port');
 
 		foreach ($this->servers as $server) {
 			if (substr($server, 0, 7) === 'unix://') {
 				$host = $server;
 				$port = 0;
 			} else {
-				list($host, $port) = explode(':', $server, 2);
+				if (substr($server, 0, 6) === 'tcp://') {
+					$server = substr($server, 6);
+				}
+				if (strstr($server, ':') !== FALSE) {
+					list($host, $port) = explode(':', $server, 2);
+				} else {
+					$host = $server;
+					$port = $defaultPort;
+				}
 			}
 			$this->memcache->addServer($host, $port);
 		}
 	}
 
 	/**
-	 * Setter for useCompression
+	 * Setter for compression flags bit
 	 *
 	 * @param boolean $useCompression
 	 * @return void
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	protected function setCompression($useCompression) {
-		$this->useCompression = $useCompression;
+		if ($useCompression === TRUE) {
+			$this->flags ^= MEMCACHE_COMPRESSED;
+		} else {
+			$this->flags &= ~MEMCACHE_COMPRESSED;
+		}
 	}
 
 	/**
@@ -172,28 +212,42 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
-	 * @throws \InvalidArgumentException if the identifier is not valid
+	 * @throws \InvalidArgumentException if the identifier is not valid or the final memcached key is longer than 250 characters
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
-		if (!$this->cache instanceof \F3\FLOW3\Cache\AbstractCache) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
+		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
 		}
+		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
 
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 		try {
-			$this->remove($entryIdentifier);
-			$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->useCompression, $expiration);
-			if (!$success) throw new \F3\FLOW3\Cache\Exception('Memcache was unable to connect to any server.', 1207165277);
-			$this->addTagsToTagIndex($tags);
-			$this->addIdentifierToTags($entryIdentifier, $tags);
+			if(strlen($data) > self::MAX_BUCKET_SIZE) {
+				$data = str_split($data, 1024 * 1000);
+				$success = TRUE;
+				$chunkNumber = 1;
+				foreach ($data as $chunk) {
+					$success &= $this->memcache->set($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber, $chunk, $this->flags, $expiration);
+					$chunkNumber++;
+				}
+				$success &= $this->memcache->set($this->identifierPrefix . $entryIdentifier, 'FLOW3*chunked:' . $chunkNumber, $this->flags, $expiration);
+			} else {
+				$success = $this->memcache->set($this->identifierPrefix . $entryIdentifier, $data, $this->flags, $expiration);
+			}
+			if ($success === TRUE) {
+				$this->removeIdentifierFromAllTags($entryIdentifier);
+				$this->addTagsToTagIndex($tags);
+				$this->addIdentifierToTags($entryIdentifier, $tags);
+			}
 		} catch(\F3\FLOW3\Error\Exception $exception) {
-			throw new \F3\FLOW3\Cache\Exception('Memcache was unable to connect to any server. ' . $exception->getMessage(), 1207208100);
+			throw new \F3\FLOW3\Cache\Exception('Could not set value. ' . $exception->getMessage(), 1207208100);
 		}
 	}
 
@@ -206,7 +260,15 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function get($entryIdentifier) {
-		return $this->memcache->get($this->identifierPrefix . $entryIdentifier);
+		$value = $this->memcache->get($this->identifierPrefix . $entryIdentifier);
+		if (substr($value, 0, 14) === 'FLOW3*chunked:') {
+			list( , $chunkCount) = explode(':', $value);
+			$value = '';
+			for ($chunkNumber = 1 ; $chunkNumber < $chunkCount; $chunkNumber++) {
+				$value .= $this->memcache->get($this->identifierPrefix . $entryIdentifier . '_chunk_' . $chunkNumber);
+			}
+		}
+		return $value;
 	}
 
 	/**
@@ -232,8 +294,8 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove($entryIdentifier) {
+		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
 		$this->removeIdentifierFromAllTags($entryIdentifier);
-		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
 		return $this->memcache->delete($this->identifierPrefix . $entryIdentifier);
 	}
 
@@ -264,22 +326,18 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 */
 	protected function findTagsByIdentifier($identifier) {
 		$tags = $this->memcache->get($this->identifierPrefix . 'ident_' . $identifier);
-		return ($tags == false ? array() : (array)$tags);
+		return ($tags === FALSE ? array() : (array)$tags);
 	}
 
 	/**
 	 * Removes all cache entries of this cache.
 	 *
-	 * Beware that this flushes the complete memcached, not only the cache
-	 * entries we stored there. We do this because:
-	 *  it is expensive to keep track of all identifiers we put there
-	 *  memcache is a cache, you should never rely on things being there
-	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flush() {
-		$this->memcache->flush();
+		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		$this->flushByTag('%MEMCACHE%' . $this->cache->getIdentifier());
 	}
 
 	/**
@@ -292,6 +350,7 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	public function flushByTag($tag) {
 		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496752);
 		$identifiers = $this->findIdentifiersTaggedWith($tag);
+		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
 		}
@@ -425,6 +484,7 @@ class Memcached extends \F3\FLOW3\Cache\AbstractBackend {
 	 * @return void
 	 */
 	public function collectGarbage() {
+		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by memcached', $this->cache->getIdentifier()), LOG_INFO);
 	}
 
 }

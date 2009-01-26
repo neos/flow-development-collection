@@ -51,12 +51,10 @@ class FileTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
-		$mockSignalDispatcher = $this->getMock('F3\FLOW3\SignalSlot\Dispatcher');
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$this->backend = new \F3\FLOW3\Cache\Backend\File('Testing');
 		$this->backend->injectEnvironment($environment);
-		$this->backend->injectSignalDispatcher($mockSignalDispatcher);
 		$this->backend->injectSystemLogger($mockSystemLogger);
 		$this->backend->initializeObject();
 	}

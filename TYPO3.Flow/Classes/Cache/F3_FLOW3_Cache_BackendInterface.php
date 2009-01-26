@@ -62,10 +62,10 @@ interface BackendInterface {
 	/**
 	 * Saves data in the cache.
 	 *
-	 * @param string $entryIdentifier: An identifier for this specific cache entry
-	 * @param string $data: The data to be stored
-	 * @param array $tags: Tags to associate with this cache entry
-	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @param string $entryIdentifier An identifier for this specific cache entry
+	 * @param string $data The data to be stored
+	 * @param array $tags Tags to associate with this cache entry
+	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
@@ -84,7 +84,7 @@ interface BackendInterface {
 	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
-	 * @param string $entryIdentifier: An identifier specifying the cache entry
+	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 */
 	public function has($entryIdentifier);
@@ -94,7 +94,7 @@ interface BackendInterface {
 	 * Usually this only affects one entry but if - for what reason ever -
 	 * old entries for the identifier still exist, they are removed as well.
 	 *
-	 * @param string $entryIdentifier: Specifies the cache entry to remove
+	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 */
 	public function remove($entryIdentifier);
