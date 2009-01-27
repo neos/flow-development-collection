@@ -90,6 +90,8 @@ class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInter
 					return self::STATUS_CHANGED;
 				}
 			} else {
+				unset($this->filesAndModificationTimes[$pathAndFilename]);
+				$this->modificationTimesChanged = TRUE;
 				return self::STATUS_DELETED;
 			}
 		} else {
