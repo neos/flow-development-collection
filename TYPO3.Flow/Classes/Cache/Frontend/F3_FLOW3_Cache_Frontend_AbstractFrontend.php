@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,7 +37,7 @@ namespace F3\FLOW3\Cache;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-abstract class AbstractCache implements \F3\FLOW3\Cache\CacheInterface {
+abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInterface {
 
 	/**
 	 * @var string Identifies this cache

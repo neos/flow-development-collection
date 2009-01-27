@@ -51,12 +51,7 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	protected $settings = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Cache\AbstractCache A reference to the cache factory
-	 */
-	protected $cacheFactory;
-
-	/**
-	 * @var \F3\FLOW3\Cache\AbstractCache The cached acl entries
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend The cached acl entries
 	 */
 	protected $cache;
 
@@ -105,11 +100,11 @@ class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	/**
 	 * Injects the ACL cache
 	 *
-	 * @param F3\FLOW3\Cache\VariableCache $cache The cache
+	 * @param F3\FLOW3\Cache\Frontend\VariableFrontend $cache The cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\VariableCache $cache) {
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 

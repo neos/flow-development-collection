@@ -40,12 +40,12 @@ namespace F3\FLOW3\Cache\Backend;
 interface BackendInterface {
 
 	/**
-	 * Sets a reference to the cache which uses this backend
+	 * Sets a reference to the cache frontend which uses this backend
 	 *
-	 * @param \F3\FLOW3\Cache\CacheInterface $cache The frontend for this backend
+	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
 	 */
-	public function setCache(\F3\FLOW3\Cache\CacheInterface $cache);
+	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache);
 
 	/**
 	 * Saves data in the cache.

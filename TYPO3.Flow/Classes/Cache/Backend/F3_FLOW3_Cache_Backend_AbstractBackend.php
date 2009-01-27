@@ -39,7 +39,8 @@ namespace F3\FLOW3\Cache\Backend;
 abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterface {
 
 	/**
-	 * @var \F3\FLOW3\Cache\CacheInterface Reference to the cache which uses this backend
+	 * Reference to the cache frontend which uses this backend
+	 * @var \F3\FLOW3\Cache\Frontend\FrontendInterface
 	 */
 	protected $cache;
 
@@ -49,12 +50,14 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	protected $signalDispatcher;
 
 	/**
-	 * @var string The current application context
+	 * The current application context
+	 * @var string
 	 */
 	protected $context;
 
 	/**
-	 * @var integer Default lifetime of a cache entry in seconds
+	 * Default lifetime of a cache entry in seconds
+	 * @var integer
 	 */
 	protected $defaultLifetime = 3600;
 
@@ -94,12 +97,12 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	}
 
 	/**
-	 * Sets a reference to the cache which uses this backend
+	 * Sets a reference to the cache frontend which uses this backend
 	 *
-	 * @param \F3\FLOW3\Cache\CacheInterface $cache The frontend for this backend
+	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
 	 */
-	public function setCache(\F3\FLOW3\Cache\CacheInterface $cache) {
+	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$this->cache = $cache;
 	}
 

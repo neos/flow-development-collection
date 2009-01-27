@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,14 +29,14 @@ namespace F3\FLOW3\Cache;
  */
 
 /**
- * Testcase for the Variable Cache
+ * Testcase for the variable cache frontend
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class VariableCacheTest extends \F3\Testing\BaseTestCase {
+class VariableFrontendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -48,7 +48,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('set');
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
 			try {
@@ -68,7 +68,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theString)));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->set('VariableCacheTest', $theString);
 	}
 
@@ -81,7 +81,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('VariableCacheTest'), $this->equalTo(serialize($theArray)));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->set('VariableCacheTest', $theArray);
 	}
 
@@ -93,7 +93,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize('Just some value')));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals('Just some value', $cache->get('VariableCacheTest'), 'The returned value was not the expected string.');
 	}
 
@@ -106,7 +106,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize($theArray)));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals($theArray, $cache->get('VariableCacheTest'), 'The returned value was not the expected unserialized array.');
 	}
 
@@ -118,7 +118,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue(serialize(FALSE)));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertFalse($cache->get('VariableCacheTest'), 'The returned value was not the FALSE.');
 	}
 
@@ -130,7 +130,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('has')->with($this->equalTo('VariableCacheTest'))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertTrue($cache->has('VariableCacheTest'), 'has() did not return TRUE.');
 	}
 
@@ -144,7 +144,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
 	}
 
@@ -157,7 +157,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('getByTag');
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$cache->getByTag('SomeInvalid\Tag');
 	}
 
@@ -174,7 +174,7 @@ class VariableCacheTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
 		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls(serialize('one value'), serialize('two value')));
 
-		$cache = new \F3\FLOW3\Cache\VariableCache('VariableCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\VariableFrontend('VariableFrontend', $backend);
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
 	}
 }

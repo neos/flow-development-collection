@@ -229,7 +229,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	public function flushRemovesOnlyOwnEntries() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
-		$thisCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
+		$thisCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thisCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thisCache'));
 		$thisBackend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
 		$thisBackend->injectEnvironment($this->environment);
@@ -237,7 +237,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$thisBackend->setCache($thisCache);
 		$thisBackend->initializeObject();
 
-		$thatCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
+		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
 		$thatBackend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
 		$thatBackend->injectEnvironment($this->environment);
@@ -279,7 +279,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	protected function setUpBackend(array $backendOptions = array()) {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array(), array(), '', FALSE);
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$backend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
 		$backend->injectEnvironment($this->environment);
 		$backend->injectSystemLogger($mockSystemLogger);

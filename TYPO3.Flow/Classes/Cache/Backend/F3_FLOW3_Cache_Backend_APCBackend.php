@@ -60,7 +60,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 	/**
 	 * A prefix to seperate stored data from other data possible stored in the APC
-	 *
 	 * @var string
 	 */
 	protected $identifierPrefix;
@@ -139,10 +138,10 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
+		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
 
-		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
+		$tags[] = '%APCBE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 
 		$success = apc_store($this->identifierPrefix . $entryIdentifier, $data, $expiration);
@@ -237,8 +236,8 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
-		$this->flushByTag('%MEMCACHE%' . $this->cache->getIdentifier());
+		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
+		$this->flushByTag('%APCBE%' . $this->cache->getIdentifier());
 	}
 
 	/**

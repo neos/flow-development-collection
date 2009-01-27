@@ -46,7 +46,7 @@ class Service {
 	protected $initialized = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\Cache\AbstractCache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -167,11 +167,11 @@ class Service {
 	 *
 	 * The cache must be set before initializing the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Cache\AbstractCache $cache Cache for the reflection service
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setCache(\F3\FLOW3\Cache\AbstractCache $cache) {
+	public function setCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 

@@ -39,7 +39,7 @@ class ModificationTimeTest extends \F3\Testing\BaseTestCase {
 	protected $strategy;
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -50,7 +50,7 @@ class ModificationTimeTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$this->cache = $this->getMock('F3\FLOW3\Cache\VariableCache', array(), array(), '', FALSE);
+		$this->cache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 
 		$this->strategy = new \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime();
 		$this->strategy->injectCache($this->cache);

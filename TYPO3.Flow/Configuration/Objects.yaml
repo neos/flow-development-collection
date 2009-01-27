@@ -100,9 +100,9 @@ F3\FLOW3\Cache\Backend\MemcachedBackend:
   scope: prototype
 F3\FLOW3\Cache\Backend\APCBackend:
   scope: prototype
-F3\FLOW3\Cache\VariableCache:
+F3\FLOW3\Cache\Frontend\VariableFrontend:
   scope: prototype
-F3\FLOW3\Cache\StringCache:
+F3\FLOW3\Cache\Frontend\StringFrontend:
   scope: prototype
 
 #                                                                          #

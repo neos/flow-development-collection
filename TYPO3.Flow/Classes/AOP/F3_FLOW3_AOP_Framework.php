@@ -71,17 +71,17 @@ class Framework {
 	protected $proxyClassBuilder;
 
 	/**
-	 * @var \F3\FLOW3\Cache\StringCache
+	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
 	 */
 	protected $proxyClassCodesCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $targetClassInformationCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $proxyBuildInformationCache;
 
@@ -151,33 +151,33 @@ class Framework {
 	/**
 	 * Injects the cache for storing proxy class code
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $proxyClassCodesCache
+	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyClassCodesCache(\F3\FLOW3\Cache\StringCache $proxyClassCodesCache) {
+	public function injectProxyClassCodesCache(\F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache) {
 		$this->proxyClassCodesCache = $proxyClassCodesCache;
 	}
 
 	/**
 	 * Injects the cache for storing information about target classes
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $targetClassInformationCache
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\VariableCache $targetClassInformationCache) {
+	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache) {
 		$this->targetClassInformationCache = $targetClassInformationCache;
 	}
 
 	/**
 	 * Injects the cache for storing information about the AOP proxy build status
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $proxyBuildInformationCache
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyBuildInformationCache(\F3\FLOW3\Cache\VariableCache $proxyBuildInformationCache) {
+	public function injectProxyBuildInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache) {
 		$this->proxyBuildInformationCache = $proxyBuildInformationCache;
 	}
 

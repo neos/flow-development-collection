@@ -33,7 +33,7 @@ namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
 class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface {
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $cache;
 
@@ -50,8 +50,12 @@ class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInter
 
 	/**
 	 * Injects the FLOW3_Monitor cache
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectCache(\F3\FLOW3\Cache\VariableCache $cache) {
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
 	}
 
@@ -70,7 +74,9 @@ class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInter
 	/**
 	 * Checks if the specified file has changed
 	 *
+	 * @param string $pathAndFilename
 	 * @return integer One of the STATUS_* constants
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getFileStatus($pathAndFilename) {
 		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
@@ -100,7 +106,9 @@ class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInter
 	/**
 	 * Checks if the specified directory has changed
 	 *
+	 * @param string $path
 	 * @return integer One of the STATUS_* constants
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getDirectoryStatus($path) {
 		return self::STATUS_UNCHANGED;

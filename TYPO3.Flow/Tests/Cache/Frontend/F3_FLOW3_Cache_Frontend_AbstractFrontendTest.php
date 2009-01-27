@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,7 +36,7 @@ namespace F3\FLOW3\Cache;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AbstractCacheTest extends \F3\Testing\BaseTestCase {
+class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -45,7 +45,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 	public function theConstructorAcceptsValidIdentifiers() {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		foreach (array('x', 'someValue', '123fivesixseveneight', 'ab_cd%', rawurlencode('package://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
-			$abstractCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+			$abstractCache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 		}
 	}
 
@@ -57,7 +57,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $identifier) {
 			try {
-				$abstractCache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
+				$abstractCache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 				$this->fail('Identifier "' . $identifier . '" was not rejected.');
 			} catch (\InvalidArgumentException $exception) {
 			}
@@ -73,7 +73,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('flush');
 
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$cache->flush();
 	}
 
@@ -88,7 +88,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('flushByTag');
 
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$cache->flushByTag('SomeInvalid\Tag');
 	}
 
@@ -102,7 +102,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('flushByTag')->with($tag);
 
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$cache->flushByTag($tag);
 	}
 
@@ -115,7 +115,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('collectGarbage');
 
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$cache->collectGarbage();
 	}
 
@@ -127,7 +127,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$this->assertEquals('%CLASS%F3_Foo_Bar_Baz', $cache->getClassTag('F3\Foo\Bar\Baz'));
 	}
 
@@ -138,7 +138,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 	public function invalidEntryIdentifiersAreRecognizedAsInvalid() {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
 			$this->assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
 		}
@@ -151,7 +151,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 	public function validEntryIdentifiersAreRecognizedAsValid() {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
 			$this->assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
 		}
@@ -164,7 +164,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 	public function invalidTagsAreRecognizedAsInvalid() {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
 			$this->assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
 		}
@@ -177,7 +177,7 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 	public function validTagsAreRecognizedAsValid() {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
 			$this->assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
 		}

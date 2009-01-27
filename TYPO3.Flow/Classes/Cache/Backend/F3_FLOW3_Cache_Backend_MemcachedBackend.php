@@ -219,10 +219,10 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
-		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
+		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 
-		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
+		$tags[] = '%MEMCACHEBE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
 
 		try {
@@ -333,9 +333,9 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flush() {
-		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$this->flushByTag('%MEMCACHE%' . $this->cache->getIdentifier());
+		$this->flushByTag('%MEMCACHEBE%' . $this->cache->getIdentifier());
 	}
 
 	/**

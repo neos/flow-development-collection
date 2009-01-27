@@ -49,12 +49,12 @@ class Publisher {
 	protected $publicResourcePath = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Cache\VariableCache The cache used for storing metadata about resources
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend The cache used for storing metadata about resources
 	 */
 	protected $resourceMetadataCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\StringCache The cache used for storing metadata about resources
+	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend The cache used for storing metadata about resources
 	 */
 	protected $resourceStatusCache;
 
@@ -91,22 +91,22 @@ class Publisher {
 	/**
 	 * Sets the cache used for storing meta data about resources
 	 *
-	 * @param \F3\FLOW3\Cache\VariableCache $metadataCache
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setMetadataCache(\F3\FLOW3\Cache\VariableCache $metadataCache) {
+	public function setMetadataCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache) {
 		$this->resourceMetadataCache = $metadataCache;
 	}
 
 	/**
 	 * Sets the cache used for storing resources status
 	 *
-	 * @param \F3\FLOW3\Cache\StringCache $statusCache
+	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $statusCache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setStatusCache(\F3\FLOW3\Cache\StringCache $statusCache) {
+	public function setStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
 		$this->resourceStatusCache = $statusCache;
 	}
 

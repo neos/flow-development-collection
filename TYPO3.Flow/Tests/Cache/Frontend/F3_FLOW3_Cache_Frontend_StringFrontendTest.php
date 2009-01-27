@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,14 +29,14 @@ namespace F3\FLOW3\Cache;
  */
 
 /**
- * Testcase for the String Cache
+ * Testcase for the string cache frontend
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StringCacheTest extends \F3\Testing\BaseTestCase {
+class StringFrontendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -48,7 +48,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('set');
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 
 		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
 			try {
@@ -68,7 +68,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('set')->with($this->equalTo('StringCacheTest'), $this->equalTo($theString));
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$cache->set('StringCacheTest', $theString);
 	}
 
@@ -80,7 +80,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 	public function setThrowsInvalidDataExceptionOnNonStringValues() {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$cache->set('StringCacheTest', array());
 	}
 
@@ -93,7 +93,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('get')->will($this->returnValue('Just some value'));
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$this->assertEquals('Just some value', $cache->get('StringCacheTest'), 'The returned value was not the expected string.');
 	}
 
@@ -105,7 +105,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
 		$backend->expects($this->once())->method('has')->with($this->equalTo('StringCacheTest'))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$this->assertTrue($cache->has('StringCacheTest'), 'has() did not return TRUE.');
 	}
 
@@ -119,7 +119,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 
 		$backend->expects($this->once())->method('remove')->with($this->equalTo($cacheIdentifier))->will($this->returnValue(TRUE));
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
 	}
 
@@ -132,7 +132,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
 		$backend->expects($this->never())->method('getByTag');
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$cache->getByTag('SomeInvalid\Tag');
 	}
 
@@ -149,7 +149,7 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 		$backend->expects($this->once())->method('findIdentifiersByTag')->with($this->equalTo($tag))->will($this->returnValue($identifiers));
 		$backend->expects($this->exactly(2))->method('get')->will($this->onConsecutiveCalls('one value', 'two value'));
 
-		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
 		$this->assertEquals($entries, $cache->getByTag($tag), 'Did not receive the expected entries');
 	}
 }

@@ -94,7 +94,7 @@ class Factory {
 	 * @param string $cacheObjectName Object name of the cache frontend
 	 * @param string $backendObjectName Object name of the cache backend
 	 * @param array $backendOptions (optional) Array of backend options
-	 * @return \F3\FLOW3\Cache\AbstractCache The created cache frontend
+	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
@@ -102,7 +102,7 @@ class Factory {
 		$backend = $this->objectFactory->create($backendObjectName, $context, $backendOptions);
 		if (!$backend instanceof \F3\FLOW3\Cache\Backend\BackendInterface) throw new \F3\FLOW3\Cache\Exception\InvalidBackend('"' . $backendObjectName . '" is not a valid cache backend object.', 1216304301);
 		$cache = $this->objectFactory->create($cacheObjectName, $cacheIdentifier, $backend);
-		if (!$cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception\InvalidCache('"' . $cacheObjectName . '" is not a valid cache object.', 1216304300);
+		if (!$cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception\InvalidCache('"' . $cacheObjectName . '" is not a valid cache frontend object.', 1216304300);
 
 		$this->cacheManager->registerCache($cache);
 		return $cache;

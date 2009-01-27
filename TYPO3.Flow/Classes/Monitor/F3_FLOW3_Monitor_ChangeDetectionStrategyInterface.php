@@ -40,6 +40,7 @@ interface ChangeDetectionStrategyInterface {
 	/**
 	 * Checks if the specified file has changed
 	 *
+	 * @param string $pathAndFilename
 	 * @return integer One of the STATUS_* constants
 	 */
 	public function getFileStatus($pathAndFilename);
@@ -47,6 +48,7 @@ interface ChangeDetectionStrategyInterface {
 	/**
 	 * Checks if the specified directory has changed
 	 *
+	 * @param string $path
 	 * @return integer One of the STATUS_* constants
 	 */
 	public function getDirectoryStatus($path);

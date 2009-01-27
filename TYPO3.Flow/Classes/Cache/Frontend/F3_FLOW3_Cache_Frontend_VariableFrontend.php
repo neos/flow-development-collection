@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Cache;
+namespace F3\FLOW3\Cache\Frontend;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Cache;
  */
 
 /**
- * A cache for strings. Nothing else.
+ * A cache frontend for any kinds of PHP variables
  *
  * @package FLOW3
  * @subpackage Cache
@@ -37,39 +37,40 @@ namespace F3\FLOW3\Cache;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class StringCache extends \F3\FLOW3\Cache\AbstractCache {
+class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 
 	/**
 	 * Saves the value of a PHP variable in the cache. Note that the variable
 	 * will be serialized if necessary.
 	 *
 	 * @param string $entryIdentifier An identifier used for this cache entry
-	 * @param string $string The variable to cache
+	 * @param mixed $variable The variable to cache
 	 * @param array $tags Tags to associate with this cache entry
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function set($entryIdentifier, $string, $tags = array()) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
-		if (!is_string($string)) throw new \F3\FLOW3\Cache\Exception\InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
+	public function set($entryIdentifier, $variable, $tags = array()) {
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
 		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057512);
+			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
 		}
 
-		$this->backend->set($entryIdentifier, $string, $tags);
+		$this->backend->set($entryIdentifier, serialize($variable), $tags);
 	}
 
 	/**
 	 * Finds and returns a variable value from the cache.
 	 *
 	 * @param string $entryIdentifier Identifier of the cache entry to fetch
-	 * @return string The value
+	 * @return mixed The value
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function get($entryIdentifier) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057752);
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
 
-		return $this->backend->get($entryIdentifier);
+		return unserialize($this->backend->get($entryIdentifier));
 	}
 
 	/**
@@ -80,12 +81,12 @@ class StringCache extends \F3\FLOW3\Cache\AbstractCache {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057772);
+		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058312);
 
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
-			$entries[] = $this->backend->get($identifier);
+			$entries[] = unserialize($this->backend->get($identifier));
 		}
 		return $entries;
 	}
