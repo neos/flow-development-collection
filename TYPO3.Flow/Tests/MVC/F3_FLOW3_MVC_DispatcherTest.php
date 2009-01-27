@@ -28,9 +28,6 @@ namespace F3\FLOW3\MVC;
  * @version $Id$
  */
 
-require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockRequestHandlingController.php');
-require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockExceptionThrowingController.php');
-
 /**
  * Testcase for the MVC Dispatcher
  *
@@ -42,75 +39,50 @@ require_once(__DIR__ . '/Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_Mock
 class DispatcherTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Dispatcher
-	 */
-	protected $dispatcher;
-
-	/**
-	 * Sets up this test case
-	 *
-	 * @return void
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setUp() {
-		$securityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
-		$firewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
+	public function dispatchCallsTheControllersProcessRequestMethodUntilTheIsDispatchedFlagInTheRequestObjectIsSet() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('FooController'));
+		$mockRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->at(2))->method('isDispatched')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->at(4))->method('isDispatched')->will($this->returnValue(TRUE));
 
-		$this->dispatcher = new \F3\FLOW3\MVC\Dispatcher($this->objectManager, $this->objectFactory);
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
+
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest'));
+		$mockController->expects($this->exactly(2))->method('processRequest')->with($mockRequest, $mockResponse);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->exactly(2))->method('getObject')->with('FooController')->will($this->returnValue($mockController));
+
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\MVC\Exception
-	 */
-	public function aStopActionExceptionThrownByTheControllerIsCatchedByTheDispatcherAndBreaksTheDispatchLoop() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
-
-		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockExceptionThrowingController');
-		$mockExceptionThrowingController = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockExceptionThrowingController');
-		$mockExceptionThrowingController->injectPropertyMapper($mockPropertyMapper);
-
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
-		$request->setControllerName('MockExceptionThrowingController');
-
-		$request->setControllerActionName('stopAction');
-		$this->dispatcher->dispatch($request, $response);
-
-		$request->setDispatched(FALSE);
-		$request->setControllerActionName('throwGeneralException');
-
-		$this->dispatcher->dispatch($request, $response);
-	}
-
-	/**
-	 * @test
+	 * @expectedException F3\FLOW3\MVC\Exception\InfiniteLoop
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function theDispatcherCallsProcessRequestMethodOfTheControllerSpecifiedInTheRequestObject() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$request->injectObjectManager($this->objectManager);
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+	public function dispatchThrowsAnInfiniteLoopExceptionIfTheRequestCouldNotBeDispachedAfter99Iterations() {
+		$requestCallCounter = 0;
+		$requestCallBack = function() use (&$requestCallCounter) {
+			return ($requestCallCounter++ < 101) ? FALSE : TRUE;
+		};
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('FooController'));
+		$mockRequest->expects($this->any())->method('isDispatched')->will($this->returnCallBack($requestCallBack, '__invoke'));
 
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->any())->method('getMappingResults')->will($this->returnValue(new \F3\FLOW3\Property\MappingResults()));
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest'));
 
-		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
-		$controller = $this->objectManager->getObject('F3\FLOW3\MVC\Fixture\Controller\MockRequestHandlingController');
-		$controller->injectPropertyMapper($mockPropertyMapper);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getObject')->with('FooController')->will($this->returnValue($mockController));
 
-		$request->setControllerPackageKey('FLOW3');
-		$request->setControllerObjectNamePattern('F3\@package\MVC\Fixture\Controller\@controller');
-		$request->setControllerName('MockRequestHandlingController');
-
-		$this->dispatcher->dispatch($request, $response);
-		$this->assertTrue($controller->requestHasBeenProcessed);
+		$dispatcher = $this->getMock('F3\FLOW3\MVC\Dispatcher', array('dummy'), array($mockObjectManager), '', TRUE);
+		$dispatcher->dispatch($mockRequest, $mockResponse);
 	}
 }
 ?>

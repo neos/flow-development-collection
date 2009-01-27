@@ -65,31 +65,14 @@ class Dispatcher {
 	public function dispatch(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
-			$dispatchLoopCount ++;
-			if ($dispatchLoopCount > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+			if ($dispatchLoopCount++ > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
+			$controller = $this->objectManager->getObject($request->getControllerObjectName());
+			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
 			try {
-				$controller = $this->getPreparedController($request, $response);
 				$controller->processRequest($request, $response);
 			} catch (\F3\FLOW3\MVC\Exception\StopAction $ignoredException) {
 			}
 		}
 	}
-
-	/**
-	 * Resolves, prepares and returns the controller which is specified in the request object.
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @param \F3\FLOW3\MVC\Response $response The current response
-	 * @return \F3\FLOW3\MVC\Controller\RequestHandlingController The controller
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController, \F3\FLOW3\MVC\Exception\InvalidController
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function getPreparedController(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
-		$controllerObjectName = $request->getControllerObjectName();
-		$controller = $this->objectManager->getObject($controllerObjectName);
-		if (!$controller instanceof \F3\FLOW3\MVC\Controller\RequestHandlingController) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $controllerObjectName . '". The controller must be a valid request handling controller.', 1202921619);
-		return $controller;
-	}
-
 }
 ?>

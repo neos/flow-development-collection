@@ -39,38 +39,81 @@ namespace F3\FLOW3\MVC\Controller;
 abstract class AbstractController implements \F3\FLOW3\MVC\Controller\ControllerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface A reference to the Object Factory
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var string Key of the package this controller belongs to
+	 * Key of the package this controller belongs to
+	 * @var string
 	 */
 	protected $packageKey;
 
 	/**
-	 * @var \F3\FLOW3\Package\Package The package this controller belongs to
-	 */
-	protected $package;
-
-	/**
 	 * Contains the settings of the current package
-	 *
 	 * @var array
 	 */
 	protected $settings;
 
 	/**
+	 * The current request
+	 * @var \F3\FLOW3\MVC\Request
+	 */
+	protected $request;
+
+	/**
+	 * The response which will be returned by this action controller
+	 * @var \F3\FLOW3\MVC\Response
+	 */
+	protected $response;
+
+	/**
+	 * Arguments passed to the controller
+	 * @var \F3\FLOW3\MVC\Controller\Arguments
+	 */
+	protected $arguments;
+
+	/**
+	 * A property mapper for mapping the arguments
+	 * @var \F3\FLOW3\MVC\Property\Mapper
+	 */
+	protected $propertyMapper;
+
+	/**
+	 * An array of supported request types. By default only web requests are supported.
+	 * Modify or replace this array if your specific controller supports certain
+	 * (additional) request types.
+	 * @var array
+	 */
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+
+	/**
+	 * Mapping results of the arguments mapping process
+	 * @var \F3\FLOW3\Property\MappingResults
+	*/
+	protected $argumentMappingResults;
+
+	/**
 	 * Constructs the controller.
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
-	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the Package Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 		$this->objectFactory = $objectFactory;
 		list(, $this->packageKey) = explode('\\', get_class($this));
-		$this->package = $packageManager->getPackage($this->packageKey);
+	}
+
+	/**
+	 * Injects a property mapper
+	 *
+	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
@@ -105,6 +148,166 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeController() {
+	}
+
+	/**
+	 * Checks if the current request type is supported by the controller.
+	 *
+	 * If your controller only supports certain request types, either
+	 * replace / modify the supporteRequestTypes property or override this
+	 * method.
+	 *
+	 * @param \F3\FLOW3\MVC\Request $request The current request
+	 * @return boolean TRUE if this request type is supported, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function canProcessRequest($request) {
+		return in_array(get_class($request), $this->supportedRequestTypes);
+	}
+
+	/**
+	 * Processes a general request. The result can be returned by altering the given response.
+	 *
+	 * @param \F3\FLOW3\MVC\Request $request The request object
+	 * @param \F3\FLOW3\MVC\Response $response The response, modified by this handler
+	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
+
+		$this->request = $request;
+		$this->request->setDispatched(TRUE);
+		$this->response = $response;
+
+		$this->initializeArguments();
+		$this->mapRequestArgumentsToLocalArguments();
+	}
+
+	/**
+	 * Forwards the request to another controller.
+	 *
+	 * @param string $actionName Name of the action to forward to
+	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments Arguments to pass to the target action
+	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, \F3\FLOW3\MVC\Controller\Arguments $arguments = NULL) {
+		$this->request->setDispatched(FALSE);
+		$this->request->setControllerActionName($actionName);
+		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
+		if ($packageKey !== NULL) $this->request->setControllerPackageKey($packageKey);
+		if ($arguments !== NULL) $this->request->setArguments($arguments);
+		throw new \F3\FLOW3\MVC\Exception\StopAction();
+	}
+
+	/**
+	 * Redirects the web request to another uri.
+	 *
+	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 *
+	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\URI object
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
+	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function redirect($uri, $delay = 0, $statusCode = 303) {
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
+
+		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
+		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
+		$this->response->setStatus($statusCode);
+		$this->response->setHeader('Location', (string)$uri);
+		throw new \F3\FLOW3\MVC\Exception\StopAction();
+	}
+
+	/**
+	 * Sends the specified HTTP status immediately.
+	 *
+	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 *
+	 * @param integer $statusCode The HTTP status code
+	 * @param string $statusMessage A custom HTTP status message
+	 * @param string $content Body content which further explains the status
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
+	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('throwStatus() only supports web requests.', 1220539739);
+
+		$this->response->setStatus($statusCode, $statusMessage);
+		if ($content === NULL) $content = $this->response->getStatus();
+		$this->response->setContent($content);
+		throw new \F3\FLOW3\MVC\Exception\StopAction();
+	}
+
+	/**
+	 * Returns the arguments which are defined for this controller.
+	 *
+	 * Use this information if you want to know about what arguments are supported and / or
+	 * required by this controller or if you'd like to know about further information about
+	 * each argument.
+	 *
+	 * @return \F3\FLOW3\MVC\Controller\Arguments Supported arguments of this controller
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getArguments() {
+		return $this->arguments;
+	}
+
+	/**
+	 * Initializes (registers / defines) arguments of this controller.
+	 *
+	 * Override this method to add arguments which can later be accessed
+	 * by the action methods.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeArguments() {
+	}
+
+	/**
+	 * Maps arguments delivered by the request object to the local controller arguments.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function mapRequestArgumentsToLocalArguments() {
+		$this->propertyMapper->setTarget($this->arguments);
+		foreach ($this->arguments as $argument) {
+			if ($argument->getFilter() != NULL) $this->propertyMapper->registerFilter($argument->getFilter(), $argument->getName());
+			if ($argument->getPropertyConverter() != NULL) $this->propertyMapper->registerPropertyConverter($argument->getPropertyConverter(), $argument->getName(), $argument->getPropertyConverterInputFormat());
+		}
+
+		$argumentsValidator = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentsValidator', $this->arguments);
+		$this->propertyMapper->registerValidator($argumentsValidator);
+		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
+		$this->propertyMapper->map($this->request->getArguments());
+
+		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
+
+		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
+			if (isset($this->arguments[$propertyName])) {
+				$this->arguments[$propertyName]->setValidity(FALSE);
+				$this->arguments[$propertyName]->addError($error);
+			}
+		}
+
+		foreach ($this->argumentMappingResults->getWarnings() as $propertyName => $warning) {
+			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->addWarning($warning);
+		}
+
+		foreach ($this->argumentMappingResults->getIdentifiers() as $propertyName => $identifier) {
+			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->setIdentifier($identifier);
+		}
 	}
 }
 

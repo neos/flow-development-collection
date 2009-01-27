@@ -36,7 +36,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ActionController extends \F3\FLOW3\MVC\Controller\RequestHandlingController {
+class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
@@ -50,7 +50,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\RequestHandlingControlle
 
 	/**
 	 * By default a view with the same name as the current action is provided. Contains NULL if none was found.
-	 * @var \F3\FLOW3\MVC\ViewInterface
+	 * @var \F3\FLOW3\MVC\View\ViewInterface
 	 */
 	protected $view = NULL;
 

@@ -43,15 +43,228 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObjectSetsCurrentPackage() {
-		$package = new \F3\FLOW3\Package\Package('FLOW3', __DIR__ . '/../../');
 		$packageKey = uniqid('Test');
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array('getPackage'), array(), '', FALSE);
-		$mockPackageManager->expects($this->atLeastOnce())->method('getPackage')->will($this->returnValue($package));
+		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array(), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), 'F3\\' . $packageKey . '\Controller', TRUE);
+		$this->assertSame($packageKey, $this->readAttribute($controller, 'packageKey'));
+	}
 
-		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array(), array($this->getMock('F3\FLOW3\Object\FactoryInterface'), $mockPackageManager), 'F3\\' . $packageKey . '\Controller', TRUE);
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\MVC\Exception\UnsupportedRequestType
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processRequestWillThrowAnExceptionIfTheGivenRequestIsNotSupported() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$this->assertEquals($packageKey, $this->readAttribute($controller, 'packageKey'), 'The package key is not as expected.');
-		$this->assertEquals($package, $this->readAttribute($controller, 'package'), 'The package is not the one we injected.');
+		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), '', FALSE);
+
+		$supportedRequestTypesReflection = new \ReflectionProperty($controller, 'supportedRequestTypes');
+		$supportedRequestTypesReflection->setAccessible(TRUE);
+		$supportedRequestTypesReflection->setValue($controller, array('F3\Something\Request'));
+
+		$controller->processRequest($mockRequest, $mockResponse);
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getArgumentsReturnsAnArgumentsObject() {
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'));
+		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockArguments));
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($mockObjectFactory, $mockPackageManager);
+		$this->assertType('F3\FLOW3\MVC\Controller\Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$this->assertFalse($request->isDispatched());
+		$controller->processRequest($request, $response);
+		$this->assertTrue($request->isDispatched());
+	}
+
+	/**
+	 * test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardThrowsAStopActionException() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$controller->processRequest($request, $response);
+		$controller->forward('index');
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardResetsTheDispatchedFlagOfTheRequest() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$controller->processRequest($request, $response);
+		$this->assertTrue($request->isDispatched());
+		try {
+			$controller->forward('index');
+		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
+		}
+		$this->assertFalse($request->isDispatched());
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function forwardSetsTheSpecifiedControllerActionAndArgumentsInToTheRequest() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$controller->processRequest($request, $response);
+		try {
+			$controller->forward('some', 'Alternative', 'TestPackage');
+		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
+		}
+
+		$this->assertEquals('some', $request->getControllerActionName());
+		$this->assertEquals('Alternative', $request->getControllerName());
+		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
+	}
+
+	/**
+	 * test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function redirectThrowsAStopActionException() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$controller->processRequest($request, $response);
+		$controller->redirect('http://typo3.org');
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+
+		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+
+		$controller->processRequest($request, $response);
+		try {
+			$controller->throwStatus(404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
+			$this->fail('The exception was not thrown.');
+		} catch (\F3\FLOW3\MVC\Exception\StopAction $exception) {
+		}
+
+		$expectedHeaders = array(
+			'HTTP/1.1 404 File Really Not Found',
+		);
+		$this->assertEquals($expectedHeaders, $response->getHeaders());
+		$this->assertEquals('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>', $response->getContent());
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentFilters() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentPropertyConverters() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheArgumentsValidator() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function thePropertyMapperIsConfiguredWithTheArgumentsObjectAsTarget() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theRawArgumentsAreMappedByThePropertyMapper() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function everyArgumentThatRaisedAnErrorInTheMappingProcessIsMarkedInvalid() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function errorsAndWarningsAreAddedToTheCorrespondigArgumentObjects() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function forUnregisteredArgumentsAWarningIsAdded() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function requiredArgumentsAreConfiguredAsRequiredPropertiesInThePropertyMapper() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

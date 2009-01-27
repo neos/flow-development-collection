@@ -29,14 +29,25 @@ namespace F3\FLOW3\MVC\Controller;
  */
 
 /**
- * Marker interface for controllers
+ * Interface for controllers
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Robert Lemke <robert@typo3.org>
  */
 interface ControllerInterface {
+
+	/**
+	 * Processes a general request. The result can be returned by altering the given response.
+	 *
+	 * @param \F3\FLOW3\MVC\Request $request The request object
+	 * @param \F3\FLOW3\MVC\Response $response The response, modified by the controller
+	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+	 */
+	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
 
 }
 ?>

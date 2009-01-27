@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\Fixture\Controller;
+namespace F3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,52 +29,38 @@ namespace F3\FLOW3\MVC\Fixture\Controller;
  */
 
 /**
- * A mock RequestHandlingController
+ * Interface of a view
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class MockRequestHandlingController extends \F3\FLOW3\MVC\Controller\RequestHandlingController {
+interface ViewInterface {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\Arguments Arguments passed to the controller
-	 */
-	public $arguments;
-
-	/**
-	 * @var array An array of supported request types. By default all kinds of request are supported. Modify or replace this array if your specific controller only supports certain request types.
-	 */
-	public $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
-
-	/**
-	 * @var boolean If processRequest() has been called
-	 */
-	public $requestHasBeenProcessed = FALSE;
-
-	/**
-	 * Doesn't really process the request but sets a flag that this method was called.
+	 * Sets the current request
 	 *
 	 * @param \F3\FLOW3\MVC\Request $request
-	 * @param \F3\FLOW3\MVC\Response $response
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
-		parent::processRequest($request, $response);
-		$this->requestHasBeenProcessed = TRUE;
-	}
+	public function setRequest(\F3\FLOW3\MVC\Request $request);
 
 	/**
-	 * Returns the package settings which were injected into this controller
+	 * Returns an View Helper instance.
+	 * View Helpers must implement the interface \F3\FLOW3\MVC\View\Helper\HelperInterface
 	 *
-	 * @return array
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param string $viewHelperObjectName the full name of the View Helper object including namespace
+	 * @return \F3\FLOW3\MVC\View\Helper\HelperInterface The View Helper instance
 	 */
-	public function getSettings() {
-		return $this->settings;
-	}
+	public function getViewHelper($viewHelperObjectName);
+
+	/**
+	 * Renders the view
+	 *
+	 * @return string The rendered view
+	 */
+	public function render();
 }
 
 ?>
