@@ -149,7 +149,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 
-		if ($lifetime === 0) {
+		if ($lifetime === 0 || ($lifetime === NULL && $this->defaultLifetime === 0)) {
 			$expiryTime = new \DateTime('9999-12-31T23:59:59+0000', new \DateTimeZone('UTC'));
 		} else {
 			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;

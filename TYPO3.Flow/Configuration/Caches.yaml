@@ -16,7 +16,8 @@
 Default:
   frontend: F3\FLOW3\Cache\Frontend\VariableFrontend
   backend: F3\FLOW3\Cache\Backend\FileBackend
-  backendOptions: { }
+  backendOptions:
+    defaultLifetime: 0
 
 ##
 # Definition of caches used by FLOW3:

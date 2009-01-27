@@ -66,6 +66,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 *
 	 * @param string $context FLOW3's application context
 	 * @param mixed $options Configuration options - depends on the actual backend
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($context, $options = array()) {
 		$this->context = $context;
@@ -101,11 +102,23 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$this->cache = $cache;
 	}
 
+	/**
+	 * Sets the default lifetime for this cache backend
+	 *
+	 * @param integer $defaultLifeTime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setDefaultLifetime($defaultLifetime) {
+		if (!is_int($defaultLifetime) || $defaultLifetime < 0) throw new \InvalidArgumentException('The default lifetime must be given as a positive integer.', 1233072774);
+		$this->defaultLifetime = $defaultLifetime;
+	}
 
 }
 ?>

@@ -142,7 +142,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
 
 		$tags[] = '%APCBE%' . $this->cache->getIdentifier();
-		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
+		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
 
 		$success = apc_store($this->identifierPrefix . $entryIdentifier, $data, $expiration);
 		if ($success === TRUE) {

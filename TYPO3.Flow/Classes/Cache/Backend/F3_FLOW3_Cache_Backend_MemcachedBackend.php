@@ -223,7 +223,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
 
 		$tags[] = '%MEMCACHEBE%' . $this->cache->getIdentifier();
-		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
+		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;
 
 		try {
 			if(strlen($data) > self::MAX_BUCKET_SIZE) {
