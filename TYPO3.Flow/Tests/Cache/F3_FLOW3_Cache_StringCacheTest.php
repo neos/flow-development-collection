@@ -40,6 +40,27 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setRejectsInvalidIdentifiers() {
+		$theString = 'Just some value';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
+		$backend->expects($this->never())->method('set');
+
+		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
+			try {
+				$cache->set($entryIdentifier, $theString);
+				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
+			} catch (\InvalidArgumentException $exception) {
+			}
+		}
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setPassesStringToBackend() {
@@ -100,6 +121,19 @@ class StringCacheTest extends \F3\Testing\BaseTestCase {
 
 		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
 		$this->assertTrue($cache->remove($cacheIdentifier), 'remove() did not return TRUE');
+	}
+
+	/**
+	 * @test
+	 * @expectedException InvalidArgumentException
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getByTagRejectsInvalidTags() {
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
+		$backend->expects($this->never())->method('getByTag');
+
+		$cache = new \F3\FLOW3\Cache\StringCache('StringCache', $backend);
+		$cache->getByTag('SomeInvalid\Tag');
 	}
 
 	/**

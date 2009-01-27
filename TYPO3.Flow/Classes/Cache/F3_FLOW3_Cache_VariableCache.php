@@ -51,6 +51,11 @@ class VariableCache extends \F3\FLOW3\Cache\AbstractCache {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function set($entryIdentifier, $variable, $tags = array()) {
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
+		foreach ($tags as $tag) {
+			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058269);
+		}
+
 		$this->backend->set($entryIdentifier, serialize($variable), $tags);
 	}
 
@@ -63,19 +68,21 @@ class VariableCache extends \F3\FLOW3\Cache\AbstractCache {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function get($entryIdentifier) {
+		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
+
 		return unserialize($this->backend->get($entryIdentifier));
 	}
 
 	/**
 	 * Finds and returns all cache entries which are tagged by the specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
 	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @param string $tag The tag to search for
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getByTag($tag) {
+		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058312);
+
 		$entries = array();
 		$identifiers = $this->backend->findIdentifiersByTag($tag);
 		foreach ($identifiers as $identifier) {
@@ -84,26 +91,5 @@ class VariableCache extends \F3\FLOW3\Cache\AbstractCache {
 		return $entries;
 	}
 
-	/**
-	 * Checks if a cache entry with the specified identifier exists.
-	 *
-	 * @param string $entryIdentifier An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function has($entryIdentifier) {
-		return $this->backend->has($entryIdentifier);
-	}
-
-	/**
-	 * Removes the given cache entry from the cache.
-	 *
-	 * @param string $entryIdentifier An identifier specifying the cache entry
-	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function remove($entryIdentifier) {
-		return $this->backend->remove($entryIdentifier);
-	}
 }
 ?>

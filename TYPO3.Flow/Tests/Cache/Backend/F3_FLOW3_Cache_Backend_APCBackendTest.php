@@ -74,23 +74,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setRejectsInvalidIdentifiers() {
-		$backend = $this->setUpBackend();
-		$data = 'Somedata';
-
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			try {
-				$backend->set($entryIdentifier, $data);
-				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
-			} catch (\InvalidArgumentException $exception) {
-			}
-		}
-	}
-
-	/**
-	 * @test
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 */
 	public function itIsPossibleToSetAndCheckExistenceInCache() {
@@ -198,16 +181,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'NonExistingIdentifier';
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function flushByTagRejectsInvalidTags() {
-		$backend = $this->setUpBackend();
-		$backend->flushByTag('SomeInvalid\Tag');
 	}
 
 	/**

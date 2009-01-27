@@ -36,7 +36,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class MemcachedTest extends \F3\Testing\BaseTestCase {
+class MemcachedBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
@@ -76,23 +76,6 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setRejectsInvalidIdentifiers() {
-		$backend = $this->setUpBackend();
-		$data = 'Somedata';
-
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			try {
-				$backend->set($entryIdentifier, $data);
-				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
-			} catch (\InvalidArgumentException $exception) {
-			}
-		}
 	}
 
 	/**
@@ -176,7 +159,7 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function findIdentifiersByTagFindsSetEntries() {
+	public function findIdentifiersByTagFindsCacheEntriesWithSpecifiedTag() {
 		$backend = $this->setUpBackend();
 
 		$data = 'Some data';
@@ -226,16 +209,6 @@ class MemcachedTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'NonExistingIdentifier';
 		$inCache = $backend->remove($identifier);
 		$this->assertFalse($inCache,'"remove" did not return false when checking on non existing identifier');
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function flushByTagRejectsInvalidTags() {
-		$backend = $this->setUpBackend();
-		$backend->flushByTag('SomeInvalid\Tag');
 	}
 
 	/**

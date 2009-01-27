@@ -39,7 +39,7 @@ namespace F3\FLOW3\Cache\Backend;
 abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterface {
 
 	/**
-	 * @var \F3\FLOW3\Cache\AbstractCache Reference to the cache which uses this backend
+	 * @var \F3\FLOW3\Cache\CacheInterface Reference to the cache which uses this backend
 	 */
 	protected $cache;
 
@@ -57,7 +57,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * @var integer Default lifetime of a cache entry in seconds
 	 */
 	protected $defaultLifetime = 3600;
-
 
 	/**
 	 * Constructs this backend
@@ -104,27 +103,6 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 		$this->cache = $cache;
 	}
 
-	/**
-	 * Checks the validity of an entry identifier. Returns true if it's valid.
-	 *
-	 * @param string An identifier to be checked for validity
-	 * @return boolean
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 */
-	public function isValidEntryIdentifier($identifier) {
-		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
-	}
-
-	/**
-	 * Checks the validity of a tag. Returns true if it's valid.
-	 *
-	 * @param string An identifier to be checked for validity
-	 * @return boolean
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isValidTag($tag) {
-		return preg_match(self::PATTERN_TAG, $tag) === 1;
-	}
 
 }
 ?>

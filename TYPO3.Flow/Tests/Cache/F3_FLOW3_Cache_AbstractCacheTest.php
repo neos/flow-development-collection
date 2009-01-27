@@ -77,6 +77,21 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$cache->flush();
 	}
 
+
+	/**
+	 * @test
+	 * @expectedException InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function flushByTagRejectsInvalidTags() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
+		$backend->expects($this->never())->method('flushByTag');
+
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		$cache->flushByTag('SomeInvalid\Tag');
+	}
+
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -115,5 +130,58 @@ class AbstractCacheTest extends \F3\Testing\BaseTestCase {
 		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
 		$this->assertEquals('%CLASS%F3_Foo_Bar_Baz', $cache->getClassTag('F3\Foo\Bar\Baz'));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidEntryIdentifiersAreRecognizedAsInvalid() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
+			$this->assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function validEntryIdentifiersAreRecognizedAsValid() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
+			$this->assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function invalidTagsAreRecognizedAsInvalid() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
+			$this->assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
+		}
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function validTagsAreRecognizedAsValid() {
+		$identifier = 'someCacheIdentifier';
+		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
+		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
+		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
+			$this->assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
+		}
+	}
+
 }
 ?>

@@ -80,45 +80,5 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function invalidEntryIdentifiersAreRecognizedAsInvalid() {
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			$this->assertFalse($this->backend->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
-		}
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function validEntryIdentifiersAreRecognizedAsValid() {
-		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
-			$this->assertTrue($this->backend->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
-		}
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function invalidTagsAreRecognizedAsInvalid() {
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
-			$this->assertFalse($this->backend->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
-		}
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function validTagsAreRecognizedAsValid() {
-		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
-			$this->assertTrue($this->backend->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
-		}
-	}
-
 }
 ?>

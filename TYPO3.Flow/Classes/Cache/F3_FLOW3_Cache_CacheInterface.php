@@ -40,9 +40,19 @@ namespace F3\FLOW3\Cache;
 interface CacheInterface {
 
 	/**
-	 * Pattern a cache identifer must match.
+	 * "Magic" tag for class-related entries
 	 */
-	const PATTERN_IDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+	const TAG_CLASS = '%CLASS%';
+
+	/**
+	 * Pattern an entry identifer must match.
+	 */
+	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+
+	/**
+	 * Pattern a tag must match.
+	 */
+	const PATTERN_TAG = '/^[a-zA-Z0-9_%]{1,250}$/';
 
 	/**
 	 * Returns this cache's identifier
@@ -78,10 +88,8 @@ interface CacheInterface {
 
 	/**
 	 * Finds and returns all cache entries which are tagged by the specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
 	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @param string $tag The tag to search for
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 */
 	public function getByTag($tag);
@@ -123,5 +131,22 @@ interface CacheInterface {
 	 * @return void
 	 */
 	public function collectGarbage();
+
+	/**
+	 * Checks the validity of an entry identifier. Returns true if it's valid.
+	 *
+	 * @param string An identifier to be checked for validity
+	 * @return boolean
+	 */
+	public function isValidEntryIdentifier($identifier);
+
+	/**
+	 * Checks the validity of a tag. Returns true if it's valid.
+	 *
+	 * @param string A tag to be checked for validity
+	 * @return boolean
+	 */
+	public function isValidTag($tag);
+
 }
 ?>

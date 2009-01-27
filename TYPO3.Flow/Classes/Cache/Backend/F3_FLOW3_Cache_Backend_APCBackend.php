@@ -139,12 +139,8 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1232986813);
 		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
-		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1232986830);
-		}
 
 		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
@@ -204,18 +200,19 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Finds and returns all cache entry identifiers which are tagged by the
 	 * specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
 	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo implement wildcard support
 	 */
 	public function findIdentifiersByTag($tag) {
-		if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1232986966);
-
-		return $this->findIdentifiersTaggedWith($tag);
+		$success = FALSE;
+		$identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
+		if ($success === FALSE) {
+			return array();
+		} else {
+			return (array) $identifiers;
+		}
 	}
 
 	/**
@@ -252,8 +249,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1232986987);
-		$identifiers = $this->findIdentifiersTaggedWith($tag);
+		$identifiers = $this->findIdentifiersByTag($tag);
 		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
@@ -319,7 +315,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
 				// Update tag-to-identifier index
-			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			$identifiers = $this->findIdentifiersByTag($tag);
 			if (array_search($entryIdentifier, $identifiers) === FALSE) {
 				$identifiers[] = $entryIdentifier;
 				apc_store($this->identifierPrefix . 'tag_' . $tag, $identifiers);
@@ -347,7 +343,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$tags = $this->findTagsByIdentifier($entryIdentifier);
 			// Deassociate tags with this identifier
 		foreach ($tags as $tag) {
-			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			$identifiers = $this->findIdentifiersByTag($tag);
 				// Formally array_search() below should never return false due to
 				// the behavior of findTagsByIdentifier(). But if reverse index is
 				// corrupted, we still can get 'false' from array_search(). This is
@@ -365,23 +361,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		}
 			// Clear reverse tag index for this identifier
 		apc_delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
-	}
-
-	/**
-	 * Returns all identifiers associated with $tag
-	 *
-	 * @param string $tag
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function findIdentifiersTaggedWith($tag) {
-		$success = FALSE;
-		$identifiers = apc_fetch($this->identifierPrefix . 'tag_' . $tag, $success);
-		if ($success === FALSE) {
-			return array();
-		} else {
-			return (array) $identifiers;
-		}
 	}
 
 	/**

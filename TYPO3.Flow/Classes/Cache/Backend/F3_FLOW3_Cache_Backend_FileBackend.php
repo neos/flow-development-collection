@@ -102,7 +102,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Sets the directory where the cache files are stored.
 	 *
-	 * @param string $cacheDirectory: The directory
+	 * @param string $cacheDirectory The directory
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist, is not writable or could not be created.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -137,21 +137,17 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Saves data in a cache file.
 	 *
-	 * @param string $entryIdentifier: An identifier for this specific cache entry
-	 * @param string $data: The data to be stored
-	 * @param array $tags: Tags to associate with this cache entry
-	 * @param integer $lifetime: Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
+	 * @param string $entryIdentifier An identifier for this specific cache entry
+	 * @param string $data The data to be stored
+	 * @param array $tags Tags to associate with this cache entry
+	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-	if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207139693);
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
-		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1213105438);
-		}
 
 		if ($lifetime === 0) {
 			$expiryTime = new \DateTime('9999-12-31T23:59:59+0000', new \DateTimeZone('UTC'));
@@ -193,7 +189,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Loads data from a cache file.
 	 *
-	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -208,7 +204,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Checks if a cache entry with the specified identifier exists.
 	 *
-	 * @param unknown_type $entryIdentifier
+	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -250,16 +246,15 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Finds and returns all cache entry identifiers which are tagged by the
 	 * specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end
-	 * of the tag.
 	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function findIdentifiersByTag($tag) {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . $tag . '/' . $this->cache->getIdentifier() . self::SEPARATOR . '*';
 		$filesFound = glob($pattern);
@@ -303,7 +298,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496751);
 		$identifiers = $this->findIdentifiersByTag($tag);
 		if (count($identifiers) === 0) return;
 
@@ -335,6 +329,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function collectGarbage() {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1222686150);
+
 		$pattern = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/*/*/*';
 		$filesFound = glob($pattern);
 		foreach ($filesFound as $cacheFile) {
@@ -402,6 +397,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function findTagFilesByEntry($entryIdentifier) {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);

@@ -36,7 +36,7 @@ namespace F3\FLOW3\Cache\Backend;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FileTest extends \F3\Testing\BaseTestCase {
+class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Cache\Backend\FileBackendBackend If set, the tearDown() method will clean up the cache subdirectory used by this unit test.
@@ -94,24 +94,6 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$directory = $environment->getPathToTemporaryDirectory();
 		$this->backend->setCacheDirectory($directory);
 		$this->assertEquals($directory, $this->backend->getCacheDirectory(), 'getDirectory() did not return the expected value.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setRejectsInvalidIdentifiers() {
-		$cache = $this->getMock('F3\FLOW3\Cache\AbstractCache', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
-		$data = 'Some data';
-		$this->backend->setCache($cache);
-
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			try {
-				$this->backend->set($entryIdentifier, $data);
-				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
-			} catch (\InvalidArgumentException $exception) {
-			}
-		}
 	}
 
 	/**
@@ -413,15 +395,6 @@ class FileTest extends \F3\Testing\BaseTestCase {
 		$entryIdentifier = 'BackendFileTest3';
 		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%test/' . $entryIdentifier . '" still exists.');
 		$this->assertTrue(!file_exists($tagsDirectory . 'UnitTestTag%special/' . $entryIdentifier), 'File "' . $tagsDirectory . 'UnitTestTag%special/' . $entryIdentifier . '" still exists.');
-	}
-
-	/**
-	 * @test
-	 * @expectedException InvalidArgumentException
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function flushByTagRejectsInvalidTags() {
-		$this->backend->flushByTag('SomeInvalid\Tag');
 	}
 
 	/**

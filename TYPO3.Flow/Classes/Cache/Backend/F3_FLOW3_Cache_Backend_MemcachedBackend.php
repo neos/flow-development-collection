@@ -218,16 +218,13 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 **/
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
-		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1207149191);
 		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
 		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
-		foreach ($tags as $tag) {
-			if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120275);
-		}
-		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
 
+		$tags[] = '%MEMCACHE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime ? $lifetime : $this->defaultLifetime;
+
 		try {
 			if(strlen($data) > self::MAX_BUCKET_SIZE) {
 				$data = str_split($data, 1024 * 1000);
@@ -302,18 +299,18 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Finds and returns all cache entry identifiers which are tagged by the
 	 * specified tag.
-	 * The asterisk ("*") is allowed as a wildcard at the beginning and the end of
-	 * the tag.
 	 *
-	 * @param string $tag The tag to search for, the "*" wildcard is supported
+	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo implement wildcard support
 	 */
 	public function findIdentifiersByTag($tag) {
-		if (!$this->isValidTag($tag))  throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1213120307);
-
-		return $this->findIdentifiersTaggedWith($tag);
+		$identifiers = $this->memcache->get($this->identifierPrefix . 'tag_' . $tag);
+		if ($identifiers !== FALSE) {
+			return (array) $identifiers;
+		} else {
+			return array();
+		}
 	}
 
 	/**
@@ -337,6 +334,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\CacheInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
+
 		$this->flushByTag('%MEMCACHE%' . $this->cache->getIdentifier());
 	}
 
@@ -348,8 +346,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function flushByTag($tag) {
-		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag.', 1226496752);
-		$identifiers = $this->findIdentifiersTaggedWith($tag);
+		$identifiers = $this->findIdentifiersByTag($tag);
 		$this->systemLogger->log(sprintf('Cache %s: removing %s entries matching tag "%s"', $this->cache->getIdentifier(), count($identifiers), $tag), LOG_INFO);
 		foreach ($identifiers as $identifier) {
 			$this->remove($identifier);
@@ -414,7 +411,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
 				// Update tag-to-identifier index
-			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			$identifiers = $this->findIdentifiersByTag($tag);
 			if (array_search($entryIdentifier, $identifiers) === FALSE) {
 				$identifiers[] = $entryIdentifier;
 				$this->memcache->set($this->identifierPrefix . 'tag_' . $tag, $identifiers);
@@ -442,7 +439,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$tags = $this->findTagsByIdentifier($entryIdentifier);
 			// Deassociate tags with this identifier
 		foreach ($tags as $tag) {
-			$identifiers = $this->findIdentifiersTaggedWith($tag);
+			$identifiers = $this->findIdentifiersByTag($tag);
 				// Formally array_search() below should never return false due to
 				// the behavior of findTagsByIdentifier(). But if reverse index is
 				// corrupted, we still can get 'false' from array_search(). This is
@@ -460,22 +457,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		}
 			// Clear reverse tag index for this identifier
 		$this->memcache->delete($this->identifierPrefix . 'ident_' . $entryIdentifier);
-	}
-
-	/**
-	 * Returns all identifiers associated with $tag
-	 *
-	 * @param string $tag
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function findIdentifiersTaggedWith($tag) {
-		$identifiers = $this->memcache->get($this->identifierPrefix . 'tag_' . $tag);
-		if ($identifiers !== FALSE) {
-			return (array) $identifiers;
-		} else {
-			return array();
-		}
 	}
 
 	/**
