@@ -28,7 +28,7 @@ namespace F3\FLOW3\Cache;
  * @version $Id$
  */
 
-require_once ('Backend/F3_FLOW3_Cache_Backend_MockBackend.php');
+require_once ('Backend/MockBackend.php');
 
 /**
  * Testcase for the Cache Factory

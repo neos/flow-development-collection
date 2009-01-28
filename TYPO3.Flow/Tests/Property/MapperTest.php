@@ -28,7 +28,7 @@ namespace F3\FLOW3\Property;
  * @version $Id$
  */
 
-require_once (__DIR__ . '/../Fixtures/F3_FLOW3_Fixture_Validation_ClassWithSetters.php');
+require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
 
 /**
  * Testcase for the Property Mapper

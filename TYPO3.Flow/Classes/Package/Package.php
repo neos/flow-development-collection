@@ -191,7 +191,7 @@ class Package implements PackageInterface {
 
 	/**
 	 * Builds and returns an array of class names => file names of all
-	 * F3_*.php files in the package's Classes directory and its sub-
+	 * *.php files in the package's Classes directory and its sub-
 	 * directories.
 	 *
 	 * @return array
@@ -200,7 +200,8 @@ class Package implements PackageInterface {
 	 */
 	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
 		$classFiles = array();
-		$currentPath = $this->packagePath . self::DIRECTORY_CLASSES . $subDirectory;
+		$classesPath = $this->packagePath . self::DIRECTORY_CLASSES;
+		$currentPath = $classesPath . $subDirectory;
 
 		if (!is_dir($currentPath)) return array();
 		if ($recursionLevel > 100) throw new \F3\FLOW3\Package\Exception('Recursion too deep.', 1166635495);
@@ -213,8 +214,9 @@ class Package implements PackageInterface {
 					if (is_dir($currentPath . $filename)) {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {
-						if (substr($filename, 0, 3) == 'F3_' && substr($filename, -4, 4) == '.php') {
-							$classFiles[str_replace('_', '\\', substr($filename, 0, -4))] = $subDirectory . $filename;
+						if (substr($filename, -4, 4) === '.php') {
+							$className = (str_replace('/', '\\', ('F3/' . $this->packageKey . '/' . substr($currentPath, strlen($classesPath)) . substr($filename, 0, -4))));
+							$classFiles[$className] = $subDirectory . $filename;
 						}
 					}
 				}

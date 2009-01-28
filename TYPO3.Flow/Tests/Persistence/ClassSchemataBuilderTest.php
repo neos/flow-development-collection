@@ -28,9 +28,9 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Repository1.php');
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Entity1.php');
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_ValueObject1.php');
+require_once('Fixture/Repository1.php');
+require_once('Fixture/Entity1.php');
+require_once('Fixture/ValueObject1.php');
 
 /**
  * Testcase for the Class Schema Builder

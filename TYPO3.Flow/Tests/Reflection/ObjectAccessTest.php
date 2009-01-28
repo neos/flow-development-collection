@@ -28,7 +28,7 @@ namespace F3\FLOW3\Reflection;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithGettersAndSetters.php');
+require_once('Fixture/DummyClassWithGettersAndSetters.php');
 
 /**
  * Testcase for Object Access

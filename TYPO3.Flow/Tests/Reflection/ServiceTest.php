@@ -28,20 +28,20 @@ namespace F3\FLOW3\Reflection;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface3.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_ImplementationOfDummyInterface1.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_Implementation1OfDummyInterface3.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_Implementation2OfDummyInterface3.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_TaggedClass1.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_TaggedClass2.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_TaggedClass3.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyClass.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyAbstractClass.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyFinalClass.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithMethods.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyClassWithProperties.php');
+require_once('Fixture/DummyInterface1.php');
+require_once('Fixture/DummyInterface2.php');
+require_once('Fixture/DummyInterface3.php');
+require_once('Fixture/ImplementationOfDummyInterface1.php');
+require_once('Fixture/Implementation1OfDummyInterface3.php');
+require_once('Fixture/Implementation2OfDummyInterface3.php');
+require_once('Fixture/TaggedClass1.php');
+require_once('Fixture/TaggedClass2.php');
+require_once('Fixture/TaggedClass3.php');
+require_once('Fixture/DummyClass.php');
+require_once('Fixture/DummyAbstractClass.php');
+require_once('Fixture/DummyFinalClass.php');
+require_once('Fixture/DummyClassWithMethods.php');
+require_once('Fixture/DummyClassWithProperties.php');
 
 /**
  * Testcase for the Reflection Service

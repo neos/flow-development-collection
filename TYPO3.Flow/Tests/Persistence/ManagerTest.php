@@ -28,10 +28,10 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Entity2.php');
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_Entity3.php');
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_DirtyEntity.php');
-require_once('Fixture/F3_FLOW3_Tests_Persistence_Fixture_CleanEntity.php');
+require_once('Fixture/Entity2.php');
+require_once('Fixture/Entity3.php');
+require_once('Fixture/DirtyEntity.php');
+require_once('Fixture/CleanEntity.php');
 
 /**
  * Testcase for the Persistence Manager

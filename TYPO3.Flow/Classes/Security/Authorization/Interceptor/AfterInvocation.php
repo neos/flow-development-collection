@@ -57,7 +57,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3_Security\ContextHolderInterface $securityContextHolder The current security context
+	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder The current security context
 	 * @param \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

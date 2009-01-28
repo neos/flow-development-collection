@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\AOP;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,76 +24,43 @@ namespace F3\FLOW3\Resource;
 
 /**
  * @package FLOW3
- * @subpackage Resource
+ * @subpackage AOP
  * @version $Id$
  */
 
+require_once('Fixture/ClassTaggedWithSomething.php');
+
 /**
- *
+ * Testcase for the Pointcut Class-Tagged-With Filter
  *
  * @package FLOW3
- * @subpackage Resource
+ * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ResourceInterface {
+class PointcutClassTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Returns the type of source the resource originates
-	 *
-	 * @return string Type, e.g. file, http, ftp, ...
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getDataSourceType();
+	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
+		$className = 'F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
 
-	/**
-	 * The URI representing
-	 *
-	 * @return \F3\FLOW3
-	 */
-	public function getURI();
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
 
-	/**
-	 * Returns the name the resource was obtained from
-	 *
-	 * @return string
-	 */
-	public function getName();
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('something');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-	/**
-	 * Returns the path the resource was obtained from
-	 *
-	 * @return string
-	 */
-	public function getPath();
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('some.*');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-	/**
-	 * Returns the path the resource was obtained from including file name
-	 *
-	 * @return string
-	 */
-	public function getPathAndFileName();
-
-	/**
-	 * Returns the media type of the resource
-	 *
-	 * @return string
-	 */
-	public function getMediaType();
-
-	/**
-	 * Returns the MIME type of the resource
-	 *
-	 * @return string
-	 */
-	public function getMIMEType();
-
-
-	/**
-	 * Returns the content represented by the resource object
-	 *
-	 * @return string|binary
-	 */
-	public function getContent();
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('any.*');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($classTaggedWithFilter->matches($className, '', '', 1));
+	}
 }
-
 ?>

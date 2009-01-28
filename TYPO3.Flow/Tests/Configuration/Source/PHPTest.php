@@ -53,7 +53,7 @@ class PHPTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
-		$pathAndFilename = __DIR__ . '/../Fixture/F3_FLOW3_Tests_Configuration_Fixture_PHPConfigurationFile';
+		$pathAndFilename = __DIR__ . '/../Fixture/PHPConfigurationFile';
 		$configurationSource = new \F3\FLOW3\Configuration\Source\PHP();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');

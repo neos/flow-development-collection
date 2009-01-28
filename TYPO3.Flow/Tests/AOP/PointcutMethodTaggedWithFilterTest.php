@@ -28,7 +28,7 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_MethodsTaggedWithSomething.php');
+require_once('Fixture/MethodsTaggedWithSomething.php');
 
 /**
  * Testcase for the Pointcut Method-Tagged-With Filter

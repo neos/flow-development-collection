@@ -63,7 +63,7 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 		$root = \vfsStream::newDirectory('Packages/TestPackage/Classes/SubDirectory');
 		\vfsStreamWrapper::setRoot($root);
 
-		$vfsClassFile = \vfsStream::newFile('F3_TestPackage_SubDirectory_ClassInSubDirectory.php')
+		$vfsClassFile = \vfsStream::newFile('ClassInSubDirectory.php')
 			->withContent('<?php ?>')
 			->at($root->getChild('TestPackage/Classes/SubDirectory'));
 
@@ -80,7 +80,7 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 		$root = \vfsStream::newDirectory('Packages/TestPackage/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J');
 		\vfsStreamWrapper::setRoot($root);
 
-		$vfsClassFile = \vfsStream::newFile('F3_TestPackage_SubDirectory_A_B_C_D_E_F_G_H_I_J_TheClass.php')
+		$vfsClassFile = \vfsStream::newFile('TheClass.php')
 			->withContent('<?php ?>')
 			->at($root->getChild('TestPackage/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J'));
 

@@ -113,8 +113,8 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue(array_key_exists('F3\TestPackage\BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
 		$this->assertTrue(array_key_exists('F3\TestPackage\SubDirectory\ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
-		$this->assertTrue($classFiles['F3\TestPackage\BasicClass'] == 'F3_TestPackage_BasicClass.php', 'Class files array contains wrong path for BasicClass!');
-		$this->assertTrue($classFiles['F3\TestPackage\SubDirectory\ClassInSubDirectory'] == 'SubDirectory/F3_TestPackage_SubDirectory_ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
+		$this->assertTrue($classFiles['F3\TestPackage\BasicClass'] == 'BasicClass.php', 'Class files array contains wrong path for BasicClass!');
+		$this->assertTrue($classFiles['F3\TestPackage\SubDirectory\ClassInSubDirectory'] == 'SubDirectory/ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
 	}
 }
 ?>

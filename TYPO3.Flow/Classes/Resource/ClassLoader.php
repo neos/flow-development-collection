@@ -28,8 +28,8 @@ namespace F3\FLOW3\Resource;
  * @version $Id$
  */
 
-require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_PackageInterface.php');
-require(FLOW3_PATH_FLOW3 . 'Package/F3_FLOW3_Package_Package.php');
+require(FLOW3_PATH_FLOW3 . 'Package/PackageInterface.php');
+require(FLOW3_PATH_FLOW3 . 'Package/Package.php');
 
 /**
  * Class Loader implementation which loads .php files found in the classes
@@ -79,7 +79,7 @@ class ClassLoader {
 			if (is_array($classNameParts) && $classNameParts[0] == 'F3') {
 				$classFilePathAndName = $this->packagesDirectory . $classNameParts[1] . '/' . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES;
 				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
-				$classFilePathAndName .= str_replace('\\', '_', $className) . '.php';
+				$classFilePathAndName .= end($classNameParts) . '.php';
 			}
 		}
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);

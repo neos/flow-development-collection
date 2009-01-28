@@ -21,14 +21,14 @@ namespace F3\FLOW3\Object;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_BasicClass.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithOptionalArguments.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_SomeInterface.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_SomeImplementation.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithSomeImplementationInjected.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ReconstitutableClassWithSimpleProperties.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithUnmatchedRequiredSetterDependency.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/F3_FLOW3_Tests_Object_Fixture_ClassWithInjectSettingsMethod.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/BasicClass.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithOptionalArguments.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/SomeInterface.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/SomeImplementation.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithSomeImplementationInjected.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ReconstitutableClassWithSimpleProperties.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithUnmatchedRequiredSetterDependency.php');
+require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithInjectSettingsMethod.php');
 
 /**
  * @package FLOW3

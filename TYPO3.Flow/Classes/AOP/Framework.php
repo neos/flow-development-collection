@@ -319,7 +319,7 @@ class Framework {
 	 *
 	 * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
 	 * @param string $pointcutMethodName Method name of the pointcut
-	 * @return mixed The \F3\FLOW3AOPPointcut or FALSE if none was found
+	 * @return mixed The \F3\FLOW3\AOP\Pointcut or FALSE if none was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {

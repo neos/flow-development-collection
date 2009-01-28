@@ -28,8 +28,8 @@ namespace F3\FLOW3\Reflection;
  * @version $Id$
  */
 
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface1.php');
-require_once('Fixture/F3_FLOW3_Tests_Reflection_Fixture_DummyInterface2.php');
+require_once('Fixture/DummyInterface1.php');
+require_once('Fixture/DummyInterface2.php');
 
 /**
  * Testcase for Reflection Class

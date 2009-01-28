@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 
-require_once(__DIR__ . '/../Fixture/Controller/F3_FLOW3_MVC_Fixture_Controller_MockActionController.php');
+require_once(__DIR__ . '/../Fixture/Controller/MockActionController.php');
 
 /**
  * Testcase for the MVC Action Controller

@@ -1,7 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\AOP;
-
+namespace F3\FLOW3\MVC\Controller;
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
  *                                                                        *
@@ -24,43 +23,62 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-require_once('Fixture/F3_FLOW3_Tests_AOP_Fixture_ClassTaggedWithSomething.php');
-
-/**
- * Testcase for the Pointcut Class-Tagged-With Filter
- *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PointcutClassTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
+
+require_once(__DIR__ . '/../Fixture/Controller/MockRESTController.php');
+
+/**
+ * Testcase for the MVC REST Controller
+ *
+ * @package FLOW3
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ */
+class RESTControllerTest extends \F3\Testing\BaseTestCase {
+
+	/**
+	 * @var \F3\FLOW3\MVC\Controller\RESTController
+	 */
+	protected $mockController;
+
+	/**
+	 * Sets up this test case
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setUp() {
+		$this->mockController = new \F3\FLOW3\MVC\Fixture\Controller\MockRESTController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
+		$this->mockController->injectObjectManager($this->objectManager);
+		$this->mockController->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
-		$className = 'F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
+	public function callActionCallsTheListActionOnGETRequestsWithoutIdentifier() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
-		$mockReflectionService->initialize(array($className));
+		$this->mockController->processRequest($request, $response);
+		$this->assertEquals('list action called', $response->getContent());
+	}
 
-		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('something');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function callActionCallsTheShowActionOnGETRequestsWithIdentifier() {
+		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
 
-		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('some.*');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
+		$request->setArgument('id', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
 
-		$classTaggedWithFilter = new \F3\FLOW3\AOP\PointcutClassTaggedWithFilter('any.*');
-		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($classTaggedWithFilter->matches($className, '', '', 1));
+		$this->mockController->processRequest($request, $response);
+		$this->assertEquals('show action called', $response->getContent());
 	}
 }
 ?>

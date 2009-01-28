@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3;
+namespace F3\FLOW3;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -27,17 +27,17 @@ namespace F3;
  * @version $Id$
  */
 
-if (version_compare(phpversion(), \F3\FLOW3::MINIMUM_PHP_VERSION, '<')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+if (version_compare(phpversion(), \F3\FLOW3\FLOW3::MINIMUM_PHP_VERSION, '<')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3\FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 }
-if (version_compare(PHP_VERSION, \F3\FLOW3::MAXIMUM_PHP_VERSION, '>')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+if (version_compare(PHP_VERSION, \F3\FLOW3\FLOW3::MAXIMUM_PHP_VERSION, '>')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3\FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 }
 
 /**
  * Utility_Files is needed before the autoloader is active
  */
-require(__DIR__ . '/Utility/F3_FLOW3_Utility_Files.php');
+require(__DIR__ . '/Utility/Files.php');
 
 define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(__DIR__ . '/'));
 define('FLOW3_PATH_PACKAGES', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
@@ -192,7 +192,7 @@ final class FLOW3 {
 	 */
 	public function initializeClassLoader() {
 		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
-			require(__DIR__ . '/Resource/F3_FLOW3_Resource_ClassLoader.php');
+			require(__DIR__ . '/Resource/ClassLoader.php');
 		}
 		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader(FLOW3_PATH_PACKAGES);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
@@ -665,7 +665,7 @@ final class FLOW3 {
 	 */
 	protected function classNameIsBlacklisted($className) {
 		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
-			if ($className == $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
+		if ($className == $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
 				return TRUE;
 			}
 		}

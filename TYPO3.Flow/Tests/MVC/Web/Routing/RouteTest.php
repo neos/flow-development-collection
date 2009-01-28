@@ -28,7 +28,7 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @version $Id$
  */
 
-require_once(__DIR__ . '/../../Fixture/Web/Routing/F3_FLOW3_MVC_Fixture_Web_Routing_MockRoutePartHandler.php');
+require_once(__DIR__ . '/../../Fixture/Web/Routing/MockRoutePartHandler.php');
 
 /**
  * Testcase for the MVC Web Routing Route Class

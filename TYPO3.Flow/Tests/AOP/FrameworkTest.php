@@ -28,8 +28,8 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  */
 
-require_once ('Fixture/F3_FLOW3_Tests_AOP_Fixture_AspectClassWithAllAdviceTypes.php');
-require_once ('Fixture/F3_FLOW3_Tests_AOP_Fixture_InterfaceForIntroduction.php');
+require_once ('Fixture/AspectClassWithAllAdviceTypes.php');
+require_once ('Fixture/InterfaceForIntroduction.php');
 
 /**
  * Testcase for the AOP Framework class
