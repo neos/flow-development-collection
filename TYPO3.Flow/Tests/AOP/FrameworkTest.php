@@ -113,27 +113,10 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes'));
 
-		$testcase = $this;
-
-		$pointcutFilterCompositeCallBack = function() use ($testcase) {
-			return $testcase->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), func_get_args());
-		};
-
 		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\PointcutExpressionParser', array('parse'), array(), '', FALSE);
-		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack($pointcutFilterCompositeCallBack, '__invoke'));
+		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack(array($this, 'pointcutFilterCompositeCallBack')));
 
-		$objectFactoryCallBack = function() use ($testcase) {
-			$arguments = array_merge(func_get_args(), array($testcase->mockObjectManager));
-			$objectName = array_shift($arguments);
-			switch ($objectName) {
-				case 'F3\FLOW3\AOP\Advisor' :
-					return new \F3\FLOW3\AOP\Advisor(current($arguments), next($arguments));
-				case 'F3\FLOW3\AOP\Pointcut' :
-				default :
-					return $testcase->getMock($objectName, array('dummy'), $arguments, '', TRUE);
-			}
-		};
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallBack($objectFactoryCallBack, '__invoke'));
+		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallBack(array($this, 'objectFactoryCallBack')));
 
 		$framework = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Framework'), array('dummy'), array($this->mockObjectManager, $this->mockObjectFactory), '', TRUE, TRUE);
 		$framework->injectReflectionService($mockReflectionService);
@@ -166,5 +149,32 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\InterfaceForIntroduction', $introductions[0]->getInterfaceName());
 		$this->assertSame('ThePointcutExpression', $introductions[0]->getPointcut()->getPointcutExpression());
 	}
+
+	/**
+	 * call back for buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions
+	 * @return \F3\FLOW3\AOP\PointcutFilterComposite but only as a mock!
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function pointcutFilterCompositeCallBack() {
+		return $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), func_get_args());
+	}
+
+	/**
+	 * call back for buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions
+	 * @return object but only mocks except for \F3\FLOW3\AOP\Advisor
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function objectFactoryCallBack() {
+		$arguments = array_merge(func_get_args(), array($this->mockObjectManager));
+		$objectName = array_shift($arguments);
+		switch ($objectName) {
+			case 'F3\FLOW3\AOP\Advisor' :
+				return new \F3\FLOW3\AOP\Advisor(current($arguments), next($arguments));
+			case 'F3\FLOW3\AOP\Pointcut' :
+			default :
+				return $this->getMock($objectName, array('dummy'), $arguments, '', TRUE);
+		}
+	}
+
 }
 ?>
