@@ -58,9 +58,9 @@
 
       <itemizedlist>
         <listitem>
-          <para>Nearly any PHP file in FLOW3 contains exactly one class and
+          <para>Almost every PHP file in FLOW3 contains exactly one class and
           does not output anything if it is called directly. Therefore you
-          start you file with a <code>&lt;?php</code> tag and end it with the
+          start your file with a <code>&lt;?php</code> tag and end it with the
           closing <code>?&gt;</code>.</para>
         </listitem>
 
@@ -79,20 +79,7 @@
                 on a class in the long run, we recommend adding a copyright
                 statement like <quote>Copyright belongs to the respective
                 authors</quote> and add yourself to the list of authors for
-                the methods you implemented.</para>
-              </listitem>
-
-              <listitem>
-                <para>If you modify a library you must document what you have
-                changed (GPL requirement). Add your name as author / co-author
-                to these modifications.</para>
-              </listitem>
-
-              <listitem>
-                <para>The importance of the header is primarily to state that
-                the code is GPL'ed. And remember only GPL compatible software
-                is allowed to interface with FLOW3 (according to GPL
-                itself).</para>
+                the methods you implemented or changed (significantly).</para>
               </listitem>
 
               <listitem>
@@ -105,23 +92,29 @@
           <example>
             <title>The FLOW3 standard file header</title>
 
-            <literallayout>&lt;?php
+            <programlisting language="php">&lt;?php
 declare(ENCODING = 'utf-8');
 namespace F3\Your\Stuff\Here;
 
-/*                                                                         *
- * This script is part of the TYPO3 project - inspiring people to share!   *
- *                                                                         *
- * TYPO3 and FLOW3 are free software; you can redistribute them and/or   *
- * modify them under the terms of the GNU General Public License version 2 *
- * as published by the Free Software Foundation.                           *
- *                                                                         *
- * This script is distributed in the hope that it will be useful, but      *
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-     *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General       *
- * Public License for more details.                                        *
- *                                                                         */
-</literallayout>
+/*                                                                        *
+ * This script belongs to the FLOW3 framework.                            *
+ *                                                                        *
+ * It is free software; you can redistribute it and/or modify it under    *
+ * the terms of the GNU Lesser General Public License as published by the *
+ * Free Software Foundation, either version 3 of the License, or (at your *
+ * option) any later version.                                             *
+ *                                                                        *
+ * This script is distributed in the hope that it will be useful, but     *
+ * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
+ * General Public License for more details.                               *
+ *                                                                        *
+ * You should have received a copy of the GNU Lesser General Public       *
+ * License along with the script.                                         *
+ * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ *                                                                        *
+ * The TYPO3 project - inspiring people to share!                         *
+ *                                                                        */</programlisting>
           </example>
         </listitem>
 
@@ -140,6 +133,11 @@ namespace F3\Your\Stuff\Here;
           <para>Files must be encoded in UTF-8</para>
         </listitem>
       </itemizedlist>
+
+      <para>Make sure you use the correct license and mention the correct
+      package in the header, See <link
+      xl:href="http://forge.typo3.org/wiki/flow3-overview/Licensing_boilerplates_to_use_with_your_code">http://forge.typo3.org/wiki/flow3-overview/Licensing_boilerplates_to_use_with_your_code</link>
+      for some boilerplate text.</para>
     </section>
 
     <section>
@@ -155,19 +153,15 @@ namespace F3\Your\Stuff\Here;
       <para><example>
           <title>Correct use of tabs and spaces</title>
 
-          <literallayout>/*‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧*
-‧*‧Some‧comment‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧*
-‧*‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧‧*/
-
-/**
-‧*‧Returns‧the‧name‧of‧the‧currently‧set‧context.
-‧*
-‧*‧@return‧string‧Name‧of‧the‧current‧context
-‧*‧@author‧Your Name &lt;your@email.here&gt;
-‧*/
-public‧function‧getContext()‧{
-»   return‧$this-&gt;context;
-}</literallayout>
+          <programlisting language="php">/**
+ * Returns the name of the currently set context.
+ *
+ * @return string Name of the current context
+ * @author Your Name &lt;your@email.here&gt;
+ */
+public function getContextName() {
+»   return $this-&gt;contextName;
+}</programlisting>
         </example></para>
 
       <para>There seem to be very passionate opinions about whether TABs or
@@ -565,6 +559,11 @@ public‧function‧getContext()‧{
             same as the class which is tested, appended with
             "Test.php".</para>
           </listitem>
+
+          <listitem>
+            <para>Files are placed in a directory structure representing the
+            namespace structure.</para>
+          </listitem>
         </itemizedlist>
 
         <para>Here are some examples:<example>
@@ -572,7 +571,7 @@ public‧function‧getContext()‧{
 
             <para><itemizedlist>
                 <listitem>
-                  <para><filename>F3_TemplateEngine_TemplateEngineInterface.php</filename></para>
+                  <para><filename>TemplateEngine/TemplateEngineInterface.php</filename></para>
 
                   <para>Contains the interface
                   <classname>\F3\TemplateEngine\TemplateEngineInterface</classname>
@@ -581,7 +580,7 @@ public‧function‧getContext()‧{
                 </listitem>
 
                 <listitem>
-                  <para><filename>F3_Error_RuntimeException.php</filename></para>
+                  <para><filename>Error/RuntimeException.php</filename></para>
 
                   <para>Contains the
                   <classname>\F3\Error\RuntimeException</classname> being a
@@ -589,7 +588,7 @@ public‧function‧getContext()‧{
                 </listitem>
 
                 <listitem>
-                  <para><filename>F3_DataAccess_Manager.php</filename></para>
+                  <para><filename>DataAccess/Manager.php</filename></para>
 
                   <para>Contains class
                   <classname>\F3\DataAccess\Manager</classname> which is part
@@ -597,7 +596,7 @@ public‧function‧getContext()‧{
                 </listitem>
 
                 <listitem>
-                  <para><filename>F3_FLOW3_Package_Manager.php</filename></para>
+                  <para><filename>FLOW3/Package/Manager.php</filename></para>
 
                   <para>Contains the class
                   <classname>\F3\FLOW3\Package\Manager</classname> which is
@@ -605,7 +604,7 @@ public‧function‧getContext()‧{
                 </listitem>
 
                 <listitem>
-                  <para><filename>F3_FLOW3_Package_ManagerTest.php</filename></para>
+                  <para><filename>Package/ManagerTest.php</filename></para>
 
                   <para>Contains the class
                   <classname>\F3\FLOW3\Package\ManagerTest</classname> which
@@ -628,7 +627,7 @@ public‧function‧getContext()‧{
         <example>
           <title>String literals</title>
 
-          <literallayout>$vision = 'Inspiring people to share';</literallayout>
+          <programlisting language="php">$vision = 'Inspiring people to share';</programlisting>
         </example>
 
         <para>If the string itself contains single quotes or apostrophes, we
@@ -637,27 +636,25 @@ public‧function‧getContext()‧{
         <example>
           <title>String literals enclosed by double quotes</title>
 
-          <literallayout>$message = "'Kasper' is the name of the friendly ghost.";</literallayout>
+          <programlisting language="php">$message = "'Kasper' is the name of the friendly ghost.";</programlisting>
         </example>
 
-        <para>If you'd like to insert values from variables, we recommend to
-        concatenate strings or use double quotes in the following form:</para>
+        <para>If you'd like to insert values from variables, we prefer to
+        concatenate strings:</para>
 
         <example>
           <title>Variable substitution</title>
 
-          <literallayout>$message = 'Hey ' . $name . ', you look ' . $look . ' today!';
-$message = "Hey $name, you look $look today!";</literallayout>
+          <programlisting language="php">$message = 'Hey ' . $name . ', you look ' . $look . ' today!';</programlisting>
         </example>
 
-        <para>As you've seen in the previous example, we concatenate strings
-        by using the dot operator. A space must be inserted before and after
-        the dot for better readability:</para>
+        <para>A space must be inserted before and after the dot for better
+        readability:</para>
 
         <example>
           <title>Concatenated strings</title>
 
-          <literallayout>$vision = 'Inspiring people ' . 'to share.';</literallayout>
+          <programlisting language="php">$vision = 'Inspiring people ' . 'to share.';</programlisting>
         </example>
 
         <para>You may break a string into multiple lines if you use the dot
@@ -667,10 +664,10 @@ $message = "Hey $name, you look $look today!";</literallayout>
         <example>
           <title>Multi-line strings</title>
 
-          <literallayout>$vision = 'Inspiring' .
+          <programlisting language="php">$vision = 'Inspiring' .
    'people ' .
    'to ' .
-   'share';</literallayout>
+   'share';</programlisting>
         </example>
       </section>
 
@@ -686,11 +683,11 @@ $message = "Hey $name, you look $look today!";</literallayout>
         <para>...<example>
             <title>Classes</title>
 
-            <literallayout>namespace F3\MyPackage;
+            <programlisting language="php">namespace F3\MyPackage;
 
 class MyObject {
 
-}</literallayout>
+}</programlisting>
           </example></para>
       </section>
 
@@ -715,22 +712,22 @@ class MyObject {
           </itemizedlist><example>
             <title>if statements</title>
 
-            <literallayout>if ($something || $somethingElse) {
+            <programlisting language="php">if ($something || $somethingElse) {
    doThis();
 } else {
    doSomethingElse();
 }
 
-if (allGoesWrong()) throw new Exception('Hey, all went wrong!');
+if (allGoesWrong() === TRUE) throw new \Exception('Hey, all went wrong!', 12345);
 
-if (weHaveALotOfCriteria()
-   &amp;&amp; notEverythingFitsIntoOneLine()
-   || youJustTendToLikeIt()) {
+if (weHaveALotOfCriteria() === TRUE
+   &amp;&amp; notEverythingFitsIntoOneLine() === TRUE
+   || youJustTendToLikeIt() === TRUE) {
       doThis();
 
 } else {
    ...
-}</literallayout>
+}</programlisting>
           </example></para>
       </section>
     </section>
@@ -777,20 +774,23 @@ if (weHaveALotOfCriteria()
         </itemizedlist>
 
         <para>That means that each file must contain a documentation block
-        like shown below, right below the header stating the license:</para>
+        like shown below, right below the header stating the license and
+        before any
+        <methodname>require</methodname>/<methodname>include</methodname>
+        calls:</para>
 
         <example>
           <title>Standard file level documentation block</title>
 
-          <literallayout>/**
- * @package    [packagename]
+          <programlisting language="php">/**
+ * @package [packagename]
  * @subpackage [subpackage name if necessary]
- * @version    $Id$
- */</literallayout>
+ * @version $Id$
+ */</programlisting>
         </example>
 
-        <para>The package tag is mandatory, the subpackage tag is optional and
-        should only be used if needed.</para>
+        <para>The package and version tag are mandatory, the subpackage tag is
+        optional.</para>
 
         <important>
           <title>$Id$, Subversion and keyword expansion</title>
@@ -834,7 +834,7 @@ enable-auto-props = yes
         <example>
           <title>Standard class documentation block</title>
 
-          <literallayout>/**
+          <programlisting language="php">/**
  * First sentence is short description. Then you can write more, just as you like
  *
  * Here may follow some detailed description about what the class is for.
@@ -847,13 +847,13 @@ enable-auto-props = yes
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SomeClass {
- ...</literallayout>
+ ...</programlisting>
         </example>
 
         <example>
           <title>Standard interface documentation block</title>
 
-          <literallayout>/**
+          <programlisting language="php">/**
  * First sentence is short description. Then you can write more, just as you like
  *
  * Here may follow some detailed description about what the interface is for.
@@ -867,13 +867,13 @@ class SomeClass {
  * @author Your Name &lt;your@email.here&gt;
  */
 interface SomeInterface {
- ...</literallayout>
+ ...</programlisting>
         </example>
 
         <example>
           <title>Standard exception documentation block</title>
 
-          <literallayout>/**
+          <programlisting language="php">/**
  * First sentence is short description. Then you can write more, just as you like
  *
  * Here may follow some detailed description about what the interface is for.
@@ -882,11 +882,11 @@ interface SomeInterface {
  *
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
- * @version    $Id$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class SomeException extends \Exception {
- ...</literallayout>
+ ...</programlisting>
         </example>
 
         <para>Additional tags or annotations, such as @see or @aspect, can be
@@ -902,11 +902,11 @@ class SomeException extends \Exception {
         <example>
           <title>Standard variable documentation block</title>
 
-          <literallayout>/**
+          <programlisting language="php">/**
  * A short description, very much recommended
  * @var string
  */
-protected $title = 'Untitled';</literallayout>
+protected $title = 'Untitled';</programlisting>
         </example>
       </section>
 
@@ -921,7 +921,7 @@ protected $title = 'Untitled';</literallayout>
         <example>
           <title>Standard method documentation block</title>
 
-          <literallayout>/**
+          <programlisting language="php">/**
  * A description for this method
  *
  * Paragraphs are seperated by a empty line.
@@ -932,7 +932,7 @@ protected $title = 'Untitled';</literallayout>
  * @author Your Name &lt;your@email.here&gt;
  */
 public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) {
- ...</literallayout>
+ ...</programlisting>
         </example>
 
         <para>A special note about the @param tags: The parameter type and
@@ -1088,13 +1088,15 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
 
               <listitem>
                 <para>Always declare the scope (public, protected, private) of
-                classes and member variables</para>
+                methods and member variables</para>
               </listitem>
 
               <listitem>
                 <para>Make use of iterators and exceptions, have a look at the
                 SPL (see <link
-                xl:href="http://www.php.net/manual/ref.spl.php">http://www.php.net/manual/ref.spl.php</link>)</para>
+                xl:href="http://www.php.net/manual/ref.spl.php">http://www.php.net/manual/ref.spl.php</link>
+                and <link
+                xl:href="http://www.php.net/~helly/php/ext/spl/">http://www.php.net/~helly/php/ext/spl/</link>)</para>
               </listitem>
 
               <listitem>
@@ -1117,11 +1119,11 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
           <example>
             <title>Encoding statement for .php files</title>
 
-            <literallayout>&lt;?php
+            <programlisting language="php">&lt;?php
 declare(ENCODING = 'utf-8');
 namespace F3\Your\Stuff\Here;
 
-...</literallayout>
+...</programlisting>
           </example>
         </listitem>
       </itemizedlist>
@@ -1138,10 +1140,10 @@ namespace F3\Your\Stuff\Here;
           </footnote>As an example, consider the following code:<example>
             <title>Bad coding smell: Comments</title>
 
-            <literallayout>   // We only allow valid persons:
+            <programlisting language="php">   // We only allow valid persons:
 if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidden === FALSE &amp;&amp; $this-&gt;environment-&gt;moonPhase === MOON_LIB::CRESCENT) {
    $xmM = $thd;
-}</literallayout>
+}</programlisting>
           </example></para>
 
         <para>This is a perfect case for the refactoring technique "extract
@@ -1151,9 +1153,9 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
         <example>
           <title>Smells better!</title>
 
-          <literallayout>if ($this-&gt;isValidPerson($person) {
+          <programlisting language="php">if ($this-&gt;isValidPerson($person) {
    $xmM = $thd;
-}</literallayout>
+}</programlisting>
         </example>
 
         <para>Bottom line is: You may (and are encouraged to) use inline

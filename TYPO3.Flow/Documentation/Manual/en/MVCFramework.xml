@@ -143,7 +143,7 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       <example>
         <title>Hello World! view</title>
 
-        <programlisting>namespace F3\Demo\View;
+        <programlisting language="php">namespace F3\Demo\View;
 
 class DefaultIndex extends \F3\FLOW3\MVC\View\AbstractView {
    public function render() {
@@ -159,7 +159,7 @@ class DefaultIndex extends \F3\FLOW3\MVC\View\AbstractView {
       <example>
         <title>Improved Hello World! controller</title>
 
-        <programlisting>namespace F3\Demo\Controller;
+        <programlisting language="php">namespace F3\Demo\Controller;
 
 class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
    public function indexAction() {

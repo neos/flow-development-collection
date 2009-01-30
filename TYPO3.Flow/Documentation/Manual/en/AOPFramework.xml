@@ -911,7 +911,7 @@ class LoggingAspect {
       <example>
         <title>Implementation of an around advice</title>
 
-        <para><programlisting>namespace F3\MyPackage;
+        <para><programlisting language="php">namespace F3\MyPackage;
 
 /**
  * A lastname rejection aspect

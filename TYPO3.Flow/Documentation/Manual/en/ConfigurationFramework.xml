@@ -199,7 +199,7 @@ TYPO3CR:
       <example>
         <title>Example for a package-level Settings.php</title>
 
-        <para><programlisting><literal>&lt;?php
+        <para><programlisting language="php">&lt;?php
 declare(ENCODING="utf-8");
 
 /*                                                                        *
@@ -229,7 +229,7 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
   'password' =&gt; NULL
 );
 
-?&gt;</literal></programlisting></para>
+?&gt;</programlisting></para>
       </example>
 
       <para>As you can see, you can introduce new configuration options by
@@ -266,12 +266,12 @@ $c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
         <title>Settings declaration using the object and the array
         syntax</title>
 
-        <para><programlisting><literal>/**
+        <para><programlisting language="php">/**
  * The storage backend to use for TYPO3CR.
  *
  * @var \F3\TYPO3CR\Storage\BackendInterface
  */
-$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</literal></programlisting></para>
+$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</programlisting></para>
       </example>
 
       <para>Finally you may even call virtual setter methods in order to get a
@@ -282,7 +282,7 @@ $c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</lit
         <title>Settings declaration with the object syntax and virtual
         setters</title>
 
-        <para><programlisting><literal>	// Traditional object / property syntax:
+        <para><programlisting language="php">	// Traditional object / property syntax:
 
 $c-&gt;Demo-&gt;administrator-&gt;name = 'John Doe';
 $c-&gt;Demo-&gt;administrator-&gt;email = 'johndoe@typo3.org';
@@ -293,7 +293,7 @@ $c-&gt;Demo-&gt;administrator-&gt;country = 'DE';
 $c-&gt;Demo-&gt;administrator-&gt;
    setName('JohnDoe')-&gt;
    setEmail('johndoe@typo3.org')-&gt;
-   setCountry('DE');</literal></programlisting></para>
+   setCountry('DE');</programlisting></para>
       </example>
     </section>
 
@@ -379,7 +379,7 @@ Smarty:
       <example>
         <title>Example for using specialClassNameAndPaths</title>
 
-        <programlisting><literal>&lt;?php
+        <programlisting language="php">&lt;?php
 declare(ENCODING="utf-8");
 
 /*                                                                        *
@@ -393,7 +393,7 @@ declare(ENCODING="utf-8");
 
 $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
 
-?&gt;</literal></programlisting>
+?&gt;</programlisting>
       </example>
     </section>
   </section>
@@ -418,7 +418,7 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%
       <example>
         <title>Settings Injection</title>
 
-        <programlisting>namespace F3\Demo;
+        <programlisting language="php">namespace F3\Demo;
 
 class SomeClass {
 
@@ -460,7 +460,7 @@ class SomeClass {
       <example>
         <title>Retrieving settings</title>
 
-        <programlisting>namespace F3\Demo;
+        <programlisting language="php">namespace F3\Demo;
 
 class SomeClass {
 

@@ -281,7 +281,7 @@
     <example>
       <title>Package.xml</title>
 
-      <programlisting>
+      <programlisting language="xml">
 &lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
 &lt;package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0"&gt;
    &lt;key&gt;TestPackage&lt;/key&gt;

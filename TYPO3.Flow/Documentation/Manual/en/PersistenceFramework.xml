@@ -28,7 +28,7 @@
     <classname>Blog</classname> class shows:<example>
         <title>The Blog's addPost() method</title>
 
-        <para><programlisting>/**
+        <para><programlisting language="php">/**
  * @param \F3\Blog\Domain\Post $post
  * @return void
  */
@@ -67,7 +67,7 @@ public function addPost(\F3\Blog\Domain\Post $post) {
     code are enough:<example>
         <title>Persistence-related annotations in the Blog class</title>
 
-        <para><programlisting>/**
+        <para><programlisting language="php">/**
  * A Blog object
  *
  * @package Blog
@@ -103,7 +103,7 @@ class Blog {
     <para>Let's conclude by taking a look at the BlogRepository code:<example>
         <title>Code of a simple BlogRepository</title>
 
-        <programlisting>/**
+        <programlisting language="php">/**
  * A BlogRepository
  *
  * @package Blog
