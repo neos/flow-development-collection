@@ -229,13 +229,13 @@ class Mapper {
 	 * Note: You can only use one converter that is not set for a specific property.
 	 * Use a composite editor, if you need more.
 	 *
-	 * @param  \F3\FLOW3\Property\ConverterInterface $propertyConverter The property editor
+	 * @param  \F3\FLOW3\Property\Converter\ConverterInterface $propertyConverter The property editor
 	 * @param  string $property The converter should only be used for this property
 	 * @param  string $format The source format the converter should be used with.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function registerPropertyConverter(\F3\FLOW3\Property\ConverterInterface $propertyConverter, $property = 'all', $format = 'default') {
+	public function registerPropertyConverter(\F3\FLOW3\Property\Converter\ConverterInterface $propertyConverter, $property = 'all', $format = 'default') {
 		$this->propertyConverters[$property] = array(
 			'format' => $format,
 			'propertyConverter' => $propertyConverter

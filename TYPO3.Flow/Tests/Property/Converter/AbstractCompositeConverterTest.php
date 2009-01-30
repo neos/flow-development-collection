@@ -44,7 +44,7 @@ class AbstractCompositeConverterTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function registeringANewFormatBasicallyWorks() {
 		$compositeConverter = $this->getMock('F3\FLOW3\Property\Converter\AbstractCompositeConverter', array('setProperty', 'getProperty', 'getSupportedFormats'));
-		$compositeConverter->registerNewFormat('someNewFormat', $this->getMock('F3\FLOW3\Property\ConverterInterface'));
+		$compositeConverter->registerNewFormat('someNewFormat', $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface'));
 		$compositeConverter->removeFormat('someNewFormat');
 	}
 
@@ -65,7 +65,7 @@ class AbstractCompositeConverterTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function settingThePropertyWithAnExtendedFormatCallsTheCorrectConverter() {
 		$compositeConverter = $this->getMock('F3\FLOW3\Property\Converter\AbstractCompositeConverter', array('setProperty', 'getProperty', 'getSupportedFormats'));
-		$converterWithNewFormat = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$converterWithNewFormat = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$converterWithNewFormat->expects($this->once())->method('setAsFormat')->with($this->equalTo('newFormat'), $this->equalTo('someProperty'));
 		$compositeConverter->registerNewFormat('newFormat', $converterWithNewFormat);
 
@@ -78,7 +78,7 @@ class AbstractCompositeConverterTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function gettingThePropertyWithAnExtendedFormatReturnsTheCorrectValueFromTheCorrectConverter() {
 		$compositeConverter = $this->getMock('F3\FLOW3\Property\Converter\AbstractCompositeConverter', array('setProperty', 'getProperty', 'getSupportedFormats'));
-		$converterWithNewFormat = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$converterWithNewFormat = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$converterWithNewFormat->expects($this->once())->method('getAsFormat')->with($this->equalTo('newFormat'))->will($this->returnValue('editedProperty'));
 
 		$compositeConverter->registerNewFormat('newFormat', $converterWithNewFormat);

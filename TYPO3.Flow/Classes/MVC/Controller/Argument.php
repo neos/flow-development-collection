@@ -123,7 +123,7 @@ class Argument {
 
 	/**
 	 * The property converter for this argument
-	 * @var \F3\FLOW3\Property\ConverterInterface
+	 * @var \F3\FLOW3\Property\Converter\ConverterInterface
 	 */
 	protected $propertyConverter = NULL;
 
@@ -472,7 +472,7 @@ class Argument {
 	/**
 	 * Returns the set property converter
 	 *
-	 * @return \F3\FLOW3\Property\ConverterInterface The set property convertr, NULL if none was set
+	 * @return \F3\FLOW3\Property\Converter\ConverterInterface The set property convertr, NULL if none was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPropertyConverter() {

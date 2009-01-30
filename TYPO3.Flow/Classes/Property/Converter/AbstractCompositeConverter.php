@@ -37,7 +37,7 @@ namespace F3\FLOW3\Property\Converter;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\ConverterInterface {
+abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converter\ConverterInterface {
 
 	/**
 	 * var array The registered extension converters
@@ -53,12 +53,12 @@ abstract class AbstractCompositeConverter implements \F3\FLOW3\Property\Converte
 	 * Register a new format, the converter will support in the future
 	 *
 	 * @param string $name The name of the format
-	 * @param \F3\FLOW3\Property\ConverterInterface $propertyConverter The property Converter that can do the conversion to and from the given format.
+	 * @param \F3\FLOW3\Property\Converter\ConverterInterface $propertyConverter The property Converter that can do the conversion to and from the given format.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo this should be just a setter used by the configuration
 	 */
-	public function registerNewFormat($name, \F3\FLOW3\Property\ConverterInterface $propertyConverter) {
+	public function registerNewFormat($name, \F3\FLOW3\Property\Converter\ConverterInterface $propertyConverter) {
 		$this->propertyConverters[$name] = $propertyConverter;
 	}
 

@@ -37,7 +37,7 @@ namespace F3\FLOW3\Property\Converter;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class DomainObjectConverter implements \F3\FLOW3\Property\ConverterInterface, \F3\FLOW3\Property\Converter\IdentifierAwareInterface {
+class DomainObjectConverter implements \F3\FLOW3\Property\Converter\ConverterInterface, \F3\FLOW3\Property\Converter\IdentifierAwareInterface {
 
 	/**
 	 * The domain object which is processed.

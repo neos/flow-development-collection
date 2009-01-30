@@ -159,5 +159,31 @@ class Files {
 			if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
 		}
 	}
+
+	/**
+	 * An enhanced version of file_get_contents which intercepts the warning
+	 * issued by the original function if a file could not be loaded.
+	 *
+	 * @param string $pathAndFilename Path and name of the file to load
+	 * @param integer $flags (optional) ORed flags using PHP's FILE_* constants (see manual of file_get_contents).
+	 * @param resource $context (optional) A context resource created by stream_context_create()
+	 * @param integer $offset (optional) Offset where reading of the file starts.
+	 * @param integer $maximumLength (optional) Maximum length to read. Default is -1 (no limit)
+	 * @return mixed The file content as a string or FALSE if the file could not be opened.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public static function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
+		if ($flags === TRUE) $flags = FILE_USE_INCLUDE_PATH;
+		try {
+			if ($maximumLength > -1) {
+				$content = file_get_contents($pathAndFilename, $flags, $context, $offset, $maximumLength);
+			} else {
+				$content = file_get_contents($pathAndFilename, $flags, $context, $offset);
+			}
+		} catch (\F3\FLOW3\Error\Exception $ignoredException) {
+			$content = FALSE;
+		}
+		return $content;
+	}
 }
 ?>

@@ -388,7 +388,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
@@ -415,7 +415,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value1'));
 
 		$this->mapper->setTarget($target);
@@ -442,7 +442,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);
@@ -469,7 +469,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\ConverterInterface');
+		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
 		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value3'));
 
 		$this->mapper->setTarget($target);

@@ -93,7 +93,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->initializeAction();
 		if ($this->initializeView) $this->initializeView();
 		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
-		if (is_string($actionResult) && \F3\PHP6\Functions::strlen($actionResult) > 0) {
+		if (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}
 	}
