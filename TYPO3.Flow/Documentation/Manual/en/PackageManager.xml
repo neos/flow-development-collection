@@ -22,7 +22,136 @@
   </note>
 
   <section>
-    <title>Files and Locations</title>
+    <title>Package Locations</title>
+
+    <section>
+      <title>Global and Local Packages</title>
+
+      <para>FLOW3 packages are located in a sub folder of the
+      <filename>Packages</filename> directory. A typical application (such as
+      TYPO3 for example) will use the core packages which are bundled with
+      FLOW3 and use additional packages which are specific to the application.
+      The core packages are kept in a directory called
+      <filename>Global</filename> while the application specific packages
+      reside in the <filename>Local</filename> directory:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><filename>Configuration/</filename></term>
+
+          <listitem>
+            <para>The global configuration folder</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><filename>Data/</filename></term>
+
+          <listitem>
+            <para>The various data folders</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><filename>Packages/</filename></term>
+
+          <listitem>
+            <variablelist>
+              <varlistentry>
+                <term><filename>Global/</filename></term>
+
+                <listitem>
+                  <para>The Global directory contains packages of the FLOW3
+                  distribution (just examples):</para>
+
+                  <variablelist>
+                    <varlistentry>
+                      <term><filename>FLOW3/</filename></term>
+
+                      <listitem>
+                        <para>The FLOW3 package</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>Fluid/</filename></term>
+
+                      <listitem>
+                        <para>The Fluid package (Template Engine)</para>
+                      </listitem>
+                    </varlistentry>
+                  </variablelist>
+                </listitem>
+              </varlistentry>
+
+              <varlistentry>
+                <term><filename>Local/</filename></term>
+
+                <listitem>
+                  <para>The Local directory contains your own / application
+                  specific packages:</para>
+
+                  <variablelist>
+                    <varlistentry>
+                      <term><filename>TYPO3/</filename></term>
+
+                      <listitem>
+                        <para>For example the TYPO3 package</para>
+                      </listitem>
+                    </varlistentry>
+
+                    <varlistentry>
+                      <term><filename>Coffee/</filename></term>
+
+                      <listitem>
+                        <para>Or the coffee package</para>
+                      </listitem>
+                    </varlistentry>
+                  </variablelist>
+                </listitem>
+              </varlistentry>
+            </variablelist>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>The reason for separating packages into Global / Local directories
+      is that the core packages residing in <filename>Global/</filename> can
+      reside in a different, shared location and be symlinked from the
+      application using it. Just delete the <filename>Global</filename>
+      directory and replace it with a symlink pointing to the
+      <filename>Packages/Global/</filename> directory of the FLOW3
+      distribution.</para>
+
+      <para>We recommend that you keep a version of the FLOW3 distribution in
+      <filename>/var/lib/flow3/flow3-x.y.z/</filename> and flag all its
+      content read-only for the web server's user. By doing that you can
+      assure that now FLOW3 package (or other PHP script) can tamper with the
+      FLOW3 package and its built-in security framework.</para>
+    </section>
+
+    <section>
+      <title>Additional Package Locations</title>
+
+      <para>Apart from the <filename>Local</filename> and
+      <filename>Global</filename> packages you may define your very own
+      additional package locations by just creating another directory or
+      symlink in the application's <filename>Packages</filename>
+      directory.</para>
+    </section>
+
+    <section>
+      <title>Loading Order</title>
+
+      <para>If multiple package locations exist, the Package Manager will
+      assure that packages from the location FLOW3 itself is located will be
+      loaded first. The loading order of all other package locations is
+      undefined.</para>
+    </section>
+  </section>
+
+  <section>
+    <title>Package Directory Layout</title>
 
     <para>The FLOW3 package directory structure follows a certain convention
     which has the advantage that you don't need to care about any
