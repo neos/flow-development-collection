@@ -45,13 +45,13 @@ class HTMLResourceTest extends \F3\Testing\BaseTestCase {
 		$HTMLResource = new \F3\FLOW3\Resource\HTMLResource();
 		$HTMLResource->setMetadata(array(
 			'URI' => 'file://FLOW3/Public/TestTemplate.html',
-			'path' => FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Public',
+			'path' => FLOW3_PATH_FLOW3 . 'Resources/Public',
 			'name' => 'TestTemplate.html',
 			'mediaType' => 'text',
 			'mimeType' => 'text/html',
 		));
 
-		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Public/TestTemplate.html'));
+		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Public/TestTemplate.html'));
 	}
 }
 

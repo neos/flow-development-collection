@@ -96,10 +96,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
 
-		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
+		$mockPackages = array(
+			'PackageA' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+			'PackageB' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+			'PackageC' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE)
+		);
 
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadGlobalSettings($packageKeys);
+		$manager->loadGlobalSettings($mockPackages);
 	}
 
 	/**
@@ -111,10 +115,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnValue($someSettings));
 
-		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
+		$mockPackages = array(
+			'PackageA' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+			'PackageB' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE),
+			'PackageC' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE)
+		);
 
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, $packageKeys);
+		$manager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, $mockPackages);
 	}
 
 	/**
@@ -125,10 +133,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->exactly(5))->method('load')->will($this->returnCallback(array($this, 'packageSettingsCallback')));
 
-		$packageKeys = array('PackageA', 'PackageB', 'PackageC');
+		$mockPackageA = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageA->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageA/Configuration/'));
+		$mockPackageB = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageB->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageB/Configuration/'));
+		$mockPackageC = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackageC->expects($this->any())->method('getConfigurationPath')->will($this->returnValue('PackageC/Configuration/'));
+
+		$mockPackages = array(
+			'PackageA' => $mockPackageA,
+			'PackageB' => $mockPackageB,
+			'PackageC' => $mockPackageC
+		);
 
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadGlobalSettings($packageKeys);
+		$manager->loadGlobalSettings($mockPackages);
 
 		$actualSettings = $manager->getSettings('PackageA');
 		$this->assertEquals('A', $actualSettings['foo']);
@@ -170,9 +189,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		switch ($filenameAndPath) {
-			case FLOW3_PATH_PACKAGES . 'PackageA/Configuration/Settings' : return $settingsA;
-			case FLOW3_PATH_PACKAGES . 'PackageB/Configuration/Settings' : return $settingsB;
-			case FLOW3_PATH_PACKAGES . 'PackageC/Configuration/Settings' : return $settingsC;
+			case 'PackageA/Configuration/Settings' : return $settingsA;
+			case 'PackageB/Configuration/Settings' : return $settingsB;
+			case 'PackageC/Configuration/Settings' : return $settingsC;
 			case FLOW3_PATH_CONFIGURATION . 'Settings' : return array();
 			case FLOW3_PATH_CONFIGURATION . 'Testing/Settings' : return array();
 			default:
@@ -202,8 +221,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\SourceInterface', array('load'));
 		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue($expectedSettings));
 
+		$mockPackages = array(
+			'TestPackage' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE)
+		);
+
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->loadGlobalSettings(array('TestPackage'));
+		$manager->loadGlobalSettings($mockPackages);
 
 		$actualSettings = $manager->getSettings('TestPackage');
 		$this->assertEquals($expectedSettings['TestPackage'], $actualSettings);

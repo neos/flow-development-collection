@@ -21,7 +21,7 @@ namespace F3\FLOW3\Object;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/DummyClass.php');
+require_once(__DIR__ . '/../Fixtures/DummyClass.php');
 
 /**
  * @package FLOW3

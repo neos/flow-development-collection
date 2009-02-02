@@ -105,9 +105,15 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackagePathReturnsTheCorrectPathOfTheTestPackage() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage->expects($this->once())->method('getPackagePath')->will($this->returnValue('ThePackagePath'));
+
+		$packagesReflection = new \ReflectionProperty($this->packageManager, 'packages');
+		$packagesReflection->setAccessible(TRUE);
+		$packagesReflection->setValue($this->packageManager, array('TestPackage' => $mockPackage));
+
 		$actualPackagePath = $this->packageManager->getPackagePath('TestPackage');
-		$expectedPackagePath = FLOW3_PATH_PACKAGES . 'TestPackage/';
-		$this->assertEquals($expectedPackagePath, $actualPackagePath, 'getPackagePath() did not return the correct path for package "TestPackage".');
+		$this->assertEquals('ThePackagePath', $actualPackagePath);
 
 		$this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
 	}
@@ -120,9 +126,15 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 */
 	public function getPackageClassesPathReturnsClassesPathOfTestPackage() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage->expects($this->once())->method('getClassesPath')->will($this->returnValue('TheClassesPath'));
+
+		$packagesReflection = new \ReflectionProperty($this->packageManager, 'packages');
+		$packagesReflection->setAccessible(TRUE);
+		$packagesReflection->setValue($this->packageManager, array('TestPackage' => $mockPackage));
+
 		$actualPackageClassesPath = $this->packageManager->getPackageClassesPath('TestPackage');
-		$expectedPackageClassesPath = FLOW3_PATH_PACKAGES . 'TestPackage/Classes/';
-		$this->assertEquals($expectedPackageClassesPath, $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
+		$this->assertEquals('TheClassesPath', $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
 
 		$this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
 	}

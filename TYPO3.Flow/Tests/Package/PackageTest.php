@@ -45,19 +45,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function constructThrowsPackageDoesNotExistException() {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
-		new \F3\FLOW3\Package\Package('TestPackage', FLOW3_PATH_PACKAGES . 'ThisPackageSurelyDoesNotExist', $mockPackageManager);
-	}
-
-	/**
-	 * Checks if the constructor throws exceptions
-	 *
-	 * @test
-	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackagePath
-	 * @author  Robert Lemke <robert@typo3.org>
-	 */
-	public function constructThrowsInvalidPathException() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
-		new \F3\FLOW3\Package\Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage', $mockPackageManager);
+		new \F3\FLOW3\Package\Package('TestPackage', './ThisPackageSurelyDoesNotExist', $mockPackageManager);
 	}
 
 	/**
@@ -67,7 +55,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function constructRejectsInvalidPackageKeys() {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
-		new \F3\FLOW3\Package\Package('Invalid_Package_Key', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
+		new \F3\FLOW3\Package\Package('Invalid_Package_Key', './TestPackage/', $mockPackageManager);
 	}
 
 	/**
@@ -79,7 +67,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		$mockMeta = $this->getMock('F3\FLOW3\Package\MetaInterface');
 		$mockMetaReader = $this->getMock('F3\FLOW3\Package\Meta\ReaderInterface');
 
-		$package = new Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/');
+		$package = new Package('FLOW3', FLOW3_PATH_FLOW3);
 		$package->injectMetaReader($mockMetaReader);
 
 		$mockMetaReader->expects($this->once())
@@ -94,27 +82,10 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackageMetaPathReturnsPathToMetaDirectory() {
-		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/');
+		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 		$packageMetaPath = $package->getPackageMetaPath();
 
 		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_META, $packageMetaPath);
-	}
-
-	/**
-	 * Test the method getClassFiles() without initializing the package manager
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getClassFilesWorks() {
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
-		$package = new \F3\FLOW3\Package\Package('TestPackage', FLOW3_PATH_PACKAGES . 'TestPackage/', $mockPackageManager);
-		$classFiles = $package->getClassFiles();
-
-		$this->assertTrue(array_key_exists('F3\TestPackage\BasicClass', $classFiles), 'The BasicClass is not in the class files array!');
-		$this->assertTrue(array_key_exists('F3\TestPackage\SubDirectory\ClassInSubDirectory', $classFiles), 'Class from sub directory is not in the class files array!');
-		$this->assertTrue($classFiles['F3\TestPackage\BasicClass'] == 'BasicClass.php', 'Class files array contains wrong path for BasicClass!');
-		$this->assertTrue($classFiles['F3\TestPackage\SubDirectory\ClassInSubDirectory'] == 'SubDirectory/ClassInSubDirectory.php', 'Class files array contains wrong path for ClassInSubDirectory!');
 	}
 }
 ?>

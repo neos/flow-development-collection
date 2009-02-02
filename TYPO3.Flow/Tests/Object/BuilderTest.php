@@ -21,14 +21,14 @@ namespace F3\FLOW3\Object;
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/BasicClass.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithOptionalArguments.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/SomeInterface.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/SomeImplementation.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithSomeImplementationInjected.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ReconstitutableClassWithSimpleProperties.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithUnmatchedRequiredSetterDependency.php');
-require_once(FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Object/Fixture/ClassWithInjectSettingsMethod.php');
+require_once(__DIR__ . '/Fixture/BasicClass.php');
+require_once(__DIR__ . '/Fixture/ClassWithOptionalArguments.php');
+require_once(__DIR__ . '/Fixture/SomeInterface.php');
+require_once(__DIR__ . '/Fixture/SomeImplementation.php');
+require_once(__DIR__ . '/Fixture/ClassWithSomeImplementationInjected.php');
+require_once(__DIR__ . '/Fixture/ReconstitutableClassWithSimpleProperties.php');
+require_once(__DIR__ . '/Fixture/ClassWithUnmatchedRequiredSetterDependency.php');
+require_once(__DIR__ . '/Fixture/ClassWithInjectSettingsMethod.php');
 
 /**
  * @package FLOW3

@@ -140,26 +140,30 @@ class Publisher {
 	}
 
 	/**
-	 * Publishes all public resources of a package
+	 * Recursively publishes all resources found in the specified source directory
+	 * to the given destination.
 	 *
-	 * @param string $packageName
+	 * @param string $sourcePath Path containing the resources to publish
+	 * @param string $relativeDestinationPath Path relative to the public resources directory where the given resources are mirrored to
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mirrorPublicPackageResources($packageName) {
-		if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($packageName)) {
+	public function mirrorResourcesDirectory($sourcePath, $relativeDestinationPath) {
+		$cacheEntryIdentifier = md5($sourcePath);
+		if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($cacheEntryIdentifier)) {
 			return;
 		} elseif ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE) {
-			$this->resourceStatusCache->set($packageName, '');
+			$this->resourceStatusCache->set($cacheEntryIdentifier, '');
 		}
 
-		$sourcePath = FLOW3_PATH_PACKAGES . $packageName . '/Resources/Public/';
 		if (!is_dir($sourcePath)) return;
-
-		$destinationPath = $this->publicResourcePath . $packageName . '/Public/';
+		$destinationPath = $this->publicResourcePath . $relativeDestinationPath;
 		$resourceFilenames = \F3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath);
 
 		foreach ($resourceFilenames as $file) {
+			if (substr(strtolower($file), -4, 4) === '.php') continue;
+
 			$relativeFile = str_replace($sourcePath, '', $file);
 			$sourceMTime = filemtime($file);
 			if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
@@ -167,12 +171,12 @@ class Publisher {
 				if ($sourceMTime === $destMTime) continue;
 			}
 
-			$URI = $this->createURI('file://' . $packageName . '/Public/' . $relativeFile);
+			$URI = $this->createURI('file://' . $relativeDestinationPath . $relativeFile);
 			$metadata = $this->extractResourceMetadata($URI);
 
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
 			if ($metadata['mimeType'] == 'text/html') {
-				$HTML = \F3\FLOW3\Resource\Processor::prefixRelativePathsInHTML(file_get_contents($file), 'Resources/Web/' . $packageName . '/Public/' . dirname($relativeFile) . '/');
+				$HTML = \F3\FLOW3\Resource\Processor::prefixRelativePathsInHTML(\F3\FLOW3\Utility\Files::getFileContents($file), 'Resources/' . $relativeDestinationPath . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {
 				copy($file, $destinationPath . $relativeFile);
@@ -206,7 +210,7 @@ class Publisher {
 		} else {
 			$metadata = array(
 				'URI' => $URI,
-				'path' => FLOW3_PATH_PACKAGES . $URI->getHost() . '/Resources' . dirname($URI->getPath()),
+				'path' => 'Packages/' . $URI->getHost() . '/Resources' . dirname($URI->getPath()),
 				'name' => basename($URI->getPath()),
 				'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename($URI->getPath()),
 				'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename($URI->getPath()),

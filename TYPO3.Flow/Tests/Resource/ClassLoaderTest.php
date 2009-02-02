@@ -47,10 +47,19 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
 		\vfsStreamWrapper::register();
-		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader(\vfsStream::url('Packages/'));
+
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage->expects($this->any())->method('getClassesPath')->will($this->returnValue(\vfsStream::url('Virtual/Classes/')));
+		$mockPackages = array(
+			'Virtual' => $mockPackage
+		);
+
+		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
+		$this->classLoader->setPackages($mockPackages);
 	}
 
 	/**
@@ -60,15 +69,14 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function classesFromSubDirectoriesAreLoaded() {
-		$root = \vfsStream::newDirectory('Packages/TestPackage/Classes/SubDirectory');
+		$root = \vfsStream::newDirectory('Packages/Virtual/Classes/SubDirectory');
 		\vfsStreamWrapper::setRoot($root);
 
 		$vfsClassFile = \vfsStream::newFile('ClassInSubDirectory.php')
 			->withContent('<?php ?>')
-			->at($root->getChild('TestPackage/Classes/SubDirectory'));
+			->at($root->getChild('Virtual/Classes/SubDirectory'));
 
-		$this->classLoader->loadClass('F3\TestPackage\SubDirectory\ClassInSubDirectory');
-
+		$this->classLoader->loadClass('F3\Virtual\SubDirectory\ClassInSubDirectory');
 		$this->assertTrue($vfsClassFile->eof());
 	}
 
@@ -77,14 +85,14 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function classesFromVeryDeeplyNestedSubDirectoriesAreLoaded() {
-		$root = \vfsStream::newDirectory('Packages/TestPackage/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J');
+		$root = \vfsStream::newDirectory('Packages/Virtual/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J');
 		\vfsStreamWrapper::setRoot($root);
 
 		$vfsClassFile = \vfsStream::newFile('TheClass.php')
 			->withContent('<?php ?>')
-			->at($root->getChild('TestPackage/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J'));
+			->at($root->getChild('Virtual/Classes/SubDirectory/A/B/C/D/E/F/G/H/I/J'));
 
-		$this->classLoader->loadClass('F3\TestPackage\SubDirectory\A\B\C\D\E\F\G\H\I\J\TheClass');
+		$this->classLoader->loadClass('F3\Virtual\SubDirectory\A\B\C\D\E\F\G\H\I\J\TheClass');
 
 		$this->assertTrue($vfsClassFile->eof());
 	}
@@ -94,14 +102,14 @@ class ClassLoaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function specialClassNamesAndPathsSettingsOverrideClassLoaderBehaviour() {
-		$root = \vfsStream::newDirectory('Packages/TestPackage/Resources/PHP');
+		$root = \vfsStream::newDirectory('Packages/Virtual/Resources/PHP');
 		\vfsStreamWrapper::setRoot($root);
 
 		$vfsClassFile = \vfsStream::newFile('Bar.php')
 			->withContent('<?php ?>')
-			->at($root->getChild('TestPackage/Resources/PHP'));
+			->at($root->getChild('Virtual/Resources/PHP'));
 
-		$this->classLoader->setSpecialClassNameAndPath('Baz', \vfsStream::url('TestPackage/Resources/PHP/Bar.php'));
+		$this->classLoader->setSpecialClassNameAndPath('Baz', \vfsStream::url('Virtual/Resources/PHP/Bar.php'));
 		$this->classLoader->loadClass('Baz');
 
 		$this->assertTrue($vfsClassFile->eof());

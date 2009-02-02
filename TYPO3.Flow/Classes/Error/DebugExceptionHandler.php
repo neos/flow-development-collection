@@ -80,8 +80,8 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 			header("HTTP/1.1 500 Internal Server Error");
 		}
 
-		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
-		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
+		$pathPosition = strpos($exception->getFile(), 'Packages/');
+		$filePathAndName = ($pathPosition === FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
@@ -141,8 +141,8 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function echoExceptionCLI(\Exception $exception) {
-		$pathPosition = strpos($exception->getFile(), FLOW3_PATH_PACKAGES);
-		$filePathAndName = ($pathPosition === 0) ? substr($exception->getFile(), strlen(FLOW3_PATH_PACKAGES)) : $exception->getFile();
+		$pathPosition = strpos($exception->getFile(), 'Packages/');
+		$filePathAndName = ($pathPosition === FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 

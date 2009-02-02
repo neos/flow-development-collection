@@ -28,8 +28,8 @@ namespace F3\FLOW3\AOP;
  * @version $Id$
  */
 
-require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/DummyClass.php');
-require_once (FLOW3_PATH_PACKAGES . 'FLOW3/Tests/Fixtures/SecondDummyClass.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Fixtures/DummyClass.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Fixtures/SecondDummyClass.php');
 
 /**
  * Testcase for the Pointcut Class Filter

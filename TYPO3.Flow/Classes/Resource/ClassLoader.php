@@ -28,9 +28,6 @@ namespace F3\FLOW3\Resource;
  * @version $Id$
  */
 
-require(FLOW3_PATH_FLOW3 . 'Package/PackageInterface.php');
-require(FLOW3_PATH_FLOW3 . 'Package/Package.php');
-
 /**
  * Class Loader implementation which loads .php files found in the classes
  * directory of an object.
@@ -43,25 +40,16 @@ require(FLOW3_PATH_FLOW3 . 'Package/Package.php');
 class ClassLoader {
 
 	/**
-	 * @var array Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the \F3\Package\Object scheme.
+	 * Class names and their absolute path and filename of specifically registered classes. Used for classes which don't follow the \F3\Package\Object scheme.
+	 * @var array
 	 */
 	protected $specialClassNamesAndPaths = array();
 
 	/**
-	 * @var string Absolute path of the Packages/ directory
+	 * An array of \F3\FLOW3\Package\Package objects
+	 * @var array
 	 */
-	protected $packagesDirectory;
-
-	/**
-	 * Constructs the class loader
-	 *
-	 * @param string $packagesDirectory Absolute path of the Packages/ directory.
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct($packagesDirectory) {
-		$this->packagesDirectory = $packagesDirectory;
-	}
+	protected $packages = array();
 
 	/**
 	 * Loads php files containing classes or interfaces found in the classes directory of
@@ -76,13 +64,24 @@ class ClassLoader {
 			$classFilePathAndName = $this->specialClassNamesAndPaths[$className];
 		} else {
 			$classNameParts = explode('\\', $className);
-			if (is_array($classNameParts) && $classNameParts[0] == 'F3') {
-				$classFilePathAndName = $this->packagesDirectory . $classNameParts[1] . '/' . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES;
+			if (is_array($classNameParts) && $classNameParts[0] === 'F3' && isset($this->packages[$classNameParts[1]])) {
+				$classFilePathAndName = $this->packages[$classNameParts[1]]->getClassesPath();
 				$classFilePathAndName .= implode(array_slice($classNameParts, 2, -1), '/') . '/';
 				$classFilePathAndName .= end($classNameParts) . '.php';
 			}
 		}
 		if (isset($classFilePathAndName) && file_exists($classFilePathAndName)) require($classFilePathAndName);
+	}
+
+	/**
+	 * Sets the available packages
+	 *
+	 * @param array $packages An array of \F3\FLOW3\Package\Package objects
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setPackages(array $packages) {
+		$this->packages = $packages;
 	}
 
 	/**

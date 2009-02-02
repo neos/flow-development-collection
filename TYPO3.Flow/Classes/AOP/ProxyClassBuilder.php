@@ -130,7 +130,7 @@ class ProxyClassBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->proxyClassTemplate = file_get_contents(FLOW3_PATH_PACKAGES . 'FLOW3/Resources/Private/AOP/AOPProxyClassTemplate.php');
+		$this->proxyClassTemplate = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/AOP/AOPProxyClassTemplate.php');
 	}
 
 	/**

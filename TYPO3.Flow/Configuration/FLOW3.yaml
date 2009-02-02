@@ -91,7 +91,7 @@ resource:
   # Settings for the resource caching mechanism
   cache:
 
-    # The path for the public resources mirror
+    # The path for the public resources mirror, relative to the Public/ directory
     publicPath: Resources/
     
     # The strategy to use when caching files for public resources. Specify either

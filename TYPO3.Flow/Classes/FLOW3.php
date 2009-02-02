@@ -38,11 +38,12 @@ if (version_compare(PHP_VERSION, \F3\FLOW3\FLOW3::MAXIMUM_PHP_VERSION, '>')) {
  * Utility_Files is needed before the autoloader is active
  */
 require(__DIR__ . '/Utility/Files.php');
+require(__DIR__ . '/Package/PackageInterface.php');
+require(__DIR__ . '/Package/Package.php');
 
-define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(__DIR__ . '/'));
-define('FLOW3_PATH_PACKAGES', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../') . '/'));
-define('FLOW3_PATH_CONFIGURATION', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Configuration/') . '/'));
-define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../../../Data/') . '/'));
+define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(__DIR__ . '/../') . '/'));
+define('FLOW3_PATH_CONFIGURATION', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Configuration/') . '/'));
+define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Data/') . '/'));
 
 /**
  * General purpose central core hyper FLOW3 class
@@ -95,6 +96,12 @@ final class FLOW3 {
 	protected $packageManager;
 
 	/**
+	 * A reference to the FLOW3 package which can be used before the Package Manager is initialized
+	 * @var \F3\FLOW3\Package\Package
+	 */
+	protected $FLOW3Package;
+
+	/**
 	 * Instance of the class loader
 	 *
 	 * @var \F3\FLOW3\Resource\ClassLoader
@@ -145,6 +152,7 @@ final class FLOW3 {
 	public function __construct($context = 'Production') {
 		$this->checkEnvironment();
 		$this->context = $context;
+		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
 
 	/**
@@ -194,7 +202,14 @@ final class FLOW3 {
 		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
 			require(__DIR__ . '/Resource/ClassLoader.php');
 		}
-		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader(FLOW3_PATH_PACKAGES);
+
+		$initialPackages = array(
+			'FLOW3' => $this->FLOW3Package,
+			'YAML' => new \F3\FLOW3\Package\Package('YAML', FLOW3_PATH_FLOW3 . '../YAML/')
+		);
+
+		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
+		$this->classLoader->setPackages($initialPackages);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
 	}
 
@@ -253,7 +268,7 @@ final class FLOW3 {
 		$this->objectManager->setContext($this->context);
 
 		$objectConfigurations = array();
-		$rawFLOW3ObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
+		$rawFLOW3ObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $this->FLOW3Package);
 		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
 			$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'Package FLOW3 (pre-initialization)');
 		}
@@ -292,16 +307,17 @@ final class FLOW3 {
 		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
+		$this->classLoader->setPackages($activePackages);
 
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGES, $packageKey);
+			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGES, $package);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 
-		$this->configurationManager->loadGlobalSettings(array_keys($activePackages));
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, array_keys($activePackages));
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, array_keys($activePackages));
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES, array_keys($activePackages));
+		$this->configurationManager->loadGlobalSettings($activePackages);
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, $activePackages);
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $activePackages);
+		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES, $activePackages);
 	}
 
 	/**
@@ -520,23 +536,23 @@ final class FLOW3 {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		$this->detectAlteredResources();
-
-		$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
-		$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
-
 		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		$requestType = ($environment->getSAPIName() == 'cli') ? 'CLI' : 'Web';
+		if ($environment->getSAPIName() !== 'cli') {
+			$this->detectAlteredResources();
+			$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
+			$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
 
-		$resourcePublisher = $this->objectManager->getObject('F3\FLOW3\Resource\Publisher');
-		$resourcePublisher->initializeMirrorDirectory($this->settings['resource']['cache']['publicPath'] . $requestType . '/');
-		$resourcePublisher->setMetadataCache($metadataCache);
-		$resourcePublisher->setStatusCache($statusCache);
-		$resourcePublisher->setCacheStrategy($this->settings['resource']['cache']['strategy']);
+			$resourcePublisher = $this->objectManager->getObject('F3\FLOW3\Resource\Publisher');
+			$resourcePublisher->initializeMirrorDirectory($this->settings['resource']['cache']['publicPath']);
+			$resourcePublisher->setMetadataCache($metadataCache);
+			$resourcePublisher->setStatusCache($statusCache);
+			$resourcePublisher->setCacheStrategy($this->settings['resource']['cache']['strategy']);
 
-		$activePackages = $this->packageManager->getActivePackages();
-		foreach (array_keys($activePackages) as $packageKey) {
-			$resourcePublisher->mirrorPublicPackageResources($packageKey);
+			$activePackages = $this->packageManager->getActivePackages();
+			foreach ($activePackages as $packageKey => $package) {
+				$resourcePublisher->mirrorResourcesDirectory($package->getResourcesPath() . 'Public/', 'Packages/' . $packageKey . '/');
+			}
+			$resourcePublisher->mirrorResourcesDirectory(FLOW3_PATH_DATA . 'Resources/Public/', 'Static/');
 		}
 	}
 
@@ -634,7 +650,7 @@ final class FLOW3 {
 
 		$objectConfigurations = $this->objectManager->getObjectConfigurations();
 		foreach ($packages as $packageKey => $package) {
-			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $packageKey);
+			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $this->FLOW3Package);
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
 				if (!$this->objectManager->isObjectRegistered($objectName)) {

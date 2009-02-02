@@ -47,6 +47,11 @@ class Manager {
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
 
 	/**
+	 * @var \F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * @var string The application context of the configuration to manage
 	 */
 	protected $context;
@@ -88,6 +93,16 @@ class Manager {
 	}
 
 	/**
+	 * Injects the package manager
+	 *
+	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * Returns an array with the settings defined for the specified package.
 	 *
 	 * @param string $packageKey Key of the package to return the settings for
@@ -118,7 +133,7 @@ class Manager {
 	public function loadFLOW3Settings() {
 		$settings = array();
 		foreach ($this->configurationSources as $configurationSource) {
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . 'FLOW3/Configuration/FLOW3'));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/FLOW3'));
 		}
 
 		foreach ($this->configurationSources as $configurationSource) {
@@ -136,23 +151,19 @@ class Manager {
 	 * The result is stored in the configuration manager's settings registry
 	 * and can be retrieved with the getSettings() method.
 	 *
-	 * @param array $packageKeys
+	 * @param array $packages An array of Package object
 	 * @return void
 	 * @see getSettings()
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadGlobalSettings(array $packageKeys) {
+	public function loadGlobalSettings(array $packages) {
 		$settings = array();
-		sort ($packageKeys);
-		$index = array_search('FLOW3', $packageKeys);
-		if ($index !== FALSE) {
-			unset ($packageKeys[$index]);
-			array_unshift($packageKeys, 'FLOW3');
-		}
-		foreach ($packageKeys as $packageKey) {
+		if (isset($packages['FLOW3'])) unset ($packages['FLOW3']);
+
+		foreach ($packages as $package) {
 			foreach ($this->configurationSources as $configurationSource) {
-				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/Settings'));
+				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load($package->getConfigurationPath() . 'Settings'));
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
@@ -173,21 +184,15 @@ class Manager {
 	 * parts of FLOW3
 	 *
 	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param array $packageKeys A list of packages to consider
+	 * @param array $packages An array of Package objects to consider
 	 * @return void
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadSpecialConfiguration($configurationType, array $packageKeys) {
-		$index = array_search('FLOW3', $packageKeys);
-		if ($index !== FALSE) {
-			unset ($packageKeys[$index]);
-			array_unshift($packageKeys, 'FLOW3');
-		}
-
-		foreach ($packageKeys as $packageKey) {
+	public function loadSpecialConfiguration($configurationType, array $packages) {
+		foreach ($packages as $packageKey => $package) {
 			foreach ($this->configurationSources as $configurationSource) {
-				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
+				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load($package->getConfigurationPath() . $configurationType));
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
@@ -207,13 +212,13 @@ class Manager {
 	 * by FLOW3 internally.
 	 *
 	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param string $packageKey Key of the package the configuration is for
+	 * @param \F3\FLOW3\Package\Package $package The package to return the configuration for
 	 * @return array The configuration
 	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
 	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSpecialConfiguration($configurationType, $packageKey = 'FLOW3') {
+	public function getSpecialConfiguration($configurationType, $package = NULL) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
@@ -221,13 +226,14 @@ class Manager {
 				return $this->configurations[$configurationType];
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_OBJECTS :
+				if (!is_object($package)) throw new \InvalidArgumentException('No package specified.', 1233336279);
 			break;
 			default:
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 		$configuration = array();
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_PACKAGES . $packageKey . '/Configuration/' . $configurationType));
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load($package->getConfigurationPath() . $configurationType));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
 			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
@@ -238,7 +244,7 @@ class Manager {
 
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_PACKAGES :
-				return (isset($configuration[$packageKey])) ? $configuration[$packageKey] : array();
+				return (isset($configuration[$package->getPackageKey()])) ? $configuration[$package->getPackageKey()] : array();
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				return $configuration;
 		}

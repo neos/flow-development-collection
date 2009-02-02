@@ -71,7 +71,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Array of package keys that are protected and that must not be removed
 	 * @var array
 	 */
-	protected $protectedPackages = array('FLOW3', 'PHP6');
+	protected $protectedPackages = array('FLOW3', 'PHP6', 'YAML');
 
 	/**
 	 * Injects a Package Meta Writer
@@ -249,7 +249,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$packageMeta = $this->objectFactory->create('F3\FLOW3\Package\Meta', $packageKey);
 		}
 
-		$packagePath = FLOW3_PATH_PACKAGES . $packageKey . '/';
+		$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/') . '/') . $packageKey . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
 
 		foreach (
@@ -323,7 +323,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
-	 * Scans all directories in the Packages/ directory for available packages.
+	 * Scans all directories in the packages directories for available packages.
 	 * For each package a \F3\FLOW3\Package\ object is created and returned as
 	 * an array.
 	 *
@@ -331,18 +331,32 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$availablePackages = array(
-			'FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_PACKAGES . 'FLOW3/')
-		);
+		$availablePackages = array('FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3));
 
-		$packagesDirectoryIterator = new \DirectoryIterator(FLOW3_PATH_PACKAGES);
-		while ($packagesDirectoryIterator->valid()) {
-			$filename = $packagesDirectoryIterator->getFilename();
-			if ($filename{0} != '.' && $filename != 'FLOW3') {
-				$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
-				$availablePackages[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
+		$localPackagesParentPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/'));
+		$globalPackagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../'));
+
+		$pathsToScan = array($globalPackagesPath);
+		$localPackagesParentDirectoryIterator = new \DirectoryIterator($localPackagesParentPath);
+		while ($localPackagesParentDirectoryIterator->valid()) {
+			$filename = $localPackagesParentDirectoryIterator->getFilename();
+			$path = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($localPackagesParentDirectoryIterator->getPathName()));
+
+			if ($filename{0} != '.' && $path !== $globalPackagesPath) {
+				$pathsToScan[] = $path;
 			}
-			$packagesDirectoryIterator->next();
+			$localPackagesParentDirectoryIterator->next();
+		}
+		foreach ($pathsToScan as $packagesPath) {
+			$packagesDirectoryIterator = new \DirectoryIterator($packagesPath);
+			while ($packagesDirectoryIterator->valid()) {
+				$filename = $packagesDirectoryIterator->getFilename();
+				if ($filename{0} != '.' && $filename != 'FLOW3') {
+					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
+					$availablePackages[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
+				}
+				$packagesDirectoryIterator->next();
+			}
 		}
 
 		$this->packages = $availablePackages;
