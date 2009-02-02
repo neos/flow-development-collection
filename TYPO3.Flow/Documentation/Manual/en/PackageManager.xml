@@ -126,7 +126,7 @@
       <para>We recommend that you keep a version of the FLOW3 distribution in
       <filename>/var/lib/flow3/flow3-x.y.z/</filename> and flag all its
       content read-only for the web server's user. By doing that you can
-      assure that now FLOW3 package (or other PHP script) can tamper with the
+      assure that no FLOW3 package (or other PHP script) can tamper with the
       FLOW3 package and its built-in security framework.</para>
     </section>
 
