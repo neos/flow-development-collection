@@ -44,22 +44,26 @@ class Publisher {
 	protected $objectFactory;
 
 	/**
-	 * @var string The base path for the mirrored public assets
+	 * The (absolute) base path for the mirrored public assets
+	 * @var string
 	 */
 	protected $publicResourcePath = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend The cache used for storing metadata about resources
+	 * The cache used for storing metadata about resources
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
 	protected $resourceMetadataCache;
 
 	/**
-	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend The cache used for storing metadata about resources
+	 * The cache used for storing metadata about resources
+	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
 	 */
 	protected $resourceStatusCache;
 
 	/**
-	 * @var integer One of the CACHE_STRATEGY constants defined in \F3\FLOW3\Resource\Manager
+	 * One of the CACHE_STRATEGY constants defined in \F3\FLOW3\Resource\Manager
+	 * @var integer
 	 */
 	protected $cacheStrategy = \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_NONE;
 
@@ -80,7 +84,7 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeMirrorDirectory($path) {
-		$this->publicResourcePath = $path;
+		$this->publicResourcePath = FLOW3_PATH_PUBLIC . $path;
 		if (!is_writable($this->publicResourcePath)) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->publicResourcePath);
 		}
@@ -199,10 +203,12 @@ class Publisher {
 	 */
 	public function extractResourceMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
 		$explodedPath = explode('/',dirname($URI->getPath()));
-		if ($explodedPath[1] == 'Public') {
+		if ($explodedPath[1] === 'Public') {
+			$packageKey = $URI->getHost();
+			unset($explodedPath[1]);
 			$metadata = array(
 				'URI' => $URI,
-				'path' => $this->publicResourcePath . $URI->getHost() . dirname($URI->getPath()),
+				'path' => $this->publicResourcePath . 'Packages/' . $packageKey . implode('/', $explodedPath),
 				'name' => basename($URI->getPath()),
 				'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename($URI->getPath()),
 				'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename($URI->getPath()),
