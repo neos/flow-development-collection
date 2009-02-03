@@ -402,8 +402,12 @@ final class FLOW3 {
 		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager, &$atLeastOneClassFileChanged) {
 			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
 			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
-				$cacheManager->flushCachesByTag(\F3\FLOW3\Cache\Frontend\FrontendInterface::TAG_CLASS . basename($pathAndFilename, '.php'));
-				$atLeastOneClassFileChanged = TRUE;
+				$matches = array();
+				if (FALSE !== preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
+					$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
+					$cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
+					$atLeastOneClassFileChanged = TRUE;
+				}
 			}
 		};
 

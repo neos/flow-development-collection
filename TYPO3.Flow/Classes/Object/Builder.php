@@ -277,6 +277,12 @@ class Builder {
 				}
 			}
 		}
+		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+			if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'inject') && !array_key_exists($propertyName, $setterProperties)) {
+				$objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
+				$setterProperties[$propertyName] =  new \F3\FLOW3\Object\ConfigurationProperty($propertyName, $objectName, \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
+			}
+		}
 		return $setterProperties;
 	}
 
@@ -366,11 +372,17 @@ class Builder {
 			$setterMethodName = 'inject' . ucfirst($propertyName);
 			if (method_exists($object, $setterMethodName)) {
 				$object->$setterMethodName($preparedValue);
-			} else {
-				$setterMethodName = 'set' . ucfirst($propertyName);
-				if (method_exists($object, $setterMethodName)) {
-					$object->$setterMethodName($preparedValue);
-				}
+				continue;
+			}
+			$setterMethodName = 'set' . ucfirst($propertyName);
+			if (method_exists($object, $setterMethodName)) {
+				$object->$setterMethodName($preparedValue);
+				continue;
+			}
+			if (property_exists($object, $propertyName)) {
+				$propertyReflection = new \ReflectionProperty($object, $propertyName);
+				$propertyReflection->setAccessible(TRUE);
+				$propertyReflection->setValue($object, $preparedValue);
 			}
 		}
 	}

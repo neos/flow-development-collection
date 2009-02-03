@@ -29,6 +29,7 @@ require_once(__DIR__ . '/Fixture/ClassWithSomeImplementationInjected.php');
 require_once(__DIR__ . '/Fixture/ReconstitutableClassWithSimpleProperties.php');
 require_once(__DIR__ . '/Fixture/ClassWithUnmatchedRequiredSetterDependency.php');
 require_once(__DIR__ . '/Fixture/ClassWithInjectSettingsMethod.php');
+require_once(__DIR__ . '/Fixture/ClassWithSetterAndPropertyInjection.php');
 
 /**
  * @package FLOW3
@@ -76,6 +77,8 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$this->mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
+
 		$this->objectBuilder = new \F3\FLOW3\Object\Builder();
 		$this->objectBuilder->injectObjectManager($this->mockObjectManager);
 		$this->objectBuilder->injectObjectFactory($this->mockObjectFactory);
@@ -676,6 +679,66 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
 
 		$this->objectBuilder->createObject($objectName, $objectConfiguration);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function autoWireSetterPropertiesSetsInjectionPropertyForPropertiesAnnotatedWithInject() {
+		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with($className, 'injectFirstDependency')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->once())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('secondDependency')));
+		$mockReflectionService->expects($this->once())->method('isPropertyTaggedWith')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->once())->method('getPropertyTagValues')->with($className, 'secondDependency', 'var')->will($this->returnValue(array('F3\Coffee\Bar')));
+
+		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
+		$mockObjectBuilder->injectReflectionService($mockReflectionService);
+		$actualSetterProperties = $mockObjectBuilder->_call('autoWireSetterProperties', array(), $className);
+
+		$this->assertSame('F3\Coffee\Bar', $actualSetterProperties['secondDependency']->getValue());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setterInjectionIsPreferredOverPropertyInjection() {
+		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
+
+		$methodParameters = array('firstDependency' => array('class' => 'F3\FLOW3\Object\ManagerInterface'));
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with($className, 'injectFirstDependency')->will($this->returnValue($methodParameters));
+		$mockReflectionService->expects($this->once())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('firstDependency')));
+		$mockReflectionService->expects($this->once())->method('isPropertyTaggedWith')->will($this->returnValue(TRUE));
+
+		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
+		$mockObjectBuilder->injectReflectionService($mockReflectionService);
+		$actualSetterProperties = $mockObjectBuilder->_call('autoWireSetterProperties', array(), $className);
+
+		$this->assertSame('F3\FLOW3\Object\ManagerInterface', $actualSetterProperties['firstDependency']->getValue());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSetterPropertiesCanDoPropertyInjectionViaReflection() {
+		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
+		$object = new $className;
+		$setterProperties = array(
+			'secondDependency' => new \F3\FLOW3\Object\ConfigurationProperty('secondDependency', 'injected value', \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_STRAIGHTVALUE)
+		);
+
+		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
+		$mockObjectBuilder->_call('injectSetterProperties', $setterProperties, $object);
+
+		$propertyReflection = new \ReflectionProperty($object, 'secondDependency');
+		$propertyReflection->setAccessible(TRUE);
+		$this->assertSame('injected value', $propertyReflection->getValue($object));
 	}
 
 	/**

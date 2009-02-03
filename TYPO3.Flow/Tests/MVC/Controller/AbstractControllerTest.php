@@ -70,20 +70,6 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getArgumentsReturnsAnArgumentsObject() {
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array('create'));
-		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($mockArguments));
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
-
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($mockObjectFactory, $mockPackageManager);
-		$this->assertType('F3\FLOW3\MVC\Controller\Arguments', $controller->getArguments(), 'getArguments() did not return an arguments object.');
-	}
-
-	/**
-	 * test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
 		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
 		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');

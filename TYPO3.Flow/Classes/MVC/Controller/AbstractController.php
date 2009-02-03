@@ -138,19 +138,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Initializes this controller.
-	 *
-	 * Override this method for initializing your concrete controller implementation.
-	 * Recommended actions for your controller initialization method are setting up the expected
-	 * arguments and narrowing down the supported request types if neccessary.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function initializeController() {
-	}
-
-	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
 	 * If your controller only supports certain request types, either
@@ -161,7 +148,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function canProcessRequest($request) {
+	public function canProcessRequest(\F3\FLOW3\MVC\Request $request) {
 		return in_array(get_class($request), $this->supportedRequestTypes);
 	}
 
@@ -183,6 +170,19 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeArguments();
 		$this->mapRequestArgumentsToLocalArguments();
+	}
+
+	/**
+	 * Initializes this controller.
+	 *
+	 * Override this method for initializing your concrete controller implementation.
+	 * Recommended actions for your controller initialization method are setting up the expected
+	 * arguments and narrowing down the supported request types if neccessary.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function initializeController() {
 	}
 
 	/**
@@ -249,20 +249,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Returns the arguments which are defined for this controller.
-	 *
-	 * Use this information if you want to know about what arguments are supported and / or
-	 * required by this controller or if you'd like to know about further information about
-	 * each argument.
-	 *
-	 * @return \F3\FLOW3\MVC\Controller\Arguments Supported arguments of this controller
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getArguments() {
-		return $this->arguments;
-	}
-
-	/**
 	 * Initializes (registers / defines) arguments of this controller.
 	 *
 	 * Override this method to add arguments which can later be accessed
@@ -271,7 +257,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeArguments() {
+	protected function initializeArguments() {
 	}
 
 	/**

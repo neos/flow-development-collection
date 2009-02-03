@@ -51,7 +51,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
 
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest'));
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->exactly(2))->method('processRequest')->with($mockRequest, $mockResponse);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
@@ -76,7 +76,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->any())->method('isDispatched')->will($this->returnCallBack($requestCallBack, '__invoke'));
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest'));
+		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getObject')->with('FooController')->will($this->returnValue($mockController));

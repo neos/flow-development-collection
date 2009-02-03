@@ -53,7 +53,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
-		$this->publicResourcePath = $environment->getPathToTemporaryDirectory() . uniqid() . '/';
+		$this->publicResourcePath = uniqid('TestResources') . '/';
 		$metadataCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 
 		$this->publisher = new \F3\FLOW3\Resource\Publisher();
@@ -77,14 +77,13 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => $this->publicResourcePath . 'FLOW3/Public',
+			'path' => FLOW3_PATH_PUBLIC . $this->publicResourcePath . 'Packages/FLOW3',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
 		);
 
 		$extractedMetadata = $this->publisher->extractResourceMetadata($URI);
-
 		$this->assertEquals($expectedMetadata, $extractedMetadata, 'The extracted metadata was not as expected.');
 	}
 
@@ -96,7 +95,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => $this->publicResourcePath . 'FLOW3/Public',
+			'path' => FLOW3_PATH_PUBLIC . $this->publicResourcePath . 'Packages/FLOW3',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
@@ -120,8 +119,8 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tearDown() {
-		if (is_dir($this->publicResourcePath)) {
-			\F3\FLOW3\Utility\Files::removeDirectoryRecursively($this->publicResourcePath);
+		if (is_dir(FLOW3_PATH_PUBLIC . $this->publicResourcePath)) {
+			\F3\FLOW3\Utility\Files::removeDirectoryRecursively(FLOW3_PATH_PUBLIC . $this->publicResourcePath);
 		}
 	}
 

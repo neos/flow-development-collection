@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\Controller;
+namespace F3\FLOW3\Tests\Object\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,38 +24,36 @@ namespace F3\FLOW3\MVC\Controller;
 
 /**
  * @package FLOW3
- * @subpackage MVC
+ * @subpackage Object
  * @version $Id$
  */
 
 /**
- * Interface for controllers
- *
  * @package FLOW3
- * @subpackage MVC
+ * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Robert Lemke <robert@typo3.org>
  */
-interface ControllerInterface {
+class ClassWithSetterAndPropertyInjection {
 
 	/**
-	 * Checks if the current request type is supported by the controller.
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @return boolean TRUE if this request type is supported, otherwise FALSE
+	 * @var F3\Foo\Bar
+	 * @inject
 	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\Request $request);
+	protected $firstDependency;
 
 	/**
-	 * Processes a general request. The result can be returned by altering the given response.
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request object
-	 * @param \F3\FLOW3\MVC\Response $response The response, modified by the controller
-	 * @return void
-	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+	 * @var F3\Coffee\Bar
+	 * @inject
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	protected $secondDependency;
+
+	/**
+	 * @param F3\FLOW3\Object\ManagerInterface
+	 */
+	public function injectFirstDependency(\F3\FLOW3\Object\ManagerInterface $firstDependency) {
+		$this->firstDependency = $firstDependency;
+	}
 
 }
 ?>

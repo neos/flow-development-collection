@@ -132,7 +132,6 @@ class Route {
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
-	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
@@ -169,7 +168,7 @@ class Route {
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setDefaults($defaults) {
+	public function setDefaults(array $defaults) {
 		$this->defaults = $defaults;
 	}
 
@@ -238,6 +237,7 @@ class Route {
 	 * By default all Dynamic Route Parts are resolved by \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
 	 * Note: Route Part handler must inherit from \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
+	 *
 	 * Usage: setRoutePartHandlers(array('@controller' => 'F3\Package\Subpackage\MyRoutePartHandler'));
 	 *
 	 * @param array $routePartHandlers Route Part handler classnames

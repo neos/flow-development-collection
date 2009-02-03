@@ -418,6 +418,10 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
     <section>
       <title>Action Controller</title>
 
+      <para>Setting $this-&gt;viewObjectName to a view object name overrides
+      the automatic resolving of the view name. Can be used for definining a
+      standard view, for example \F3\Fluid\View\TemplateView.</para>
+
       <para></para>
 
       <section>

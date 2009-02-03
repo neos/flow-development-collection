@@ -729,7 +729,6 @@ class Service {
 	 */
 	protected function saveToCache(array $newClassNames) {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
-
 		foreach ($newClassNames as $className) {
 			$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
 		}

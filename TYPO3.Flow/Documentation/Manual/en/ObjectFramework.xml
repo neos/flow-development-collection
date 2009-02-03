@@ -780,6 +780,64 @@ class Foo {
       </section>
 
       <section>
+        <title>Property Injection</title>
+
+        <para>Setter injection is the academic, clean way to set dependencies
+        from outside. However, writing these setters can become quite tiresome
+        if all they do is setting the property. For these cases FLOW3 provides
+        support for <emphasis>Property Injection</emphasis>:</para>
+
+        <example>
+          <title>Example for Property Injection</title>
+
+          <programlisting language="php">namespace F3\MyPackage;
+
+class Foo {
+
+	/**
+	 * An instance of a BarInterface compatible object.
+	 *
+	 * @var \F3\MyPackage\BarInterface
+	 * @inject
+	 */
+	protected $bar;
+
+	public function doSomething() {
+		$this-&gt;bar-&gt;doSomethingElse();
+	}
+}</programlisting>
+        </example>
+
+        <para>You could say that property injection is the same like setter
+        injection – just without the setter. The <literal>@inject</literal>
+        annotation tells the object framework that the property is supposed to
+        be injected and the <literal>@var</literal> annotation specifies the
+        type. Note that property injection even works (and should only be
+        used) with protected properties. The Objects configuration for
+        property injection is identical to the setter injection
+        configuration.</para>
+
+        <note>
+          <para>If a setter method exists for the same property, it has
+          precedence.</para>
+        </note>
+
+        <para>Setting properties directly, without a setter method, surely is
+        convenient - but is it clean enough? In general it is a bad idea to
+        allow direct access to mutable properties because you never know if at
+        some point you need to take some action while a property is set. And
+        if thousands of users (or only five) use your API, it's hard to change
+        your design decision in favor of a setter method.</para>
+
+        <para>However, we don't consider injection methods as part of the
+        public API. As you've seen, FLOW3 takes care of all the object
+        dependencies and the only other code working with injection methods
+        directly are unit tests. Therefore we consider it safe to say that you
+        can still switch back from property injection to setter injection
+        without problems if it turns out that you really need it.</para>
+      </section>
+
+      <section>
         <title>Settings Injection</title>
 
         <para>No, this headline is not misspelled. FLOW3 offers some
@@ -1032,7 +1090,8 @@ $c['F3\MyPackage\Foo']-&gt;properties-&gt;enableCache-&gt;setting = 'MyPackage.C
         objects is not really flexible, as it is hard coded. That's why only
         those options can be set through annotations which are part of the
         class design and won't change afterwards. Currently
-        <literal>scope</literal> is the only supported annotation.</para>
+        <literal>scope</literal> and <literal>inject</literal> are the only
+        supported annotations.</para>
 
         <para>It's up to you defining the scope in the class directly or doing
         it in a <filename>Objects</filename> configuration file – both have

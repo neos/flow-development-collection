@@ -55,6 +55,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $view = NULL;
 
 	/**
+	 * By default a matching view will be resolved. If this property is set, automatic resolving is disabled and the specified object is used instead.
+	 * @var string
+	 */
+	protected $viewObjectName = NULL;
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
@@ -107,7 +113,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewObjectName = $this->request->getViewObjectName();
+		$viewObjectName = ($this->viewObjectName === NULL) ? $this->request->getViewObjectName() : $this->viewObjectName;
 		if ($viewObjectName === FALSE) {
 			$viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 		}
