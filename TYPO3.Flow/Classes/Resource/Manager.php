@@ -114,13 +114,14 @@ class Manager {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResource($URI) {
-		if (is_string($URI)) {
-			$URI = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $URI);
-		}
 		$URIString = (string)$URI;
 
 		if (isset($this->loadedResources[$URIString])) {
 			return $this->loadedResources[$URIString];
+		}
+
+		if (is_string($URI)) {
+			$URI = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $URI);
 		}
 
 		$metadata = $this->resourcePublisher->getMetadata($URI);
