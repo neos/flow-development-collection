@@ -72,6 +72,13 @@ class ClassSchema {
 	protected $properties = array();
 
 	/**
+	 * The properties forming the identity of an object
+	 *
+	 * @var array
+	 */
+	protected $identityProperties = array();
+
+	/**
 	 * Constructs this class schema
 	 *
 	 * @param string $className Name of the class this schema is referring to
@@ -103,7 +110,7 @@ class ClassSchema {
 	public function setProperty($name, $type) {
 		$matches = array();
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$this->properties[$name] = ($matches[1] == 'int') ? 'integer' : $matches[1];
+			$this->properties[$name] = ($matches[1] === 'int') ? 'integer' : $matches[1];
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
@@ -171,6 +178,33 @@ class ClassSchema {
 	 */
 	public function getUUIDPropertyName() {
 		return $this->uuidPropertyName;
+	}
+
+	/**
+	 * Gets the properties (names and types) forming the identity of an object.
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentityProperties() {
+		return $this->identityProperties;
+	}
+
+	/**
+	 * Marks the given property as one of properties forming the identity
+	 * of an object. The property must already be registered in the class
+	 * schema.
+	 *
+	 * @param string $propertyName
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function markAsIdentityProperty($propertyName) {
+		if (!array_key_exists($propertyName, $this->properties)) {
+			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
+		}
+
+		$this->identityProperties[$propertyName] = $this->properties[$propertyName];
 	}
 
 }

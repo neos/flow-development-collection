@@ -54,6 +54,32 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($classSchema->hasProperty('b'));
 		$this->assertFalse($classSchema->hasProperty('c'));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function markAsIdentityPropertyRejectsUnknownProperties() {
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+
+		$classSchema->markAsIdentityProperty('unknownProperty');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getIdentityPropertiesReturnsNamesAndTypes() {
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema->setProperty('a', 'string');
+		$classSchema->setProperty('b', 'integer');
+
+		$classSchema->markAsIdentityProperty('a');
+
+		$this->assertSame(array('a' => 'string'), $classSchema->getIdentityProperties());
+	}
+
 }
 
 ?>

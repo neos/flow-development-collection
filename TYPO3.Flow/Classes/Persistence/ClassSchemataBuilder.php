@@ -83,11 +83,14 @@ class ClassSchemataBuilder {
 			$classSchema = new \F3\FLOW3\Persistence\ClassSchema($className);
 			$classSchema->setModelType($modelType);
 			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
+				if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
+					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
+				}
 				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
 					$classSchema->setUUIDPropertyName($propertyName);
 				}
-				if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
-					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
+				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'identity')) {
+					$classSchema->markAsIdentityProperty($propertyName);
 				}
 			}
 			$classSchemata[$className] = $classSchema;

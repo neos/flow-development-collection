@@ -51,6 +51,7 @@ class Entity1 {
 	 * Just a normal string
 	 *
 	 * @var string
+	 * @identity
 	 */
 	protected $someString;
 
@@ -66,6 +67,7 @@ class Entity1 {
 
 	/**
 	 * @var \DateTime
+	 * @identity
 	 */
 	protected $someDate;
 

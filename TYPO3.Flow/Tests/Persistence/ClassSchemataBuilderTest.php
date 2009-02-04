@@ -153,6 +153,22 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
 	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 */
+	public function identityPropertiesAreDetectedFromAnnotation() {
+		$expectedIdentityProperties = array(
+			'someString' => 'string',
+			'someDate' => 'DateTime'
+		);
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchema = array_pop($builtClassSchemata);
+
+		$this->assertSame($builtClassSchema->getIdentityProperties(), $expectedIdentityProperties);
+	}
+
 }
 
 ?>
