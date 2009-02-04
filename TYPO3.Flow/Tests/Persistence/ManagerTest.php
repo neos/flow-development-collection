@@ -181,6 +181,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($session->getReconstitutedObjects()->contains($entity3));
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUIDCallsBackend() {
+		$fakeObject = new \stdClass();
+		$fakeUUID = '123-456-789';
+		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend->expects($this->once())->method('getUUID')->with($fakeObject)->will($this->returnValue($fakeUUID));
+
+		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
+		$returnedUUID = $manager->getUUID($fakeObject);
+
+		$this->assertEquals($fakeUUID, $returnedUUID);
+	}
 }
 
 ?>

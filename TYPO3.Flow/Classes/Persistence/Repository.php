@@ -148,6 +148,19 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Finds an object matching the given identifier.
+	 *
+	 * @param string $uuid The identifier of the object to find
+	 * @return object The matching object if found, otherwise NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findByUUID($uuid) {
+		$query = $this->createQuery();
+		$result = $query->matching($query->withUUID($uuid))->execute();
+		return current($result);
+	}
+
+	/**
 	 * Returns a query for objects of this repository
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryInterface

@@ -71,5 +71,20 @@ interface RepositoryInterface {
 	 */
 	public function getRemovedObjects();
 
+	/**
+	 * Returns all objects of this repository.
+	 *
+	 * @return array An array of objects, empty if no objects found
+	 */
+	public function findAll();
+
+	/**
+	 * Finds an object matching the given identifier.
+	 *
+	 * @param string $uuid The identifier of the object to find
+	 * @return object The matching object if found, otherwise NULL
+	 */
+	public function findByUUID($uuid);
+
 }
 ?>

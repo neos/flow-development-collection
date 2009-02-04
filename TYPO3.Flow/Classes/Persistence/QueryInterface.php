@@ -54,6 +54,14 @@ interface QueryInterface {
 	public function matching($constraint);
 
 	/**
+	 * Matches against the (internal) identifier.
+	 *
+	 * @param string $uuid An identifier
+	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 */
+	public function withUUID($uuid);
+
+	/**
 	 * Returns an equals criterion used for matching objects against a query
 	 *
 	 * @param string $property The name of the property to compare against

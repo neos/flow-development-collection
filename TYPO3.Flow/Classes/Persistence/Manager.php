@@ -181,7 +181,6 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @todo eventually replace foreach/attach with a merge method if added to PHP
 	 */
 	public function persistAll() {
 		$aggregateRootObjects = new \SplObjectStorage();
@@ -191,19 +190,11 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
-			$objects = $repository->getObjects();
-			foreach ($objects as $object) {
-				$aggregateRootObjects->attach($object);
-			}
-			$removedObjects = $repository->getRemovedObjects();
-			foreach ($removedObjects as $removedObject) {
-				$removedObjects->attach($removedObject);
-			}
+			$aggregateRootObjects->addAll($repository->getObjects());
+			$removedObjects->addAll($repository->getRemovedObjects());
 		}
-		$reconstitutedObjects = $this->session->getReconstitutedObjects();
-		foreach ($reconstitutedObjects as $reconstitutedObject) {
-			$aggregateRootObjects->attach($reconstitutedObject);
-		}
+
+		$aggregateRootObjects->addAll($this->session->getReconstitutedObjects());
 
 			// hand in only aggregate roots, leaving handling of subobjects to
 			// the underlying storage layer
@@ -219,5 +210,18 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 			$this->session->unregisterReconstitutedObject($removedObject);
 		}
 	}
+
+	/**
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * persistence manager. Otherwise NULL is returned.
+	 *
+	 * @param object $object
+	 * @return string The identifier for the object if it is known, or NULL
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUUID($object) {
+		$this->backend->getUUID($object);
+	}
+
 }
 ?>

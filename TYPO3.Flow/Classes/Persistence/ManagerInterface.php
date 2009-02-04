@@ -75,5 +75,14 @@ interface ManagerInterface {
 	 */
 	public function persistAll();
 
+	/**
+	 * Returns the (internal) identifier for the object, if it is known to the
+	 * persistence manager. Otherwise NULL is returned.
+	 *
+	 * @param object $object
+	 * @return string The identifier for the object if it is known, or NULL
+	 */
+	public function getUUID($object);
+
 }
 ?>

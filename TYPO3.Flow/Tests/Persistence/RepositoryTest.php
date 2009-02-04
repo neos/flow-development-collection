@@ -118,6 +118,58 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue($repository->getRemovedObjects()->contains($object));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQueryCallsQueryFactoryWithExpectedType() {
+		$fakeRepositoryClassName = 'ExpectedTypeRepository';
+		$expectedType = 'ExpectedType';
+
+		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
+		$mockQueryFactory->expects($this->once())->method('create')->with($expectedType);
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('AOPProxyGetProxyTargetClassName'));
+		$repository->expects($this->once())->method('AOPProxyGetProxyTargetClassName')->will($this->returnValue($fakeRepositoryClassName));
+		$repository->injectQueryFactory($mockQueryFactory);
+
+		$repository->createQuery();
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findAllCreatesQueryAndReturnsResultOfExecuteCall() {
+		$expectedResult = array('one', 'two');
+
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue($expectedResult));
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
+		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+
+		$this->assertSame($expectedResult, $repository->findAll());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findByUUIDCreatesQueryAndReturnsResultOfExecuteCall() {
+		$fakeUUID = '123-456';
+
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('withUUID')->with($fakeUUID)->will($this->returnValue('matchCriteria'));
+		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('one', 'two')));
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
+		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+
+		$this->assertSame('one', $repository->findByUUID($fakeUUID));
+	}
 }
 
 ?>
