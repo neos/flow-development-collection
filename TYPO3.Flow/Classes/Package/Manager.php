@@ -249,7 +249,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$packageMeta = $this->objectFactory->create('F3\FLOW3\Package\Meta', $packageKey);
 		}
 
-		$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/') . '/') . $packageKey . '/';
+		$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/') . $packageKey . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
 
 		foreach (

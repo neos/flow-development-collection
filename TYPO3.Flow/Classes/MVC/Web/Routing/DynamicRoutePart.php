@@ -61,10 +61,10 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 		if (!$this->matchValue($valueToMatch)) {
 			return FALSE;
 		}
-		if (\F3\PHP6\Functions::strlen($valueToMatch)) {
-			$uriSegments[0] = \F3\PHP6\Functions::substr($uriSegments[0], \F3\PHP6\Functions::strlen($valueToMatch));
+		if (strlen($valueToMatch)) {
+			$uriSegments[0] = substr($uriSegments[0], strlen($valueToMatch));
 		}
-		if (isset($uriSegments[0]) && \F3\PHP6\Functions::strlen($uriSegments[0]) == 0 && $this->getNextRoutePartInCurrentUriPatternSegment() === NULL) {
+		if (isset($uriSegments[0]) && strlen($uriSegments[0]) == 0 && $this->getNextRoutePartInCurrentUriPatternSegment() === NULL) {
 			array_shift($uriSegments);
 		}
 
@@ -85,12 +85,12 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 		}
 		$valueToMatch = $uriSegments[0];
 		$splitString = $this->getSplitString();
-		if (\F3\PHP6\Functions::strlen($splitString) > 0) {
-			$splitStringPosition = \F3\PHP6\Functions::strpos($valueToMatch, $splitString);
+		if (strlen($splitString) > 0) {
+			$splitStringPosition = strpos($valueToMatch, $splitString);
 			if ($splitStringPosition === FALSE) {
 				return '';
 			}
-			$valueToMatch = \F3\PHP6\Functions::substr($valueToMatch, 0, $splitStringPosition);
+			$valueToMatch = substr($valueToMatch, 0, $splitStringPosition);
 		}
 		return $valueToMatch;
 	}
@@ -105,7 +105,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function matchValue($value) {
-		if (!\F3\PHP6\Functions::strlen($value)) {
+		if (!strlen($value)) {
 			if (!isset($this->defaultValue)) {
 				return FALSE;
 			}
@@ -164,7 +164,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * Returns the next Route Parts name. This will be used to locate the end of this Dynamic Route Part.
 	 * The next Route Part must be NULL or an instance of tpye \F3\FLOW3\MVC\Web\Routing\StaticRoutePart
 	 * because two Dynamic Route Parts can't directly follow each other.
-	 * 
+	 *
 	 * @return string value of the following Route Part if it exists. Otherwise an empty string.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

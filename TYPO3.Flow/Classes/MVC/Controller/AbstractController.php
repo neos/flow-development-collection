@@ -128,16 +128,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Initializes this object after all dependencies have been resolved.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeObject() {
-		$this->initializeController();
-	}
-
-	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
 	 * If your controller only supports certain request types, either
@@ -173,20 +163,19 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Initializes this controller.
+	 * Initializes (registers / defines) arguments of this controller.
 	 *
-	 * Override this method for initializing your concrete controller implementation.
-	 * Recommended actions for your controller initialization method are setting up the expected
-	 * arguments and narrowing down the supported request types if neccessary.
+	 * Override this method to add arguments which can later be accessed
+	 * by the action methods.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function initializeController() {
+	protected function initializeArguments() {
 	}
 
 	/**
-	 * Forwards the request to another controller.
+	 * Forwards the request to another action and / or controller.
 	 *
 	 * @param string $actionName Name of the action to forward to
 	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
@@ -246,18 +235,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		if ($content === NULL) $content = $this->response->getStatus();
 		$this->response->setContent($content);
 		throw new \F3\FLOW3\MVC\Exception\StopAction();
-	}
-
-	/**
-	 * Initializes (registers / defines) arguments of this controller.
-	 *
-	 * Override this method to add arguments which can later be accessed
-	 * by the action methods.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function initializeArguments() {
 	}
 
 	/**

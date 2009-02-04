@@ -28,8 +28,6 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 
-require_once(__DIR__ . '/../Fixture/Controller/MockActionController.php');
-
 /**
  * Testcase for the MVC Action Controller
  *
@@ -43,68 +41,96 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function stringsReturnedByActionMethodAreAppendedToResponseObject() {
-		$mockController = new \F3\FLOW3\MVC\Fixture\Controller\MockActionController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$mockController->injectObjectManager($this->objectManager);
-		$mockController->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+	public function callActionMethodAppendsStringsReturnedByActionMethodToTheResponseObject() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('foo'));
 
-		$request->setControllerActionName('returnSomeString');
-		$mockController->processRequest($request, $response);
-		$this->assertEquals('Mock Action Controller Return String', $response->getContent(), 'The response object did not contain the string returned by the action controller');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$mockResponse->expects($this->once())->method('appendContent')->with('the returned string');
+
+		$mockArguments = new \ArrayObject;
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('fooAction')->will($this->returnValue('the returned string'));
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('response', $mockResponse);
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_call('callActionMethod');
 	}
 
 	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
-	public function ifNoViewCouldBeResolvedAnEmptyViewIsProvided() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ActionController', array('exoticAction'), array($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface')), 'F3\FLOW3\MVC\Controller\ActionController' . uniqid());
-		$mockController->injectObjectManager($this->objectManager);
-		$mockController->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+	public function initializeViewPreparesTheViewSpecifiedInTheRequestObjectAndUsesTheEmptyViewIfNoneCouldBeFound() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getViewObjectName')->will($this->returnValue('Foo'));
+		$mockRequest->expects($this->at(1))->method('getViewObjectName')->will($this->returnValue(FALSE));
 
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView->expects($this->exactly(2))->method('setRequest')->with($mockRequest);
 
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('DefaultController');
-		$request->setControllerActionName('exotic');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('getObject')->with('Foo')->will($this->returnValue($mockView));
+		$mockObjectManager->expects($this->at(1))->method('getObject')->with('F3\FLOW3\MVC\View\EmptyView')->will($this->returnValue($mockView));
 
-		$mockController->processRequest($request, $response);
-		$viewReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($mockController), 'view');
-		$view = $viewReflection->getValue($mockController);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('objectManager', $mockObjectManager);
 
-		$this->assertType('F3\FLOW3\MVC\View\ViewInterface', $view, 'The view has either not been set or is not of the expected type.');
-		$this->assertEquals('F3\FLOW3\MVC\View\EmptyView', get_class($view), 'The action controller did not provide an empty view.');
+		$mockController->_call('initializeView');
+		$mockController->_call('initializeView');
+
+		$this->assertSame($mockView, $mockController->_get('view'));
 	}
 
 	/**
-	 * Views following the scheme \F3\PackageName\View\ActionName will be set as $this->view
-	 * automatically.
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function aViewMatchingTheActionNameIsProvidedAutomatically() {
-		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ActionController', array('thingAction'), array($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface')), 'F3\FLOW3\MVC\Controller\ActionController' . uniqid());
-		$mockController->injectObjectManager($this->objectManager);
-		$mockController->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+	public function initializeArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('foo'));
 
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'Text');
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'Integer');
 
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Some');
-		$request->setControllerActionName('thing');
-		$request->setViewObjectNamePattern('F3\@package\View\@controller\@action');
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
-		$mockController->processRequest($request, $response);
-		$viewReflection = new \F3\FLOW3\Reflection\PropertyReflection(get_class($mockController), 'view');
-		$view = $viewReflection->getValue($mockController);
+		$methodParameters = array(
+			'stringArgument' => array(
+				'position' => 0,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => FALSE
+			),
+			'integerArgument' => array(
+				'position' => 1,
+				'byReference' => FALSE,
+				'array' => FALSE,
+				'optional' => FALSE,
+				'allowsNull' => FALSE
+			)
+		);
 
-		$this->assertType('F3\FLOW3\MVC\View\ViewInterface', $view, 'The view has either not been set or is not of the expected type.');
-		$this->assertEquals('F3\TestPackage\View\Some\Thing', get_class($view), 'The action controller did not select the "Some" "Thing" view.');
+		$methodTagsValues = array(
+			'something' => array('confusing'),
+			'param' => array(
+				'string $firstArgument This is the first argument',
+				'integer $secondArgument This is the second argument',
+			)
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
+		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
+
+		$mockController->injectReflectionService($mockReflectionService);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_call('initializeArguments');
 	}
 }
 ?>

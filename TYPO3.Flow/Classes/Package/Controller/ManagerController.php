@@ -34,6 +34,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var F3\FLOW3\Package\ManagerInterface
+	 * @inject
 	 */
 	protected $packageManager;
 
@@ -41,27 +42,6 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\CLI\Request');
-
-	/**
-	 * Initializes this controller
-	 *
-	 * @return void
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
-	 */
-	public function initializeController() {
-		$this->arguments->addNewArgument('packageKey');
-	}
-
-	/**
-	 * Injects the package manager
-	 *
-	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
-	 * @return void
-	 * @author Tobias Liebig <mail_typo3@etobi.de>
-	 */
-	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
-	}
 
 	/**
 	 * Default action (no arguments given)
@@ -77,11 +57,11 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Action for creating a new package
 	 *
+	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
-	public function createAction() {
-		$packageKey = $this->arguments['packageKey']->getValue();
+	public function createAction($packageKey) {
 		if ($packageKey == '') {
 			return $this->helpAction();
 		}
@@ -95,11 +75,11 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Action for deleting an existing package
 	 *
+	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function deleteAction() {
-		$packageKey = $this->arguments['packageKey']->getValue();
+	public function deleteAction($packageKey) {
 		if ($packageKey == '') {
 			return $this->helpAction();
 		}
@@ -113,30 +93,32 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	/**
 	 * Action for activating a package
 	 *
+	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
-	public function activateAction() {
-		if ($this->arguments['packageKey'] == '') {
+	public function activateAction($packageKey) {
+		if ($packageKey == '') {
 			return $this->helpAction();
 		} else {
-			$this->packageManager->activatePackage($this->arguments['packageKey']->getValue());
-			return 'package "' . $this->arguments['packageKey'] . '" activated.' . chr(10);
+			$this->packageManager->activatePackage($packageKey);
+			return 'package "' . $packageKey . '" activated.' . chr(10);
 		}
 	}
 
 	/**
 	 * Action for deactivating a package
 	 *
+	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
-	public function deactivateAction() {
-		if ($this->arguments['packageKey'] == '') {
+	public function deactivateAction($packageKey) {
+		if ($packageKey == '') {
 			return $this->helpAction();
 		} else {
-			$this->packageManager->deactivatePackage($this->arguments['packageKey']->getValue());
-			return 'package "' . $this->arguments['packageKey'] . '" deactivated.' . chr(10);
+			$this->packageManager->deactivatePackage($packageKey);
+			return 'package "' . $packageKey . '" deactivated.' . chr(10);
 		}
 	}
 

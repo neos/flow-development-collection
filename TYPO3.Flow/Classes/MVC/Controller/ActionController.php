@@ -44,6 +44,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
+
+	/**
 	 * @var boolean If initializeView() should be called on an action invocation.
 	 */
 	protected $initializeView = TRUE;
@@ -72,6 +77,17 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
+	 * Injects the reflection service
+	 *
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
 	 * Handles a request. The result output is returned by altering the given response.
 	 *
 	 * @param \F3\FLOW3\MVC\Request $request The request object
@@ -81,7 +97,44 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		parent::processRequest($request, $response);
+		if ($this->initializeView) $this->initializeView();
 		$this->callActionMethod();
+	}
+
+	/**
+	 * Implementation of the arguments initilization in the action controller:
+	 * Automatically registers arguments of the current action
+	 *
+	 * IMPORTANT: If this method is overridden, make sure to call this parent
+	 *            _before_ your own code because otherwise the order of automatically
+	 *            registered arguments wouldn't match the action method signature.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see processRequest() in the AbstractController
+	 */
+	protected function initializeArguments() {
+		$actionMethodName = $this->request->getControllerActionName() . 'Action';
+		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchAction('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1233753845);
+
+		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $actionMethodName);
+		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $actionMethodName);
+		foreach ($methodParameters as $parameterName => $parameterInfo) {
+			$dataType = 'Text';
+			if (isset($methodTagsAndValues['param']) && count($methodTagsAndValues['param']) > 0) {
+				$explodedTagValue = explode(' ', array_shift($methodTagsAndValues['param']));
+				switch ($explodedTagValue[0]) {
+					case 'integer' :
+						$dataType = 'Integer';
+					break;
+					default:
+						if (strpos($dataType, '\\') !== FALSE) {
+							$dataType = $explodedTagValue[0];
+						}
+				}
+			}
+			$this->arguments->addNewArgument($parameterName, $dataType);
+		}
 	}
 
 	/**
@@ -94,11 +147,15 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function callActionMethod() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
-
-		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchAction('An action "' . $this->request->getControllerActionName() . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
+		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchAction('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		$this->initializeAction();
-		if ($this->initializeView) $this->initializeView();
-		$actionResult = call_user_func_array(array($this, $actionMethodName), array());
+
+		$preparedArguments = array();
+		foreach ($this->arguments as $argument) {
+			$preparedArguments[] = $argument->getValue();
+		}
+
+		$actionResult = call_user_func_array(array($this, $actionMethodName), $preparedArguments);
 		if (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}
@@ -114,9 +171,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function initializeView() {
 		$viewObjectName = ($this->viewObjectName === NULL) ? $this->request->getViewObjectName() : $this->viewObjectName;
-		if ($viewObjectName === FALSE) {
-			$viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
-		}
+		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
+
 		$this->view = $this->objectManager->getObject($viewObjectName);
 		$this->view->setRequest($this->request);
 	}

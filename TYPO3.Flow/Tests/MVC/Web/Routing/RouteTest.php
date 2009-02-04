@@ -216,7 +216,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeMatchesIfStaticSegmentsMatchAndASegmentExtistsForAllDynamicUriPartSegments() {
+	public function routeMatchesIfStaticSegmentsMatchAndASegmentExistsForAllDynamicUriPartSegments() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('foo/[bar]');
 
