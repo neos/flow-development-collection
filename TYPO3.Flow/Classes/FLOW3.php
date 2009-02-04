@@ -403,7 +403,7 @@ final class FLOW3 {
 			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
 			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
 				$matches = array();
-				if (FALSE !== preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
+				if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
 					$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
 					$cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
 					$atLeastOneClassFileChanged = TRUE;
