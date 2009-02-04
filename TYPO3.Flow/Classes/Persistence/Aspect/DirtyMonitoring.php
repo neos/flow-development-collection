@@ -113,9 +113,9 @@ class DirtyMonitoring {
 
 		if (property_exists($proxy, 'FLOW3PersistenceCleanProperties')) {
 			$cleanProperties = $proxy->FLOW3PersistenceCleanProperties;
-			$identifierProperty = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getIdentifierProperty();
-			if ($identifierProperty !== NULL && $proxy->AOPProxyGetProperty($identifierProperty) != $cleanProperties[$identifierProperty]) {
-				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $identifierProperty . '" tagged as @identifier has been modified, that is simply too much.', 1222871239);
+			$uuidPropertyName = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
+			if ($uuidPropertyName !== NULL && $proxy->AOPProxyGetProperty($uuidPropertyName) != $cleanProperties[$uuidPropertyName]) {
+				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
 
 			$propertyName = $joinPoint->getMethodArgument('propertyName');

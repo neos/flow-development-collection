@@ -220,7 +220,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getUUID($object) {
-		$this->backend->getUUID($object);
+		return $this->backend->getUUID($object);
 	}
 
 }

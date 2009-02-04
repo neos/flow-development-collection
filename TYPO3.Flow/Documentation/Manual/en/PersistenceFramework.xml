@@ -230,15 +230,14 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
             </row>
 
             <row>
-              <entry>@identifier</entry>
+              <entry>@uuid</entry>
 
               <entry>Variable</entry>
 
-              <entry>Marks the variable as being the object identifier. This
+              <entry>Marks the variable as being the object uuid. This
               makes the persistence backend use the value of this variable as
               identifier for the internal representation of the object.
-              <emphasis>You must make sure your identifier is unique,
-              preferably use an UUID.</emphasis></entry>
+              <emphasis>You must make sure your identifier is an UUID.</emphasis></entry>
             </row>
           </tbody>
         </tgroup>

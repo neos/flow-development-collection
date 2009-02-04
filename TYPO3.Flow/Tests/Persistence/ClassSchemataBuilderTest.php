@@ -138,17 +138,17 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function identifierPropertyIsDetectedFromAnnotation() {
+	public function uuidPropertyNameIsDetectedFromAnnotation() {
 		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
-		$this->assertEquals($builtClassSchema->getIdentifierProperty(), 'someIdentifier');
+		$this->assertEquals($builtClassSchema->getUUIDPropertyName(), 'someIdentifier');
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
 	 */
-	public function identifierPropertyIsSetAsRegularPropertyAsWell() {
+	public function uuidPropertyNameIsSetAsRegularPropertyAsWell() {
 		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
