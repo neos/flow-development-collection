@@ -54,6 +54,32 @@ interface QueryInterface {
 	public function matching($constraint);
 
 	/**
+	 * Performs a logical conjunction of the two given constraints
+	 *
+	 * @param mixed $constraint1
+	 * @param mixed $constraint2
+	 * @return unknown
+	 */
+	public function logicalAnd($constraint1, $constraint2);
+
+	/**
+	 * Performs a logical disjunction of the two given constraints
+	 *
+	 * @param mixed $constraint1
+	 * @param mixed $constraint2
+	 * @return unknown
+	 */
+	public function logicalOr($constraint1, $constraint2);
+
+	/**
+	 * Performs a logical negation of the given constraint
+	 *
+	 * @param mixed $constraint
+	 * @return unknown
+	 */
+	public function logicalNot($constraint);
+
+	/**
 	 * Matches against the (internal) identifier.
 	 *
 	 * @param string $uuid An identifier
