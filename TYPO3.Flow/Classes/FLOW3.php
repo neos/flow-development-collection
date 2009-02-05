@@ -633,16 +633,12 @@ final class FLOW3 {
 		}
 
 		foreach ($availableClassNames as $className) {
-			if (substr($className, -9, 9) == 'Interface') {
+			if (substr($className, -9, 9) === 'Interface') {
 				$objectTypes[] = $className;
 				if (!$this->objectManager->isObjectRegistered($className)) {
 					$this->objectManager->registerObjectType($className);
 				}
-			}
-		}
-
-		foreach ($availableClassNames as $className) {
-			if (substr($className, -9, 9) != 'Interface') {
+			} else {
 				$objectName = $className;
 				if (!$this->objectManager->isObjectRegistered($objectName)) {
 					if (!$this->reflectionService->isClassAbstract($className)) {
@@ -654,7 +650,7 @@ final class FLOW3 {
 
 		$objectConfigurations = $this->objectManager->getObjectConfigurations();
 		foreach ($packages as $packageKey => $package) {
-			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $this->FLOW3Package);
+			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $package);
 			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
 				$objectName = str_replace('_', '\\', $objectName);
 				if (!$this->objectManager->isObjectRegistered($objectName)) {
