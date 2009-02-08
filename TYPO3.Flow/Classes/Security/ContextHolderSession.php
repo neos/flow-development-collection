@@ -228,6 +228,10 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) {
 			$token->injectObjectFactory($this->objectFactory);
 			$token->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
+		} elseif ($token instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) {
+			$token->injectObjectFactory($this->objectFactory);
+			$token->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
+			$token->injectRSAWalletService($this->objectManager->getObject('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface'));
 		}
 	}
 }

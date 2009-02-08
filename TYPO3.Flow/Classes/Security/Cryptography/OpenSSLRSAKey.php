@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Security\Cryptography;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,45 +25,61 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id:$
  */
 
 /**
- * Contract for an authentication provider used by the \F3\FLOW3\Security\Authenticaton\ProviderManager.
- * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context, which contains
- * a \F3\FLOW3\Security\Authentication\UserDetailsInterface.
+ * A RSA key
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @version $Id:$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @scope prototype
  */
-interface ProviderInterface {
+class OpenSSLRSAKey {
 
 	/**
-	 * Returns TRUE if the given token can be authenticated by this provider
+	 * @var string
+	 */
+	protected $modulus;
+
+	/**
+	 * @var string
+	 */
+	protected $keyString;
+
+	/**
+	 * Constructor
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
-	 * @return boolean TRUE if the given token class can be authenticated by this provider
+	 * @param string $modulus The HEX modulus
+	 * @param string $keyString The private key string
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token);
+	public function __construct($modulus, $keyString) {
+		$this->modulus = $modulus;
+		$this->keyString = $keyString;
+	}
 
 	/**
-	 * Returns the classnames of the tokens this provider is responsible for.
+	 * Returns the modulus in HEX representation
 	 *
-	 * @return array The classname of the token this provider is responsible for
+	 * @return string The modulus
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getTokenClassnames();
+	public function getModulus() {
+		return $this->modulus;
+	}
 
 	/**
-	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.
+	 * Returns the key string
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
-	 * @return void
+	 * @return string The key string
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
+	public function getKeyString() {
+		return $this->keyString;
+	}
 }
-
 ?>

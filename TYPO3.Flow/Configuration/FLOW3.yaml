@@ -166,7 +166,7 @@ security:
     #   ADMINISTRATOR: []
     #   DEVELOPER: []
     #   CUSTOMER:
-    #     PRIVILEGED_CUSTOMER: [CUSTOMER]
+    #   PRIVILEGED_CUSTOMER: [CUSTOMER]
     #
     roles: []
     
@@ -182,6 +182,11 @@ security:
     #      deleteMethods:          ACCESS_DENY
     #      MyPackageUpdateMethods: ACCESS_DENY
     acls: []
+
+  # Set the storage path for RSA keys
+  cryptography:
+    RSAWalletServicePHP:
+      keystore: '%FLOW3_PATH_DATA%Temporary/Security/RSAWalletKeystore'
 
 utility:
   environment:

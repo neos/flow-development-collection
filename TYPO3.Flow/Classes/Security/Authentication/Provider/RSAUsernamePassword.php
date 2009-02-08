@@ -25,24 +25,41 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: F3_FLOW3_Security_Authentication_Provider_UsernamePassword.php 1707 2009-01-07 10:37:30Z k-fish $
  */
 
 /**
- * An authentication provider that authenticates \F3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
+ * An authentication provider that authenticates \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword tokens.
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @version $Id: F3_FLOW3_Security_Authentication_Provider_UsernamePassword.php 1707 2009-01-07 10:37:30Z k-fish $
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  */
-class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
+class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
 
 	/**
 	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface The entry point for this provider
 	 */
 	protected $entryPoint = NULL;
+
+	/**
+	 * The RSAWalletService
+	 * @var \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface
+	 */
+	protected $RSAWalletService;
+
+	/**
+	 * Inject the RSAWAlletService, used to decrypt the username
+	 *
+	 * @param \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService The RSAWalletService
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectRSAWalletService(\F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService) {
+		$this->RSAWalletService = $RSAWalletService;
+	}
 
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
@@ -52,18 +69,18 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
-		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) return TRUE;
+		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) return TRUE;
 		return FALSE;
 	}
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
 	 *
-	 * @return string The classname of the token this provider is responsible for
+	 * @return array The classname of the token this provider is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassnames() {
-		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword');
+		return array('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword');
 	}
 
 	/**
@@ -74,10 +91,26 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
+		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
-		if ($credentials['username'] === 'admin' && $credentials['password'] === 'password') $authenticationToken->setAuthenticationStatus(TRUE);
+
+		if ($credentials['encryptedUsername'] !== '' && $credentials['encryptedPassword'] !== '') {
+
+			$passwordKeypairUUID = $authenticationToken->getPasswordKeypairUUID();
+			$usernameKeypairUUID = $authenticationToken->getUsernameKeypairUUID();
+
+			if ($usernameKeypairUUID !== NULL && $passwordKeypairUUID !== NULL) {
+
+				$username = $this->RSAWalletService->decrypt(base64_decode($credentials['encryptedUsername']), $usernameKeypairUUID);
+
+				if ($username === 'admin' && $this->RSAWalletService->checkRSAEncryptedPassword(base64_decode($credentials['encryptedPassword']), 'af1e8a52451786a6b3bf78838e03a0a2', 'a709157e66e0197cafa0c2ba99f6e252', $passwordKeypairUUID)) {
+					$authenticationToken->setAuthenticationStatus(TRUE);
+				}
+
+				$authenticationToken->invalidateCurrentKeypairs();
+			}
+		}
 	}
 }
 

@@ -69,6 +69,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @expectedException \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUnsupportedTokenThrowsAnException() {
@@ -76,12 +77,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 
 		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 
-		try {
-			$usernamePasswordProvider->authenticate($someNiceToken);
-			$this->fail('No exception has been thrown.');
-		} catch (\F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken $exception) {
-
-		}
+		$usernamePasswordProvider->authenticate($someNiceToken);
 	}
 
 	/**

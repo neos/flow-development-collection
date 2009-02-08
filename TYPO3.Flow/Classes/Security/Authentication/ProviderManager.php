@@ -180,8 +180,10 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderClass($provider['provider']));
 			$this->providers[] = $providerInstance;
 
-			$tokenInstance = $this->objectManager->getObject($providerInstance->getTokenClassname());
-			$this->tokens[] = $tokenInstance;
+			foreach ($providerInstance->getTokenClassnames() as $tokenClassname) {
+				$tokenInstance = $this->objectManager->getObject($tokenClassname);
+				$this->tokens[] = $tokenInstance;
+			}
 
 			if ($provider['patternType'] != '') {
 				$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
