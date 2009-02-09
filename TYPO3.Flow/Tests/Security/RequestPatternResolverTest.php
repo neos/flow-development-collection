@@ -68,7 +68,7 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassname() {
+	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
 		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
 		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3\TestPackage\TestRequestPattern');
 

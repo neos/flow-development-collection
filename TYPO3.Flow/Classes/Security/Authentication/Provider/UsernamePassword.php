@@ -62,7 +62,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 * @return string The classname of the token this provider is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getTokenClassnames() {
+	public function getTokenClassNames() {
 		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword');
 	}
 

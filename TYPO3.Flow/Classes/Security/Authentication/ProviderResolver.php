@@ -58,22 +58,19 @@ class ProviderResolver {
 	 * Resolves the class name of an authentication provider. If a valid provider class name is given, it is just returned.
 	 *
 	 * @param string $name The (short) name of the provider
-	 * @return string The class name of the authentication provider
+	 * @return string The object name of the authentication provider
 	 * @throws \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveProviderClass($name) {
-		$resolvedClassName = '';
+	public function resolveProviderObjectName($providerName) {
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);
+		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
-		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\Provider\\' . $providerName);
+		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\Provider\\' . $name);
-		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
-
-		if ($resolvedClassName != '') return $resolvedClassName;
-
-		throw new \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound('An authentication provider with the name: "' . $name . '" could not be resolved.', 1217154134);
+		throw new \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound('An authentication provider with the name "' . $providerName . '" could not be resolved.', 1217154134);
 	}
 }
 ?>

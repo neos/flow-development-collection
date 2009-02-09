@@ -108,15 +108,15 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	/**
 	 * Returns the public key for the given UUID
 	 *
-	 * @param UUID $UUID The UUID
+	 * @param UUID $uuid The UUID
 	 * @return \F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey The public key
 	 * @throws \F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPublicKey($UUID) {
-		if (!isset($this->keyStore[$UUID])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438860);
+	public function getPublicKey($uuid) {
+		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438860);
 
-		return $this->keyStore[$UUID]['publicKey'];
+		return $this->keyStore[$uuid]['publicKey'];
 	}
 
 	/**
@@ -127,9 +127,9 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @return string The ciphertext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function encryptWithPublicKey($plaintext, $UUID) {
+	public function encryptWithPublicKey($plaintext, $uuid) {
 		$cipher = '';
-		openssl_public_encrypt($plaintext, &$cipher, $this->getPublicKey($UUID)->getKeyString());
+		openssl_public_encrypt($plaintext, $cipher, $this->getPublicKey($uuid)->getKeyString());
 
 		return $cipher;
 	}
@@ -140,17 +140,17 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * to check passwords!
 	 *
 	 * @param string $cipher cipher text to decrypt
-	 * @param UUID $UUID The uuid to identify to correct private key
+	 * @param UUID $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid keypair
 	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowed If the given UUID identifies a keypair for encrypted passwords
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decrypt($cipher, $UUID) {
-		if (!isset($this->keyStore[$UUID])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438861);
-		if ($this->keyStore[$UUID]['usedForPasswords']) throw new \F3\FLOW3\Security\Exception\DecryptionNotAllowed('You are not allowed to decrypt passwords!', 1233655350);
+	public function decrypt($cipher, $uuid) {
+		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438861);
+		if ($this->keyStore[$uuid]['usedForPasswords']) throw new \F3\FLOW3\Security\Exception\DecryptionNotAllowed('You are not allowed to decrypt passwords!', 1233655350);
 
-		return $this->decryptWithPrivateKey($cipher, $this->keyStore[$UUID]['privateKey']);
+		return $this->decryptWithPrivateKey($cipher, $this->keyStore[$uuid]['privateKey']);
 	}
 
 	/**
@@ -160,15 +160,15 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
 	 * @param string $salt The salt used in the md5 password hash
-	 * @param UUID $UUID The uuid to identify to correct private key
+	 * @param UUID $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid keypair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $UUID) {
-		if (!isset($this->keyStore[$UUID])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1233655216);
+	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
+		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1233655216);
 
-		$decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keyStore[$UUID]['privateKey']);
+		$decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keyStore[$uuid]['privateKey']);
 
 		return ($passwordHash === md5(md5($decryptedPassword) . $salt));
 	}
@@ -176,15 +176,15 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	/**
 	 * Destroys the keypair identified by the given UUID
 	 *
-	 * @param UUID $UUID The UUDI
+	 * @param UUID $uuid The UUDI
 	 * @return void
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function destroyKeypair($UUID) {
-		if (!isset($this->keyStore[$UUID])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438863);
+	public function destroyKeypair($uuid) {
+		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438863);
 
-		unset($this->keyStore[$UUID]);
+		unset($this->keyStore[$uuid]);
 		$this->writeData();
 	}
 
@@ -206,7 +206,7 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function getPrivateKeyString($keyResource) {
-		openssl_pkey_export($keyResource, &$privateKeyString, NULL, $this->openSSLConfiguration);
+		openssl_pkey_export($keyResource, $privateKeyString, NULL, $this->openSSLConfiguration);
 		return $privateKeyString;
 	}
 
@@ -246,7 +246,7 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	private function decryptWithPrivateKey($cipher, \F3\FLOW3\Security\Cryptography\OpenSSLRSAKey $privateKey) {
 		$decrypted = '';
 		$key = openssl_pkey_get_private($privateKey->getKeyString());
-		openssl_private_decrypt($cipher, &$decrypted, $key);
+		openssl_private_decrypt($cipher, $decrypted, $key);
 
 		return $decrypted;
 	}
@@ -286,7 +286,7 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->keystoreDirectory);
 			} catch(\Exception $exception) {
 			}
-			//if (!is_writable($this->keystoreDirectory)) throw new \F3\FLOW3\Security\Exception('The keystore directory "' . $this->keystoreDirectory . '" could not be created.', 1233700339);
+			#if (!is_writable($this->keystoreDirectory)) throw new \F3\FLOW3\Security\Exception('The keystore directory "' . $this->keystoreDirectory . '" could not be created.', 1233700339);
 		}
 
 		file_put_contents($this->keystoreDirectory . '/RSAKeys', serialize($this->keyStore));

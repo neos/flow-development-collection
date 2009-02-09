@@ -55,7 +55,7 @@ interface ProviderInterface {
 	 *
 	 * @return array The classname of the token this provider is responsible for
 	 */
-	public function getTokenClassnames();
+	public function getTokenClassNames();
 
 	/**
 	 * Tries to authenticate the given token. Sets isAuthenticated to TRUE if authentication succeeded.

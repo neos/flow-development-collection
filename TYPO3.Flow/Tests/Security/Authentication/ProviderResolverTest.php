@@ -42,11 +42,11 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveProviderClassThrowsAnExceptionIfNoProviderIsAvailable() {
+	public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable() {
 		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
 
 		try {
-			$providerResolver->resolveProviderClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
+			$providerResolver->resolveProviderObjectName('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
 			$this->fail('No exception was thrown.');
 		} catch (\F3\FLOW3\Security\Exception\NoAuthenticationProviderFound $exception) {
 
@@ -59,7 +59,7 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
 		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
-		$providerClass = $providerResolver->resolveProviderClass('UsernamePassword');
+		$providerClass = $providerResolver->resolveProviderObjectName('UsernamePassword');
 
 		$this->assertEquals('F3\FLOW3\Security\Authentication\Provider\UsernamePassword', $providerClass, 'The wrong classname has been resolved');
 	}
@@ -68,9 +68,9 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveProviderReturnsTheCorrectProviderForACompleteClassname() {
+	public function resolveProviderReturnsTheCorrectProviderForACompleteClassName() {
 		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
-		$providerClass = $providerResolver->resolveProviderClass('F3\TestPackage\TestAuthenticationProvider');
+		$providerClass = $providerResolver->resolveProviderObjectName('F3\TestPackage\TestAuthenticationProvider');
 
 		$this->assertEquals('F3\TestPackage\TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');
 	}

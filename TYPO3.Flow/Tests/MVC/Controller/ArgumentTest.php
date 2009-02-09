@@ -130,7 +130,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function dataTypeValidatorCanBeAFullClassname() {
+	public function dataTypeValidatorCanBeAFullClassName() {
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\Text')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\Text')));
 

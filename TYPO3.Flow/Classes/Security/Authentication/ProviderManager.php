@@ -177,11 +177,11 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
 		foreach ($settings['security']['authentication']['providers'] as $provider) {
-			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderClass($provider['provider']));
+			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderObjectName($provider['provider']));
 			$this->providers[] = $providerInstance;
 
-			foreach ($providerInstance->getTokenClassnames() as $tokenClassname) {
-				$tokenInstance = $this->objectManager->getObject($tokenClassname);
+			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
+				$tokenInstance = $this->objectManager->getObject($tokenClassName);
 				$this->tokens[] = $tokenInstance;
 			}
 

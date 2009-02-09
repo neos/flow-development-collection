@@ -68,7 +68,7 @@ class InterceptorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassname() {
+	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName() {
 		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager);
 		$interceptorClass = $interceptorResolver->resolveInterceptorClass('F3\TestPackage\TestSecurityInterceptor');
 

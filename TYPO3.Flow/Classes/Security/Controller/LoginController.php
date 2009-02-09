@@ -39,18 +39,6 @@ namespace F3\FLOW3\Security\Controller;
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * The current request
-	 * @var \F3\FLOW3\MVC\Web\Request
-	 */
-	protected $request;
-
-	/**
-	 * The response which will be returned by this action controller
-	 * @var \F3\FLOW3\MVC\Web\Response
-	 */
-	protected $response;
-
-	/**
 	 * The security context holder
 	 * @var \F3\FLOW3\Security\ContextHolderInterface
 	 */

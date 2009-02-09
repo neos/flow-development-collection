@@ -51,11 +51,11 @@ interface RSAWalletServiceInterface {
 	/**
 	 * Returns the public key for the given UUID
 	 *
-	 * @param UUID $UUID The UUID
+	 * @param UUID $uuid The UUID
 	 * @return F3\FLOW3\Security\Cryptography\RSAKey The public key
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 */
-	public function getPublicKey($UUID);
+	public function getPublicKey($uuid);
 
 	/**
 	 * Decrypts the given cypher with the private key identified by the given UUID
@@ -63,22 +63,22 @@ interface RSAWalletServiceInterface {
 	 * to check passwords!
 	 *
 	 * @param string $cypher Cypher text to decrypt
-	 * @param UUID $UUID The uuid to identify to correct private key
+	 * @param UUID $uuid The uuid to identify to correct private key
 	 * @return string The decrypted text
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid keypair
 	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowed If the given UUID identifies a keypair for encrypted passwords
 	 */
-	public function decrypt($cypher, $UUID);
+	public function decrypt($cypher, $uuid);
 
 	/**
 	 * Encrypts the given plaintext with the public key identified by the given UUID
 	 *
 	 * @param string $plaintext The plaintext to encrypt
-	 * @param UUID $UUID The uuid to identify to correct public key
+	 * @param UUID $uuid The uuid to identify to correct public key
 	 * @return string The ciphertext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function encryptWithPublicKey($plaintext, $UUID);
+	public function encryptWithPublicKey($plaintext, $uuid);
 
 	/**
 	 * Checks if the given encrypted password is correct by
@@ -87,18 +87,18 @@ interface RSAWalletServiceInterface {
 	 * @param string $encryptedPassword The received, RSA encrypted password to check
 	 * @param string $passwordHash The md5 hashed password string (md5(md5(password) . salt))
 	 * @param string $salt The salt used in the md5 password hash
-	 * @param UUID $UUID The uuid to identify to correct private key
+	 * @param UUID $uuid The uuid to identify to correct private key
 	 * @return boolean TRUE if the password is correct
 	 */
-	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $UUID);
+	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid);
 
 	/**
 	 * Destroys the keypair identified by the given UUID
 	 *
-	 * @param UUID $UUID The UUID
+	 * @param UUID $uuid The UUID
 	 * @return void
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 */
-	public function destroyKeypair($UUID);
+	public function destroyKeypair($uuid);
 }
 ?>

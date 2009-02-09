@@ -202,9 +202,9 @@ class Argument {
 	public function setDataType($dataType) {
 		$this->dataType = ($dataType != '' ? $dataType : 'Text');
 
-		$dataTypeValidatorClassname = $this->dataType;
-		if (!$this->objectManager->isObjectRegistered($dataTypeValidatorClassname)) $dataTypeValidatorClassname = 'F3\FLOW3\Validation\Validator\\' . $this->dataType;
-		$this->datatypeValidator = $this->objectManager->getObject($dataTypeValidatorClassname);
+		$dataTypeValidatorClassName = $this->dataType;
+		if (!$this->objectManager->isObjectRegistered($dataTypeValidatorClassName)) $dataTypeValidatorClassName = 'F3\FLOW3\Validation\Validator\\' . $this->dataType;
+		$this->datatypeValidator = $this->objectManager->getObject($dataTypeValidatorClassName);
 
 		return $this;
 	}
