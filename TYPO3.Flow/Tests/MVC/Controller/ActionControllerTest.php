@@ -43,7 +43,6 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function callActionMethodAppendsStringsReturnedByActionMethodToTheResponseObject() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('foo'));
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
 		$mockResponse->expects($this->once())->method('appendContent')->with('the returned string');
@@ -55,7 +54,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('response', $mockResponse);
 		$mockController->_set('arguments', $mockArguments);
-		$mockController->_call('callActionMethod');
+		$mockController->_call('callActionMethod', 'fooAction');
 	}
 
 	/**
@@ -90,7 +89,6 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('foo'));
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'Text');
@@ -130,7 +128,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->injectReflectionService($mockReflectionService);
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('arguments', $mockArguments);
-		$mockController->_call('initializeArguments');
+		$mockController->_call('initializeArguments', 'fooAction');
 	}
 }
 ?>

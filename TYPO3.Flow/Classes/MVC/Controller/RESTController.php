@@ -59,24 +59,20 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
-		if (!($request instanceof \F3\FLOW3\MVC\Web\Request) || !($response instanceof \F3\FLOW3\MVC\Web\Response)) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidRequestType('This RESTController only supports web requests.', 1226665171);
-		}
+		$this->arguments->addNewArgument('id', 'UUID');
 		parent::processRequest($request, $response);
 	}
 
 	/**
-	 * Determines the name of the requested action and calls the action method accordingly.
-	 * This implementation analyzes the HTTP request and chooses a matching REST-style action.
+	 * Determines the action method and assures that the method exists.
 	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function callActionMethod() {
+	protected function resolveActionMethodName() {
 		if ($this->arguments['id']->isValid() === FALSE) $this->throwStatus(400);
-
-		if ($this->request->getControllerActionName() == 'index') {
+		if ($this->request->getControllerActionName() === 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
 				case 'GET' :
@@ -95,23 +91,7 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 			}
 			$this->request->setControllerActionName($actionName);
 		}
-		parent::callActionMethod();
-	}
-
-	/**
-	 * Initializes (registers / defines) arguments of this controller.
-	 *
-	 * Override this method to add arguments which can later be accessed
-	 * by the action methods.
-	 *
-	 * NOTE: If you override this method, don't forget to call the parent
-	 * method as well (or define the identifier own your own).
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeArguments() {
-		$this->arguments->addNewArgument('id', 'UUID');
+		return parent::resolveActionMethodName();
 	}
 }
 ?>

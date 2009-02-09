@@ -39,46 +39,20 @@ require_once(__DIR__ . '/../Fixture/Controller/MockRESTController.php');
 class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Controller\RESTController
-	 */
-	protected $mockController;
-
-	/**
-	 * Sets up this test case
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setUp() {
-		$this->mockController = new \F3\FLOW3\MVC\Fixture\Controller\MockRESTController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$this->mockController->injectObjectManager($this->objectManager);
-		$this->mockController->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
-	}
-
-	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function callActionCallsTheListActionOnGETRequestsWithoutIdentifier() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+	public function processRequestRegistersAnIdArgument() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
-		$this->mockController->processRequest($request, $response);
-		$this->assertEquals('list action called', $response->getContent());
-	}
+		$mockArguments = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function callActionCallsTheShowActionOnGETRequestsWithIdentifier() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeArguments', 'mapRequestArgumentsToLocalArguments', 'initializeView'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->processRequest($mockRequest, $mockResponse);
 
-		$request->setArgument('id', '6499348f-f8fd-48de-9979-24e1edc2fbe7');
-
-		$this->mockController->processRequest($request, $response);
-		$this->assertEquals('show action called', $response->getContent());
+		$this->assertTrue(isset($mockArguments['id']));
 	}
 }
 ?>
