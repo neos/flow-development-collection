@@ -51,6 +51,11 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
+		if (PHP_SAPI === 'cli') {
+			$this->markTestSkipped('Skipping resource publisher tests in CLI mode (for now)');
+			return;
+		}
+
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
 		$this->publicResourcePath = uniqid('TestResources') . '/';
