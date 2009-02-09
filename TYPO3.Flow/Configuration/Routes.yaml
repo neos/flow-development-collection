@@ -59,3 +59,14 @@ FLOW3_DefaultWithFormatAndParameters:
     @controller: Default
     @action:     index
     @format:     html
+
+##
+# Default route to the FLOW3 Login Controller
+
+FLOW3_Login
+  uriPattern: 'flow3/login/[@action]'
+  controllerObjectNamePattern: 'F3\FLOW3\Security\Controller\LoginController'
+  viewObjectNamePattern: 'F3\FLOW3\Security\View\LoginView'
+  defaults:
+    @action:     'index'
+    @format:     'html'
