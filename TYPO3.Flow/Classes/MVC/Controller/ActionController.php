@@ -66,6 +66,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $viewObjectName = NULL;
 
 	/**
+	 * Name of the action method
+	 * @var string
+	 */
+	protected $actionMethodName = 'indexAction';
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
@@ -112,13 +118,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$actionMethodName = $this->resolveActionMethodName();
-		$this->initializeArguments($actionMethodName);
+		$this->actionMethodName = $this->resolveActionMethodName();
+		$this->initializeArguments();
 		$this->mapRequestArgumentsToLocalArguments();
 		if ($this->initializeView) $this->initializeView();
 		$this->initializeAction();
 
-		$this->callActionMethod($actionMethodName);
+		$this->callActionMethod();
 	}
 
 	/**
@@ -132,9 +138,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function initializeArguments($actionMethodName) {
-		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $actionMethodName);
-		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $actionMethodName);
+	protected function initializeArguments() {
+		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
+		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
 			if (isset($methodTagsAndValues['param']) && count($methodTagsAndValues['param']) > 0) {
@@ -175,13 +181,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function callActionMethod($actionMethodName) {
+	protected function callActionMethod() {
 		$preparedArguments = array();
 		foreach ($this->arguments as $argument) {
 			$preparedArguments[] = $argument->getValue();
 		}
 
-		$actionResult = call_user_func_array(array($this, $actionMethodName), $preparedArguments);
+		$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
 		if (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}

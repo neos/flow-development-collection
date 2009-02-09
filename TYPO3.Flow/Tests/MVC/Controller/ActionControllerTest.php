@@ -54,7 +54,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('response', $mockResponse);
 		$mockController->_set('arguments', $mockArguments);
-		$mockController->_call('callActionMethod', 'fooAction');
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_call('callActionMethod');
 	}
 
 	/**
@@ -128,7 +129,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->injectReflectionService($mockReflectionService);
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('arguments', $mockArguments);
-		$mockController->_call('initializeArguments', 'fooAction');
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_call('initializeArguments');
 	}
 }
 ?>
