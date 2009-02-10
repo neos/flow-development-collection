@@ -188,7 +188,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
-		if (is_string($actionResult) && strlen($actionResult) > 0) {
+		if ($actionResult === NULL && $this->view instanceof \F3\FLOW3\MVC\View\ViewInterface) {
+			$this->response->appendContent($this->view->render());
+		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
 			$this->response->appendContent($actionResult);
 		}
 	}

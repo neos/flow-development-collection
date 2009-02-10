@@ -59,6 +59,31 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function callActionMethodRendersTheViewAutomaticallyIfTheActionReturnedNullAndAViewExists() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$mockResponse->expects($this->once())->method('appendContent')->with('the view output');
+
+		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		$mockView->expects($this->once())->method('render')->will($this->returnValue('the view output'));
+
+		$mockArguments = new \ArrayObject;
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('fooAction');
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('response', $mockResponse);
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('view', $mockView);
+		$mockController->_call('callActionMethod');
+	}
+
+	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
