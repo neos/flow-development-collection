@@ -173,11 +173,33 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Magic call method for finder methods
+	 *
+	 * @param string $methodName Name of the method
+	 * @param array $arguments The arguments
+	 * @return mixed The result of the find method
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __call($methodName, array $arguments) {
+		if (substr($methodName, 0, 6) === 'findBy' && strlen($methodName) > 7) {
+			$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
+			$query = $this->createQuery();
+			return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
+			$propertyName = strtolower(substr($methodName, 9, 1)) . substr($methodName, 10);
+			$query = $this->createQuery();
+			$result = $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			return current($result);
+		}
+		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);
+	}
+
+	/**
 	 * Returns the class name of this class. Seems useless until you think about
 	 * the possibility of $this *not* being an AOP proxy. If $this is an AOP proxy
 	 * this method will be overridden.
 	 *
-	 * @return string
+	 * @return string Class name of the repository. If it is proxied, it's still the (target) class name.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function AOPProxyGetProxyTargetClassName() {

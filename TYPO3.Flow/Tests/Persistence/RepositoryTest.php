@@ -170,6 +170,48 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertSame('one', $repository->findByUUID($fakeUUID));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function magicCallMethodAcceptsFindBySomethingCallsAndExecutesAQueryWithThatCriteria() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
+		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('baz', 'quux')));
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
+		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+
+		$this->assertSame(array('baz', 'quux'), $repository->findByFoo('bar'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function magicCallMethodAcceptsFindOneBySomethingCallsAndExecutesAQueryWithThatCriteria() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
+		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('baz', 'quux')));
+
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('createQuery'));
+		$repository->expects($this->once())->method('createQuery')->will($this->returnValue($mockQuery));
+
+		$this->assertSame('baz', $repository->findOneByFoo('bar'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Error\Exception
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('dummy'));
+		$repository->__call('foo', array());
+	}
 }
 
 ?>
