@@ -43,10 +43,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @var \SplObjectStorage
 	 */
-	protected $objects;
+	protected $addedObjects;
 
 	/**
-	 * Objects removed but not found in $this->objects at removal time
+	 * Objects removed but not found in $this->addedObjects at removal time
 	 *
 	 * @var \SplObjectStorage
 	 */
@@ -63,7 +63,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function __construct() {
-		$this->objects = new \SplObjectStorage();
+		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
 	}
 
@@ -87,12 +87,12 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function add($object) {
-		$this->objects->attach($object);
+		$this->addedObjects->attach($object);
 		$this->removedObjects->detach($object);
 	}
 
 	/**
-	 * Removes an object from this repository. If it is contained in $this->objects
+	 * Removes an object from this repository. If it is contained in $this->addedObjects
 	 * we just remove it there, since this means it has never been persisted yet.
 	 *
 	 * Else we keep the object around to check if we need to remove it from the
@@ -104,25 +104,25 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function remove($object) {
-		if ($this->objects->contains($object)) {
-			$this->objects->detach($object);
+		if ($this->addedObjects->contains($object)) {
+			$this->addedObjects->detach($object);
 		} else {
 			$this->removedObjects->attach($object);
 		}
 	}
 
 	/**
-	 * Returns all objects that have been added to this repository with add().
+	 * Returns all addedObjects that have been added to this repository with add().
 	 *
-	 * This is a service method for the persistence manager to get all objects
+	 * This is a service method for the persistence manager to get all addedObjects
 	 * added to the repository. Those are only objects *added*, not objects
 	 * fetched from the underlying storage.
 	 *
 	 * @return \SplObjectStorage the objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getObjects() {
-		return $this->objects;
+	public function getAddedObjects() {
+		return $this->addedObjects;
 	}
 
 	/**

@@ -61,7 +61,7 @@ interface RepositoryInterface {
 	 *
 	 * @return array An array of objects
 	 */
-	public function getObjects();
+	public function getAddedObjects();
 
 	/**
 	 * Returns an array with objects remove()d from the repository that

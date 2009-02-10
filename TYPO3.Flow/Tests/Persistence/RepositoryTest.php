@@ -56,7 +56,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository = new \F3\FLOW3\Persistence\Repository();
 		$repository->add($someObject);
 
-		$this->assertTrue($repository->getObjects()->contains($someObject));
+		$this->assertTrue($repository->getAddedObjects()->contains($someObject));
 	}
 
 	/**
@@ -75,9 +75,9 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$repository->remove($object2);
 
-		$this->assertTrue($repository->getObjects()->contains($object1));
-		$this->assertFalse($repository->getObjects()->contains($object2));
-		$this->assertTrue($repository->getObjects()->contains($object3));
+		$this->assertTrue($repository->getAddedObjects()->contains($object1));
+		$this->assertFalse($repository->getAddedObjects()->contains($object2));
+		$this->assertTrue($repository->getAddedObjects()->contains($object3));
 	}
 
 	/**
@@ -99,9 +99,9 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$repository->remove($object2);
 
-		$this->assertTrue($repository->getObjects()->contains($object1));
-		$this->assertFalse($repository->getObjects()->contains($object2));
-		$this->assertTrue($repository->getObjects()->contains($object3));
+		$this->assertTrue($repository->getAddedObjects()->contains($object1));
+		$this->assertFalse($repository->getAddedObjects()->contains($object2));
+		$this->assertTrue($repository->getAddedObjects()->contains($object3));
 	}
 
 	/**

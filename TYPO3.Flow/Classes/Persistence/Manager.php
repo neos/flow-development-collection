@@ -190,7 +190,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 		$repositoryClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Persistence\RepositoryInterface');
 		foreach ($repositoryClassNames as $repositoryClassName) {
 			$repository = $this->objectManager->getObject($repositoryClassName);
-			$aggregateRootObjects->addAll($repository->getObjects());
+			$aggregateRootObjects->addAll($repository->getAddedObjects());
 			$removedObjects->addAll($repository->getRemovedObjects());
 		}
 
