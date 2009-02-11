@@ -38,9 +38,15 @@ namespace F3\FLOW3\Persistence;
  */
 class ClassSchema {
 
+	/**
+	 * Available model types
+	 */
 	const MODELTYPE_ENTITY = 1;
 	const MODELTYPE_VALUEOBJECT = 2;
 
+	/**
+	 * Specifies the allowed property types.
+	 */
 	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
 
 	/**
@@ -56,6 +62,12 @@ class ClassSchema {
 	 * @var integer
 	 */
 	protected $modelType = self::MODELTYPE_ENTITY;
+
+	/**
+	 * Whether a repository exists for the class this schema is referring to
+	 * @var boolean
+	 */
+	protected $repositoryManaged = FALSE;
 
 	/**
 	 * The name of the property holding the uuid of an entity, if any.
@@ -134,7 +146,7 @@ class ClassSchema {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setModelType($modelType) {
-		if ($modelType < 1 || $modelType > 3) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
+		if ($modelType < self::MODELTYPE_ENTITY || $modelType > self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
 		$this->modelType = $modelType;
 	}
 
@@ -149,7 +161,28 @@ class ClassSchema {
 	}
 
 	/**
-	 * If the class schema has a certain property
+	 * Marks the class is being managed by a repository or not.
+	 *
+	 * @param boolean $isManaged TRUE if it is managed
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setRepositoryManaged($isManaged) {
+		$this->repositoryManaged = $isManaged;
+	}
+
+	/**
+	 * Whether the class is being managed by a repository.
+	 *
+	 * @return boolean TRUE if it is managed
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isRepositoryManaged() {
+		return $this->repositoryManaged;
+	}
+
+	/**
+	 * If the class schema has a certain property.
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return boolean
@@ -162,12 +195,16 @@ class ClassSchema {
 	/**
 	 * Sets the property marked as uuid of an object with @uuid
 	 *
-	 * @param string $name
+	 * @param string $propertyName
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUUIDPropertyName($name) {
-		$this->uuidPropertyName = $name;
+	public function setUUIDPropertyName($propertyName) {
+		if (!array_key_exists($propertyName, $this->properties)) {
+			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as UUID property.', 1233863842);
+		}
+
+		$this->uuidPropertyName = $propertyName;
 	}
 
 	/**
@@ -178,16 +215,6 @@ class ClassSchema {
 	 */
 	public function getUUIDPropertyName() {
 		return $this->uuidPropertyName;
-	}
-
-	/**
-	 * Gets the properties (names and types) forming the identity of an object.
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getIdentityProperties() {
-		return $this->identityProperties;
 	}
 
 	/**
@@ -205,6 +232,17 @@ class ClassSchema {
 		}
 
 		$this->identityProperties[$propertyName] = $this->properties[$propertyName];
+	}
+
+	/**
+	 * Gets the properties (names and types) forming the identity of an object.
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @see markAsIdentityProperty()
+	 */
+	public function getIdentityProperties() {
+		return $this->identityProperties;
 	}
 
 }

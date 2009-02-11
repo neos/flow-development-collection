@@ -62,18 +62,21 @@ class ClassSchemataBuilder {
 	 * @param array $classNames Names of the classes to build schemata from
 	 * @return array of \F3\FLOW3\Persistence\ClassSchema
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidClass if one of the specified classes does not exist
 	 */
 	public function build(array $classNames) {
 		$classSchemata = array();
 		foreach ($classNames as $className) {
-			if (!class_exists($className)) throw new \F3\FLOW3\Persistence\Exception\InvalidClass('Unknown class "' . $className . '".', 1214495364);
+			if (!$this->reflectionService->isClassReflected($className)) throw new \F3\FLOW3\Persistence\Exception\InvalidClass('Unknown class "' . $className . '".', 1214495364);
 
 			$modelType = NULL;
+			$repositoryManaged = FALSE;
 			if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
 				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY;
-			} elseif ($this->reflectionService->isClassImplementationOf($className, 'F3\FLOW3\Persistence\RepositoryInterface')) {
-				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_REPOSITORY;
+				if ($this->reflectionService->isClassReflected($className . 'Repository')) {
+					$repositoryManaged = TRUE;
+				}
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
 				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT;
 			} else {
@@ -82,6 +85,7 @@ class ClassSchemataBuilder {
 
 			$classSchema = new \F3\FLOW3\Persistence\ClassSchema($className);
 			$classSchema->setModelType($modelType);
+			$classSchema->setRepositoryManaged($repositoryManaged);
 			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 				if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
 					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
