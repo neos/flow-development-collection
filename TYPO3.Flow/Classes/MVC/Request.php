@@ -368,6 +368,30 @@ class Request {
 	}
 
 	/**
+	 * Returns the value of the specified argument
+	 *
+	 * @param string $argumentName Name of the argument
+	 * @return string Value of the argument
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if such an argument does not exist
+	 */
+	public function getArgument($argumentName) {
+		if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
+		return $this->arguments[$argumentName];
+	}
+
+	/**
+	 * Checks if an argument of the given name exists (is set)
+	 *
+	 * @param string $argumentName Name of the argument to check
+	 * @return boolean TRUE if the argument is set, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function hasArgument($argumentName) {
+		return isset($this->arguments[$argumentName]);
+	}
+
+	/**
 	 * Returns an ArrayObject of arguments and their values
 	 *
 	 * @return \ArrayObject ArrayObject of arguments and their values (which may be arguments and values as well)
@@ -397,30 +421,6 @@ class Request {
 	 */
 	public function getFormat() {
 		return $this->format;
-	}
-
-	/**
-	 * Returns the value of the specified argument
-	 *
-	 * @param string $argumentName Name of the argument
-	 * @return string Value of the argument
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if such an argument does not exist
-	 */
-	public function getArgument($argumentName) {
-		if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
-		return $this->arguments[$argumentName];
-	}
-
-	/**
-	 * Checks if an argument of the given name exists (is set)
-	 *
-	 * @param string $argumentName Name of the argument to check
-	 * @return boolean TRUE if the argument is set, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function hasArgument($argumentName) {
-		return isset($this->arguments[$argumentName]);
 	}
 }
 ?>

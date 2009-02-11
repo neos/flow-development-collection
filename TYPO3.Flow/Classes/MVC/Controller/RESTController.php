@@ -71,21 +71,21 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveActionMethodName() {
-		if ($this->arguments['id']->isValid() === FALSE) $this->throwStatus(400);
 		if ($this->request->getControllerActionName() === 'index') {
 			$actionName = 'index';
 			switch ($this->request->getMethod()) {
 				case 'GET' :
-					$actionName = ($this->arguments['id']->getValue() === NULL) ? 'list' : 'show';
+					$actionName = ($this->request->hasArgument('id')) ? 'show' : 'list';
 				break;
 				case 'POST' :
 					$actionName = 'create';
 				break;
 				case 'PUT' :
-					if ($this->arguments['id']->getValue() === NULL) $this->throwStatus(400, NULL, 'Invalid identifier');
+					if (!$this->request->hasArgument('id')) $this->throwStatus(400, NULL, 'Missing identifier');
 					$actionName = 'update';
 				break;
 				case 'DELETE' :
+					if (!$this->request->hasArgument('id')) $this->throwStatus(400, NULL, 'Missing identifier');
 					$actionName = 'delete';
 				break;
 			}

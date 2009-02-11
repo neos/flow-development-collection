@@ -54,5 +54,164 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue(isset($mockArguments['id']));
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resolveActionMethodNameOnlyResolvesRESTMethodNamesIfTheActionNameIsIndex() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->exactly(2))->method('getControllerActionName')->will($this->returnValue('foo'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('fooAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+
+		$this->assertSame('fooAction', $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function actionNameForGETRequestsWithoutIdIsList() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(FALSE));
+
+			// This is the important expectation:
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
+
+		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('list'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('listAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function actionNameForGETRequestsWithIdIsShow() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('GET'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(TRUE));
+
+			// This is the important expectation:
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('show');
+
+		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('show'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('showAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function actionNameForPOSTRequestsIsCreate() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('POST'));
+
+			// This is the important expectation:
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('create');
+
+		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('create'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('createAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function actionNameForPUTRequestsIsUpdate() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('PUT'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(TRUE));
+
+			// This is the important expectation:
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('update');
+
+		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('update'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('updateAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function aPUTRequestWithoutIdWillThrowAStatus400() {
+		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopAction(); };
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('PUT'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(FALSE));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('throwStatus'), array(), '', FALSE);
+		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
+		$controller->_set('request', $mockRequest);
+		$controller->_set('response', $mockResponse);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function actionNameForDELETERequestsIsDelete() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('DELETE'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(TRUE));
+
+			// This is the important expectation:
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('delete');
+
+		$mockRequest->expects($this->at(4))->method('getControllerActionName')->will($this->returnValue('delete'));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('deleteAction'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function aDELETERequestWithoutIdWillThrowAStatus400() {
+		$throwStopException = function() { throw new \F3\FLOW3\MVC\Exception\StopAction(); };
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->at(0))->method('getControllerActionName')->will($this->returnValue('index'));
+		$mockRequest->expects($this->once())->method('getMethod')->will($this->returnValue('DELETE'));
+		$mockRequest->expects($this->once())->method('hasArgument')->with('id')->will($this->returnValue(FALSE));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('throwStatus'), array(), '', FALSE);
+		$controller->expects($this->once())->method('throwStatus')->with(400)->will($this->returnCallBack(array($throwStopException, '__invoke')));
+		$controller->_set('request', $mockRequest);
+		$controller->_set('response', $mockResponse);
+		$result = $controller->_call('resolveActionMethodName');
+	}
+
 }
 ?>
