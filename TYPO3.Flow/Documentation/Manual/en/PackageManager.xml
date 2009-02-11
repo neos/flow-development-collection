@@ -340,7 +340,8 @@
     class name as well as the file name. An example for a valid class name is
     <classname>\F3\MyPackage\Controller\DefaultController</classname> while
     the file containing this class would be named
-    <filename>F3_MyPackage_Controller_DefaultController.php</filename>.</para>
+    <filename>DefaultController.php</filename> and is expected to be in a
+    directory <filename>MyPackage/Classes/Controller</filename>.</para>
 
     <para>All details about naming files, classes, methods and variables
     correctly can be found in the FLOW3 Coding Guidelines. You're highly

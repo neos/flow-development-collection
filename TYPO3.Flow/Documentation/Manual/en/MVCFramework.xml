@@ -102,7 +102,7 @@
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_DefaultController.php</literallayout>
+        DefaultController.php</literallayout>
 
       <para>The DefaultController class looks as simple as this (leaving out
       the very recommended comments):</para>
@@ -134,9 +134,9 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_DefaultController.php
+        DefaultController.php
       View/
-        F3_Demo_View_DefaultIndex.php</literallayout>
+        DefaultIndex.php</literallayout>
 
       <para>The view's code is equally trivial:</para>
 
@@ -205,15 +205,15 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
   Demo/
     Classes/
       Controller/
-        F3_Demo_Controller_DefaultController.php
-        F3_Demo_Controller_CustomerController.php
-        F3_Demo_Controller_OrderController.php
+        DefaultController.php
+        CustomerController.php
+        OrderController.php
       View/
-        F3_Demo_View_DefaultIndex.php
-        F3_Demo_View_CustomerIndex.php
-        F3_Demo_View_CustomerList.php
-        F3_Demo_View_CustomerDetails.php
-        F3_Demo_View_OrderList.php</literallayout>
+        DefaultIndex.php
+        CustomerIndex.php
+        CustomerList.php
+        CustomerDetails.php
+        OrderList.php</literallayout>
       </example>
 
       <para>Adhering to these conventions has the advantage that the classname
