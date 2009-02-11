@@ -48,7 +48,7 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeArguments', 'mapRequestArgumentsToLocalArguments', 'initializeView'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeActionMethodArguments', 'mapRequestArgumentsToLocalArguments', 'initializeView'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
 		$controller->processRequest($mockRequest, $mockResponse);
 

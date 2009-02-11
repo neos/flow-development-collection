@@ -113,7 +113,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
+	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
@@ -155,7 +155,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('arguments', $mockArguments);
 		$mockController->_set('actionMethodName', 'fooAction');
-		$mockController->_call('initializeArguments');
+		$mockController->_call('initializeActionMethodArguments');
 	}
 }
 ?>

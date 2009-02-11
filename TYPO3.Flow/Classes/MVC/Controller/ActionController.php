@@ -119,6 +119,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->response = $response;
 
 		$this->actionMethodName = $this->resolveActionMethodName();
+		$this->initializeActionMethodArguments();
 		$this->initializeArguments();
 		$this->mapRequestArgumentsToLocalArguments();
 		if ($this->initializeView) $this->initializeView();
@@ -131,14 +132,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Implementation of the arguments initilization in the action controller:
 	 * Automatically registers arguments of the current action
 	 *
-	 * IMPORTANT: If this method is overridden, make sure to call this parent
-	 *            _before_ your own code because otherwise the order of automatically
-	 *            registered arguments wouldn't match the action method signature.
+	 * Don't override this method - use initializeArguments() instead.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initializeArguments()
+	 * @internal
 	 */
-	protected function initializeArguments() {
+	protected function initializeActionMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
 		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
