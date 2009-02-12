@@ -25,8 +25,8 @@ require_once(__DIR__ . '/Fixture/BasicClass.php');
 require_once(__DIR__ . '/Fixture/ClassWithOptionalArguments.php');
 require_once(__DIR__ . '/Fixture/SomeInterface.php');
 require_once(__DIR__ . '/Fixture/SomeImplementation.php');
-require_once(__DIR__ . '/Fixture/ClassWithSomeImplementationInjected.php');
 require_once(__DIR__ . '/Fixture/ReconstitutableClassWithSimpleProperties.php');
+require_once(__DIR__ . '/Fixture/ClassWithSomeImplementationInjected.php');
 require_once(__DIR__ . '/Fixture/ClassWithUnmatchedRequiredSetterDependency.php');
 require_once(__DIR__ . '/Fixture/ClassWithInjectSettingsMethod.php');
 require_once(__DIR__ . '/Fixture/ClassWithSetterAndPropertyInjection.php');
@@ -685,7 +685,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function autoWireSetterPropertiesSetsInjectionPropertyForPropertiesAnnotatedWithInject() {
+	public function autoWirePropertiesSetsInjectionPropertyForPropertiesAnnotatedWithInject() {
 		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
@@ -696,9 +696,9 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
 		$mockObjectBuilder->injectReflectionService($mockReflectionService);
-		$actualSetterProperties = $mockObjectBuilder->_call('autoWireSetterProperties', array(), $className);
+		$actualProperties = $mockObjectBuilder->_call('autoWireProperties', array(), $className);
 
-		$this->assertSame('F3\Coffee\Bar', $actualSetterProperties['secondDependency']->getValue());
+		$this->assertSame('F3\Coffee\Bar', $actualProperties['secondDependency']->getValue());
 	}
 
 	/**
@@ -717,16 +717,16 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
 		$mockObjectBuilder->injectReflectionService($mockReflectionService);
-		$actualSetterProperties = $mockObjectBuilder->_call('autoWireSetterProperties', array(), $className);
+		$actualProperties = $mockObjectBuilder->_call('autoWireProperties', array(), $className);
 
-		$this->assertSame('F3\FLOW3\Object\ManagerInterface', $actualSetterProperties['firstDependency']->getValue());
+		$this->assertSame('F3\FLOW3\Object\ManagerInterface', $actualProperties['firstDependency']->getValue());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSetterPropertiesCanDoPropertyInjectionViaReflection() {
+	public function injectPropertiesCanDoPropertyInjectionViaReflection() {
 		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
 		$object = new $className;
 		$setterProperties = array(
@@ -734,7 +734,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
-		$mockObjectBuilder->_call('injectSetterProperties', $setterProperties, $object);
+		$mockObjectBuilder->_call('injectProperties', $setterProperties, $object);
 
 		$propertyReflection = new \ReflectionProperty($object, 'secondDependency');
 		$propertyReflection->setAccessible(TRUE);
@@ -745,10 +745,10 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createSkeletonReturnsAnObjectOfTheSpecifiedType() {
+	public function createEmptyObjectReturnsAnObjectOfTheSpecifiedType() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$object = $this->objectBuilder->createEmptyObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertType('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $object);
 	}
 
@@ -757,20 +757,20 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Object\Exception\CannotReconstituteObject
 	 */
-	public function createSkeletonRejectsObjectTypesWhichAreNotPersistable() {
+	public function createEmptyObjectRejectsObjectTypesWhichAreNotPersistable() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
 
-		$this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+		$this->objectBuilder->createEmptyObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createSkeletonPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
+	public function createEmptyObjectPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$object = $this->objectBuilder->createEmptyObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertFalse($object->constructorHasBeenCalled);
 	}
 
@@ -778,7 +778,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function thawSetterDependenciesTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
+	public function reinjectDependenciesTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array('firstProperty', 'secondProperty', 'publicProperty', 'injectedDependency')));
 
@@ -789,30 +789,10 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('stringDependency', 'wasInjected'));
-		$object = $objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
-		$objectBuilder->thawSetterDependencies($object, $objectConfiguration);
+		$object = $objectBuilder->createEmptyObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$objectBuilder->reinjectDependencies($object, $objectConfiguration);
 
 		$this->assertEquals('wasInjected', $object->AOPProxyGetProperty('stringDependency'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function thawPropertiesSetsPropertyValues() {
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
-		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
-
-		$properties = array(
-			'firstProperty' => 'firstValue',
-			'secondProperty' => 'secondValue',
-			'publicProperty' => 'publicValue',
-		);
-		$this->objectBuilder->thawProperties($object, $properties);
-
-		$this->assertEquals('firstValue', $object->AOPProxyGetProperty('firstProperty'));
-		$this->assertEquals('secondValue', $object->AOPProxyGetProperty('secondProperty'));
-		$this->assertEquals('publicValue', $object->publicProperty);
 	}
 }
 ?>

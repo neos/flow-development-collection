@@ -144,7 +144,7 @@ class Builder {
 
 			if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
 				$arguments = $this->autoWireArguments($arguments, $className);
-				$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
+				$setterProperties = $this->autoWireProperties($setterProperties, $className);
 			}
 			$preparedArguments = array();
 			$this->injectArguments($arguments, $preparedArguments);
@@ -166,7 +166,7 @@ class Builder {
 				throw new \F3\FLOW3\Object\Exception\CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . ').', 1187164523);
 			}
 
-			$this->injectSetterProperties($setterProperties, $object);
+			$this->injectProperties($setterProperties, $object);
 			$this->callLifecycleInitializationMethod($object, $objectConfiguration);
 		} catch (\Exception $exception) {
 			unset ($this->objectsBeingBuilt[$objectName]);
@@ -182,14 +182,18 @@ class Builder {
 	 * @param string $objectName Name of the object to create a skeleton for
 	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration The object configuration
 	 * @return object The object skeleton
+	 * @throws \F3\FLOW3\Object\Exception\CannotReconstituteObject
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function createSkeleton($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration) {
+	public function createEmptyObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration) {
 		$className = $objectConfiguration->getClassName();
-		if (!in_array('F3\FLOW3\AOP\ProxyInterface', class_implements($className))) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot create skeleton of the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1234386924);
+
+			// Note: The class_implements() function also invokes autoload to assure that the interfaces
+			// and the class are loaded. Would end up with __PHP_Incomplete_Class without it.
+		if (!in_array('F3\FLOW3\AOP\ProxyInterface', class_implements($className))) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot create empty instance of the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1234386924);
 
 		$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-
 		$object->AOPProxySetProperty('objectFactory', $this->objectFactory);
 		$object->AOPProxySetProperty('objectManager', $this->objectManager);
 		$object->AOPProxyDeclareMethodsAndAdvices();
@@ -198,37 +202,26 @@ class Builder {
 	}
 
 	/**
-	 * Does (setter) dependency injection for the given object
+	 * Injects (again) all properties, be it through setter injection or through
+	 * reflection. Arguments can - naturally - not be injected once the object
+	 * lives, because the constructor must not be called a second time.
 	 *
-	 * @param object $object The object to inject dependencies into
+	 * This method is used for reinjecting dependencies after an object has been
+	 * reconstituted or unserialized.
+	 *
+	 * @param object $object The object to inject properties into
 	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration The object configuration
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function thawSetterDependencies($object, \F3\FLOW3\Object\Configuration $objectConfiguration) {
-		$setterProperties = $objectConfiguration->getProperties();
+	public function reinjectDependencies($object, \F3\FLOW3\Object\Configuration $objectConfiguration) {
+		$properties = $objectConfiguration->getProperties();
 		$className = $objectConfiguration->getClassName();
 		if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
-			$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
+			$properties = $this->autoWireProperties($properties, $className);
 		}
-
-		$this->injectSetterProperties($setterProperties, $object);
-	}
-
-	/**
-	 * Sets the given properties on the object.
-	 *
-	 * @param object $object The object to set properties on
-	 * @param array $properties The property name/value pairs to set
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function thawProperties($object, array $properties = array()) {
-		if (!$object instanceof \F3\FLOW3\AOP\ProxyInterface) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot thaw properties for object of "' . get_class($object) . '" because it does not implement the AOP Proxy Interface.', 1234356515);
-
-		foreach ($properties as $propertyName => $value) {
-			$object->AOPProxySetProperty($propertyName, $value);
-		}
+		$this->injectProperties($properties, $object);
 	}
 
 	/**
@@ -276,7 +269,7 @@ class Builder {
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireSetterProperties(array $setterProperties, $className) {
+	protected function autoWireProperties(array $setterProperties, $className) {
 		foreach (get_class_methods($className) as $methodName) {
 			if (substr($methodName, 0, 6) === 'inject') {
 				$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
@@ -319,7 +312,7 @@ class Builder {
 	 *
 	 * @param array $arguments Array of \F3\FLOW3\Object\ConfigurationArgument for the current object
 	 * @param array &$preparedArguments An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
-	 * @return void
+	 * @return void  The result is stored in the $preparedArguments array
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function injectArguments($arguments, &$preparedArguments) {
@@ -360,15 +353,16 @@ class Builder {
 	}
 
 	/**
-	 * Checks, resolves and injects dependencies through calling the setter method of the registered properties.
+	 * Checks, resolves and injects dependencies as properties through calling the setter methods or setting
+	 * properties directly through reflection.
 	 *
-	 * @param array $setterProperties: Array of \F3\FLOW3\Object\ConfigurationProperty for the current object
-	 * @param object $object: The recently created instance of the current object. Dependencies will be injected to it.
+	 * @param array $properties Array of \F3\FLOW3\Object\ConfigurationProperty for the current object
+	 * @param object $object The recently created instance of the current object. Dependencies will be injected to it.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function injectSetterProperties($setterProperties, $object) {
-		foreach ($setterProperties as $propertyName => $property) {
+	protected function injectProperties($properties, $object) {
+		foreach ($properties as $propertyName => $property) {
 			$propertyValue = $property->getValue();
 			switch ($property->getType()) {
 				case \F3\FLOW3\Object\ConfigurationProperty::PROPERTY_TYPES_OBJECT:
