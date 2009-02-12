@@ -58,13 +58,9 @@ interface DirtyMonitoringInterface {
 	 * Resets the dirty flags of all properties to signal that the object is
 	 * clean again after being persisted.
 	 *
-	 * The $joinPoint argument here is a special case, as the introduced
-	 * method is used from within an advice and "externally", thus we need
-	 * to handle this specially
-	 *
-	 * @param JoinPointInterface $joinPoint Current joinpoint, if used from within an advice
 	 * @return void
 	 */
-	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL);
+	public function memorizeCleanState();
+
 }
 ?>

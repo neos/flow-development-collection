@@ -66,15 +66,7 @@ class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodIntercep
 	 * ' . $methodParametersDocumentation . '
 	 * @return void
 	 */
-	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {';
-		if ($methodName == '__wakeup') {
-			$emptyInterceptorCode .= $this->buildWakeupCode();
-			if (method_exists($targetClassName, '__wakeup')) {
-				$emptyInterceptorCode .= "\n\t\tparent::__wakeup();\n";
-			}
-		}
-		$emptyInterceptorCode .= '
-	}
+	' . $staticKeyword . 'public function ' . $methodName . '(' . $methodParametersCode . ') {}
 ';
 		return $emptyInterceptorCode;
 	}

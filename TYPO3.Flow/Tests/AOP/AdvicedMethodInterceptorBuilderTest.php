@@ -135,7 +135,7 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 			$result = parent::__wakeup(PARAMETERSCODE2);
 
-		} else {WAKEUPCODE
+		} else {
 			$methodArguments = array(
 				\'arg1\' => $arg1,
 				\'arg2\' => $arg2,
@@ -153,7 +153,6 @@ class AdvicedMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		$builder->expects($this->once())->method('buildAdvicesCode')->with(array('groupedAdvicesDummy'), '__wakeup', 'Bar')->will($this->returnValue('ADVICESCODE'));
 		$builder->expects($this->at(1))->method('buildMethodParametersCode')->with($className, '__wakeup', TRUE)->will($this->returnValue('PARAMETERSCODE1'));
 		$builder->expects($this->at(2))->method('buildMethodParametersCode')->with($className, '__wakeup', FALSE)->will($this->returnValue('PARAMETERSCODE2'));
-		$builder->expects($this->at(3))->method('buildWakeupCode')->will($this->returnValue('WAKEUPCODE'));
 
 		$builder->injectReflectionService($mockReflectionService);
 

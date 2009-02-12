@@ -40,7 +40,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function AOPProxyDeclareMethodsAndAdvices() {
+	public function AOPProxyDeclareMethodsAndAdvices() {
 ###METHODS_AND_ADVICES_ARRAY_CODE###
 	}
 

@@ -69,18 +69,6 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Automatically call memorizeCleanState() after __wakeup()
-	 *
-	 * @afterreturning method(.*->__wakeup()) && F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function autoMemorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$joinPoint->getProxy()->memorizeCleanState($joinPoint);
-	}
-
-	/**
 	 * Around advice, implements the isNew() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
@@ -131,17 +119,13 @@ class DirtyMonitoring {
 	 * Register an object's clean state, e.g. after it has been reconstituted
 	 * from the FLOW3 persistence layer
 	 *
-	 * @before method(.*->memorizeCleanState())
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
+	 * @before method(.*->memorizeCleanState())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint = NULL) {
-		if ($joinPoint === NULL) {
-			$proxy = $this;
-		} else {
-			$proxy = $joinPoint->getProxy();
-		}
+	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$proxy = $joinPoint->getProxy();
 		$cleanProperties = array();
 		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
 

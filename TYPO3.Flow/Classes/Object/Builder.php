@@ -120,9 +120,9 @@ class Builder {
 	 * Creates and returns a ready-to-use object of the specified type.
 	 * During the building process all depencencies are resolved and injected.
 	 *
-	 * @param string $objectName: Name of the object to create an object for
-	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration: The object configuration
-	 * @param array $overridingArguments: An array of \F3\FLOW3\Object\Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
+	 * @param string $objectName Name of the object to create an object for
+	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration The object configuration
+	 * @param array $overridingArguments An array of \F3\FLOW3\Object\Argument which override possible autowired arguments. Numbering starts with 1! Index == 1 is the first argument, index == 2 to the second etc.
 	 * @return object
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject
 	 * @author Robert Lemke <robert@typo3.org>
@@ -177,31 +177,58 @@ class Builder {
 	}
 
 	/**
-	 * Reconstitutes the specified object and fills it with the given properties.
+	 * Creates a skeleton of the specified object
 	 *
-	 * @param string $objectName Name of the object to reconstitute
+	 * @param string $objectName Name of the object to create a skeleton for
 	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration The object configuration
-	 * @param array $properties The names of properties and their values which should be set during the reconstitution
-	 * @return object The reconstituted object
-	 * @throws \F3\FLOW3\Object\Exception\CannotReconstituteObject if the class cannot be reconstituted or a circular dependency ocurred.
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return object The object skeleton
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function reconstituteObject($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration, array $properties = array()) {
-		if (isset ($this->objectsBeingBuilt[$objectName])) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Circular object dependency for object "' . $objectName . '".', 1216742543);
-		$this->objectsBeingBuilt[$objectName] = TRUE;
-
+	public function createSkeleton($objectName, \F3\FLOW3\Object\Configuration $objectConfiguration) {
 		$className = $objectConfiguration->getClassName();
-		if (!in_array('F3\FLOW3\AOP\ProxyInterface', class_implements($className))) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot reconstitute the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1216738485);
+		if (!in_array('F3\FLOW3\AOP\ProxyInterface', class_implements($className))) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot create skeleton of the class "' . $className . '" because it does not implement the AOP Proxy Interface.', 1234386924);
 
-			// those objects will be fetched from within the __wakeup() method of the object...
-		$GLOBALS['reconstituteObject']['objectFactory'] = $this->objectFactory;
-		$GLOBALS['reconstituteObject']['objectManager'] = $this->objectManager;
-		$GLOBALS['reconstituteObject']['properties'] = $properties;
 		$object = unserialize('O:' . strlen($className) . ':"' . $className . '":0:{};');
-		unset($GLOBALS['reconstituteObject']);
 
-		unset ($this->objectsBeingBuilt[$objectName]);
+		$object->AOPProxySetProperty('objectFactory', $this->objectFactory);
+		$object->AOPProxySetProperty('objectManager', $this->objectManager);
+		$object->AOPProxyDeclareMethodsAndAdvices();
+
 		return $object;
+	}
+
+	/**
+	 * Does (setter) dependency injection for the given object
+	 *
+	 * @param object $object The object to inject dependencies into
+	 * @param \F3\FLOW3\Object\Configuration $objectConfiguration The object configuration
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function thawSetterDependencies($object, \F3\FLOW3\Object\Configuration $objectConfiguration) {
+		$setterProperties = $objectConfiguration->getProperties();
+		$className = $objectConfiguration->getClassName();
+		if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
+			$setterProperties = $this->autoWireSetterProperties($setterProperties, $className);
+		}
+
+		$this->injectSetterProperties($setterProperties, $object);
+	}
+
+	/**
+	 * Sets the given properties on the object.
+	 *
+	 * @param object $object The object to set properties on
+	 * @param array $properties The property name/value pairs to set
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function thawProperties($object, array $properties = array()) {
+		if (!$object instanceof \F3\FLOW3\AOP\ProxyInterface) throw new \F3\FLOW3\Object\Exception\CannotReconstituteObject('Cannot thaw properties for object of "' . get_class($object) . '" because it does not implement the AOP Proxy Interface.', 1234356515);
+
+		foreach ($properties as $propertyName => $value) {
+			$object->AOPProxySetProperty($propertyName, $value);
+		}
 	}
 
 	/**

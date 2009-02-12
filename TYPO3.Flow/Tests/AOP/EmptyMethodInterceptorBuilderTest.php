@@ -67,8 +67,7 @@ class EmptyMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * ' . '
 	 * @return void
 	 */
-	static public function foo(PARAMETERSCODE1) {
-	}
+	static public function foo(PARAMETERSCODE1) {}
 ';
 
 		$builder = $this->getMock('F3\FLOW3\AOP\EmptyMethodInterceptorBuilder', array('buildMethodParametersCode'), array(), '', FALSE);
@@ -108,14 +107,12 @@ class EmptyMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * ' . '
 	 * @return void
 	 */
-	static public function __wakeup(PARAMETERSCODE1) {WAKEUPCODE
-	}
+	static public function __wakeup(PARAMETERSCODE1) {}
 ';
 
 		$builder = $this->getMock('F3\FLOW3\AOP\EmptyMethodInterceptorBuilder', array('buildMethodParametersCode', 'buildWakeupCode'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
 		$builder->expects($this->at(0))->method('buildMethodParametersCode')->with($className, '__wakeup', TRUE)->will($this->returnValue('PARAMETERSCODE1'));
-		$builder->expects($this->at(1))->method('buildWakeupCode')->will($this->returnValue('WAKEUPCODE'));
 
 		$actualCode = $builder->build('__wakeup', $interceptedMethods, 'Bar');
 		$this->assertSame($expectedCode, $actualCode);

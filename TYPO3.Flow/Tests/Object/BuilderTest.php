@@ -745,10 +745,10 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reconstituteObjectReturnsAnObjectOfTheSpecifiedType() {
+	public function createSkeletonReturnsAnObjectOfTheSpecifiedType() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertType('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $object);
 	}
 
@@ -757,55 +757,62 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Object\Exception\CannotReconstituteObject
 	 */
-	public function reconstituteObjectRejectsObjectTypesWhichAreNotPersistable() {
+	public function createSkeletonRejectsObjectTypesWhichAreNotPersistable() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\BasicClass');
 
-		$this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+		$this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function reconstituteObjectPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
+	public function createSkeletonPreventsThatTheConstructorOfTheTargetObjectIsCalled() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$this->assertFalse($object->constructorHasBeenCalled);
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function reconstituteObjectCallsTheTargetObjectsWakeupMethod() {
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
+	public function thawSetterDependenciesTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array('firstProperty', 'secondProperty', 'publicProperty', 'injectedDependency')));
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
-		$this->assertTrue($object->wakeupHasBeenCalled);
+		$objectBuilder = new \F3\FLOW3\Object\Builder();
+		$objectBuilder->injectObjectManager($this->mockObjectManager);
+		$objectBuilder->injectObjectFactory($this->mockObjectFactory);
+		$objectBuilder->injectReflectionService($mockReflectionService);
+
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
+		$objectConfiguration->setProperty(new \F3\FLOW3\Object\ConfigurationProperty('stringDependency', 'wasInjected'));
+		$object = $objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
+		$objectBuilder->thawSetterDependencies($object, $objectConfiguration);
+
+		$this->assertEquals('wasInjected', $object->AOPProxyGetProperty('stringDependency'));
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function reconstituteObjectCallsTheTargetObjectsWakeupMethodOnlyAfterAllPropertiesHaveBeenRestored() {
+	public function thawPropertiesSetsPropertyValues() {
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties');
+		$object = $this->objectBuilder->createSkeleton('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 
 		$properties = array(
-			'wakeupHasBeenCalled' => FALSE
+			'firstProperty' => 'firstValue',
+			'secondProperty' => 'secondValue',
+			'publicProperty' => 'publicValue',
 		);
+		$this->objectBuilder->thawProperties($object, $properties);
 
-		$object = $this->objectBuilder->reconstituteObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration, $properties);
-		$this->assertTrue($object->wakeupHasBeenCalled);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function reconstituteObjectTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
-		$this->markTestIncomplete('Not yet implemented');
+		$this->assertEquals('firstValue', $object->AOPProxyGetProperty('firstProperty'));
+		$this->assertEquals('secondValue', $object->AOPProxyGetProperty('secondProperty'));
+		$this->assertEquals('publicValue', $object->publicProperty);
 	}
 }
 ?>

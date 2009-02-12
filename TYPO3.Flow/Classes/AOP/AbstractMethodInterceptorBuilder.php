@@ -254,24 +254,6 @@ abstract class AbstractMethodInterceptorBuilder {
 		return $advicesCode;
 	}
 
-	/**
-	 * Builds code for the __wakeup() method to fetch an object factory, set
-	 * up AOP internals and collect properties after reconstitution.
-	 *
-	 * @return string
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function buildWakeupCode() {
-		$wakeupCode = '
-		$this->objectFactory = $GLOBALS[\'reconstituteObject\'][\'objectFactory\'];
-		$this->objectManager = $GLOBALS[\'reconstituteObject\'][\'objectManager\'];
-		$this->AOPProxyDeclareMethodsAndAdvices();
-		foreach ($GLOBALS[\'reconstituteObject\'][\'properties\'] as $property => $value) {
-			$this->$property = $value;
-		}';
-		return $wakeupCode;
-	}
-
 }
 
 ?>

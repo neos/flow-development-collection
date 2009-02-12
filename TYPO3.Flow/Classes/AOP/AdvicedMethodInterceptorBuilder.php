@@ -86,9 +86,6 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterc
 			}
 			$methodInterceptorCode .= '
 		} else {';
-			if ($methodName === '__wakeup') {
-				$methodInterceptorCode .= $this->buildWakeupCode();
-			}
 			$methodInterceptorCode .= '
 			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, $methodName) . ');
 			$this->methodIsInAdviceMode[\'' . $methodName . '\'] = TRUE;
@@ -97,13 +94,6 @@ class AdvicedMethodInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInterc
 		}
 		return $result;
 ';
-		} else {
-			if ($methodName == '__wakeup') {
-				$methodInterceptorCode .= $this->buildWakeupCode();
-				if (method_exists($targetClassName, '__wakeup')) {
-					$methodInterceptorCode .= "\n\t\tparent::__wakeup();\n";
-				}
-			}
 		}
 		$methodInterceptorCode .= '
 	}

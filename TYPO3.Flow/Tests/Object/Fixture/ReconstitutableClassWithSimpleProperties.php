@@ -25,9 +25,9 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 	public $constructorHasBeenCalled = FALSE;
 
 	/**
-	 * @var boolean
+	 * @var string
 	 */
-	public $wakeupHasBeenCalled = FALSE;
+	protected $stringDependency;
 
 	/**
 	 * The constructor - similar to what you would find in a AOP proxy class.
@@ -38,8 +38,8 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 		$this->constructorHasBeenCalled = TRUE;
 	}
 
-	public function __wakeup() {
-		$this->wakeupHasBeenCalled = TRUE;
+	public function injectStringDependency($string) {
+		$this->stringDependency = $string;
 	}
 
 	public function AOPProxyGetProxyTargetClassName() {
@@ -55,6 +55,8 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 	}
 
 	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+
+	public function AOPProxyDeclareMethodsAndAdvices() {}
 
 }
 ?>
