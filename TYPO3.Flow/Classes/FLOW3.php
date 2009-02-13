@@ -59,7 +59,7 @@ final class FLOW3 {
 	 */
 	const VERSION = '0.2.0';
 
-	const MINIMUM_PHP_VERSION = '5.3.0alpha3';
+	const MINIMUM_PHP_VERSION = '5.3.0beta1';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
