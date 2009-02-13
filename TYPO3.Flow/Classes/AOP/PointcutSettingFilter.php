@@ -39,6 +39,7 @@ namespace F3\FLOW3\AOP;
  */
 class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 
+	const PATTERN_SPLITBYEQUALSIGN = '/\s*( *= *)\s*/';
 	const PATTERN_MATCHVALUEINQUOTES = '/(?:"(?P<DoubleQuotedString>(?:\\"|[^"])*)"|\'(?P<SingleQuotedString>(?:\\\'|[^\'])*)\')/';
 
 	/**
@@ -119,7 +120,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function parseConfigurationOptionPath($settingComparisonExpression) {
-		$settingComparisonExpression = split(' *= *', $settingComparisonExpression);
+		$settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);
 		if (isset($settingComparisonExpression[1])) {
 			$matches = array();
 			preg_match(self::PATTERN_MATCHVALUEINQUOTES, $settingComparisonExpression[1], $matches);
@@ -132,7 +133,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 			}
 		}
 
-		$configurationKeys = split(':[ ]{0,1}', $settingComparisonExpression[0]);
+		$configurationKeys = preg_split('/: */', $settingComparisonExpression[0]);
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
 			$settingValue = $this->configurationManager->getSettings($settingPackageKey);
