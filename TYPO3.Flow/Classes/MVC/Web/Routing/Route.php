@@ -42,14 +42,14 @@ class Route {
 
 	const ROUTEPART_TYPE_STATIC = 'static';
 	const ROUTEPART_TYPE_DYNAMIC = 'dynamic';
-	const PATTERN_EXTRACTROUTEPARTS = '/(?P<dynamic>\[?)(?P<content>@?[^\]\[]+)\]?/';
+	const PATTERN_EXTRACTROUTEPARTS = '/(?P<optionalStart>\(?)(?P<dynamic>{?)(?P<content>@?[^}{\(\)]+)}?(?P<optionalEnd>\)?)/';
 
 	/**
 	 * Route name
 	 *
 	 * @var string
 	 */
-	protected $name;
+	protected $name = NULL;
 
 	/**
 	 * Default values
@@ -62,7 +62,7 @@ class Route {
 	 * URI Pattern of this route
 	 * @var string
 	 */
-	protected $uriPattern;
+	protected $uriPattern = NULL;
 
 	/**
 	 * @var string
@@ -104,18 +104,11 @@ class Route {
 	protected $isParsed = FALSE;
 
 	/**
-	 * Container for RoutePartCollections. Each element represents one URI segment and contains one or more \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart object(s)
+	 * Container for Route Parts.
 	 *
-	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
+	 * @var array
 	 */
-	protected $uriPatternSegments;
-
-	/**
-	 * Container for RoutePartCollections. Each element represents one Query parameter and contains one or more \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart object(s)
-	 *
-	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
-	 */
-	protected $uriPatternQueryParameters;
+	protected $routeParts;
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
@@ -181,7 +174,7 @@ class Route {
 	 */
 	public function setUriPattern($uriPattern) {
 		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
-		$this->uriPattern = trim($uriPattern, '/ ');
+		$this->uriPattern = $uriPattern;
 		$this->isParsed = FALSE;
 	}
 
@@ -236,7 +229,7 @@ class Route {
 	/**
 	 * By default all Dynamic Route Parts are resolved by \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
-	 * Note: Route Part handler must inherit from \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
+	 * Note: Route Part handlers must implement \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
 	 *
 	 * Usage: setRoutePartHandlers(array('@controller' => 'F3\Package\Subpackage\MyRoutePartHandler'));
 	 *
@@ -275,11 +268,10 @@ class Route {
 	 * an array combining Route default values and calculated matchResults from the individual Route Parts.
 	 *
 	 * @param string $requestPath the request path without protocol, host and query string
-	 * @param string $requestQuery the request query string (optional)
 	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function matches($requestPath, $requestQuery = NULL) {
+	public function matches($requestPath) {
 		$this->matchResults = NULL;
 		if ($requestPath === NULL) {
 			return FALSE;
@@ -290,44 +282,42 @@ class Route {
 		if (!$this->isParsed) {
 			$this->parse();
 		}
-
 		$matchResults = array();
 
-		$requestPath = trim($requestPath, '/ ');
-		$requestPathSegments = strlen($requestPath) ? explode('/', $requestPath) : array();
-		foreach ($this->uriPatternSegments as $uriPatternSegment) {
-			foreach ($uriPatternSegment as $routePart) {
-				if (!$routePart->match($requestPathSegments)) {
-					return FALSE;
-				}
-				if ($routePart->getValue() !== NULL) {
-					$matchResults[$routePart->getName()] = $routePart->getValue();
-				}
-			}
-		}
-		if (count($requestPathSegments) > 0) {
-			return FALSE;
-		}
-
-		if ($this->uriPatternQueryParameters !== NULL) {
-			$requestQuery = trim($requestQuery);
-			$requestQueryParameters = strlen($requestQuery) ? explode('&', $requestQuery) : array();
-			foreach ($this->uriPatternQueryParameters as $uriPatternQueryParameter) {
-				foreach ($uriPatternQueryParameter as $routePart) {
-					if (!$routePart->match($requestQueryParameters)) {
+		$requestPath = trim($requestPath, '/');
+		$skipOptionalParts = FALSE;
+		$optionalPartCount = 0;
+		foreach ($this->routeParts as $routePart) {
+			if ($routePart->isOptional()) {
+				$optionalPartCount++;
+				if ($skipOptionalParts) {
+					if ($routePart->getDefaultValue() === NULL) {
 						return FALSE;
 					}
-					if ($routePart->getValue() !== NULL) {
-						$matchResults[$routePart->getName()] = $routePart->getValue();
+					continue;
+				}
+			} else {
+				$optionalPartCount = 0;
+				$skipOptionalParts = FALSE;
+			}
+			if (!$routePart->match($requestPath)) {
+				if ($routePart->isOptional() && $optionalPartCount == 1) {
+					if ($routePart->getDefaultValue() === NULL) {
+						return FALSE;
 					}
+					$skipOptionalParts = TRUE;
+				} else {
+					return FALSE;
 				}
 			}
-			if (count($requestQueryParameters) > 0) {
-				return FALSE;
+			if ($routePart->getValue() !== NULL) {
+				$matchResults[$routePart->getName()] = $routePart->getValue();
 			}
 		}
-
-		$this->matchResults = array_merge($this->defaults, $matchResults);
+		if (strlen($requestPath) > 0) {
+			return FALSE;
+		}
+		$this->matchResults = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->defaults, $matchResults);
 		return TRUE;
 	}
 
@@ -349,31 +339,31 @@ class Route {
 			$this->parse();
 		}
 
-		$uri = '';
-
-		foreach ($this->uriPatternSegments as $uriPatternSegment) {
-			foreach ($uriPatternSegment as $routePart) {
-				if (!$routePart->resolve($routeValues)) {
+		$matchingURI = '';
+		$requireOptionalRouteParts = FALSE;
+		$matchingOptionalUriPortion = '';
+		$matchingUriPart = '';
+		foreach ($this->routeParts as $routePart) {
+			if (!$routePart->resolve($routeValues)) {
+				if (!$routePart->hasDefaultValue()) {
 					return FALSE;
 				}
-				$uri.= \F3\PHP6\Functions::strtolower($routePart->getValue());
 			}
-			$uri.= '/';
-		}
-		$uri = rtrim($uri, '/');
-
-		if ($this->uriPatternQueryParameters !== NULL) {
-			$uri.= '?';
-			foreach ($this->uriPatternQueryParameters as $uriPatternQueryParameter) {
-				foreach ($uriPatternQueryParameter as $routePart) {
-					if (!$routePart->resolve($routeValues)) {
-						return FALSE;
-					}
-					$uri.= \F3\PHP6\Functions::strtolower($routePart->getValue());
-				}
-				$uri.= '&';
+			if (!$routePart->isOptional()) {
+				$matchingURI.= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
+				$requireOptionalRouteParts = FALSE;
+				continue;
 			}
-			$uri = rtrim($uri, '&');
+			if ($routePart->hasValue() && $routePart->getValue() !== $routePart->getDefaultValue()) {
+				$matchingOptionalUriPortion.= $routePart->getValue();
+				$requireOptionalRouteParts = TRUE;
+			} else {
+				$matchingOptionalUriPortion.= $routePart->getDefaultValue();
+			}
+			if ($requireOptionalRouteParts) {
+				$matchingURI.= $matchingOptionalUriPortion;
+				$matchingOptionalUriPortion = '';
+			}
 		}
 
 		foreach ($this->defaults as $key => $defaultValue) {
@@ -384,80 +374,58 @@ class Route {
 				unset($routeValues[$key]);
 			}
 		}
+
 		if (count($routeValues) > 0) {
 			return FALSE;
 		}
-		$this->matchingURI = $uri;
+
+		$this->matchingURI = $matchingURI;
+		$this->matchingURI = \F3\PHP6\Functions::strtolower($matchingURI);
 		return TRUE;
 	}
 
 	/**
-	 * Iterates through all segments and query parameters in $this->uriPattern and creates appropriate Route Part instances.
+	 * Iterates through all segments in $this->uriPattern and creates appropriate Route Part instances.
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function parse() {
+	public function parse() {
 		if ($this->isParsed) {
 			return;
 		}
-		$this->uriPatternSegments = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$this->uriPatternQueryParameters = NULL;
-
-		$splittedUriPattern = explode('?', $this->uriPattern);
-		$uriPatternPath = $splittedUriPattern[0];
-		if (isset($splittedUriPattern[1])) {
-			$uriPatternQuery = $splittedUriPattern[1];
-		} else {
-			$uriPatternQuery = NULL;
+		$this->routeParts = array();
+		$currentRoutePartIsOptional = FALSE;
+		if (substr($this->uriPattern, -1) === '/') {
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
+		}
+		if (isset($this->uriPattern{0}) && $this->uriPattern{0} === '/') {
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" starts with a slash, which is not allowed.', 1234782983);
 		}
 
-		$uriPatternSegments = explode('/', $uriPatternPath);
-		foreach ($uriPatternSegments as $uriPatternSegment) {
-			$this->uriPatternSegments->append($this->createRoutePartsFromUriPatternPart($uriPatternSegment, $this->uriPatternSegments));
-		}
-
-		if ($uriPatternQuery !== NULL) {
-			$uriPatternQueryParameters = explode('&', $uriPatternQuery);
-			$this->uriPatternQueryParameters = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-			foreach ($uriPatternQueryParameters as $uriPatternQueryParameter) {
-				$this->uriPatternQueryParameters->append($this->createRoutePartsFromUriPatternPart($uriPatternQueryParameter, $this->uriPatternQueryParameters));
-			}
-		}
-	}
-
-	/**
-	 * Creates corresponding Route Part instances for a given URI pattern fragment (either an URI pattern segment or a URI pattern query parameter).
-	 * A Route Part can by dynamic or static. Dynamic Route Parts are wrapped in square brackets.
-	 * One segment can contain more than one Dynamic Route Part, but they have to be separated by Static Route Parts.
-	 *
-	 * @param string $uriPatternPart one segment or one query parameter (name and value) of the URI pattern including brackets.
-	 * @param \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments current collection of uriPattern parts.
-	 * @return \F3\FLOW3\MVC\Web\Routing\RoutePartCollection corresponding Route Part instances
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function createRoutePartsFromUriPatternPart($uriPatternPart, \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection &$uriPatternSegments) {
-		$routePartCollection = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\RoutePartCollection');
 		$matches = array();
-		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $uriPatternPart, $matches, PREG_SET_ORDER);
+		preg_match_all(self::PATTERN_EXTRACTROUTEPARTS, $this->uriPattern, $matches, PREG_SET_ORDER);
 
-		$lastRoutePartType = NULL;
+		$lastRoutePart = NULL;
 		foreach ($matches as $matchIndex => $match) {
 			$routePartType = empty($match['dynamic']) ? self::ROUTEPART_TYPE_STATIC : self::ROUTEPART_TYPE_DYNAMIC;
 			$routePartName = $match['content'];
-			if ($routePartType === self::ROUTEPART_TYPE_DYNAMIC) {
-				if ($lastRoutePartType === self::ROUTEPART_TYPE_DYNAMIC) {
-					throw new \F3\FLOW3\MVC\Exception\SuccessiveDynamicRouteParts('two succesive Dynamic Route Parts are not allowed!', 1218446975);
+			if (!empty($match['optionalStart'])) {
+				if ($lastRoutePart !== NULL && $lastRoutePart->isOptional()) {
+					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
 				}
+				$currentRoutePartIsOptional = TRUE;
 			}
-
 			$routePart = NULL;
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
+					if ($lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+						throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
+					}
 					if (isset($this->routePartHandlers[$routePartName])) {
 						$routePart = $this->objectManager->getObject($this->routePartHandlers[$routePartName]);
-						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart) {
-							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must inherit from "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePart"', 1218480972);
+						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface"', 1218480972);
 						}
 					} else {
 						$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
@@ -468,15 +436,26 @@ class Route {
 					break;
 				case self::ROUTEPART_TYPE_STATIC:
 					$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
+					if ($lastRoutePart !== NULL && $lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
+						$lastRoutePart->setSplitString($routePartName);
+					}
 			}
 			$routePart->setName($routePartName);
-			$routePart->setUriPatternSegments($uriPatternSegments);
+			$routePart->setOptional($currentRoutePartIsOptional);
 
-			$routePartCollection->append($routePart);
-			$lastRoutePartType = $routePartType;
+			$this->routeParts[] = $routePart;
+			if (!empty($match['optionalEnd'])) {
+				if (!$currentRoutePartIsOptional) {
+					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains an unopened optional section.', 1234564495);
+				}
+				$currentRoutePartIsOptional = FALSE;
+			}
+			$lastRoutePart = $routePart;
 		}
-
-		return $routePartCollection;
+		if ($currentRoutePartIsOptional) {
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains an unterminated optional section.', 1234563922);
+		}
+		$this->isParsed = TRUE;
 	}
 }
 

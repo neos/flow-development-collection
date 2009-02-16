@@ -38,38 +38,51 @@ namespace F3\FLOW3\MVC\Web\Routing;
  */
 class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 
+	/*                                                                        *
+	 * Basic functionality (scope, getters, setters, ...)                     *
+	 *                                                                        */
+
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartDoesNotMatchIfUriSegmentIsEmptyOrNullAndNoDefaultValueIsSet() {
+	public function dynamicRoutePartIsPrototype() {
+		$routePart1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
+		$routePart2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
+		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Dynamic Route Part is not prototype!');
+	}
+
+	/*                                                                        *
+	 * URI matching                                                           *
+	 *                                                                        */
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartDoesNotMatchIfRequestPathIsNullOrEmpty() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 
-		$uriSegments = array();
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should not match if uriSegments array is empty and no default value is set.');
+		$requestPath = NULL;
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is NULL.');
 
-		$uriSegments = array(NULL, 'foo');
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should never match if uriSegment is NULL.');
+		$requestPath = '';
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is empty.');
 
-		$uriSegments = array('', 'foo');
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should never match if current uriSegment is empty and no default value is set.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartMatchesIfDefaultValueIsSet() {
+	public function dynamicRoutePartDoesNotMatchEmptyRequestPathEvenIfDefaultValueIsSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('bar');
 
-		$uriSegments = array();
-		$this->assertTrue($routePart->match($uriSegments), 'Dynamic Route Part should match if uriSegments array is empty and a default value is set.');
-
-		$uriSegments = array('', 'foo');
-		$this->assertTrue($routePart->match($uriSegments), 'Dynamic Route Part should match if current uriSegment is empty and a default value is set.');
+		$requestPath = '';
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if $requestPath is empty.');
 	}
 
 	/**
@@ -78,10 +91,9 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function dynamicRoutePartDoesNotMatchIfNameIsNotSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$uriSegments = array('foo', 'bar');
-		$routePart->setDefaultValue('foo');
+		$requestPath = 'foo';
 
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should not match if name is not set.');
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if name is not set.');
 	}
 
 
@@ -89,15 +101,16 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function valueMatchesFirstUriSegmentAfterSuccessfulMatch() {
+	public function valueMatchesFirstRequestPathSegmentAfterSuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('bar');
+		$routePart->setSplitString('/');
 
-		$uriSegments = array('firstSegment', 'secondSegment');
-		$routePart->match($uriSegments);
+		$requestPath = 'firstSegment/secondSegment';
+		$routePart->match($requestPath);
 
-		$this->assertEquals('firstSegment', $routePart->getValue(), 'value of Dynamic Route Part should be equal to first uriSegment after successful match.');
+		$this->assertEquals('firstSegment', $routePart->getValue(), 'value of Dynamic Route Part should be equal to first request path segment after successful match.');
 	}
 
 	/**
@@ -107,12 +120,13 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function valueIsNullAfterUnsuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
+		$routePart->setSplitString('/');
 
-		$uriSegments = array('foo', 'bar');
-		$routePart->match($uriSegments);
+		$requestPath = 'foo/bar';
+		$routePart->match($requestPath);
 
-		$uriSegments = array('', 'foo');
-		$routePart->match($uriSegments);
+		$requestPath = '/bar';
+		$routePart->match($requestPath);
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL after unsuccessful match.');
 	}
 
@@ -120,65 +134,71 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function uriSegmentsAreShortenedByOneSegmentAfterSuccessfulMatch() {
+	public function requestPathIsShortenedByOneSegmentAfterSuccessfulMatch() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('bar');
-		$uriSegments = array('bar', 'foo', 'test');
-		$routePart->match($uriSegments);
+		$routePart->setSplitString('/');
 
-		$this->assertSame(array('foo', 'test'), $uriSegments, 'Dynamic Route Part should shorten uriSegments array by one entry on successful match.');
+		$requestPath = 'bar/foo/test';
+		$routePart->match($requestPath);
+
+		$this->assertSame('/foo/test', $requestPath, 'Dynamic Route Part should shorten request path by one segment on successful match.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartMatchesIfSplitStringIsFound() {
+	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('-'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
-		$uriSegments = array('foo-bar', 'test');
 
-		$this->assertTrue($routePart->match($uriSegments), 'Dynamic Route Part should match if current uriSegment contains splitString.');
+		$requestPath = 'foo/bar';
+
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if request Path has more than one segment and no split string is set.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartDoesNotMatchIfSplitStringIsNotFound() {
+	public function dynamicRouteDoesNotMatchRequestPathWithMoreThanOneSegmentIfSplitStringIsNotFound() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('-'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
-		$uriSegments = array('foo', 'test');
+		$routePart->setSplitString('not-existing');
 
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should not match if current uriSegment does not contain splitString.');
+		$requestPath = 'foo/bar';
+
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if request Path has more than one segment and does not contain split string.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartShortensCurrentUriSegmentAfterSuccessfulMatch() {
+	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('-'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
-		$uriSegments = array('foo-bar', 'test');
-		$this->assertTrue($routePart->match($uriSegments));
 
-		$this->assertSame(array('-bar', 'test'), $uriSegments,  'Dynamic Route Part should cut off first part of matching string until splitString.');
+		$requestPath = 'bar';
+
+		$this->assertTrue($routePart->match($requestPath));
+		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and no split string is set.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRouteMatchesRequestPathWithOnlyOneSegmentIfSplitStringIsNotFound() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('foo');
+		$routePart->setSplitString('not-existing');
+
+		$requestPath = 'bar';
+
+		$this->assertTrue($routePart->match($requestPath));
+		$this->assertEquals('bar', $routePart->getValue(), 'Dynamic Route Part should match if request Path has only one segment and does not contain split string.');
 	}
 
 	/**
@@ -188,49 +208,29 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function dynamicRoutePartDoesNotMatchIfSplitStringIsAtFirstPosition() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('-'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
-		$uriSegments = array('-foo', 'bar');
+		$routePart->setSplitString('-');
 
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part should not match if splitString is first character of current uriSegment.');
+		$requestPath = '-foo/bar';
+
+		$this->assertFalse($routePart->match($requestPath), 'Dynamic Route Part should not match if split string is first character of current request path.');
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartDoesNotMatchIfSplitStringContainsMoreCharactersThatAreNotInUriSegments() {
+	public function dynamicRoutePartMatchesIfSplitStringContainsMultipleCharactersThatAreFoundInRequestPath() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('_-_'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
+		$routePart->setSplitString('_-_');
 
-		$uriSegments = array('foo-bar', 'bar');
-		$this->assertFalse($routePart->match($uriSegments), 'Dynamic Route Part with a splitString of "_-_" should not match uriParts separated by "-".');
+		$requestPath = 'foo_-_bar';
+		$this->assertTrue($routePart->match($requestPath), 'Dynamic Route Part with a split string of "_-_" should match request path of "foo_-_bar".');
 	}
 
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function dynamicRoutePartMatchesIfSplitStringContainsMoreCharactersThatAreNotInUriSegments() {
-		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
-		$routePart->setName('foo');
-		$mockRoutePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\AbstractRoutePart');
-		$mockRoutePart->expects($this->once())->method('getName')->will($this->returnValue('_-_'));
-		$mockUriPatternSegmentCollection = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection');
-		$mockUriPatternSegmentCollection->expects($this->once())->method('getNextRoutePartInCurrentUriPatternSegment')->will($this->returnValue($mockRoutePart));
-		$routePart->setUriPatternSegments($mockUriPatternSegmentCollection);
-
-		$uriSegments = array('foo_-_bar', 'bar');
-		$this->assertTrue($routePart->match($uriSegments), 'Dynamic Route Part with a splitString of "_-_" should match uriParts separated by "_-_".');
-	}
+	/*                                                                        *
+	 * URI resolving                                                          *
+	 *                                                                        */
 
 	/**
 	 * @test
@@ -260,14 +260,25 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function dynamicRoutePartResolvesEmptyArrayIfDefaultValueIsSet() {
+	public function dynamicRoutePartDoesNotResolveEmptyArray() {
+		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
+		$routePart->setName('foo');
+		$routeValues = array();
+
+		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function dynamicRoutePartDoesNotResolveEmptyArrayEvenIfDefaultValueIsSet() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
 		$routePart->setDefaultValue('defaultValue');
 		$routeValues = array();
 
-		$this->assertTrue($routePart->resolve($routeValues));
-		$this->assertEquals('defaultValue', $routePart->getValue(), 'Dynamic Route Part should resolve if a default value is set.');
+		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve an empty $routeValues-array even if default Value is set.');
 	}
 
 	/**
@@ -277,7 +288,7 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function resolveReturnsFalseIfNoCorrespondingValueIsGiven() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$routeValues = array('differentString' => 'bar');
+		$routeValues = array('notFoo' => 'bar');
 
 		$this->assertFalse($routePart->resolve($routeValues), 'Dynamic Route Part should not resolve if no element with the same name exists in $routeValues and no default value is set.');
 	}
@@ -315,12 +326,11 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function routePartValueIsNullAfterUnsuccessfulResolve() {
 		$routePart = new \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart();
 		$routePart->setName('foo');
-		$routePart->setDefaultValue('defaultValue');
-		$routeValues = array();
+		$routeValues = array('foo' => 'bar');
 
 		$this->assertTrue($routePart->resolve($routeValues));
 
-		$routePart->setDefaultValue(NULL);
+		$routeValues = array();
 		$this->assertFalse($routePart->resolve($routeValues));
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
 	}

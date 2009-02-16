@@ -36,35 +36,35 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractRoutePart {
+abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartInterface {
 
 	/**
 	 * Name of the Route Part
 	 *
 	 * @var string
 	 */
-	protected $name;
+	protected $name = NULL;
 
 	/**
 	 * Value of the Route Part after decoding.
 	 *
 	 * @var mixed
 	 */
-	protected $value;
+	protected $value = NULL;
 
 	/**
 	 * Default value of the Route Part.
 	 *
 	 * @var mixed
 	 */
-	protected $defaultValue;
+	protected $defaultValue = NULL;
 
 	/**
-	 * Reference of the UriPatternSegmentCollection this Route Part belongs to.
+	 * Specifies whether this Route part is optional. Which means it's put in parentheses in the routes URI pattern.
 	 *
-	 * @var \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection
+	 * @var boolean
 	 */
-	protected $uriPatternSegments;
+	protected $isOptional = FALSE;
 
 	/**
 	 * Returns name of the Route Part.
@@ -88,6 +88,16 @@ abstract class AbstractRoutePart {
 	}
 
 	/**
+	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
+	 * 
+	 * @return boolean
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function hasValue() {
+		return isset($this->value);
+	}
+
+	/**
 	 * Returns value of the Route Part. Before match() is called this returns NULL.
 	 * 
 	 * @return mixed
@@ -95,6 +105,26 @@ abstract class AbstractRoutePart {
 	 */
 	public function getValue() {
 		return $this->value;
+	}
+
+	/**
+	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
+	 * 
+	 * @return boolean
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function hasDefaultValue() {
+		return isset($this->defaultValue);
+	}
+
+	/**
+	 * Gets default value of the Route Part.
+	 * 
+	 * @return mixed $defaultValue
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getDefaultValue() {
+		return $this->defaultValue;
 	}
 
 	/**
@@ -109,52 +139,25 @@ abstract class AbstractRoutePart {
 	}
 
 	/**
-	 * Sets a reference to the UriPatternSegmentCollection this Route Part belongs to.
+	 * Getter for $this->isOptional.
 	 * 
-	 * @param \F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments
+	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see setOptional()
+	 */
+	public function isOptional() {
+		return $this->isOptional;
+	}
+
+	/**
+	 * Specifies whether this Route part is optional.
+	 * 
+	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setUriPatternSegments(\F3\FLOW3\MVC\Web\Routing\UriPatternSegmentCollection $uriPatternSegments) {
-		$this->uriPatternSegments = $uriPatternSegments;
+	public function setOptional($isOptional) {
+		$this->isOptional = $isOptional;
 	}
-
-	/**
-	 * Returns the next Route Part instance in the current URI Pattern Segment Collection.
-	 * 
-	 * @return \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart the next Route Part or NULL if this is the last Route Part in the current collection.
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	protected function getNextRoutePartInCurrentUriPatternSegment() {
-		if ($this->uriPatternSegments === NULL) {
-			return NULL;
-		}
-		return $this->uriPatternSegments->getNextRoutePartInCurrentUriPatternSegment();
-	}
-
-	/**
-	 * Checks whether this Route Part corresponds to the given $uriSegments.
-	 * This method does not only check if the Route Part matches. It can also
-	 * shorten the $uriSegments-Array by one or more elements when matching is successful.
-	 * This is why $uriSegments has to be passed by reference.
-	 *
-	 * @param array $uriSegments An array with one element per request URI segment.
-	 * @return boolean TRUE if Route Part matched $uriSegments, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public abstract function match(array &$uriSegments);
-
-	/**
-	 * Checks whether this Route Part corresponds to the given $routeValues.
-	 * This method does not only check if the Route Part matches. It also
-	 * removes resolved elements from $routeValues-Array.
-	 * This is why $routeValues has to be passed by reference.
-	 *
-	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
-	 * @return boolean TRUE if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public abstract function resolve(array &$routeValues);
-
 }
 ?>

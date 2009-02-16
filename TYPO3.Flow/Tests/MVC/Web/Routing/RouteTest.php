@@ -41,7 +41,7 @@ require_once(__DIR__ . '/../../Fixture/Web/Routing/MockRoutePartHandler.php');
 class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/*                                                                        *
-	 * Basic functionality (scope, getters, setters, ...)                     *
+	 * Basic functionality (scope, getters, setters, exceptions)              *
 	 *                                                                        */
 
 	/**
@@ -81,55 +81,93 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function settingUriPatternResetsRoute() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/foo/[key2]/bar');
+		$route->setUriPattern('{key1}/foo/{key2}/bar');
 
-		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
-		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"[key1]/foo/[key2]/bar"-Route should match "value1/foo/value2/bar"-request.');
+		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
+		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
 		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 
-		$route->setUriPattern('foo/[key3]/foo');
+		$route->setUriPattern('foo/{key3}/foo');
 
-		$this->assertFalse($route->matches('foo/value3/bar'), '"foo/[key3]/foo"-Route should not match "foo/value3/bar"-request.');
-		$this->assertTrue($route->matches('foo/value3/foo'), '"foo/[key3]/foo"-Route should match "foo/value3/foo"-request.');
+		$this->assertFalse($route->matches('foo/value3/bar'), '"foo/{key3}/foo"-Route should not match "foo/value3/bar"-request.');
+		$this->assertTrue($route->matches('foo/value3/foo'), '"foo/{key3}/foo"-Route should match "foo/value3/foo"-request.');
 		$this->assertEquals(array('key3' => 'value3'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\Object\Exception\UnknownObject
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingNonExistingRoutePartHandlerThrowsException() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/[key2]');
+		$route->setUriPattern('{key1}/{key2}');
 		$route->setRoutePartHandlers(
 			array(
 				'key1' => 'Non_Existing_RoutePartHandler',
 			)
 		);
-		try {
-			$route->matches('foo/bar');
-			$this->fail('matches() did not throw an exception although the specified routePart handler class is inexistent.');
-		} catch (\F3\FLOW3\Object\Exception\UnknownObject $exception) {
-		}
+		$route->parse();
 	}
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingInvalidRoutePartHandlerThrowsException() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/[key2]');
+		$route->setUriPattern('{key1}/{key2}');
 		$route->setRoutePartHandlers(
 			array(
 				'key1' => 'F3\FLOW3\MVC\Web\Routing\StaticRoutePart',
 			)
 		);
-		try {
-			$route->matches('foo/bar');
-			$this->fail('matches() did not throw an exception although the specified routePart handler is invalid.');
-		} catch (\F3\FLOW3\MVC\Exception\InvalidRoutePartHandler $exception) {
-		}
+		$route->parse();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function uriPatternWithSuccessiveDynamicRoutepartsThrowsException() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('{key1}{key2}');
+		$route->parse();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function uriPatternWithSuccessiveOptionalSectionsThrowsException() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('(foo/bar)(/bar/foo)');
+		$route->parse();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function uriPatternWithUnterminatedOptionalSectionsThrowsException() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('foo/(bar');
+		$route->parse();
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidUriPattern
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function uriPatternWithUnopenedOptionalSectionsThrowsException() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('foo)/bar');
+		$route->parse();
 	}
 
 	/*                                                                        *
@@ -142,20 +180,9 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function routeDoesNotMatchIfRequestPathIsNull() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[foo]/[bar]');
+		$route->setUriPattern('');
 
 		$this->assertFalse($route->matches(NULL), 'Route should not match if requestPath is NULL.');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeDoesNotMatchIfRequestPathIsEmpty() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[foo]/[bar]');
-
-		$this->assertFalse($route->matches(''), 'Route should not match if requestPath is empty.');
 	}
 
 	/**
@@ -185,9 +212,9 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function routeDoesNotMatchIfOneSegmentOfRequestPathIsDifferentFromItsRespectiveStaticUriPatternSegment() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('foo/[bar]');
+		$route->setUriPattern('foo/{bar}');
 
-		$this->assertFalse($route->matches('bar/someValue'), '"foo/[bar]"-Route should not match "bar/someValue"-request.');
+		$this->assertFalse($route->matches('bar/someValue'), '"foo/{bar}"-Route should not match "bar/someValue"-request.');
 	}
 
 	/**
@@ -198,7 +225,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('');
 
-		$this->assertTrue($route->matches(''), 'Route should not match if URI Pattern is empty.');
+		$this->assertTrue($route->matches(''), 'Route should match if URI Pattern and RequestPath are empty.');
 	}
 
 	/**
@@ -216,11 +243,22 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
+	public function routeDoesNotMatchIfRequestPathIsEqualToStaticUriPatternWithoutSlashes() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required1/required2');
+
+		$this->assertFalse($route->matches('required1required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
 	public function routeMatchesIfStaticSegmentsMatchAndASegmentExistsForAllDynamicUriPartSegments() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('foo/[bar]');
+		$route->setUriPattern('foo/{bar}');
 
-		$this->assertTrue($route->matches('foo/someValue'), '"foo/[bar]"-Route should match "foo/someValue"-request.');
+		$this->assertTrue($route->matches('foo/someValue'), '"foo/{bar}"-Route should match "foo/someValue"-request.');
 	}
 
 	/**
@@ -229,7 +267,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getMatchResultsReturnsCorrectResultsAfterSuccessfulMatch() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('foo/[bar]');
+		$route->setUriPattern('foo/{bar}');
 		$route->matches('foo/someValue');
 
 		$this->assertEquals(array('bar' => 'someValue'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
@@ -241,10 +279,10 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function staticAndDynamicRoutesCanBeMixedInAnyOrder() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/foo/[key2]/bar');
+		$route->setUriPattern('{key1}/foo/{key2}/bar');
 
-		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"[key1]/foo/[key2]/bar"-Route should not match "value1/foo/value2/foo"-request.');
-		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"[key1]/foo/[key2]/bar"-Route should match "value1/foo/value2/bar"-request.');
+		$this->assertFalse($route->matches('value1/foo/value2/foo'), '"{key1}/foo/{key2}/bar"-Route should not match "value1/foo/value2/foo"-request.');
+		$this->assertTrue($route->matches('value1/foo/value2/bar'), '"{key1}/foo/{key2}/bar"-Route should match "value1/foo/value2/bar"-request.');
 		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -254,10 +292,10 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function uriPatternSegmentCanContainTwoDynamicRouteParts() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('user/[firstName]-[lastName]');
+		$route->setUriPattern('user/{firstName}-{lastName}');
 
-		$this->assertFalse($route->matches('user/johndoe'), '"user/[firstName]-[lastName]"-Route should not match "user/johndoe"-request.');
-		$this->assertTrue($route->matches('user/john-doe'), '"user/[firstName]-[lastName]"-Route should match "user/john-doe"-request.');
+		$this->assertFalse($route->matches('user/johndoe'), '"user/{firstName}-{lastName}"-Route should not match "user/johndoe"-request.');
+		$this->assertTrue($route->matches('user/john-doe'), '"user/{firstName}-{lastName}"-Route should match "user/john-doe"-request.');
 		$this->assertEquals(array('firstName' => 'john', 'lastName' => 'doe'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -267,10 +305,10 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function uriPatternSegmentsCanContainMultipleDynamicRouteParts() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 
-		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should not match "value1-value2/value3.value4value5"-request.');
-		$this->assertTrue($route->matches('value1-value2/value3.value4.value5'), '"[key1]-[key2]/[key3].[key4].[@format]"-Route should match "value1-value2/value3.value4.value5"-request.');
+		$this->assertFalse($route->matches('value1-value2/value3.value4value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should not match "value1-value2/value3.value4value5"-request.');
+		$this->assertTrue($route->matches('value1-value2/value3.value4.value5'), '"{key1}-{key2}/{key3}.{key4}.{@format}"-Route should match "value1-value2/value3.value4.value5"-request.');
 		$this->assertEquals(array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', '@format' => 'value5'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
@@ -278,33 +316,12 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function defaultValuesAreSetForUriPatternSegmentsWithMultipleRouteParts() {
+	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndDefaultValueIsSet() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]-[key2]/[key3].[key4].[@format]');
-		$defaults = array(
-			'key1' => 'defaultValue1',
-			'key2' => 'defaultValue2',
-			'key3' => 'defaultValue3',
-			'key4' => 'defaultValue4'
-		);
-		$route->setDefaults($defaults);
-		$route->matches('foo-/.bar.xml');
+		$route->setUriPattern('{foo}');
+		$route->setDefaults(array('foo' => 'bar'));
 
-		$this->assertEquals(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function processingUriPatternWithSuccessiveDynamicRoutepartsThrowsException() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1][key2]');
-		try {
-			$route->matches('value1value2');
-			$this->fail('matches() did not throw an exception although the specified URI Pattern contains successive Dynamic Route Parts which is not possible.');
-		} catch (\F3\FLOW3\MVC\Exception\SuccessiveDynamicRouteParts $exception) {
-		}
+		$this->assertFalse($route->matches(''), 'Route should not match if required Route Part does not match.');
 	}
 
 	/**
@@ -325,116 +342,314 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$route->matches('SomePackage');
 		$matchResults = $route->getMatchResults();
 
-		$this->assertEquals($defaults['@controller'], $matchResults['@controller']);
+		$this->assertEquals($defaults['@controller'], $matchResults{'@controller'});
 		$this->assertEquals($defaults['@action'], $matchResults['@action']);
 	}
 
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function registeredRoutePartHandlerIsInvokedWhenCallingMatch() {
+		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler');
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('{key1}/{key2}');
+		$route->setRoutePartHandlers(
+			array(
+				'key1' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
+			)
+		);
+		$route->matches('foo/bar');
+
+		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $route->getMatchResults());
+	}
+
 	/*                                                                        *
-	 * URI matching (query strings)                                           *
+	 * URI matching (optional Route Parts)                                    *
 	 *                                                                        */
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithQueryStringIfUriPatternContainsDifferentStaticQueryString() {
+	public function routeMatchesEmptyRequestPathIfUriPatternContainsOneOptionalStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=value1');
+		$route->setUriPattern('(optional)');
 
-		$this->assertFalse($route->matches('search', 'param1=value2'));
+		$this->assertTrue($route->matches(''));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithoutQueryStringIfUriPatternContainsQueryString() {
+	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]');
+		$route->setUriPattern('required(optional)');
 
-		$this->assertFalse($route->matches('search'), 'if UriPattern contains a query string, the URI must include a query string too.');
+		$this->assertTrue($route->matches('requiredoptional'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithMissingQueryParametersIfUriPatternContainsQueryString() {
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneRequiredAndOneOptionalStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
+		$route->setUriPattern('required(optional)');
 
-		$this->assertFalse($route->matches('search', 'param1=value1'), 'if UriPattern contains a query string, the URI must include all configured query parameters.');
+		$this->assertTrue($route->matches('required'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithDifferentQueryParametersIfUriPatternContainsQueryString() {
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsOneOptionalAndOneRequiredStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]');
+		$route->setUriPattern('(optional)required');
 
-		$this->assertFalse($route->matches('search', 'differentParamenter=value'), 'if UriPattern contains a query string, the URI\'s query parameter must be the same.');
+		$this->assertTrue($route->matches('required'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithDifferentQueryParameterOrderIfUriPatternContainsQueryString() {
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
+		$route->setUriPattern('(optional)required(optional2)');
 
-		$this->assertFalse($route->matches('search', 'param2=value2&param1=value1'), 'if UriPattern contains a query string, the URI\'s query parameter must be in the same order.');
+		$this->assertTrue($route->matches('required'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeDoesNotMatchAnUriWithAdditionalQueryParametersIfUriPatternContainsQueryString() {
+	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoOptionalAndOneRequiredStaticRoutePart() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]');
+		$route->setUriPattern('(optional)required(optional2)');
 
-		$this->assertFalse($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern contains a query string, the URI may not include additional query parameters.');
+		$this->assertTrue($route->matches('optionalrequiredoptional2'));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeMatchesAnUriWithAnyQueryStringIfUriPatternDoesNotContainQueryString() {
+	public function routeDoesNotMatchEmptyRequestPathIfUriPatternContainsOneOptionalDynamicRoutePartWithoutDefaultValue() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search');
+		$route->setUriPattern('({optional})');
 
-		$this->assertTrue($route->matches('search', 'param1=value1&param2=value2'), 'if UriPattern does not contain a query string, the URI\'s query parameters are ignored.');
+		$this->assertFalse($route->matches(''));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingStaticQueryString() {
+	public function routeMatchesEmptyRequestPathIfUriPatternContainsOneOptionalDynamicRoutePartWithDefaultValue() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=value1');
+		$route->setUriPattern('({optional})');
+		$route->setDefaults(array('optional' => 'defaultValue'));
 
-		$this->assertTrue($route->matches('search', 'param1=value1'));
+		$this->assertTrue($route->matches(''));
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeMatchesAnUriWithQueryStringIfUriPatternContainsMatchingDynamicQueryString() {
+	public function routeDoesNotMatchRequestPathContainingNoneOfTheOptionalRoutePartsIfNoDefaultsAreSet() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]');
+		$route->setUriPattern('page(.{@format})');
 
-		$this->assertTrue($route->matches('search', 'param1=value1'));
+		$this->assertFalse($route->matches('page'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchRequestPathContainingOnlySomeOfTheOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('page(.{@format})');
+		$route->setDefaults(array('@format' => 'html'));
+
+		$this->assertFalse($route->matches('page.'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathContainingNoneOfTheOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('page(.{@format})');
+		$route->setDefaults(array('@format' => 'html'));
+
+		$this->assertTrue($route->matches('page'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathContainingAllOfTheOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('page(.{@format})');
+		$route->setDefaults(array('@format' => 'html'));
+
+		$this->assertTrue($route->matches('page.html'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required(/optional1/optional2)');
+
+		$this->assertTrue($route->matches('required'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchRequestPathWithRequiredAndOnlyOneOptionalPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required(/optional1/optional2)');
+
+		$this->assertFalse($route->matches('required/optional1'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchRequestPathWithAllPartsIfUriPatternEndsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required(/optional1/optional2)');
+
+		$this->assertTrue($route->matches('required/optional1/optional2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required1(/optional1/optional2)/required2');
+
+		$this->assertTrue($route->matches('required1/required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required1/(optional1/optional2/)required2');
+
+		$this->assertFalse($route->matches('required1/optional1/required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathWithAllPartsIfUriPatternContainsTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('required1/(optional1/optional2/)required2');
+
+		$this->assertTrue($route->matches('required1/optional1/optional2/required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathWithOnlyRequiredPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('(optional1/optional2/)required1/required2');
+
+		$this->assertTrue($route->matches('required1/required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchRequestPathWithOnlyOneOptionalPartIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('(optional1/optional2/)required1/required2');
+
+		$this->assertFalse($route->matches('optional1/required1/required2'));
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesRequestPathWithAllPartsIfUriPatternStartsWithTwoSuccessiveOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('(optional1/optional2/)required1/required2');
+
+		$this->assertTrue($route->matches('optional1/optional2/required1/required2'));
+	}
+	
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeDoesNotMatchIfRoutePartDoesNotMatchAndIsOptionalButHasNoDefault() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('({foo})');
+
+		$this->assertFalse($route->matches(''), 'Route should not match if optional Route Part does not match and has no default value.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function routeMatchesIfRoutePartDoesNotMatchButIsOptionalAndHasDefault() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('({foo})');
+		$route->setDefaults(array('foo' => 'bar'));
+
+		$this->assertTrue($route->matches(''), 'Route should match if optional Route Part has a default value.');
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function defaultValuesAreSetForUriPatternSegmentsWithMultipleOptionalRouteParts() {
+		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
+		$route->setUriPattern('{key1}-({key2})/({key3}).({key4}.{@format})');
+		$defaults = array(
+			'key1' => 'defaultValue1',
+			'key2' => 'defaultValue2',
+			'key3' => 'defaultValue3',
+			'key4' => 'defaultValue4'
+		);
+		$route->setDefaults($defaults);
+		$route->matches('foo-/.bar.xml');
+
+		$this->assertEquals(array('key1' => 'foo', 'key2' => 'defaultValue2', 'key3' => 'defaultValue3', 'key4' => 'bar', '@format' => 'xml'), $route->getMatchResults(), 'Route match results should be set correctly on successful match');
 	}
 
 	/*                                                                        *
 	 * URI resolving                                                          *
 	 *                                                                        */
+
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -442,7 +657,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	public function matchingRouteIsProperlyResolved() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 		$route->setDefaults(array('@format' => 'xml'));
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4');
 
@@ -456,7 +671,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function routeCantBeResolvedIfUriPatternContainsLessValuesThanAreSpecified() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]-[key2]/[key3].[key4].[@format]');
+		$route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 		$route->setDefaults(array('@format' => 'xml'));
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
 
@@ -495,7 +710,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function matchingRequestPathIsNullAfterUnsuccessfulResolve() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]');
+		$route->setUriPattern('{key1}');
 		$routeValues = array('key1' => 'value1');
 
 		$this->assertTrue($route->resolves($routeValues));
@@ -509,28 +724,10 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function registeredRoutePartHandlerIsInvokedWhenCallingMatch() {
-		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler');
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/[key2]');
-		$route->setRoutePartHandlers(
-			array(
-				'key1' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
-			)
-		);
-		$route->matches('foo/bar');
-
-		$this->assertEquals(array('key1' => '_match_invoked_', 'key2' => 'bar'), $route->getMatchResults());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function registeredRoutePartHandlerIsInvokedWhenCallingResolve() {
 		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler');
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('[key1]/[key2]');
+		$route->setUriPattern('{key1}/{key2}');
 		$route->setRoutePartHandlers(
 			array(
 				'key1' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
@@ -540,77 +737,6 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$route->resolves($routeValues);
 
 		$this->assertEquals('_resolve_invoked_/value2', $route->getMatchingURI());
-	}
-
-	/*                                                                        *
-	 * URI resolving (query strings)                                          *
-	 *                                                                        */
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithOneStaticQueryParameter() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=value1');
-		$routeValues = array();
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?param1=value1', $route->getMatchingURI());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithMultipleStaticQueryParameter() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=value1&param2=value2&param3=value3');
-		$routeValues = array();
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?param1=value1&param2=value2&param3=value3', $route->getMatchingURI());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithOneDefaultDynamicQueryParameter() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[value1]');
-		$route->setDefaults(array('value1' => 'defaultValue1'));
-		$routeValues = array();
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?param1=defaultvalue1', $route->getMatchingURI());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithMultipleDefaultDynamicQueryParameters() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]&param2=[param2]');
-		$route->setDefaults(array('param1' => 'defaultValue1', 'param2' => 'defaultValue2'));
-		$routeValues = array();
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?param1=defaultvalue1&param2=defaultvalue2', $route->getMatchingURI());
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function routeCanResolveUrisWithQueryParameters() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setUriPattern('search?param1=[param1]');
-		$routeValues = array('param1' => 'foo');
-
-		$this->assertTrue($route->resolves($routeValues));
-		$this->assertEquals('search?param1=foo', $route->getMatchingURI());
 	}
 }
 ?>

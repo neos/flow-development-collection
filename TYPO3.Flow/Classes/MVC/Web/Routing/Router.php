@@ -112,11 +112,10 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
 		$requestPath = substr($request->getRequestURI()->getPath(), strlen((string)$request->getBaseURI()->getPath()));
 		if (substr($requestPath, 0, 9) == 'index.php' || substr($requestPath, 0, 13) == 'index_dev.php') {
-			$requestPath = strstr($requestPath, '/');
+			$requestPath = ltrim(strstr($requestPath, '/'), '/');
 		}
-		$requestQuery = $request->getRequestURI()->getQuery();
 		foreach (array_reverse($this->routes) as $route) {
-			if ($route->matches($requestPath, $requestQuery)) {
+			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
 				foreach ($matchResults as $argumentName => $argumentValue) {
 					if ($argumentName{0} == '@') {
