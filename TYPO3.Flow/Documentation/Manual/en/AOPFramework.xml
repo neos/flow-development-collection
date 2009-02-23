@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:xl="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -638,14 +638,18 @@ class FooSecurityAspect {
 class PointcutTestingAspect {
 
 	/**
-	 * Pointcut which includes all method executions in pointcutTestingTargetClasses except those from Target Class number 3.
+	 * Pointcut which includes all method executions in
+	 * pointcutTestingTargetClasses except those from Target
+	 * Class number 3.
 	 *
-	 * @pointcut method(F3\TestPackage\PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; !method(F3\TestPackage\PointcutTestingTargetClass3-&gt;.*())
+	 * @pointcut method(F3\TestPackage\PointcutTestingTargetClass.*-&gt;.*()) &amp;&amp; ⏎
+      !method(F3\TestPackage\PointcutTestingTargetClass3-&gt;.*())
 	 */
 	public function pointcutTestingTargetClasses() {}
 
 	/**
-	 * Pointcut which consists of only the F3\TestPackage\OtherPointcutTestingTargetClass.
+	 * Pointcut which consists of only the
+	 * F3\TestPackage\OtherPointcutTestingTargetClass.
 	 *
 	 * @pointcut method(F3\TestPackage\OtherPointcutTestingTargetClass-&gt;.*())
 	 */
@@ -654,7 +658,8 @@ class PointcutTestingAspect {
 	/**
 	 * A combination of both above pointcuts
 	 *
-	 * @pointcut F3\TestPackage\PointcutTestingAspect-&gt;pointcutTestingTargetClasses || F3\TestPackage\PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
+	 * @pointcut F3\TestPackage\PointcutTestingAspect-&gt;pointcutTestingTargetClasses ⏎
+      || F3\TestPackage\PointcutTestingAspect-&gt;otherPointcutTestingTargetClass
 	 * @author Robert Lemke &lt;robert@typo3.org&gt;
 	 */
 	public function bothPointcuts() {}
@@ -667,7 +672,8 @@ class PointcutTestingAspect {
 	public function serviceLayerClasses() {}
 
 	/**
-	 * A pointcut which matches any method from the BasicClass and all classes from the service layer
+	 * A pointcut which matches any method from the BasicClass and all classes
+	 * from the service layer
 	 *
 	 * @pointcut method(F3\TestPackage\Basic.*-&gt;.*()) || within(F3\FLOW3\Service.*)
 	 */
@@ -705,11 +711,13 @@ class PointcutTestingAspect {
           <title>Declaration of a before advice</title>
 
           <para><programlisting language="php">	/**
-	 * Before advice which is invoked before any method call within the News package
+	 * Before advice which is invoked before any method call within the News 
+	 * package
 	 *
 	 * @before class(F3\News\.*-&gt;.*())
 	 */
-	public function myBeforeAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function myBeforeAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+    $joinPoint) {
 	}</programlisting></para>
         </example></para>
     </section>
@@ -728,9 +736,11 @@ class PointcutTestingAspect {
         <para><programlisting language="php">	/**
 	 * After returning advice
 	 *
-	 * @afterreturning method(public F3\News\FeedAgregator-&gt;[import|update].*()) || F3\MyPackage\MyAspect-&gt;someOtherPointcut
+	 * @afterreturning method(public F3\News\FeedAgregator-&gt;[import|update].*()) ⏎
+      || F3\MyPackage\MyAspect-&gt;someOtherPointcut
 	 */
-	public function myAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+    $joinPoint) {
 	}</programlisting></para>
       </example>
     </section>
@@ -750,7 +760,8 @@ class PointcutTestingAspect {
 	 *
 	 * @afterthrowing within(F3\News\ImportantLayer)
 	 */
-	public function myAfterThrowingAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function myAfterThrowingAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+    $joinPoint) {
 	}</programlisting></para>
       </example>
     </section>
@@ -840,7 +851,9 @@ class PointcutTestingAspect {
 
           <mediaobject>
             <imageobject>
-              <imagedata fileref="AOPFramework_AdviceChain.png"></imagedata>
+              <imagedata contentdepth="100%"
+                         fileref="AOPFramework_AdviceChain.png" scalefit="1"
+                         width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </figure></para>
@@ -877,7 +890,8 @@ class LoggingAspect {
 	 * @param  \F3\FLOW3\Log\SystemLoggerInterface $logger The System Logger
 	 * @return void
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface ⏎
+    $systemLogger) {
 		$this-&gt;logger = $systemLogger;
 	}
 
@@ -889,7 +903,8 @@ class LoggingAspect {
 	 * @before method(F3\MyPackage\.*-&gt;.*())
 	 */
 	public function logMethodExecution(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		$logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . $joinPoint-&gt;getClassName() . ' has been called.';
+		$logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . ⏎
+    $joinPoint-&gt;getClassName() . ' has been called.';
 		$this-&gt;logger-&gt;log($logMessage);
 	}
 }</programlisting>
@@ -931,7 +946,7 @@ class LastNameRejectionAspect {
 	/**
 	 * Around advice, rejects the lastname "Sarkosh"
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point
+	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return mixed Result of the target method
 	 * @around F3\MyPackage\LastNameRejectionAspect-&gt;guestbookSubmissionPointcut
 	 */
@@ -1007,15 +1022,16 @@ class IntroductionAspect {
 	public $newInterface;
 
 	/**
-	 * Around advice, implements the new method "newMethod" of the "NewInterface" interface
+	 * Around advice, implements the new method "newMethod" of the
+	 * "NewInterface" interface
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point
+	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @around method(F3\MyPackage\OldClass-&gt;newMethod())
 	 */
 	public function newMethod(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-			// We call the advice chain, in case any other advice is declared for this method,
-			// but we don't care about the result.
+			// We call the advice chain, in case any other advice is declared for
+			// this method, but we don't care about the result.
 		$someResult = $joinPoint-&gt;getAdviceChain-&gt;proceed($joinPoint);
 
 		$a = $joinPoint-&gt;getMethodArgument('a');
@@ -1041,10 +1057,12 @@ class IntroductionAspect {
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="AOPFramework_ProxyBuildingProcess.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="AOPFramework_ProxyBuildingProcess.png"
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
     </section>
   </section>
-</section>
+</chapter>

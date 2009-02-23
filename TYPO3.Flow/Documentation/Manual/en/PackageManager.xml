@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
          xmlns:ns4="http://www.w3.org/1999/xhtml"
@@ -260,7 +260,7 @@
                       <term><filename>Public</filename></term>
 
                       <listitem>
-                        <para>Contains private resources for the
+                        <para>Contains public resources for the
                         package.</para>
                       </listitem>
                     </varlistentry>
@@ -405,18 +405,24 @@
     follows a RelaxNG schema which is available at <link
     ns6:href="http://typo3.org/ns/2008/flow3/package/Package.rng">http://typo3.org/ns/2008/flow3/package/Package.rng</link>.</para>
 
+    <note>
+      <para>If you are working with Eclipse, you might want to install the
+      <link ns6:href="http://dev3.org">DEV3 plug-in</link> which - among other
+      tools - provides you with a convenient Package.xml editor</para>
+    </note>
+
     <para>Here is an example of a valid <filename>Package.xml</filename>
     file:</para>
 
     <example>
       <title>Package.xml</title>
 
-      <programlisting language="xml">
-&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
-&lt;package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0"&gt;
+      <programlisting language="xml">&lt;?xml version="1.0" encoding="utf-8" standalone="yes" ?&gt;
+&lt;package xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://typo3.org/ns/2008/flow3/package" version="1.0"&gt;
    &lt;key&gt;TestPackage&lt;/key&gt;
    &lt;title&gt;Test Package&lt;/title&gt;
-   &lt;description&gt;The test package to demonstrate the features of Package.xml&lt;/description&gt;
+   &lt;description&gt;Test to demonstrate the features of Package.xml&lt;/description&gt;
    &lt;version&gt;0.0.1&lt;/version&gt;
    &lt;state&gt;Alpha&lt;/state&gt;
    &lt;categories&gt;
@@ -445,7 +451,6 @@
          &lt;package minVersion="1.0.0" maxVersion="1.9.9"&gt;FLOW3&lt;/package&gt;
          &lt;system type="PHP" minVersion="5.1.0" /&gt;
          &lt;system type="PHPExtension"&gt;xml&lt;/system&gt;
-         &lt;system type="PHPExtension"&gt;pgsql&lt;/system&gt;
          &lt;system type="PEAR" minVersion="1.5.1"&gt;XML_RPC&lt;/system&gt;
       &lt;/depends&gt;
       &lt;conflicts&gt;
@@ -476,14 +481,7 @@
       &lt;/uploads&gt;
    &lt;/repository&gt;
 &lt;/package&gt;
-
       </programlisting>
     </example>
-
-    <note>
-      <para>If you are working with Eclipse, you might want to install the
-      <link ns6:href="http://dev3.org">DEV3 plug-in</link> which - among other
-      tools - provides you with a convenient Package.xml editor</para>
-    </note>
   </section>
-</section>
+</chapter>

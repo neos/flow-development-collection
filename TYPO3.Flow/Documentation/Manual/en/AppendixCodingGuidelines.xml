@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
-         xmlns:xl="http://www.w3.org/1999/xlink"
-         xmlns:xi="http://www.w3.org/2001/XInclude"
-         xmlns:xhtml="http://www.w3.org/1999/xhtml"
-         xmlns:svg="http://www.w3.org/2000/svg"
-         xmlns:ns="http://docbook.org/ns/docbook"
-         xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+<appendix version="5.0" xmlns="http://docbook.org/ns/docbook"
+          xmlns:xl="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:xhtml="http://www.w3.org/1999/xhtml"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns="http://docbook.org/ns/docbook"
+          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Coding Guidelines</title>
 
   <para>Coding Standards are an important factor for achieving a high code
@@ -674,7 +674,7 @@ public function getContextName() {
       <section>
         <title>Arrays</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
@@ -694,7 +694,7 @@ class MyObject {
       <section>
         <title>Functions and methods</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
@@ -703,11 +703,18 @@ class MyObject {
         <para><itemizedlist>
             <listitem>
               <para>There needs to be one space between the
-              <function>if</function> keyword and the opening brace "("</para>
+              <function>if</function> keyword and the opening brace "(" of the
+              test expression</para>
             </listitem>
 
             <listitem>
-              <para>...</para>
+              <para>After the closing brace ")" of the test expression follows
+              one space before the curly brace "{"</para>
+            </listitem>
+
+            <listitem>
+              <para><function>else</function> and <function>elseif</function>
+              are on the same line as their corresponding curly braces</para>
             </listitem>
           </itemizedlist><example>
             <title>if statements</title>
@@ -718,7 +725,7 @@ class MyObject {
    doSomethingElse();
 }
 
-if (allGoesWrong() === TRUE) throw new \Exception('Hey, all went wrong!', 12345);
+if (allGoesWrong() === TRUE) throw new \Exception('Hey, all went wrong!', 123);
 
 if (weHaveALotOfCriteria() === TRUE
    &amp;&amp; notEverythingFitsIntoOneLine() === TRUE
@@ -798,8 +805,8 @@ if (weHaveALotOfCriteria() === TRUE
           <para>The $Id$ in the version tag will be expanded with information
           about the file version by Subversion. This so-called keyword
           expansion needs to be explicitly enabled, though! We recommend to
-          put this into your <filename>~.subversion/config
-          file</filename>:</para>
+          put this into your <filename>~.subversion/config</filename>
+          file:</para>
 
           <example>
             <title>Suggested configuration for Subversion in
@@ -810,7 +817,8 @@ global-ignores = #*# *.rej *.orig *.bak *~ .*
 log-encoding = utf-8
 enable-auto-props = yes
 [auto-props]
-*.php = svn:keywords=Id Revision</literallayout></para>
+*.php = svn:keywords=Id Revision
+*.yaml = svn:keywords=Id Revision</literallayout></para>
           </example>
 
           <para>This does a little more than just enable the keyword
@@ -844,7 +852,8 @@ enable-auto-props = yes
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
  */
 class SomeClass {
  ...</programlisting>
@@ -863,7 +872,8 @@ class SomeClass {
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
  * @author Your Name &lt;your@email.here&gt;
  */
 interface SomeInterface {
@@ -883,7 +893,8 @@ interface SomeInterface {
  * @package [packagename]
  * @subpackage [subpackage name if necessary]
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
  */
 class SomeException extends \Exception {
  ...</programlisting>
@@ -1141,7 +1152,8 @@ namespace F3\Your\Stuff\Here;
             <title>Bad coding smell: Comments</title>
 
             <programlisting language="php">   // We only allow valid persons:
-if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidden === FALSE &amp;&amp; $this-&gt;environment-&gt;moonPhase === MOON_LIB::CRESCENT) {
+if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidden === FALSE &amp;&amp; ↩
+  $this-&gt;environment-&gt;moonPhase === MOON_LIB::CRESCENT) {
    $xmM = $thd;
 }</programlisting>
           </example></para>
@@ -1186,12 +1198,25 @@ if (is_object($p) &amp;&amp; strlen($p-&gt;lastN) &gt; 0 &amp;&amp; $p-&gt;hidde
       <literallayout>+ \F3\FLOW3\Exception
   + \F3\FLOW3\Object\Exception
     + \F3\FLOW3\Object\Exception\InvalidObjectName</literallayout>
+
+      <section>
+        <title>Throwing an exception</title>
+
+        <para>When throwing an exception, make sure to provide a clear error
+        message and an error code being the unix timestamp of when you write
+        the <function>throw</function> statement. That error code must be
+        unique, so watch out when doing copy and paste!</para>
+
+        <para>For every exception there should be a page on the TYPO3 wiki, as
+        exception messages link to that page, identified by the error code
+        (unix timestamp).</para>
+      </section>
     </section>
 
     <section>
       <title>Cross platform issues</title>
 
-      <para></para>
+      <para/>
     </section>
   </section>
-</section>
+</appendix>

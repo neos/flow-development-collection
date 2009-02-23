@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
          xmlns:ns4="http://www.w3.org/2000/svg"
@@ -53,7 +53,9 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="MVCFramework_ModelViewController.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="MVCFramework_ModelViewController.png"
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -119,8 +121,8 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 }</programlisting>
       </example>
 
-      <para>Provided that the web root directory of your local server points
-      to FLOW3's <filename>public/</filename> directory, you will get the
+      <para>Provided that the document root of your local server points to
+      FLOW3's <filename>Public/</filename> directory, you will get the
       following output when calling the URI
       <uri>http://localhost/demo/</uri>:</para>
 
@@ -284,8 +286,9 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="MVCFramework_RequestResponseWorkflow.png"
-                       scalefit="1"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="MVCFramework_RequestResponseWorkflow.png"
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -631,4 +634,4 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       flow3-manual/</code></para>
     </example>
   </section>
-</section>
+</chapter>

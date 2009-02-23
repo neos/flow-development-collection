@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:xl="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -18,7 +18,9 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="PersistenceFramework_BlogDomainModel.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="PersistenceFramework_BlogDomainModel.png"
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure></para>
@@ -182,6 +184,12 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         <title>Persistence-related code annotations</title>
 
         <tgroup cols="3">
+          <colspec colwidth="1*" />
+
+          <colspec colwidth="1*" />
+
+          <colspec colwidth="4*" />
+
           <thead>
             <row>
               <entry>Annotation</entry>
@@ -286,7 +294,9 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
           <mediaobject>
             <imageobject>
-              <imagedata fileref="PersistenceFramework_PersistenceProcess.png"></imagedata>
+              <imagedata contentdepth="100%"
+                         fileref="PersistenceFramework_PersistenceProcess.png"
+                         scalefit="1" width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </figure>Keep in mind that the diagram omits some details like dirty
@@ -307,7 +317,9 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 
           <mediaobject>
             <imageobject>
-              <imagedata fileref="PersistenceFramework_QueryProcess.png"></imagedata>
+              <imagedata contentdepth="100%"
+                         fileref="PersistenceFramework_QueryProcess.png"
+                         scalefit="1" width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </figure>For the developer the complexity is hidden between the
@@ -321,4 +333,4 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       Repository.</para>
     </section>
   </section>
-</section>
+</chapter>

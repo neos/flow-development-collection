@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
          xmlns:ns4="http://www.w3.org/2000/svg"
@@ -391,7 +391,8 @@ declare(ENCODING="utf-8");
  * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
  */
 
-$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
+$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = ⏎
+    '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
 
 ?&gt;</programlisting>
       </example>
@@ -475,7 +476,8 @@ class SomeClass {
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
 	 * @return void
 	 */
-	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager ⏎
+    $configurationManager) {
 		$this-&gt;configurationManager = $configurationManager;
 	}
 
@@ -509,4 +511,4 @@ class SomeClass {
       for object configuration).</para>
     </section>
   </section>
-</section>
+</chapter>

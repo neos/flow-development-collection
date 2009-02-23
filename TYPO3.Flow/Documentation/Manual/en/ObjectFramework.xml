@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<section version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
          xmlns:xl="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
          xmlns:xhtml="http://www.w3.org/1999/xhtml"
@@ -31,7 +31,7 @@
     factory method) and finally assure a certain scope for the object (such as
     <firstterm>Singleton</firstterm> or <firstterm>Prototype</firstterm>).
     <personname> <firstname>Howard</firstname> <othername>Lewis</othername>
-    <surname>Ship</surname> </personname>explained this circumstances nicely
+    <surname>Ship</surname> </personname> explained this circumstances nicely
     in <link
     xl:href="http://tapestryjava.blogspot.com/2004/08/dependency-injection-mirror-of-garbage.html">his
     blog</link> (quite some time ago):</para>
@@ -65,6 +65,10 @@
         <title>Supported scopes</title>
 
         <tgroup cols="2">
+          <colspec colwidth="1*" />
+
+          <colspec colwidth="3*" />
+
           <thead>
             <row>
               <entry align="center">Scope</entry>
@@ -93,7 +97,9 @@
             </row>
 
             <row>
-              <entry>session <remark>Not yet implemented</remark></entry>
+              <entry>session<footnote>
+                  <remark>Not yet implemented</remark>
+                </footnote></entry>
 
               <entry>The object instance is unique during the whole user
               session - each injection or <function>getObject</function> call
@@ -119,7 +125,7 @@ class ASingletonClass {
 
 	protected static $instance;
 
-	public static function getInstance() {
+	static public function getInstance() {
 		if (!is_object(self::$instance)) {
 			self::$instance = $this;
 		}
@@ -176,7 +182,8 @@ class SomeClass {
       simply passed as additional arguments to the
       <methodname>create</methodname> method:</para>
 
-      <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName', 'first argument', $secondArgument, 42, $fourthArgument);</programlisting></para>
+      <para><programlisting language="php">$myFreshObject = $objectFactory-&gt;create('F3\MyPackage\MyClassName', ↩
+   'first argument', $secondArgument, 42, $fourthArgument);</programlisting></para>
     </section>
 
     <section>
@@ -205,10 +212,10 @@ class SampleClass {
 
 	/**
 	 * Constructor.
-	 * The Object Factory will automatically be passed (injected) by the object framework on
-	 * instantiating this class.
+	 * The Object Factory will automatically be passed (injected) by the object 
+	 * framework on instantiating this class.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this-&gt;objectFactory = $objectFactory;
@@ -319,14 +326,17 @@ class Address {
       <example>
         <title>Passing constructor arguments</title>
 
-        <programlisting language="php">	# Explicitly fetch a unique instance of the address book (but better use Dependency Injection ...):
+        <programlisting language="php">// Explicitly fetch a unique instance of the address book (but better use 
+// Dependency Injection ...):
 $myAddressBook = $objectManager-&gt;getObject('F3\Address\AddressBook');
 
-	# Create two new addresses and add them to the address book:
-$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', '2720', 'København', 'DK');
+// Create two new addresses and add them to the address book:
+$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'Tryggevældevej', ↩
+    '2720', 'København', 'DK');
 $myAddresbook-&gt;addAddress($newAddress);
 
-$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'An den Brodbänken', '21335', 'Lüneburg', 'DE');
+$newAddress = $objectFactory-&gt;create('F3\Address\Address', 'An den Brodbänken', ↩
+   '21335', 'Lüneburg', 'DE');
 $myAddresbook-&gt;addAddress($newAddress);</programlisting>
       </example>
     </section>
@@ -490,7 +500,7 @@ Destructing object ...</screen>
       class implementing that interface. Object types can be created and
       retrieved like regular objects:</para>
 
-      <programlisting language="php">$objectTypeInstance = $objectFactory-&gt;create('F3\SomePackage\SomeInterfaceName');</programlisting>
+      <programlisting language="php">$objectTypeInstance = $objectFactory-&gt;create('F3\MyPackage\MyInterface');</programlisting>
 
       <para>If exactly one class implements the
       <interfacename>F3\SomePackage\SomeInterfaceName</interfacename>
@@ -1069,7 +1079,8 @@ $c['F3\MyPackage\Foo']-&gt;arguments-&gt;array(
 $c['F3\MyPackage\Foo']-&gt;arguments-&gt;3-&gt;value = FALSE;
 
 $c['F3\MyPackage\Foo']-&gt;properties-&gt;bar-&gt;object = 'F3\MyPackage\BarInterface';
-$c['F3\MyPackage\Foo']-&gt;properties-&gt;enableCache-&gt;setting = 'MyPackage.Cache.enable';
+$c['F3\MyPackage\Foo']-&gt;properties-&gt;enableCache-&gt;setting = ↩
+    'MyPackage.Cache.enable';
 
 ?&gt;</programlisting>
         </example>
@@ -1152,7 +1163,8 @@ class Greeter {
       <example>
         <title>Code using the object F3_MyPackage_Greeter</title>
 
-        <programlisting language="php">   // Use setter injection for fetching an instance of the \F3\MyPackage\Greeter object:
+        <programlisting language="php">  // Use setter injection for fetching an instance 
+  // of the \F3\MyPackage\Greeter object:
 public function injectGreeter(\F3\MyPackage\Greeter $greeter) {
 	$this-&gt;greeter = $greeter;
 }
@@ -1172,7 +1184,8 @@ public function someAction() {
       <example>
         <title>Objects.yaml file for object replacement</title>
 
-        <programlisting language="php">   # Change the name of the class which represents the object "F3\MyPackage\Greeter":
+        <programlisting language="yaml">  // Change the name of the class which
+  // represents the object F3\MyPackage\Greeter
 F3\MyPackage\Greeter: className: F3\OtherPackage\GreeterWithCompliments</programlisting>
       </example>
 
@@ -1216,7 +1229,8 @@ class GreeterWithCompliments implements \F3\MyPackage\GreeterInterface{
         <title>Code using the object type
         F3\MyPackage\GreeterInterface</title>
 
-        <programlisting language="php">   // Use setter injection for fetching an instance of the \F3\MyPackage\Greeter object:
+        <programlisting language="php">  // Use setter injection for fetching an instance ↩
+  // of the \F3\MyPackage\Greeter object:
 public function injectGreeter(\F3\MyPackage\GreeterInterface $greeter) {
 	$this-&gt;greeter = $greeter;
 }
@@ -1233,7 +1247,8 @@ public function someAction() {
       <example>
         <title>Objects.yaml file for object type definition</title>
 
-        <para><programlisting language="php">F3\MyPackage\GreeterInterface: className: F3\OtherPackage\GreeterWithCompliments</programlisting></para>
+        <para><programlisting language="yaml">F3\MyPackage\GreeterInterface:
+  className: 'F3\OtherPackage\GreeterWithCompliments'</programlisting></para>
       </example>
     </section>
 
@@ -1296,7 +1311,8 @@ class Foo {
 	protected $identifier;
 	protected $enableCache;
 
-	public function __construct(\F3\MyPackage\BarInterface $bar, $identifier, $enableCache) {
+	public function __construct(\F3\MyPackage\BarInterface $bar, $identifier, ↩
+    $enableCache) {
 		$this-&gt;bar = $bar;
 		$this-&gt;identifier = $identifier;
 		$this-&gt;enableCache = $enableCache;
@@ -1367,7 +1383,7 @@ class Foo {
         <example>
           <title>Sample configuration for Setter Injection</title>
 
-          <programlisting language="php">F3\MyPackage\Foo:
+          <programlisting language="yaml">F3\MyPackage\Foo:
   properties:
     bar: { object: F3\MyPackage\Bar }
     identifier: { value: "some string" }
@@ -1393,7 +1409,7 @@ class Foo {
         <example>
           <title>Injecting an object specified in the settings</title>
 
-          <programlisting language="php">F3\MyPackage\Foo:
+          <programlisting language="yaml">F3\MyPackage\Foo:
   properties:
     bar: { object: MyPackage.fooStuff.barImplementation }</programlisting>
         </example>
@@ -1401,7 +1417,7 @@ class Foo {
         <example>
           <title>Example Settings.yaml of MyPackage</title>
 
-          <programlisting language="php">fooStuff:
+          <programlisting language="yaml">fooStuff:
   barImplementation: F3\MyPackage\Bars\ASpecialBar</programlisting>
         </example>
       </section>
@@ -1425,7 +1441,7 @@ class Foo {
         <example>
           <title>Nesting object configuration</title>
 
-          <programlisting language="php">F3\MyPackage\Controller\DefaultController:
+          <programlisting language="yaml">F3\MyPackage\Controller\DefaultController:
   properties:
     cache:
       object:
@@ -1458,7 +1474,7 @@ class Foo {
         <example>
           <title>Turning off autowiring support in Objects.yaml</title>
 
-          <programlisting language="php">F3\MyPackage\MyObject:
+          <programlisting language="yaml">F3\MyPackage\MyObject:
   autoWiringMode: off;</programlisting>
         </example>
       </section>
@@ -1475,7 +1491,8 @@ class Foo {
       provides a convenient <methodname>create</methodname> method taking care
       of all the rest.</para>
 
-      <programlisting language="php">$myCache = $cacheFactory-&gt;create('MyCache', 'F3\FLOW3\Cache\VariableCache', 'F3\FLOW3\Cache\Backend\File', array('cacheDirectory' =&gt; '/tmp'));</programlisting>
+      <programlisting language="php">$myCache = $cacheFactory-&gt;create('MyCache', 'F3\FLOW3\Cache\VariableCache', ↩
+    'F3\FLOW3\Cache\Backend\File', array('cacheDirectory' =&gt; '/tmp'));</programlisting>
 
       <para>It is possible to specify for each object if it should be created
       by a custom factory rather than the Object Builder. Consider the
@@ -1484,7 +1501,7 @@ class Foo {
       <example>
         <title>Sample configuration for a Custom Factory</title>
 
-        <programlisting language="php">F3\FLOW3\Cache\CacheInterface:
+        <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
   factoryClassName: F3\FLOW3\Cache\Factory
   factoryMethodName: create</programlisting>
       </example>
@@ -1500,7 +1517,7 @@ class Foo {
         <title>YAML configuration for a Custom Factory with default
         arguments</title>
 
-        <programlisting language="php">F3\FLOW3\Cache\CacheInterface:
+        <programlisting language="yaml">F3\FLOW3\Cache\CacheInterface:
   factoryClassName: F3\FLOW3\Cache\Factory
   arguments:
     2: value: F3\FLOW3\Cache\VariableCache
@@ -1539,10 +1556,10 @@ class Foo {
         <title>Objects.yaml configuration of the initialization and shutdown
         method</title>
 
-        <programlisting language="php">F3\MyPackage\MyObject:
+        <programlisting language="yaml">F3\MyPackage\MyObject:
   lifecycleInitializationMethod: myInitializeMethodname
   lifecycleShutdownMethod: myShutdownMethodname</programlisting>
       </example>
     </section>
   </section>
-</section>
+</chapter>

@@ -6,29 +6,36 @@
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns:ns="http://docbook.org/ns/docbook"
       xmlns:mathml="http://www.w3.org/1998/Math/MathML">
-  <info>
-    <title>FLOW3</title>
 
+  <title>FLOW3 Framework</title>
+
+  <!-- Meta information -->
+
+  <info>
     <abstract>
       <para>FLOW3 is a modern application framework for enterprise-grade PHP
       applications. This reference describes FLOW3's main features.</para>
     </abstract>
 
     <author>
-      <personname><firstname>Robert</firstname><surname>Lemke</surname></personname>
+      <personname>
+        <firstname>Robert</firstname>
+
+        <surname>Lemke</surname>
+      </personname>
 
       <email>robert@typo3.org</email>
     </author>
 
     <author>
-      <personname><firstname>Karsten</firstname><surname>Dambekalns</surname></personname>
+      <personname>
+        <firstname>Karsten</firstname>
+
+        <surname>Dambekalns</surname>
+      </personname>
 
       <email>karsten@typo3.org</email>
     </author>
-
-    <authorinitials>robert</authorinitials>
-
-    <authorinitials>karsten</authorinitials>
 
     <copyright>
       <year>2007</year>
@@ -43,35 +50,32 @@
     </copyright>
   </info>
 
-  <chapter>
-    <title>FLOW3</title>
+  <!-- Chapters -->
 
-    <xi:include href="Introduction.xml" />
+  <xi:include href="Introduction.xml" />
 
-    <xi:include href="FLOW3Bootstrap.xml" />
+  <xi:include href="FLOW3Bootstrap.xml" />
 
-    <xi:include href="PackageManager.xml" />
+  <xi:include href="PackageManager.xml" />
 
-    <xi:include href="ObjectFramework.xml" />
+  <xi:include href="ObjectFramework.xml" />
 
-    <xi:include href="ConfigurationFramework.xml" />
+  <xi:include href="ConfigurationFramework.xml" />
 
-    <xi:include href="ResourceManager.xml" />
+  <xi:include href="ResourceManager.xml" />
 
-    <xi:include href="MVCFramework.xml" />
+  <xi:include href="MVCFramework.xml" />
 
-    <xi:include href="CacheFramework.xml" />
+  <xi:include href="CacheFramework.xml" />
 
-    <xi:include href="ErrorException.xml" />
+  <xi:include href="ErrorException.xml" />
 
-    <xi:include href="AOPFramework.xml" />
+  <xi:include href="AOPFramework.xml" />
 
-    <xi:include href="PersistenceFramework.xml" />
-  </chapter>
+  <xi:include href="PersistenceFramework.xml" />
 
-  <appendix>
-    <title>Coding Guidelines</title>
+  <!-- Appendixes -->
 
-    <xi:include href="AppendixCodingGuidelines.xml" />
-  </appendix>
+  <xi:include href="AppendixCodingGuidelines.xml" />
+
 </book>
