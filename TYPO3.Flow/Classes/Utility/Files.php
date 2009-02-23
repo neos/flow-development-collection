@@ -90,10 +90,10 @@ class Files {
 
 		$directoryIterator = new \DirectoryIterator($path);
 		foreach ($directoryIterator as $file) {
-			if ($file->isFile() && \F3\PHP6\Functions::substr($file->getFilename(),0,1) != '.') {
-				$files[] = \F3\FLOW3\Utility\Files::getUnixStylePath($file->getPathname());
+			if ($file->isFile() && substr($file->getFilename(),0,1) != '.') {
+				$files[] = self::getUnixStylePath($file->getPathname());
 			}
-			if ($file->isDir() && \F3\PHP6\Functions::substr($file->getFilename(),0,1) != '.') {
+			if ($file->isDir() && substr($file->getFilename(),0,1) != '.') {
 				self::readDirectoryRecursively($file->getPathname(), $files);
 			}
 		}
@@ -104,7 +104,7 @@ class Files {
 	 * Deletes all files, directories and subdirectories from the specified
 	 * directory. The passed directory itself won't be deleted though.
 	 *
-	 * @param string $path: Path to the directory which shall be emptied.
+	 * @param string $path Path to the directory which shall be emptied.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see removeDirectoryRecursively()
@@ -128,21 +128,21 @@ class Files {
 	 * directory. Contrary to emptyDirectoryRecursively() this function will
 	 * also finally remove the emptied directory.
 	 *
-	 * @param  string $path: Path to the directory which shall be removed completely.
+	 * @param  string $path Path to the directory which shall be removed completely.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see emptyDirectoryRecursively()
 	 */
 	public static function removeDirectoryRecursively($path) {
 		self::emptyDirectoryRecursively($path);
-		rmdir ($path);
+		rmdir($path);
 	}
 
 	/**
 	 * Creates a directory specified by $path. If the parent directories
 	 * don't exist yet, they will be created as well.
 	 *
-	 * @param string $path: Path to the directory which shall be created
+	 * @param string $path Path to the directory which shall be created
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -152,11 +152,34 @@ class Files {
 		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
-		if (!is_dir($path) && \F3\PHP6\Functions::strlen($path) > 0) {
+		if (!is_dir($path) && strlen($path) > 0) {
 			$oldMask = umask(000);
 			mkdir($path, 0777, TRUE);
 			umask($oldMask);
 			if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('Could not create directory "' . $path . '"!', 1170251400);
+		}
+	}
+
+	/**
+	 * Copies the contents of the source directory to the target directory.
+	 * $targetDirectory will be created if it does not exist.
+	 *
+	 * @param string $sourceDirectory
+	 * @param string $targetDirectory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public static function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
+		if (!is_dir($sourceDirectory)) throw new \F3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
+
+		self::createDirectoryRecursively($targetDirectory);
+		if (!is_dir($targetDirectory)) throw new \F3\FLOW3\Utility\Exception('"' . $targetDirectory . '" is no directory.', 1235428779);
+
+		$resourceFilenames = self::readDirectoryRecursively($sourceDirectory);
+		foreach ($resourceFilenames as $filename) {
+			$relativeFilename = str_replace($sourceDirectory, '', $filename);
+			self::createDirectoryRecursively($targetDirectory . dirname($relativeFilename));
+			copy($filename, self::concatenatePaths(array($targetDirectory, $relativeFilename)));
 		}
 	}
 
