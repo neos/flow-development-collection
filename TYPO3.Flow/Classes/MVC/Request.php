@@ -164,7 +164,7 @@ class Request {
 	 * controller name
 	 *
 	 * @return string The controller's Object Name
-	 * @throws \F3\FLOW3\MVC:Exception\NoSuchController if the controller does not exist
+	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getControllerObjectName() {

@@ -29,21 +29,21 @@ namespace F3\FLOW3\MVC\Controller;
  */
 
 /**
- * A Special Case of a Controller: If no controller has been specified in the
- * request, this controller is chosen.
+ * A Special Case of a Controller: If no controller could be resolved this
+ * controller is chosen.
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DefaultController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * @inject
-	 * @var \F3\FLOW3\MVC\View\DefaultView
+	 * @var \F3\FLOW3\MVC\View\NotFoundView
 	 */
-	protected $defaultView;
+	protected $notFoundView;
 
 	/**
 	 * Processes a generic request and fills the response with the default view
@@ -52,21 +52,20 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\Response $response The response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
 		$request->setDispatched(TRUE);
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
-				$this->defaultView->setRequest($request);
-				$response->setContent($this->defaultView->render());
+				$this->notFoundView->setRequest($request);
+				$response->setContent($this->notFoundView->render());
 				break;
 			default :
 				$response->setContent(
 					"\nWelcome to FLOW3!\n\n" .
-					"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
-					"other view is available. Please refer to the Developer's Guide for more information \n" .
-					"how to create and configure one.\n\n" .
-					"Have fun! The FLOW3 Development Team\n"
+					"You see this message because no controller could be resolved.\n" .
+					"Sorry! The FLOW3 Development Team\n"
 				);
 		}
 	}

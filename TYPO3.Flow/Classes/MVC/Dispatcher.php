@@ -66,7 +66,11 @@ class Dispatcher {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
-			$controller = $this->objectManager->getObject($request->getControllerObjectName());
+			try {
+				$controller = $this->objectManager->getObject($request->getControllerObjectName());
+			} catch (\F3\FLOW3\MVC\Exception\NoSuchController $exception) {
+				$controller = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\NotFoundController');
+			}
 			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
 			try {
 				$controller->processRequest($request, $response);

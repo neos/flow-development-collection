@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\Controller;
+namespace F3\FLOW3\MVC\View;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,46 +29,37 @@ namespace F3\FLOW3\MVC\Controller;
  */
 
 /**
- * A Special Case of a Controller: If no controller has been specified in the
- * request, this controller is chosen.
+ * The not found view - a special case.
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class DefaultController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @inject
-	 * @var \F3\FLOW3\MVC\View\DefaultView
+	 * @var \F3\FLOW3\MVC\Request
 	 */
-	protected $defaultView;
+	protected $request;
 
 	/**
-	 * Processes a generic request and fills the response with the default view
+	 * Renders the not found view
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request
-	 * @param \F3\FLOW3\MVC\Response $response The response
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return string The rendered view
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
-		$request->setDispatched(TRUE);
-		switch (get_class($request)) {
-			case 'F3\FLOW3\MVC\Web\Request' :
-				$this->defaultView->setRequest($request);
-				$response->setContent($this->defaultView->render());
-				break;
-			default :
-				$response->setContent(
-					"\nWelcome to FLOW3!\n\n" .
-					"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
-					"other view is available. Please refer to the Developer's Guide for more information \n" .
-					"how to create and configure one.\n\n" .
-					"Have fun! The FLOW3 Development Team\n"
-				);
+	public function render() {
+		if (!is_object($this->request)) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
+
+		$template = $this->objectFactory->create('F3\FLOW3\MVC\View\Template');
+		$template->setTemplateResource($this->resourceManager->getResource('file://FLOW3/Public/MVC/NotFoundView_Template.html')->getContent());
+
+		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
+			$template->setMarkerContent('baseuri', $this->request->getBaseURI());
 		}
+		return $template->render();
 	}
 }
 
