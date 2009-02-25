@@ -59,6 +59,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
 				$this->notFoundView->setRequest($request);
+				$response->setStatus(404);
 				$response->setContent($this->notFoundView->render());
 				break;
 			default :
