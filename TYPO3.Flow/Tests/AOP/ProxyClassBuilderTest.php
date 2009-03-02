@@ -43,7 +43,11 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildProxyClassReturnsFalseIfNoMethodsWereInterceptedNorInterfacesIntroduced() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->will($this->returnValue(array()));
+
 		$builder = $this->getMock('F3\FLOW3\AOP\ProxyClassBuilder', array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
 		$proxyBuildResult = $builder->buildProxyClass(__CLASS__, array(), 'Testing');
 		$this->assertFalse($proxyBuildResult);
 	}
@@ -96,7 +100,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getMethodsFromTargetClassReturnsMethodNamesAndTheirDeclaringClassOfTheSpecifiedClassAndEvenIfTheyDontExistTheConstructAndWakeupMethod() {
 		$className = uniqid('Foo');
-		eval("class $className { public function foo() {} public function bar() {} } ");
+		eval("class $className { public function foo() {} protected function bar() {} } ");
 
 		$expectedMethodNames = array(
 			array(NULL, '__construct'),
@@ -105,9 +109,12 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 			array(NULL, '__wakeup')
 		);
 
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
-		$actualMethodNames = $builder->_call('getMethodsFromTargetClass', $className);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassMethodNames')->with($className)->will($this->returnValue(array('foo', 'bar')));
 
+		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
+		$actualMethodNames = $builder->_call('getMethodsFromTargetClass', $className);
 		$this->assertSame($expectedMethodNames, $actualMethodNames);
 	}
 

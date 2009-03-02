@@ -450,9 +450,20 @@ class Service {
 	 * @param string $className Name of the class to return the method names of
 	 * @return array An array of method names or an empty array if none exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getClassMethodNames($className) {
-		return get_class_methods($className);
+		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
+			if (!isset($this->methodVisibilities[$className])) return array();
+			$methodNames = array_keys($this->methodVisibilities[$className]);
+		} else {
+			$methodNames = array();
+			$class = new \F3\FLOW3\Reflection\ClassReflection($className);
+			foreach ($class->getMethods() as $method) {
+				$methodNames[] = $method->getName();
+			}
+		}
+		return $methodNames;
 	}
 
 	/**

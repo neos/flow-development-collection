@@ -156,7 +156,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @return array results of the matching route
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function findMatchResults($requestPath) {
+	protected function findMatchResults($requestPath) {
 		$this->createRoutesFromConfiguration();
 
 		foreach (array_reverse($this->routes) as $route) {

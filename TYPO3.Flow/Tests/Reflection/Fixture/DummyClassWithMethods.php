@@ -55,7 +55,7 @@ class DummyClassWithMethods {
 	 *
 	 * @return void
 	 */
-	public function secondMethod() {
+	protected function secondMethod() {
 
 	}
 }

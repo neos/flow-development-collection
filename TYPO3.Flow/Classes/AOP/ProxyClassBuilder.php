@@ -186,10 +186,11 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName Name of the target class
 	 * @return array Method information with declaring class and method name pairs
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
-		$existingMethodNames = get_class_methods($targetClassName);
+		$existingMethodNames = $this->reflectionService->getClassMethodNames($targetClassName);
 
 		if (array_search('__construct', $existingMethodNames) === FALSE) $methods[] = array(NULL, '__construct');
 		foreach ($existingMethodNames as $methodName) {
