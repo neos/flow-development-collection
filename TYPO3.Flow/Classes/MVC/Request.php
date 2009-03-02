@@ -59,25 +59,18 @@ class Request {
 	protected $controllerObjectNamePattern = 'F3\@package\Controller\@controllerController';
 
 	/**
-	 * Pattern after which the view object name is built
-	 *
-	 * @var string
-	 */
-	protected $viewObjectNamePattern = 'F3\@package\View\@controller@action@format';
-
-	/**
 	 * Package key of the controller which is supposed to handle this request.
 	 *
 	 * @var string
 	 */
-	protected $controllerPackageKey = 'FLOW3\MVC';
+	protected $controllerPackageKey = NULL;
 
 	/**
 	 * Subpackage key of the controller which is supposed to handle this request.
 	 *
 	 * @var string
 	 */
-	protected $controllerSubpackageKey;
+	protected $controllerSubpackageKey = NULL;
 
 	/**
 	 * @var string Object name of the controller which is supposed to handle this request.
@@ -166,84 +159,22 @@ class Request {
 	 * @return string The controller's Object Name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getControllerObjectName() {
-		$lowercaseObjectName = str_replace('@package', $this->controllerPackageKey, $this->controllerObjectNamePattern);
-		$lowercaseObjectName = str_replace('@subpackage', $this->controllerSubpackageKey, $lowercaseObjectName);
-		$lowercaseObjectName = strtolower(str_replace('@controller', $this->controllerName, $lowercaseObjectName));
+		$packageKey = $this->controllerPackageKey;
+		if ($this->controllerSubpackageKey !== NULL && $this->controllerSubpackageKey !== '') {
+			$packageKey.= '\\' . $this->controllerSubpackageKey;
+		}
+		$possibleObjectName = $this->controllerObjectNamePattern;
+		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
+		$possibleObjectName = str_replace('@controller', $this->controllerName, $possibleObjectName);
+		$lowercaseObjectName = strtolower($possibleObjectName);
+
 		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
 		if ($objectName === FALSE) throw new \F3\FLOW3\MVC\Exception\NoSuchController('The controller object "' . $lowercaseObjectName . '" does not exist.', 1220884009);
 
 		return $objectName;
-	}
-
-	/**
-	 * Sets the pattern for building the controller object name.
-	 *
-	 * The pattern may contain the placeholders "@package" and "@controller" which will be substituted
-	 * by the real package key and controller name.
-	 *
-	 * @param string $pattern The pattern
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setControllerObjectNamePattern($pattern) {
-		$this->controllerObjectNamePattern = $pattern;
-	}
-
-	/**
-	 * Returns the pattern for building the controller object name.
-	 *
-	 * @return string $pattern The pattern
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getControllerObjectNamePattern() {
-		return $this->controllerObjectNamePattern;
-	}
-
-	/**
-	 * Sets the pattern for building the view object name
-	 *
-	 * @param string $pattern The view object name pattern, eg. \F3\@package\View::@controller@action
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setViewObjectNamePattern($pattern) {
-		if (!is_string($pattern)) throw new \InvalidArgumentException('The view object name pattern must be a valid string, ' . gettype($pattern) . ' given.', 1221563219);
-		$this->viewObjectNamePattern = $pattern;
-	}
-
-	/**
-	 * Returns the View Object Name Pattern
-	 *
-	 * @return string The pattern
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getViewObjectNamePattern() {
-		return $this->viewObjectNamePattern;
-	}
-
-	/**
-	 * Returns the view's (possible) object name according to the defined view object
-	 * name pattern and the specified values for package, controller, action and format.
-	 *
-	 * If no valid view object name could be resolved, FALSE is returned
-	 *
-	 * @return mixed Either the view object name or FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getViewObjectName() {
-		$possibleViewName = $this->viewObjectNamePattern;
-		$possibleViewName = str_replace('@package', $this->controllerPackageKey, $possibleViewName);
-		$possibleViewName = str_replace('@subpackage', $this->controllerSubpackageKey, $possibleViewName);
-		$possibleViewName = str_replace('@controller', $this->controllerName, $possibleViewName);
-		$possibleViewName = str_replace('@action', $this->controllerActionName, $possibleViewName);
-
-		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(str_replace('@format', $this->format, $possibleViewName));
-		if ($viewObjectName === FALSE) {
-			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(str_replace('@format', '', $possibleViewName));
-		}
-		return $viewObjectName;
 	}
 
 	/**

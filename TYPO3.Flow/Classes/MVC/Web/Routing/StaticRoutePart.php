@@ -41,8 +41,8 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 
 	/**
 	 * Gets default value of the Route Part.
-	 * 
-	 * @return mixed $defaultValue
+	 *
+	 * @return string $defaultValue
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getDefaultValue() {
@@ -56,6 +56,8 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @param string $requestPath The request path to be matched - without query parameters, host and fragment.
 	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo add configurable case sensitivity
 	 */
 	public function match(&$requestPath) {
 		if ($this->name === NULL || $this->name === '') {
@@ -65,7 +67,7 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 			return FALSE;
 		}
 		$valueToMatch = \F3\PHP6\Functions::substr($requestPath, 0, \F3\PHP6\Functions::strlen($this->name));
-		if ($valueToMatch != $this->name) {
+		if (\F3\PHP6\Functions::strtolower($valueToMatch) != \F3\PHP6\Functions::strtolower($this->name)) {
 			return FALSE;
 		}
 		$requestPath = \F3\PHP6\Functions::substr($requestPath, \F3\PHP6\Functions::strlen($valueToMatch));
@@ -74,16 +76,19 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	}
 
 	/**
-	 * Sets the Route Part value to the Route Part name and returns TRUE.
+	 * Sets the Route Part value to the Route Part name and returns TRUE if successful.
 	 *
 	 * @param array $routeValues not used but needed to implement \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart
-	 * @return boolean always TRUE
+	 * @return boolean
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @todo add configurable case sensitivity
 	 */
 	public function resolve(array &$routeValues) {
 		if ($this->name === NULL || $this->name === '') {
 			return FALSE;
 		}
-		$this->value = $this->name;
+		$this->value = \F3\PHP6\Functions::strtolower($this->name);
 		return TRUE;
 	}
 }

@@ -66,6 +66,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $viewObjectName = NULL;
 
 	/**
+	 * Pattern after which the view object name is built
+	 *
+	 * @var string
+	 */
+	protected $viewObjectNamePattern = 'F3\@package\View\@controller@action@format';
+
+	/**
 	 * Name of the action method
 	 * @var string
 	 */
@@ -205,11 +212,36 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewObjectName = ($this->viewObjectName === NULL) ? $this->request->getViewObjectName() : $this->viewObjectName;
+		$viewObjectName = ($this->viewObjectName === NULL) ? $this->resolveViewObjectName() : $this->viewObjectName;
 		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 
 		$this->view = $this->objectManager->getObject($viewObjectName);
 		$this->view->setRequest($this->request);
+	}
+
+	/**
+	 * Determines the fully qualified view Classname.
+	 *
+	 * @return string The fully qualified view Classname
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function resolveViewObjectName() {
+		$possibleViewName = $this->viewObjectNamePattern;
+		$packageKey = $this->request->getControllerPackageKey();
+		$subpackageKey = $this->request->getControllerSubpackageKey();
+		if ($subpackageKey !== NULL && $subpackageKey !== '') {
+			$packageKey.= '\\' . $subpackageKey;
+		}
+		$possibleViewName = str_replace('@package', $packageKey, $possibleViewName);
+		$possibleViewName = str_replace('@controller', $this->request->getControllerName(), $possibleViewName);
+		$possibleViewName = str_replace('@action', $this->request->getControllerActionName(), $possibleViewName);
+
+		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $this->request->getFormat(), $possibleViewName)));
+		if ($viewObjectName === FALSE) {
+			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewName)));
+		}
+		return $viewObjectName;
 	}
 
 	/**

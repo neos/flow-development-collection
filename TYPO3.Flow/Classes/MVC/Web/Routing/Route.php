@@ -65,31 +65,24 @@ class Route {
 	protected $uriPattern = NULL;
 
 	/**
-	 * @var string
-	 */
-	protected $controllerObjectNamePattern = NULL;
-
-	/**
-	 * @var string
-	 */
-	protected $viewObjectNamePattern = NULL;
-
-	/**
-	 * Contains the routing results (indexed by "package", "controller" and "action") after a successful call of matches()
+	 * Contains the routing results (indexed by "package", "controller" and
+	 * "action") after a successful call of matches()
 	 *
 	 * @var array
 	 */
 	protected $matchResults = array();
 
 	/**
-	 * Contains the matching uri (excluding protocol and host) after a successful call of resolves()
+	 * Contains the matching uri (excluding protocol and host) after a
+	 * successful call of resolves()
 	 *
 	 * @var string
 	 */
 	protected $matchingURI;
 
 	/**
-	 * Contains associative array of custom Route Part handler classnames (key: Route Part name, value: Route Part handler classname)
+	 * Contains associative array of custom Route Part handler classnames
+	 * (key: Route Part name, value: Route Part handler classname)
 	 *
 	 * @var array
 	 */
@@ -108,7 +101,7 @@ class Route {
 	 *
 	 * @var array
 	 */
-	protected $routeParts;
+	protected $routeParts = array();
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
@@ -179,59 +172,15 @@ class Route {
 	}
 
 	/**
-	 * Set a custom controller object name pattern which will be
-	 * passed to the web request.
-	 *
-	 * @param string $pattern A pattern which may contain placeholders
-	 * @return void
-	 * @see \F3\FLOW3\MVC\Web\Request
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setControllerObjectNamePattern($pattern) {
-		$this->controllerObjectNamePattern = $pattern;
-	}
-
-	/**
-	 * Returns the custom controller object name pattern.
-	 *
-	 * @return string The pattern or NULL if none was defined
-	 * @see \F3\FLOW3\MVC\Web\Request
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getControllerObjectNamePattern() {
-		return $this->controllerObjectNamePattern;
-	}
-
-	/**
-	 * Sets a custom view object name pattern which will be
-	 * passed to the web request.
-	 *
-	 * @param string $pattern A pattern which may contain placeholders
-	 * @return void
-	 * @see \F3\FLOW3\MVC\Web\Request
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setViewObjectNamePattern($pattern) {
-		$this->viewObjectNamePattern = $pattern;
-	}
-
-	/**
-	 * Returns the custom view object name pattern.
-	 *
-	 * @return string The pattern or NULL if none was defined
-	 * @see \F3\FLOW3\MVC\Web\Request
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getViewObjectNamePattern() {
-		return $this->viewObjectNamePattern;
-	}
-
-	/**
-	 * By default all Dynamic Route Parts are resolved by \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
+	 * By default all Dynamic Route Parts are resolved by
+	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
-	 * Note: Route Part handlers must implement \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
 	 *
-	 * Usage: setRoutePartHandlers(array('@controller' => 'F3\Package\Subpackage\MyRoutePartHandler'));
+	 * Note: Route Part handlers must implement
+	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
+	 *
+	 * Usage: setRoutePartHandlers(array('@controller' =>
+	 *            'F3\Package\Subpackage\MyRoutePartHandler'));
 	 *
 	 * @param array $routePartHandlers Route Part handler classnames
 	 * @return void
@@ -264,12 +213,14 @@ class Route {
 
 	/**
 	 * Checks whether $requestPath corresponds to this Route.
-	 * If all Route Parts match successfully TRUE is returned and $this->matchResults contains
-	 * an array combining Route default values and calculated matchResults from the individual Route Parts.
+	 * If all Route Parts match successfully TRUE is returned and
+	 * $this->matchResults contains an array combining Route default values and
+	 * calculated matchResults from the individual Route Parts.
 	 *
 	 * @param string $requestPath the request path without protocol, host and query string
 	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see getMatchResults()
 	 */
 	public function matches($requestPath) {
 		$this->matchResults = NULL;
@@ -323,12 +274,14 @@ class Route {
 
 	/**
 	 * Checks whether $routeValues can be resolved to a corresponding uri.
-	 * If all Route Parts can resolve one or more of the $routeValues, TRUE is returned and $this->matchingURI contains
-	 * the generated uri (excluding protocol and host).
+	 * If all Route Parts can resolve one or more of the $routeValues, TRUE is
+	 * returned and $this->matchingURI contains the generated URI (excluding
+	 * protocol and host).
 	 *
 	 * @param array $routeValues An array containing key/value pairs to be resolved to uri segments
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see getMatchingURI()
 	 */
 	public function resolves(array $routeValues) {
 		$this->matchingURI = NULL;
@@ -350,18 +303,18 @@ class Route {
 				}
 			}
 			if (!$routePart->isOptional()) {
-				$matchingURI.= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
+				$matchingURI .= $routePart->hasValue() ? $routePart->getValue() : $routePart->getDefaultValue();
 				$requireOptionalRouteParts = FALSE;
 				continue;
 			}
 			if ($routePart->hasValue() && $routePart->getValue() !== $routePart->getDefaultValue()) {
-				$matchingOptionalUriPortion.= $routePart->getValue();
+				$matchingOptionalUriPortion .= $routePart->getValue();
 				$requireOptionalRouteParts = TRUE;
 			} else {
-				$matchingOptionalUriPortion.= $routePart->getDefaultValue();
+				$matchingOptionalUriPortion .= $routePart->getDefaultValue();
 			}
 			if ($requireOptionalRouteParts) {
-				$matchingURI.= $matchingOptionalUriPortion;
+				$matchingURI .= $matchingOptionalUriPortion;
 				$matchingOptionalUriPortion = '';
 			}
 		}
@@ -379,28 +332,28 @@ class Route {
 			return FALSE;
 		}
 
-		$this->matchingURI = $matchingURI;
 		$this->matchingURI = \F3\PHP6\Functions::strtolower($matchingURI);
 		return TRUE;
 	}
 
 	/**
-	 * Iterates through all segments in $this->uriPattern and creates appropriate Route Part instances.
+	 * Iterates through all segments in $this->uriPattern and creates
+	 * appropriate RoutePart instances.
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function parse() {
-		if ($this->isParsed) {
+		if ($this->isParsed || $this->uriPattern === NULL || $this->uriPattern === '') {
 			return;
 		}
 		$this->routeParts = array();
 		$currentRoutePartIsOptional = FALSE;
 		if (substr($this->uriPattern, -1) === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
 		}
-		if (isset($this->uriPattern{0}) && $this->uriPattern{0} === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" starts with a slash, which is not allowed.', 1234782983);
+		if ($this->uriPattern[0] === '/') {
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" starts with a slash, which is not allowed.', 1234782983);
 		}
 
 		$matches = array();
@@ -446,14 +399,14 @@ class Route {
 			$this->routeParts[] = $routePart;
 			if (!empty($match['optionalEnd'])) {
 				if (!$currentRoutePartIsOptional) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains an unopened optional section.', 1234564495);
+					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" contains an unopened optional section.', 1234564495);
 				}
 				$currentRoutePartIsOptional = FALSE;
 			}
 			$lastRoutePart = $routePart;
 		}
 		if ($currentRoutePartIsOptional) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains an unterminated optional section.', 1234563922);
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" contains an unterminated optional section.', 1234563922);
 		}
 		$this->isParsed = TRUE;
 	}

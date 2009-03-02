@@ -219,3 +219,22 @@ F3\FLOW3\SignalSlot\Dispatcher: []
 F3\FLOW3\Utility\Environment:
   properties:
     temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase
+
+#                                                                          #
+# Routing                                                                  #
+#                                                                          #
+
+F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
+  properties:
+    findMatchResultsCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_MVC_Web_Routing_FindMatchResults
+    resolveCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_MVC_Web_Routing_Resolve

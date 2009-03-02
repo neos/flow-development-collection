@@ -65,6 +65,7 @@ class RouterTest extends \F3\Testing\BaseTestCase {
 
 		$route = new \F3\FLOW3\MVC\Web\Routing\Router($mockObjectManager, $mockObjectFactory, $mockEnvironment);
 		$route->setRoutesConfiguration($routesConfiguration);
+		$route->resolve(array());
 	}
 
 }

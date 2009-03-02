@@ -89,21 +89,23 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeViewPreparesTheViewSpecifiedInTheRequestObjectAndUsesTheEmptyViewIfNoneCouldBeFound() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
-		$mockRequest->expects($this->at(0))->method('getViewObjectName')->will($this->returnValue('Foo'));
-		$mockRequest->expects($this->at(1))->method('getViewObjectName')->will($this->returnValue(FALSE));
+		$mockRequest->expects($this->at(0))->method('getControllerPackageKey')->will($this->returnValue('Foo'));
+		$mockRequest->expects($this->at(1))->method('getControllerSubpackageKey')->will($this->returnValue(''));
+		$mockRequest->expects($this->at(2))->method('getControllerName')->will($this->returnValue('Test'));
+		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('html'));
 
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
-		$mockView->expects($this->exactly(2))->method('setRequest')->with($mockRequest);
+		$mockView->expects($this->exactly(1))->method('setRequest')->with($mockRequest);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('Foo')->will($this->returnValue($mockView));
-		$mockObjectManager->expects($this->at(1))->method('getObject')->with('F3\FLOW3\MVC\View\EmptyView')->will($this->returnValue($mockView));
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('f3\foo\view\testhtml')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('f3\foo\view\test')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\View\EmptyView')->will($this->returnValue($mockView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('objectManager', $mockObjectManager);
 
-		$mockController->_call('initializeView');
 		$mockController->_call('initializeView');
 
 		$this->assertSame($mockView, $mockController->_get('view'));

@@ -64,35 +64,11 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function thePatternForBuildingTheControllerObjectNameCanBeCustomized() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\bar\baz\foo'))
-			->will($this->returnValue('F3\TestPackage\Bar\Baz\Foo'));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
-		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
-			->will($this->returnValue('TestPackage'));
-
-		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
-		$request->injectPackageManager($mockPackageManager);
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Foo');
-		$request->setControllerObjectNamePattern('F3\@package\Bar\Baz\@controller');
-
-		$this->assertEquals('F3\TestPackage\Bar\Baz\Foo', $request->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function lowerCasePackageKeysAndObjectNamesAreConvertedToTheRealObjectName() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('f3\testpackage\bar\baz\foo'))
-			->will($this->returnValue('F3\TestPackage\Bar\Baz\Foo'));
+			->with($this->equalTo('f3\testpackage\bar\baz\controller\foocontroller'))
+			->will($this->returnValue('F3\TestPackage\Bar\Baz\Controller\FooController'));
 
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
 		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
@@ -104,36 +80,9 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$request->injectPackageManager($mockPackageManager);
 		$request->setControllerPackageKey('testpackage');
 		$request->setControllerName('foo');
-		$request->setControllerObjectNamePattern('f3\@package\bar\baz\@controller');
+		$request->setControllerSubpackageKey('bar\baz');
 
-		$this->assertEquals('F3\TestPackage\Bar\Baz\Foo', $request->getControllerObjectName());
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function thePatternForBuildingTheViewObjectNameCanBeCustomized() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
-			->with($this->equalTo('F3\TestPackage\Vista\FooXbarYxmlZ'))
-			->will($this->returnValue('F3\TestPackage\Vista\FooXBarYXMLZ'));
-
-		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
-		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
-			->will($this->returnValue('TestPackage'));
-
-		$request = new \F3\FLOW3\MVC\Request();
-		$request->injectObjectManager($mockObjectManager);
-		$request->injectPackageManager($mockPackageManager);
-
-		$request->setControllerPackageKey('TestPackage');
-		$request->setControllerName('Foo');
-		$request->setControllerActionName('bar');
-		$request->setFormat('xml');
-		$request->setViewObjectNamePattern('F3\@package\Vista\@controllerX@actionY@formatZ');
-
-		$this->assertEquals('F3\TestPackage\Vista\FooXBarYXMLZ', $request->getViewObjectName());
+		$this->assertEquals('F3\TestPackage\Bar\Baz\Controller\FooController', $request->getControllerObjectName());
 	}
 
 	/**

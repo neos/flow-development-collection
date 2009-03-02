@@ -67,16 +67,6 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function theControllerObjectNamePatternCanBeSetAndRetrieved() {
-		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
-		$route->setControllerObjectNamePattern('XY3_@package_@controller');
-		$this->assertEquals('XY3_@package_@controller', $route->getControllerObjectNamePattern());
-	}
-
-	/**
-	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function settingUriPatternResetsRoute() {
@@ -602,7 +592,7 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertTrue($route->matches('optional1/optional2/required1/required2'));
 	}
-	
+
 
 	/**
 	 * @test

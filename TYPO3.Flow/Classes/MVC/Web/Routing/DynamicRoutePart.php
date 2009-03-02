@@ -49,7 +49,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 
 	/**
 	 * Sets split string of the Route Part.
-	 * 
+	 *
 	 * @param string $splitString
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -93,7 +93,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findValueToMatch($requestPath) {
-		if (!isset($requestPath) || $requestPath === '' || $requestPath{0} === '/') {
+		if (!isset($requestPath) || $requestPath === '' || $requestPath[0] === '/') {
 			return '';
 		}
 		$valueToMatch = $requestPath;
@@ -129,7 +129,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 	/**
 	 * Removes matching part from $requestPath.
 	 * This method can be overridden by custom RoutePartHandlers to implement custom matching mechanisms.
-	 * 
+	 *
 	 * @param string $requestPath The request path to be matched
 	 * @param string $valueToMatch The matching value
 	 * @return void

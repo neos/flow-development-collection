@@ -79,7 +79,9 @@ class RequestBuilder {
 	public function build() {
 		$request = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Request');
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
-			$request->setControllerObjectNamePattern('F3\FLOW3\MVC\Controller\DefaultController');
+			$request->setControllerPackageKey('FLOW3');
+			$request->setControllerSubpackageKey('MVC');
+			$request->setControllerName('Default');
 			return $request;
 		}
 
@@ -112,7 +114,7 @@ class RequestBuilder {
 
 		if (count($command['subpackages']) > 0) {
 			$subPackages = implode('\\', $command['subpackages']);
-			$request->setControllerObjectNamePattern('F3\@package\\' . $subPackages . '\Controller\\@controllerController');
+			$request->setControllerSubpackageKey($subPackages);
 		}
 	}
 

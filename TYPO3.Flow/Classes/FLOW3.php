@@ -376,6 +376,7 @@ final class FLOW3 {
 	public function initializeFileMonitor() {
 		if ($this->settings['monitor']['fileMonitor']['enable'] === TRUE) {
 			$this->monitorClassFiles();
+			$this->monitorRoutesConfigurationFiles();
 		}
 	}
 
@@ -419,6 +420,35 @@ final class FLOW3 {
 		if ($atLeastOneClassFileChanged) {
 			$this->cacheManager->flushCachesByTag($classFileCache->getClassTag());
 		}
+	}
+
+	/**
+	 * Checks if Routes.yaml files have been altered and if so flushes the
+	 * related caches.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function monitorRoutesConfigurationFiles() {
+		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
+		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . 'Routes.yaml');
+		$monitor->monitorFile(FLOW3_PATH_CONFIGURATION . $this->context . '/Routes.yaml');
+
+		$cacheManager = $this->cacheManager;
+		$cacheFlushingSlot = function() use ($cacheManager) {
+			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
+			if ($monitorIdentifier === 'FLOW3_RoutesConfigurationFiles') {
+				$findMatchResultsCache = $cacheManager->getCache('FLOW3_MVC_Web_Routing_FindMatchResults');
+				$findMatchResultsCache->flush();
+				$resolveCache = $cacheManager->getCache('FLOW3_MVC_Web_Routing_Resolve');
+				$resolveCache->flush();
+			}
+		};
+
+		$signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+		$signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+
+		$monitor->detectChanges();
 	}
 
 	/**

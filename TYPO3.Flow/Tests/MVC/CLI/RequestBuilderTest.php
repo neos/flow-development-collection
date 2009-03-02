@@ -76,7 +76,9 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function simpleCLIAccessBuildsCorrectRequest() {
-		$this->mockRequest->expects($this->once())->method('setControllerObjectNamePattern')->with('F3\FLOW3\MVC\Controller\DefaultController');
+		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('FLOW3');
+		$this->mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('MVC');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
 
 		$this->environment->SERVER['argc'] = 1;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -142,7 +144,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function CLIAccesWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
+	public function CLIAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
@@ -167,7 +169,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function checkIfCLIAccesWithPackageControllerActionAndArgumentsToleratesSpaces() {
+	public function checkIfCLIAccessWithPackageControllerActionAndArgumentsToleratesSpaces() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
@@ -200,7 +202,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function CLIAccesWithShortArgumentsBuildsCorrectRequest() {
+	public function CLIAccessWithShortArgumentsBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
@@ -230,7 +232,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function CLIAccesWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
+	public function CLIAccessWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
@@ -286,8 +288,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function requestContainsCorrectControllerObjectNamePatternForCLIAccessWithSubpackage() {
-		$this->mockRequest->expects($this->once())->method('setControllerObjectNamePattern')->with('F3\@package\Sub\Package\Controller\@controllerController');
+	public function CLIAccessWithSubpackageBuildsCorrectRequest() {
+		$this->mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('Sub\Package');
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Test');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('run');

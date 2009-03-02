@@ -35,3 +35,6 @@ FLOW3_Resource_Status:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_Security_Policy: []
 FLOW3_Object_Configurations: []
+FLOW3_MVC_Web_Routing_FindMatchResults: []
+FLOW3_MVC_Web_Routing_Resolve:
+  frontend: F3\FLOW3\Cache\Frontend\StringFrontend

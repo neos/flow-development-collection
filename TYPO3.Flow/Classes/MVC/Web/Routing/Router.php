@@ -40,24 +40,31 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the Object Manager
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
 	 */
-	protected $utilityEnvironment;
+	protected $environment;
 
 	/**
-	 * @var \F3\FLOW3\Configuration\Container The FLOW3 configuration
+	 * The FLOW3 configuration
+	 * @var \F3\FLOW3\Configuration\Container
 	 */
 	protected $configuration;
+
+	/**
+	 * Array containing the configuration for all routes.
+	 * @var array
+	 */
+	protected $routesConfiguration = array();
 
 	/**
 	 * Array of routes to match against
@@ -66,18 +73,23 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected $routes = array();
 
 	/**
+	 * TRUE if route object have been created, otherwise FALSE
+	 * @var boolean
+	 */
+	protected $routesCreated = FALSE;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Utility\Environment $utilityEnvironment A reference to the environment
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager A reference to the configuration manager
-	 * @return void
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Utility\Environment $environment A reference to the environment
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $utilityEnvironment) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
-		$this->utilityEnvironment = $utilityEnvironment;
+		$this->environment = $environment;
 	}
 
 	/**
@@ -88,16 +100,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setRoutesConfiguration(array $routesConfiguration) {
-		foreach ($routesConfiguration as $routeName => $routeConfiguration) {
-			$route = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
-			$route->setName($routeName);
-			$route->setUriPattern($routeConfiguration['uriPattern']);
-			if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
-			if (isset($routeConfiguration['controllerObjectNamePattern'])) $route->setControllerObjectNamePattern($routeConfiguration['controllerObjectNamePattern']);
-			if (isset($routeConfiguration['viewObjectNamePattern'])) $route->setViewObjectNamePattern($routeConfiguration['viewObjectNamePattern']);
-			if (isset($routeConfiguration['routePartHandlers'])) $route->setRoutePartHandlers($routeConfiguration['routePartHandlers']);
-			$this->routes[$routeName] = $route;
-		}
+		$this->routesConfiguration = $routesConfiguration;
 	}
 
 	/**
@@ -115,55 +118,69 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		if (substr($requestPath, 0, 5) === 'index' && strpos($requestPath, '.php/')) {
 			$requestPath = ltrim(strstr($requestPath, '/'), '/');
 		}
-		foreach (array_reverse($this->routes) as $route) {
-			if ($route->matches($requestPath)) {
-				$matchResults = $route->getMatchResults();
-				foreach ($matchResults as $argumentName => $argumentValue) {
-					if ($argumentName{0} === '@') {
-						switch ($argumentName) {
-							case '@package' :
-								$request->setControllerPackageKey($argumentValue);
-							break;
-							case '@subpackage' :
-								$request->setControllerSubpackageKey($argumentValue);
-							break;
-							case '@controller' :
-								$request->setControllerName($argumentValue);
-							break;
-							case '@action' :
-								$request->setControllerActionName($argumentValue);
-							break;
-							case '@format' :
-								$request->setFormat($argumentValue);
-							break;
-						}
-					} else {
-						$request->setArgument($argumentName, $argumentValue);
+		$matchResults = $this->findMatchResults($requestPath);
+		if ($matchResults !== NULL) {
+			foreach ($matchResults as $argumentName => $argumentValue) {
+				if ($argumentName[0] == '@') {
+					switch ($argumentName) {
+						case '@package' :
+							$request->setControllerPackageKey($argumentValue);
+						break;
+						case '@subpackage' :
+							$request->setControllerSubpackageKey($argumentValue);
+						break;
+						case '@controller' :
+							$request->setControllerName($argumentValue);
+						break;
+						case '@action' :
+							$request->setControllerActionName($argumentValue);
+						break;
+						case '@format' :
+							$request->setFormat($argumentValue);
+						break;
 					}
+				} else {
+					$request->setArgument($argumentName, $argumentValue);
 				}
-				$pattern = $route->getControllerObjectNamePattern();
-				if ($pattern !== NULL) $request->setControllerObjectNamePattern($pattern);
-
-				$pattern = $route->getViewObjectNamePattern();
-				if ($pattern !== NULL) $request->setViewObjectNamePattern($pattern);
-				$this->emitRouteMatched($route->getName(), $matchResults);
-				break;
 			}
 		}
-
 		$this->setArgumentsFromRawRequestData($request);
 	}
 
 	/**
-	 * Builds the corresponding uri (excluding protocol and host) by iterating through all configured routes
-	 * and calling their respective resolves()-method.
-	 * If no matching route is found, an empty string is returned.
+	 * Iterates through all configured routes and calls matches() on them.
+	 * Returns the matchResults of the matching route or NULL if no matching
+	 * route could be found.
+	 *
+	 * @param string $request The request path
+	 * @return array results of the matching route
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function findMatchResults($requestPath) {
+		$this->createRoutesFromConfiguration();
+
+		foreach (array_reverse($this->routes) as $route) {
+			if ($route->matches($requestPath)) {
+				$matchResults = $route->getMatchResults();
+				$this->emitRouteMatched($route->getName(), $matchResults);
+				return $matchResults;
+			}
+		}
+		return NULL;
+	}
+
+	/**
+	 * Builds the corresponding uri (excluding protocol and host) by iterating
+	 * through all configured routes and calling their respective resolves()
+	 * method. If no matching route is found, an empty string is returned.
 	 *
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolve(array $routeValues) {
+		$this->createRoutesFromConfiguration();
+
 		foreach (array_reverse($this->routes) as $route) {
 			if ($route->resolves($routeValues)) {
 				return $route->getMatchingURI();
@@ -185,6 +202,28 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	}
 
 	/**
+	 * Creates F3\FLOW3\MVC\Web\Routing\Route objects from the injected routes
+	 * configuration.
+	 *
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function createRoutesFromConfiguration() {
+		if ($this->routesCreated === FALSE) {
+			$this->routes = array();
+			foreach ($this->routesConfiguration as $routeName => $routeConfiguration) {
+				$route = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
+				$route->setName($routeName);
+				$route->setUriPattern($routeConfiguration['uriPattern']);
+				if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
+				if (isset($routeConfiguration['routePartHandlers'])) $route->setRoutePartHandlers($routeConfiguration['routePartHandlers']);
+				$this->routes[$routeName] = $route;
+			}
+			$this->routesCreated = TRUE;
+		}
+	}
+
+	/**
 	 * Takes the raw request data and - depending on the request method
 	 * maps them into the request object. Afterwards all mapped arguments
 	 * can be retrieved by the getArgument(s) method, no matter if they
@@ -200,7 +239,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		}
 		switch ($request->getMethod()) {
 			case 'POST' :
-				foreach ($this->utilityEnvironment->getRawPOSTArguments() as $argumentName => $argumentValue) {
+				foreach ($this->environment->getRawPOSTArguments() as $argumentName => $argumentValue) {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;

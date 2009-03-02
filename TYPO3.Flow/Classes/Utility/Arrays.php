@@ -198,5 +198,26 @@ class Arrays {
 			return NULL;
 		}
 	}
+
+	/**
+	 * Sorts multidimensional arrays by recursively calling ksort on its elements.
+	 *
+	 * @param array $array the array to sort
+	 * @param integer $sortFlags may be used to modify the sorting behavior using these values (see http://www.php.net/manual/en/function.sort.php)
+	 * @return boolean TRUE on success, FALSE on failure
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see asort()
+	 */
+	static public function sortKeysRecursively(array &$array, $sortFlags = NULL) {
+		foreach($array as &$value) {
+			if (is_array($value)) {
+				if (self::sortKeysRecursively($value, $sortFlags) === FALSE) {
+					return FALSE;
+				}
+			}
+		}
+		return ksort($array, $sortFlags);
+	}
+
 }
 ?>
