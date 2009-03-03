@@ -179,7 +179,7 @@ class Publisher {
 			$metadata = $this->extractResourceMetadata($URI);
 
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
-			if ($metadata['mimeType'] == 'text/html') {
+			if ($metadata['mimeType'] === 'text/html') {
 				$HTML = \F3\FLOW3\Resource\Processor::prefixRelativePathsInHTML(\F3\FLOW3\Utility\Files::getFileContents($file), 'Resources/' . $relativeDestinationPath . dirname($relativeFile) . '/');
 				file_put_contents($destinationPath . $relativeFile, $HTML);
 			} else {

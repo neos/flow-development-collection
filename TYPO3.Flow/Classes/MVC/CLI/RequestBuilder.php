@@ -150,11 +150,11 @@ class RequestBuilder {
 			if ($onlyArgumentsFollow) {
 				$commandLineArguments['arguments'][] = $rawArgument;
 			} else {
-				if (!$commandHasEnded && $rawArgument{0} !== '-') {
+				if (!$commandHasEnded && $rawArgument[0] !== '-') {
 					$command[] = $rawArgument;
-				} elseif ($rawArgument{0} === '-') {
+				} elseif ($rawArgument[0] === '-') {
 					$commandHasEnded = TRUE;
-					if ($rawArgument{1} === '-') {
+					if ($rawArgument[1] === '-') {
 							// long option (--blah=hurz)
 						$rawArgument = substr($rawArgument, 2);
 					} else {
@@ -203,7 +203,7 @@ class RequestBuilder {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments) {
-		if (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0]{0} === '-' && (strpos($currentArgument, '=') === FALSE)) {
+		if (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE)) {
 			return NULL;
 		}
 
@@ -216,7 +216,7 @@ class RequestBuilder {
 		}
 
 		$splitArgument = explode('=', $currentArgument, 2);
-		while ((!isset($splitArgument[1]) || trim($splitArgument[1]) == '') && count($rawCommandLineArguments) > 0) {
+		while ((!isset($splitArgument[1]) || trim($splitArgument[1]) === '') && count($rawCommandLineArguments) > 0) {
 			$currentArgument .= array_shift($rawCommandLineArguments);
 			$splitArgument = explode('=', $currentArgument);
 		}

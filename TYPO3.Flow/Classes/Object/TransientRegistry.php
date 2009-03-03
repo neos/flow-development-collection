@@ -66,7 +66,7 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function putObject($objectName, $object) {
-		if (!is_string($objectName) || strlen($objectName) == 0) throw new \RuntimeException('No valid object name specified.', 1167919564);
+		if (!is_string($objectName) || strlen($objectName) === 0) throw new \RuntimeException('No valid object name specified.', 1167919564);
 		if (!is_object($object)) throw new \RuntimeException('$object must be of type Object', 1167917199);
 		$this->objects[$objectName] = $object;
 	}

@@ -65,7 +65,7 @@ class Files {
 		$resultingPath = '';
 		foreach ($paths as $index => $path) {
 			$path = self::getUnixStylePath($path);
-			if ($index == 0) {
+			if ($index === 0) {
 				$path = rtrim($path, '/');
 			} else {
 				$path = trim($path, '/');

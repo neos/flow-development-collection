@@ -88,7 +88,7 @@ class PointcutExpressionParser {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression) {
-		if (!is_string($pointcutExpression) || strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
 		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(self::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -97,7 +97,7 @@ class PointcutExpressionParser {
 			$operator = ($partIndex > 0) ? trim($pointcutExpressionParts[$partIndex - 1]) : '&&';
 			$expression = trim($pointcutExpressionParts[$partIndex]);
 
-			if ($expression{0} == '!') {
+			if ($expression[0] === '!') {
 				$expression = trim(substr($expression, 1));
 				$operator .= '!';
 			}
@@ -271,9 +271,9 @@ class PointcutExpressionParser {
 		$substring = '';
 
 		for ($i = $startingPosition; $i < strlen($string); $i++) {
-			if ($string{$i} == ')') $openParentheses--;
+			if ($string[$i] === ')') $openParentheses--;
 			if ($openParentheses > 0) $substring .= $string{$i};
-			if ($string{$i} == '(') $openParentheses++;
+			if ($string[$i] === '(') $openParentheses++;
 		}
 		if ($openParentheses > 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression is in excess of ' . $openParentheses . ' closing parentheses.', 1168966689);
 		if ($openParentheses < 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression lacks of ' . $openParentheses . ' closing parentheses.', 1168966690);

@@ -124,7 +124,7 @@ class ClassFileManipulator {
 		$newOperatorHasBeenReplaced = FALSE;
 
 		$whitespace = '';
-		while ($tokens[$index][0] == T_WHITESPACE) {
+		while ($tokens[$index][0] === T_WHITESPACE) {
 			$whitespace .= $tokens[$index][1];
 			$index++;
 		}
@@ -132,7 +132,7 @@ class ClassFileManipulator {
 		switch ($tokens[$index][0]) {
 			case T_STRING :
 				$className = $tokens[$index][1];
-				if ($tokens[$index + 1][0] == '(') {
+				if ($tokens[$index + 1][0] === '(') {
 					$index++;
 					$constructorArguments = $this->parseConstructorArguments($tokens, $index);
 					if ($this->objectManager->isObjectRegistered($className)) {

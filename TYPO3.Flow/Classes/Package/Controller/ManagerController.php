@@ -62,14 +62,14 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function createAction($packageKey) {
-		if ($packageKey == '') {
+		if ($packageKey === '') {
 			return $this->helpAction();
 		}
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
-			return 'The package "' . $packageKey . '" already exists.' . chr(10);
+			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$this->packageManager->createPackage($packageKey);
-		return 'New package "' . $packageKey . '" created.' . chr(10);
+		return 'New package "' . $packageKey . '" created.' . PHP_EOL;
 	}
 
 	/**
@@ -80,14 +80,14 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function deleteAction($packageKey) {
-		if ($packageKey == '') {
+		if ($packageKey === '') {
 			return $this->helpAction();
 		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'The package "' . $packageKey . '" does not exist.' . chr(10);
+			return 'The package "' . $packageKey . '" does not exist.' . PHP_EOL;
 		}
 		$this->packageManager->deletePackage($packageKey);
-		return 'Package "' . $packageKey . '" has been deleted.' . chr(10);
+		return 'Package "' . $packageKey . '" has been deleted.' . PHP_EOL;
 	}
 
 	/**
@@ -98,11 +98,11 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function activateAction($packageKey) {
-		if ($packageKey == '') {
+		if ($packageKey === '') {
 			return $this->helpAction();
 		} else {
 			$this->packageManager->activatePackage($packageKey);
-			return 'package "' . $packageKey . '" activated.' . chr(10);
+			return 'package "' . $packageKey . '" activated.' . PHP_EOL;
 		}
 	}
 
@@ -114,11 +114,11 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function deactivateAction($packageKey) {
-		if ($packageKey == '') {
+		if ($packageKey === '') {
 			return $this->helpAction();
 		} else {
 			$this->packageManager->deactivatePackage($packageKey);
-			return 'package "' . $packageKey . '" deactivated.' . chr(10);
+			return 'package "' . $packageKey . '" deactivated.' . PHP_EOL;
 		}
 	}
 
@@ -129,15 +129,15 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
 	 */
 	public function helpAction() {
-		return chr(10) .
-			'FLOW3 Package CLI Controller' . chr(10) .
-			'Usage: php index_dev.php FLOW3 Package <command> package-key=<PACKAGE>' . chr(10).
-			chr(10) .
-			'<command>:' . chr(10) .
-			'  create     - create a new package' . chr(10).
-			'  activate   - activate a package' . chr(10).
-			'  deactivate - activate a package' . chr(10).
-			'  delete     - delete a package' . chr(10)
+		return PHP_EOL .
+			'FLOW3 Package CLI Controller' . PHP_EOL .
+			'Usage: php index.php FLOW3 Package <command> --package-key=<PACKAGE>' . PHP_EOL.
+			PHP_EOL .
+			'<command>:' . PHP_EOL .
+			'  create     - create a new package' . PHP_EOL.
+			'  activate   - activate a package' . PHP_EOL.
+			'  deactivate - activate a package' . PHP_EOL.
+			'  delete     - delete a package' . PHP_EOL
 		;
 	}
 }

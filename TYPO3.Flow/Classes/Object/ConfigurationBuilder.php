@@ -101,7 +101,7 @@ class ConfigurationBuilder {
 				break;
 				case 'autoWiringMode':
 					$methodName = 'set' . ucfirst($optionName);
-					$objectConfiguration->$methodName($optionValue == TRUE);
+					$objectConfiguration->$methodName($optionValue === TRUE);
 				break;
 				default:
 					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Invalid configuration option "' . $optionName . '" (source: ' . $objectConfiguration->getConfigurationSourceHint() . ')', 1167574981);

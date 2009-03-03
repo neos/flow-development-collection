@@ -130,7 +130,7 @@ class Configuration {
 		}
 
 		$this->objectName = $objectName;
-		$this->className = ($className == NULL ? $objectName : $className);
+		$this->className = ($className === NULL ? $objectName : $className);
 	}
 
 	/**

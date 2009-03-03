@@ -109,7 +109,7 @@ class Template extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function render() {
-		if ($this->templateResource == '') throw new \F3\FLOW3\MVC\Exception\InvalidTemplateResource('No template resource has been defined yet.', 1187860750);
+		if ($this->templateResource === '') throw new \F3\FLOW3\MVC\Exception\InvalidTemplateResource('No template resource has been defined yet.', 1187860750);
 		$output = $this->templateResource;
 		foreach ($this->markers as $marker => $content) {
 			$output = str_replace('###' . \F3\PHP6\Functions::strtoupper($marker) . '###', $content, $output);

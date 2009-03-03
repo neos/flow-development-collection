@@ -625,18 +625,18 @@ final class FLOW3 {
 
 		if (!extension_loaded('Reflection')) throw new \F3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
 		$method = new \ReflectionMethod(__CLASS__, 'checkEnvironment');
-		if ($method->getDocComment() == '') throw new \F3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
+		if ($method->getDocComment() === '') throw new \F3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
 
 		set_time_limit(0);
 		ini_set('unicode.output_encoding', 'utf-8');
 		ini_set('unicode.stream_encoding', 'utf-8');
 		ini_set('unicode.runtime_encoding', 'utf-8');
 		#locale_set_default('en_UK');
-		if (ini_get('date.timezone') == '') {
+		if (ini_get('date.timezone') === '') {
 			date_default_timezone_set('Europe/Copenhagen');
 		}
 
-		if (ini_get('magic_quotes_gpc') == '1' || ini_get('magic_quotes_gpc') == 'On') {
+		if (ini_get('magic_quotes_gpc') === '1' || ini_get('magic_quotes_gpc') === 'On') {
 			die('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 		}
 	}
@@ -711,7 +711,7 @@ final class FLOW3 {
 	 */
 	protected function classNameIsBlacklisted($className) {
 		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
-		if ($className == $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
+		if ($className === $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
 				return TRUE;
 			}
 		}

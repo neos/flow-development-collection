@@ -54,7 +54,7 @@ class XMLWriter implements \F3\FLOW3\Package\Meta\WriterInterface {
 		$xml->setIndent(true);
 		$xml->setIndentString(chr(9));
 
-		$xml->writeRaw('<?xml version="1.0" encoding="utf-8" standalone="yes" ?>' . chr(10));
+		$xml->startDocument('1.0', 'utf-8', 'yes');
 		$xml->startElement('package');
 
 		$xml->writeAttribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');

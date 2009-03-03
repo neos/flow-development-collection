@@ -104,7 +104,7 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canHandleRequest() {
-		return ($this->utilityEnvironment->getSAPIName() == 'cli');
+		return ($this->utilityEnvironment->getSAPIName() === 'cli');
 	}
 
 	/**

@@ -210,7 +210,7 @@ class Package implements PackageInterface {
 			$classesDirectoryIterator = new \DirectoryIterator($currentPath);
 			while ($classesDirectoryIterator->valid()) {
 				$filename = $classesDirectoryIterator->getFilename();
-				if ($filename{0} != '.') {
+				if ($filename[0] != '.') {
 					if (is_dir($currentPath . $filename)) {
 						$classFiles = array_merge($classFiles, $this->buildArrayOfClassFiles($subDirectory . $filename . '/', ($recursionLevel+1)));
 					} else {

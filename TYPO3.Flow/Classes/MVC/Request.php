@@ -275,7 +275,7 @@ class Request {
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new \F3\FLOW3\MVC\Exception\InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
-		if ($actionName{0} !== \F3\PHP6\Functions::strtolower($actionName{0})) throw new \F3\FLOW3\MVC\Exception\InvalidActionName('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
+		if ($actionName[0] !== \F3\PHP6\Functions::strtolower($actionName[0])) throw new \F3\FLOW3\MVC\Exception\InvalidActionName('The action name must start with a lower case letter, "' . $actionName . '" does not match this criteria.', 1218473352);
 		$this->controllerActionName = $actionName;
 	}
 
@@ -298,7 +298,7 @@ class Request {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setArgument($argumentName, $value) {
-		if (!is_string($argumentName) || \F3\PHP6\Functions::strlen($argumentName) == 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentName('Invalid argument name.', 1210858767);
+		if (!is_string($argumentName) || \F3\PHP6\Functions::strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentName('Invalid argument name.', 1210858767);
 		$this->arguments[$argumentName] = $value;
 	}
 

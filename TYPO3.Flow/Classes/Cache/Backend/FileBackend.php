@@ -258,7 +258,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . $tag . '/' . $this->cache->getIdentifier() . self::SEPARATOR . '*';
 		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) == 0) return array();
+		if ($filesFound === FALSE || count($filesFound) === 0) return array();
 
 		$cacheEntries = array();
 		foreach ($filesFound as $filename) {
@@ -282,7 +282,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/*';
 		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) == 0) return;
+		if ($filesFound === FALSE || count($filesFound) === 0) return;
 
 		foreach ($filesFound as $filename) {
 			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
@@ -363,7 +363,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function renderCacheEntryPath($identifier) {
 		$identifierHash = sha1($identifier);
-		return $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $identifierHash{0} . '/' . $identifierHash{1} . '/';
+		return $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
 	}
 
 	/**
@@ -381,7 +381,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$pattern = $this->renderCacheEntryPath($entryIdentifier) . self::FILENAME_EXPIRYTIME_GLOB . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
+		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
 		return $filesFound;
 	}
 
@@ -400,7 +400,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) == 0) return FALSE;
+		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
 		return $filesFound;
 	}
 }

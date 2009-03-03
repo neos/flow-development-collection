@@ -167,7 +167,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 				$arguments = '';
 				if (isset($step['args']) && is_array($step['args'])) {
 					foreach ($step['args'] as $argument) {
-						$arguments .= (strlen($arguments) == 0) ? '' : '<span style="color:white;">,</span> ';
+						$arguments .= (strlen($arguments) === 0) ? '' : '<span style="color:white;">,</span> ';
 						if (is_object($argument)) {
 							$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
 						} elseif (is_string($argument)) {
@@ -216,9 +216,9 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 					for ($line = $startLine; $line < $endLine; $line++) {
 						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
 
-						if ($line == $lineNumber) $codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
+						if ($line === $lineNumber) $codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
 						$codeSnippet .= sprintf('%05d', $line) . ': ' . $codeLine;
-						if ($line == $lineNumber) $codeSnippet .= '</pre><pre>';
+						if ($line === $lineNumber) $codeSnippet .= '</pre><pre>';
 					}
 					$codeSnippet .= '</pre>';
 				}

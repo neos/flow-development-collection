@@ -64,7 +64,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression, $trace = array()) {
-		if (!is_string($pointcutExpression) || strlen($pointcutExpression) == 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
+		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
 		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
@@ -73,7 +73,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 			$operator = ($partIndex > 0) ? trim($pointcutExpressionParts[$partIndex - 1]) : '&&';
 			$expression = trim($pointcutExpressionParts[$partIndex]);
 
-			if ($expression{0} == '!') {
+			if ($expression[0] === '!') {
 				$expression = trim(substr($expression, 1));
 				$operator .= '!';
 			}

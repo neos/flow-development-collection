@@ -149,7 +149,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
-		if (strtoupper(substr($name, 0, 4)) == 'HTTP') throw new \InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
+		if (strtoupper(substr($name, 0, 4)) === 'HTTP') throw new \InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
 		if ($replaceExistingHeader === TRUE || !isset($this->headers[$name])) {
 			$this->headers[$name] = array($value);
 		} else {

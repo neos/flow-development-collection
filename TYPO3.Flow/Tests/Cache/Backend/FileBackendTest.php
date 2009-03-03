@@ -128,7 +128,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
+		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 
@@ -154,7 +154,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier ;
+		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier ;
 		$filesFound = glob($pattern);
 		$this->assertEquals(1, count($filesFound), 'There was not exactly one cache entry.');
 	}
@@ -244,7 +244,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$cacheDirectory = $this->backend->getCacheDirectory();
 		$this->backend->setCache($cache);
 
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
+		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
 
 		$this->backend->set($entryIdentifier, $data);
 		$filesFound = glob($pattern);
@@ -272,7 +272,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$cacheDirectory = $this->backend->getCacheDirectory();
 		$this->backend->setCache($cache);
 
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
+		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_GLOB . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
 
 		$this->backend->set($entryIdentifier, $data, array(), 1);
 		$filesFound = glob($pattern);
@@ -502,7 +502,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data, array(), 0);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash{0} . '/' . $entryIdentifierHash{1} . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_UNLIMITED . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
+		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . \F3\FLOW3\Cache\Backend\FileBackend::FILENAME_EXPIRYTIME_UNLIMITED . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
 		$filesFound = glob($pattern);
 		$this->assertTrue(is_array($filesFound), 'filesFound was no array.');
 

@@ -296,7 +296,7 @@ class Framework {
 			eval($this->proxyClassCodesCache->get(str_replace('\\', '_', $proxyClassName)));
 
 			foreach ($objectConfigurations as $objectName => $objectConfiguration) {
-				if ($objectConfiguration->getClassName() == $targetClassName) {
+				if ($objectConfiguration->getClassName() === $targetClassName) {
 					$objectConfigurations[$objectName]->setClassName($proxyClassName);
 				}
 			}
@@ -326,7 +326,7 @@ class Framework {
 		if (!$this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has not yet been initialized!', 1207216396);
 		if (!isset($this->aspectContainers[$aspectClassName])) return FALSE;
 		foreach ($this->aspectContainers[$aspectClassName]->getPointcuts() as $pointcut) {
-			if ($pointcut->getPointcutMethodName() == $pointcutMethodName) {
+			if ($pointcut->getPointcutMethodName() === $pointcutMethodName) {
 				return $pointcut;
 			}
 		}

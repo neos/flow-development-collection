@@ -342,7 +342,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$filename = $localPackagesParentDirectoryIterator->getFilename();
 			$path = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($localPackagesParentDirectoryIterator->getPathName()));
 
-			if ($filename{0} != '.' && $path !== $globalPackagesPath) {
+			if ($filename[0] != '.' && $path !== $globalPackagesPath) {
 				$pathsToScan[] = $path;
 			}
 			$localPackagesParentDirectoryIterator->next();
@@ -351,7 +351,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$packagesDirectoryIterator = new \DirectoryIterator($packagesPath);
 			while ($packagesDirectoryIterator->valid()) {
 				$filename = $packagesDirectoryIterator->getFilename();
-				if ($filename{0} != '.' && $filename != 'FLOW3') {
+				if ($filename[0] != '.' && $filename != 'FLOW3') {
 					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
 					$availablePackages[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
 				}

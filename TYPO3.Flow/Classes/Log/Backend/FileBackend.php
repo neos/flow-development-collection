@@ -104,9 +104,9 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . chr(10);
+		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
 		if (!empty($additionalData)) {
-			$output .= $this->getFormattedVarDump($additionalData) . chr(10);
+			$output .= $this->getFormattedVarDump($additionalData) . PHP_EOL;
 		}
 		if ($this->fileHandle !== FALSE) {
 			fputs($this->fileHandle, $output);
@@ -141,31 +141,31 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 		if (is_array($var)) {
 			foreach ($var as $k=>$v) {
 				if (is_array($v)) {
-					$output .= str_repeat(' ',$spaces) . $k . ' => array (' . chr(10) . $this->getFormattedVarDump($v, $spaces+3) . str_repeat (' ', $spaces) . ')' . chr(10);
+					$output .= str_repeat(' ',$spaces) . $k . ' => array (' . PHP_EOL . $this->getFormattedVarDump($v, $spaces+3) . str_repeat (' ', $spaces) . ')' . PHP_EOL;
 				} else {
 					if (is_object($v)) {
-						$output .= str_repeat(' ', $spaces) . $k . ' => object: ' . get_class($v) . chr(10);
+						$output .= str_repeat(' ', $spaces) . $k . ' => object: ' . get_class($v) . PHP_EOL;
 					} else {
-						$output .= str_repeat(' ',$spaces) . $k . ' => ' . $v . chr(10);
+						$output .= str_repeat(' ',$spaces) . $k . ' => ' . $v . PHP_EOL;
 					}
 				}
 			}
 		} else {
 			if (is_object($var)) {
-				$output .= str_repeat(' ', $spaces) . ' [ OBJECT: ' . \F3\PHP6\Functions::strtoupper(get_class($var)) . ' ]:' . chr(10);
+				$output .= str_repeat(' ', $spaces) . ' [ OBJECT: ' . \F3\PHP6\Functions::strtoupper(get_class($var)) . ' ]:' . PHP_EOL;
 				if (is_array(get_object_vars ($var))) {
 					foreach (get_object_vars ($var) as $objVarName => $objVarValue) {
 						if (is_array($objVarValue) || is_object($objVarValue)) {
-							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . chr(10);
+							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . PHP_EOL;
 							$output .= $this->getFormattedVarDump($objVarValue, $spaces+3);
 						} else {
-							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . $objVarValue . chr(10);
+							$output .= str_repeat(' ', $spaces) . $objVarName . ' => ' . $objVarValue . PHP_EOL;
 						}
 					}
 				}
-				$output .= chr(10);
+				$output .= PHP_EOL;
 			} else {
-				$output .= str_repeat(' ', $spaces) . '=> ' . $var . chr(10);
+				$output .= str_repeat(' ', $spaces) . '=> ' . $var . PHP_EOL;
 			}
 		}
 		return $output;
