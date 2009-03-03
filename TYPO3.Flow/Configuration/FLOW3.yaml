@@ -71,6 +71,12 @@ monitor:
     enable: n
     changeDetectionStrategy: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime
 
+mvc:
+
+  # Object name of the controller to use if no other controller could be resolved
+  # matching the request.
+  notFoundController: F3\FLOW3\MVC\Controller\NotFoundController
+
 persistence:
   
   # Whether to enable FLOW3's persistence manager or not.

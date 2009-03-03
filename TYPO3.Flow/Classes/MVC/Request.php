@@ -52,6 +52,11 @@ class Request {
 	protected $packageManager;
 
 	/**
+	 * @var array
+	 */
+	protected $settings = array();
+
+	/**
 	 * Pattern after which the controller object name is built
 	 *
 	 * @var string
@@ -129,6 +134,17 @@ class Request {
 	}
 
 	/**
+	 * Injects the FLOW3 settings
+	 *
+	 * @param array $settings The FLOW3 settings
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * Sets the dispatched flag
 	 *
 	 * @param boolean $flag If this request has been dispatched
@@ -172,7 +188,7 @@ class Request {
 		$lowercaseObjectName = strtolower($possibleObjectName);
 
 		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
-		if ($objectName === FALSE) throw new \F3\FLOW3\MVC\Exception\NoSuchController('The controller object "' . $lowercaseObjectName . '" does not exist.', 1220884009);
+		if ($objectName === FALSE) $objectName = $this->settings['mvc']['notFoundController'];
 
 		return $objectName;
 	}

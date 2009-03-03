@@ -64,9 +64,8 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 				break;
 			default :
 				$response->setContent(
-					"\nWelcome to FLOW3!\n\n" .
-					"You see this message because no controller could be resolved.\n" .
-					"Sorry! The FLOW3 Development Team\n"
+					"\n404 Not Found\n\n" .
+					"No controller could be resolved which would match your request.\n"
 				);
 		}
 	}

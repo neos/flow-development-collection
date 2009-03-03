@@ -490,6 +490,20 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
 
         <para></para>
       </section>
+
+      <section>
+        <title>Not Found Controller</title>
+
+        <para>The
+        <classname>F3\FLOW3\MVC\Controller\NotFoundController</classname> is
+        used whenever no other controller could be resolved which would match
+        the current request. It displays a generic "404 Page Not Found"
+        message.</para>
+
+        <para>It is possible to define your own custom controller which is
+        used in these cases. Just specify the object name in the FLOW3
+        settings.</para>
+      </section>
     </section>
   </section>
 

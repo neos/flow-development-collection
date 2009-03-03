@@ -89,6 +89,31 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function ifTheResolvedControllerDoesNotExistTheNotFoundControllerDefinedInTheFLOW3SettingsIsUsedInstead() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
+			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
+			->will($this->returnValue(FALSE));
+
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
+		$mockPackageManager->expects($this->once())->method('getCaseSensitivePackageKey')
+			->with($this->equalTo('testpackage'))
+			->will($this->returnValue('TestPackage'));
+
+		$request = new \F3\FLOW3\MVC\Request();
+		$request->injectObjectManager($mockObjectManager);
+		$request->injectPackageManager($mockPackageManager);
+		$request->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
+		$request->setControllerPackageKey('testpackage');
+		$request->setControllerName('foo');
+
+		$this->assertEquals('F3\TestPackage\TheCustomNotFoundController', $request->getControllerObjectName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function aSingleArgumentCanBeSetWithSetArgumentAndRetrievedWithGetArgument() {
 		$request = new \F3\FLOW3\MVC\Request();
 		$request->setArgument('someArgumentName', 'theValue');
