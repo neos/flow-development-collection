@@ -114,14 +114,10 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
-		$requestPath = substr($request->getRequestURI()->getPath(), strlen((string)$request->getBaseURI()->getPath()));
-		if (substr($requestPath, 0, 5) === 'index' && strpos($requestPath, '.php/')) {
-			$requestPath = ltrim(strstr($requestPath, '/'), '/');
-		}
-		$matchResults = $this->findMatchResults($requestPath);
+		$matchResults = $this->findMatchResults($request->getRequestURI()->getPath());
 		if ($matchResults !== NULL) {
 			foreach ($matchResults as $argumentName => $argumentValue) {
-				if ($argumentName[0] == '@') {
+				if ($argumentName[0] === '@') {
 					switch ($argumentName) {
 						case '@package' :
 							$request->setControllerPackageKey($argumentValue);

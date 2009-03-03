@@ -199,24 +199,16 @@ class Environment {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getRequestURI() {
-		if (isset($this->SERVER['REQUEST_URI'])) {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI'];
+		if (isset($this->SERVER['PATH_INFO'])) {
+			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
 		} else {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/' . ltrim($this->getScriptPathAndFileName(), '/') . (isset($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING']:'');
+			$requestURI = str_replace($this->SERVER['SCRIPT_NAME'], '', $this->SERVER['REQUEST_URI']);
+			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost();
+			$requestURIString .= (strlen($requestURI) ? $requestURI : '/');
 		}
 
 		$requestURI = new \F3\FLOW3\Property\DataType\URI($requestURIString);
 		return $requestURI;
-	}
-
-	/**
-	 * Returns the script file name (usually index.php)
-	 *
-	 * @return string The script file name
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getScriptFileName() {
-		return basename($this->SERVER['SCRIPT_FILENAME']);
 	}
 
 	/**
@@ -329,7 +321,7 @@ class Environment {
 		try {
 			$this->temporaryDirectory = $this->createTemporaryDirectory($this->temporaryDirectoryBase);
 		} catch (\F3\FLOW3\Utility\Exception $exception) {
-			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR == '/') ? '/tmp' : '\\WINDOWS\\TEMP';
+			$fallBackTemporaryDirectoryBase = (DIRECTORY_SEPARATOR === '/') ? '/tmp' : '\\WINDOWS\\TEMP';
 			$this->temporaryDirectory = $this->createTemporaryDirectory($fallBackTemporaryDirectoryBase);
 		}
 		return $this->temporaryDirectory;
