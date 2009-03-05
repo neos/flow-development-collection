@@ -47,7 +47,7 @@ class ClassSchema {
 	/**
 	 * Specifies the allowed property types.
 	 */
-	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|SplObjectStorage|F3\\\\[a-zA-Z0-9\\\\]+)/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -114,7 +114,7 @@ class ClassSchema {
 	 * Sets (defines) a specific property and its type.
 	 *
 	 * @param string $name Name of the property
-	 * @param string $type Type of the property (ie. one of "integer", "float", "boolean", "string", "array", "DateTime" or some class type (F3_*)
+	 * @param string $type Type of the property (see ALLOWED_TYPES_PATTERN)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>

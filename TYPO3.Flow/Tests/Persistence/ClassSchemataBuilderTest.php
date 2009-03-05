@@ -71,7 +71,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
-		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier');
+		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier', 'someSplObjectStorage');
 
 		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -92,6 +92,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 			'someInteger' => 'integer',
 			'someFloat' => 'float',
 			'someDate' => 'DateTime',
+			'someSplObjectStorage' => 'SplObjectStorage',
 			'someIdentifier' => 'string'
 		);
 

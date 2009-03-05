@@ -72,6 +72,11 @@ class Entity1 {
 	protected $someDate;
 
 	/**
+	 * @var \SplObjectStorage
+	 */
+	protected $someSplObjectStorage;
+
+	/**
 	 * A transient string
 	 *
 	 * @var string
