@@ -202,8 +202,7 @@ class Environment {
 		if (isset($this->SERVER['PATH_INFO'])) {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
 		} else {
-			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost();
-			$requestURIString .= (strlen($requestURI) ? $requestURI : '/');
+			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/';
 		}
 
 		$requestURI = new \F3\FLOW3\Property\DataType\URI($requestURIString);
