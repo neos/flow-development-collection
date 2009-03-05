@@ -202,7 +202,6 @@ class Environment {
 		if (isset($this->SERVER['PATH_INFO'])) {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
 		} else {
-			$requestURI = str_replace($this->SERVER['SCRIPT_NAME'], '', $this->SERVER['REQUEST_URI']);
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost();
 			$requestURIString .= (strlen($requestURI) ? $requestURI : '/');
 		}
