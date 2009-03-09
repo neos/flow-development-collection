@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -36,20 +36,20 @@ namespace F3\FLOW3\Package\Meta;
  * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class XMLWriter implements \F3\FLOW3\Package\Meta\WriterInterface {
+class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 
 	/**
 	 * Write metadata for the given package into a Package.xml file.
 	 *
 	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
-	 * @param \F3\FLOW3\Package\MetaInterface $meta The Meta object containing the information to write
+	 * @param \F3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
 	 * @return boolean If writing the XML file was successful returns TRUE, otherwise FALSE
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function writePackageMeta(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaInterface $meta) {
+	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
-		if ($xml->openURI($package->getPackageMetaPath() . 'Package.xml') === FALSE) return FALSE;
+		if ($xml->openURI($package->getPackageMetaDataPath() . 'Package.xml') === FALSE) return FALSE;
 
 		$xml->setIndent(true);
 		$xml->setIndentString(chr(9));
@@ -107,11 +107,11 @@ class XMLWriter implements \F3\FLOW3\Package\Meta\WriterInterface {
 	 *
 	 *
 	 * @param \XMLWriter $xml The XMLWriter to write to
-	 * @param \F3\FLOW3\Package\Meta\AbstractParty $party The party to write
+	 * @param \F3\FLOW3\Package\MetaData\AbstractParty $party The party to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\Meta\AbstractParty $party) {
+	protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$xml->startElement($party->getPartyType());
 
 		if (strlen($party->getRole())) $xml->writeAttribute('role', $party->getRole());
@@ -135,21 +135,21 @@ class XMLWriter implements \F3\FLOW3\Package\Meta\WriterInterface {
 	 * Write the constraint to a XMLWriter instance.
 	 *
 	 * @param \XMLWriter $xml The XMLWriter to write to
-	 * @param \F3\FLOW3\Package\Meta\AbstractConstraint $constraint The constraint to write
+	 * @param \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\Meta\AbstractConstraint $constraint) {
+	protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());
 
 		if(strlen($constraint->getMinVersion())) $xml->writeAttribute('minVersion', $constraint->getMinVersion());
 		if(strlen($constraint->getMaxVersion())) $xml->writeAttribute('maxVersion', $constraint->getMaxVersion());
 
 		switch($constraint->getConstraintScope()) {
-			case \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_SYSTEM:
+			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM:
 				if(strlen($constraint->getType())) $xml->writeAttribute('type', $constraint->getType());
 			break;
-			case \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_PACKAGE:
+			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE:
 			break;
 		}
 

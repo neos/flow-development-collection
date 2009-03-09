@@ -40,9 +40,9 @@ namespace F3\FLOW3\Package;
 class Manager implements \F3\FLOW3\Package\ManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Package\Meta\WriterInterface
+	 * @var \F3\FLOW3\Package\MetaData\WriterInterface
 	 */
-	protected $packageMetaWriter;
+	protected $packageMetaDataWriter;
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
@@ -74,14 +74,14 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	protected $protectedPackages = array('FLOW3', 'PHP6', 'YAML');
 
 	/**
-	 * Injects a Package Meta Writer
+	 * Injects a Package MetaData Writer
 	 *
-	 * @param \F3\FLOW3\Package\Meta\WriterInterface $packageMetaWriter A package meta writer instance to write package metadata
+	 * @param \F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter A package meta data writer instance to write package metadata
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function injectPackageMetaWriter(\F3\FLOW3\Package\Meta\WriterInterface $packageMetaWriter) {
-		$this->packageMetaWriter = $packageMetaWriter;
+	public function injectPackageMetaDataWriter(\F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter) {
+		$this->packageMetaDataWriter = $packageMetaDataWriter;
 	}
 
 	/**
@@ -133,7 +133,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 
 	/**
 	 * Returns a \F3\FLOW3\Package\PackageInterface object for the specified package.
-	 * A package is available, if the package directory contains valid meta information.
+	 * A package is available, if the package directory contains valid MetaData information.
 	 *
 	 * @param string $packageKey
 	 * @return \F3\FLOW3\Package The requested package object
@@ -146,10 +146,10 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
-	 * Returns an array of \F3\FLOW3\Package\Meta objects of all available packages.
+	 * Returns an array of \F3\FLOW3\Package objects of all available packages.
 	 * A package is available, if the package directory contains valid meta information.
 	 *
-	 * @return array Array of \F3\FLOW3\Package\Meta
+	 * @return array Array of \F3\FLOW3\Package
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAvailablePackages() {
@@ -157,11 +157,11 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
-	 * Returns an array of \F3\FLOW3\Package\Meta objects of all active packages.
+	 * Returns an array of \F3\FLOW3\Package objects of all active packages.
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
-	 * @return array Array of \F3\FLOW3\Package\Meta
+	 * @return array Array of \F3\FLOW3\Package
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Implement activation / deactivation of packages
 	 */
@@ -237,16 +237,16 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Create a package, given the package key
 	 *
 	 * @param string $packageKey The package key of the new package
-	 * @param \F3\FLOW3\Package\Meta $packageMeta If specified, this package meta object is used for writing the Package.xml file
+	 * @param \F3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file
 	 * @return \F3\FLOW3\Package\Package The newly created package
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createPackage($packageKey, \F3\FLOW3\Package\Meta $packageMeta = NULL) {
+	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = NULL) {
 		if (!$this->isPackageKeyValid($packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('The package key "' . $packageKey . '" is invalid', 1220722210);
 		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExists('The package key "' . $packageKey . '" already exists', 1220722873);
 
-		if ($packageMeta === NULL) {
-			$packageMeta = $this->objectFactory->create('F3\FLOW3\Package\Meta', $packageKey);
+		if ($packageMetaData === NULL) {
+			$packageMetaData = $this->objectFactory->create('F3\FLOW3\Package\MetaData', $packageKey);
 		}
 
 		$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/') . $packageKey . '/';
@@ -254,7 +254,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 
 		foreach (
 			array(
-				\F3\FLOW3\Package\Package::DIRECTORY_META,
+				\F3\FLOW3\Package\Package::DIRECTORY_METADATA,
 				\F3\FLOW3\Package\Package::DIRECTORY_CLASSES,
 				\F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION,
 				\F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION,
@@ -265,8 +265,8 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 		}
 
 		$package = $this->objectFactory->create('F3\FLOW3\Package\Package', $packageKey, $packagePath);
-		$result = $this->packageMetaWriter->writePackageMeta($package, $packageMeta);
-		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta information at "' . $packagePath . '"', 1232625240);
+		$result = $this->packageMetaDataWriter->writePackageMetaData($package, $packageMetaData);
+		if ($result === FALSE) throw new \F3\FLOW3\Package\Exception('Error while writing the package meta data information at "' . $packagePath . '"', 1232625240);
 
 		$this->packages[$packageKey] = $package;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {

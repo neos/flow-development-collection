@@ -63,29 +63,29 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackageMetaUsesMetaReader() {
-		$mockMeta = $this->getMock('F3\FLOW3\Package\MetaInterface');
-		$mockMetaReader = $this->getMock('F3\FLOW3\Package\Meta\ReaderInterface');
+	public function getPackageMetaDataUsesMetaDataReader() {
+		$mockMetaData = $this->getMock('F3\FLOW3\Package\MetaDataInterface');
+		$mockMetaDataReader = $this->getMock('F3\FLOW3\Package\MetaData\ReaderInterface');
 
 		$package = new Package('FLOW3', FLOW3_PATH_FLOW3);
-		$package->injectMetaReader($mockMetaReader);
+		$package->injectMetaDataReader($mockMetaDataReader);
 
-		$mockMetaReader->expects($this->once())
-			->method('readPackageMeta')
-			->will($this->returnValue($mockMeta));
+		$mockMetaDataReader->expects($this->once())
+			->method('readPackageMetaData')
+			->will($this->returnValue($mockMetaData));
 
-		$this->assertSame($mockMeta, $package->getPackageMeta());
+		$this->assertSame($mockMetaData, $package->getPackageMetaData());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackageMetaPathReturnsPathToMetaDirectory() {
+	public function getPackageMetaDataPathReturnsPathToMetaDirectory() {
 		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
-		$packageMetaPath = $package->getPackageMetaPath();
+		$packageMetaDataPath = $package->getPackageMetaDataPath();
 
-		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_META, $packageMetaPath);
+		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_METADATA, $packageMetaDataPath);
 	}
 }
 ?>

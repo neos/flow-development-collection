@@ -29,14 +29,14 @@ namespace F3\FLOW3\Package;
  */
 
 /**
- * The default TYPO3 Package Meta implementation
+ * The default TYPO3 Package MetaData implementation
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Meta implements \F3\FLOW3\Package\MetaInterface {
+class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 
 	const CONSTRAINT_TYPE_DEPENDS = 'depends';
 	const CONSTRAINT_TYPE_CONFLICTS = 'conflicts';
@@ -247,7 +247,7 @@ class Meta implements \F3\FLOW3\Package\MetaInterface {
 	}
 
 	/**
-	 * @return Array of F3\FLOW3\Package\Meta\AbstractParty The package parties
+	 * @return Array of F3\FLOW3\Package\MetaData\AbstractParty The package parties
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getParties() {
@@ -257,11 +257,11 @@ class Meta implements \F3\FLOW3\Package\MetaInterface {
 	/**
 	 * Add a party
 	 *
-	 * @param F3\FLOW3\Package\Meta\AbstractParty $party
+	 * @param F3\FLOW3\Package\MetaData\AbstractParty $party
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function addParty(\F3\FLOW3\Package\Meta\AbstractParty $party) {
+	public function addParty(\F3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$this->parties[] = $party;
 	}
 
@@ -290,11 +290,11 @@ class Meta implements \F3\FLOW3\Package\MetaInterface {
 	/**
 	 * Add a constraint
 	 *
-	 * @param F3\FLOW3\Package\Meta\AbstractConstraint $constraint The constraint to add
+	 * @param F3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to add
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function addConstraint(\F3\FLOW3\Package\Meta\AbstractConstraint $constraint) {
+	public function addConstraint(\F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$this->constraints[$constraint->getConstraintType()][] = $constraint;
 	}
 }

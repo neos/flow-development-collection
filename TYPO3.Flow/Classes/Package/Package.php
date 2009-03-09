@@ -43,7 +43,7 @@ class Package implements PackageInterface {
 	const DIRECTORY_CLASSES = 'Classes/';
 	const DIRECTORY_CONFIGURATION = 'Configuration/';
 	const DIRECTORY_DOCUMENTATION = 'Documentation/';
-	const DIRECTORY_META = 'Meta/';
+	const DIRECTORY_METADATA = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 	const DIRECTORY_TESTS = 'Tests/';
 
@@ -60,14 +60,14 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
-	 * @var \F3\FLOW3\Package\Meat\ReaderInterface
+	 * @var \F3\FLOW3\Package\MetaData\ReaderInterface
 	 */
-	protected $metaReader;
+	protected $metaDataReader;
 
 	/**
-	 * @var \F3\FLOW3\Package\Meta Meta information about this package
+	 * @var \F3\FLOW3\Package\MetaData Meta information about this package
 	 */
-	protected $packageMeta;
+	protected $packageMetaData;
 
 	/**
 	 * @var array Names and relative paths (to this package directory) of files containing classes
@@ -93,27 +93,27 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Injects a Meta file reader
+	 * Injects a MetaData file reader
 	 *
 	 * @param \F3\FLOW3\Package\Meat\ReaderInterface $metaReader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectMetaReader(\F3\FLOW3\Package\Meta\ReaderInterface $metaReader) {
-		$this->metaReader = $metaReader;
+	public function injectMetaDataReader(\F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader) {
+		$this->metaDataReader = $metaDataReader;
 	}
 
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @return \F3\FLOW3\Package\MetaData
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackageMeta() {
-		if ($this->packageMeta === NULL) {
-			$this->packageMeta = $this->metaReader->readPackageMeta($this);
+	public function getPackageMetaData() {
+		if ($this->packageMetaData === NULL) {
+			$this->packageMetaData = $this->metaDataReader->readPackageMetaData($this);
 		}
-		return $this->packageMeta;
+		return $this->packageMetaData;
 	}
 
 	/**
@@ -180,13 +180,13 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Returns the full path to the package's Meta directory
+	 * Returns the full path to the package's meta data directory
 	 *
 	 * @return string Path to the package's meta information file
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMetaPath() {
-		return $this->packagePath . self::DIRECTORY_META;
+	public function getPackageMetaDataPath() {
+		return $this->packagePath . self::DIRECTORY_METADATA;
 	}
 
 	/**

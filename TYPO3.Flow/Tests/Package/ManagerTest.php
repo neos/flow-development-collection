@@ -172,14 +172,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createPackageCreatesPackageMetaFile() {
+	public function createPackageCreatesPackageMetaDataFile() {
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
 		$packageManager->createPackage('YetAnotherTestPackage');
 
 		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
-		$this->assertTrue(is_file($packagePath . F3\FLOW3\Package\Package::DIRECTORY_META . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO),
+		$this->assertTrue(is_file($packagePath . F3\FLOW3\Package\Package::DIRECTORY_METADATA . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO),
 			'Mandatory Package.xml was created');
 	}
 
@@ -189,22 +189,22 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createPackageWithMetadataUsesMetaWriter() {
+	public function createPackageWithMetaDatadataUsesMetaDataWriter() {
 
-		$metaWriter = $this->getMock('F3\FLOW3\Package\Meta\WriterInterface');
+		$metaWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
 		$metaWriter->expects($this->atLeastOnce())
-			->method('writePackageMeta')
+			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
 		$packageManager = new \F3\FLOW3\Package\Manager($metaWriter);
 		$packageManager->initialize();
 
-		$meta = $this->getMock('F3\FLOW3\Package\Meta', array(), array('YetAnotherTestPackage'));
+		$meta = $this->getMock('F3\FLOW3\Package\MetaData', array(), array('YetAnotherTestPackage'));
 
 		$packageManager->createPackage('YetAnotherTestPackage', $meta);
 
 		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
-		$this->assertStringEqualsFile($packagePath . F3\FLOW3\Package\Package::DIRECTORY_META . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO, '<package/>');
+		$this->assertStringEqualsFile($packagePath . F3\FLOW3\Package\Package::DIRECTORY_METADATA . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO, '<package/>');
 	}
 
 	/**

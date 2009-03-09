@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,89 +23,22 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * Constraint meta model
+ * Package constraint meta model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractConstraint {
+class PackageConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 
 	/**
-	 * One of depends, conflicts or suggests
-	 *
-	 * @var string The constraint type
-	 */
-	protected $constraintType;
-
-	/**
-	 * @var string The constraint name or value
-	 */
-	protected $value;
-
-	/**
-	 * @var string The minimum version
-	 */
-	protected $minVersion;
-
-	/**
-	 * @var string The maximum version
-	 */
-	protected $maxVersion;
-
-	/**
-	 * Meta constraint constructor
-	 *
-	 * @param string $constraintType
-	 * @param string $value
-	 * @param string $minVersion
-	 * @param string $maxVersion
+	 * @return string The constraint scope
+	 * @see \F3\FLOW3\Package\MetaData\Constraint::getConstraintScope()
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function __construct($constraintType, $value, $minVersion = null, $maxVersion = null) {
-		$this->constraintType = $constraintType;
-		$this->value = $value;
-		$this->minVersion = $minVersion;
-		$this->maxVersion = $maxVersion;
+	public function getConstraintScope() {
+		return \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE;
 	}
-
-	/**
-	 * @return string The constraint name or value
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getValue() {
-		return $this->value;
-	}
-
-	/**
-	 * @return string The minimum version
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getMinVersion() {
-		return $this->minVersion;
-	}
-
-	/**
-	 * @return string The maximum version
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getMaxVersion() {
-		return $this->maxVersion;
-	}
-
-	/**
-	 * @return string The constraint type (depends, conflicts, suggests)
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getConstraintType() {
-		return $this->constraintType;
-	}
-
-	/**
-	 * @return string The constraint scope (package, system)
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public abstract function getConstraintScope();
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,23 +23,68 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * Package company party meta model
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id$
+ */
+
+/**
+ * Interface for TYPO3 Package MetaData information
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
+ * @author Christopher Hlubek <hlubek@networkteam.com>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Company extends \F3\FLOW3\Package\Meta\AbstractParty {
+interface MetaDataInterface {
 
 	/**
-	 * Get the party type
-	 *
-	 * @return string Party type "company"
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return string The package key
 	 */
-	public function getPartyType() {
-		return \F3\FLOW3\Package\Meta::PARTY_TYPE_COMPANY;
-	}
+	public function getPackageKey();
+
+	/**
+	 * @return string The package title
+	 */
+	public function getTitle();
+
+	/**
+	 * @return string The package version
+	 */
+	public function getVersion();
+
+	/**
+	 * @return string The package description
+	 */
+	public function getDescription();
+
+	/**
+	 * @return string The package state
+	 */
+	public function getState();
+
+	/**
+	 * @return Array of string The package categories
+	 */
+	public function getCategories();
+
+	/**
+	 * @return Array of F3\FLOW3\Package\MetaData\Party The package parties
+	 */
+	public function getParties();
+
+	/**
+	 * @param string $constraintType: Type of the constraints to get: depends, conflicts, suggests
+	 * @return Array of F3\FLOW3\Package\MetaData\Constraint Package constraints
+	 */
+	public function getConstraintsByType($constraintType);
+
+	/**
+	 * Get all constraints
+	 *
+	 * @return array An array of array of \F3\FLOW3\Package\MetaData\Constraint Package constraints
+	 */
+	public function getConstraints();
 }
 ?>

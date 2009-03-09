@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,53 +23,97 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * System constraint meta model
+ * Party meta model for persons and companies
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3_FLOW3_Package_Meta.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class SystemConstraint extends \F3\FLOW3\Package\Meta\AbstractConstraint {
+abstract class AbstractParty {
 
 	/**
-	 * The type for a system scope constraint (e.g. "Memory")
+	 * The party role
 	 *
 	 * @var string
 	 */
-	protected $type;
+	protected $role;
 
 	/**
-	 * Meta system constraint constructor
+	 * Name of the party
 	 *
-	 * @param string $constraintType
-	 * @param string $type
-	 * @param string $value
-	 * @param string $minVersion
-	 * @param string $maxVersion
+	 * @var string
+	 */
+	protected $name;
+
+	/**
+	 * Email of the party
+	 *
+	 * @var string
+	 */
+	protected $email;
+
+	/**
+	 * Website of the party
+	 *
+	 * @var string
+	 */
+	protected $website;
+
+	/**
+	 * Meta data party model constructor
+	 *
+	 * @param string $role
+	 * @param string $name
+	 * @param string $email
+	 * @param string $website
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function __construct($constraintType, $type, $value = NULL, $minVersion = NULL, $maxVersion = NULL) {
-		if (!strlen($value)) $value = NULL;
-		parent::__construct($constraintType, $value, $minVersion, $maxVersion);
-		$this->type = $type;
+	public function __construct($role, $name, $email = NULL, $website = NULL) {
+		$this->role = $role;
+		$this->name = $name;
+		$this->email = $email;
+		$this->website = $website;
 	}
 
 	/**
-	 * @return string The system constraint type
+	 * @return string The role of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getType() {
-		return $this->type;
+	public function getRole() {
+		return $this->role;
 	}
 
 	/**
-	 * @return string The constraint scope
-	 * @see \F3\FLOW3\Package\Meta\Constraint\getConstraintScope()
+	 * @return string The name of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getConstraintScope() {
-		return \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_SYSTEM;
+	public function getName() {
+		return $this->name;
 	}
+
+	/**
+	 * @return string The email of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getEmail() {
+		return $this->email;
+	}
+
+	/**
+	 * @return string The website of the party
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getWebsite() {
+		return $this->website;
+	}
+
+	/**
+	 * Get the party type (MetaData\PARTY_TYPE_PERSON, MetaData\PARTY_TYPE_COMPANY)
+	 *
+	 * @return string The type of the party (person, company)
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public abstract function getPartyType();
 }
 ?>

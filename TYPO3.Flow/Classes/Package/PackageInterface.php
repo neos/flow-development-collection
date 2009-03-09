@@ -42,9 +42,9 @@ interface PackageInterface {
 	/**
 	 * Returns the package meta object of this package.
 	 *
-	 * @return \F3\FLOW3\Package\Meta
+	 * @return \F3\FLOW3\Package\MetaData
 	 */
-	public function getPackageMeta();
+	public function getPackageMetaData();
 
 	/**
 	 * Returns the array of filenames of the class files
@@ -79,6 +79,6 @@ interface PackageInterface {
 	 *
 	 * @return string Path to this package's Package.xml file
 	 */
-	public function getPackageMetaPath();
+	public function getPackageMetaDataPath();
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,22 +23,69 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * Package constraint meta model
+ * Package person party meta model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PackageConstraint extends \F3\FLOW3\Package\Meta\AbstractConstraint {
+class Person extends \F3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
-	 * @return string The constraint scope
-	 * @see \F3\FLOW3\Package\Meta\Constraint::getConstraintScope()
+	 * Company of the person
+	 *
+	 * @var string
+	 */
+	protected $company;
+
+	/**
+	 * Repository user name of the person
+	 *
+	 * @var string
+	 */
+	protected $repositoryUserName;
+
+	/**
+	 * Meta data person model constructor
+	 *
+	 * @param string $role
+	 * @param string $name
+	 * @param string $email
+	 * @param string $website
+	 * @param string $company
+	 * @param string $repositoryUserName
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getConstraintScope() {
-		return \F3\FLOW3\Package\Meta::CONSTRAINT_SCOPE_PACKAGE;
+	public function __construct($role, $name, $email = NULL, $website = NULL, $company = NULL, $repositoryUserName = NULL) {
+		parent::__construct($role, $name, $email, $website);
+
+		$this->company = $company;
+		$this->repositoryUserName = $repositoryUserName;
+	}
+
+	/**
+	 * @return string The company of the person
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getCompany() {
+		return $this->company;
+	}
+
+	/**
+	 * @return string The repository username
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getRepositoryUserName() {
+		return $this->repositoryUserName;
+	}
+
+	/**
+	 * @return string Party type "person"
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPartyType() {
+		return \F3\FLOW3\Package\MetaData::PARTY_TYPE_PERSON;
 	}
 }
 ?>

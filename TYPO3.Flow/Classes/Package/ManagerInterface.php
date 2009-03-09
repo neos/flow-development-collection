@@ -75,7 +75,7 @@ interface ManagerInterface {
 	public function getAvailablePackages();
 
 	/**
-	 * Returns an array of \F3\FLOW3\Package\Meta objects of all active packages.
+	 * Returns an array of \F3\FLOW3\PackageInterface objects of all active packages.
 	 * A package is active, if it is available and has been activated in the package
 	 * manager settings.
 	 *
@@ -119,10 +119,10 @@ interface ManagerInterface {
 	 * Create a new package, given the package key
 	 *
 	 * @param string $packageKey The package key to use for the new package
-	 * @param \F3\FLOW3\Package\Meta $packageMeta Package metadata
+	 * @param \F3\FLOW3\Package\MetaData $packageMetaData Package metadata
 	 * @return \F3\FLOW3\Package\Package The newly created package
 	 */
-	public function createPackage($packageKey, \F3\FLOW3\Package\Meta $packageMeta = null);
+	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = null);
 
 	/**
 	 * Deactivates a packe if it is in the list of active packages

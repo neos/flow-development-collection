@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,69 +23,30 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * Package person party meta model
+ * @package FLOW3
+ * @subpackage Package
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
+ */
+
+/**
+ * An interface for a package metadata writer
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Christopher Hlubek <hlubek@networkteam.com>
  */
-class Person extends \F3\FLOW3\Package\Meta\AbstractParty {
+interface WriterInterface {
 
 	/**
-	 * Company of the person
+	 * Write metadata for the given package
 	 *
-	 * @var string
+	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
+	 * @param \F3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
+	 * @return void
 	 */
-	protected $company;
+	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta);
 
-	/**
-	 * Repository user name of the person
-	 *
-	 * @var string
-	 */
-	protected $repositoryUserName;
-
-	/**
-	 * Meta person model constructor
-	 *
-	 * @param string $role
-	 * @param string $name
-	 * @param string $email
-	 * @param string $website
-	 * @param string $company
-	 * @param string $repositoryUserName
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function __construct($role, $name, $email = NULL, $website = NULL, $company = NULL, $repositoryUserName = NULL) {
-		parent::__construct($role, $name, $email, $website);
-
-		$this->company = $company;
-		$this->repositoryUserName = $repositoryUserName;
-	}
-
-	/**
-	 * @return string The company of the person
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getCompany() {
-		return $this->company;
-	}
-
-	/**
-	 * @return string The repository username
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getRepositoryUserName() {
-		return $this->repositoryUserName;
-	}
-
-	/**
-	 * @return string Party type "person"
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getPartyType() {
-		return \F3\FLOW3\Package\Meta::PARTY_TYPE_PERSON;
-	}
 }
 ?>

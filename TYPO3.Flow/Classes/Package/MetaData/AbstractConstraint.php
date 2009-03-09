@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,97 +23,89 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * Party meta model for persons and companies
+ * Constraint meta data model
  *
  * @package FLOW3
  * @subpackage Package
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractParty {
+abstract class AbstractConstraint {
 
 	/**
-	 * The party role
+	 * One of depends, conflicts or suggests
 	 *
-	 * @var string
+	 * @var string The constraint type
 	 */
-	protected $role;
+	protected $constraintType;
 
 	/**
-	 * Name of the party
-	 *
-	 * @var string
+	 * @var string The constraint name or value
 	 */
-	protected $name;
+	protected $value;
 
 	/**
-	 * Email of the party
-	 *
-	 * @var string
+	 * @var string The minimum version
 	 */
-	protected $email;
+	protected $minVersion;
 
 	/**
-	 * Website of the party
-	 *
-	 * @var string
+	 * @var string The maximum version
 	 */
-	protected $website;
+	protected $maxVersion;
 
 	/**
-	 * Meta party model constructor
+	 * Meta data constraint constructor
 	 *
-	 * @param string $role
-	 * @param string $name
-	 * @param string $email
-	 * @param string $website
+	 * @param string $constraintType
+	 * @param string $value
+	 * @param string $minVersion
+	 * @param string $maxVersion
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function __construct($role, $name, $email = NULL, $website = NULL) {
-		$this->role = $role;
-		$this->name = $name;
-		$this->email = $email;
-		$this->website = $website;
+	public function __construct($constraintType, $value, $minVersion = null, $maxVersion = null) {
+		$this->constraintType = $constraintType;
+		$this->value = $value;
+		$this->minVersion = $minVersion;
+		$this->maxVersion = $maxVersion;
 	}
 
 	/**
-	 * @return string The role of the party
+	 * @return string The constraint name or value
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getRole() {
-		return $this->role;
+	public function getValue() {
+		return $this->value;
 	}
 
 	/**
-	 * @return string The name of the party
+	 * @return string The minimum version
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getName() {
-		return $this->name;
+	public function getMinVersion() {
+		return $this->minVersion;
 	}
 
 	/**
-	 * @return string The email of the party
+	 * @return string The maximum version
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getEmail() {
-		return $this->email;
+	public function getMaxVersion() {
+		return $this->maxVersion;
 	}
 
 	/**
-	 * @return string The website of the party
+	 * @return string The constraint type (depends, conflicts, suggests)
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getWebsite() {
-		return $this->website;
+	public function getConstraintType() {
+		return $this->constraintType;
 	}
 
 	/**
-	 * Get the party type (Meta\PARTY_TYPE_PERSON, Meta\PARTY_TYPE_COMPANY)
-	 *
-	 * @return string The type of the party (person, company)
+	 * @return string The constraint scope (package, system)
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public abstract function getPartyType();
+	public abstract function getConstraintScope();
 }
 ?>

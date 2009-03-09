@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Package\Meta;
  */
 
 /**
- * Testcase for the XML Meta reader
+ * Testcase for the XML MetaData reader
  *
  * @package FLOW3
  * @subpackage Tests
@@ -46,45 +46,45 @@ class XMLReaderTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function readPackageMetaReadsPackageXML() {
+	public function readPackageMetaDataReadsPackageXML() {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 
 		$mockPackage->expects($this->atLeastOnce())
-			->method('getPackageMetaPath')
+			->method('getPackageMetaDataPath')
 			->will($this->returnValue(__DIR__ . '/../Fixtures/XMLReaderTest_Package.xml'));
 
 		$mockPackage->expects($this->any())
 			->method('getPackageKey')
 			->will($this->returnValue('YetAnotherTestPackage'));
 
-		$metaReader = new \F3\FLOW3\Package\Meta\XMLReader();
+		$metaReader = new \F3\FLOW3\Package\MetaData\XMLReader();
 
-		$packageMeta = $metaReader->readPackageMeta($mockPackage);
+		$packageMetaData = $metaReader->readPackageMetaData($mockPackage);
 
-		$this->assertEquals('YetAnotherTestPackage', $packageMeta->getPackageKey());
-		$this->assertEquals('Yet another test package', $packageMeta->getTitle());
-		$this->assertEquals('0.1.1', $packageMeta->getVersion());
-		$this->assertEquals('A test package to test the creation of the Package.xml by the Package Manager', $packageMeta->getDescription());
-		$this->assertEquals('Beta', $packageMeta->getState());
-		$this->assertEquals(array('Testing', 'System'), $packageMeta->getCategories());
+		$this->assertEquals('YetAnotherTestPackage', $packageMetaData->getPackageKey());
+		$this->assertEquals('Yet another test package', $packageMetaData->getTitle());
+		$this->assertEquals('0.1.1', $packageMetaData->getVersion());
+		$this->assertEquals('A test package to test the creation of the Package.xml by the Package Manager', $packageMetaData->getDescription());
+		$this->assertEquals('Beta', $packageMetaData->getState());
+		$this->assertEquals(array('Testing', 'System'), $packageMetaData->getCategories());
 
-		$parties = $packageMeta->getParties();
+		$parties = $packageMetaData->getParties();
 		$this->assertTrue(is_array($parties));
 		$person1 = $parties[0];
-		$this->assertType('F3\FLOW3\Package\Meta\Person', $person1);
+		$this->assertType('F3\FLOW3\Package\MetaData\Person', $person1);
 		$this->assertEquals('LeadDeveloper', $person1->getRole());
 		$this->assertEquals('Robert Lemke', $person1->getName());
 		$this->assertEquals('robert@typo3.org', $person1->getEmail());
 
-		$constraints = $packageMeta->getConstraintsByType('depends');
+		$constraints = $packageMetaData->getConstraintsByType('depends');
 		$this->assertTrue(is_array($constraints));
 
-		$this->assertType('F3\FLOW3\Package\Meta\PackageConstraint', $constraints[0]);
+		$this->assertType('F3\FLOW3\Package\MetaData\PackageConstraint', $constraints[0]);
 		$this->assertEquals('depends', $constraints[0]->getConstraintType());
 		$this->assertEquals('FLOW3', $constraints[0]->getValue());
 		$this->assertEquals('1.0.0', $constraints[0]->getMinVersion());
 		$this->assertEquals('1.9.9', $constraints[0]->getMaxVersion());
-		$this->assertType('F3\FLOW3\Package\Meta\SystemConstraint', $constraints[1]);
+		$this->assertType('F3\FLOW3\Package\MetaData\SystemConstraint', $constraints[1]);
 		$this->assertNull($constraints[1]->getValue());
 		$this->assertEquals('PHP', $constraints[1]->getType());
 		$this->assertEquals('5.3.0', $constraints[1]->getMinVersion());

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,30 +23,23 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
- */
-
-/**
- * An interface for a package metadata writer
+ * Package company party meta model
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Christopher Hlubek <hlubek@networkteam.com>
  */
-interface WriterInterface {
+class Company extends \F3\FLOW3\Package\MetaData\AbstractParty {
 
 	/**
-	 * Write metadata for the given package
+	 * Get the party type
 	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
-	 * @param \F3\FLOW3\Package\MetaInterface $meta The Meta object containing the information to write
-	 * @return void
+	 * @return string Party type "company"
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function writePackageMeta(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaInterface $meta);
-
+	public function getPartyType() {
+		return \F3\FLOW3\Package\MetaData::PARTY_TYPE_COMPANY;
+	}
 }
 ?>

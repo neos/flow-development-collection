@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,66 +25,27 @@ namespace F3\FLOW3\Package;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  */
 
 /**
- * Interface for TYPO3 Package Meta information
+ * An interface for a package metadata reader
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
- * @author Christopher Hlubek <hlubek@networkteam.com>
+ * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Christopher Hlubek <hlubek@networkteam.com>
  */
-interface MetaInterface {
+interface ReaderInterface {
 
 	/**
-	 * @return string The package key
-	 */
-	public function getPackageKey();
-
-	/**
-	 * @return string The package title
-	 */
-	public function getTitle();
-
-	/**
-	 * @return string The package version
-	 */
-	public function getVersion();
-
-	/**
-	 * @return string The package description
-	 */
-	public function getDescription();
-
-	/**
-	 * @return string The package state
-	 */
-	public function getState();
-
-	/**
-	 * @return Array of string The package categories
-	 */
-	public function getCategories();
-
-	/**
-	 * @return Array of F3\FLOW3\Package\Meta\Party The package parties
-	 */
-	public function getParties();
-
-	/**
-	 * @param string $constraintType: Type of the constraints to get: depends, conflicts, suggests
-	 * @return Array of F3\FLOW3\Package\Meta\Constraint Package constraints
-	 */
-	public function getConstraintsByType($constraintType);
-
-	/**
-	 * Get all constraints
+	 * Read the package metadata for the given package
 	 *
-	 * @return array An array of array of \F3\FLOW3\Package\Meta\Constraint Package constraints
+	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
+	 * @return \F3\FLOW3\Package\MetaData A package meta instance
 	 */
-	public function getConstraints();
+	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package);
+
 }
 ?>

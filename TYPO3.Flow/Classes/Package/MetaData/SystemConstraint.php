@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Package\Meta;
+namespace F3\FLOW3\Package\MetaData;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,29 +23,53 @@ namespace F3\FLOW3\Package\Meta;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
- */
-
-/**
- * An interface for a package metadata reader
+ * System constraint meta model
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
+ * @version $Id:F3_FLOW3_Package_Meta.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @author Christopher Hlubek <hlubek@networkteam.com>
  */
-interface ReaderInterface {
+class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 
 	/**
-	 * Read the package metadata for the given package
+	 * The type for a system scope constraint (e.g. "Memory")
 	 *
-	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
-	 * @return \F3\FLOW3\Package\Meta A package meta instance
+	 * @var string
 	 */
-	public function readPackageMeta(\F3\FLOW3\Package\PackageInterface $package);
+	protected $type;
 
+	/**
+	 * Meta data system constraint constructor
+	 *
+	 * @param string $constraintType
+	 * @param string $type
+	 * @param string $value
+	 * @param string $minVersion
+	 * @param string $maxVersion
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function __construct($constraintType, $type, $value = NULL, $minVersion = NULL, $maxVersion = NULL) {
+		if (!strlen($value)) $value = NULL;
+		parent::__construct($constraintType, $value, $minVersion, $maxVersion);
+		$this->type = $type;
+	}
+
+	/**
+	 * @return string The system constraint type
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getType() {
+		return $this->type;
+	}
+
+	/**
+	 * @return string The constraint scope
+	 * @see \F3\FLOW3\Package\MetaData\Constraint\getConstraintScope()
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getConstraintScope() {
+		return \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM;
+	}
 }
 ?>
