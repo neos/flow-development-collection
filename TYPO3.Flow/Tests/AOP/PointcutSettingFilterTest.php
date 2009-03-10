@@ -49,7 +49,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = TRUE;
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package: foo: bar: baz: value');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertTrue($filter->matches('', '', '', 1));
@@ -66,7 +66,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = FALSE;
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package: foo: bar: baz: value');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertFalse($filter->matches('', '', '', 1));
@@ -84,7 +84,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = TRUE;
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package: foo: foozy: baz: value');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.foozy.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 	}
@@ -100,7 +100,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = 'not boolean';
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package: foo: bar: baz: value');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertFalse($filter->matches('', '', '', 1));
@@ -117,7 +117,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = TRUE;
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package:foo: bar:baz: value');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertTrue($filter->matches('', '', '', 1));
@@ -134,7 +134,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = 'option value';
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package:foo: bar:baz: value = \'option value\'');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value = \'option value\'');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertTrue($filter->matches('', '', '', 1));
@@ -151,7 +151,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = 'option value';
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package:foo: bar:baz: value = "option value"');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value = "option value"');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertTrue($filter->matches('', '', '', 1));
@@ -168,7 +168,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 		$settings['foo']['bar']['baz']['value'] = 'some other value';
 		$mockConfigurationManager->expects($this->atLeastOnce())->method('getSettings')->with('package')->will($this->returnValue($settings));
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package:foo: bar:baz: value = \'some value\'');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value = \'some value\'');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 		$this->assertFalse($filter->matches('', '', '', 1));
@@ -184,7 +184,7 @@ class PointcutSettingFilterTest extends \F3\Testing\BaseTestCase {
 
 		$settings['foo']['bar']['baz']['value'] = 'option value';
 
-		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package: foo: bar: baz: value = "forgot to close quotes');
+		$filter = new \F3\FLOW3\AOP\PointcutSettingFilter('package.foo.bar.baz.value = "forgot to close quotes');
 		$filter->injectConfigurationManager($mockConfigurationManager);
 		$filter->initializeObject();
 	}

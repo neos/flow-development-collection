@@ -370,10 +370,10 @@ class FooSecurityAspect {
       <programlisting language="php">   /**
 	 * A pointcut which matches all methods whose name starts with "delete".
 	 *
-	 * <co xml:id="co.pointcutdeclaration.1"/>@pointcut method(.*-&gt;delete.*())
+	 * <co xml:id="co.pointcutdeclaration.1" />@pointcut method(.*-&gt;delete.*())
 	 * @author John Doe &lt;john@typo3.org&gt;
 	 */
-	public function <co xml:id="co.pointcutdeclaration.2"/>deleteMethods() {}</programlisting>
+	public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</programlisting>
 
       <calloutlist>
         <callout arearefs="co.pointcutdeclaration.1">
@@ -571,16 +571,16 @@ class FooSecurityAspect {
         <para><example>
             <title>setting() pointcut designator</title>
 
-            <para>Matches if <code>"my: configuration: option"</code> is set
-            to TRUE in the current execution context:</para>
+            <para>Matches if <code>"my.configuration.option"</code> is set to
+            TRUE in the current execution context:</para>
 
-            <para><code>setting(my: configuration: option)</code></para>
+            <para><code>setting(my.configuration.option)</code></para>
 
-            <para>Matches if <code>"my: configuration: option"</code> is equal
+            <para>Matches if <code>"my.configuration.option"</code> is equal
             to "AOP is cool" in the current execution context: (Note: single
             and double quotes are allowed)</para>
 
-            <para><code>setting(my: configuration: option = 'AOP is
+            <para><code>setting(my.configuration.option = 'AOP is
             cool')</code></para>
           </example></para>
       </section>
@@ -852,7 +852,7 @@ class PointcutTestingAspect {
             <imageobject>
               <imagedata contentdepth="100%"
                          fileref="AOPFramework_AdviceChain.png" scalefit="1"
-                         width="100%"/>
+                         width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </figure></para>
@@ -1058,7 +1058,7 @@ class IntroductionAspect {
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="AOPFramework_ProxyBuildingProcess.png"
-                       scalefit="1" width="100%"/>
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>

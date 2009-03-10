@@ -99,7 +99,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 		$parser->expects($this->once())->method('parseDesignatorMethod')->with('&&', 'Foo->Bar()', $mockPointcutFilterComposite);
 		$parser->expects($this->once())->method('parseDesignatorWithin')->with('&&', 'Bar', $mockPointcutFilterComposite);
 		$parser->expects($this->once())->method('parseDesignatorFilter')->with('&&', '\Foo\Bar\Baz', $mockPointcutFilterComposite);
-		$parser->expects($this->once())->method('parseDesignatorSetting')->with('&&', 'Foo: Bar: baz', $mockPointcutFilterComposite);
+		$parser->expects($this->once())->method('parseDesignatorSetting')->with('&&', 'Foo.Bar.baz', $mockPointcutFilterComposite);
 
 		$parser->parse('\Foo\Bar->baz');
 		$parser->parse('classTaggedWith(foo)');
@@ -108,7 +108,7 @@ class PointcutExpressionParserTest extends \F3\Testing\BaseTestCase {
 		$parser->parse('method(Foo->Bar())');
 		$parser->parse('within(Bar)');
 		$parser->parse('filter(\Foo\Bar\Baz)');
-		$parser->parse('setting(Foo: Bar: baz)');
+		$parser->parse('setting(Foo.Bar.baz)');
 	}
 
 	/**

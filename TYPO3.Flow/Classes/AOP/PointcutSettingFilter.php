@@ -133,7 +133,8 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\PointcutFilterInterface {
 			}
 		}
 
-		$configurationKeys = preg_split('/: */', $settingComparisonExpression[0]);
+		$configurationKeys = preg_split('/\./', $settingComparisonExpression[0]);
+
 		if (count($configurationKeys) > 0) {
 			$settingPackageKey = array_shift($configurationKeys);
 			$settingValue = $this->configurationManager->getSettings($settingPackageKey);
