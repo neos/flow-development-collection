@@ -69,7 +69,7 @@ class PolicyEnforcementAspect {
 	 * Note: If we have some kind of "run as" functionality in the future, we would have to manipulate the security context
 	 * before calling the policy enforcement interceptor
 	 *
-	 * @around filter(F3\FLOW3\Security\ACL\PolicyService) && setting(FLOW3: security: enable)
+	 * @around filter(F3\FLOW3\Security\ACL\PolicyService) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

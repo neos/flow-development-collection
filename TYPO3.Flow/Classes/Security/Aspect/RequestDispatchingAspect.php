@@ -65,7 +65,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
-	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3: security: enable)
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
@@ -81,7 +81,7 @@ class RequestDispatchingAspect {
 	 * Catches Access Denied exceptions and instructs the response to redirect to a
 	 * login page.
 	 *
-	 * @afterthrowing method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3: security: enable)
+	 * @afterthrowing method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
