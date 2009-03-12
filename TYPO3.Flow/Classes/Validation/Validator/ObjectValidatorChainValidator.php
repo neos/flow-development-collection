@@ -36,7 +36,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ObjectValidatorChain implements \F3\FLOW3\Validation\ObjectValidatorInterface {
+class ObjectValidatorChainValidator implements \F3\FLOW3\Validation\Validator\ObjectValidatorInterface {
 
 	/**
 	 * @var array
@@ -103,10 +103,10 @@ class ObjectValidatorChain implements \F3\FLOW3\Validation\ObjectValidatorInterf
 	}
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid value for the property ($propertyName) of the class ($className).
+	 * Returns TRUE, if the given property ($propertyValue) is a valid value for the property ($propertyName) of the class ($className).
 	 * Any errors will be stored in the given errors object. If at least one error occurred, the result is FALSE.
 	 *
-	 * @param string $className The propterty's class name
+	 * @param string $className The property's class name
 	 * @param string $propertyName The name of the property for wich the value should be validated
 	 * @param object $propertyValue The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
@@ -125,11 +125,11 @@ class ObjectValidatorChain implements \F3\FLOW3\Validation\ObjectValidatorInterf
 	/**
 	 * Adds a new validator to the chain. Returns the index of the chain entry.
 	 *
-	 * @param \F3\FLOW3\Validation\ValidatorInterface $validator The validator that should be added
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
 	 * @return integer The index of the new chain entry
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addValidator(\F3\FLOW3\Validation\ObjectValidatorInterface $validator) {
+	public function addValidator(\F3\FLOW3\Validation\Validator\ObjectValidatorInterface $validator) {
 		$this->validators[] = $validator;
 		return count($this->validators) - 1;
 	}
@@ -138,7 +138,7 @@ class ObjectValidatorChain implements \F3\FLOW3\Validation\ObjectValidatorInterf
 	 * Returns the validator with the given index of the chain.
 	 *
 	 * @param integer $index The index of the validator that should be returned
-	 * @return \F3\FLOW3\Validation\ValidatorInterface The requested validator
+	 * @return \F3\FLOW3\Validation\Validator\ValidatorInterface The requested validator
 	 * @throws \F3\FLOW3\Validation\Exception\InvalidChainIndex
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

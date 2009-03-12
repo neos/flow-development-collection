@@ -56,7 +56,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resolveValidatorReturnsTheCorrectValidator() {
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface', array(), array(), 'F3\Virtual\BasicClassValidator');
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface', array(), array(), 'F3\Virtual\BasicClassValidator');
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockValidator));

@@ -132,7 +132,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		if ($this->initializeView) $this->initializeView();
 		$this->initializeAction();
 
-		$this->callActionMethod();
+# FIXME
+		if (FALSE && !$this->argumentsAreValid) {
+			$this->callErrorMethod();
+		} else {
+			$this->callActionMethod();
+		}
 	}
 
 	/**
@@ -151,19 +156,24 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
+			$isRequired = ($parameterInfo['optional'] !== TRUE);
 			if (isset($methodTagsAndValues['param']) && count($methodTagsAndValues['param']) > 0) {
 				$explodedTagValue = explode(' ', array_shift($methodTagsAndValues['param']));
 				switch ($explodedTagValue[0]) {
 					case 'integer' :
 						$dataType = 'Integer';
 					break;
+					case 'array' :
+						$dataType = 'Array';
+					break;
 					default:
-						if (strpos($dataType, '\\') !== FALSE) {
+						if (strpos($explodedTagValue[0], '\\') !== FALSE) {
 							$dataType = $explodedTagValue[0];
+							if ($dataType[0] === '\\') $dataType = substr($dataType, 1);
 						}
 				}
 			}
-			$this->arguments->addNewArgument($parameterName, $dataType);
+			$this->arguments->addNewArgument($parameterName, $dataType, $isRequired);
 		}
 	}
 
@@ -182,10 +192,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * Calls the specified action method and passes the arguments.
-	 * If the action returns a string, it is appended to the content in the
-	 * response object.
 	 *
-	 * @param string $actionMethodName Name of the action method
+	 * If the action returns a string, it is appended to the content in the
+	 * response object. If the action doesn't return anything and a valid
+	 * view exists, the view is rendered automatically.
+	 *
+	 * @param string $actionMethodName Name of the action method to call
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -194,7 +206,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		foreach ($this->arguments as $argument) {
 			$preparedArguments[] = $argument->getValue();
 		}
-
 		$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
 		if ($actionResult === NULL && $this->view instanceof \F3\FLOW3\MVC\View\ViewInterface) {
 			$this->response->appendContent($this->view->render());
@@ -220,9 +231,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
-	 * Determines the fully qualified view Classname.
+	 * Determines the fully qualified view object name.
 	 *
-	 * @return string The fully qualified view Classname
+	 * @return string The fully qualified view object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

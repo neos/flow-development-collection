@@ -29,34 +29,75 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator for floats
+ * Validator to chain many validators
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class Float extends \F3\FLOW3\Validation\AbstractValidator {
+class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid float.
+	 * @var array
+	 */
+	protected $validators = array();
+
+	/**
+	 * Returns TRUE, if the given property ($propertyValue) is a valid.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param  object $propertyValue The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Any occured Error will be stored here
+	 * @param mixed $propertyValue The value that should be validated
 	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 
-		if (is_float($propertyValue)) return TRUE;
-		if (is_string($propertyValue) && strpos($propertyValue, '.') && preg_match('/^[0-9.e+-]+$/', $propertyValue)) return TRUE;
+		$subjectIsValid = TRUE;
 
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid float. Got: "' . $propertyValue . '"', 1221560288));
-		return FALSE;
+		foreach ($this->validators as $validator) {
+			$subjectIsValid &= $validator->isValidProperty($propertyValue, $errors);
+		}
+
+		return (boolean)$subjectIsValid;
+	}
+
+	/**
+	 * Adds a new validator to the chain. Returns the index of the chain entry.
+	 *
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
+	 * @return integer The index of the new chain entry
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function addValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+		$this->validators[] = $validator;
+		return count($this->validators) - 1;
+	}
+
+	/**
+	 * Returns the validator with the given index of the chain.
+	 *
+	 * @param integer $index The index of the validator that should be returned
+	 * @return \F3\FLOW3\Validation\Validator\ValidatorInterface The requested validator
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidChainIndex
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getValidator($index) {
+		if (!isset($this->validators[$index])) throw new \F3\FLOW3\Validation\Exception\InvalidChainIndex('Invalid chain index.', 1207215864);
+		return $this->validators[$index];
+	}
+
+	/**
+	 * Removes the validator with the given index of the chain.
+	 *
+	 * @param integer $index The index of the validator that should be removed
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function removeValidator($index) {
+		if (!isset($this->validators[$index])) throw new \F3\FLOW3\Validation\Exception\InvalidChainIndex('Invalid chain index.', 1207020177);
+		unset($this->validators[$index]);
 	}
 }
 

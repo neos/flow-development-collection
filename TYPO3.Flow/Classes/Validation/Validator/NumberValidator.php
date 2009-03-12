@@ -29,32 +29,17 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator for regular expressions
+ * Validator for general numbers
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RegularExpression extends \F3\FLOW3\Validation\AbstractValidator {
+class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * @var string The regular expression
-	 */
-	protected $regularExpression;
-
-	/**
-	 * Creates a RegularExpression validator with the given expression
-	 *
-	 * @param string The regular expression, must be ready to use with preg_match()
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct($regularExpression) {
-		$this->regularExpression = $regularExpression;
-	}
-
-	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) matches the given regular expression.
+	 * Returns TRUE, if the given property ($propertyValue) is a valid number.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -67,12 +52,10 @@ class RegularExpression extends \F3\FLOW3\Validation\AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 
-		if (!is_string($propertyValue) || preg_match($this->regularExpression, $propertyValue) === 0) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $propertyValue . '"', 1221565130));
-			return FALSE;
-		}
+		if (is_numeric($propertyValue)) return TRUE;
 
-		return TRUE;
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
+		return FALSE;
 	}
 }
 

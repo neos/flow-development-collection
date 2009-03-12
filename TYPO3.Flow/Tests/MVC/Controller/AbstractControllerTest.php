@@ -67,190 +67,85 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestSetsTheDispatchedFlagOfTheRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
 
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$this->assertFalse($request->isDispatched());
-		$controller->processRequest($request, $response);
-		$this->assertTrue($request->isDispatched());
+		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'mapRequestArgumentsToLocalArguments'), array(), '', FALSE);
+		$controller->processRequest($mockRequest, $mockResponse);
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function forwardThrowsAStopActionException() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setDispatched')->with(FALSE);
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
 
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
-
-		$controller->processRequest($request, $response);
-		$controller->forward('index');
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$controller->_call('forward', 'foo');
 	}
 
 	/**
-	 * test
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function forwardResetsTheDispatchedFlagOfTheRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
+		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
+		$mockRequest->expects($this->once())->method('setControllerPackageKey')->with('Baz');
+		$mockRequest->expects($this->once())->method('setArguments')->with($mockArguments);
 
-		$controller->processRequest($request, $response);
-		$this->assertTrue($request->isDispatched());
-		try {
-			$controller->forward('index');
-		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
-		}
-		$this->assertFalse($request->isDispatched());
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$controller->_call('forward', 'foo', 'Bar', 'Baz', $mockArguments);
 	}
 
 	/**
-	 * test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function forwardSetsTheSpecifiedControllerActionAndArgumentsInToTheRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
-
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
-
-		$controller->processRequest($request, $response);
-		try {
-			$controller->forward('some', 'Alternative', 'TestPackage');
-		} catch(\F3\FLOW3\MVC\Exception\StopAction $exception) {
-		}
-
-		$this->assertEquals('some', $request->getControllerActionName());
-		$this->assertEquals('Alternative', $request->getControllerName());
-		$this->assertEquals('TestPackage', $request->getControllerPackageKey());
-	}
-
-	/**
-	 * test
+	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function redirectThrowsAStopActionException() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
-
-		$controller->processRequest($request, $response);
-		$controller->redirect('http://typo3.org');
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('response', $mockResponse);
+		$controller->_call('redirect', 'http://typo3.org');
 	}
 
 	/**
-	 * test
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function throwStatusSetsTheSpecifiedStatusHeaderAndStopsTheCurrentAction() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 
-		$controller = new \F3\FLOW3\MVC\Controller\AbstractController($this->objectFactory, $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface'));
-		$controller->injectPropertyMapper($this->objectManager->getObject('F3\FLOW3\Property\Mapper'));
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockResponse->expects($this->once())->method('setStatus')->with(404, 'File Really Not Found');
+		$mockResponse->expects($this->once())->method('setContent')->with('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
 
-		$controller->processRequest($request, $response);
-		try {
-			$controller->throwStatus(404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
-			$this->fail('The exception was not thrown.');
-		} catch (\F3\FLOW3\MVC\Exception\StopAction $exception) {
-		}
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('response', $mockResponse);
 
-		$expectedHeaders = array(
-			'HTTP/1.1 404 File Really Not Found',
-		);
-		$this->assertEquals($expectedHeaders, $response->getHeaders());
-		$this->assertEquals('<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>', $response->getContent());
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentFilters() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function thePropertyMapperIsConfiguredWithTheCorrectArgumentPropertyConverters() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function thePropertyMapperIsConfiguredWithTheArgumentsValidator() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function thePropertyMapperIsConfiguredWithTheArgumentsObjectAsTarget() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function theRawArgumentsAreMappedByThePropertyMapper() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function everyArgumentThatRaisedAnErrorInTheMappingProcessIsMarkedInvalid() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function errorsAndWarningsAreAddedToTheCorrespondigArgumentObjects() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function forUnregisteredArgumentsAWarningIsAdded() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function requiredArgumentsAreConfiguredAsRequiredPropertiesInThePropertyMapper() {
-		$this->markTestIncomplete();
+		$controller->_call('throwStatus', 404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
 	}
 }
 ?>

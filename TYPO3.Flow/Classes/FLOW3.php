@@ -545,7 +545,7 @@ final class FLOW3 {
 			$repository = $this->objectManager->getObject('F3\PHPCR\RepositoryInterface');
 			$session = $repository->login();
 			$persistenceBackend = $this->objectManager->getObject('F3\FLOW3\Persistence\BackendInterface', $session);
-			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\Manager');
+			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface');
 			$persistenceManager->initialize();
 		}
 
@@ -603,7 +603,7 @@ final class FLOW3 {
 		$requestHandler->handleRequest();
 
 		if ($this->settings['persistence']['enable'] === TRUE) {
-			$this->objectManager->getObject('F3\FLOW3\Persistence\Manager')->persistAll();
+			$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
 		}
 		$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 		$this->systemLogger->log(sprintf('Shutting down FLOW3 ...', $this->context), LOG_INFO);

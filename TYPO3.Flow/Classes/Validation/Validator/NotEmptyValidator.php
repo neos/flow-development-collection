@@ -36,10 +36,10 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotEmpty extends \F3\FLOW3\Validation\AbstractValidator {
+class NotEmptyValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is not empty (NULL or empty string).
+	 * Returns TRUE, if the given property ($propertyValue) is not empty (NULL or empty string).
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *

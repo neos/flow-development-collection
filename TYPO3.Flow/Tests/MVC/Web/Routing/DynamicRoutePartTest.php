@@ -334,5 +334,41 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 		$this->assertFalse($routePart->resolve($routeValues));
 		$this->assertNull($routePart->getValue(), 'Dynamic Route Part value should be NULL when call to resolve() was not successful.');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resolveWillTryToResolveAnIdentityValueIfResolveValueWasNotSuccessfulAndTheValueIsAnObject() {
+		$object = new \ArrayObject();
+		$routeValues = array('foo' => $object);
+
+		$routePart = $this->getMock('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart', array('findValueToResolve', 'resolveValue', 'resolveIdentityValueFromObject'), array(), '', FALSE);
+		$routePart->setName('foo');
+		$routePart->expects($this->once())->method('findValueToResolve')->with($routeValues)->will($this->returnValue($object));
+		$routePart->expects($this->once())->method('resolveValue')->with($object)->will($this->returnValue(FALSE));
+		$routePart->expects($this->once())->method('resolveIdentityValueFromObject')->with($object)->will($this->returnValue(TRUE));
+
+		$result = $routePart->resolve($routeValues);
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resolveIdentityValueFromObjectTriesToResolveAnObjectsUUIDAndReplacesTheObjectValueWithAnArrayContainingThatUUID() {
+		$mockObject = new \stdclass;
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getUUID')->with($mockObject)->will($this->returnValue('4f74a7de-aff0-42ca-8278-0c1730faa792'));
+
+		$routePart = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart'), array('dummy'), array(), '', FALSE);
+		$routePart->_set('persistenceManager', $mockPersistenceManager);
+		$result = $routePart->_callRef('resolveIdentityValueFromObject', $mockObject);
+
+		$this->assertTrue($result);
+		$this->assertSame(array('__uuid' => '4f74a7de-aff0-42ca-8278-0c1730faa792'), $routePart->_get('value'));
+	}
 }
 ?>

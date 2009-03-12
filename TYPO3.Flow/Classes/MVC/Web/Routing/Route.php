@@ -319,20 +319,19 @@ class Route {
 			}
 		}
 
+			// Remove remaining route values of applied default values:
 		foreach ($this->defaults as $key => $defaultValue) {
 			if (isset($routeValues[$key])) {
-				if ($routeValues[$key] != $defaultValue) {
+				if ($routeValues[$key] !== $defaultValue) {
 					return FALSE;
 				}
 				unset($routeValues[$key]);
 			}
 		}
-
 		if (count($routeValues) > 0) {
 			return FALSE;
 		}
-
-		$this->matchingURI = \F3\PHP6\Functions::strtolower($matchingURI);
+		$this->matchingURI = strtolower($matchingURI);
 		return TRUE;
 	}
 

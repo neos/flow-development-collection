@@ -29,7 +29,7 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  */
 
 /**
- * [Enter description here]
+ * Fixture class with getters and setters
  *
  * @package
  * @subpackage
@@ -65,9 +65,10 @@ class DummyClassWithGettersAndSetters {
 		return '42';
 	}
 
-	protected function setProtectedProperty($bla) {
-
+	protected function setProtectedProperty($value) {
+		$this->protectedProperty = $value;
 	}
+
 	protected function getPrivateProperty() {
 		return '21';
 	}

@@ -136,8 +136,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
-		$classNames = array_merge($this->reflectionService->getClassNamesByTag('entity'),
-			$this->reflectionService->getClassNamesByTag('valueobject'));
+		$classNames = array_merge($this->reflectionService->getClassNamesByTag('entity'), $this->reflectionService->getClassNamesByTag('valueobject'));
 
 		$this->classSchemata = $this->classSchemataBuilder->build($classNames);
 		$this->backend->initialize($this->classSchemata);
@@ -171,7 +170,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getClassSchema($className) {
-		return $this->classSchemata[$className];
+		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 
 	/**

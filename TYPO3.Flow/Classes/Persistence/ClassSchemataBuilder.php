@@ -71,11 +71,11 @@ class ClassSchemataBuilder {
 			if (!$this->reflectionService->isClassReflected($className)) throw new \F3\FLOW3\Persistence\Exception\InvalidClass('Unknown class "' . $className . '".', 1214495364);
 
 			$modelType = NULL;
-			$repositoryManaged = FALSE;
+			$aggregateRoot = FALSE;
 			if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
 				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY;
 				if ($this->reflectionService->isClassReflected($className . 'Repository')) {
-					$repositoryManaged = TRUE;
+					$aggregateRoot = TRUE;
 				}
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {
 				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT;
@@ -85,7 +85,7 @@ class ClassSchemataBuilder {
 
 			$classSchema = new \F3\FLOW3\Persistence\ClassSchema($className);
 			$classSchema->setModelType($modelType);
-			$classSchema->setRepositoryManaged($repositoryManaged);
+			$classSchema->setAggregateRoot($aggregateRoot);
 			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 				if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
 					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));

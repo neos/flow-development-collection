@@ -65,7 +65,7 @@ class ValidatorResolver {
 		$validatorName = $class . 'Validator';
 		if (!$this->objectManager->isObjectRegistered($validatorName)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036055);
 		$validator = $this->objectManager->getObject($validatorName);
-		if (!($validator instanceof \F3\FLOW3\Validation\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\ObjectValidatorInterface', 1211036068);
+		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\Validator\ObjectValidatorInterface', 1211036068);
 		return $validator;
 	}
 
@@ -81,7 +81,7 @@ class ValidatorResolver {
 		$validatorName = $class . 'Validator';
 		if (!$this->objectManager->isObjectRegistered($validatorName)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036084);
 		$validator = $this->objectManager->getObject($validatorName);
-		if (!($validator instanceof \F3\FLOW3\Validation\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\ObjectValidatorInterface', 1211036095);
+		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\Validator\ObjectValidatorInterface', 1211036095);
 		return $validatorName;
 	}
 }

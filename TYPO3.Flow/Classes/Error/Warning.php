@@ -35,6 +35,7 @@ namespace F3\FLOW3\Error;
  * @subpackage Error
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class Warning {
 
@@ -65,7 +66,7 @@ class Warning {
 	 * @return string The error message
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getErrorMessage() {
+	public function getMessage() {
 		return $this->message;
 	}
 
@@ -74,7 +75,7 @@ class Warning {
 	 * @return string The error code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getErrorCode() {
+	public function getCode() {
 		return $this->code;
 	}
 }

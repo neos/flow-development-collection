@@ -59,7 +59,7 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider validIntegers
 	 */
 	public function integerValidatorReturnsTrueForAValidInteger($integer) {
-		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
+		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($integerValidator->isValidProperty($integer, $validationErrors));
@@ -89,7 +89,7 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
+		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
 		$integerValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -105,14 +105,14 @@ class IntegerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$integerValidator = new \F3\FLOW3\Validation\Validator\Integer();
+		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
 		$integerValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$integerValidator->isValidProperty('not a number', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560494, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221560494, $validationErrors[0]->getCode());
 	}
 
 }

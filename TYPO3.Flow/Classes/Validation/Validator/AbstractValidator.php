@@ -29,26 +29,30 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * A validator which accepts any input
+ * Abstract validator
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Raw implements \F3\FLOW3\Validation\ValidatorInterface {
+abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Always returns TRUE.
-	 *
-	 * @param mixed $propertyValue ignored
-	 * @param \F3\FLOW3\Validation\Errors $errors ignored
-	 * @return boolean Always TRUE
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var \F3\FLOW3\Object\FactoryInterface The object factory
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-		return TRUE;
+	protected $objectFactory;
+
+	/**
+	 * Injector for the object factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
+
 }
 
 ?>

@@ -43,7 +43,7 @@ class TextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorReturnsTrueForASimpleString() {
-		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($textValidator->isValidProperty('this is a very simple string', $validationErrors));
@@ -58,7 +58,7 @@ class TextTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -74,14 +74,14 @@ class TextTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$textValidator = new \F3\FLOW3\Validation\Validator\Text();
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221565786, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221565786, $validationErrors[0]->getCode());
 	}
 }
 

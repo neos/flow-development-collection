@@ -58,57 +58,52 @@ class ObjectAccess {
 	 * @param object $object Object to get the property from
 	 * @param string $propertyName name of the property to retrieve
 	 * @return object Value of the property.
-	 * @throws \F3\FLOW3\Reflection\Exception if property was not found or was no string
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function getProperty($object, $propertyName) {
-		if (!is_string($propertyName)) {
-			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178303);
-		}
+		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 
-		if (self::isPropertyAccessible($object, $propertyName, self::ACCESS_GET)) {
-			$getterMethodName = self::buildGetterMethodName($propertyName);
+		if (is_callable(array($object, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
 			return call_user_func(array($object, $getterMethodName));
-		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
-			return $object->$propertyName;
 		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
 			return $object[$propertyName];
-		} else {
-			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not read accessible.', 1231176209);
+		} elseif (array_key_exists($propertyName, get_object_vars($object))) {
+			return $object->$propertyName;
 		}
+		return NULL;
 	}
 
 	/**
 	 * Set a property for a given object.
 	 * Tries to set the property the following ways:
-	 * - if the target object is an instance of ArrayAccess, it sets the property
-	 *   on it without checking if it existed.
 	 * - if public setter method exists, call it.
 	 * - if public property exists, set it directly.
-	 * - else, throw exception
+	 * - if the target object is an instance of ArrayAccess, it sets the property
+	 *   on it without checking if it existed.
+	 * - else, return FALSE
 	 *
-	 * @param object $object Object to get the property from
-	 * @param string $propertyName Name of the property to retrieve
-	 * @param object $propertyValue Value of the property which should be set.
+	 * @param object $object The target object
+	 * @param string $propertyName Name of the property to set
+	 * @param object $propertyValue Value of the property
 	 * @return void
-	 * @throws \F3\FLOW3\Reflection\Exception if property was not found or was no string
+	 * @throws \F3\FLOW3\Reflection\Exception if property was could not be set
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function setProperty($object, $propertyName, $propertyValue) {
-		if (!is_string($propertyName)) {
-			throw new \F3\FLOW3\Reflection\Exception('Given property is not of type string.', 1231178878);
-		}
+		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
-		if (self::isPropertyAccessible($object, $propertyName, self::ACCESS_SET)) {
-			$setterMethodName = self::buildSetterMethodName($propertyName);
+		if (is_callable(array($object, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
 			call_user_func(array($object, $setterMethodName), $propertyValue);
-		} elseif (self::isPropertyAccessible($object, $propertyName, self::ACCESS_PUBLIC)) {
-			$object->$propertyName = $propertyValue;
 		} elseif ($object instanceof \ArrayAccess) {
 			$object[$propertyName] = $propertyValue;
+		} elseif (array_key_exists($propertyName, get_object_vars($object))) {
+			$object->$propertyName = $propertyValue;
 		} else {
-			throw new \F3\FLOW3\Reflection\Exception('The property "' . $propertyName . '" on class "' . get_class($object) . '" is not write accessible.', 1231179088);
+			return FALSE;
 		}
+		return TRUE;
 	}
 
 	/**
@@ -152,41 +147,6 @@ class ObjectAccess {
 			$properties[$propertyName] = self::getProperty($object, $propertyName);
 		}
 		return $properties;
-	}
-
-	/**
-	 * Checks if a $property on an $object is accessible by $type. For ACCESS_PUBLIC
-	 * on ArrayObject instances this returns FALSE.
-	 *
-	 * @param object $object The object to do the check on
-	 * @param string $propertyName Name of the property
-	 * @param int $type either self::ACCESS_GET, self::ACCESS_SET or self::ACCESS_PUBLIC.
-	 * @return boolean TRUE if property is accessible, FALSE otherwise; FALSE if property does not exist.
-	 * @throws F3\FLOW3\Reflection\Exception if called with the wrong $type
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	static public function isPropertyAccessible($object, $propertyName, $type) {
-		switch ($type) {
-			case self::ACCESS_GET:
-				if (is_callable(array($object, self::buildGetterMethodName($propertyName)))) {
-					return TRUE;
-				}
-				break;
-			case self::ACCESS_SET:
-				if (is_callable(array($object, self::buildSetterMethodName($propertyName)))) {
-					return TRUE;
-				}
-				break;
-			case self::ACCESS_PUBLIC:
-				if (!($object instanceof \ArrayObject) && array_key_exists($propertyName, get_object_vars($object))) {
-					return TRUE;
-				}
-				break;
-			default:
-				throw new \F3\FLOW3\Reflection\Exception('isPropertyAccessible called with wrong $type!', 1231176210);
-		}
-
-		return FALSE;
 	}
 
 	/**

@@ -197,17 +197,5 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', TRUE);
 		$this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
 	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function addNewArgumentCreatesDefaultPropertyConvertr() {
-		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
-		$addedArgument = $arguments->addNewArgument('dummyName', 'F3\TestPackage\BasicClass');
-		$this->assertEquals('F3\FLOW3\Property\Converter\DomainObjectConverter', get_class($addedArgument->getPropertyConverter()), 'Default property converter is not of type DomainObjectConverter.');
-		$this->assertEquals('array', $addedArgument->getPropertyConverterInputFormat(), 'Property converter not correctly initialized');
-
-	}
 }
 ?>

@@ -29,17 +29,18 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator for general numbers
+ * Validator for alphanumeric strings
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Number extends \F3\FLOW3\Validation\AbstractValidator {
+class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid number.
+	 * Returns TRUE, if the given property ($propertyValue) is a valid
+	 * alphanumeric string, which is defined as [a-zA-Z0-9]*.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -52,9 +53,9 @@ class Number extends \F3\FLOW3\Validation\AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 
-		if (is_numeric($propertyValue)) return TRUE;
+		if (is_string($propertyValue) && preg_match('/^[a-z0-9]*$/i', $propertyValue)) return TRUE;
 
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221551320));
 		return FALSE;
 	}
 }

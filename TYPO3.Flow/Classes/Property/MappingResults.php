@@ -50,16 +50,6 @@ class MappingResults {
 	protected $warnings = array();
 
 	/**
-	 * A list of found identifiers for each property.
-	 *
-	 * Key: Name of property
-	 * Value: Identifier
-	 *
-	 * @var array
-	 */
-	protected $identifiers = array();
-
-	/**
 	 * Adds an error to the mapping results. This might be for example a
 	 * validation or mapping error
 	 *
@@ -111,31 +101,6 @@ class MappingResults {
 	 */
 	public function getWarnings() {
 		return $this->warnings;
-	}
-
-	/**
-	 * Add an $identifier for a $property to the mapping results.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param string $identifier Identifier of the property
-	 * @return void
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function addIdentifier($propertyName, $identifier) {
-		$this->identifiers[$propertyName] = $identifier;
-	}
-
-	/**
-	 * Get properties which have identifiers assigned, including the identifiers.
-	 *
-	 * Returns an associative array. The key is the property name, and the
-	 * associated value is the identifier for this property.
-	 *
-	 * @return array Associative identifier array. Key: Property Name; Value: Identifier for the property
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function getIdentifiers() {
-		return $this->identifiers;
 	}
 
 	/**

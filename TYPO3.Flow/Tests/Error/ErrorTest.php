@@ -46,7 +46,7 @@ class ErrorTest extends \F3\Testing\BaseTestCase {
 		$errorMessage = 'The message';
 		$error = new \F3\FLOW3\Error\Error($errorMessage, 0);
 
-		$this->assertEquals($errorMessage, $error->getErrorMessage());
+		$this->assertEquals($errorMessage, $error->getMessage());
 	}
 
 	/**
@@ -57,7 +57,7 @@ class ErrorTest extends \F3\Testing\BaseTestCase {
 		$errorCode = 123456789;
 		$error = new \F3\FLOW3\Error\Error('', $errorCode);
 
-		$this->assertEquals($errorCode, $error->getErrorCode());
+		$this->assertEquals($errorCode, $error->getCode());
 	}
 }
 

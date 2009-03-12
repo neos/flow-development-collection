@@ -43,7 +43,7 @@ class RawTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theRawValidatorAlwaysReturnsTRUE() {
-		$rawValidator = new \F3\FLOW3\Validation\Validator\Raw();
+		$rawValidator = new \F3\FLOW3\Validation\Validator\RawValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($rawValidator->isValidProperty('simple1expression', $validationErrors));

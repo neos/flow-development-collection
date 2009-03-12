@@ -45,7 +45,7 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 
 	/**
 	 * Injects the Router
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -56,7 +56,7 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 
 	/**
 	 * Creates a link by making use of the Routers reverse routing mechanism.
-	 * 
+	 *
 	 * @param string $label Inner HTML of the generated link. Label is htmlspecialchared by default
 	 * @param string $actionName Name of the action to be called
 	 * @param array $arguments Additional arguments
@@ -75,7 +75,7 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 
 	/**
 	 * Creates an URI by making use of the Routers reverse routing mechanism.
-	 * 
+	 *
 	 * @param string $actionName Name of the action to be called
 	 * @param array $arguments Additional arguments
 	 * @param string $controllerName Name of the target controller. If not set, current controller is used
@@ -96,7 +96,6 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 		} else if (strlen($subpackageKey)) {
 			$routeValues['@subpackage'] = $subpackageKey;
 		}
-
 		$URIString = $this->router->resolve($routeValues);
 		return $URIString;
 	}

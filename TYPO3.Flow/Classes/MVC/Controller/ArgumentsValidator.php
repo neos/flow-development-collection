@@ -37,7 +37,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ArgumentsValidator implements \F3\FLOW3\Validation\ObjectValidatorInterface {
+class ArgumentsValidator implements \F3\FLOW3\Validation\Validator\ObjectValidatorInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface The object factory
@@ -98,16 +98,16 @@ class ArgumentsValidator implements \F3\FLOW3\Validation\ObjectValidatorInterfac
 	 * in the given errors object. If validation succeeds, this method returns TRUE, else it will return FALSE.
 	 * It also invokes any registered property editors.
 	 *
-	 * @param object $object: The object of which the property should be validated
-	 * @param string $propertyName: The name of the property that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors: Here any occured validation error is stored
+	 * @param object $object The object of which the property should be validated
+	 * @param string $propertyName The name of the property that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors Here any occured validation error is stored
 	 * @return boolean TRUE if the property could be validated, FALSE if an error occured
 	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
 	 */
 	public function validateProperty($object, $propertyName, \F3\FLOW3\Validation\Errors &$errors) {
 		if (!$object instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \F3\FLOW3\Validation\Exception\InvalidSubject('The specified object cannot be validated by this validator.', 1216720830);
 
-		$propertyValidatorErrors = $this->createNewValidationErrorsObject();
+		$propertyValidatorErrors = $this->objectFactory->create('F3\FLOW3\Validation\Errors');
 
 		$isValid = TRUE;
 		if ($object[$propertyName]->getValidator() != NULL) $isValid &= $object[$propertyName]->getValidator()->isValidProperty($object[$propertyName]->getValue(), $propertyValidatorErrors);
@@ -129,25 +129,17 @@ class ArgumentsValidator implements \F3\FLOW3\Validation\ObjectValidatorInterfac
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured
 	 */
 	public function isValidProperty($className, $propertyName, $propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-		$propertyValidatorErrors = $this->createNewValidationErrorsObject();
+		$propertyValidatorErrors = $this->objectFactory->create('F3\FLOW3\Validation\Errors');
 
 		$isValid = TRUE;
 		if ($this->registeredArguments[$propertyName]->getValidator() != NULL) $isValid &= $this->registeredArguments[$propertyName]->getValidator()->isValidProperty($propertyValue->getValue(), $propertyValidatorErrors);
-		$isValid &= $this->registeredArguments[$propertyName]->getDatatypeValidator()->isValidProperty($propertyValue, $propertyValidatorErrors);
+
+		$dataTypeValidator = $this->registeredArguments[$propertyName]->getDatatypeValidator();
+		if ($dataTypeValidator !== NULL) $isValid &= $dataTypeValidator->isValidProperty($propertyValue, $propertyValidatorErrors);
 
 		if (!$isValid) $errors[$propertyName] = $propertyValidatorErrors;
 
 		return (boolean)$isValid;
-	}
-
-	/**
-	 * This is a factory method to get a clean validation errors object
-	 *
-	 * @return \F3\FLOW3\Validation\Errors An empty errors object
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function createNewValidationErrorsObject() {
-		return $this->objectFactory->create('F3\FLOW3\Validation\Errors');
 	}
 }
 ?>

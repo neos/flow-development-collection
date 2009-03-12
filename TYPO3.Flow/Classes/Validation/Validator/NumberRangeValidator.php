@@ -36,7 +36,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NumberRange extends \F3\FLOW3\Validation\AbstractValidator {
+class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * The start value of the range
@@ -68,7 +68,7 @@ class NumberRange extends \F3\FLOW3\Validation\AbstractValidator {
 	}
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid number in the given range.
+	 * Returns TRUE, if the given property ($propertyValue) is a valid number in the given range.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *

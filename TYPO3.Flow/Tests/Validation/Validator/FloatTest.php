@@ -61,7 +61,7 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider validFloats
 	 */
 	public function floatValidatorReturnsTrueForAValidFloat($address) {
-		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
@@ -91,7 +91,7 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$floatValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -107,14 +107,14 @@ class FloatTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$floatValidator = new \F3\FLOW3\Validation\Validator\Float();
+		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$floatValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$floatValidator->isValidProperty(123456, $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560288, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221560288, $validationErrors[0]->getCode());
 	}
 
 }

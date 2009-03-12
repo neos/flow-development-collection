@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,30 +29,26 @@ namespace F3\FLOW3\Validation;
  */
 
 /**
- * Abstract validator
+ * A validator which accepts any input
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractValidator implements \F3\FLOW3\Validation\ValidatorInterface {
+class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface The object factory
-	 */
-	protected $objectFactory;
-
-	/**
-	 * Injector for the object factory
+	 * Always returns TRUE.
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param mixed $propertyValue ignored
+	 * @param \F3\FLOW3\Validation\Errors $errors ignored
+	 * @return boolean Always TRUE
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
-		$this->objectFactory = $objectFactory;
+	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
+		return TRUE;
 	}
-
 }
 
 ?>

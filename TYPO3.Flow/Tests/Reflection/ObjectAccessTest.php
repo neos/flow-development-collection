@@ -24,7 +24,7 @@ namespace F3\FLOW3\Reflection;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Reflection
  * @version $Id$
  */
 
@@ -34,10 +34,9 @@ require_once('Fixture/DummyClassWithGettersAndSetters.php');
  * Testcase for Object Access
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Reflection
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
 class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
@@ -58,7 +57,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPropertyReturnsExpectedValueForGetterProperty() {
 		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'property');
-		$this->assertEquals($property, 'string1', 'A property of a given object was not returned correctly.');
+		$this->assertEquals($property, 'string1');
 	}
 
 	/**
@@ -72,45 +71,44 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Reflection\Exception
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertyThrowsExceptionIfPropertyDoesNotExist() {
+	public function getPropertyReturnsNullIfPropertyDoesNotExist() {
 		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, 'notExistingProperty');
+		$this->assertNull($property);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Reflection\Exception
+	 * @expectedException \InvalidArgumentException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertyThrowsExceptionIfPropertyIsNoString() {
+	public function getPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
 		$property = \F3\FLOW3\Reflection\ObjectAccess::getProperty($this->dummyObject, new \ArrayObject());
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Reflection\Exception
+	 * @expectedException \InvalidArgumentException
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setPropertyThrowsExceptionIfPropertyIsNoString() {
+	public function setPropertyThrowsExceptionIfThePropertyNameIsNotAString() {
 		$property = \F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, new \ArrayObject(), 42);
 	}
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\Reflection\Exception
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setPropertyThrowsExceptionIfPropertyIsNotAccessible() {
-		$property = \F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42);
+	public function setPropertyReturnsFalseIfPropertyIsNotAccessible() {
+		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'protectedProperty', 42));
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setPropertyWorksWhenSetterAvailable() {
+	public function setPropertyCallsASetterMethodToSetThePropertyValueIfOneIsAvailable() {
 		\F3\FLOW3\Reflection\ObjectAccess::setProperty($this->dummyObject, 'property', 4242);
 		$this->assertEquals($this->dummyObject->getProperty(), 4242, 'setProperty does not work with setter.');
 	}
@@ -128,7 +126,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function setPropertyWorksWithArrayObject() {
+	public function setPropertyCanDirectlySetValuesInAnArrayObject() {
 		$arrayObject = new \ArrayObject();
 		\F3\FLOW3\Reflection\ObjectAccess::setProperty($arrayObject, 'publicProperty', 4242);
 		$this->assertEquals($arrayObject['publicProperty'], 4242, 'setProperty does not work with ArrayObject property.');
@@ -138,7 +136,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function getPropertyWorksWithArrayObject() {
+	public function getPropertyCanAccessPropertiesOfAnArrayObject() {
 		$arrayObject = new \ArrayObject(array('key' => 'value'));
 		$expected = \F3\FLOW3\Reflection\ObjectAccess::getProperty($arrayObject, 'key');
 		$this->assertEquals($expected, 'value', 'getProperty does not work with ArrayObject property.');
@@ -166,36 +164,6 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 			'publicProperty' => NULL,
 			'publicProperty2' => 42);
 		$this->assertEquals($allProperties, $expectedProperties, 'expectedProperties did not return the right values for the properties.');
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function isPropertyAccessibleReturnsCorrectResultForGetters() {
-		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'property', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_GET), 'IsPropertyAccessible returned wrong result when called on a public getter.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'protectedProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_GET), 'IsPropertyAccessible returned wrong result when called on a protected getter.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'privateProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_GET), 'IsPropertyAccessible returned wrong result when called on a private getter.');
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function isPropertyAccessibleReturnsCorrectResultForSetters() {
-		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'property', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_SET), 'IsPropertyAccessible returned wrong result when called on a public setter.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'protectedProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_SET), 'IsPropertyAccessible returned wrong result when called on a protected setter.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'privateProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_SET), 'IsPropertyAccessible returned wrong result when called on a private setter.');
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function isPropertyAccessibleReturnsCorrectResultForPublic() {
-		$this->assertTrue(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'publicProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_PUBLIC), 'IsPropertyAccessible returned wrong result when called on a public variable.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'property', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_PUBLIC), 'IsPropertyAccessible returned wrong result when called on a protected variable.');
-		$this->assertFalse(\F3\FLOW3\Reflection\ObjectAccess::isPropertyAccessible($this->dummyObject, 'nonExistantProperty', \F3\FLOW3\Reflection\ObjectAccess::ACCESS_PUBLIC), 'IsPropertyAccessible returned wrong result when called on a private variable.');
 	}
 }
 ?>

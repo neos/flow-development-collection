@@ -55,10 +55,9 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected $environment;
 
 	/**
-	 * The FLOW3 configuration
-	 * @var \F3\FLOW3\Configuration\Container
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
-	protected $configuration;
+	protected $systemLogger;
 
 	/**
 	 * Array containing the configuration for all routes.
@@ -90,6 +89,17 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $objectFactory;
 		$this->environment = $environment;
+	}
+
+	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -150,6 +160,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 *
 	 * @param string $request The request path
 	 * @return array results of the matching route
+	 * @see route()
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function findMatchResults($requestPath) {
@@ -158,7 +169,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		foreach (array_reverse($this->routes) as $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
-				$this->emitRouteMatched($route->getName(), $matchResults);
+				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the request path "' . $requestPath . '".', LOG_NOTICE);
 				return $matchResults;
 			}
 		}
@@ -177,24 +188,12 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	public function resolve(array $routeValues) {
 		$this->createRoutesFromConfiguration();
 
-		foreach (array_reverse($this->routes) as $route) {
+		foreach (array_reverse($this->routes) as $routeName => $route) {
 			if ($route->resolves($routeValues)) {
 				return $route->getMatchingURI();
 			}
 		}
 		return '';
-	}
-
-	/**
-	 * Emits the signal that a route matched and was chosen
-	 *
-	 * @param string $routeName Name of the route which matched
-	 * @param array $arguments an array with evaluated arguments
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @signal
-	 */
-	public function emitRouteMatched($routeName, array $arguments) {
 	}
 
 	/**

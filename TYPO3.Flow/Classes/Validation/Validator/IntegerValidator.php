@@ -36,10 +36,10 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Integer extends \F3\FLOW3\Validation\AbstractValidator {
+class IntegerValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid integer.
+	 * Returns TRUE, if the given property ($propertyValue) is a valid integer.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *

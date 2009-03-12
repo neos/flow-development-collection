@@ -42,7 +42,7 @@ class DirtyMonitoring {
 	/**
 	 * The persistence manager
 	 *
-	 * @var \F3\FLOW3\Persistence\Manager
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
 	 */
 	protected $persistenceManager;
 
@@ -60,11 +60,11 @@ class DirtyMonitoring {
 	/**
 	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\Manager $persistenceManager
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\Manager $persistenceManager) {
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
 	}
 

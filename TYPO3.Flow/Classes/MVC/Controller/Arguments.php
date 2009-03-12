@@ -159,10 +159,6 @@ class Arguments extends \ArrayObject {
 		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 
-		if ($this->objectManager->isObjectRegistered($dataType)) {
-			$propertyConverter = $this->objectFactory->create('F3\FLOW3\Property\Converter\DomainObjectConverter', $dataType);
-			$argument->setPropertyConverter($propertyConverter)->setPropertyConverterInputFormat('array');
-		}
 		$this->addArgument($argument);
 		return $argument;
 	}
@@ -243,7 +239,6 @@ class Arguments extends \ArrayObject {
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) !== 'set') throw new LogicException('Unknown method "' . $methodName . '".', 1210858451);
-
 		$firstLowerCaseArgumentName = $this->translateToLongArgumentName(strtolower($methodName[3]) . substr($methodName, 4));
 		$firstUpperCaseArgumentName = $this->translateToLongArgumentName(ucfirst(substr($methodName, 3)));
 
@@ -268,9 +263,7 @@ class Arguments extends \ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function translateToLongArgumentName($argumentName) {
-
 		if (in_array($argumentName, $this->getArgumentNames())) return $argumentName;
-
 		foreach ($this as $argument) {
 			if ($argumentName === $argument->getShortName()) return $argument->getName();
 		}

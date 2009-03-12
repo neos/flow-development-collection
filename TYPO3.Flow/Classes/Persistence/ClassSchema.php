@@ -67,7 +67,7 @@ class ClassSchema {
 	 * Whether a repository exists for the class this schema is referring to
 	 * @var boolean
 	 */
-	protected $repositoryManaged = FALSE;
+	protected $aggregateRoot = FALSE;
 
 	/**
 	 * The name of the property holding the uuid of an entity, if any.
@@ -161,24 +161,26 @@ class ClassSchema {
 	}
 
 	/**
-	 * Marks the class is being managed by a repository or not.
+	 * Marks the class if it is root of an aggregate and therefore accessible
+	 * through a repository - or not.
 	 *
-	 * @param boolean $isManaged TRUE if it is managed
+	 * @param boolean $isRoot TRUE if it is the root of an aggregate
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setRepositoryManaged($isManaged) {
-		$this->repositoryManaged = $isManaged;
+	public function setAggregateRoot($isRoot) {
+		$this->aggregateRoot = $isRoot;
 	}
 
 	/**
-	 * Whether the class is being managed by a repository.
+	 * Whether the class is an aggregate root and therefore accessible through
+	 * a repository.
 	 *
 	 * @return boolean TRUE if it is managed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isRepositoryManaged() {
-		return $this->repositoryManaged;
+	public function isAggregateRoot() {
+		return $this->aggregateRoot;
 	}
 
 	/**

@@ -173,7 +173,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function repositoryManagedIsDetectedForEntities() {
+	public function aggregateRootIsDetectedForEntities() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('isClassReflected'));
 		$reflectionService->expects($this->at(0))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Entity1')->will($this->returnValue(TRUE));
 		$reflectionService->expects($this->at(1))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Entity1Repository')->will($this->returnValue(TRUE));
@@ -186,7 +186,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 		$builtClassSchemata = $builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
-		$this->assertTrue($builtClassSchema->isRepositoryManaged());
+		$this->assertTrue($builtClassSchema->isAggregateRoot());
 	}
 
 }

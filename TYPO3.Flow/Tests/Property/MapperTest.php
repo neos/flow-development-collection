@@ -40,52 +40,18 @@ require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
  */
 class MapperTest extends \F3\Testing\BaseTestCase {
 
+	protected $mockObjectFactory;
+	protected $mappingResults;
+
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * Sets up this test case
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setUp() {
+		$this->mappingResults = new \F3\FLOW3\Property\MappingResults();
 		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallback(array($this, 'createCallback')));
-		$this->mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
-		$this->mapper = new \F3\FLOW3\Property\Mapper($this->mockObjectFactory);
-		$this->mapper->injectValidatorResolver($this->mockValidatorResolver);
-	}
-
-	/**
-	 * Callback for the mocked object factory defined in setUp()
-	 *
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function createCallback() {
-		switch (func_get_arg(0)) {
-			case 'F3\FLOW3\Property\MappingResults':
-				return new \F3\FLOW3\Property\MappingResults();
-			break;
-			case 'F3\FLOW3\Property\MappingWarning':
-				$message = func_get_arg(1);
-				$code = func_get_arg(2);
-				return new \F3\FLOW3\Property\MappingWarning($message, $code);
-			break;
-			case 'F3\FLOW3\Validation\Errors':
-				return new \F3\FLOW3\Validation\Errors();
-			break;
-			case 'F3\FLOW3\Property\MappingError':
-				$message = func_get_arg(1);
-				$code = func_get_arg(2);
-				return new \F3\FLOW3\Property\MappingError($message, $code);
-			break;
-		}
-	}
-
-	/**
-	 * Checks if non-objects as a target trigger an exception
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTargetObject
-	 */
-	public function mapperOnlyAcceptsObjectsAsTarget() {
-		$this->mapper->setTarget(array());
 	}
 
 	/**
@@ -94,28 +60,9 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mappingWithArrayObjectTargetBasicallyWorks() {
-		$target = new \ArrayObject();
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.'
-			)
-		);
+	public function mapAndValidateCanCopyPropertiesOfOneArrayObjectToAnother() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1', 'key2'));
-		$this->mapper->map($source);
-		$this->assertEquals($source, $target, 'The two ArrayObjects are not equal after mapping them together.');
-	}
-
-	/**
-	 * Checks if one ArrayObject can be bound to another by using the default settings
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mappingWithNestedArrayObjectWorks() {
 		$target = new \ArrayObject();
 		$source = new \ArrayObject(
 			array(
@@ -132,10 +79,27 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
-		$this->mapper->map($source);
-		$this->assertEquals($source, $target, 'The two ArrayObjects are not equal after mapping them together.');
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$successful = $mapper->mapAndValidate(array('key1', 'key2', 'key3', 'key4'), $source, $target);
+		$this->assertEquals($source, $target);
+		$this->assertTrue($successful);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTargetObject
+	 */
+	public function mapAndValidateExpectsTheTargetToBeAnObject() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
+		$target = '';
+		$source = new \ArrayObject(array('key1' => 'value1'));
+
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$mapper->mapAndValidate(array('key1'), $source, $target);
 	}
 
 	/**
@@ -144,7 +108,10 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mappingWithSetterAccessBasicallyWorks() {
+	public function mapAndValidateCanCopyPropertiesFromAnArrayObjectToAnObjectWithSetters() {
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue(new \F3\FLOW3\Error\Error('Error1', 1)));
+
 		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$source = new \ArrayObject (
 			array(
@@ -161,83 +128,28 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$this->mapper->setTarget($target);
-		$this->mapper->map($source);
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$result = $mapper->mapAndValidate(array('property1', 'property2', 'property3', 'property4'), $source, $target);
 
 		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
 		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
 		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
 		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
-	}
 
-	/**
-	 * Checks if mapping to a non-array target object via setter methods works if the shorthand syntax is used
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function mappingWithSetterAccessBasicallyWorksWithShortSyntax() {
-		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-		$source = new \ArrayObject (
-			array(
-				'property1' => 'value1',
-				'property2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'property4' => new \ArrayObject(
-					array(
-						'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
-					)
-				),
-				'property3' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
+		$this->assertEquals(FALSE, $result);
 
-		$this->mapper->map($source, $target);
-
-		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
-		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
-		$this->assertEquals($source['property3'], $target->property3, 'Property 3 has not the expected value.');
-		$this->assertEquals($source['property4'], $target->property4, 'Property 4 has not the expected value.');
+		$errors = $this->mappingResults->getErrors();
+		$this->assertSame('Error1', $errors['property2']->getMessage());
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function onlyCertainAllowedPropertiesAreMapped() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
+	public function onlySpecifiedPropertiesAreMapped() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
-		$target = new \ArrayObject();
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1', 'key3'));
-		$expectedTarget = new \ArrayObject(
-			array(
-				'key1' => $source['key1'],
-				'key3' => $source['key3']
-			)
-		);
-		$this->mapper->map($source);
-		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function onlyCertainAllowedPropertiesAreMappedWithAlternativeSyntax() {
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -257,7 +169,10 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 				'key3' => $source['key3']
 			)
 		);
-		$this->mapper->map($source, $target, array('key1', 'key3'));
+
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$mapper->mapAndValidate(array('key1', 'key3'), $source, $target);
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
 	}
 
@@ -265,7 +180,9 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function wildCardWorksForSpecifyingAllowedProperties() {
+	public function noPropertyIsMappedIfNoPropertiesWereSpecified() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
 		$source = new \ArrayObject(
 			array(
 				'key1' => 'value1',
@@ -279,396 +196,57 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$target = new \ArrayObject();
 
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key.*'));
-		$this->mapper->map($source);
-		$this->assertEquals(array_keys($source->getArrayCopy()), array_keys((array)$target), 'The target object contains not the expected properties after allowing key.*');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function noPropertyIsMappedIfNoPropertiesAreAllowed() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array());
 		$expectedTarget = new \ArrayObject;
-		$this->mapper->map($source);
-		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing no property at all.');
-	}
 
-	/**
-	 * Needed for multiple invocations of $this->propertyMapper->map(..., ...);
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function allowedPropertiesAreResetIfThirdParameterOfMapIsNotSet() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$this->mapper->setAllowedProperties(array());
-
-		$expectedTarget = $source;
-		$this->mapper->map($source, $target);
-		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content. Thus, the allowed properties have not been reset.');
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$mapper->mapAndValidate(array(), $source, $target);
+		$this->assertEquals($expectedTarget, $target);
 	}
 
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function objectCanBeMappedToOtherObject() {
+	public function anObjectCanBeMappedToAnotherObject() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
 		$source = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$source->setProperty1('Hallo');
 		$source->setProperty3('It is already late in the evening and I am curious which special characters my mac keyboard can do. «∑€®†Ω¨⁄øπ•±å‚∂ƒ©ªº∆@œæ¥≈ç√∫~µ∞…––çµ∫≤∞. Amazing :-) ');
 
-		$destination = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-		$this->mapper->map($source, $destination);
-		$this->assertEquals($source, $destination, 'Complex objects cannot be mapped to each other.');
-	}
-
-	/**
-	 * @test
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function propertyMapperCallsGetIdentifierIfPropertyEditorIsRegistered() {
-		$identifier = '550e8400-e29b-11d4-a716-446655441234';
-		$source = new \ArrayObject(array(
-			'property1' => 'bla',
-			'property2' => 'blubb'
-		));
-
-		$destination = new \ArrayObject();
-		$this->mapper->setTarget($destination);
-		$mockDomainObjectConverter = $this->getMock('F3\FLOW3\Property\Converter\DomainObjectConverter', array('getIdentifier', 'setAsFormat'), array(), '', FALSE);
-		$mockDomainObjectConverter->expects($this->once())->method('getIdentifier')->will($this->returnValue($identifier));
-		$this->mapper->registerPropertyConverter($mockDomainObjectConverter, 'property1');
-		$this->mapper->map($source);
-
-		$identifiers = $this->mapper->getMappingResults()->getIdentifiers();
-		$this->assertEquals(array('property1' => $identifier), $identifiers, 'Identifiers not correctly set');
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function aPropertyConverterRegisteredForAllPropertiesIsCalledCorrectly() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
-		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value1'));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1'));
-		$this->mapper->registerPropertyConverter($propertyConverter);
-
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function aPropertyConverterRegisteredForAllPropertiesWithASpecificFormatIsCalledCorrectly() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
-		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value1'));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1'));
-		$this->mapper->registerPropertyConverter($propertyConverter, 'all', 'customFormat');
-
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function aPropertyConverterRegisteredForASinglePropertyIsCalledCorrectly() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
-		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('default'), $this->equalTo('value3'));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
-		$this->mapper->registerPropertyConverter($propertyConverter, 'key3');
-
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function aPropertyConverterRegisteredForASinglePropertyWithASpecificFormatIsCalledCorrectly() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$propertyConverter = $this->getMock('F3\FLOW3\Property\Converter\ConverterInterface');
-		$propertyConverter->expects($this->once())->method('setAsFormat')->with($this->equalTo('customFormat'), $this->equalTo('value3'));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1', 'key2', 'key3', 'key4'));
-		$this->mapper->registerPropertyConverter($propertyConverter, 'key3', 'customFormat');
-
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function registeredFiltersAreCalledForTheRightProperties() {
-		$source = new \ArrayObject(
-			array(
-				'key1' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \ArrayObject();
-		$filter = $this->getMock('F3\FLOW3\Validation\FilterInterface');
-		$filter->expects($this->once())->method('filter')->with($this->equalTo('value1'));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key1'));
-		$this->mapper->registerFilter($filter);
-
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function mappingAnAllowedPropertyAddsAWarningIfItIsNotAccessibleInTheTargetObject() {
-		$source = new \ArrayObject(
-			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
 		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
-		$this->mapper->map($source);
-		$mappingResults = $this->mapper->getMappingResults();
-
-		$this->assertTrue($mappingResults->hasWarnings());
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$mapper->mapAndValidate(array('property1', 'property3'), $source, $target);
+		$this->assertEquals($source, $target);
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mappingARequiredPropertyAddsAnErrorIfItIsNotAccessibleInTheTargetObject() {
-		$source = new \ArrayObject(
-			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
-		$this->mapper->setRequiredProperties(array('key'));
-		$this->mapper->map($source);
-		$mappingResults = $this->mapper->getMappingResults();
-
-		$this->assertTrue($mappingResults->hasErrors());
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function mappingANotDefinedPropertyAddsAnWarning() {
-		$source = new \ArrayObject(
-			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3'));
-		$this->mapper->map($source);
-		$mappingResults = $this->mapper->getMappingResults();
-
-		$this->assertTrue($mappingResults->hasWarnings());
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function onlyWriteOnNoErrorsModeBasicallyWorks() {
-		$source = new \ArrayObject(
-			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
-
-		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
-		$originalTargetCopy = clone $target;
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
-		$this->mapper->setRequiredProperties(array('notExistantKey'));
-		$this->mapper->setOnlyWriteOnNoErrors(TRUE);
-		$this->mapper->map($source);
-
-		$this->assertEquals($originalTargetCopy, $target);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function validatorIsInvokedCorrectly() {
-		$source = new \ArrayObject(
-			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
-			)
-		);
+	public function ifAPropertyNameWasSpecifiedAndIsNotOptionalButDoesntExistInTheSourceTheMappingFails() {
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue(new \F3\FLOW3\Error\Error('Error1', 1)));
 
 		$target = new \ArrayObject();
-		$validator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface');
-
-		$validator->expects($this->once())->method('validate');
-		$validator->expects($this->atLeastOnce())->method('isValidProperty');
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
-		$this->mapper->registerValidator($validator);
-		$this->mapper->map($source);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function propertyIsNotMappedIfValidatorReturnsFalse() {
 		$source = new \ArrayObject(
 			array(
-				'key' => 'value1',
-				'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
-				'key3' => 'value3',
-				'key4' => array(
-					'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
-				)
+				'key1' => 'value1',
+				'key2' => 'value2'
 			)
 		);
 
-		$target = new \ArrayObject();
-		$validator = $this->getMock('F3\FLOW3\Validation\ObjectValidatorInterface');
-
-		$validator->expects($this->once())->method('validate')->will($this->returnValue(FALSE));
-		$validator->expects($this->atLeastOnce())->method('isValidProperty')->will($this->returnValue(FALSE));
-
-		$this->mapper->setTarget($target);
-		$this->mapper->setAllowedProperties(array('key', 'key2', 'key3', 'key4'));
-		$this->mapper->registerValidator($validator);
-		$this->mapper->map($source);
-
-		$this->assertEquals($target, new \ArrayObject());
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$successful = $mapper->mapAndValidate(array('key1', 'key2', 'key3', 'key4'), $source, $target, array('key4'));
+		$this->assertFalse($successful);
+		$errors = $this->mappingResults->getErrors();
+		$this->assertSame('Error1', $errors['key3']->getMessage());
 	}
+
+
 }
 ?>

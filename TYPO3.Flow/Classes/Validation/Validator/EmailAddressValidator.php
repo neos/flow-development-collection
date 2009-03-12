@@ -36,7 +36,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EmailAddress extends \F3\FLOW3\Validation\AbstractValidator {
+class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($proptertyValue) is a valid email address.

@@ -56,6 +56,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $settings;
 
 	/**
+	 * @var \F3\FLOW3\Property\Mapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * The current request
 	 * @var \F3\FLOW3\MVC\Request
 	 */
@@ -74,24 +79,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $arguments;
 
 	/**
-	 * A property mapper for mapping the arguments
-	 * @var \F3\FLOW3\MVC\Property\Mapper
-	 */
-	protected $propertyMapper;
-
-	/**
 	 * An array of supported request types. By default only web requests are supported.
 	 * Modify or replace this array if your specific controller supports certain
 	 * (additional) request types.
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
-
-	/**
-	 * Mapping results of the arguments mapping process
-	 * @var \F3\FLOW3\Property\MappingResults
-	*/
-	protected $argumentMappingResults;
 
 	/**
 	 * Constructs the controller.
@@ -106,17 +99,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Injects a property mapper
-	 *
-	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
-		$this->propertyMapper = $propertyMapper;
-	}
-
-	/**
 	 * Injects the settings of the package this controller belongs to.
 	 *
 	 * @param array $settings Settings container of the current package
@@ -125,6 +107,17 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
+	}
+
+	/**
+	 * Injects the property mapper
+	 *
+	 * @param \F3\FLOW3\Property\Mapper $propertyMapper The property mapper
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
@@ -247,33 +240,8 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function mapRequestArgumentsToLocalArguments() {
-		$this->propertyMapper->setTarget($this->arguments);
-		foreach ($this->arguments as $argument) {
-			if ($argument->getFilter() !== NULL) $this->propertyMapper->registerFilter($argument->getFilter(), $argument->getName());
-			if ($argument->getPropertyConverter() !== NULL) $this->propertyMapper->registerPropertyConverter($argument->getPropertyConverter(), $argument->getName(), $argument->getPropertyConverterInputFormat());
-		}
-
-		$argumentsValidator = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentsValidator', $this->arguments);
-		$this->propertyMapper->registerValidator($argumentsValidator);
-		$this->propertyMapper->setAllowedProperties(array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames()));
-		$this->propertyMapper->map($this->request->getArguments());
-
-		$this->argumentMappingResults = $this->propertyMapper->getMappingResults();
-
-		foreach ($this->argumentMappingResults->getErrors() as $propertyName => $error) {
-			if (isset($this->arguments[$propertyName])) {
-				$this->arguments[$propertyName]->setValidity(FALSE);
-				$this->arguments[$propertyName]->addError($error);
-			}
-		}
-
-		foreach ($this->argumentMappingResults->getWarnings() as $propertyName => $warning) {
-			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->addWarning($warning);
-		}
-
-		foreach ($this->argumentMappingResults->getIdentifiers() as $propertyName => $identifier) {
-			if (isset($this->arguments[$propertyName])) $this->arguments[$propertyName]->setIdentifier($identifier);
-		}
+		$propertyNames = array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames());
+		$this->propertyMapper->mapAndValidate($propertyNames, $this->request->getArguments(), $this->arguments);
 	}
 }
 

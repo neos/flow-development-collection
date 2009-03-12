@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -74,10 +74,10 @@ interface ObjectValidatorInterface {
 	public function validateProperty($object, $propertyName, \F3\FLOW3\Validation\Errors &$errors);
 
 	/**
-	 * Returns TRUE, if the given propterty ($proptertyValue) is a valid value for the property ($propertyName) of the class ($className).
+	 * Returns TRUE, if the given property ($propertyValue) is a valid value for the property ($propertyName) of the class ($className).
 	 * Any errors will be stored in the given errors object. If at least one error occurred, the result is FALSE.
 	 *
-	 * @param  string $className: The propterty's class name
+	 * @param  string $className: The property's class name
 	 * @param  string $propertyName: The name of the property for wich the value should be validated
 	 * @param  object $propertyValue: The value that should be validated
 	 * @return boolean TRUE if the value could be validated for the given property, FALSE if an error occured

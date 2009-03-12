@@ -44,7 +44,7 @@ class UUIDTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
 		$errors = new \F3\FLOW3\Validation\Errors();
-		$validator = new \F3\FLOW3\Validation\Validator\UUID();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 
 		$this->assertTrue($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
 		$this->assertTrue($validator->isValidProperty('533548ca-8914-4a19-9404-ef390a6ce387', $errors));
@@ -60,7 +60,7 @@ class UUIDTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$errors = new \F3\FLOW3\Validation\Errors();
-		$validator = new \F3\FLOW3\Validation\Validator\UUID();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors));
@@ -76,7 +76,7 @@ class UUIDTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$errors = new \F3\FLOW3\Validation\Errors();
-		$validator = new \F3\FLOW3\Validation\Validator\UUID();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
 		$this->assertFalse($validator->isValidProperty('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
@@ -93,13 +93,13 @@ class UUIDTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$errors = new \F3\FLOW3\Validation\Errors();
-		$validator = new \F3\FLOW3\Validation\Validator\UUID();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
 		$validator->isValidProperty('e104e469-9030-4b98-babf-3990f07', $errors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $errors[0]);
-		$this->assertEquals(1221565853, $errors[0]->getErrorCode());
+		$this->assertEquals(1221565853, $errors[0]->getCode());
 	}
 }
 

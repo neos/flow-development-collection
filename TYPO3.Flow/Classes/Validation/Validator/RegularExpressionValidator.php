@@ -29,18 +29,32 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator for alphanumeric strings
+ * Validator based on regular expressions
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Alphanumeric extends \F3\FLOW3\Validation\AbstractValidator {
+class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid
-	 * alphanumeric string, which is defined as [a-zA-Z0-9]*.
+	 * @var string The regular expression
+	 */
+	protected $regularExpression;
+
+	/**
+	 * Creates a RegularExpression validator based on the given expression
+	 *
+	 * @param string The regular expression, must be ready to use with preg_match()
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct($regularExpression) {
+		$this->regularExpression = $regularExpression;
+	}
+
+	/**
+	 * Returns TRUE, if the given property ($propertyValue) matches the given regular expression.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -53,10 +67,12 @@ class Alphanumeric extends \F3\FLOW3\Validation\AbstractValidator {
 	 */
 	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
 
-		if (is_string($propertyValue) && preg_match('/^[a-z0-9]*$/i', $propertyValue)) return TRUE;
+		if (!is_string($propertyValue) || preg_match($this->regularExpression, $propertyValue) === 0) {
+			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $propertyValue . '"', 1221565130));
+			return FALSE;
+		}
 
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221551320));
-		return FALSE;
+		return TRUE;
 	}
 }
 

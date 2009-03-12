@@ -43,7 +43,7 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
@@ -58,7 +58,7 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -74,7 +74,7 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -90,14 +90,14 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty('', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560718, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221560718, $validationErrors[0]->getCode());
 	}
 
 	/**
@@ -109,14 +109,14 @@ class NotEmptyTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmpty();
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValidProperty(NULL, $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560910, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221560910, $validationErrors[0]->getCode());
 	}
 }
 

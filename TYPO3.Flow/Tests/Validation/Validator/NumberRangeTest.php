@@ -43,7 +43,7 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(10.5, $validationErrors));
@@ -58,7 +58,7 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
 		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -70,7 +70,7 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1000, 0);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1000, 0);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertTrue($numberRangeValidator->isValidProperty(100, $validationErrors));
@@ -85,7 +85,7 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(0, 1000);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
 		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
@@ -101,14 +101,14 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1, 42);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1, 42);
 		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberRangeValidator->isValidProperty(4711, $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221561046, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221561046, $validationErrors[0]->getCode());
 	}
 
 	/**
@@ -120,14 +120,14 @@ class NumberRangeTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRange(1, 42);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1, 42);
 		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberRangeValidator->isValidProperty('this is not between 1 an 42', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221563685, $validationErrors[0]->getErrorCode());
+		$this->assertEquals(1221563685, $validationErrors[0]->getCode());
 	}
 }
 

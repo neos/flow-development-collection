@@ -150,10 +150,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageCreatesPackageFolderAndReturnsPackage() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -169,10 +171,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * Check creating a package creates the mandatory Package.xml
 	 * (this doesn't check the content of the file)
 	 *
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageCreatesPackageMetaDataFile() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -186,10 +190,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Check createPackage uses a meta writer to write the contents of the package meta to a file
 	 *
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageWithMetaDatadataUsesMetaDataWriter() {
+		$this->markTestIncomplete();
 
 		$metaWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
 		$metaWriter->expects($this->atLeastOnce())
@@ -211,10 +216,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * Check create package creates the folders for
 	 * classes, configuration, documentation, resources and tests
 	 *
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageCreatesClassesConfigurationDocumentationResourcesAndTestsFolders() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -229,10 +236,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageThrowsExceptionForInvalidPackageKey() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -248,10 +257,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Check handling of duplicate package keys in package creation
 	 *
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -265,10 +276,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function createPackageCreatesDeactivatedPackage() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -282,10 +295,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Check package key validation accepts only valid keys
 	 *
-	 * test
+	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageKeyValidationWorks() {
+		$this->markTestIncomplete();
+
 		$this->assertFalse($this->packageManager->isPackageKeyValid('Invalid_Package_Key'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('invalidPackageKey'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('1nvalidPackageKey'));
@@ -293,10 +308,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function deacivatePackageRemovesPackageFromActivePackages() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -310,10 +327,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function activatePackagesAddsPackageToActivePackages() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -325,10 +344,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -342,10 +363,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsProtected() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 		try {
@@ -358,10 +381,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageRemovesPackageFromAvailablePackages() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -373,10 +398,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageRemovesPackageFromActivePackages() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
@@ -389,10 +416,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * test
+	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageRemovesPackageDirectoryFromFilesystem() {
+		$this->markTestIncomplete();
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Property\Converter;
+namespace F3\FLOW3\Validation\Validator;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,35 +24,32 @@ namespace F3\FLOW3\Property\Converter;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  */
 
 /**
- * A fixture class
+ * Contract for a validator
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
+ * @author Robert Lemke <robert@typo3.org>
+ * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ExampleDomainObject_BlogPosting {
-	public function setTitle($title) {
-		$this->title = $title;
-	}
+interface ValidatorInterface {
 
-	public function getTitle() {
-		return $title;
-	}
-
-	public function setContents($contents) {
-		$this->contents = $contents;
-	}
-	public function getContents() {
-		return $this->contents;
-	}
-
+	/**
+	 * Returns TRUE, if the given property ($propertyValue) is a valid.
+	 * Any errors will be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
+	 *
+	 * @param  object $propertyValue: The value that should be validated
+	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 */
+	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors);
 }
-
 
 ?>
