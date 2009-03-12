@@ -39,7 +39,7 @@ namespace F3\FLOW3\Validation\Validator;
 class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * Returns TRUE, if the given property ($proptertyValue) is a valid email address.
+	 * Checks if the given value is a valid email address.
 	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -133,16 +133,13 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * ?:\r\n)?[ \t])*))*)?;\s*)
 	 * (from http://ex-parrot.com/~pdw/Mail-RFC822-Address.html)
 	 *
-	 * @param mixed $propertyValue The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Any occured Error will be stored here
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions Not used
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-
-		if(is_string($propertyValue) && preg_match('
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+		if(is_string($value) && preg_match('
 				/
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
 					@
@@ -152,8 +149,8 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 						(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5])\.){3}(?:(?:\d{1,2}|1\d{1,2}|2[0-5][0-5]))
 					)
 					\b
-				/ix', $propertyValue)) return TRUE;
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "' . $propertyValue . '"', 1221559976));
+				/ix', $value)) return TRUE;
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "' . $value . '"', 1221559976));
 		return FALSE;
 	}
 }

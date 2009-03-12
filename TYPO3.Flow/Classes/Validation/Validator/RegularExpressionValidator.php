@@ -39,39 +39,32 @@ namespace F3\FLOW3\Validation\Validator;
 class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * @var string The regular expression
-	 */
-	protected $regularExpression;
-
-	/**
-	 * Creates a RegularExpression validator based on the given expression
+	 * Returns TRUE, if the given property ($value) matches the given regular expression.
 	 *
-	 * @param string The regular expression, must be ready to use with preg_match()
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct($regularExpression) {
-		$this->regularExpression = $regularExpression;
-	}
-
-	/**
-	 * Returns TRUE, if the given property ($propertyValue) matches the given regular expression.
-	 * Any errors will be stored in the given errors object.
-	 * If at least one error occurred, the result is FALSE.
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
 	 *
-	 * @param mixed $propertyValue The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Any occured Error will be stored here
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions Contains the regular expression (key: 'regularExpression')
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-
-		if (!is_string($propertyValue) || preg_match($this->regularExpression, $propertyValue) === 0) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $propertyValue . '"', 1221565130));
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+		if (!isset($validationOptions['regularExpression'])) {
+			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132));
 			return FALSE;
 		}
-
+		$result = preg_match($validationOptions['regularExpression'], $value);
+		if ($result === 0) {
+			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $value . '"', 1221565130));
+			return FALSE;
+		}
+		if ($result === FALSE) {
+			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression "' . $validationOptions['regularExpression'] . '" contained an error.', 1221565131));
+			return FALSE;
+		}
 		return TRUE;
 	}
 }

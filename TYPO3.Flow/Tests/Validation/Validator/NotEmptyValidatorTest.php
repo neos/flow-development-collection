@@ -29,105 +29,94 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the number range validator
+ * Testcase for the not empty validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NumberRangeTest extends \F3\Testing\BaseTestCase {
+class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
+	public function notEmptyValidatorReturnsTrueForASimpleString() {
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($numberRangeValidator->isValidProperty(10.5, $validationErrors));
+		$this->assertTrue($notEmptyValidator->isValid('a not empty string', $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
+	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($numberRangeValidator->isValidProperty(1000.1, $validationErrors));
+		$this->assertFalse($notEmptyValidator->isValid('', $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1000, 0);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($numberRangeValidator->isValidProperty(100, $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function numberRangeValidatorReturnsFalseForAString() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
+	public function notEmptyValidatorReturnsFalseForANullValue() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(0, 1000);
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($numberRangeValidator->isValidProperty('not a number', $validationErrors));
+		$this->assertFalse($notEmptyValidator->isValid(NULL, $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorObjectForANumberOutOfRange() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
+	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1, 42);
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$numberRangeValidator->isValidProperty(4711, $validationErrors);
+		$notEmptyValidator->isValid('', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221561046, $validationErrors[0]->getCode());
+		$this->assertEquals(1221560718, $validationErrors[0]->getCode());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorObjectForAStringSubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
+	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator(1, 42);
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
+		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$numberRangeValidator->isValidProperty('this is not between 1 an 42', $validationErrors);
+		$notEmptyValidator->isValid(NULL, $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221563685, $validationErrors[0]->getCode());
+		$this->assertEquals(1221560910, $validationErrors[0]->getCode());
 	}
 }
 

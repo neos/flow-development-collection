@@ -35,21 +35,25 @@ namespace F3\FLOW3\Validation\Validator;
  * @subpackage Validation
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 interface ValidatorInterface {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid.
-	 * Any errors will be stored in the given errors object.
-	 * If at least one error occurred, the result is FALSE.
+	 * Checks if the given value is valid according to the validator.
 	 *
-	 * @param  object $propertyValue: The value that should be validated
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
+	 *
+	 * Depending on the validator implementation, additional options may be passed
+	 * in an array.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors);
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array());
 }
 
 ?>

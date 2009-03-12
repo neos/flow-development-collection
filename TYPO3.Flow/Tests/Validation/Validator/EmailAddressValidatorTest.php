@@ -29,50 +29,97 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the regular expression validator
+ * Testcase for the email address validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RegularExpressionTest extends \F3\Testing\BaseTestCase {
+class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Data provider with valid email addresses
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
+	public function validAddresses() {
+		return array(
+			array('andreas.foerthner@netlogix.de'),
+			array('user@localhost'),
+			array('user@localhost.localdomain'),
+			array('info@guggenheim.museum'),
+			array('just@test.invalid'),
+			array('just+spam@test.de'),
+			array('local@192.168.0.2')
+		);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider validAddresses
+	 */
+	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
+
+		$this->assertTrue($emailAddressValidator->isValid($address, $validationErrors));
+	}
+
+	/**
+	 * Data provider with invalid email addresses
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function invalidAddresses() {
+		return array(
+			array('andreas.foerthner@'),
+			array('@typo3.org'),
+			array('someone@typo3.'),
+			array('local@192.168.2'),
+			array('local@192.168.270.1')
+		);
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @dataProvider invalidAddresses
+	 */
+	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
+		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
+		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($regularExpressionValidator->isValidProperty('simple1expression', $validationErrors));
-		$this->assertFalse($regularExpressionValidator->isValidProperty('simple1expressions', $validationErrors));
+		$this->assertFalse($emailAddressValidator->isValid($address, $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
+	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
+		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
+		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$regularExpressionValidator->isValidProperty('some subject that will not match', $validationErrors);
+		$emailAddressValidator->isValid('notAValidMail@Address', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221565130, $validationErrors[0]->getCode());
+		$this->assertEquals(1221559976, $validationErrors[0]->getCode());
 	}
+
 }
 
 ?>

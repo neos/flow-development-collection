@@ -41,21 +41,19 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	/**
 	 * Returns TRUE, if the given property ($propertyValue) is a valid
 	 * alphanumeric string, which is defined as [a-zA-Z0-9]*.
-	 * Any errors will be stored in the given errors object.
-	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param mixed $propertyValue The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Any occured Error will be stored here
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions Not used
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given value
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-
-		if (is_string($propertyValue) && preg_match('/^[a-z0-9]*$/i', $propertyValue)) return TRUE;
-
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "' . $propertyValue . '"', 1221551320));
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return TRUE;
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "' . $value . '"', 1221551320));
 		return FALSE;
 	}
 }

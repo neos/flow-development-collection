@@ -36,7 +36,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RawTest extends \F3\Testing\BaseTestCase {
+class RawValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -46,11 +46,11 @@ class RawTest extends \F3\Testing\BaseTestCase {
 		$rawValidator = new \F3\FLOW3\Validation\Validator\RawValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($rawValidator->isValidProperty('simple1expression', $validationErrors));
-		$this->assertTrue($rawValidator->isValidProperty('', $validationErrors));
-		$this->assertTrue($rawValidator->isValidProperty(NULL, $validationErrors));
-		$this->assertTrue($rawValidator->isValidProperty(FALSE, $validationErrors));
-		$this->assertTrue($rawValidator->isValidProperty(new \ArrayObject(), $validationErrors));
+		$this->assertTrue($rawValidator->isValid('simple1expression', $validationErrors));
+		$this->assertTrue($rawValidator->isValid('', $validationErrors));
+		$this->assertTrue($rawValidator->isValid(NULL, $validationErrors));
+		$this->assertTrue($rawValidator->isValid(FALSE, $validationErrors));
+		$this->assertTrue($rawValidator->isValid(new \ArrayObject(), $validationErrors));
 	}
 }
 

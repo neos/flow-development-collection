@@ -24,99 +24,83 @@ namespace F3\FLOW3\Validation\Validator;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  */
 
 /**
- * Testcase for the float validator
+ * Testcase for the UUID validator
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FloatTest extends \F3\Testing\BaseTestCase {
+class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Data provider with valid email addresses
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function validFloats() {
-		return array(
-			array(1029437.234726),
-			array('123.45'),
-			array('+123.45'),
-			array('-123.45'),
-			array('123.45e3'),
-			array(123.45e3)
-		);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @dataProvider validFloats
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function floatValidatorReturnsTrueForAValidFloat($address) {
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+	public function validatorAcceptsCorrectUUIDs() {
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 
-		$this->assertTrue($floatValidator->isValidProperty($address, $validationErrors));
+		$this->assertTrue($validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
+		$this->assertTrue($validator->isValid('533548ca-8914-4a19-9404-ef390a6ce387', $errors));
 	}
 
 	/**
-	 * Data provider with invalid email addresses
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function invalidFloats() {
-		return array(
-			array(1029437),
-			array('1029437'),
-			array('not a number')
-		);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @dataProvider invalidFloats
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560288);
+	public function tooShortUUIDIsRejected() {
+		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
+		$validator->injectObjectFactory($mockObjectFactory);
 
-		$this->assertFalse($floatValidator->isValidProperty($address, $validationErrors));
+		$this->assertFalse($validator->isValid('e104e469-9030-4b98-babf-3990f07', $errors));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function UUIDWithOtherThanHexValuesIsRejected() {
+		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
+		$validator->injectObjectFactory($mockObjectFactory);
+
+		$this->assertFalse($validator->isValid('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560288);
+	public function UUIDValidatorCreatesTheCorrectErrorObjectIfTheSubjectIsInvalid() {
+		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$errors = new \F3\FLOW3\Validation\Errors();
+		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
+		$validator->injectObjectFactory($mockObjectFactory);
 
-		$floatValidator->isValidProperty(123456, $validationErrors);
+		$validator->isValid('e104e469-9030-4b98-babf-3990f07', $errors);
 
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560288, $validationErrors[0]->getCode());
+		$this->assertType('F3\FLOW3\Validation\Error', $errors[0]);
+		$this->assertEquals(1221565853, $errors[0]->getCode());
 	}
-
 }
 
 ?>

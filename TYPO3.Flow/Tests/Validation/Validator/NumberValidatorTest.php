@@ -29,59 +29,59 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the text validator
+ * Testcase for the number validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class TextTest extends \F3\Testing\BaseTestCase {
+class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsTrueForASimpleString() {
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
+	public function numberValidatorReturnsTrueForASimpleInteger() {
+		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($textValidator->isValidProperty('this is a very simple string', $validationErrors));
+		$this->assertTrue($numberValidator->isValid(1029437, $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsFalseForAStringWithHTMLEntities() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+	public function numberValidatorReturnsFalseForAString() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$textValidator->injectObjectFactory($mockObjectFactory);
+		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
+		$numberValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
+		$this->assertFalse($numberValidator->isValid('not a number', $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+	public function numberValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$textValidator->injectObjectFactory($mockObjectFactory);
+		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
+		$numberValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$textValidator->isValidProperty('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);
+		$numberValidator->isValid('this is not a number', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221565786, $validationErrors[0]->getCode());
+		$this->assertEquals(1221563685, $validationErrors[0]->getCode());
 	}
 }
 

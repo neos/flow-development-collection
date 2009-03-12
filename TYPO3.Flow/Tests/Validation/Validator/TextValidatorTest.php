@@ -29,97 +29,60 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the email address validator
+ * Testcase for the text validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EmailAddressTest extends \F3\Testing\BaseTestCase {
+class TextValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Data provider with valid email addresses
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function validAddresses() {
-		return array(
-			array('andreas.foerthner@netlogix.de'),
-			array('user@localhost'),
-			array('user@localhost.localdomain'),
-			array('info@guggenheim.museum'),
-			array('just@test.invalid'),
-			array('just+spam@test.de'),
-			array('local@192.168.0.2')
-		);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @dataProvider validAddresses
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
-		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
+	public function textValidatorReturnsTrueForASimpleString() {
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($emailAddressValidator->isValidProperty($address, $validationErrors));
-	}
-
-	/**
-	 * Data provider with invalid email addresses
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function invalidAddresses() {
-		return array(
-			array('andreas.foerthner@'),
-			array('@typo3.org'),
-			array('someone@typo3.'),
-			array('local@192.168.2'),
-			array('local@192.168.270.1')
-		);
-	}
-
-	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @test
-	 * @dataProvider invalidAddresses
-	 */
-	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
-		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
-		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($emailAddressValidator->isValidProperty($address, $validationErrors));
+		$this->assertTrue($textValidator->isValid('this is a very simple string', $validationErrors));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
+	public function textValidatorReturnsFalseForAStringWithHTMLEntities() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
-		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
+		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$emailAddressValidator->isValidProperty('notAValidMail@Address', $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221559976, $validationErrors[0]->getCode());
+		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
 	}
 
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
+		$textValidator->injectObjectFactory($mockObjectFactory);
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
+
+		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);
+
+		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
+		$this->assertEquals(1221565786, $validationErrors[0]->getCode());
+	}
 }
 
 ?>

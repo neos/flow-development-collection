@@ -29,94 +29,105 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the not empty validator
+ * Testcase for the number range validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotEmptyTest extends \F3\Testing\BaseTestCase {
+class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorReturnsTrueForASimpleString() {
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
+	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($notEmptyValidator->isValidProperty('a not empty string', $validationErrors));
+		$this->assertTrue($numberRangeValidator->isValid(10.5, $validationErrors, array('startRange' => 0, 'endRange' => 1000)));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorReturnsFalseForAnEmptyString() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
+	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($notEmptyValidator->isValidProperty('', $validationErrors));
+		$this->assertFalse($numberRangeValidator->isValid(1000.1, $validationErrors, array('startRange' => 0, 'endRange' => 1000)));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorReturnsFalseForANullValue() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
+	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($notEmptyValidator->isValidProperty(NULL, $validationErrors));
+		$this->assertTrue($numberRangeValidator->isValid(100, $validationErrors, array('startRange' => 1000, 'endRange' => 0)));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorCreatesTheCorrectErrorObjectForAnEmptySubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560718);
+	public function numberRangeValidatorReturnsFalseForAString() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$notEmptyValidator->isValidProperty('', $validationErrors);
+		$this->assertFalse($numberRangeValidator->isValid('not a number', $validationErrors, array('startRange' => 0, 'endRange' => 1000)));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function numberRangeValidatorCreatesTheCorrectErrorObjectForANumberOutOfRange() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
+
+		$numberRangeValidator->isValid(4711, $validationErrors, array('startRange' => 1, 'endRange' => 42));
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560718, $validationErrors[0]->getCode());
+		$this->assertEquals(1221561046, $validationErrors[0]->getCode());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
+	public function numberRangeValidatorCreatesTheCorrectErrorObjectForAStringSubject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
+		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$notEmptyValidator->isValidProperty(NULL, $validationErrors);
+		$numberRangeValidator->isValid('this is not between 1 an 42', $validationErrors, array('startRange' => 1, 'endRange' => 42));
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560910, $validationErrors[0]->getCode());
+		$this->assertEquals(1221563685, $validationErrors[0]->getCode());
 	}
 }
 

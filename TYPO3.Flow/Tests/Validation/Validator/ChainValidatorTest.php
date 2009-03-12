@@ -36,7 +36,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ChainTest extends \F3\Testing\BaseTestCase {
+class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -58,14 +58,14 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 	public function allValidatorsInTheChainAreInvocedCorrectly() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('isValidProperty');
+		$validatorObject->expects($this->once())->method('isValid');
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->once())->method('isValidProperty');
+		$secondValidatorObject->expects($this->once())->method('isValid');
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValidProperty('some subject', new \F3\FLOW3\Validation\Errors());
+		$validatorChain->isValid('some subject', new \F3\FLOW3\Validation\Errors());
 	}
 
 	/**
@@ -75,14 +75,14 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 	public function validatorChainReturnsTrueIfAllChainedValidatorsReturnTrue() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorChain->isValidProperty('some subject', new \F3\FLOW3\Validation\Errors()));
+		$this->assertTrue($validatorChain->isValid('some subject', new \F3\FLOW3\Validation\Errors()));
 	}
 
 	/**

@@ -45,22 +45,22 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	protected $validators = array();
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid.
-	 * Any errors will be stored in the given errors object.
-	 * If at least one error occurred, the result is FALSE.
+	 * Checks if the given value is valid according to the validators of the chain..
 	 *
-	 * @param mixed $propertyValue The value that should be validated
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions Not used
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
-
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
 		$subjectIsValid = TRUE;
-
 		foreach ($this->validators as $validator) {
-			$subjectIsValid &= $validator->isValidProperty($propertyValue, $errors);
+			$subjectIsValid &= $validator->isValid($value, $errors);
 		}
-
 		return (boolean)$subjectIsValid;
 	}
 

@@ -29,59 +29,49 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the alphanumeric validator
+ * Testcase for the regular expression validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class AlphanumericTest extends \F3\Testing\BaseTestCase {
+class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
+	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+
+		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
+		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($alphanumericValidator->isValidProperty('12ssDF34daweidf', $validationErrors));
+		$this->assertTrue($regularExpressionValidator->isValid('simple1expression', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
+		$this->assertFalse($regularExpressionValidator->isValid('simple1expressions', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221551320);
+	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
+		$error = new \F3\FLOW3\Validation\Error('', 1221565130);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
+		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator('/^simple[0-9]expression$/');
+		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221551320);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$alphanumericValidator->isValidProperty('adsf%&/$jklsfdö', $validationErrors);
+		$regularExpressionValidator->isValid('some subject that will not match', $validationErrors);
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221551320, $validationErrors[0]->getCode());
+		$this->assertEquals(1221565130, $validationErrors[0]->getCode());
 	}
 }
 

@@ -39,16 +39,16 @@ namespace F3\FLOW3\Validation\Validator;
 class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Always returns TRUE.
+	 * Always returns TRUE
 	 *
-	 * @param mixed $propertyValue ignored
-	 * @param \F3\FLOW3\Validation\Errors $errors ignored
-	 * @return boolean Always TRUE
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors Not used
+	 * @param array $validationOptions Not used
+	 * @return boolean TRUE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
 		return TRUE;
 	}
 }
-
 ?>

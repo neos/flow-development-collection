@@ -39,52 +39,35 @@ namespace F3\FLOW3\Validation\Validator;
 class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * The start value of the range
-	 * @var number
-	 */
-	protected $startRange;
-
-	/**
-	 * The end value of the range
-	 * @var number
-	 */
-	protected $endRange;
-
-	/**
-	 * Constructor
-	 *
-	 * @param number The start of the range
-	 * @param number The end of the range
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct($startRange, $endRange) {
-		if ($startRange > $endRange) {
-			$this->endRange = $startRange;
-			$this->startRange = $endRange;
-		} else {
-			$this->endRange = $endRange;
-			$this->startRange = $startRange;
-		}
-	}
-
-	/**
 	 * Returns TRUE, if the given property ($propertyValue) is a valid number in the given range.
-	 * Any errors will be stored in the given errors object.
-	 * If at least one error occurred, the result is FALSE.
 	 *
-	 * @param mixed $propertyValue The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Any occured Error will be stored here
-	 * @return boolean TRUE if the value could be validated. FALSE if an error occured
-	 * @throws \F3\FLOW3\Validation\Exception\InvalidSubject if this validator cannot validate the given subject or the subject is not an object.
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions An array specifying the startRange and endRange
+	 * @return boolean TRUE if the value is within the range, otherwise FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidProperty($propertyValue, \F3\FLOW3\Validation\Errors &$errors) {
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+		if (!is_numeric($value)) {
+			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $value . '"', 1221563685));
+			return FALSE;
+		}
 
-		if (!is_numeric($propertyValue)) $errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $propertyValue . '"', 1221563685));
-		if ($propertyValue < $this->startRange || $propertyValue > $this->endRange) $errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not in the valid range (' . $this->startRange . ', ' . $this->endRange . '). Got: "' . $propertyValue . '"', 1221561046));
+		$startRange = (isset($validationOptions['startRange'])) ? intval($validationOptions['startRange']) : 0;
+		$endRange = (isset($validationOptions['endRange'])) ? intval($validationOptions['endRange']) : PHP_INT_MAX;
+		if ($startRange > $endRange) {
+			$x = $startRange;
+			$startRange = $endRange;
+			$endRange = $x;
+		}
+		if ($value >= $startRange && $value <= $endRange) return TRUE;
 
-		if (count($errors) > 0) return FALSE;
-		return TRUE;
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not in the valid range (' . $startRange . ', ' . $endRange . '). Got: "' . $value . '"', 1221561046));
+		return FALSE;
 	}
 }
 
