@@ -197,5 +197,15 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', TRUE);
 		$this->assertTrue($addedArgument->isRequired(), 'addNewArgument() did not create an argument that is marked as required.');
 	}
+
+	/**
+	 * @test
+	 * @expectedException \LogicException
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function callingInvalidMethodThrowsException() {
+		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$arguments->nonExistingMethod();
+	}
 }
 ?>

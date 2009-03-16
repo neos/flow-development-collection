@@ -238,7 +238,7 @@ class Arguments extends \ArrayObject {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __call($methodName, array $arguments) {
-		if (substr($methodName, 0, 3) !== 'set') throw new LogicException('Unknown method "' . $methodName . '".', 1210858451);
+		if (substr($methodName, 0, 3) !== 'set') throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
 		$firstLowerCaseArgumentName = $this->translateToLongArgumentName(strtolower($methodName[3]) . substr($methodName, 4));
 		$firstUpperCaseArgumentName = $this->translateToLongArgumentName(ucfirst(substr($methodName, 3)));
 
