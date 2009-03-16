@@ -60,10 +60,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $view = NULL;
 
 	/**
-	 * By default a matching view will be resolved. If this property is set, automatic resolving is disabled and the specified object is used instead.
+	 * By default $this->viewObjectNamePattern is used to find a matching view object.
+	 * If no custom view class can be found, $this->defaultViewObjectName will be used.
 	 * @var string
 	 */
-	protected $viewObjectName = NULL;
+	protected $defaultViewObjectName = NULL;
 
 	/**
 	 * Pattern after which the view object name is built
@@ -223,7 +224,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewObjectName = ($this->viewObjectName === NULL) ? $this->resolveViewObjectName() : $this->viewObjectName;
+		$viewObjectName = $this->resolveViewObjectName();
 		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 
 		$this->view = $this->objectManager->getObject($viewObjectName);
@@ -233,7 +234,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Determines the fully qualified view object name.
 	 *
-	 * @return string The fully qualified view object name
+	 * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
@@ -251,6 +252,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', $this->request->getFormat(), $possibleViewName)));
 		if ($viewObjectName === FALSE) {
 			$viewObjectName = $this->objectManager->getCaseSensitiveObjectName(strtolower(str_replace('@format', '', $possibleViewName)));
+		}
+		if ($viewObjectName === FALSE && $this->defaultViewObjectName !== NULL) {
+			$viewObjectName = $this->defaultViewObjectName;
 		}
 		return $viewObjectName;
 	}

@@ -112,6 +112,47 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @test
+	 */
+	public function resolveViewObjectNameUsesViewObjectNamePatternToResolveViewObjectName() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('getControllerPackageKey')->will($this->returnValue('MyPackage'));
+		$mockRequest->expects($this->once())->method('getControllerSubpackageKey')->will($this->returnValue('MySubPackage'));
+		$mockRequest->expects($this->once())->method('getControllerName')->will($this->returnValue('MyController'));
+		$mockRequest->expects($this->once())->method('getControllerActionName')->will($this->returnValue('MyAction'));
+		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('MyFormat'));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')->with('randomviewobjectpattern\mypackage\mysubpackage\mycontroller\myaction\myformat');
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('objectManager', $mockObjectManager);
+		$mockController->_set('viewObjectNamePattern', 'RandomViewObjectPattern\@package\@controller\@action\@format');
+
+		$mockController->_call('resolveViewObjectName');
+	}
+
+	/**
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @test
+	 */
+	public function resolveViewObjectNameReturnsDefaultViewObjectNameIfNoCustomViewCanBeFound() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->exactly(2))->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('objectManager', $mockObjectManager);
+		$mockController->_set('defaultViewObjectName', 'MyDefaultViewObjectName');
+
+		$this->assertEquals('MyDefaultViewObjectName', $mockController->_call('resolveViewObjectName'));
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
