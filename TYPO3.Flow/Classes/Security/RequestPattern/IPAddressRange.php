@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Security\RequestPattern;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,47 +25,68 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: URL.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * Contract for an authentication entry point
+ * This class holds an ipAddressRange pattern an decides, if a \F3\FLOW3\MVC\Request object matches against this pattern
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: URL.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-interface EntryPointInterface {
+class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 
 	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
+	 * @var string The address range
+	 */
+	protected $ipAddressRange = '';
+
+	/**
+	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @return boolean TRUE if authentication is possible
+	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canForward(\F3\FLOW3\MVC\Request $request);
+	public function canMatch(\F3\FLOW3\MVC\Request $request) {
+		return TRUE;
+	}
 
 	/**
-	 * Sets the options array
+	 * Returns the set pattern
 	 *
-	 * @param array $options An array of configuration options
+	 * @return string The set pattern
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPattern() {
+		return $this->ipAddressRange;
+	}
+
+	/**
+	 * Sets an ip address range
+	 *
+	 * @param string $ipAddressRange The ip address range
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setOptions(array $options);
+	public function setPattern($ipAddressRange) {
+		$this->ipAddressRange = $ipAddressRange;
+	}
 
 	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
+	 * Matches a \F3\FLOW3\MVC\Request against its set ip address range
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @param \F3\FLOW3\MVC\Response $response The current response
-	 * @return void
+	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @return boolean TRUE if the pattern matched, FALSE otherwise
+	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	public function matchRequest(\F3\FLOW3\MVC\Request $request) {
+		return FALSE;
+	}
 }
 
 ?>

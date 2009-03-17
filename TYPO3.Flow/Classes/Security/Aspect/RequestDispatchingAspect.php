@@ -62,6 +62,20 @@ class RequestDispatchingAspect {
 	}
 
 	/**
+	 * Advices the dispatch method to initialize the security framework.
+	 *
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @return mixed Result of the advice chain
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeSecurity(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$request = $joinPoint->getMethodArgument('request');
+		$this->securityContextHolder->initializeContext($request);
+		return $joinPoint->getAdviceChain()->proceed($joinPoint);
+	}
+
+	/**
 	 * Advices the dispatch method so that illegal requests are blocked before invoking
 	 * any controller.
 	 *
@@ -72,33 +86,36 @@ class RequestDispatchingAspect {
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
-		$this->securityContextHolder->initializeContext($request);
 		$this->firewall->blockIllegalRequests($request);
 		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 
 	/**
-	 * Catches Access Denied exceptions and instructs the response to redirect to a
-	 * login page.
+	 * Catches AuthenticationRequired Exceptions and tries to call an authentication entry point,
+	 * if available.
 	 *
 	 * @afterthrowing method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function forwardAccessDeniedExceptionsToLoginPage(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$exception = $joinPoint->getException();
 		$request = $joinPoint->getMethodArgument('request');
-		if (!$request instanceof \F3\FLOW3\MVC\Web\Request || !$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequired) throw $exception;
-
 		$response = $joinPoint->getMethodArgument('response');
 
-		$request->setDispatched(TRUE);
-		$uri = 'login';
-		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
-		$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
-		$response->setStatus(303);
-		$response->setHeader('Location', (string)$uri);
+		if (!$exception instanceof \F3\FLOW3\Security\Exception\AuthenticationRequired) throw $exception;
+
+		$entryPointFound = FALSE;
+		foreach ($this->securityContextHolder->getContext()->getAuthenticationTokens() as $token) {
+			$entryPoint = $token->getAuthenticationEntryPoint();
+
+			if ($entryPoint !== NULL && $entryPoint->canForward($request)) {
+				$entryPointFound = TRUE;
+				$entryPoint->startAuthentication($request, $response);
+			}
+		}
+		if ($entryPointFound === FALSE) throw $exception;
 	}
 }
 ?>

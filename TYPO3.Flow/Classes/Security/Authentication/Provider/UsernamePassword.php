@@ -35,14 +35,8 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
 class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
-
-	/**
-	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface The entry point for this provider
-	 */
-	protected $entryPoint = NULL;
 
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
@@ -77,7 +71,13 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
 		$credentials = $authenticationToken->getCredentials();
-		if ($credentials['username'] === 'admin' && $credentials['password'] === 'password') $authenticationToken->setAuthenticationStatus(TRUE);
+		if ($credentials['username'] === 'admin' && $credentials['password'] === 'password') {
+			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		} elseif ($credentials['username'] !== '' || $credentials['password'] !== '') {
+			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+		} elseif ($authenticationToken->getAuthenticationStatus() !== \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		}
 	}
 }
 

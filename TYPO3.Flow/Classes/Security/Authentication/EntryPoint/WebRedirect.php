@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Security\Authentication\EntryPoint;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,19 +25,25 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: EntryPointInterface.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * Contract for an authentication entry point
+ * An authentication entry point, that redirects to another webpage.
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: EntryPointInterface.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-interface EntryPointInterface {
+class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterface {
+
+	/**
+	 * The configurations options
+	 * @var array
+	 */
+	protected $options = array();
 
 	/**
 	 * Returns TRUE if the given request can be authenticated by the authentication provider
@@ -47,7 +53,9 @@ interface EntryPointInterface {
 	 * @return boolean TRUE if authentication is possible
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canForward(\F3\FLOW3\MVC\Request $request);
+	public function canForward(\F3\FLOW3\MVC\Request $request) {
+		return ($request instanceof \F3\FLOW3\MVC\Web\Request);
+	}
 
 	/**
 	 * Sets the options array
@@ -56,16 +64,27 @@ interface EntryPointInterface {
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setOptions(array $options);
+	public function setOptions(array $options) {
+		$this->options = $options;
+	}
 
 	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
+	 * Starts the authentication: Redirect to login page
 	 *
 	 * @param \F3\FLOW3\MVC\Request $request The current request
 	 * @param \F3\FLOW3\MVC\Response $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+		if (!$this->canForward($request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('Unsupported request type for authentication entry point given.', 1237282462);
+		if (!is_array($this->options) || !isset($this->options['uri'])) throw new \F3\FLOW3\Security\Exception\MissingConfiguration('The configuration for the WebRedirect authentication entry point is incorrect or missing.', 1237282583);
+
+		$escapedUri = htmlentities($this->options['uri'], ENT_QUOTES, 'utf-8');
+		$response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . $escapedUri . '"/></head></html>');
+		$response->setStatus(303);
+		$response->setHeader('Location', (string)$this->options['uri']);
+
+	}
 }
 
 ?>

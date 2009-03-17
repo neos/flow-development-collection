@@ -39,6 +39,12 @@ namespace F3\FLOW3\Security\Authentication;
  */
 interface TokenInterface {
 
+	const
+		NO_CREDENTIALS_GIVEN = 1,
+		WRONG_CREDENTIALS = 2,
+		AUTHENTICATION_SUCCESSFUL = 3,
+		AUTHENTICATION_NEEDED = 4;
+
 	/**
 	 * Returns TRUE if this token is currently authenticated
 	 *
@@ -54,35 +60,37 @@ interface TokenInterface {
 	public function getAuthenticationEntryPoint();
 
 	/**
-	 * Returns TRUE if a \F3\FLOW3\Security\RequestPattern was set
+	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
 	 *
 	 * @return boolean True if a \F3\FLOW3\Security\RequestPattern was set
 	 */
-	public function hasRequestPattern();
+	public function hasRequestPatterns();
 
 	/**
-	 * Sets a \F3\FLOW3\Security\RequestPattern
+	 * Sets request patterns
 	 *
-	 * @param \F3\FLOW3\Security\RequestPattern $requestPattern The set request pattern
+	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(\F3\FLOW3\Security\RequestPatternInterface $requestPattern);
+	public function setRequestPatterns(array $requestPatterns);
 
 	/**
-	 * Returns the set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
-	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
 	 */
-	public function getRequestPattern();
+	public function getRequestPatterns();
 
 	/**
 	 * Updates the authentication credentials, the authentication manager needs to authenticate this token.
 	 * This could be a username/password from a login controller.
-	 * This method is called while initializing the security context.
+	 * This method is called while initializing the security context. By returning TRUE you
+	 * make sure that the authentication manager will (re-)authenticate the tokens with the current credentials.
+	 * Note: You should not persist the credentials!
 	 *
-	 * @return void
+	 * @return boolean TRUE if this token needs to be (re-)authenticated
 	 */
 	public function updateCredentials();
 
@@ -111,10 +119,17 @@ interface TokenInterface {
 	/**
 	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
 	 *
-	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
+	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL
 	 * @return void
 	 */
 	public function setAuthenticationStatus($authenticationStatus);
+
+	/**
+	 * Returns the current authentication status
+	 *
+	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, REAUTHENTICATION_NEEDED
+	 */
+	public function getAuthenticationStatus();
 }
 
 ?>

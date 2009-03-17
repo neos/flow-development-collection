@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Security\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,47 +25,18 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: NoRequestPatternFound.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * Contract for an authentication entry point
+ * A "MissingConfiguratio" Exception
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: NoRequestPatternFound.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface EntryPointInterface {
-
-	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @return boolean TRUE if authentication is possible
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function canForward(\F3\FLOW3\MVC\Request $request);
-
-	/**
-	 * Sets the options array
-	 *
-	 * @param array $options An array of configuration options
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setOptions(array $options);
-
-	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @param \F3\FLOW3\MVC\Response $response The current response
-	 * @return void
-	 */
-	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+class MissingConfiguration extends \F3\FLOW3\Security\Exception {
 }
 
 ?>

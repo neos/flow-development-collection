@@ -40,12 +40,14 @@ namespace F3\FLOW3\Security\Authentication;
 class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
+	 * The object manager
+	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\ProviderResolver The provider resolver
+	 * The provider resolver
+	 * @var \F3\FLOW3\Security\Authentication\ProviderResolver
 	 */
 	protected $providerResolver;
 
@@ -56,40 +58,59 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	protected $securityContext;
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternResolver The request pattern resolver
+	 * The request pattern resolver
+	 * @var \F3\FLOW3\Security\RequestPatternResolver
 	 */
 	protected $requestPatternResolver;
 
 	/**
-	 * @var array Array of \F3\FLOW3\Security\Authentication\ProviderInterface objects
+	 * The authentication entry point resolver
+	 * @var \F3\FLOW3\Security\Authentication\EntryPointResolver
+	 */
+	protected $entryPointResolver;
+
+	/**
+	 * Array of \F3\FLOW3\Security\Authentication\ProviderInterface objects
+	 * @var array
 	 */
 	protected $providers = array();
 
 	/**
-	 * @var array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @var array
 	 */
 	protected $tokens = array();
 
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
 	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @param \F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver The provider resolver
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
+	 * @param \F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver The authentication entry point resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager,
-			\F3\FLOW3\Object\ManagerInterface $objectManager,
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager,
 			\F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver,
-			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver) {
+			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
+			\F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver) {
 
 		$this->objectManager = $objectManager;
 		$this->providerResolver = $providerResolver;
 		$this->requestPatternResolver = $requestPatternResolver;
+		$this->entryPointResolver = $entryPointResolver;
+	}
 
-		$this->buildProvidersAndTokensFromConfiguration($configurationManager->getSettings('FLOW3'));
+	/**
+	 * Inject the settings
+	 *
+	 * @param array $settings The settings
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectSettings(array $settings) {
+		$this->buildProvidersAndTokensFromConfiguration($settings);
 	}
 
 	/**
@@ -141,6 +162,10 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * If securityContext->authenticateAllTokens() returns TRUE all tokens have be authenticated,
 	 * otherwise there has to be at least one authenticated token to have a valid authentication.
 	 *
+	 * Note: This method sets the 'authenticationPerformed' flag in the security context. You have to
+	 * set it back to FALSE if you need reauthentication (usually the tokens should do it as soon as they
+	 * received new credentials).
+	 *
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AuthenticationRequired
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -148,9 +173,12 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	public function authenticate() {
 		$allTokensAreAuthenticated = TRUE;
 		if ($this->securityContext === NULL) throw new \F3\FLOW3\Security\Exception('Cannot authenticate because no security context has been set.', 1232978667);
+
 		foreach ($this->securityContext->getAuthenticationTokens() as $token) {
 			foreach ($this->providers as $provider) {
-				if ($provider->canAuthenticate($token)) {
+				if ($provider->canAuthenticate($token)
+					&& $token->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
+
 					$provider->authenticate($token);
 					break;
 				}
@@ -161,7 +189,6 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 			$allTokensAreAuthenticated &= $token->isAuthenticated();
 		}
 
-		$this->securityContext->setAuthenticationPerformed(TRUE);
 		if ($allTokensAreAuthenticated) return;
 
 		throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate any token.', 1222204027);
@@ -177,7 +204,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
 		foreach ($settings['security']['authentication']['providers'] as $provider) {
-			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderObjectName($provider['provider']));
+			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderObjectName($provider['type']));
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
@@ -185,10 +212,21 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 				$this->tokens[] = $tokenInstance;
 			}
 
-			if ($provider['patternType'] != '') {
-				$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($provider['patternType']));
-				$requestPattern->setPattern($provider['patternValue']);
-				$tokenInstance->setRequestPattern($requestPattern);
+			if (isset($provider['requestPatterns']) && is_array($provider['requestPatterns'])) {
+				$requestPatterns = array();
+				foreach($provider['requestPatterns'] as $patternType => $patternConfiguration) {
+					$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($patternType));
+					$requestPattern->setPattern($patternConfiguration);
+					$requestPatterns[] = $requestPattern;
+				}
+				$tokenInstance->setRequestPatterns($requestPatterns);
+			}
+
+			if (isset($provider['entryPoint']) && is_array($provider['entryPoint']) && isset($provider['entryPoint']['type'])) {
+				$entryPoint = $this->objectManager->getObject($this->entryPointResolver->resolveEntryPointClass($provider['entryPoint']['type']));
+				if (isset($provider['entryPoint']['options']) && is_array($provider['entryPoint']['options'])) $entryPoint->setOptions($provider['entryPoint']['options']);
+
+				$tokenInstance->setAuthenticationEntryPoint($entryPoint);
 			}
 		}
 	}

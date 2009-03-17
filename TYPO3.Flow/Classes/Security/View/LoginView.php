@@ -104,7 +104,7 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 		</head>
 		<body>
 			<img src=\"Resources/Packages/FLOW3/Security/Media/f3_logo.gif\" id=\"logo\" />
-			<form action=\"typo3\" name=\"loginForm\" id=\"loginForm\" method=\"POST\" onsubmit=\"encryptLoginData();\">
+			<form action=\"flow3/login\" name=\"loginForm\" id=\"loginForm\" method=\"POST\" onsubmit=\"encryptLoginData();\">
 				<p>Welcome to the FLOW3 Framework! Please Login.</p>
 				<label for=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername\">Username:</label><input type=\"text\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername\" value=\"\" tabindex=\"1\" /><br />
 				<label for=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword\">Password:</label><input type=\"password\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword\" value=\"\" tabindex=\"2\" />

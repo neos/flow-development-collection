@@ -51,10 +51,10 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $environment;
 
 	/**
-	 * Indicates wether this token is authenticated
-	 * @var boolean
+	 * Current authentication status of this token
+	 * @var integer
 	 */
-	protected $authenticationStatus = FALSE;
+	protected $authenticationStatus = self::NO_CREDENTIALS_GIVEN;
 
 	/**
 	 * The username/password credentials
@@ -63,9 +63,15 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $credentials = array('username' => '', 'password' => '');
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @var array The set request patterns
 	 */
-	protected $requestPattern = NULL;
+	protected $requestPatterns = NULL;
+
+	/**
+	 * The authentication entry point
+	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
+	 */
+	protected $entryPoint = NULL;
 
 	/**
 	 * Injects the object factory
@@ -96,54 +102,63 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticated() {
-		return $this->authenticationStatus;
+		return ($this->authenticationStatus === self::AUTHENTICATION_SUCCESSFUL);
+	}
+
+	/**
+	 * Sets the authentication entry point
+	 *
+	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @return void
+	 */
+	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
+		$this->entryPoint = $entryPoint;
 	}
 
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
+	 * @return \F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint() {
-
+		return $this->entryPoint;
 	}
 
 	/**
-	 * Returns TRUE if a \F3\FLOW3\Security\RequestPattern was set
+	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
 	 *
 	 * @return boolean True if a \F3\FLOW3\Security\RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function hasRequestPattern() {
-		if ($this->requestPattern != NULL) return TRUE;
+	public function hasRequestPatterns() {
+		if ($this->requestPatterns != NULL) return TRUE;
 		return FALSE;
 	}
 
 	/**
-	 * Sets a \F3\FLOW3\Security\RequestPattern
+	 * Sets request patterns
 	 *
-	 * @param \F3\FLOW3\Security\RequestPatternInterface $requestPattern A request pattern
+	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(\F3\FLOW3\Security\RequestPatternInterface $requestPattern) {
-		$this->requestPattern = $requestPattern;
+	public function setRequestPatterns(array $requestPatterns) {
+		$this->requestPatterns = $requestPatterns;
 	}
 
 	/**
-	 * Returns the set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
-	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRequestPattern() {
-		return $this->requestPattern;
+	public function getRequestPatterns() {
+		return $this->requestPatterns;
 	}
 
 	/**
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
-	 * are available.
+	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -151,8 +166,14 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	public function updateCredentials() {
 		$POSTArguments = $this->environment->getRawPOSTArguments();
 
-		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])) $this->credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
-		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) $this->credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+		if (isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'])
+			&& isset($POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'])) {
+
+			$this->credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+			$this->credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+
+			$this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
+		}
 	}
 
 	/**
@@ -191,12 +212,24 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	/**
 	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
 	 *
-	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
+	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
+		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus('Invalid authentication status.', 1237224453);
+
 		$this->authenticationStatus = $authenticationStatus;
+	}
+
+	/**
+	 * Returns the current authentication status
+	 *
+	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
+	 */
+	public function getAuthenticationStatus() {
+		return $this->authenticationStatus;
 	}
 
 	/**
@@ -206,7 +239,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __sleep() {
-		return (array('authenticationStatus', 'credentials', 'requestPattern'));
+		return (array('authenticationStatus', 'requestPatterns', 'entryPoint'));
 	}
 }
 

@@ -34,6 +34,10 @@ FLOW3_Resource_MetaData: []
 FLOW3_Resource_Status:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
 FLOW3_Security_Policy: []
+FLOW3_Security_Cryptography_RSAWallet:
+  backend: F3\FLOW3\Cache\Backend\FileBackend
+  backendOptions:
+    defaultLifetime: 30
 FLOW3_Object_Configurations: []
 FLOW3_MVC_Web_Routing_FindMatchResults: []
 FLOW3_MVC_Web_Routing_Resolve:

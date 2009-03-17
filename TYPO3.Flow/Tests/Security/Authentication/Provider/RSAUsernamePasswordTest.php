@@ -48,7 +48,7 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('encryptedUsername' => 'some fake value', 'encryptedPassword' => 'some other fake value')));
 		$mockToken->expects($this->any())->method('getPasswordKeypairUUID')->will($this->returnValue('b2021eba-8084-4955-b2b6-a0a2c9bfad45'));
 		$mockToken->expects($this->any())->method('getUsernameKeypairUUID')->will($this->returnValue('b2021eba-8084-4955-b2b6-a0a2c9bfad46'));
-		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TRUE);
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$mockWalletService = $this->getMock('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface', array(), array(), '', FALSE);
 		$mockWalletService->expects($this->once())->method('decrypt')->will($this->returnValue('admin'));
@@ -69,7 +69,7 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('encryptedUsername' => 'some fake value', 'encryptedPassword' => 'some other fake value')));
 		$mockToken->expects($this->any())->method('getPasswordKeypairUUID')->will($this->returnValue('b2021eba-8084-4955-b2b6-a0a2c9bfad45'));
 		$mockToken->expects($this->any())->method('getUsernameKeypairUUID')->will($this->returnValue('b2021eba-8084-4955-b2b6-a0a2c9bfad46'));
-		$mockToken->expects($this->never())->method('setAuthenticationStatus');
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
 		$mockWalletService = $this->getMock('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface', array(), array(), '', FALSE);
 		$mockWalletService->expects($this->once())->method('decrypt')->will($this->returnValue('admin'));

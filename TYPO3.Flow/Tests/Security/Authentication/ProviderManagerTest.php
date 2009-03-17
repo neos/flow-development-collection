@@ -45,24 +45,27 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function configuredProvidersAndTokensAreBuiltCorrectly() {
 		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['authentication']['providers'] = array(
 			array(
-				'provider' => 'UsernamePassword',
-				'patternType' => '',
-				'patternValue' => ''
+				'type' => 'UsernamePassword',
+				'requestPatterns' => array(
+					'URI' => 'typo3/.*',
+					'F3\TestPackage\TestRequestPattern' => 'test',
+				),
 			),
 			array(
-				'provider' => 'F3\TestPackage\TestAuthenticationProvider',
-				'patternType' => 'URL',
-				'patternValue' => '/some/url/.*'
+				'type' => 'F3\TestPackage\TestAuthenticationProvider',
+				'requestPatterns' => array(
+					'URI' => 'fe/.*',
+				),
 			)
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
 
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
 		$providers = $providerManager->getProviders();
 		$tokens = $providerManager->getTokens();
 
@@ -72,9 +75,12 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertType('F3\FLOW3\Security\Authentication\Token\UsernamePassword', $tokens[0]);
 		$this->assertType('F3\TestPackage\TestAuthenticationToken', $tokens[1]);
 
-		$this->assertTrue($tokens[1]->hasRequestPattern());
-		$this->assertType('F3\FLOW3\Security\RequestPattern\URL', $tokens[1]->getRequestPattern());
-		$this->assertEquals('/some/url/.*', $tokens[1]->getRequestPattern()->getPattern());
+		$this->assertTrue($tokens[1]->hasRequestPatterns());
+
+		$patterns = $tokens[1]->getRequestPatterns();
+
+		$this->assertType('F3\FLOW3\Security\RequestPattern\URI', $patterns[0]);
+		$this->assertEquals('fe/.*', $patterns[0]->getPattern());
 	}
 
 	/**
@@ -91,6 +97,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockToken1->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
 		$mockToken2->expects($this->atLeastOnce())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$mockToken1->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
+		$mockToken2->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
 
 		$mockProvider1->expects($this->atLeastOnce())->method('canAuthenticate')->will($this->onConsecutiveCalls(TRUE, FALSE));
 		$mockProvider2->expects($this->atLeastOnce())->method('canAuthenticate')->will($this->returnValue(TRUE));
@@ -98,15 +106,14 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProvider1->expects($this->once())->method('authenticate')->with($mockToken1);
 		$mockProvider2->expects($this->once())->method('authenticate')->with($mockToken2);
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['authentication']['providers'] = array();
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
 		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
 		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2)));
 
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
 		$providerManager->setProviders(array($mockProvider1, $mockProvider2));
 		$providerManager->setSecurityContext($securityContext);
 
@@ -118,32 +125,9 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticateSetsTheAuthenticationPerformedFlagInTheSecurityContextCorrectly() {
-		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['security']['authentication']['providers'] = array();
-
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-		$securityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
-		$securityContext->expects($this->once())->method('setAuthenticationPerformed')->with(TRUE);
-
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
-		$providerManager->setSecurityContext($securityContext);
-		$providerManager->setProviders(array());
-
-		$providerManager->authenticate($mockToken1);
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
 	public function authenticateTriesToAuthenticateAnActiveToken() {
 		$context = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['authentication']['providers'] = array();
 
@@ -155,9 +139,11 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 
 		$context->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
+		$settings = array();
+		$settings['security']['authentication']['providers'] = array();
 
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 
@@ -169,9 +155,46 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function authenticateAuthenticatesOnlyTokensWithStatusAuthenticationNeeded() {
+		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockProvider = $this->getMock('F3\FLOW3\Security\Authentication\ProviderInterface');
+		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken11');
+		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken12');
+		$mockToken3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'mockAuthenticationToken13');
+
+		$mockToken1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$mockToken2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+		$mockToken3->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+
+		$mockToken1->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS));
+		$mockToken2->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN));
+		$mockToken3->expects($this->any())->method('getAuthenticationStatus')->will($this->returnValue(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED));
+
+		$mockProvider->expects($this->any())->method('canAuthenticate')->will($this->returnValue(TRUE));
+		$mockProvider->expects($this->once())->method('authenticate')->with($mockToken3);
+
+		$settings = array();
+		$settings['security']['authentication']['providers'] = array();
+
+		$securityContext->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(FALSE));
+		$securityContext->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
+
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
+		$providerManager->setSecurityContext($securityContext);
+		$providerManager->setProviders(array($mockProvider));
+
+		$providerManager->authenticate();
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function authenticateThrowsAnExceptionIfNoTokenCouldBeAuthenticated() {
 		$context = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['authentication']['providers'] = array();
 
@@ -183,9 +206,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 
 		$context->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 
@@ -202,7 +224,7 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function authenticateThrowsAnExceptionIfAuthenticateAllTokensIsTrueButATokenCouldNotBeAuthenticated() {
 		$context = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['authentication']['providers'] = array();
 
@@ -215,9 +237,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$context->expects($this->atLeastOnce())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
 		$context->expects($this->atLeastOnce())->method('authenticateAllTokens')->will($this->returnValue(TRUE));
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-
-		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager));
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
 		$providerManager->setSecurityContext($context);
 		$providerManager->setProviders(array());
 
@@ -225,6 +246,47 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 			$providerManager->authenticate();
 			$this->fail('No exception has been thrown.');
 		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequired $exception) {}
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function configuredAuthenticationEntryPointsAreInstalledCorrectly() {
+		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$settings = array();
+		$settings['security']['authentication']['providers'] = array(
+			array(
+				'type' => 'UsernamePassword',
+				'entryPoint' => array(
+					'type' => 'WebRedirect',
+					'options' => array(
+						'firstConfigurationParameter' => 1,
+						'secondConfigurationParameter' => 2,
+						'thirdConfigurationParameter' => 3,
+					)
+				)
+			)
+		);
+
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager), new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager));
+		$providerManager->injectSettings($settings);
+		$tokens = $providerManager->getTokens();
+
+		$entryPoint = $tokens[0]->getAuthenticationEntryPoint();
+
+		$this->assertType('F3\FLOW3\Security\Authentication\EntryPoint\WebRedirect', $entryPoint, 'The configured token has not been resolved');
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function optionsOfTheConfiguredAuthenticationEntryPointsAreSetCorrectly() {
+		$this->markTestIncomplete();
 	}
 }
 ?>

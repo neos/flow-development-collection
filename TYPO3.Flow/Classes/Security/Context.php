@@ -58,12 +58,6 @@ class Context {
 	protected $request;
 
 	/**
-	 * TRUE if the tokens already have been authenticated in this request
-	 * @var boolean
-	 */
-	protected $authenticationPerformed = FALSE;
-
-	/**
 	 * Constructor.
 	 *
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
@@ -98,29 +92,6 @@ class Context {
 	}
 
 	/**
-	 * Sets the authentication performed flag. If it is set to TRUE
-	 * the authentication manager will not reauthenticate the tokens
-	 * in the current request.
-	 *
-	 * @param boolean $status Set this to TRUE, if the tokens have been authenticated in this request
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setAuthenticationPerformed($status) {
-		$this->authenticationPerformed = $status;
-	}
-
-	/**
-	 * Returns TRUE if the tokens already have been authenticated in this request
-	 *
-	 * @return boolean TRUE if the tokens already have been authenticated in this request
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function authenticationPerformed() {
-		return $this->authenticationPerformed;
-	}
-
-	/**
 	 * Returns TRUE, if all active tokens have to be authenticated.
 	 *
 	 * @return boolean TRUE, if all active tokens have to be authenticated.
@@ -137,18 +108,58 @@ class Context {
 	 *
 	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo cache tokens active for the current request
 	 */
 	public function getAuthenticationTokens() {
 		$activeTokens = array();
 
 		foreach ($this->tokens as $token) {
-			if ($token->hasRequestPattern()) {
+			if ($token->hasRequestPatterns()) {
 
-				$requestPattern = $token->getRequestPattern();
-				if ($requestPattern->canMatch($this->request) && $requestPattern->matchRequest($this->request)) {
-					$activeTokens[] = $token;
+				$requestPatterns = $token->getRequestPatterns();
+				$tokenIsActive = TRUE;
+
+				foreach ($requestPatterns as $requestPattern) {
+					if ($requestPattern->canMatch($this->request)) {
+						$tokenIsActive &= $requestPattern->matchRequest($this->request);
+					}
 				}
+				if ($tokenIsActive) $activeTokens[] = $token;
+
+			} else {
+				$activeTokens[] = $token;
+			}
+		}
+
+		return $activeTokens;
+	}
+
+	/**
+	 * Returns all \F3\FLOW3\Security\Authentication\Tokens of the security context which are
+	 * active for the current request and of the given type. If a token has a request pattern that cannot match
+	 * against the current request it is determined as not active.
+	 *
+	 * @param string $className The class name
+	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAuthenticationTokensOfType($className) {
+		$activeTokens = array();
+
+		foreach ($this->tokens as $token) {
+			if (($token instanceof $className) === FALSE) continue;
+
+			if ($token->hasRequestPatterns()) {
+
+				$requestPatterns = $token->getRequestPatterns();
+				$tokenIsActive = TRUE;
+
+				foreach ($requestPatterns as $requestPattern) {
+					if ($requestPattern->canMatch($this->request)) {
+						$tokenIsActive &= $requestPattern->matchRequest($this->request);
+					}
+				}
+				if ($tokenIsActive) $activeTokens[] = $token;
+
 			} else {
 				$activeTokens[] = $token;
 			}

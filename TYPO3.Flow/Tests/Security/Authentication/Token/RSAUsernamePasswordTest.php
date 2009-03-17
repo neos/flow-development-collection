@@ -60,6 +60,7 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$token->injectObjectFactory($mockObjectFactory);
 		$token->injectEnvironment($mockEnvironment);
 		$token->injectRSAWalletService($mockWalletService);
+
 		$token->updateCredentials();
 
 		$expectedCredentials = array ('encryptedUsername' => 'some encrypted username', 'encryptedPassword' => 'some encrypted password');
@@ -75,21 +76,35 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 
+		$generateNewKeypairCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === TRUE) return 'uuidForPassword';
+			elseif ($args[0] === FALSE) return 'uuidForUsername';
+			else throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID();
+		};
+
+		$getPublicKeyCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === 'uuidForPassword') return 'publicKeyForPassword';
+			elseif ($args[0] === 'uuidForUsername') return 'publicKeyForUsername';
+			else throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID();
+		};
+
 		$mockRSAWalletService = $this->getMock('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface', array(), array(), '', FALSE);
-		$mockRSAWalletService->expects($this->at(0))->method('generateNewKeypair')->with($this->equalTo(TRUE))->will($this->returnValue('uuid1'));
-		$mockRSAWalletService->expects($this->at(2))->method('generateNewKeypair')->will($this->returnValue('uuid2'));
-		$mockRSAWalletService->expects($this->at(1))->method('getPublicKey')->with($this->equalTo('uuid1'))->will($this->returnValue('publicKey1'));
-		$mockRSAWalletService->expects($this->at(3))->method('getPublicKey')->with($this->equalTo('uuid2'))->will($this->returnValue('publicKey2'));
+		$mockRSAWalletService->expects($this->any())->method('generateNewKeypair')->will($this->returnCallback($generateNewKeypairCallback));
+		$mockRSAWalletService->expects($this->any())->method('getPublicKey')->will($this->returnCallback($getPublicKeyCallback));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);
 		$token->injectEnvironment($mockEnvironment);
 		$token->injectRSAWalletService($mockRSAWalletService);
 
-		$this->assertEquals($token->generatePublicKeyForPassword(), 'publicKey1', 'The wrong public key was returned for password encryption.');
-		$this->assertEquals($token->generatePublicKeyForUsername(), 'publicKey2', 'The wrong public key was returned for username encryption.');
-		$this->assertEquals($token->getPasswordKeypairUUID(), 'uuid1', 'The wrong keypair UUID for password encryption was returend.');
-		$this->assertEquals($token->getUsernameKeypairUUID(), 'uuid2', 'The wrong keypair UUID for username encryption was returend.');
+		$this->assertEquals($token->generatePublicKeyForPassword(), 'publicKeyForPassword', 'The wrong public key was returned for password encryption.');
+		$this->assertEquals($token->generatePublicKeyForUsername(), 'publicKeyForUsername', 'The wrong public key was returned for username encryption.');
+		$this->assertEquals($token->getPasswordKeypairUUID(), 'uuidForPassword', 'The wrong keypair UUID for password encryption was returend.');
+		$this->assertEquals($token->getUsernameKeypairUUID(), 'uuidForUsername', 'The wrong keypair UUID for username encryption was returend.');
 	}
 
 	/**
@@ -101,12 +116,32 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 
-		$mockRSAWalletService = $this->getMock('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface', array(), array(), '', FALSE);
+		$generateNewKeypairCallback = function() {
+			$args = func_get_args();
 
-		$mockRSAWalletService->expects($this->at(0))->method('generateNewKeypair')->with($this->equalTo(TRUE))->will($this->returnValue('uuid1'));
-		$mockRSAWalletService->expects($this->at(2))->method('generateNewKeypair')->will($this->returnValue('uuid2'));
-		$mockRSAWalletService->expects($this->at(4))->method('destroyKeypair')->with($this->equalTo('uuid1'));
-		$mockRSAWalletService->expects($this->at(5))->method('destroyKeypair')->with($this->equalTo('uuid2'));
+			if ($args[0] === TRUE) return 'uuidForPassword';
+			elseif ($args[0] === FALSE) return 'uuidForUsername';
+			else throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID();
+		};
+
+		$getPublicKeyCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === 'uuidForPassword') return 'publicKeyForPassword';
+			elseif ($args[0] === 'uuidForUsername') return 'publicKeyForUsername';
+			else throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID();
+		};
+
+		$destroyKeypairCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] !== 'uuidForPassword' && $args[0] !== 'uuidForUsername') throw new \Exception('destroyKeypair() was called with a wrong uuid. Got: ' . $args[0]);
+		};
+
+		$mockRSAWalletService = $this->getMock('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface', array(), array(), '', FALSE);
+		$mockRSAWalletService->expects($this->any())->method('generateNewKeypair')->will($this->returnCallback($generateNewKeypairCallback));
+		$mockRSAWalletService->expects($this->any())->method('getPublicKey')->will($this->returnCallback($getPublicKeyCallback));
+		$mockRSAWalletService->expects($this->any())->method('destroyKeypair')->will($this->returnCallback($destroyKeypairCallback));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
 		$token->injectObjectFactory($mockObjectFactory);
@@ -117,6 +152,73 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 		$token->generatePublicKeyForUsername();
 
 		$token->invalidateCurrentKeypairs();
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theAuthenticationStatusIsCorrectlyInitialized() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus() {
+		$token1 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token1->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		$token2 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token2->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED);
+		$token3 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token3->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+		$token4 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token4->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+
+		$this->assertFalse($token1->isAuthenticated());
+		$this->assertFalse($token2->isAuthenticated());
+		$this->assertFalse($token3->isAuthenticated());
+		$this->assertTrue($token4->isAuthenticated());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$POSTArguments = array(
+			'F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername' => 'some encrypted username',
+			'F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword' => 'some encrypted password'
+		);
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
+
+		$token = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token->injectObjectFactory($mockObjectFactory);
+		$token->injectEnvironment($mockEnvironment);
+
+		$token->updateCredentials();
+
+		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @expectedException \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token->setAuthenticationStatus(-1);
 	}
 }
 ?>

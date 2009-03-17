@@ -67,6 +67,8 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated() === FALSE) continue;
+
 			foreach ($token->getGrantedAuthorities() as $grantedAuthority) {
 				$privileges = $this->policyService->getPrivileges($grantedAuthority, $joinPoint, 'ACCESS');
 				if (!isset($privileges[0])) continue;
@@ -79,7 +81,7 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 		if ($accessDenies > 0) return self::VOTE_DENY;
 		if ($accessGrants > 0) return self::VOTE_GRANT;
 
-		return VOTE_ABSTAIN;
+		return self::VOTE_ABSTAIN;
 	}
 }
 

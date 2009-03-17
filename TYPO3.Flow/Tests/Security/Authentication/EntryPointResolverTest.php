@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security;
+namespace F3\FLOW3\Security\Authentication;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -25,32 +25,29 @@ namespace F3\FLOW3\Security;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: RequestPatternResolverTest.php 1886 2009-02-09 16:08:54Z robert $
  */
 
 /**
- * Testcase for the request pattern resolver
+ * Testcase for the authentication entry point resolver
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: RequestPatternResolverTest.php 1886 2009-02-09 16:08:54Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
+class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException \F3\FLOW3\Security\Exception\NoEntryPointFound
 	 */
-	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
+	public function resolveEntryPointClassThrowsAnExceptionIfNoEntryPointIsAvailable() {
+		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager);
 
-		try {
-			$requestPatternResolver->resolveRequestPatternClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Security\Exception\NoRequestPatternFound $exception) {
-
-		}
+		$entryPointResolver->resolveEntryPointClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
+		$this->fail('No exception was thrown.');
 	}
 
 	/**
@@ -58,10 +55,14 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
-		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('URI');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('ValidShortName')->will($this->returnValue(''));
+		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName')->will($this->returnValue('F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName'));
 
-		$this->assertEquals('F3\FLOW3\Security\RequestPattern\URI', $requestPatternClass, 'The wrong classname has been resolved');
+		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
+		$entryPointClass = $entryPointResolver->resolveEntryPointClass('ValidShortName');
+
+		$this->assertEquals('F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName', $entryPointClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -69,10 +70,13 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
-		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3\TestPackage\TestRequestPattern');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('ExistingEntryPointClass')->will($this->returnValue('ExistingEntryPointClass'));
 
-		$this->assertEquals('F3\TestPackage\TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');
+		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
+		$entryPointClass = $entryPointResolver->resolveEntryPointClass('ExistingEntryPointClass');
+
+		$this->assertEquals('ExistingEntryPointClass', $entryPointClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

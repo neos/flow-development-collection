@@ -25,59 +25,18 @@ namespace F3\FLOW3\Security\RequestPattern;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: URLTest.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * Testcase for the URL request pattern
+ * Testcase for the controller object name request pattern
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id$
+ * @version $Id: URLTest.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class URLTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
-		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
-
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
-		try {
-			$requestPattern->matchRequest($cliRequest);
-			$this->fail('No exception has been thrown.');
-		} catch (\F3\FLOW3\Security\Exception\RequestTypeNotSupported $exception) {
-
-		}
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function canMatchReturnsTrueForASupportedRequestType() {
-		$webRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
-		$this->assertTrue($requestPattern->canMatch($webRequest));
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
-		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
-
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
-		$this->assertFalse($requestPattern->canMatch($cliRequest));
-	}
+class ControllerObjectNameTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -86,13 +45,10 @@ class URLTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function requestMatchingBasicallyWorks() {
 		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$uri = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
+		$request->expects($this->once())->method('getControllerObjectName')->will($this->returnValue('F3\FLOW3\Security\Controller\LoginController'));
 
-		$request->expects($this->once())->method('getRequestURI')->will($this->returnValue($uri));
-		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
-
-		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URL();
-		$requestPattern->setPattern('/some/nice/.*');
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\ControllerObjectName();
+		$requestPattern->setPattern('F3\FLOW3\Security\.*');
 
 		$this->assertTrue($requestPattern->matchRequest($request));
 	}

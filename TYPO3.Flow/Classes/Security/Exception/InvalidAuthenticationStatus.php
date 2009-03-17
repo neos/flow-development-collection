@@ -25,29 +25,18 @@ namespace F3\FLOW3\Security\Exception;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: NoRequestPatternFound.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * The security exception handler.
+ * A "InvalidAuthenticationStatus" Exception
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: NoRequestPatternFound.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class Handler {
-
-	/**
-	 * Handles an exception. If possible it calls an AuthenticationEntryPoint to start authentication.
-	 *
-	 * @param \F3\FLOW3\Security\Exception $securityException The exception to be handled
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function handleException(\F3\FLOW3\Security\Exception $securityException) {
-
-	}
+class InvalidAuthenticationStatus extends \F3\FLOW3\Security\Exception {
 }
 
 ?>

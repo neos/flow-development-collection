@@ -42,7 +42,7 @@ class PolicyEnforcementAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function enforcePolicySetsPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor() {
+	public function enforcePolicyPassesTheGivenJoinPointOverToThePolicyEnforcementInterceptor() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
@@ -76,7 +76,7 @@ class PolicyEnforcementAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function enforcePolicySetsPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor() {
+	public function enforcePolicyPassesTheGivenJoinPointOverToTheAfterInvocationInterceptor() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
@@ -93,7 +93,7 @@ class PolicyEnforcementAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function enforcePolicySetsPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor() {
+	public function enforcePolicyPassesTheReturnValueOfTheInterceptedMethodOverToTheAfterInvocationInterceptor() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);
@@ -130,7 +130,7 @@ class PolicyEnforcementAspectTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function enforcePolicySetsCallsTheAdviceChainCorrectly() {
+	public function enforcePolicyCallsTheAdviceChainCorrectly() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
 		$mockAfterInvocationInterceptor = $this->getMock('F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation', array(), array(), '', FALSE);

@@ -51,10 +51,10 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	protected $environment;
 
 	/**
-	 * Indicates wether this token is authenticated
-	 * @var boolean
+	 * Current authentication status of this token
+	 * @var integer
 	 */
-	protected $authenticationStatus = FALSE;
+	protected $authenticationStatus = self::NO_CREDENTIALS_GIVEN;
 
 	/**
 	 * The username/password credentials
@@ -63,9 +63,15 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	protected $credentials = array('encryptedUsername' => '', 'encryptedPassword' => '');
 
 	/**
-	 * @var \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @var array The set request patterns
 	 */
-	protected $requestPattern = NULL;
+	protected $requestPatterns = NULL;
+
+	/**
+	 * The authentication entry point
+	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
+	 */
+	protected $entryPoint = NULL;
 
 	/**
 	 * The RSAWalletService
@@ -125,54 +131,63 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticated() {
-		return $this->authenticationStatus;
+		return ($this->authenticationStatus === self::AUTHENTICATION_SUCCESSFUL);
+	}
+
+	/**
+	 * Sets the authentication entry point
+	 *
+	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @return void
+	 */
+	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
+		$this->entryPoint = $entryPoint;
 	}
 
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available
+	 * @return \F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 */
 	public function getAuthenticationEntryPoint() {
-
+		return $this->entryPoint;
 	}
 
 	/**
-	 * Returns TRUE if a \F3\FLOW3\Security\RequestPattern was set
+	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
 	 *
 	 * @return boolean True if a \F3\FLOW3\Security\RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function hasRequestPattern() {
-		if ($this->requestPattern != NULL) return TRUE;
+	public function hasRequestPatterns() {
+		if ($this->requestPatterns != NULL) return TRUE;
 		return FALSE;
 	}
 
 	/**
-	 * Sets a \F3\FLOW3\Security\RequestPattern
+	 * Sets request patterns
 	 *
-	 * @param \F3\FLOW3\Security\RequestPatternInterface $requestPattern A request pattern
+	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
-	public function setRequestPattern(\F3\FLOW3\Security\RequestPatternInterface $requestPattern) {
-		$this->requestPattern = $requestPattern;
+	public function setRequestPatterns(array $requestPatterns) {
+		$this->requestPatterns = $requestPatterns;
 	}
 
 	/**
-	 * Returns the set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
-	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
+	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getRequestPattern() {
-		return $this->requestPattern;
+	public function getRequestPatterns() {
+		return $this->requestPatterns;
 	}
 
 	/**
 	 * Updates the username and password credentials from the POST vars, if the POST parameters
-	 * are available.
+	 * are available. Sets the authentication status to REAUTHENTICATION_NEEDED, if credentials have been sent.
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -180,8 +195,14 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	public function updateCredentials() {
 		$POSTArguments = $this->environment->getRawPOSTArguments();
 
-		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername'])) $this->credentials['encryptedUsername'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername'];
-		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword'])) $this->credentials['encryptedPassword'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword'];
+		if (isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername'])
+			&& isset($POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword'])) {
+
+			$this->credentials['encryptedUsername'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername'];
+			$this->credentials['encryptedPassword'] = $POSTArguments['F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword'];
+
+			$this->setAuthenticationStatus(self::AUTHENTICATION_NEEDED);
+		}
 	}
 
 	/**
@@ -217,15 +238,27 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 		return array($this->objectFactory->create('F3\FLOW3\Security\ACL\Role', 'ADMINISTRATOR'));
 	}
 
-	/**
+		/**
 	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
 	 *
-	 * @param boolean $authenticationStatus TRUE if the token ist authenticated, FALSE otherwise
+	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @throws F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
 	 */
 	public function setAuthenticationStatus($authenticationStatus) {
+		if (!in_array($authenticationStatus, array(self::NO_CREDENTIALS_GIVEN, self::WRONG_CREDENTIALS, self::AUTHENTICATION_SUCCESSFUL, self::AUTHENTICATION_NEEDED))) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus('Invalid authentication status.', 1237224453);
+
 		$this->authenticationStatus = $authenticationStatus;
+	}
+
+	/**
+	 * Returns the current authentication status
+	 *
+	 * @return integer One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
+	 */
+	public function getAuthenticationStatus() {
+		return $this->authenticationStatus;
 	}
 
 	/**
@@ -235,10 +268,11 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function generatePublicKeyForPassword() {
-		if ($this->passwordKeypairUUID === NULL) {
-			$this->passwordKeypairUUID = $this->RSAWalletService->generateNewKeypair(TRUE);
-		}
+		try {
+			return $this->RSAWalletService->getPublicKey($this->passwordKeypairUUID);
+		} catch (\F3\FLOW3\Security\Exception\InvalidKeyPairID $e) {}
 
+		$this->passwordKeypairUUID = $this->RSAWalletService->generateNewKeypair(TRUE);
 		return $this->RSAWalletService->getPublicKey($this->passwordKeypairUUID);
 	}
 
@@ -259,10 +293,11 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function generatePublicKeyForUsername() {
-		if ($this->usernameKeypairUUID === NULL) {
-			$this->usernameKeypairUUID = $this->RSAWalletService->generateNewKeypair(FALSE);
-		}
+		try {
+			return $this->RSAWalletService->getPublicKey($this->usernameKeypairUUID);
+		} catch (\F3\FLOW3\Security\Exception\InvalidKeyPairID $e) {}
 
+		$this->usernameKeypairUUID = $this->RSAWalletService->generateNewKeypair(FALSE);
 		return $this->RSAWalletService->getPublicKey($this->usernameKeypairUUID);
 	}
 
@@ -283,10 +318,13 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invalidateCurrentKeypairs() {
-		$this->RSAWalletService->destroyKeypair($this->passwordKeypairUUID);
-		$this->RSAWalletService->destroyKeypair($this->usernameKeypairUUID);
-		unset($this->passwordKeypairUUID);
-		unset($this->usernameKeypairUUID);
+		try {
+			$this->RSAWalletService->destroyKeypair($this->passwordKeypairUUID);
+			$this->RSAWalletService->destroyKeypair($this->usernameKeypairUUID);
+		} catch (\F3\FLOW3\Security\Exception\InvalidKeyPairID $e) {}
+
+		$this->passwordKeypairUUID = NULL;
+		$this->usernameKeypairUUID = NULL;
 	}
 
 	/**
@@ -296,7 +334,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __sleep() {
-		return array('authenticationStatus', 'credentials', 'requestPattern', 'passwordKeypairUUID', 'usernameKeypairUUID');
+		return array('authenticationStatus', 'requestPatterns', 'entryPoint', 'passwordKeypairUUID', 'usernameKeypairUUID');
 	}
 }
 

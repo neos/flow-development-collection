@@ -146,7 +146,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 		$context->setRequest($request);
 
 		$this->authenticationManager->setSecurityContext($context);
-		$managerTokens = $this->authenticationManager->getTokens();
+		$managerTokens = $this->filterInactiveTokens($this->authenticationManager->getTokens(), $request);
 		$sessionTokens = $context->getAuthenticationTokens();
 		$mergedTokens = $this->mergeTokens($managerTokens, $sessionTokens);
 
@@ -202,6 +202,37 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	}
 
 	/**
+	 * Filters all tokens that don't match for the given request.
+	 *
+	 * @param array $tokens The token array to be filtered
+	 * @param \F3\FLOW3\MVC\Request $request The request object
+	 * @return array The filtered token array
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\Request $request) {
+		$activeTokens = array();
+
+		foreach ($tokens as $token) {
+			if ($token->hasRequestPatterns()) {
+				$requestPatterns = $token->getRequestPatterns();
+				$tokenIsActive = TRUE;
+
+				foreach ($requestPatterns as $requestPattern) {
+					if ($requestPattern->canMatch($request)) {
+						$tokenIsActive &= $requestPattern->matchRequest($request);
+					}
+				}
+				if ($tokenIsActive) $activeTokens[] = $token;
+
+			} else {
+				$activeTokens[] = $token;
+			}
+		}
+
+		return $activeTokens;
+	}
+
+	/**
 	 * Updates the token credentials for all tokens in the given array.
 	 *
 	 * @param array Array of authentication tokens the credentials should be updated for
@@ -225,14 +256,10 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
-		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) {
-			$token->injectObjectFactory($this->objectFactory);
-			$token->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
-		} elseif ($token instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) {
-			$token->injectObjectFactory($this->objectFactory);
-			$token->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
-			$token->injectRSAWalletService($this->objectManager->getObject('F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface'));
-		}
+		$objectConfiguration = $this->objectManager->getObjectConfiguration(get_class($token));
+		$objectBuilder = $this->objectManager->getObject('F3\FLOW3\Object\Builder');
+
+		$objectBuilder->reinjectDependencies($token, $objectConfiguration);
 	}
 }
 

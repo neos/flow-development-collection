@@ -104,18 +104,8 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invoke() {
-		try {
-			if (!$this->securityContext->authenticationPerformed()) {
-				$this->authenticationManager->authenticate();
-			}
-		} catch (\F3\FLOW3\Security\Exception\AuthenticationRequired $exception) {
-			foreach ($this->securityContext->getAuthenticationTokens() as $token) {
-				if ($token->getAuthenticationEntryPoint() !== NULL && !($this->joinPoint->getProxy() instanceof \F3\FLOW3\Security\Authentication\EntryPointInterface)) {
-					$token->getAuthenticationEntryPoint()->startAuthentication();
-				}
-			}
-			throw $exception;
-		}
+
+		$this->authenticationManager->authenticate();
 
 		$this->accessDecisionManager->decide($this->securityContext, $this->joinPoint);
 	}

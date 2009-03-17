@@ -50,13 +50,14 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
 			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
 		);
-		
+
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
 
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
-		$token->injectObjectFactory($mockObjectFactory);		
+		$token->injectObjectFactory($mockObjectFactory);
 		$token->injectEnvironment($mockEnvironment);
+
 		$token->updateCredentials();
 
 		$expectedCredentials = array ('username' => 'FLOW3', 'password' => 'verysecurepassword');
@@ -70,6 +71,73 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getAuthenticationEntryPointReturnsTheConfiguredAuthenticationEntryPoint() {
 		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function theAuthenticationStatusIsCorrectlyInitialized() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus() {
+		$token1 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token1->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		$token2 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token2->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED);
+		$token3 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token3->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
+		$token4 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token4->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+
+		$this->assertFalse($token1->isAuthenticated());
+		$this->assertFalse($token2->isAuthenticated());
+		$this->assertFalse($token3->isAuthenticated());
+		$this->assertTrue($token4->isAuthenticated());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function updateCredentialsSetsTheCorrectAuthenticationStatusIfNewCredentialsArrived() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$POSTArguments = array(
+			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::username' => 'FLOW3',
+			'F3\FLOW3\Security\Authentication\Token\UsernamePassword::password' => 'verysecurepassword'
+		);
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
+		$mockEnvironment->expects($this->once())->method('getRawPOSTArguments')->will($this->returnValue($POSTArguments));
+
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->injectObjectFactory($mockObjectFactory);
+		$token->injectEnvironment($mockEnvironment);
+
+		$token->updateCredentials();
+
+		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED, $token->getAuthenticationStatus());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @expectedException \F3\FLOW3\Security\Exception\InvalidAuthenticationStatus
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->setAuthenticationStatus(-1);
 	}
 }
 ?>

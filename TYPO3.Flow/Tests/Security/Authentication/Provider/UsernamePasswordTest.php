@@ -46,7 +46,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function authenticatingAUsernamePasswordTokenWorks() {
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
-		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(TRUE);
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 		$usernamePasswordProvider->authenticate($mockToken);
@@ -60,7 +60,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function authenticationFailsWithWrongCredentialsInAUsernamePasswordToken() {
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'flow3', 'password' => 'wrongpassword')));
-		$mockToken->expects($this->never())->method('setAuthenticationStatus');
+		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
 		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
 		$usernamePasswordProvider->authenticate($mockToken);

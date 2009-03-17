@@ -201,6 +201,15 @@ F3\FLOW3\Security\ACL\PolicyService:
         arguments:
           1: value: FLOW3_Security_Policy
 
+F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface:
+  properties:
+    keystoreCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_Security_Cryptography_RSAWallet
+
 #                                                                          #
 # Session                                                                  #
 #                                                                          #

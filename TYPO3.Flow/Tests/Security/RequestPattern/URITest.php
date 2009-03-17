@@ -24,73 +24,77 @@ namespace F3\FLOW3\Security\RequestPattern;
 
 /**
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * This class holds an URL pattern an decides, if a \F3\FLOW3\MVC\Web\Request object matches against this pattern
- * Note: This pattern can only be used for web requests.
+ * Testcase for the URI request pattern
  *
  * @package FLOW3
- * @subpackage Security
+ * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class URL implements \F3\FLOW3\Security\RequestPatternInterface {
+class URITest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var string The preg_match() styled URL pattern
-	 */
-	protected $URLPattern = '';
-
-	/**
-	 * Returns TRUE, if this pattern can match against the given request object.
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
-	 * @return boolean TRUE if this pattern can match
+	 * @test
+	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(\F3\FLOW3\MVC\Request $request) {
-		if ($request instanceof \F3\FLOW3\MVC\Web\Request) return TRUE;
-		return FALSE;
+	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
+		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
+
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URI();
+		try {
+			$requestPattern->matchRequest($cliRequest);
+			$this->fail('No exception has been thrown.');
+		} catch (\F3\FLOW3\Security\Exception\RequestTypeNotSupported $exception) {
+
+		}
 	}
 
 	/**
-	 * Returns the set pattern
-	 *
-	 * @return string The set pattern
+	 * @test
+	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPattern() {
-		return $this->URLPattern;
+	public function canMatchReturnsTrueForASupportedRequestType() {
+		$webRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URI();
+		$this->assertTrue($requestPattern->canMatch($webRequest));
 	}
 
 	/**
-	 * Sets an URL pattern (preg_match() syntax)
-	 *
-	 * @param string $URLpattern The preg_match() styled URL pattern
-	 * @return void
+	 * @test
+	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setPattern($URLpattern) {
-		$this->URLPattern = $URLpattern;
+	public function canMatchReturnsFalseForAnUnsupportedRequestType() {
+		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
+
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URI();
+		$this->assertFalse($requestPattern->canMatch($cliRequest));
 	}
 
 	/**
-	 * Matches a \F3\FLOW3\MVC\Request against its set URL pattern rules
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
-	 * @return boolean TRUE if the pattern matched, FALSE otherwise
-	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
+	 * @test
+	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(\F3\FLOW3\MVC\Request $request) {
-		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('The given request type is not supported.', 1216903641);
+	public function requestMatchingBasicallyWorks() {
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$uri = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
 
-		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->URLPattern) . '$/', $request->getRequestURI()->getPath());
+		$request->expects($this->once())->method('getRequestURI')->will($this->returnValue($uri));
+		$uri->expects($this->once())->method('getPath')->will($this->returnValue('/some/nice/path/to/index.php'));
+
+		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URI();
+		$requestPattern->setPattern('/some/nice/.*');
+
+		$this->assertTrue($requestPattern->matchRequest($request));
 	}
 }
-
 ?>

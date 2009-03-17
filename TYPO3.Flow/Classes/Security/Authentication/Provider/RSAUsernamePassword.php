@@ -35,14 +35,8 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  * @subpackage Security
  * @version $Id: F3_FLOW3_Security_Authentication_Provider_UsernamePassword.php 1707 2009-01-07 10:37:30Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
- * @scope prototype
  */
 class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
-
-	/**
-	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface The entry point for this provider
-	 */
-	protected $entryPoint = NULL;
 
 	/**
 	 * The RSAWalletService
@@ -105,11 +99,15 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderI
 				$username = $this->RSAWalletService->decrypt(base64_decode($credentials['encryptedUsername']), $usernameKeypairUUID);
 
 				if ($username === 'admin' && $this->RSAWalletService->checkRSAEncryptedPassword(base64_decode($credentials['encryptedPassword']), 'af1e8a52451786a6b3bf78838e03a0a2', 'a709157e66e0197cafa0c2ba99f6e252', $passwordKeypairUUID)) {
-					$authenticationToken->setAuthenticationStatus(TRUE);
+					$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				} else {
+					$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 				}
 
 				$authenticationToken->invalidateCurrentKeypairs();
 			}
+		} elseif ($authenticationToken->getAuthenticationStatus() !== \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
+			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
 		}
 	}
 }

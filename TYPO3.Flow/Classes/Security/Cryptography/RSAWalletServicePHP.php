@@ -45,34 +45,15 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	protected $openSSLConfiguration = array();
 
 	/**
-	 * Path to the keystore directory
-	 * @var string
+	 * The keystore cache
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
 	 */
-	protected $keystoreDirectory;
-
-	/**
-	 * Array of stored keys in the wallet
-	 * @var array
-	 */
-	protected $keyStore = array();
+	protected $keystoreCache;
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
-
-	/**
-	 * Inject the settings to retrieve the keystore directory and open the RSAKeys file if exists
-	 *
-	 * @param array $settings The package settings
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectSettings($settings) {
-		$this->keystoreDirectory = $settings['security']['cryptography']['RSAWalletServicePHP']['keystore'];
-
-		if (file_exists($this->keystoreDirectory . '/RSAKeys')) $this->keyStore = unserialize(file_get_contents($this->keystoreDirectory . '/RSAKeys'));
-	}
 
 	/**
 	 * Injects the object factory
@@ -83,6 +64,17 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the cache for storing rsa keys
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $keystoreCache
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectKeystoreCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $keystoreCache) {
+		$this->keystoreCache = $keystoreCache;
 	}
 
 	/**
@@ -114,9 +106,11 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPublicKey($uuid) {
-		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438860);
+		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438860);
 
-		return $this->keyStore[$uuid]['publicKey'];
+		$keyPair = $this->keystoreCache->get($uuid);
+
+		return $keyPair['publicKey'];
 	}
 
 	/**
@@ -147,10 +141,13 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function decrypt($cipher, $uuid) {
-		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438861);
-		if ($this->keyStore[$uuid]['usedForPasswords']) throw new \F3\FLOW3\Security\Exception\DecryptionNotAllowed('You are not allowed to decrypt passwords!', 1233655350);
+		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438861);
 
-		return $this->decryptWithPrivateKey($cipher, $this->keyStore[$uuid]['privateKey']);
+		$keyPair = $this->keystoreCache->get($uuid);
+
+		if ($keyPair['usedForPasswords']) throw new \F3\FLOW3\Security\Exception\DecryptionNotAllowed('You are not allowed to decrypt passwords!', 1233655350);
+
+		return $this->decryptWithPrivateKey($cipher, $keyPair['privateKey']);
 	}
 
 	/**
@@ -166,9 +163,11 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
-		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1233655216);
+		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1233655216);
 
-		$decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $this->keyStore[$uuid]['privateKey']);
+		$keyPair = $this->keystoreCache->get($uuid);
+
+		$decryptedPassword = $this->decryptWithPrivateKey($encryptedPassword, $keyPair['privateKey']);
 
 		return ($passwordHash === md5(md5($decryptedPassword) . $salt));
 	}
@@ -182,20 +181,12 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function destroyKeypair($uuid) {
-		if (!isset($this->keyStore[$uuid])) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438863);
 
-		unset($this->keyStore[$uuid]);
-		$this->writeData();
-	}
-
-	/**
-	 * Ensures that all data is written to the keystore file
-	 *
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function shutdownObject() {
-		$this->writeData();
+		try {
+			$this->keystoreCache->remove($uuid);
+		} catch (\InvalidArgumentException $e) {
+			 throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438863);
+		}
 	}
 
 	/**
@@ -252,7 +243,7 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	}
 
 	/**
-	 * Stores the given keypair with the given UUID.
+	 * Stores the given keypair under the returned UUID.
 	 *
 	 * @param \F3\FLOW3\Security\Cryptography\OpenSSLRSAKey $publicKey The public key
 	 * @param \F3\FLOW3\Security\Cryptography\OpenSSLRSAKey $privateKey The private key
@@ -261,35 +252,16 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	private function storeKeyPair($publicKey, $privateKey, $usedForPasswords) {
-		$keyPairUUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
+		$keyPairUUID = str_replace('-', '_', \F3\FLOW3\Utility\Algorithms::generateUUID());
 
-		$this->keyStore[$keyPairUUID] = array();
-		$this->keyStore[$keyPairUUID]['publicKey'] = $publicKey;
-		$this->keyStore[$keyPairUUID]['privateKey'] = $privateKey;
-		$this->keyStore[$keyPairUUID]['usedForPasswords'] = $usedForPasswords;
+		$keyPair = array();
+		$keyPair['publicKey'] = $publicKey;
+		$keyPair['privateKey'] = $privateKey;
+		$keyPair['usedForPasswords'] = $usedForPasswords;
 
-		$this->writeData();
+		$this->keystoreCache->set($keyPairUUID, $keyPair);
 
 		return $keyPairUUID;
-	}
-
-	/**
-	 * Write data to keystore file
-	 *
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	private function writeData() {
-
-		if (!is_writable($this->keystoreDirectory)) {
-			try {
-				\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->keystoreDirectory);
-			} catch(\Exception $exception) {
-			}
-			#if (!is_writable($this->keystoreDirectory)) throw new \F3\FLOW3\Security\Exception('The keystore directory "' . $this->keystoreDirectory . '" could not be created.', 1233700339);
-		}
-
-		file_put_contents($this->keystoreDirectory . '/RSAKeys', serialize($this->keyStore));
 	}
 }
 ?>

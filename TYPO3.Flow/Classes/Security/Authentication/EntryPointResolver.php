@@ -25,47 +25,56 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
+ * @version $Id: RequestPatternResolver.php 1811 2009-01-28 12:04:49Z robert $
  */
 
 /**
- * Contract for an authentication entry point
+ * The authentication entry point resolver. It resolves the class name of an
+ * authentication entry point based on names.
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: RequestPatternResolver.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface EntryPointInterface {
+class EntryPointResolver {
 
 	/**
-	 * Returns TRUE if the given request can be authenticated by the authentication provider
-	 * represented by this entry point
-	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @return boolean TRUE if authentication is possible
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @var \F3\FLOW3\Object\ManagerInterface The object manager
 	 */
-	public function canForward(\F3\FLOW3\MVC\Request $request);
+	protected $objectManager;
 
 	/**
-	 * Sets the options array
+	 * Constructor.
 	 *
-	 * @param array $options An array of configuration options
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setOptions(array $options);
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
 
 	/**
-	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
+	 * Resolves the class name of an entry point. If a valid entry point class name is given, it is just returned.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @param \F3\FLOW3\MVC\Response $response The current response
-	 * @return void
+	 * @param string $name The (short) name of the entry point
+	 * @return string The class name of the entry point, NULL if no class was found.
+	 * @throws \F3\FLOW3\Security\Exception\NoEntryPointFound
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	public function resolveEntryPointClass($name) {
+		$resolvedClassName = '';
+
+		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
+		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
+
+		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\Authentication\EntryPoint\\' . $name);
+		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
+
+		if ($resolvedClassName != '') return $resolvedClassName;
+
+		throw new \F3\FLOW3\Security\Exception\NoEntryPointFound('An entry point with the name: "' . $name . '" could not be resolved.', 1236767282);
+	}
 }
-
 ?>

@@ -49,7 +49,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		$settings['security']['firewall']['rejectAll'] = FALSE;
 		$settings['security']['firewall']['filters'] = array(
 			array(
-				'patternType' => 'URL',
+				'patternType' => 'URI',
 				'patternValue' => '/some/url/.*',
 				'interceptor' => 'AccessGrant'
 			),
@@ -66,7 +66,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		$filters = $firewall->getFilters();
 
 		$this->assertType('F3\FLOW3\Security\Authorization\RequestFilter', $filters[0]);
-		$this->assertType('F3\FLOW3\Security\RequestPattern\URL', $filters[0]->getRequestPattern());
+		$this->assertType('F3\FLOW3\Security\RequestPattern\URI', $filters[0]->getRequestPattern());
 		$this->assertEquals('/some/url/.*', $filters[0]->getRequestPattern()->getPattern());
 		$this->assertType('F3\FLOW3\Security\Authorization\Interceptor\AccessGrant', $filters[0]->getSecurityInterceptor());
 
@@ -115,7 +115,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 		$settings['security']['firewall']['rejectAll'] = TRUE;
 		$settings['security']['firewall']['filters'] = array(
 			array(
-				'patternType' => 'URL',
+				'patternType' => 'URI',
 				'patternValue' => '/some/url/.*',
 				'interceptor' => 'F3\TestPackage\TestSecurityInterceptor'
 			),

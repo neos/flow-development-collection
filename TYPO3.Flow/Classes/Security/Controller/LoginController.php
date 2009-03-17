@@ -56,35 +56,47 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Inject the authentication manager
+	 *
+	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
+		$this->authenticationManager = $authenticationManager;
+	}
+
+	/**
 	 * Renders the login page
 	 *
 	 * @return string The rendered login page
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function indexAction() {
-		$authenticationTokens = $this->securityContextHolder->getContext()->getAuthenticationTokens();
+		$authenticationTokens = $this->securityContextHolder->getContext()->getAuthenticationTokensOfType('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword');
 		$userIsAuthenticated = FALSE;
 		$publicKeyPassword = NULL;
 		$publicKeyUsername = NULL;
 
-		foreach ($authenticationTokens as $authenticationToken) {
-			if ($authenticationToken->isAuthenticated()) {
-				$userIsAuthenticated = TRUE;
-				break;
-			}
-
-			if ($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) {
-				$publicKeyPassword = $authenticationToken->generatePublicKeyForPassword();
-				$publicKeyUsername = $authenticationToken->generatePublicKeyForUsername();
-				break;
-			}
+		if ($authenticationTokens[0]->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
+			$this->authenticationManager->authenticate();
 		}
 
+		if ($authenticationTokens[0]->isAuthenticated()) {
+			$userIsAuthenticated = TRUE;
+		} else {
+			$publicKeyPassword = $authenticationTokens[0]->generatePublicKeyForPassword();
+			$publicKeyUsername = $authenticationTokens[0]->generatePublicKeyForUsername();
+		}
+
+		//TODO: exception if no token found!
+
 		if (!$userIsAuthenticated) {
-			$loginForm = $this->view->render();
+			$loginView = $this->objectManager->getObject('F3\FLOW3\Security\View\LoginView');
+			$loginView->setRequest($this->request);
+			$loginForm = $loginView->render();
 			$loginForm = str_replace('###PUBLIC_KEY_PASSWORD###', $publicKeyPassword->getModulus(), $loginForm);
 			$loginForm = str_replace('###PUBLIC_KEY_USERNAME###', $publicKeyUsername->getModulus(), $loginForm);
-
 			return $loginForm;
 		} else {
 			$authenticatedUserView = $this->objectManager->getObject('F3\FLOW3\Security\View\AuthenticatedUserView');
