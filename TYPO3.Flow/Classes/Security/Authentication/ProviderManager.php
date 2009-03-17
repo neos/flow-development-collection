@@ -203,8 +203,16 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
+		if (!isset($settings['security']['authentication']['providers'])) return;
+		if (!is_array($settings['security']['authentication']['providers'])) return;
+
 		foreach ($settings['security']['authentication']['providers'] as $provider) {
-			$providerInstance = $this->objectManager->getObject($this->providerResolver->resolveProviderObjectName($provider['type']));
+			if (!isset($provider['type'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('You have to set an authentication provider type in the configuration!', 1237330316);
+
+			$providerObjectName = $this->providerResolver->resolveProviderObjectName($provider['type']);
+			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $provider['type'] . '" could not be found!', 1237330453);
+
+			$providerInstance = $this->objectManager->getObject($providerObjectName);
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {

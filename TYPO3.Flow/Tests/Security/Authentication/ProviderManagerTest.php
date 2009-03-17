@@ -285,6 +285,57 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function noTokensAndProvidersAreBuiltIfTheConfigurationArrayIsEmpty() {
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, $this->getMock('F3\FLOW3\Security\Authentication\ProviderResolver', array(), array(), '', FALSE), $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE), $this->getMock('F3\FLOW3\Security\Authentication\EntryPointResolver', array(), array(), '', FALSE));
+		$providerManager->injectSettings(array());
+
+		$this->assertEquals(array(), $providerManager->getTokens());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @expectedException F3\FLOW3\Security\Exception\InvalidAuthenticationProvider
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist() {
+		$settings = array();
+		$settings['security']['authentication']['providers'] = array(
+			array(
+				'type' => 'NotExistingProvider',
+			)
+		);
+
+		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\ProviderResolver', array(), array(), '', FALSE);
+		$mockProviderResolver->expects($this->once())->method('resolveProviderObjectName')->will($this->returnValue(NULL));
+
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, $mockProviderResolver, $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE), $this->getMock('F3\FLOW3\Security\Authentication\EntryPointResolver', array(), array(), '', FALSE));
+		$providerManager->injectSettings($settings);
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @expectedException F3\FLOW3\Security\Exception\InvalidAuthenticationProvider
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function anExceptionIsThrownIfTheConfiguredProviderTypeIsMissing() {
+		$settings = array();
+		$settings['security']['authentication']['providers'] = array(
+			array(
+				'typo' => 'NotExistingProvider',
+			)
+		);
+
+		$providerManager = new \F3\FLOW3\Security\Authentication\ProviderManager($this->objectManager, $this->getMock('F3\FLOW3\Security\Authentication\ProviderResolver', array(), array(), '', FALSE), $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE), $this->getMock('F3\FLOW3\Security\Authentication\EntryPointResolver', array(), array(), '', FALSE));
+		$providerManager->injectSettings($settings);
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function optionsOfTheConfiguredAuthenticationEntryPointsAreSetCorrectly() {
 		$this->markTestIncomplete();
 	}
