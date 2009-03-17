@@ -44,32 +44,38 @@ class ACLTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function voteDeniesAccessIfNoAccessPrivilegeWasConfigured() {
-		$this->markTestIncomplete();
-
-		$mockCustomDenyPrivilege = $this->getMock('F3\FLOW3\Security\ACL\Privilege');
+		$mockCustomDenyPrivilege = $this->getMock('F3\FLOW3\Security\ACL\Privilege', array(), array(), '', FALSE);
 		$mockCustomDenyPrivilege->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMPRIVILEGE'));
 
-		$mockCustomDenyPrivilege2 = $this->getMock('F3\FLOW3\Security\ACL\Privilege');
+		$mockCustomDenyPrivilege2 = $this->getMock('F3\FLOW3\Security\ACL\Privilege', array(), array(), '', FALSE);
 		$mockCustomDenyPrivilege2->expects($this->any())->method('isGrant')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege2->expects($this->any())->method('isDeny')->will($this->returnValue(FALSE));
 		$mockCustomDenyPrivilege2->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMPRIVILEGE'));
 
-		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\ACL\Role');
+		$mockRoleAdministrator = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), 'role1', FALSE);
 		$mockRoleAdministrator->expects($this->any())->method('__toString')->will($this->returnValue('ADMINISTRATOR'));
 
-		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\ACL\Role');
+		$mockRoleCustomer = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), 'role2', FALSE);
 		$mockRoleCustomer->expects($this->any())->method('__toString')->will($this->returnValue('CUSTOMER'));
 
-		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
-		$mockToken1->expects($this->atLeastOnce())->method('getGrantedAuthorities')->will($this->returnValue(array($mockRoleAdministrator)));
-
-		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context');
-		$mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1)));
+		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockSecurityContext->expects($this->once())->method('getGrantedAuthorities')->will($this->returnValue(array($mockRoleAdministrator, $mockRoleCustomer)));
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
+		$getPrivilegesCallback = function() use (&$mockCustomDenyPrivilege, &$mockCustomDenyPrivilege2) {
+			$args = func_get_args();
+
+			if ($args[0] instanceof role1) return array($mockCustomDenyPrivilege);
+			else return array($mockCustomDenyPrivilege2);
+		};
+
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\ACL\PolicyService');
+		$mockPolicyService->expects($this->any())->method('getPrivileges')->will($this->returnCallback($getPrivilegesCallback));
+
+		$ACLVoter = new ACL($mockPolicyService);
+		$this->assertEquals($ACLVoter->vote($mockSecurityContext, $mockJoinPoint), ACL::VOTE_DENY , 'The wrong vote was returned!');
 	}
 
 	/**
@@ -77,14 +83,9 @@ class ACLTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function voteAbstainsIfNoTokenIsAuthenticated() {
-		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
-		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
-		$mockToken1->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-		$mockToken2->expects($this->once())->method('isAuthenticated')->will($this->returnValue(FALSE));
-
+	public function voteAbstainsIfNoGrantedAuthoritiesAreAvailable() {
 		$mockSecurityContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockSecurityContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array($mockToken1, $mockToken2)));
+		$mockSecurityContext->expects($this->once())->method('getGrantedAuthorities')->will($this->returnValue(array()));
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\ACL\PolicyService', array(), array(), '', FALSE);

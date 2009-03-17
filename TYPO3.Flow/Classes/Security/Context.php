@@ -47,6 +47,18 @@ class Context {
 	protected $tokens = array();
 
 	/**
+	 * Array of tokens currently active
+	 * @var array
+	 */
+	protected $activeTokens = array();
+
+	/**
+	 * Array of tokens currently inactive
+	 * @var array
+	 */
+	protected $inactiveTokens = array();
+
+	/**
 	 * TRUE, if all tokens have to be authenticated, FALSE if one is sufficient.
 	 * @var boolean
 	 */
@@ -56,6 +68,12 @@ class Context {
 	 * @var \F3\FLOW3\MVC\Request
 	 */
 	protected $request;
+
+	/**
+	 * TRUE if separateActiveAndInactiveTokens has been called
+	 * @var boolean
+	 */
+	protected $separateTokensPerformed = FALSE;
 
 	/**
 	 * Constructor.
@@ -77,7 +95,7 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationTokens(array $tokens) {
-		$this->tokens = $tokens;
+		$this->activeTokens = $tokens;
 	}
 
 	/**
@@ -110,27 +128,9 @@ class Context {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokens() {
-		$activeTokens = array();
+		if ($this->separateTokensPerformed === FALSE) $this->separateActiveAndInactiveTokens();
 
-		foreach ($this->tokens as $token) {
-			if ($token->hasRequestPatterns()) {
-
-				$requestPatterns = $token->getRequestPatterns();
-				$tokenIsActive = TRUE;
-
-				foreach ($requestPatterns as $requestPattern) {
-					if ($requestPattern->canMatch($this->request)) {
-						$tokenIsActive &= $requestPattern->matchRequest($this->request);
-					}
-				}
-				if ($tokenIsActive) $activeTokens[] = $token;
-
-			} else {
-				$activeTokens[] = $token;
-			}
-		}
-
-		return $activeTokens;
+		return $this->activeTokens;
 	}
 
 	/**
@@ -145,9 +145,42 @@ class Context {
 	public function getAuthenticationTokensOfType($className) {
 		$activeTokens = array();
 
-		foreach ($this->tokens as $token) {
+		if ($this->separateTokensPerformed === FALSE) $this->separateActiveAndInactiveTokens();
+
+		foreach ($this->activeTokens as $token) {
 			if (($token instanceof $className) === FALSE) continue;
 
+			$activeTokens[] = $token;
+		}
+
+		return $activeTokens;
+	}
+
+	/**
+	 * Returns the granted authorities of all active and authenticated tokens
+	 *
+	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthorityInterface objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getGrantedAuthorities() {
+		$grantedAuthorities = array();
+		foreach ($this->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated()) $grantedAuthorities = array_merge($grantedAuthorities, $token->getGrantedAuthorities());
+		}
+
+		return $grantedAuthorities;
+	}
+
+	/**
+	 * Stores all active tokens in $this->activeTokens, all others in $this->inactiveTokens
+	 *
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function separateActiveAndInactiveTokens() {
+		$this->separateTokensPerformed = TRUE;
+
+		foreach ($this->tokens as $token) {
 			if ($token->hasRequestPatterns()) {
 
 				$requestPatterns = $token->getRequestPatterns();
@@ -158,24 +191,15 @@ class Context {
 						$tokenIsActive &= $requestPattern->matchRequest($this->request);
 					}
 				}
-				if ($tokenIsActive) $activeTokens[] = $token;
-
+				if ($tokenIsActive) {
+					$this->activeTokens[] = $token;
+				} else {
+					$this->inactiveTokens[] = $token;
+				}
 			} else {
-				$activeTokens[] = $token;
+				$this->activeTokens[] = $token;
 			}
 		}
-
-		return $activeTokens;
-	}
-
-	/**
-	 * Returns the granted authorities of all active and authenticated tokens
-	 *
-	 * @return array Array of F3_FLOW3_Security_Authentication_GrantedAuthorityInterface objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getGrantedAuthorities() {
-
 	}
 
 	/**
@@ -185,6 +209,7 @@ class Context {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __sleep() {
+		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
 		return (array('tokens', 'authenticateAllTokens'));
 	}
 }

@@ -66,16 +66,12 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	public function vote(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;
 		$accessDenies = 0;
-		foreach ($securityContext->getAuthenticationTokens() as $token) {
-			if ($token->isAuthenticated() === FALSE) continue;
+		foreach ($securityContext->getGrantedAuthorities() as $grantedAuthority) {
+			$privileges = $this->policyService->getPrivileges($grantedAuthority, $joinPoint, 'ACCESS');
+			if (!isset($privileges[0])) continue;
 
-			foreach ($token->getGrantedAuthorities() as $grantedAuthority) {
-				$privileges = $this->policyService->getPrivileges($grantedAuthority, $joinPoint, 'ACCESS');
-				if (!isset($privileges[0])) continue;
-
-				if ($privileges[0]->isGrant()) $accessGrants++;
-				else $accessDenies++;
-			}
+			if ($privileges[0]->isGrant()) $accessGrants++;
+			else $accessDenies++;
 		}
 
 		if ($accessDenies > 0) return self::VOTE_DENY;
