@@ -62,11 +62,11 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 			<title>FLOW3 Login</title>
 
 				<base href=\"" . $baseURI . "\" />
-				<script type=\"text/javascript\" src=\"Resources/Web/FLOW3/Public/Security/JavaScript/jsbn/jsbn.js\"></script>
-				<script type=\"text/javascript\" src=\"Resources/Web/FLOW3/Public/Security/JavaScript/jsbn/prng4.js\"></script>
-				<script type=\"text/javascript\" src=\"Resources/Web/FLOW3/Public/Security/JavaScript/jsbn/rng.js\"></script>
-				<script type=\"text/javascript\" src=\"Resources/Web/FLOW3/Public/Security/JavaScript/jsbn/rsa.js\"></script>
-				<script type=\"text/javascript\" src=\"Resources/Web/FLOW3/Public/Security/JavaScript/jsbn/base64.js\"></script>
+				<script type=\"text/javascript\" src=\"Resources/Packages/FLOW3/Security/JavaScript/jsbn/jsbn.js\"></script>
+				<script type=\"text/javascript\" src=\"Resources/Packages/FLOW3/Security/JavaScript/jsbn/prng4.js\"></script>
+				<script type=\"text/javascript\" src=\"Resources/Packages/FLOW3/Security/JavaScript/jsbn/rng.js\"></script>
+				<script type=\"text/javascript\" src=\"Resources/Packages/FLOW3/Security/JavaScript/jsbn/rsa.js\"></script>
+				<script type=\"text/javascript\" src=\"Resources/Packages/FLOW3/Security/JavaScript/jsbn/base64.js\"></script>
 
 				<style type=\"text/css\">
 					body { font-family:sans-serif; font-size:90%; background-color:#fff; }
