@@ -173,7 +173,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Magic call method for finder methods
+	 * Magic call method for finder methods.
+	 *
+	 * Currently provides two methods
+	 *  - findBy<PropertyName>($value, $caseSensitive = TRUE)
+	 *  - findOneBy<PropertyName>($value, $caseSensitive = TRUE)
 	 *
 	 * @param string $methodName Name of the method
 	 * @param array $arguments The arguments
@@ -184,11 +188,19 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		if (substr($methodName, 0, 6) === 'findBy' && strlen($methodName) > 7) {
 			$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);
 			$query = $this->createQuery();
-			return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			if (isset($arguments[1])) {
+				return $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
+			} else {
+				return $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			}
 		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
 			$propertyName = strtolower(substr($methodName, 9, 1)) . substr($methodName, 10);
 			$query = $this->createQuery();
-			$result = $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			if (isset($arguments[1])) {
+				$result = $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
+			} else {
+				$result = $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+			}
 			return current($result);
 		}
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);

@@ -92,9 +92,10 @@ interface QueryInterface {
 	 *
 	 * @param string $property The name of the property to compare against
 	 * @param mixed $operand The value to compare with
+	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
 	 * @return \F3\FLOW3\Persistence\OperatorInterface
 	 */
-	public function equals($property, $operand);
+	public function equals($property, $operand, $caseSensitive = TRUE);
 
 	/**
 	 * Returns a like criterion used for matching objects against a query
