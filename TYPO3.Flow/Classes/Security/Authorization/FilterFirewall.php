@@ -66,22 +66,28 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
 	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager,
-			\F3\FLOW3\Object\ManagerInterface $objectManager,
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager,
 			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
 			\F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver) {
 
 		$this->objectManager = $objectManager;
 		$this->requestPatternResolver = $requestPatternResolver;
 		$this->interceptorResolver = $interceptorResolver;
-		$settings = $configurationManager->getSettings('FLOW3');
+	}
 
+	/**
+	 * Injects the configuration settings
+	 *
+	 * @param array $settings
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectSettings(array $settings) {
 		$this->rejectAll = $settings['security']['firewall']['rejectAll'];
 		$this->buildFiltersFromSettings($settings['security']['firewall']['filters']);
 	}

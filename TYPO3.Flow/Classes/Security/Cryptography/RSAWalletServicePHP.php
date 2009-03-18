@@ -67,6 +67,21 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	}
 
 	/**
+	 * Injects the openSSL configuration to be used
+	 *
+	 * @param array $settings
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectSettings(array $settings) {
+		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'])
+			&& is_array($settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'])) {
+
+			$this->openSSLConfiguration = $settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'];
+		}
+	}
+
+	/**
 	 * Injects the cache for storing rsa keys
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $keystoreCache

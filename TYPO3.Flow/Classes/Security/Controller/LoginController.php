@@ -79,7 +79,11 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$publicKeyUsername = NULL;
 
 		if ($authenticationTokens[0]->getAuthenticationStatus() === \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED) {
-			$this->authenticationManager->authenticate();
+			try {
+				$this->authenticationManager->authenticate();
+			} catch (\F3\FLOW3\Security\Exception\InvalidKeyPairID $e) {
+				$authenticationTokens[0]->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+			}
 		}
 
 		if ($authenticationTokens[0]->isAuthenticated()) {
@@ -89,7 +93,7 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$publicKeyUsername = $authenticationTokens[0]->generatePublicKeyForUsername();
 		}
 
-		//TODO: exception if no token found!
+		//TODO: exception if no token found! (e.g. security disabled, no provider configured ...)
 
 		if (!$userIsAuthenticated) {
 			$loginView = $this->objectManager->getObject('F3\FLOW3\Security\View\LoginView');

@@ -44,10 +44,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokensReturnsOnlyTokensActiveForThisRequest() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
-		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
 		$request = $this->getMock('F3\FLOW3\MVC\Request');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'matchingRequestPattern');
@@ -87,7 +85,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
-		$securityContext = new $securityContextProxy($mockConfigurationManager);
+		$securityContext = new $securityContextProxy();
+		$securityContext->injectSettings($settings);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->setRequest($request);
 
@@ -100,12 +99,11 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticateAllTokensIsSetCorrectlyFromConfiguration() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = TRUE;
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-		$securityContext = new \F3\FLOW3\Security\Context($mockConfigurationManager);
+		$securityContext = new \F3\FLOW3\Security\Context();
+		$securityContext->injectSettings($settings);
 
 		$this->assertTrue($securityContext->authenticateAllTokens());
 	}
@@ -116,10 +114,9 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationTokenReturnsTheCorrectToken() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
-		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
+
 		$request = $this->getMock('F3\FLOW3\MVC\Request');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'matchingRequestPattern11');
@@ -159,7 +156,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->any())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
-		$securityContext = new $securityContextProxy($mockConfigurationManager);
+		$securityContext = new $securityContextProxy();
+		$securityContext->injectSettings($settings);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->setRequest($request);
 
@@ -173,10 +171,9 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getGrantedAuthoritiesReturnsTheCorrectAuthorities() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
-		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
+
 		$request = $this->getMock('F3\FLOW3\MVC\Request');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'matchingRequestPattern111');
@@ -236,7 +233,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$token6->expects($this->any())->method('getGrantedAuthorities')->will($this->returnValue(array($grantedAuthority6)));
 
 		$securityContextProxy = $this->buildAccessibleProxy('F3\FLOW3\Security\Context');
-		$securityContext = new $securityContextProxy($mockConfigurationManager);
+		$securityContext = new $securityContextProxy();
+		$securityContext->injectSettings($settings);
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->setRequest($request);
 

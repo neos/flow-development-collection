@@ -149,11 +149,12 @@ security:
     # can be authenticated.
     authenticateAllTokens: FALSE
 
-  # An array of access decision voters that should vote when access decisions are made
-  accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL]
+  authorization:
+    # An array of access decision voters that should vote when access decisions are made
+    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL]
 
-  # If this is set to TRUE access will be granted even if all voters abstain
-  allowAccessIfAllVotersAbstain: FALSE
+    # If this is set to TRUE access will be granted even if all voters abstain
+    allowAccessIfAllVotersAbstain: FALSE
 
   policy:
     
@@ -189,10 +190,12 @@ security:
     #      MyPackageUpdateMethods: ACCESS_DENY
     acls: []
 
-  # Set the storage path for RSA keys
   cryptography:
     RSAWalletServicePHP:
-      keystore: '%FLOW3_PATH_DATA%Temporary/Security/RSAWalletKeystore'
+
+      # Defines the openSSL configuration used for key handling.
+      # See the PHP openSSL documentation for possible settings.
+      openSSLConfiguration: []
 
 utility:
   environment:

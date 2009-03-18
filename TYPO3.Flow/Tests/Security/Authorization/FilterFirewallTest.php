@@ -44,7 +44,6 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
 		$settings = array();
 		$settings['security']['firewall']['rejectAll'] = FALSE;
 		$settings['security']['firewall']['filters'] = array(
@@ -60,9 +59,8 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall->injectSettings($settings);
 		$filters = $firewall->getFilters();
 
 		$this->assertType('F3\FLOW3\Security\Authorization\RequestFilter', $filters[0]);
@@ -84,7 +82,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function configuredFiltersAreCalledAndTheirInterceptorsInvoked() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['firewall']['rejectAll'] = FALSE;
 		$settings['security']['firewall']['filters'] = array(
@@ -95,9 +93,8 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall->injectSettings($settings);
 
 		$firewall->blockIllegalRequests($mockRequest);
 	}
@@ -110,7 +107,7 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+
 		$settings = array();
 		$settings['security']['firewall']['rejectAll'] = TRUE;
 		$settings['security']['firewall']['filters'] = array(
@@ -121,9 +118,8 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 			),
 		);
 
-		$mockConfigurationManager->expects($this->once())->method('getSettings')->will($this->returnValue($settings));
-
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($mockConfigurationManager, $this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
+		$firewall->injectSettings($settings);
 
 		$firewall->blockIllegalRequests($mockRequest);
 	}

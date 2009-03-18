@@ -76,14 +76,13 @@ class Context {
 	protected $separateTokensPerformed = FALSE;
 
 	/**
-	 * Constructor.
+	 * Injects the configuration settings
 	 *
-	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
+	 * @param array $settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Configuration\Manager $configurationManager) {
-		$settings = $configurationManager->getSettings('FLOW3');
+	public function injectSettings(array $settings) {
 		$this->authenticateAllTokens = $settings['security']['authentication']['authenticateAllTokens'];
 	}
 
