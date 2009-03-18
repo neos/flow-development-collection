@@ -141,9 +141,9 @@ security:
     # So make sure, that the primary authentication method is the first array entry.
     providers:
       -
-        provider: UsernamePassword
-        patternType:
-        patternValue:
+        type: RSAUsernamePassword
+        requestPatterns:
+         controllerObjectName: F3\FLOW3\Security\.*
 
     # If set to TRUE, authentication will only succeed, if all active tokens (authentication mechanisms)
     # can be authenticated.
