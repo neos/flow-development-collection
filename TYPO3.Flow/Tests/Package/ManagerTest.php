@@ -144,8 +144,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitivePackageKeyReturnsTheUpperCamelCaseVersionOfAGivenPackageKeyIfThePackageIsRegistered() {
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->initialize();
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'), array(), '', FALSE);
+		$packageManager->_set('packageKeys', array('testpackage' => 'TestPackage'));
+
 		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
 	}
 
