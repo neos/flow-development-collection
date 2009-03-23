@@ -40,17 +40,16 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\FLOW3\Security\Exception\NoAuthenticationProviderFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderObjectNameThrowsAnExceptionIfNoProviderIsAvailable() {
-		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		try {
-			$providerResolver->resolveProviderObjectName('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Security\Exception\NoAuthenticationProviderFound $exception) {
+		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($mockObjectManager);
 
-		}
+		$providerResolver->resolveProviderClass('notExistingClass');
 	}
 
 	/**
@@ -58,10 +57,21 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForAShortName() {
-		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
-		$providerClass = $providerResolver->resolveProviderObjectName('UsernamePassword');
+		$getCaseSensitiveObjectNameCallback = function() {
+			$args = func_get_args();
 
-		$this->assertEquals('F3\FLOW3\Security\Authentication\Provider\UsernamePassword', $providerClass, 'The wrong classname has been resolved');
+			if ($args[0] === 'F3\FLOW3\Security\Authentication\Provider\ValidShortName') return 'F3\FLOW3\Security\Authentication\Provider\ValidShortName';
+
+			return FALSE;
+		};
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+
+		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($mockObjectManager);
+		$providerClass = $providerResolver->resolveProviderClass('ValidShortName');
+
+		$this->assertEquals('F3\FLOW3\Security\Authentication\Provider\ValidShortName', $providerClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -69,10 +79,13 @@ class ProviderResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveProviderReturnsTheCorrectProviderForACompleteClassName() {
-		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($this->objectManager);
-		$providerClass = $providerResolver->resolveProviderObjectName('F3\TestPackage\TestAuthenticationProvider');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('existingProviderClass')->will($this->returnValue('existingProviderClass'));
 
-		$this->assertEquals('F3\TestPackage\TestAuthenticationProvider', $providerClass, 'The wrong classname has been resolved');
+		$providerResolver = new \F3\FLOW3\Security\Authentication\ProviderResolver($mockObjectManager);
+		$providerClass = $providerResolver->resolveProviderClass('existingProviderClass');
+
+		$this->assertEquals('existingProviderClass', $providerClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

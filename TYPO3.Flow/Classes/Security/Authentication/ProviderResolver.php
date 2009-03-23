@@ -63,7 +63,7 @@ class ProviderResolver {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveProviderObjectName($providerName) {
+	public function resolveProviderClass($providerName) {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);
 		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 

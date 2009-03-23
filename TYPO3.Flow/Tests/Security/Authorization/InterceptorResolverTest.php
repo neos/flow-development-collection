@@ -40,17 +40,16 @@ class InterceptorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\FLOW3\Security\Exception\NoInterceptorFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorClassThrowsAnExceptionIfNoInterceptorIsAvailable() {
-		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		try {
-			$interceptorResolver->resolveInterceptorClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Security\Exception\NoInterceptorFound $exception) {
+		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($mockObjectManager);
 
-		}
+		$interceptorResolver->resolveInterceptorClass('notExistingClass');
 	}
 
 	/**
@@ -58,10 +57,22 @@ class InterceptorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForAShortName() {
-		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager);
-		$interceptorClass = $interceptorResolver->resolveInterceptorClass('AccessDeny');
+		$getCaseSensitiveObjectNameCallback = function() {
+			$args = func_get_args();
 
-		$this->assertEquals('F3\FLOW3\Security\Authorization\Interceptor\AccessDeny', $interceptorClass, 'The wrong classname has been resolved');
+			if ($args[0] === 'F3\FLOW3\Security\Authorization\Interceptor\ValidShortName') return 'F3\FLOW3\Security\Authorization\Interceptor\ValidShortName';
+
+			return FALSE;
+		};
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+
+
+		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($mockObjectManager);
+		$interceptorClass = $interceptorResolver->resolveInterceptorClass('ValidShortName');
+
+		$this->assertEquals('F3\FLOW3\Security\Authorization\Interceptor\ValidShortName', $interceptorClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -69,10 +80,13 @@ class InterceptorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveInterceptorReturnsTheCorrectInterceptorForACompleteClassName() {
-		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager);
-		$interceptorClass = $interceptorResolver->resolveInterceptorClass('F3\TestPackage\TestSecurityInterceptor');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingInterceptorClass')->will($this->returnValue('ExistingInterceptorClass'));
 
-		$this->assertEquals('F3\TestPackage\TestSecurityInterceptor', $interceptorClass, 'The wrong classname has been resolved');
+		$interceptorResolver = new \F3\FLOW3\Security\Authorization\InterceptorResolver($mockObjectManager);
+		$interceptorClass = $interceptorResolver->resolveInterceptorClass('ExistingInterceptorClass');
+
+		$this->assertEquals('ExistingInterceptorClass', $interceptorClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

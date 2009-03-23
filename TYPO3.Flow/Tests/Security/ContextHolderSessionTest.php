@@ -111,8 +111,8 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$mockContext->expects($this->once())->method('setRequest')->with($mockRequest);
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue($mockContext));
-		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
+		$mockSession->expects($this->any())->method('getData')->will($this->returnValue($mockContext));
+		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
 		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
@@ -148,16 +148,22 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
+		$token1ClassName = uniqid('token1');
+		$token1CloneClassName = '\F3\FLOW3\Security\Authentication\\' . $token1ClassName;
+		$token2ClassName = uniqid('token2');
+		$token2CloneClassName = '\F3\FLOW3\Security\Authentication\\' . $token2ClassName;
+		$token3ClassName = uniqid('token3');
+
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token1');
-		$token1Clone = new \F3\FLOW3\Security\Authentication\token1();
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token2');
-		$token2Clone = new \F3\FLOW3\Security\Authentication\token2();
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'token3');
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token1ClassName);
+		$token1Clone = new $token1CloneClassName();
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token2ClassName);
+		$token2Clone = new $token2CloneClassName();
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token3ClassName);
 
 		$tokensFromTheManager = array($token1, $token2, $token3);
 		$tokensFromTheSession = array($token1Clone, $token2Clone);
@@ -194,7 +200,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockToken1->expects($this->once())->method('updateCredentials');
 		$mockToken2->expects($this->once())->method('updateCredentials');
 		$mockToken3->expects($this->once())->method('updateCredentials');
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
@@ -217,7 +223,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue($mockContext));
+		$mockSession->expects($this->once())->method('getData')->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($mockContext);
@@ -236,45 +242,51 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function filterInactiveTokensWorks() {
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
-		$settings = array();
-		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
-		$mockConfigurationManager->expects($this->any())->method('getSettings')->will($this->returnValue($settings));
+		$matchingRequestPatternClassName = uniqid('matchingRequestPattern');
+		$notMatchingRequestPatternClassName = uniqid('notMatchingRequestPattern');
+		$abstainingRequestPatternClassName = uniqid('abstainingRequestPattern');
+		$authenticationToken1ClassName = uniqid('authenticationToken1');
+		$authenticationToken2ClassName = uniqid('authenticationToken2');
+		$authenticationToken3ClassName = uniqid('authenticationToken3');
+		$authenticationToken4ClassName = uniqid('authenticationToken4');
+		$authenticationToken5ClassName = uniqid('authenticationToken5');
+		$authenticationToken6ClassName = uniqid('authenticationToken6');
+
 		$request = $this->getMock('F3\FLOW3\MVC\Request');
 
-		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'matchingRequestPattern1');
+		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
 		$matchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));
 		$matchingRequestPattern->expects($this->any())->method('matchRequest')->will($this->returnValue(TRUE));
 
-		$notMatchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'notMatchingRequestPattern1');
+		$notMatchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $notMatchingRequestPatternClassName);
 		$notMatchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));
 		$notMatchingRequestPattern->expects($this->any())->method('matchRequest')->will($this->returnValue(FALSE));
 
-		$abstainingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'abstainingRequestPattern1');
+		$abstainingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $abstainingRequestPatternClassName);
 		$abstainingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(FALSE));
 		$abstainingRequestPattern->expects($this->never())->method('matchRequest');
 
-		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken11');
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken1ClassName);
 		$token1->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token1->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($matchingRequestPattern)));
 
-		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken12');
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken2ClassName);
 		$token2->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(FALSE));
 		$token2->expects($this->never())->method('getRequestPatterns');
 
-		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken13');
+		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken3ClassName);
 		$token3->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token3->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($notMatchingRequestPattern)));
 
-		$token4 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken14');
+		$token4 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken4ClassName);
 		$token4->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token4->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern)));
 
-		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken15');
+		$token5 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken5ClassName);
 		$token5->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token5->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $notMatchingRequestPattern, $matchingRequestPattern)));
 
-		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), 'authenticationToken16');
+		$token6 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $authenticationToken6ClassName);
 		$token6->expects($this->once())->method('hasRequestPatterns')->will($this->returnValue(TRUE));
 		$token6->expects($this->once())->method('getRequestPatterns')->will($this->returnValue(array($abstainingRequestPattern, $matchingRequestPattern, $matchingRequestPattern)));
 

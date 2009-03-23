@@ -43,7 +43,7 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeSecurityInitializesTheSecurityContextWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 
 		$getMethodArgumentCallback = function() use (&$request) {
 			$args = func_get_args();
@@ -69,8 +69,8 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function blockIllegalRequestsCallsTheFirewallWithTheGivenRequest() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired();
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -98,8 +98,8 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointBasicallyWorks() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {
@@ -134,14 +134,14 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 		$dispatchingAspect->forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPoint($mockJoinPoint);
 	}
 
-/**
+	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @expectedException \F3\FLOW3\Security\Exception\AuthenticationRequired
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPointThrowsTheOriginalExceptionIfNoEntryPointIsAvailable() {
-		$request = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Request');
-		$response = $this->objectManager->getObject('F3\FLOW3\MVC\Web\Response');
+		$request = $request = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$response = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 		$exception = new \F3\FLOW3\Security\Exception\AuthenticationRequired('AuthenticationRequired Exception! Bad...', 1237212410);
 
 		$getMethodArgumentCallback = function() use (&$request, &$response) {

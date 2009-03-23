@@ -44,57 +44,87 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function configuredFiltersAreCreatedCorrectly() {
-		$settings = array();
-		$settings['security']['firewall']['rejectAll'] = FALSE;
-		$settings['security']['firewall']['filters'] = array(
+		$resolveRequestPatternClassCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === 'URI') return 'mockPatternURI';
+			elseif ($args[0] === 'F3\TestRequestPattern') return 'mockPatternTest';
+		};
+
+		$resolveInterceptorClassCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === 'AccessGrant') return 'mockInterceptorAccessGrant';
+			elseif ($args[0] === 'F3\TestSecurityInterceptor') return 'mockInterceptorTest';
+		};
+
+		$mockRequestPattern1 = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'pattern1', FALSE);
+		$mockRequestPattern1->expects($this->once())->method('setPattern')->with('/some/url/.*');
+		$mockRequestPattern2 = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), 'pattern2', FALSE);
+		$mockRequestPattern2->expects($this->once())->method('setPattern')->with('/some/url/blocked.*');
+
+		$getObjectCallback = function() use (&$mockRequestPattern1, &$mockRequestPattern2) {
+			$args = func_get_args();
+
+			if ($args[0] === 'mockPatternURI') return $mockRequestPattern1;
+			elseif ($args[0] === 'mockPatternTest') return $mockRequestPattern2;
+			elseif ($args[0] === 'mockInterceptorAccessGrant') return 'AccessGrant';
+			elseif ($args[0] === 'mockInterceptorTest') return 'InterceptorTest';
+
+			elseif ($args[0] === 'F3\FLOW3\Security\Authorization\RequestFilter') {
+				if ($args[1] == $mockRequestPattern1 && $args[2] === 'AccessGrant') return 'filter1';
+				if ($args[1] == $mockRequestPattern2 && $args[2] === 'InterceptorTest') return 'filter2';
+			}
+		};
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
+		$mockPatternResolver = $this->getMock('F3\FLOW3\Security\RequestPatternResolver', array(), array(), '', FALSE);
+		$mockPatternResolver->expects($this->any())->method('resolveRequestPatternClass')->will($this->returnCallback($resolveRequestPatternClassCallback));
+		$mockInterceptorResolver = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorResolver', array(), array(), '', FALSE);
+		$mockInterceptorResolver->expects($this->any())->method('resolveInterceptorClass')->will($this->returnCallback($resolveInterceptorClassCallback));
+
+		$settings = array(
 			array(
 				'patternType' => 'URI',
 				'patternValue' => '/some/url/.*',
 				'interceptor' => 'AccessGrant'
 			),
 			array(
-				'patternType' => 'F3\TestPackage\TestRequestPattern',
+				'patternType' => 'F3\TestRequestPattern',
 				'patternValue' => '/some/url/blocked.*',
-				'interceptor' => 'F3\TestPackage\TestSecurityInterceptor'
+				'interceptor' => 'F3\TestSecurityInterceptor'
 			)
 		);
 
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
-		$firewall->injectSettings($settings);
-		$filters = $firewall->getFilters();
+		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('blockIllegalRequests'), array(), '', FALSE);
+		$firewall->_set('objectManager', $mockObjectManager);
+		$firewall->_set('requestPatternResolver', $mockPatternResolver);
+		$firewall->_set('interceptorResolver', $mockInterceptorResolver);
 
-		$this->assertType('F3\FLOW3\Security\Authorization\RequestFilter', $filters[0]);
-		$this->assertType('F3\FLOW3\Security\RequestPattern\URI', $filters[0]->getRequestPattern());
-		$this->assertEquals('/some/url/.*', $filters[0]->getRequestPattern()->getPattern());
-		$this->assertType('F3\FLOW3\Security\Authorization\Interceptor\AccessGrant', $filters[0]->getSecurityInterceptor());
+		$firewall->_call('buildFiltersFromSettings', $settings);
+		$result = $firewall->_get('filters');
 
-		$this->assertType('F3\FLOW3\Security\Authorization\RequestFilter', $filters[1]);
-		$this->assertType('F3\TestPackage\TestRequestPattern', $filters[1]->getRequestPattern());
-		$this->assertEquals('/some/url/blocked.*', $filters[1]->getRequestPattern()->getPattern());
-		$this->assertType('F3\TestPackage\TestSecurityInterceptor', $filters[1]->getSecurityInterceptor());
+		$this->assertEquals(array('filter1', 'filter2'), $result, 'The filters were not built correctly.');
 	}
 
 	/**
 	 * @test
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException \F3\FLOW3\Security\Exception\AccessDenied
 	 */
-	public function configuredFiltersAreCalledAndTheirInterceptorsInvoked() {
+	public function allConfiguredFiltersAreCalled() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 
-		$settings = array();
-		$settings['security']['firewall']['rejectAll'] = FALSE;
-		$settings['security']['firewall']['filters'] = array(
-			array(
-				'patternType' => 'F3\TestPackage\TestRequestPattern',
-				'patternValue' => '.*',
-				'interceptor' => 'AccessDeny'
-			),
-		);
+		$mockFilter1 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter1->expects($this->once())->method('filterRequest')->with($mockRequest);
+		$mockFilter2 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter2->expects($this->once())->method('filterRequest')->with($mockRequest);
+		$mockFilter3 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter3->expects($this->once())->method('filterRequest')->with($mockRequest);
 
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
-		$firewall->injectSettings($settings);
+		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('dummy'), array(), '', FALSE);
+		$firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
 
 		$firewall->blockIllegalRequests($mockRequest);
 	}
@@ -106,20 +136,18 @@ class FilterFirewallTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Security\Exception\AccessDenied
 	 */
 	public function ifRejectAllIsSetAndNoFilterExplicitlyAllowsTheRequestAPermissionDeniedExceptionIsThrown() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 
-		$settings = array();
-		$settings['security']['firewall']['rejectAll'] = TRUE;
-		$settings['security']['firewall']['filters'] = array(
-			array(
-				'patternType' => 'URI',
-				'patternValue' => '/some/url/.*',
-				'interceptor' => 'F3\TestPackage\TestSecurityInterceptor'
-			),
-		);
+		$mockFilter1 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter1->expects($this->once())->method('filterRequest')->with($mockRequest)->will($this->returnValue(FALSE));
+		$mockFilter2 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter2->expects($this->once())->method('filterRequest')->with($mockRequest)->will($this->returnValue(FALSE));
+		$mockFilter3 = $this->getMock('F3\FLOW3\Security\Authorization\RequestFilter', array(), array(), '', FALSE);
+		$mockFilter3->expects($this->once())->method('filterRequest')->with($mockRequest)->will($this->returnValue(FALSE));
 
-		$firewall = new \F3\FLOW3\Security\Authorization\FilterFirewall($this->objectManager, new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager), new \F3\FLOW3\Security\Authorization\InterceptorResolver($this->objectManager));
-		$firewall->injectSettings($settings);
+		$firewall = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\FilterFirewall'), array('dummy'), array(), '', FALSE);
+		$firewall->_set('filters', array($mockFilter1, $mockFilter2, $mockFilter3));
+		$firewall->_set('rejectAll', TRUE);
 
 		$firewall->blockIllegalRequests($mockRequest);
 	}

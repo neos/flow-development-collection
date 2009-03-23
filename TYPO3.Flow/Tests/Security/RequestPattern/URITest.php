@@ -41,18 +41,14 @@ class URITest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
+	 * @expectedException F3\FLOW3\Security\Exception\RequestTypeNotSupported
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function anExceptionIsThrownIfTheGivenRequestObjectIsNotSupported() {
 		$cliRequest = $this->getMock('F3\FLOW3\MVC\CLI\Request');
 
 		$requestPattern = new \F3\FLOW3\Security\RequestPattern\URI();
-		try {
-			$requestPattern->matchRequest($cliRequest);
-			$this->fail('No exception has been thrown.');
-		} catch (\F3\FLOW3\Security\Exception\RequestTypeNotSupported $exception) {
-
-		}
+		$requestPattern->matchRequest($cliRequest);
 	}
 
 	/**

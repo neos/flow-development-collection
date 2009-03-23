@@ -44,20 +44,29 @@ class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \F3\FLOW3\Security\Exception\NoEntryPointFound
 	 */
 	public function resolveEntryPointClassThrowsAnExceptionIfNoEntryPointIsAvailable() {
-		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		$entryPointResolver->resolveEntryPointClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
-		$this->fail('No exception was thrown.');
+		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
+
+		$entryPointResolver->resolveEntryPointClass('notExistingClass');
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
+	public function resolveEntryPointClassReturnsTheCorrectRequestPatternForAShortName() {
+		$getCaseSensitiveObjectNameCallback = function() {
+			$args = func_get_args();
+
+			if ($args[0] === 'F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName') return 'F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName';
+
+			return FALSE;
+		};
+
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('ValidShortName')->will($this->returnValue(''));
-		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName')->will($this->returnValue('F3\FLOW3\Security\Authentication\EntryPoint\ValidShortName'));
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
 
 		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
 		$entryPointClass = $entryPointResolver->resolveEntryPointClass('ValidShortName');
@@ -69,9 +78,9 @@ class EntryPointResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
+	public function resolveEntryPointClassReturnsTheCorrectRequestPatternForACompleteClassName() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('ExistingEntryPointClass')->will($this->returnValue('ExistingEntryPointClass'));
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingEntryPointClass')->will($this->returnValue('ExistingEntryPointClass'));
 
 		$entryPointResolver = new \F3\FLOW3\Security\Authentication\EntryPointResolver($mockObjectManager);
 		$entryPointClass = $entryPointResolver->resolveEntryPointClass('ExistingEntryPointClass');

@@ -93,16 +93,6 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	}
 
 	/**
-	 * Returns the configure filters.
-	 *
-	 * @return array The configured filters
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getFilters() {
-		return $this->filters;
-	}
-
-	/**
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *

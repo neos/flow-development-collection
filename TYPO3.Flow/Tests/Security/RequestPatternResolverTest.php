@@ -40,17 +40,16 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\FLOW3\Security\Exception\NoRequestPatternFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternClassThrowsAnExceptionIfNoRequestPatternIsAvailable() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnValue(FALSE));
 
-		try {
-			$requestPatternResolver->resolveRequestPatternClass('IfSomeoneCreatesAClassNamedLikeThisTheFailingOfThisTestIsHisLeastProblem');
-			$this->fail('No exception was thrown.');
-		} catch (\F3\FLOW3\Security\Exception\NoRequestPatternFound $exception) {
+		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($mockObjectManager);
 
-		}
+		$requestPatternResolver->resolveRequestPatternClass('notExistingClass');
 	}
 
 	/**
@@ -58,10 +57,21 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForAShortName() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
-		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('URI');
+		$getCaseSensitiveObjectNameCallback = function() {
+			$args = func_get_args();
 
-		$this->assertEquals('F3\FLOW3\Security\RequestPattern\URI', $requestPatternClass, 'The wrong classname has been resolved');
+			if ($args[0] === 'F3\FLOW3\Security\RequestPattern\ValidShortName') return 'F3\FLOW3\Security\RequestPattern\ValidShortName';
+
+			return FALSE;
+		};
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->will($this->returnCallback($getCaseSensitiveObjectNameCallback));
+
+		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($mockObjectManager);
+		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ValidShortName');
+
+		$this->assertEquals('F3\FLOW3\Security\RequestPattern\ValidShortName', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 
 	/**
@@ -69,10 +79,13 @@ class RequestPatternResolverTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function resolveRequestPatternReturnsTheCorrectRequestPatternForACompleteClassName() {
-		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($this->objectManager);
-		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('F3\TestPackage\TestRequestPattern');
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->any())->method('getCaseSensitiveObjectName')->with('ExistingRequestPatternClass')->will($this->returnValue('ExistingRequestPatternClass'));
 
-		$this->assertEquals('F3\TestPackage\TestRequestPattern', $requestPatternClass, 'The wrong classname has been resolved');
+		$requestPatternResolver = new \F3\FLOW3\Security\RequestPatternResolver($mockObjectManager);
+		$requestPatternClass = $requestPatternResolver->resolveRequestPatternClass('ExistingRequestPatternClass');
+
+		$this->assertEquals('ExistingRequestPatternClass', $requestPatternClass, 'The wrong classname has been resolved');
 	}
 }
 ?>

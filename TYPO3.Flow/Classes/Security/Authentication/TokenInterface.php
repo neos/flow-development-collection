@@ -53,6 +53,14 @@ interface TokenInterface {
 	public function isAuthenticated();
 
 	/**
+	 * Sets the authentication entry point
+	 *
+	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @return void
+	 */
+	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint);
+
+	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
 	 * @return \F3\FLOW3\Security\Authentication\EntryPoint The configured authentication entry point, NULL if none is available

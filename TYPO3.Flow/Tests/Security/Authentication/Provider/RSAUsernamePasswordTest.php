@@ -43,6 +43,16 @@ class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function getTokenClassNamesReturnsTheCorrectClassNames() {
+		$RSAUsernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\RSAUsernamePassword();
+		$this->assertEquals(array('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword'), $RSAUsernamePasswordProvider->getTokenClassNames());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function authenticatingARSAUsernamePasswordTokenWorks() {
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('encryptedUsername' => 'some fake value', 'encryptedPassword' => 'some other fake value')));

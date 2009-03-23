@@ -54,7 +54,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canForwardReturnsTrueForNonWebRequests() {
+	public function canForwardReturnsFalseForNonWebRequests() {
 		$entryPoint = new WebRedirect();
 
 		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\CLI\Request')));

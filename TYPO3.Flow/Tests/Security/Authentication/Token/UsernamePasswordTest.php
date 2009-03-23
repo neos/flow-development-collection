@@ -69,15 +69,6 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getAuthenticationEntryPointReturnsTheConfiguredAuthenticationEntryPoint() {
-		$this->markTestIncomplete();
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
 	public function theAuthenticationStatusIsCorrectlyInitialized() {
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$this->assertSame(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN, $token->getAuthenticationStatus());

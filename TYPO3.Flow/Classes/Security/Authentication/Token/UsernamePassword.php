@@ -110,6 +110,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setAuthenticationEntryPoint(\F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint) {
 		$this->entryPoint = $entryPoint;
@@ -119,6 +120,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
 	 * @return \F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationEntryPoint() {
 		return $this->entryPoint;

@@ -65,13 +65,11 @@ class RequestPatternResolver {
 	public function resolveRequestPatternClass($name) {
 		$resolvedClassName = '';
 
-		$nameIsClassName = $this->objectManager->getCaseSensitiveObjectName($name);
-		if ($nameIsClassName) $resolvedClassName = $nameIsClassName;
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($name);
+		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
-		$extendedNameIsClassName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\RequestPattern\\' . $name);
-		if ($extendedNameIsClassName) $resolvedClassName = $extendedNameIsClassName;
-
-		if ($resolvedClassName != '') return $resolvedClassName;
+		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName('F3\FLOW3\Security\RequestPattern\\' . $name);
+		if ($resolvedObjectName !== FALSE) return $resolvedObjectName;
 
 		throw new \F3\FLOW3\Security\Exception\NoRequestPatternFound('A request pattern with the name: "' . $name . '" could not be resolved.', 1217154134);
 	}

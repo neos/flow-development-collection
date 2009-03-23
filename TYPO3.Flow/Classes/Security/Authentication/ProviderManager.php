@@ -110,18 +110,10 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function injectSettings(array $settings) {
-		$this->buildProvidersAndTokensFromConfiguration($settings);
-	}
+		if (!isset($settings['security']['authentication']['providers'])) return;
+		if (!is_array($settings['security']['authentication']['providers'])) return;
 
-	/**
-	 * Sets the providers
-	 *
-	 * @param array Array of providers (\F3\FLOW3\Security\Authentication\ProviderInterface)
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setProviders($providers) {
-		$this->providers = $providers;
+		$this->buildProvidersAndTokensFromConfiguration($settings['security']['authentication']['providers']);
 	}
 
 	/**
@@ -133,16 +125,6 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 */
 	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
-	}
-
-	/**
-	 * Returns the configured providers
-	 *
-	 * @return array Array of configured providers
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getProviders() {
-		return $this->providers;
 	}
 
 	/**
@@ -197,19 +179,16 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	/**
 	 * Builds the provider and token objects based on the given configuration
 	 *
-	 * @param array The FLOW3 settings
+	 * @param array $providers The configured provider settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 */
-	protected function buildProvidersAndTokensFromConfiguration(array $settings) {
-		if (!isset($settings['security']['authentication']['providers'])) return;
-		if (!is_array($settings['security']['authentication']['providers'])) return;
-
-		foreach ($settings['security']['authentication']['providers'] as $provider) {
+	protected function buildProvidersAndTokensFromConfiguration(array $providers) {
+		foreach ($providers as $provider) {
 			if (!isset($provider['type'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('You have to set an authentication provider type in the configuration!', 1237330316);
 
-			$providerObjectName = $this->providerResolver->resolveProviderObjectName($provider['type']);
+			$providerObjectName = $this->providerResolver->resolveProviderClass($provider['type']);
 			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $provider['type'] . '" could not be found!', 1237330453);
 
 			$providerInstance = $this->objectManager->getObject($providerObjectName);

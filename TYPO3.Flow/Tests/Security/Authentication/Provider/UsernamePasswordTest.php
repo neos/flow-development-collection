@@ -43,7 +43,17 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticatingAUsernamePasswordTokenWorks() {
+	public function getTokenClassNamesReturnsTheCorrectClassNames() {
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
+		$this->assertEquals(array('F3\FLOW3\Security\Authentication\Token\UsernamePassword'), $usernamePasswordProvider->getTokenClassNames());
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function authenticatingAnUsernamePasswordTokenWorks() {
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
@@ -57,7 +67,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function authenticationFailsWithWrongCredentialsInAUsernamePasswordToken() {
+	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'flow3', 'password' => 'wrongpassword')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
