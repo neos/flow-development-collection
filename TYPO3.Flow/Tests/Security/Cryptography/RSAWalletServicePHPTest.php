@@ -39,6 +39,19 @@ namespace F3\FLOW3\Security\Cryptography;
 class RSAWalletServicePHPTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * Set up this testcase.
+	 * In this case this only marks the test to be skipped if openssl extension is not installed
+	 *
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setUp() {
+		if (!function_exists('openssl_pkey_new')) {
+			$this->markTestSkipped('openssl_pkey_new() not available');
+		}
+	}
+
+	/**
 	 * @test
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

@@ -56,6 +56,16 @@ interface ViewInterface {
 	public function getViewHelper($viewHelperObjectName);
 
 	/**
+	 * Add a variable to the view data collection.
+	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible,
+	 *
+	 * @param string $key Key of variable
+	 * @param object $value Value of object
+	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 */
+	public function assign($key, $value);
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view

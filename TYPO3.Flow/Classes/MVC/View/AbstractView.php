@@ -69,6 +69,12 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $viewHelpers;
 
 	/**
+	 * @var array view data collection.
+	 * @see assign()
+	 */
+	protected $viewData = array();
+
+	/**
 	 * Constructs the view.
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
@@ -124,6 +130,18 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 			$this->viewHelpers[$viewHelperClassName] = $viewHelper;
 		}
 		return $this->viewHelpers[$viewHelperClassName];
+	}
+
+	/**
+	 * Add a variable to $this->viewData.
+	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible,
+	 *
+	 * @param string $key Key of variable
+	 * @param object $value Value of object
+	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 */
+	public function assign($key, $value) {
+		$this->viewData[$key] = $value;
 	}
 
 	/**
