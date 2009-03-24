@@ -62,6 +62,7 @@ class ObjectAccess {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function getProperty($object, $propertyName) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301367);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 
 		if (is_callable(array($object, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
@@ -92,6 +93,7 @@ class ObjectAccess {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	static public function setProperty($object, $propertyName, $propertyValue) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301368);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178878);
 
 		if (is_callable(array($object, $setterMethodName = self::buildSetterMethodName($propertyName)))) {
@@ -119,6 +121,7 @@ class ObjectAccess {
 	 * @todo What to do with ArrayAccess
 	 */
 	static public function getAccessiblePropertyNames($object) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
 		$declaredPropertyNames = array_keys(get_class_vars(get_class($object)));
 
 		foreach (get_class_methods($object) as $methodName) {
@@ -142,6 +145,7 @@ class ObjectAccess {
 	 * @todo What to do with ArrayAccess
 	 */
 	static public function getAccessibleProperties($object) {
+		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301370);
 		$properties = array();
 		foreach (self::getAccessiblePropertyNames($object) as $propertyName) {
 			$properties[$propertyName] = self::getProperty($object, $propertyName);

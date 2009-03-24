@@ -49,12 +49,16 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = new \ArrayObject;
 
+		$mockArgumentMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockArgumentMappingResults->expects($this->once())->method('hasErrors')->will($this->returnValue(FALSE));
+
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('fooAction')->will($this->returnValue('the returned string'));
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('response', $mockResponse);
 		$mockController->_set('arguments', $mockArguments);
 		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('argumentsMappingResults', $mockArgumentMappingResults);
 		$mockController->_call('callActionMethod');
 	}
 
@@ -73,13 +77,43 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = new \ArrayObject;
 
+		$mockArgumentMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockArgumentMappingResults->expects($this->once())->method('hasErrors')->will($this->returnValue(FALSE));
+
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'initializeAction'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('fooAction');
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('response', $mockResponse);
 		$mockController->_set('arguments', $mockArguments);
 		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('argumentsMappingResults', $mockArgumentMappingResults);
 		$mockController->_set('view', $mockView);
+		$mockController->_call('callActionMethod');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function callActionMethodCallsTheErrorActionIfTheMappingResultsHaveErrors() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$mockResponse->expects($this->once())->method('appendContent')->with('the returned string');
+
+		$mockArguments = new \ArrayObject;
+
+		$mockArgumentMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockArgumentMappingResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('barAction', 'initializeAction'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('barAction')->will($this->returnValue('the returned string'));
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('response', $mockResponse);
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('errorMethodName', 'barAction');
+		$mockController->_set('argumentsMappingResults', $mockArgumentMappingResults);
 		$mockController->_call('callActionMethod');
 	}
 

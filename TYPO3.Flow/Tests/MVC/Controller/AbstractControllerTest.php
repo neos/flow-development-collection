@@ -57,12 +57,8 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array('dummy'), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), '', FALSE);
-
-		$supportedRequestTypesReflection = new \ReflectionProperty($controller, 'supportedRequestTypes');
-		$supportedRequestTypesReflection->setAccessible(TRUE);
-		$supportedRequestTypesReflection->setValue($controller, array('F3\Something\Request'));
-
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('mapRequestArgumentsToControllerArguments'), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), '', FALSE);
+		$controller->_set('supportedRequestTypes', array('F3\Something\Request'));
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
 
@@ -76,7 +72,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array('initializeArguments', 'mapRequestArgumentsToLocalArguments'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
 

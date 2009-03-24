@@ -60,6 +60,11 @@ class Argument {
 	protected $queryFactory;
 
 	/**
+	 * @var \F3\FLOW3\Property\Mapper
+	 */
+	protected $propertyMapper;
+
+	/**
 	 * Name of this argument
 	 * @var string
 	 */
@@ -70,6 +75,12 @@ class Argument {
 	 * @var string
 	 */
 	protected $shortName = NULL;
+
+	/**
+	 * Short help message for this argument
+	 * @var string Short help message for this argument
+	 */
+	protected $shortHelpMessage = NULL;
 
 	/**
 	 * Data type of this argument's value
@@ -96,43 +107,13 @@ class Argument {
 	protected $value = NULL;
 
 	/**
-	 * Short help message for this argument
-	 * @var string Short help message for this argument
-	 */
-	protected $shortHelpMessage = NULL;
-
-	/**
-	 * The argument is valid
-	 * @var boolean
-	 */
-	protected $isValid = TRUE;
-
-	/**
-	 * Any error (\F3\FLOW3\Error\Error) that occured while initializing this argument (e.g. a mapping error)
-	 * @var array
-	 */
-	protected $errors = array();
-
-	/**
-	 * Any warning (\F3\FLOW3\Error\Warning) that occured while initializing this argument (e.g. a mapping warning)
-	 * @var array
-	 */
-	protected $warnings = array();
-
-	/**
-	 * The property validator for this argument
+	 * A custom validator, used supplementary to the base validation
 	 * @var \F3\FLOW3\Validation\Validator\ValidatorInterface
 	 */
 	protected $validator = NULL;
 
 	/**
-	 * The property validator for this arguments data type
-	 * @var \F3\FLOW3\Validation\Validator\ValidatorInterface
-	 */
-	protected $dataTypeValidator = NULL;
-
-	/**
-	 * The filter for this argument
+	 * A filter for this argument
 	 * @var \F3\FLOW3\Validation\FilterInterface
 	 */
 	protected $filter = NULL;
@@ -161,7 +142,17 @@ class Argument {
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
-		$this->objectFactory = $this->objectManager->getObjectFactory();
+	}
+
+	/**
+	 * Injects the Object Factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -184,6 +175,17 @@ class Argument {
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
+	}
+
+	/**
+	 * Injects the Property Mapper
+	 *
+	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
+		$this->propertyMapper = $propertyMapper;
 	}
 
 	/**
@@ -215,7 +217,7 @@ class Argument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setShortName($shortName) {
-		if ($shortName !== NULL && (!is_string($shortName) || strlen($shortName) != 1)) throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
+		if ($shortName !== NULL && (!is_string($shortName) || strlen($shortName) !== 1)) throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
 		$this->shortName = $shortName;
 		return $this;
 	}
@@ -233,14 +235,12 @@ class Argument {
 	/**
 	 * Sets the data type of this argument's value
 	 *
-	 * @param string $dataType: Name of the data type
+	 * @param string $dataType The data type. Can be either a built-in type such as "Text" or "Integer" or a fully qualified object name
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setDataType($dataType) {
-		$this->dataType = ($dataType != '' ? $dataType : 'Text');
-		$dataTypeValidatorObjectName = (strpos($this->dataType, '\\') === FALSE) ? ('F3\FLOW3\Validation\Validator\\' . $this->dataType . 'Validator') : $this->dataType;
-		$this->dataTypeValidator = $this->objectManager->isObjectRegistered($dataTypeValidatorObjectName) ? $this->objectManager->getObject($dataTypeValidatorObjectName) : NULL;
+		$this->dataType = $dataType;
 		$this->dataTypeClassSchema = $this->persistenceManager->getClassSchema($this->dataType);
 		return $this;
 	}
@@ -263,7 +263,7 @@ class Argument {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setRequired($required) {
-		$this->isRequired = $required;
+		$this->isRequired = (boolean)$required;
 		return $this;
 	}
 
@@ -278,69 +278,11 @@ class Argument {
 	}
 
 	/**
-	 * Sets the value of this argument.
-	 *
-	 * @param mixed $value: The value of this argument
-	 * @return \F3\FLOW3\MVC\Controller\Argument $this
-	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setValue($value) {
-		if ($this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
-			if (isset($value['__identity']) && is_array($value['__identity'])) {
-				$query = $this->queryFactory->create($this->dataType);
-				foreach ($this->dataTypeClassSchema->getIdentityProperties() as $propertyName => $propertyType) {
-					# TODO build query for multiple properties
-					break;
-				}
-				$query->matching($query->equals($propertyName, $value['__identity'][$propertyName]));
-				$objects = $query->execute();
-				if (count($objects) === 1 ) {
-					$value = current($objects);
-				} else {
-					# TODO add error (not found) and set validity to FALSE
-				}
-			} elseif (isset($value['__uuid'])) {
-				$query = $this->queryFactory->create($this->dataType);
-				$query->matching($query->equals('uuid', $value['__uuid']));
-				$objects = $query->execute();
-				if (count($objects) === 1 ) {
-					$value = current($objects);
-				} else {
-					# TODO add error (not found) and set validity to FALSE
-				}
-			}
-		}
-		$this->value = $value;
-		return $this;
-	}
-
-	/**
-	 * Returns the value of this argument
-	 *
-	 * @return object The value of this argument - if none was set, NULL is returned
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getValue() {
-		return $this->value;
-	}
-
-	/**
-	 * Checks if this argument has a value set.
-	 *
-	 * @return boolean TRUE if a value was set, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isValue() {
-		return $this->value !== NULL;
-	}
-
-	/**
 	 * Sets a short help message for this argument. Mainly used at the command line, but maybe
 	 * used elsewhere, too.
 	 *
-	 * @param string $message: A short help message
-	 * @return \F3\FLOW3\MVC\Controller\Argument		$this
+	 * @param string $message A short help message
+	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setShortHelpMessage($message) {
@@ -360,79 +302,31 @@ class Argument {
 	}
 
 	/**
-	 * Set the validity status of the argument
+	 * Sets a custom validator which is used supplementary to the base validation
 	 *
-	 * @param boolean TRUE if the argument is valid, FALSE otherwise
-	 * @return void
+	 * @param mixed $validator Object name of a validator or the actual validator object
+	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setValidity($isValid) {
-		$this->isValid = $isValid;
+	public function setValidator($validator) {
+		$this->validator = ($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface) ? $validator : $this->objectManager->getObject($validator);
+		return $this;
 	}
 
 	/**
-	 * Returns TRUE when the argument is valid
+	 * Create and set a validator chain
 	 *
-	 * @return boolean TRUE if the argument is valid
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function isValid() {
-		return $this->isValid;
-	}
-
-	/**
-	 * Add an initialization error (e.g. a mapping error)
-	 *
-	 * @param \F3\FLOW3\Error\Error An error object
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function addError(\F3\FLOW3\Error\Error $error) {
-		$this->errors[] = $error;
-	}
-
-	/**
-	 * Get all initialization errors
-	 *
-	 * @return array An array containing \F3\FLOW3\Error\Error objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @see addError(\F3\FLOW3\Error\Error $error)
-	 */
-	public function getErrors() {
-		return $this->errors;
-	}
-
-	/**
-	 * Add an initialization warning (e.g. a mapping warning)
-	 *
-	 * @param \F3\FLOW3\Error\Warning A warning object
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function addWarning(\F3\FLOW3\Error\Warning $warning) {
-		$this->warnings[] = $warning;
-	}
-
-	/**
-	 * Get all initialization warnings
-	 *
-	 * @return array An array containing \F3\FLOW3\Error\Warning objects
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @see addWarning(\F3\FLOW3\Error\Warning $warning)
-	 */
-	public function getWarnings() {
-		return $this->warnings;
-	}
-
-	/**
-	 * Set an additional validator
-	 *
-	 * @param string Object name of a validator
+	 * @param array Object names of the validators
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setValidator($objectName) {
-		$this->validator = $this->objectManager->getObject($objectName);
+	public function setNewValidatorChain(array $objectNames) {
+		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ChainValidator');
+		foreach ($objectNames as $objectName) {
+			if (!$this->objectManager->isObjectRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Validator\\' . $objectName;
+			$this->validator->addValidator($this->objectManager->getObject($objectName));
+		}
 		return $this;
 	}
 
@@ -447,24 +341,14 @@ class Argument {
 	}
 
 	/**
-	 * Returns the set datatype validator
-	 *
-	 * @return \F3\FLOW3\Validation\Validator\ValidatorInterface The set datatype validator
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getDataTypeValidator() {
-		return $this->dataTypeValidator;
-	}
-
-	/**
 	 * Set a filter
 	 *
-	 * @param string Object name of a filter
+	 * @param mixed $filter Object name of a filter or the actual filter object
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setFilter($objectName) {
-		$this->filter = $this->objectManager->getObject($objectName);
+	public function setFilter($filter) {
+		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->getObject($filter);
 		return $this;
 	}
 
@@ -486,24 +370,6 @@ class Argument {
 	}
 
 	/**
-	 * Create and set a validator chain
-	 *
-	 * @param array Object names of the validators
-	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setNewValidatorChain(array $objectNames) {
-		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ChainValidator');
-
-		foreach ($objectNames as $objectName) {
-			if (!$this->objectManager->isObjectRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Validator\\' . $objectName;
-			$this->validator->addValidator($this->objectManager->getObject($objectName));
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Returns the set filter
 	 *
 	 * @return \F3\FLOW3\Validation\FilterInterface The set filter, NULL if none was set
@@ -511,6 +377,75 @@ class Argument {
 	 */
 	public function getFilter() {
 		return $this->filter;
+	}
+
+	/**
+	 * Sets the value of this argument.
+	 *
+	 * @param mixed $value: The value of this argument
+	 * @return \F3\FLOW3\MVC\Controller\Argument $this
+	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setValue($value) {
+		if (is_array($value) && $this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
+			if (isset($value['__identity'])) {
+				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
+#var_dump($value);
+				unset($value['__identity']);
+				if (count($value) === 0) {
+					$value = $existingObject;
+				} elseif ($existingObject !== NULL) {
+					$newObject = clone $existingObject;
+					if ($this->propertyMapper->map(array_keys($value), $value, $newObject)) {
+						$value = $newObject;
+					}
+				}
+			} else {
+				$newObject = $this->objectFactory->create($this->dataType);
+				if ($this->propertyMapper->map(array_keys($value), $value, $newObject)) {
+					$value = $newObject;
+				}
+			}
+		}
+		$this->value = $value;
+		return $this;
+	}
+
+	/**
+	 *
+	 */
+	protected function findObjectByIdentityProperties(array $identityProperties) {
+		$query = $this->queryFactory->create($this->dataType);
+		foreach ($this->dataTypeClassSchema->getIdentityProperties() as $propertyName => $propertyType) {
+			# TODO build query for multiple properties
+			break;
+		}
+		$query->matching($query->equals($propertyName, $identityProperties[$propertyName]));
+		$objects = $query->execute();
+		if (count($objects) === 1 ) return current($objects);
+		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.', 1237305719);
+	}
+
+	/**
+	 *
+	 */
+	protected function findObjectByIdentityUUID($uuid) {
+		$query = $this->queryFactory->create($this->dataType);
+		$query->matching($query->withUUID($uuid));
+		$objects = $query->execute();
+		if (count($objects) === 1 ) return current($objects);
+		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object with uuid "' . $uuid . '" resulted in ' . count($objects) . ' objects instead of one.', 1237305720);
+	}
+
+	/**
+	 * Returns the value of this argument
+	 *
+	 * @return object The value of this argument - if none was set, NULL is returned
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getValue() {
+		return $this->value;
 	}
 
 	/**

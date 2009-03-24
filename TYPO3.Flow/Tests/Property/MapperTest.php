@@ -60,7 +60,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mapAndValidateCanCopyPropertiesOfOneArrayObjectToAnother() {
+	public function mapCanCopyPropertiesOfOneArrayObjectToAnother() {
 		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
 		$target = new \ArrayObject();
@@ -81,8 +81,28 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$successful = $mapper->mapAndValidate(array('key1', 'key2', 'key3', 'key4'), $source, $target);
+		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target);
 		$this->assertEquals($source, $target);
+		$this->assertTrue($successful);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapAcceptsAnArrayAsSource() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
+		$target = new \ArrayObject();
+		$source = array(
+			'key1' => 'value1',
+			'key2' => 'value2'
+		);
+
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$successful = $mapper->map(array('key1', 'key2'), $source, $target);
+		$this->assertEquals(new \ArrayObject($source), $target);
 		$this->assertTrue($successful);
 	}
 
@@ -91,7 +111,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTargetObject
 	 */
-	public function mapAndValidateExpectsTheTargetToBeAnObject() {
+	public function mapExpectsTheTargetToBeAnObject() {
 		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 
 		$target = '';
@@ -99,7 +119,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$mapper->mapAndValidate(array('key1'), $source, $target);
+		$mapper->map(array('key1'), $source, $target);
 	}
 
 	/**
@@ -108,7 +128,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mapAndValidateCanCopyPropertiesFromAnArrayObjectToAnObjectWithSetters() {
+	public function mapCanCopyPropertiesFromAnArrayObjectToAnObjectWithSetters() {
 		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
 		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue(new \F3\FLOW3\Error\Error('Error1', 1)));
 
@@ -130,7 +150,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$result = $mapper->mapAndValidate(array('property1', 'property2', 'property3', 'property4'), $source, $target);
+		$result = $mapper->map(array('property1', 'property2', 'property3', 'property4'), $source, $target);
 
 		$this->assertEquals($source['property1'], $target->property1, 'Property 1 has not the expected value.');
 		$this->assertEquals(NULL, $target->getProperty2(), 'Property 2 is set although it should not, as there is no public setter and no public variable.');
@@ -172,7 +192,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$mapper->mapAndValidate(array('key1', 'key3'), $source, $target);
+		$mapper->map(array('key1', 'key3'), $source, $target);
 		$this->assertEquals($expectedTarget, $target, 'The target object has not the expected content after allowing key1 and key3.');
 	}
 
@@ -200,7 +220,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$mapper->mapAndValidate(array(), $source, $target);
+		$mapper->map(array(), $source, $target);
 		$this->assertEquals($expectedTarget, $target);
 	}
 
@@ -219,7 +239,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$target = new \F3\FLOW3\Fixture\Validation\ClassWithSetters();
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$mapper->mapAndValidate(array('property1', 'property3'), $source, $target);
+		$mapper->map(array('property1', 'property3'), $source, $target);
 		$this->assertEquals($source, $target);
 	}
 
@@ -241,12 +261,10 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$mapper = new \F3\FLOW3\Property\Mapper();
 		$mapper->injectObjectFactory($this->mockObjectFactory);
-		$successful = $mapper->mapAndValidate(array('key1', 'key2', 'key3', 'key4'), $source, $target, array('key4'));
+		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target, array('key4'));
 		$this->assertFalse($successful);
 		$errors = $this->mappingResults->getErrors();
 		$this->assertSame('Error1', $errors['key3']->getMessage());
 	}
-
-
 }
 ?>

@@ -238,13 +238,13 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 					$request->setArgument($argumentName, $argumentValue);
 				}
 			break;
-			case 'PUT' :
-				$putArguments = array();
-				parse_str(file_get_contents("php://input"), $putArguments);
-				foreach ($putArguments as $argumentName => $argumentValue) {
-					$request->setArgument($argumentName, $argumentValue);
-				}
-			break;
+#			case 'PUT' :
+#				$putArguments = array();
+#				parse_str(file_get_contents("php://input"), $putArguments);
+#				foreach ($putArguments as $argumentName => $argumentValue) {
+#					$request->setArgument($argumentName, $argumentValue);
+#				}
+#			break;
 		}
 	}
 }

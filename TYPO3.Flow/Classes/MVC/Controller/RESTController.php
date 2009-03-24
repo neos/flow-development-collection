@@ -59,7 +59,7 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
-		$this->arguments->addNewArgument('id', 'UUID');
+		$this->arguments->addNewArgument('id', 'UUID', FALSE);
 		parent::processRequest($request, $response);
 	}
 

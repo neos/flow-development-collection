@@ -29,8 +29,10 @@ namespace F3\FLOW3\Property;
  */
 
 /**
- * The Property Mapper maps properties onto a given target object, often a (domain-) model.
- * Which properties are bound, required and how they should be filtered can be customized.
+ * The Property Mapper maps properties from a source onto a given target object, often a
+ * (domain-) model. Which properties are required and how they should be filtered can
+ * be customized.
+ *
  * During the mapping process, the property values are validated and the result of this
  * validation can be queried.
  *
@@ -42,7 +44,7 @@ namespace F3\FLOW3\Property;
  *       'someProperty' => 'SomeValue'
  *    )
  * );
- * $mapper->map(array('someProperty'), $source, $target);
+ * $mapper->mapAndValidate(array('someProperty'), $source, $target);
  *
  * Now the target object equals the source object.
  *
@@ -92,20 +94,49 @@ class Mapper {
 	}
 
 	/**
-	 * Maps the given properties to the target object and validates it. If the result is not valid, the operation
-	 * will be undone, the target object remains unchanged and the method returns FALSE.
+	 * Maps the given properties to the target object and validates the properties according to the defined
+	 * validators. If the result object is not valid, the operation will be undone (the target object remains
+	 * unchanged) and this method returns FALSE.
+	 *
+	 * If in doubt, always prefer this method to the map() method because skipping validation can easily become
+	 * a security issue.
 	 *
 	 * @param array $propertyNames Names of the properties to map.
-	 * @param object $array Source object containing the properties to map to the target object
+	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
 	 * @param object $target The target object
-	 * @return \F3\FLOW3\Property\MappingResults
+	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
+	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
+	 * @see getMappingResults()
+	 * @see map()
 	 * @author Robert Lemke <robert@typo3.org>
-	 *
-	 * mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), $validator = NULL, $propertyValidators = array(), $propertyFilters = array);
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), $validator = NULL, array $propertyValidators = array(), array $propertyFilters = array()) {
+	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
+		$this->map($propertyNames, $source, $target, $optionalPropertyNames);
+
+		# TODO validate the results
+
+		return (!$this->mappingResults->hasErrors() && !$this->mappingResults->hasWarnings());
+	}
+
+	/**
+	 * Maps the given properties to the target object WITHOUT VALIDATING THE RESULT.
+	 * If the properties could be set, this method returns TRUE, otherwise FALSE.
+	 * Returning TRUE does not mean that the target object is valid and secure!
+	 *
+	 * Only use this method if you're sure that you don't need validation!
+	 *
+	 * @param array $propertyNames Names of the properties to map.
+	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
+	 * @param object $target The target object
+	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
+	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
+	 * @see getMapAndValidate()
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
 		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
 
+		if (is_array($source)) $source = new \ArrayObject($source);
 		if (!$source instanceof \ArrayAccess) $source = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($source));
 		if (!is_object($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('The target object must be a valid object, ' . gettype($target) . ' given.', 1187807099);
 		foreach ($propertyNames as $propertyName) {

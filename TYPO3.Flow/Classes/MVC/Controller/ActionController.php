@@ -80,11 +80,18 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $actionMethodName = 'indexAction';
 
 	/**
+	 * Name of the special error action method which is called in case of errors
+	 * @var string
+	 */
+	protected $errorMethodName = 'errorAction';
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -96,6 +103,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -129,16 +137,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->actionMethodName = $this->resolveActionMethodName();
 		$this->initializeActionMethodArguments();
 		$this->initializeArguments();
-		$this->mapRequestArgumentsToLocalArguments();
+		$this->mapRequestArgumentsToControllerArguments();
 		if ($this->initializeView) $this->initializeView();
 		$this->initializeAction();
-
-# FIXME
-		if (FALSE && !$this->argumentsAreValid) {
-			$this->callErrorMethod();
-		} else {
-			$this->callActionMethod();
-		}
+		$this->callActionMethod();
 	}
 
 	/**
@@ -157,7 +159,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
-			$isRequired = ($parameterInfo['optional'] !== TRUE);
 			if (isset($methodTagsAndValues['param']) && count($methodTagsAndValues['param']) > 0) {
 				$explodedTagValue = explode(' ', array_shift($methodTagsAndValues['param']));
 				switch ($explodedTagValue[0]) {
@@ -174,7 +175,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 						}
 				}
 			}
-			$this->arguments->addNewArgument($parameterName, $dataType, $isRequired);
+			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE));
 		}
 	}
 
@@ -184,6 +185,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
@@ -201,13 +203,20 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param string $actionMethodName Name of the action method to call
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function callActionMethod() {
+		$argumentsAreValid = TRUE;
 		$preparedArguments = array();
 		foreach ($this->arguments as $argument) {
 			$preparedArguments[] = $argument->getValue();
 		}
-		$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+
+		if ($this->argumentsMappingResults->hasErrors()) {
+			$actionResult = call_user_func(array($this, $this->errorMethodName));
+		} else {
+			$actionResult = call_user_func_array(array($this, $this->actionMethodName), $preparedArguments);
+		}
 		if ($actionResult === NULL && $this->view instanceof \F3\FLOW3\MVC\View\ViewInterface) {
 			$this->response->appendContent($this->view->render());
 		} elseif (is_string($actionResult) && strlen($actionResult) > 0) {
@@ -224,7 +233,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewObjectName = $this->resolveViewObjectName();
+		$viewObjectName = ($this->defaultViewObjectName === NULL) ? $this->resolveViewObjectName() : $this->defaultViewObjectName;
 		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 
 		$this->view = $this->objectManager->getObject($viewObjectName);
@@ -271,5 +280,22 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected function initializeAction() {
 	}
 
+	/**
+	 * A special action which is called if the originally intended action could
+	 * not be called, for example if the arguments were not valid.
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function errorAction() {
+		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
+		foreach ($this->argumentsMappingResults->getErrors() as $error) {
+			$message .= 'Error:   ' . $error->getMessage() . PHP_EOL;
+		}
+		foreach ($this->argumentsMappingResults->getWarnings() as $warning) {
+			$message .= 'Warning: ' . $warning->getMessage() . PHP_EOL;
+		}
+		return $message;
+	}
 }
 ?>

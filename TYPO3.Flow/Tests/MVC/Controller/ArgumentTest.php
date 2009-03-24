@@ -54,7 +54,6 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$this->mockObjectManager->expects($this->any())->method('getObjectFactory')->will($this->returnValue($this->mockObjectFactory));
 	}
 
 	/**
@@ -102,6 +101,83 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
 		$returnedArgument = $argument->setValue('x');
 		$this->assertSame($argument, $returnedArgument, 'The returned argument is not the original argument.');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setValueTriesToConvertAnIdentityArrayContainingAUUIDIntoTheRealObject() {
+		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema->expects($this->once())->method('isAggregateRoot')->will($this->returnValue(TRUE));
+
+		$mockQuery = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Query', array(), array(), '', FALSE);
+		$mockQuery->expects($this->once())->method('matching')->with('constraint');
+		$mockQuery->expects($this->once())->method('withUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue('constraint'));
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('the object')));
+
+		$mockQueryFactory = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\QueryFactory', array(), array(), '', FALSE);
+		$mockQueryFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue($mockQuery));
+
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument->_set('dataType', 'MyClass');
+		$argument->_set('dataTypeClassSchema', $mockClassSchema);
+		$argument->_set('queryFactory', $mockQueryFactory);
+		$argument->setValue(array('__identity' => 'e104e469-9030-4b98-babf-3990f07dd3f1'));
+
+		$this->assertSame('the object', $argument->_get('value'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setValueTriesToConvertAnIdentityArrayContainingIdentifiersIntoTheRealObject() {
+		$this->markTestIncomplete('Not yet fully implemented.');
+
+		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema->expects($this->once())->method('isAggregateRoot')->will($this->returnValue(TRUE));
+
+		$mockQuery = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Query', array(), array(), '', FALSE);
+		# TODO Insert more expectations here
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('the object')));
+
+		$mockQueryFactory = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\QueryFactory', array(), array(), '', FALSE);
+		$mockQueryFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue($mockQuery));
+
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument->_set('dataType', 'MyClass');
+		$argument->_set('dataTypeClassSchema', $mockClassSchema);
+		$argument->_set('queryFactory', $mockQueryFactory);
+		$argument->setValue(array('__identity' => array('key1' => 'value1', 'key2' => 'value2')));
+
+		$this->assertSame('the object', $argument->_get('value'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setValueConvertsAnArrayIntoAFreshObjectWithThePropertiesSetToTheArrayValuesIfDataTypeIsAClassAndNoIdentityInformationIsFoundInTheValue() {
+		$theValue = array('property1' => 'value1', 'property2' => 'value2');
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue('the object'));
+
+		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema->expects($this->once())->method('isAggregateRoot')->will($this->returnValue(TRUE));
+
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array('map'), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, 'the object')->will($this->returnValue(TRUE));
+
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument->_set('dataType', 'MyClass');
+		$argument->_set('dataTypeClassSchema', $mockClassSchema);
+		$argument->_set('objectFactory', $mockObjectFactory);
+		$argument->_set('propertyMapper', $mockPropertyMapper);
+		$argument->setValue($theValue);
+
+		$this->assertSame('the object', $argument->_get('value'));
 	}
 
 	/**
@@ -161,19 +237,11 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function defaultDataTypeIsText() {
-		$this->markTestIncomplete();
-
-		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(TRUE));
-		$this->mockObjectManager->expects($this->any())->method('getObject')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\TextValidator')));
-
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument', NULL);
-		$argument->injectObjectManager($this->mockObjectManager);
-
-		$this->assertType('F3\FLOW3\Validation\Validator\TextValidator', $argument->getDatatypeValidator(), 'The returned datatype validator is not a text validator as expected.');
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument');
+		$this->assertSame('Text', $argument->getDataType());
 	}
 
 	/**
@@ -184,7 +252,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ChainValidator')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectManager($this->mockObjectManager);
+		$argument->injectObjectFactory($this->mockObjectFactory);
 		$argument->setNewValidatorChain(array());
 
 		$this->assertType('F3\FLOW3\Validation\Validator\ChainValidator', $argument->getValidator(), 'The returned validator is not a chain as expected.');
@@ -246,7 +314,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Filter\Chain')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectManager($this->mockObjectManager);
+		$argument->injectObjectFactory($this->mockObjectFactory);
 		$argument->setNewFilterChain(array());
 
 		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $argument->getFilter(), 'The returned filter is not a chain as expected.');
@@ -254,46 +322,18 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNewFilterChainAddsThePassedFiltersToTheCreatedFilterChain() {
-		$this->markTestIncomplete();
-
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->onConsecutiveCalls(FALSE, TRUE, TRUE));
-		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\TextValidator()));
-		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectManager($this->mockObjectManager);
-		$argument->setNewFilterChain(array('F3\FLOW3\Validation\Filter\Chain', 'F3\FLOW3\Validation\Filter\Chain'));
-
-		$filterChain = $argument->getFilter();
-		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(0), 'The returned filter is not a filter chain as expected.');
-		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(1), 'The returned filter is not a filter chain as expected.');
+		$this->markTestIncomplete('Implement this test with a new Filter Resolver');
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNewFilterChainCanHandleShortFilterNames() {
-		$this->markTestIncomplete();
-
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-		$this->mockObjectManager->expects($this->exactly(3))->method('isObjectRegistered')->will($this->returnValue(FALSE));
-		$this->mockObjectManager->expects($this->at(2))->method('getObject')->with('F3\FLOW3\Validation\Validator\TextValidator')->will($this->returnValue(new \F3\FLOW3\Validation\Validator\TextValidator()));
-		$this->mockObjectManager->expects($this->at(4))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-		$this->mockObjectManager->expects($this->at(6))->method('getObject')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue(new \F3\FLOW3\Validation\Filter\Chain()));
-
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectManager($this->mockObjectManager);
-		$argument->setNewFilterChain(array('Chain', 'Chain'));
-
-		$filterChain = $argument->getFilter();
-		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(0), 'The returned filter is not a filter chain as expected.');
-		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $filterChain->getFilter(1), 'The returned filter is not a filter chain as expected.');
+		$this->markTestIncomplete('Implement this test with a new Filter Resolver');
 	}
 }
 ?>

@@ -45,11 +45,6 @@ class Arguments extends \ArrayObject {
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface A reference to the object manager
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var array Names of the arguments contained by this object
 	 */
 	protected $argumentNames = array();
@@ -61,9 +56,8 @@ class Arguments extends \ArrayObject {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
-		$this->objectManager = $objectManager;
 		parent::__construct();
 	}
 
@@ -147,15 +141,13 @@ class Arguments extends \ArrayObject {
 	 * If an argument with the same name exists already, it will be replaced by the
 	 * new argument object.
 	 *
-	 * If $dataType is an object registered at the Object Manager, it sets the default property converter to map this property.
-	 *
 	 * @param string $name Name of the argument
 	 * @param string $dataType Name of one of the built-in data types
 	 * @param boolean $isRequired TRUE if this argument should be marked as required
 	 * @return \F3\FLOW3\MVC\Controller\Argument The new argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addNewArgument($name, $dataType = 'Text', $isRequired = FALSE) {
+	public function addNewArgument($name, $dataType = 'Text', $isRequired = TRUE) {
 		$argument = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Argument', $name, $dataType);
 		$argument->setRequired($isRequired);
 

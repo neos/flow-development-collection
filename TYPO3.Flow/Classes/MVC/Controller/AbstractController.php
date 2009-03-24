@@ -79,6 +79,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $arguments;
 
 	/**
+	 * The results of the mapping of request arguments to controller arguments
+	 * @var \F3\FLOW3\Property\MappingResults
+	 */
+	protected $argumentsMappingResults;
+
+	/**
 	 * An array of supported request types. By default only web requests are supported.
 	 * Modify or replace this array if your specific controller supports certain
 	 * (additional) request types.
@@ -155,7 +161,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->response = $response;
 
 		$this->initializeArguments();
-		$this->mapRequestArgumentsToLocalArguments();
+		$this->mapRequestArgumentsToControllerArguments();
 	}
 
 	/**
@@ -239,9 +245,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function mapRequestArgumentsToLocalArguments() {
-		$propertyNames = array_merge($this->arguments->getArgumentNames(), $this->arguments->getArgumentShortNames());
-		$this->propertyMapper->mapAndValidate($propertyNames, $this->request->getArguments(), $this->arguments);
+	protected function mapRequestArgumentsToControllerArguments() {
+		$optionalPropertyNames = array();
+		$allPropertyNames = $this->arguments->getArgumentNames();
+		foreach ($allPropertyNames as $propertyName) {
+			if ($this->arguments[$propertyName]->isRequired() === FALSE) $optionalPropertyNames[] = $propertyName;
+		}
+		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames);
+		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 }
 
