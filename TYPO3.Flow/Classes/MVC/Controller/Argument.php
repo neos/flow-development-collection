@@ -421,7 +421,7 @@ class Argument {
 			# TODO build query for multiple properties
 			break;
 		}
-		$query->matching($query->equals($propertyName, $identityProperties[$propertyName]));
+		$query->matching($query->equals($propertyName, $identityProperties[$propertyName], FALSE));
 		$objects = $query->execute();
 		if (count($objects) === 1 ) return current($objects);
 		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.', 1237305719);
