@@ -271,17 +271,5 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected function initializeAction() {
 	}
 
-	/**
-	 * The default action of this controller.
-	 *
-	 * This method should always be overridden by the concrete action
-	 * controller implementation.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function indexAction() {
-		return 'No index action has been implemented yet for this controller.';
-	}
 }
 ?>
