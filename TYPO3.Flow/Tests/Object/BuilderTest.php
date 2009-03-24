@@ -792,7 +792,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$object = $objectBuilder->createEmptyObject('F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties', $objectConfiguration);
 		$objectBuilder->reinjectDependencies($object, $objectConfiguration);
 
-		$this->assertEquals('wasInjected', $object->AOPProxyGetProperty('stringDependency'));
+		$this->assertEquals('wasInjected', $object->FLOW3_AOP_Proxy_getProperty('stringDependency'));
 	}
 }
 ?>

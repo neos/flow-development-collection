@@ -69,11 +69,11 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Around advice, implements the isNew() method introduced above
+	 * Around advice, implements the FLOW3_Persistence_isNew() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
-	 * @around method(.*->isNew())
+	 * @around method(.*->FLOW3_Persistence_isNew())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -81,15 +81,15 @@ class DirtyMonitoring {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		$proxy = $joinPoint->getProxy();
-		return !property_exists($proxy, 'FLOW3PersistenceCleanProperties');
+		return !property_exists($proxy, 'FLOW3_Persistence_cleanProperties');
 	}
 
 	/**
-	 * Around advice, implements the isDirty() method introduced above
+	 * Around advice, implements the FLOW3_Persistence_isDirty() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
-	 * @around method(.*->isDirty())
+	 * @around method(.*->FLOW3_Persistence_isDirty())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -99,15 +99,15 @@ class DirtyMonitoring {
 		$proxy = $joinPoint->getProxy();
 		$isDirty = FALSE;
 
-		if (property_exists($proxy, 'FLOW3PersistenceCleanProperties')) {
-			$cleanProperties = $proxy->FLOW3PersistenceCleanProperties;
+		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
+			$cleanProperties = $proxy->FLOW3_Persistence_cleanProperties;
 			$uuidPropertyName = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
-			if ($uuidPropertyName !== NULL && $proxy->AOPProxyGetProperty($uuidPropertyName) != $cleanProperties[$uuidPropertyName]) {
+			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) != $cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
 
 			$propertyName = $joinPoint->getMethodArgument('propertyName');
-			if ($cleanProperties[$propertyName] !== $proxy->AOPProxyGetProperty($propertyName)) {
+			if ($cleanProperties[$propertyName] !== $proxy->FLOW3_AOP_Proxy_getProperty($propertyName)) {
 				$isDirty = TRUE;
 			}
 		}
@@ -121,7 +121,7 @@ class DirtyMonitoring {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @before method(.*->memorizeCleanState())
+	 * @before method(.*->FLOW3_Persistence_memorizeCleanState())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -130,9 +130,9 @@ class DirtyMonitoring {
 		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
 
 		foreach ($propertyNames as $propertyName) {
-			$cleanProperties[$propertyName] = $proxy->AOPProxyGetProperty($propertyName);
+			$cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
 		}
-		$proxy->FLOW3PersistenceCleanProperties = $cleanProperties;
+		$proxy->FLOW3_Persistence_cleanProperties = $cleanProperties;
 	}
 
 }

@@ -62,7 +62,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodI
 		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
 			' . $callParentCode . '
 		} else {
-			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . '	\'AOPProxyObjectManager\' => $AOPProxyObjectManager, \'AOPProxyObjectFactory\' => $AOPProxyObjectFactory
+			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . '	\'FLOW3_AOP_Proxy_objectManager\' => $FLOW3_AOP_Proxy_objectManager, \'FLOW3_AOP_Proxy_objectFactory\' => $FLOW3_AOP_Proxy_objectFactory
 			);
 			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
 			' . $this->buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClassName) . '
@@ -77,11 +77,11 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodI
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(' . $methodParametersCode . (strlen($methodParametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
-		$this->objectManager = $AOPProxyObjectManager;
-		$this->objectFactory = $AOPProxyObjectFactory;
+	public function __construct(' . $methodParametersCode . (strlen($methodParametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
+		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
+		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
 		$result = NULL;
-		$this->AOPProxyDeclareMethodsAndAdvices();
+		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		' . $interceptionCode . '
 		return $result;
 	}

@@ -43,7 +43,7 @@ interface DirtyMonitoringInterface {
 	 *
 	 * @return boolean TRUE if the object is new, otherwise FALSE
 	 */
-	public function isNew();
+	public function FLOW3_Persistence_isNew();
 
 	/**
 	 * If the specified property of the reconstituted object has been modified
@@ -52,7 +52,7 @@ interface DirtyMonitoringInterface {
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean TRUE if the given property has been modified
 	 */
-	public function isDirty($propertyName);
+	public function FLOW3_Persistence_isDirty($propertyName);
 
 	/**
 	 * Resets the dirty flags of all properties to signal that the object is
@@ -60,7 +60,7 @@ interface DirtyMonitoringInterface {
 	 *
 	 * @return void
 	 */
-	public function memorizeCleanState();
+	public function FLOW3_Persistence_memorizeCleanState();
 
 }
 ?>

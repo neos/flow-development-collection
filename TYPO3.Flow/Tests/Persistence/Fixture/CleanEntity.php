@@ -56,7 +56,7 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 *
 	 * @return string Name of the target class
 	 */
-	public function AOPProxyGetProxyTargetClassName() {
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return 'F3\FLOW3\Tests\Persistence\Fixture\CleanEntity';
 	}
 
@@ -66,7 +66,7 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
 	}
 
@@ -77,7 +77,7 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 */
-	public function AOPProxyGetProperty($propertyName) {
+	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
 		return $this->$propertyName;
 	}
 
@@ -88,7 +88,7 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 * @param mixed $propertyValue Value to set
 	 * @return void
 	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue) {
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
 
 	}
 
@@ -97,7 +97,7 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 *
 	 * @return boolean
 	 */
-	public function isDirty() {
+	public function FLOW3_Persistence_isDirty() {
 		return FALSE;
 	}
 
@@ -105,6 +105,6 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 * Dummy method for mock creation
 	 * @return void
 	 */
-	public function memorizeCleanState() {}
+	public function FLOW3_Persistence_memorizeCleanState() {}
 }
 ?>

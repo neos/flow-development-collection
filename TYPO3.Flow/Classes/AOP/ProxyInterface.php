@@ -45,14 +45,14 @@ interface ProxyInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
-	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
 	/**
 	 * Returns the name of the class this proxy extends.
 	 *
 	 * @return string Name of the target class
 	 */
-	public function AOPProxyGetProxyTargetClassName();
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
 
 	/**
 	 * Returns the value of an arbitrary property.
@@ -61,7 +61,7 @@ interface ProxyInterface {
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 */
-	public function AOPProxyGetProperty($propertyName);
+	public function FLOW3_AOP_Proxy_getProperty($propertyName);
 
 	/**
 	 * Sets the value of an arbitrary property.
@@ -70,6 +70,6 @@ interface ProxyInterface {
 	 * @param mixed $propertyValue Value to set
 	 * @return void
 	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue);}
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);}
 
 ?>

@@ -67,10 +67,10 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\AbstractMethodInt
 	 * ' . $parametersDocumentation . '
 	 * @return void
 	 */
-	public function __construct(' . $parametersCode . (strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
-		$this->objectManager = $AOPProxyObjectManager;
-		$this->objectFactory = $AOPProxyObjectFactory;
-		$this->AOPProxyDeclareMethodsAndAdvices();
+	public function __construct(' . $parametersCode . (strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
+		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
+		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
+		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		' . $callParentCode . '
 	}
 ';

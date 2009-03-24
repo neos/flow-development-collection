@@ -168,7 +168,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQuery() {
-		$type = str_replace('Repository', '', $this->AOPProxyGetProxyTargetClassName());
+		$type = str_replace('Repository', '', $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
 		return $this->queryFactory->create($type);
 	}
 
@@ -214,7 +214,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @return string Class name of the repository. If it is proxied, it's still the (target) class name.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function AOPProxyGetProxyTargetClassName() {
+	protected function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return get_class($this);
 	}
 

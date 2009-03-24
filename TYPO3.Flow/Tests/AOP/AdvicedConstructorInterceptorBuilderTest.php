@@ -66,16 +66,16 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 	 * ' . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(PARAMETERSCODE2, \F3\FLOW3\Object\ManagerInterface $AOPProxyObjectManager, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
-		$this->objectManager = $AOPProxyObjectManager;
-		$this->objectFactory = $AOPProxyObjectFactory;
+	public function __construct(PARAMETERSCODE2, \F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
+		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
+		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
 		$result = NULL;
-		$this->AOPProxyDeclareMethodsAndAdvices();
+		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		' . '
 		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
 			parent::__construct(PARAMETERSCODE1);
 		} else {
-			$methodArguments = array(ARGUMENTSARRAYCODE	\'AOPProxyObjectManager\' => $AOPProxyObjectManager, \'AOPProxyObjectFactory\' => $AOPProxyObjectFactory
+			$methodArguments = array(ARGUMENTSARRAYCODE	\'FLOW3_AOP_Proxy_objectManager\' => $FLOW3_AOP_Proxy_objectManager, \'FLOW3_AOP_Proxy_objectFactory\' => $FLOW3_AOP_Proxy_objectFactory
 			);
 			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
 			ADVICESCODE

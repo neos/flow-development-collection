@@ -184,7 +184,7 @@ abstract class AbstractMethodInterceptorBuilder {
 
 		if (isset ($groupedAdvices['F3\FLOW3\AOP\AroundAdvice'])) {
 			$advicesCode .= '
-			$adviceChains = $this->AOPProxyGetAdviceChains(\'' . $methodName . '\');
+			$adviceChains = $this->FLOW3_AOP_Proxy_getAdviceChains(\'' . $methodName . '\');
 			$adviceChain = $adviceChains[\'F3\FLOW3\AOP\AroundAdvice\'];
 			$adviceChain->rewind();
 			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments, $adviceChain));
@@ -192,7 +192,7 @@ abstract class AbstractMethodInterceptorBuilder {
 		} else {
 			$advicesCode .= '
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'' . $targetClassName . '\', \'' . $methodName . '\', $methodArguments);
-			$result = $this->AOPProxyInvokeJoinPoint($joinPoint);
+			$result = $this->FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
 ';
 		}
 

@@ -78,7 +78,7 @@ class AdviceChain {
 		if ($this->adviceIndex < count($this->advices)) {
 			$result = $this->advices[$this->adviceIndex]->invoke($joinPoint);
 		} else {
-			$result = $this->proxy->AOPProxyInvokeJoinpoint($joinPoint);
+			$result = $this->proxy->FLOW3_AOP_Proxy_invokeJoinpoint($joinPoint);
 		}
 		return $result;
 	}

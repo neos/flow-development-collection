@@ -34,7 +34,7 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($someArgument, \F3\FLOW3\Object\FactoryInterface $AOPProxyObjectFactory) {
+	public function __construct($someArgument, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
 		$this->constructorHasBeenCalled = TRUE;
 	}
 
@@ -42,21 +42,21 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 		$this->stringDependency = $string;
 	}
 
-	public function AOPProxyGetProxyTargetClassName() {
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return 'F3\FLOW3\Tests\Object\Fixture\ReconstitutableClassWithSimpleProperties';
 	}
 
-	public function AOPProxyGetProperty($propertyName) {
+	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
 		return $this->$propertyName;
 	}
 
-	public function AOPPRoxySetProperty($propertyName, $propertyValue) {
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
 		$this->$propertyName = $propertyValue;
 	}
 
-	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
 
-	public function AOPProxyDeclareMethodsAndAdvices() {}
+	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {}
 
 }
 ?>

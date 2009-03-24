@@ -196,7 +196,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		try {
 
 			$joinPoint = new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments);
-			$result = $this->AOPProxyInvokeJoinPoint($joinPoint);
+			$result = $this->FLOW3_AOP_Proxy_invokeJoinPoint($joinPoint);
 
 		} catch (\Exception $exception) {
 
@@ -234,7 +234,7 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 				$advice->invoke($joinPoint);
 			}
 
-			$adviceChains = $this->AOPProxyGetAdviceChains(\'foo\');
+			$adviceChains = $this->FLOW3_AOP_Proxy_getAdviceChains(\'foo\');
 			$adviceChain = $adviceChains[\'F3\FLOW3\AOP\AroundAdvice\'];
 			$adviceChain->rewind();
 			$result = $adviceChain->proceed(new \F3\FLOW3\AOP\JoinPoint($this, \'TargetClass\', \'foo\', $methodArguments, $adviceChain));

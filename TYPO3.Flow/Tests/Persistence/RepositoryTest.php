@@ -130,8 +130,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
 		$mockQueryFactory->expects($this->once())->method('create')->with($expectedType);
 
-		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('AOPProxyGetProxyTargetClassName'));
-		$repository->expects($this->once())->method('AOPProxyGetProxyTargetClassName')->will($this->returnValue($fakeRepositoryClassName));
+		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('FLOW3_AOP_Proxy_getProxyTargetClassName'));
+		$repository->expects($this->once())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue($fakeRepositoryClassName));
 		$repository->injectQueryFactory($mockQueryFactory);
 
 		$repository->createQuery();
