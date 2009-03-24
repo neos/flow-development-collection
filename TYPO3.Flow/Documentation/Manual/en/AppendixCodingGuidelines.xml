@@ -1137,6 +1137,84 @@ namespace F3\Your\Stuff\Here;
 ...</programlisting>
           </example>
         </listitem>
+
+        <listitem>
+          <para>Prefer strict comparisons whenever possible, to avoid problems
+          with truthy and falsy <sidebar>
+              <figure>
+                <title>Truthy and falsy are fuzzy...</title>
+
+                <mediaobject>
+                  <imageobject>
+                    <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
+                  </imageobject>
+                </mediaobject>
+              </figure>
+            </sidebar>values that might behave different than what you expect.
+          Here are some examples:<example>
+              <title>Examples of good and bad comparisons</title>
+
+              <para><programlisting language="php">if ($template)             // BAD
+if (isset($template))      // GOOD
+if ($template !== NULL))   // GOOD
+if ($template !== ''))     // GOOD
+
+if (strlen($template) &gt; 0) // BAD! strlen("-1") is greater than 0
+if (is_string($template) &amp;&amp; strlen($template) &gt;0) // BETTER
+
+if ($foo == $bar)          // BAD, avoid truthy comparisons
+if ($foo != $bar)          // BAD, avoid falsy comparisons
+if ($foo === $bar))        // GOOD
+if ($foo !== $bar))        // GOOD</programlisting></para>
+            </example></para>
+        </listitem>
+
+        <listitem>
+          <para>Order of methods in classes. To gain a better overview, it
+          helps if methods in classes are always ordered in a certain way. We
+          prefer the following:<orderedlist>
+              <listitem>
+                <para>constructor</para>
+              </listitem>
+
+              <listitem>
+                <para>injection methods</para>
+              </listitem>
+
+              <listitem>
+                <para>initialization methods (including
+                initializeObject())</para>
+              </listitem>
+
+              <listitem>
+                <para>public methods</para>
+              </listitem>
+
+              <listitem>
+                <para>protected methods</para>
+              </listitem>
+
+              <listitem>
+                <para>private methods</para>
+              </listitem>
+
+              <listitem>
+                <para>shutdown methods</para>
+              </listitem>
+
+              <listitem>
+                <para>destructor</para>
+              </listitem>
+            </orderedlist></para>
+        </listitem>
+
+        <listitem>
+          <para>Avoid double-negation. Instead of
+          <literal>exportSystemView(..., $noRecurse)</literal> use
+          <literal>exportSystemView(..., $recurse)</literal>. It is more
+          logical to pass TRUE if you want recursion instead of having to pass
+          FALSE. In general, parameters negating things are a bad idea.</para>
+        </listitem>
       </itemizedlist>
 
       <section>
