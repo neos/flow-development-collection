@@ -194,8 +194,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'Text', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'Integer', TRUE);
+		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
@@ -206,36 +206,29 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => FALSE,
-				'allowsNull' => FALSE
+				'allowsNull' => FALSE,
+				'type' => 'string'
 			),
 			'integerArgument' => array(
 				'position' => 1,
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => FALSE,
-				'allowsNull' => FALSE
+				'allowsNull' => FALSE,
+				'type' => 'integer'
 			),
 			'objectArgument' => array(
 				'position' => 2,
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => FALSE,
-				'allowsNull' => FALSE
-			)
-		);
-
-		$methodTagsValues = array(
-			'something' => array('confusing'),
-			'param' => array(
-				'string $firstArgument This is the first argument',
-				'integer $secondArgument This is the second argument',
-				'\F3\Foo\Bar $objectArgument This is the third argument'
+				'allowsNull' => FALSE,
+				'type' => 'F3\Foo\Bar'
 			)
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
-		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
 
 		$mockController->injectReflectionService($mockReflectionService);
 		$mockController->_set('request', $mockRequest);
@@ -253,7 +246,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'Text', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'Array', FALSE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE);
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
@@ -292,7 +285,6 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodParameters));
-		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
 
 		$mockController->injectReflectionService($mockReflectionService);
 		$mockController->_set('request', $mockRequest);

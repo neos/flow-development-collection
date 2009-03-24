@@ -156,25 +156,14 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function initializeActionMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
-		$methodTagsAndValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
-			if (isset($methodTagsAndValues['param']) && count($methodTagsAndValues['param']) > 0) {
-				$explodedTagValue = explode(' ', array_shift($methodTagsAndValues['param']));
-				switch ($explodedTagValue[0]) {
-					case 'integer' :
-						$dataType = 'Integer';
-					break;
-					case 'array' :
-						$dataType = 'Array';
-					break;
-					default:
-						if (strpos($explodedTagValue[0], '\\') !== FALSE) {
-							$dataType = $explodedTagValue[0];
-							if ($dataType[0] === '\\') $dataType = substr($dataType, 1);
-						}
-				}
+			if (isset($parameterInfo['type'])) {
+				$dataType = $parameterInfo['type'];
+			} elseif ($parameterInfo['array']) {
+				$dataType = 'array';
 			}
+
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE));
 		}
 	}

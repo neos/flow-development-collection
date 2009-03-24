@@ -524,7 +524,7 @@ class Service {
 			$method = new \ReflectionMethod($className, $methodName);
 			$parametersInformation = array();
 			foreach($method->getParameters() as $parameter) {
-				$parametersInformation[$parameter->getName()] = $this->convertParameterReflectionToArray($parameter);
+				$parametersInformation[$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
 			}
 		}
 		return $parametersInformation;
@@ -647,7 +647,7 @@ class Service {
 			}
 
 			foreach ($method->getParameters() as $parameter) {
-				$this->methodParameters[$className][$methodName][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter);
+				$this->methodParameters[$className][$methodName][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
 			}
 		}
 	}
@@ -658,8 +658,9 @@ class Service {
 	 * @param ReflectionParameter $parameter The parameter to reflect
 	 * @return array Parameter information array
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	protected function convertParameterReflectionToArray(\ReflectionParameter $parameter) {
+	protected function convertParameterReflectionToArray(\ReflectionParameter $parameter, \ReflectionMethod $method = NULL) {
 		$parameterInformation = array(
 			'position' => $parameter->getPosition(),
 			'byReference' => $parameter->isPassedByReference() ? TRUE : FALSE,
@@ -667,10 +668,25 @@ class Service {
 			'optional' => $parameter->isOptional() ? TRUE : FALSE,
 			'allowsNull' => $parameter->allowsNull() ? TRUE : FALSE
 		);
+
 		$parameterClass = $parameter->getClass();
 		$parameterInformation['class'] = ($parameterClass !== NULL) ? $parameterClass->getName() : NULL;
 		if ($parameter->isDefaultValueAvailable()) {
 			$parameterInformation['defaultValue'] = $parameter->getDefaultValue();
+		}
+		if ($parameterClass !== NULL) {
+			$parameterInformation['type'] = $parameterClass->getName();
+		} elseif ($method !== NULL) {
+			$methodTagsAndValues = $this->getMethodTagsValues($method->getDeclaringClass()->getName(), $method->getName());
+			if (isset($methodTagsAndValues['param']) && isset($methodTagsAndValues['param'][$parameter->getPosition()])) {
+				$explodedParameters = explode(' ', $methodTagsAndValues['param'][$parameter->getPosition()]);
+				if (count($explodedParameters) >= 2) {
+					$parameterInformation['type'] = $explodedParameters[0];
+				}
+			}
+		}
+		if (isset($parameterInformation['type']) && $parameterInformation['type']{0} === '\\') {
+			$parameterInformation['type'] = substr($parameterInformation['type'], 1);
 		}
 		return $parameterInformation;
 	}

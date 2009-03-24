@@ -55,34 +55,67 @@ class ValidatorResolver {
 
 	/**
 	 * Returns an object of an appropriate validator for the given class. If no validator is available
-	 * a \F3\FLOW3\Validation\Exception\NoValidatorFound exception is thrown.
+	 * NULL is returned
 	 * @param string The classname for which validator is needed
-	 * @return object The resolved validator object
-	 * @throws \F3\FLOW3\Validation\Exception\NoValidatorFound
+	 * @return object The resolved validator object or NULL.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function resolveValidator($class) {
-		$validatorName = $class . 'Validator';
-		if (!$this->objectManager->isObjectRegistered($validatorName)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036055);
-		$validator = $this->objectManager->getObject($validatorName);
-		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\Validator\ObjectValidatorInterface', 1211036068);
-		return $validator;
+	public function resolveValidatorClass($dataType) {
+		$dataType = $this->unifyDataType($dataType);
+
+		$resolvedClassName = '';
+
+		$possibleClassName = $dataType . 'Validator';
+		if ($this->objectManager->isObjectRegistered($possibleClassName)) {
+			return $possibleClassName;
+		}
+
+		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $dataType . 'Validator';
+		if ($this->objectManager->isObjectRegistered($possibleClassName)) {
+			return $possibleClassName;
+		}
+
+		return NULL;
 	}
 
 	/**
-	 * Returns the name of an appropriate validator for the given class. If no validator is available
-	 * a \F3\FLOW3\Validation\Exception\NoValidatorFound exception is thrown.
-	 * @param string The classname for which validator is needed
-	 * @return object The resolved validator object
-	 * @throws \F3\FLOW3\Validation\Exception\NoValidatorFound
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Get a validator for a given data type. Returns NULL if no validator was found,
+	 * or an instance of F3\FLOW3\Validation\Validator\ValidatorInterface.
+	 *
+	 * @param string $dataType Data type
+	 * @return F3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function resolveValidatorName($class) {
-		$validatorName = $class . 'Validator';
-		if (!$this->objectManager->isObjectRegistered($validatorName)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('No validator with name ' . $validatorName . ' found!', 1211036084);
-		$validator = $this->objectManager->getObject($validatorName);
-		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ObjectValidatorInterface)) throw new \F3\FLOW3\Validation\Exception\NoValidatorFound('The found validator class did not implement \F3\FLOW3\Validation\Validator\ObjectValidatorInterface', 1211036095);
-		return $validatorName;
+	public function getValidator($dataType) {
+		$validatorClass = $this->resolveValidatorClass($dataType);
+		if ($validatorClass !== NULL) {
+			return $this->objectManager->getObject($validatorClass);
+		}
+		return NULL;
+	}
+
+	/**
+	 * Preprocess data types. Used to map primitive PHP types to DataTypes in FLOW3.
+	 *
+	 * @param string $type Data type to unify
+	 * @return string unified data type
+	 * @author Sebastian Kurfürst <sebastian@typo3.org
+	 */
+	protected function unifyDataType($type) {
+		switch($type) {
+			case 'int' :
+			case 'integer' :
+				$type = 'Integer';
+				break;
+			case 'string' :
+				$type = 'Text';
+				break;
+			case 'array' :
+				$type = 'Array';
+			break;
+		}
+		return $type;
 	}
 }
 

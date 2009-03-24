@@ -306,7 +306,7 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->initialize($availableClassNames);
 
-		$expectedTags = array('firsttag' => array(), 'return' => array('void'), 'secondtag' => array('a', 'b'));
+		$expectedTags = array('firsttag' => array(), 'return' => array('void'), 'secondtag' => array('a', 'b'), 'param' => array('string $arg1 Argument 1 documentation'));
 		$detectedTags = $reflectionService->getMethodTagsValues('F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithMethods', 'firstMethod');
 		ksort($detectedTags);
 		$this->assertEquals($expectedTags, $detectedTags);
@@ -325,9 +325,9 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$reflectionService->initialize($availableClassNames);
 
 		$expectedParameters = array(
-			'arg1' => array('position' => 0, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL, 'allowsNull' => TRUE),
+			'arg1' => array('position' => 0, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL, 'allowsNull' => TRUE, 'type' => 'string'),
 			'arg2' => array('position' => 1, 'byReference' => TRUE, 'array' => FALSE, 'optional' => FALSE, 'class' => NULL, 'allowsNull' => TRUE),
-			'arg3' => array('position' => 2, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => 'stdClass', 'allowsNull' => FALSE),
+			'arg3' => array('position' => 2, 'byReference' => FALSE, 'array' => FALSE, 'optional' => FALSE, 'class' => 'stdClass', 'allowsNull' => FALSE, 'type' => 'stdClass'),
 			'arg4' => array('position' => 3, 'byReference' => FALSE, 'array' => FALSE, 'optional' => TRUE, 'class' => NULL, 'allowsNull' => TRUE, 'defaultValue' => 'default')
 		);
 
