@@ -135,5 +135,14 @@ class DirtyMonitoring {
 		$proxy->FLOW3_Persistence_cleanProperties = $cleanProperties;
 	}
 
+	/**
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
+	 * @return void
+	 * @afterreturning F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject && method(.*->__clone())
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		unset($joinPoint->getProxy()->FLOW3_Persistence_cleanProperties);
+	}
 }
 ?>

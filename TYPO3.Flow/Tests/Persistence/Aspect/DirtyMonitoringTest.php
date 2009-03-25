@@ -29,45 +29,33 @@ namespace F3\FLOW3\Persistence\Aspect;
  */
 
 /**
- * An interface used to introduce certain methods to support object persistence
+ * Testcase for the Dirty Monitoring Aspect
  *
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface DirtyMonitoringInterface {
+class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * If the monitored object has ever been persisted
-	 *
-	 * @return boolean TRUE if the object is new, otherwise FALSE
-	 */
-	public function FLOW3_Persistence_isNew();
-
-	/**
-	 * If the specified property of the reconstituted object has been modified
-	 * since it woke up.
-	 *
-	 * @param string $propertyName Name of the property to check
-	 * @return boolean TRUE if the given property has been modified
-	 */
-	public function FLOW3_Persistence_isDirty($propertyName);
-
-	/**
-	 * Resets the dirty flags of all properties to signal that the object is
-	 * clean again after being persisted.
-	 *
-	 * @return void
-	 */
-	public function FLOW3_Persistence_memorizeCleanState();
-
-	/**
-	 * Introduces a clone method
-	 *
+	 * @test
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __clone();
+	public function cloneObjectUnsetsTheCleanPropertiesArrayAtTheClonedObject() {
+		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
+
+		$object = new \stdClass;
+		$object->FLOW3_Persistence_cleanProperties = array('foo');
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($object));
+
+		$aspect->cloneObject($mockJoinPoint);
+		$this->assertFalse(isset($object->FLOW3_Persistence_cleanProperties));
+	}
+
 }
+
 ?>
