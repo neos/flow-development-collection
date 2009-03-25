@@ -40,7 +40,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function AOPProxyDeclareMethodsAndAdvices() {
+	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {
 ###METHODS_AND_ADVICES_ARRAY_CODE###
 	}
 
@@ -51,7 +51,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxyInvokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
 			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
 		}
@@ -63,7 +63,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return string Name of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxyGetProxyTargetClassName() {
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return '###TARGET_CLASS_NAME###';
 	}
 
@@ -75,7 +75,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxyGetProperty($propertyName) {
+	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
 		return $this->$propertyName;
 	}
 
@@ -87,7 +87,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function AOPProxySetProperty($propertyName, $propertyValue) {
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
 		$this->$propertyName = $propertyValue;
 	}
 
@@ -99,7 +99,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @return mixed The advice chains  (array of \F3\FLOW3\AOP\AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function AOPProxyGetAdviceChains($methodName) {
+	protected function FLOW3_AOP_Proxy_getAdviceChains($methodName) {
 		$adviceChains = NULL;
 		if (is_array($this->groupedAdviceChains)) {
 			if (isset($this->groupedAdviceChains[$methodName])) {
