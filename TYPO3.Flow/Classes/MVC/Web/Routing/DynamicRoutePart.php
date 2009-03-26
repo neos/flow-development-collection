@@ -221,7 +221,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function resolveIdentityValueFromObject($object) {
-		$uuid = $this->persistenceManager->getUUID($object);
+		$uuid = $this->persistenceManager->getBackend()->getUUIDByObject($object);
 		if ($uuid === NULL) return FALSE;
 		$this->value =  array('__uuid' => $uuid);
 		return TRUE;

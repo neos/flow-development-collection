@@ -172,6 +172,107 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Replacing a reconstituted object (which has a uuid) by a new object
+	 * will ask the persistence backend to replace them accordingly in the
+	 * identity map.
+	 *
+	 * @test
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replaceReconstitutedObjectByNewObject() {
+		$existingObject = new \stdClass;
+		$newObject = new \stdClass;
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+		$mockPersistenceBackend->expects($this->once())->method('replaceObject')->with($existingObject, $newObject);
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
+		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
+		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->replace($existingObject, $newObject);
+	}
+
+	/**
+	 * Replacing a reconstituted object which during this session has been
+	 * marked for removal (by calling the repository's remove method)
+	 * additionally registers the "newObject" for removal and removes the
+	 * "existingObject" from the list of removed objects.
+	 *
+	 * @test
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replaceReconstituedObjectWhichIsMarkedToBeRemoved() {
+		$existingObject = new \stdClass;
+		$newObject = new \stdClass;
+
+		$removedObjects = new \SPLObjectStorage;
+		$removedObjects->attach($existingObject);
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
+		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
+		$mockPersistenceSession->expects($this->once())->method('registerReconstitutedObject')->with($newObject);
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->_set('removedObjects', $removedObjects);
+		$repository->replace($existingObject, $newObject);
+
+		$this->assertFalse($removedObjects->contains($existingObject));
+		$this->assertTrue($removedObjects->contains($newObject));
+	}
+
+	/**
+	 * Replacing a new object which has not yet been persisted by another
+	 * new object will just replace them in the repository's list of added
+	 * objects.
+	 *
+	 * @test
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replaceNewObjectByNewObject() {
+		$existingObject = new \stdClass;
+		$newObject = new \stdClass;
+
+		$addedObjects = new \SPLObjectStorage;
+		$addedObjects->attach($existingObject);
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue(NULL));
+
+		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->_set('addedObjects', $addedObjects);
+		$repository->replace($existingObject, $newObject);
+
+		$this->assertFalse($addedObjects->contains($existingObject));
+		$this->assertTrue($addedObjects->contains($newObject));
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

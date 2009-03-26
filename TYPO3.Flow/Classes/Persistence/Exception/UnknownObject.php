@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Persistence\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,50 +29,14 @@ namespace F3\FLOW3\Persistence;
  */
 
 /**
- * The FLOW3 Persistence Manager interface
+ * An Unknown Object Exception
  *
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ManagerInterface {
-
-	/**
-	 * Initializes the persistence manager
-	 *
-	 * @return void
-	 */
-	public function initialize();
-
-	/**
-	 * Returns the current persistence session
-	 *
-	 * @return \F3\FLOW3\Persistence\Session
-	 */
-	public function getSession();
-
-	/**
-	 * Returns the persistence backend
-	 *
-	 * @return \F3\FLOW3\Persistence\BackendInterface
-	 */
-	public function getBackend();
-
-	/**
-	 * Returns the class schema for the given class
-	 *
-	 * @param string $className
-	 * @return \F3\FLOW3\Persistence\ClassSchema
-	 */
-	public function getClassSchema($className);
-
-	/**
-	 * Commits new objects and changes to objects in the current persistence
-	 * session into the backend
-	 *
-	 * @return void
-	 */
-	public function persistAll();
+class UnknownObject extends \F3\FLOW3\Persistence\Exception {
 }
+
 ?>

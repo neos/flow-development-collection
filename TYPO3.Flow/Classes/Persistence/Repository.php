@@ -58,6 +58,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	protected $queryFactory;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Constructs a new Repository
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -76,6 +81,17 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
+	}
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -108,6 +124,34 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			$this->addedObjects->detach($object);
 		} else {
 			$this->removedObjects->attach($object);
+		}
+	}
+
+	/**
+	 * Replaces an object by another.
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function replace($existingObject, $newObject) {
+		$backend = $this->persistenceManager->getBackend();
+		$session = $this->persistenceManager->getSession();
+		$uuid = $backend->getUUIDByObject($existingObject);
+		if ($uuid !== NULL) {
+			$backend->replaceObject($existingObject, $newObject);
+			$session->unregisterReconstitutedObject($existingObject);
+			$session->registerReconstitutedObject($newObject);
+
+			if ($this->removedObjects->contains($existingObject)) {
+				$this->removedObjects->detach($existingObject);
+				$this->removedObjects->attach($newObject);
+			}
+		} elseif ($this->addedObjects->contains($existingObject)) {
+			$this->addedObjects->detach($existingObject);
+			$this->addedObjects->attach($newObject);
+		} else {
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "existing object" is unknown to the persistence backend.', 1238068475);
 		}
 	}
 

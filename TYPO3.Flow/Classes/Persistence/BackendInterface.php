@@ -76,7 +76,23 @@ interface BackendInterface {
 	 * @param object $object
 	 * @return string The identifier for the object if it is known, or NULL
 	 */
-	public function getUUID($object);
+	public function getUUIDByObject($object);
 
+	/**
+	 * Replaces the given object by the second object.
+	 *
+	 * This method will unregister the existing object at the identity map and
+	 * register the new object instead. The existing object must therefore
+	 * already be registered at the identity map which is the case for all
+	 * reconstituted objects.
+	 *
+	 * The new object will be identified by the uuid which formerly belonged
+	 * to the existing object. The existing object looses its uuid.
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @return void
+	 */
+	public function replaceObject($existingObject, $newObject);
 }
 ?>

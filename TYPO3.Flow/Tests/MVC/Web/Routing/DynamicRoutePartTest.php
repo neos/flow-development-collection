@@ -360,8 +360,11 @@ class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 	public function resolveIdentityValueFromObjectTriesToResolveAnObjectsUUIDAndReplacesTheObjectValueWithAnArrayContainingThatUUID() {
 		$mockObject = new \stdclass;
 
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($mockObject)->will($this->returnValue('4f74a7de-aff0-42ca-8278-0c1730faa792'));
+
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getUUID')->with($mockObject)->will($this->returnValue('4f74a7de-aff0-42ca-8278-0c1730faa792'));
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
 		$routePart = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart'), array('dummy'), array(), '', FALSE);
 		$routePart->_set('persistenceManager', $mockPersistenceManager);

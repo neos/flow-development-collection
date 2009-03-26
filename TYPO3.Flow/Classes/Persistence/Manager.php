@@ -209,18 +209,5 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 			$this->session->unregisterReconstitutedObject($removedObject);
 		}
 	}
-
-	/**
-	 * Returns the (internal) identifier for the object, if it is known to the
-	 * persistence manager. Otherwise NULL is returned.
-	 *
-	 * @param object $object
-	 * @return string The identifier for the object if it is known, or NULL
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getUUID($object) {
-		return $this->backend->getUUID($object);
-	}
-
 }
 ?>
