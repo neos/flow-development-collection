@@ -165,11 +165,12 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	/**
 	 * Returns the class schema for the given class
 	 *
-	 * @param string $className
+	 * @param mixed $classNameOrObject The class name or an object
 	 * @return \F3\FLOW3\Persistence\ClassSchema
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getClassSchema($className) {
+	public function getClassSchema($classNameOrObject) {
+		$className = is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject;
 		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 

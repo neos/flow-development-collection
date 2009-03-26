@@ -79,6 +79,14 @@ interface BackendInterface {
 	public function getUUIDByObject($object);
 
 	/**
+	 * Checks if the given object has ever been persisted.
+	 *
+	 * @param object $object The object to check
+	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+	 */
+	public function isNewObject($object);
+
+	/**
 	 * Replaces the given object by the second object.
 	 *
 	 * This method will unregister the existing object at the identity map and

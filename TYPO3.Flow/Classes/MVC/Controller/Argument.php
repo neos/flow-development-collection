@@ -391,7 +391,6 @@ class Argument {
 		if (is_array($value) && $this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
 			if (isset($value['__identity'])) {
 				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
-#var_dump($value);
 				unset($value['__identity']);
 				if (count($value) === 0) {
 					$value = $existingObject;
