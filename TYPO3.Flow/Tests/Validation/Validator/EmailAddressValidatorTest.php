@@ -90,9 +90,7 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider invalidAddresses
 	 */
 	public function emailAddressValidatorReturnsFalseForAnInvalidEmailAddress($address) {
-		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
 		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
@@ -106,18 +104,14 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function emailValidatorCreatesTheCorrectErrorObjectForAnInvalidEmailAddress() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221559976);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "notAValidMail@Address"', 1221559976);
 
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
 		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$emailAddressValidator->isValid('notAValidMail@Address', $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221559976, $validationErrors[0]->getCode());
 	}
 
 }

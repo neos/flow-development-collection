@@ -70,18 +70,14 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid text (contained XML tags). Got: "<span style="color: #BBBBBB;">a nice text</span>"', 1221565786);
 
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221565786, $validationErrors[0]->getCode());
 	}
 }
 

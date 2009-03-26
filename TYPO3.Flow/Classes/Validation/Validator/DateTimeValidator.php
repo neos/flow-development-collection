@@ -24,48 +24,38 @@ namespace F3\FLOW3\Validation\Validator;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  */
 
 /**
- * Testcase for the regular expression validator
+ * Validator for DateTime objects
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
+class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * Checks if the given value is a valid DateTime object.
+	 *
+	 * If at least one error occurred, the result is FALSE and any errors will
+	 * be stored in the given errors object.
+	 *
+	 * @param mixed $value The value that should be validated
+	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
+	 * @param array $validationOptions Not used
+	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($regularExpressionValidator->isValid('simple1expression', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
-		$this->assertFalse($regularExpressionValidator->isValid('simple1expressions', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132);
-
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator('/^simple[0-9]expression$/');
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$regularExpressionValidator->isValid('some subject that will not match', $validationErrors);
+	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+		if ($value instanceof \DateTime) {
+			return TRUE;
+		}
+		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid DateTime. Got: "' .gettype($value) . '"', 1238087674));
+		return FALSE;
 	}
 }
 

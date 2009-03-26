@@ -29,86 +29,40 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Testcase for the float validator
+ * Testcase for the DateTime validator
  *
  * @package FLOW3
  * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FloatValidatorTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * Data provider with valid floats
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function validFloats() {
-		return array(
-			array(1029437.234726),
-			array('123.45'),
-			array('+123.45'),
-			array('-123.45'),
-			array('123.45e3'),
-			array(123.45e3)
-		);
-	}
+class DateTimeValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @dataProvider validFloats
 	 */
-	public function floatValidatorReturnsTrueForAValidFloat($address) {
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
+	public function dateTimeValidatorReturnsTrueForAValidDateTimeObject() {
+		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($floatValidator->isValid($address, $validationErrors));
-	}
-
-	/**
-	 * Data provider with invalid floats
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function invalidFloats() {
-		return array(
-			array(1029437),
-			array('1029437'),
-			array('not a number')
-		);
+		$this->assertTrue($dateTimeValidator->isValid(new \DateTime, $validationErrors));
 	}
 
 	/**
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
-	 * @dataProvider invalidFloats
 	 */
-	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
+	public function dateTimeValidatorReturnsFalseForAnInvalidDateTimeObject() {
+		$error = new \F3\FLOW3\Validation\Error('', 1238087674);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
+		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
+		$dateTimeValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($floatValidator->isValid($address, $validationErrors));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid float. Got: "123456"', 1221560288);
-
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$floatValidator->isValid(123456, $validationErrors);
+		$this->assertFalse($dateTimeValidator->isValid('blah', $validationErrors));
 	}
 
 }

@@ -54,9 +54,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221551320);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
 		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
@@ -70,18 +68,14 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221551320);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "adsf%&/$jklsfdö"', 1221551320);
 
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
 		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$alphanumericValidator->isValid('adsf%&/$jklsfdö', $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221551320, $validationErrors[0]->getCode());
 	}
 }
 

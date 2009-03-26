@@ -105,18 +105,14 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function notEmptyValidatorCreatesTheCorrectErrorObjectForANullValue() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221560910);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was NULL.', 1221560910);
 
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$notEmptyValidator->isValid(NULL, $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221560910, $validationErrors[0]->getCode());
 	}
 }
 

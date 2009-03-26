@@ -70,18 +70,14 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "this is not a number"', 1221563685);
 
 		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
 		$numberValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$numberValidator->isValid('this is not a number', $validationErrors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221563685, $validationErrors[0]->getCode());
 	}
 }
 

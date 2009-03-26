@@ -55,9 +55,7 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
-		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
@@ -71,9 +69,7 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
-		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
@@ -88,18 +84,14 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function UUIDValidatorCreatesTheCorrectErrorObjectIfTheSubjectIsInvalid() {
-		$error = new \F3\FLOW3\Validation\Error('The given subject was not a valid UUID', 1221565853);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid UUID. Got: "e104e469-9030-4b98-babf-3990f07"', 1221565853);
 
 		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
 		$validator->isValid('e104e469-9030-4b98-babf-3990f07', $errors);
-
-		$this->assertType('F3\FLOW3\Validation\Error', $errors[0]);
-		$this->assertEquals(1221565853, $errors[0]->getCode());
 	}
 }
 
