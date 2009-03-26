@@ -53,16 +53,28 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorReturnsFalseForAStringWithHTMLEntities() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221565786);
+	public function textValidatorReturnsFalseForAStringWithHTML() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
 
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
 		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
 		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function textValidatorReturnsFalseForAStringWithPercentEncodedHTML() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
+		$textValidator->injectObjectFactory($mockObjectFactory);
+		$validationErrors = new \F3\FLOW3\Validation\Errors();
+
+		$this->assertFalse($textValidator->isValid('%3cspan style="color: #BBBBBB;"%3ea nice text%3c/span%3e', $validationErrors));
 	}
 
 	/**

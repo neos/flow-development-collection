@@ -50,9 +50,10 @@ class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Jochen Rau <jochen.rau@typoplanet.de>
 	 */
 	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
-		if (!is_string($value) || preg_match('/<[\/]*[a-z,A-Z,0-9]*>/', $value)) {
+		if ($value !== filter_var($value, FILTER_SANITIZE_STRING)) {
 			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid text (contained XML tags). Got: "' . $value . '"', 1221565786));
 			return FALSE;
 		}
