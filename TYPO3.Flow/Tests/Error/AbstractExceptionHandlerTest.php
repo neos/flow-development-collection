@@ -24,71 +24,37 @@ namespace F3\FLOW3\Error;
 
 /**
  * @package FLOW3
- * @subpackage Error
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * An abstract exception handler
+ * Testcase for the Abstract Exception Handler
  *
  * @package FLOW3
- * @subpackage Error
+ * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
+class AbstractExceptionHandlerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 */
-	protected $systemLogger;
-
-	/**
-	 * @var string
-	 */
-	protected $backgracePathAndFilename;
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @test
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
+	public function handleExceptionLogsInformationAboutTheExceptionInTheSystemLog() {
+		$exception = new \Exception('The Message', 12345);
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger->expects($this->once())->method('log')->with('Uncaught exception #12345. The Message.', LOG_CRIT);
+
+		$exceptionHandler = $this->getMock('F3\FLOW3\Error\AbstractExceptionHandler', array('dummy'), array(), '', FALSE);
+		$exceptionHandler->injectSystemLogger($mockSystemLogger);
+		$exceptionHandler->handleException($exception);
 	}
 
-	/**
-	 * Sets the path and file name of a file used to dump the backtrace.
-	 *
-	 * @param string $pathAndFilename
-	 */
-	public function setBacktracePathAndFilename($pathAndFilename) {
-		$this->backtracePathAndFilename = $pathAndFilename;
-	}
-
-	/**
-	 * Handles the given exception
-	 *
-	 * @param \Exception $exception: The exception object
-	 * @return void
-	 */
-	public function handleException(\Exception $exception) {
-		if (is_object($this->systemLogger)) {
-			$exceptionCodeNumber = ($exception->getCode() > 0) ? ' #' . $exception->getCode() : '';
-			$backTrace = $exception->getTrace();
-			$className = isset($backTrace[0]['class']) ? $backTrace[0]['class'] : '?';
-			$methodName = isset($backTrace[0]['function']) ? $backTrace[0]['function'] : '?';
-			$line = isset($backTrace['line']) ? ' in line ' . $backTrace['line'] : '';
-			$message = 'Uncaught exception' . $exceptionCodeNumber . '. ' . $exception->getMessage() . $line . '.';
-
-			$explodedClassName = explode('\\', $className);
-			$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
-
-			$this->systemLogger->log($message, LOG_CRIT, array(), $packageKey, $className, $methodName);
-		}
-	}
 
 }
+
 ?>

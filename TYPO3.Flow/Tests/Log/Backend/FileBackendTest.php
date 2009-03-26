@@ -70,7 +70,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$backend->append('foo');
 
-		$this->assertSame(52 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+		$this->assertSame(56 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 }
 ?>

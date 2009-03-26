@@ -29,7 +29,7 @@ namespace F3\FLOW3\Error;
  */
 
 /**
- * Testcase for the alphanumeric validator
+ * Testcase for the Error object
  *
  * @package FLOW3
  * @subpackage Tests
