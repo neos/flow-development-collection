@@ -44,6 +44,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\MVC\View\Helper\URIHelper
+	 */
+	protected $URIHelper;
+
+	/**
 	 * Key of the package this controller belongs to
 	 * @var string
 	 */
@@ -127,6 +132,17 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
+	 * Injects the URI helper
+	 *
+	 * @param \F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper The URI helper
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectURIHelper(\F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper) {
+		$this->URIHelper = $URIHelper;
+	}
+
+	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
 	 * If your controller only supports certain request types, either
@@ -187,7 +203,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, \ArrayObject $arguments = NULL) {
+	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL) {
 		$this->request->setDispatched(FALSE);
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
@@ -196,6 +212,35 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		throw new \F3\FLOW3\MVC\Exception\StopAction();
 	}
 
+	/**
+	 * Forwards the request to another action and / or controller.
+	 *
+	 * NOTE: This method only supports web requests and will thrown an exception
+	 * if used with other request types.
+	 *
+	 * @param string $actionName Name of the action to forward to
+	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
+	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments Arguments to pass to the target action
+	 * @return void
+	 * @throws \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL) {
+		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
+		$this->URIHelper->setRequest($this->request);
+
+		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
+			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
+		} else {
+			$subpackageKey = NULL;
+		}
+		$uri = $this->URIHelper->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+		$this->response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . htmlentities($uri, ENT_QUOTES, 'utf-8') . '"/></head></html>');
+		$this->response->setStatus(303);
+		$this->response->setHeader('Location', (string)$uri);
+		throw new \F3\FLOW3\MVC\Exception\StopAction();
+	}
 
 	/**
 	 * Redirects the web request to another uri.
@@ -209,7 +254,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function redirect($uri, $delay = 0, $statusCode = 303) {
+	protected function redirectToURI($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
 
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');

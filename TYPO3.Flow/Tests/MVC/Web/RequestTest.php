@@ -66,10 +66,9 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getArgumentsReturnsProperlyInitializedArgumentsArrayObjectForNewRequest() {
+	public function getArgumentsReturnsProperlyInitializedArgumentsArrayForNewRequest() {
 		$request = new \F3\FLOW3\MVC\Web\Request();
-		$request->injectEnvironment($this->environment);
-		$this->assertType('ArrayObject', $request->getArguments(), 'getArguments() does not return an ArrayObject for a virgin request object.');
+		$this->assertType('array', $request->getArguments(), 'getArguments() does not return an array for a virgin request object.');
 	}
 
 	/**

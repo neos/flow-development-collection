@@ -125,11 +125,11 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function multipleArgumentsCanBeSetWithSetArgumentsAndRetrievedWithGetArguments() {
-		$arguments = new \ArrayObject(array(
+		$arguments = array(
 			'firstArgument' => 'firstValue',
 			'dænishÅrgument' => 'görman välju',
 			'3a' => '3v'
-		));
+		);
 		$request = new \F3\FLOW3\MVC\Request();
 		$request->setArguments($arguments);
 		$this->assertEquals($arguments, $request->getArguments());

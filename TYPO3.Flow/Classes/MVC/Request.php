@@ -88,9 +88,9 @@ class Request {
 	protected $controllerActionName = 'index';
 
 	/**
-	 * @var ArrayObject The arguments for this request
+	 * @var array The arguments for this request
 	 */
-	protected $arguments;
+	protected $arguments = array();
 
 	/**
 	 * @var string The requested representation format
@@ -101,15 +101,6 @@ class Request {
 	 * @var boolean If this request has been changed and needs to be dispatched again
 	 */
 	protected $dispatched = FALSE;
-
-	/**
-	 * Constructs this request
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->arguments = new \ArrayObject;
-	}
 
 	/**
 	 * Injects the object manager
@@ -306,11 +297,11 @@ class Request {
 	 * Sets the whole arguments ArrayObject and therefore replaces any arguments
 	 * which existed before.
 	 *
-	 * @param \ArrayObject $arguments An ArrayObject of argument names and their values
+	 * @param array $arguments An array of argument names and their values
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setArguments(\ArrayObject $arguments) {
+	public function setArguments(array $arguments) {
 		$this->arguments = $arguments;
 	}
 
@@ -341,7 +332,7 @@ class Request {
 	/**
 	 * Returns an ArrayObject of arguments and their values
 	 *
-	 * @return \ArrayObject ArrayObject of arguments and their values (which may be arguments and values as well)
+	 * @return array Array of arguments and their values (which may be arguments and values as well)
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArguments() {
