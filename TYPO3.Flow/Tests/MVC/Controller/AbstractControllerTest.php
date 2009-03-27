@@ -112,17 +112,22 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function redirectToURIThrowsAStopActionException() {
+	public function redirectRedirectsToTheSpecifiedAction() {
+		$arguments = array('foo' => 'bar');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockURIHelper = $this->getMock('F3\FLOW3\MVC\View\Helper\URIHelper');
+		$mockURIHelper->expects($this->once())->method('URIFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('redirectToURI'), array(), '', FALSE);
+		$controller->expects($this->once())->method('redirectToURI')->with('the uri');
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);
-		$controller->_call('redirectToURI', 'http://typo3.org');
+		$controller->_set('URIHelper', $mockURIHelper);
+		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);
 	}
 
 	/**
@@ -143,42 +148,5 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$controller->_call('throwStatus', 404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
 	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function redirectThrowsAStopActionException() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		$mockURIHelper = $this->getMock('F3\FLOW3\MVC\View\Helper\URIHelper');
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('response', $mockResponse);
-		$controller->_set('URIHelper', $mockURIHelper);
-		$controller->_call('redirect', 'show');
-	}
-
-	/**
-	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function redirectAsksForExpectedURI() {
-		$arguments = array('foo' => 'bar');
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		$mockURIHelper = $this->getMock('F3\FLOW3\MVC\View\Helper\URIHelper');
-		$mockURIHelper->expects($this->once())->method('URIFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package');
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('request', $mockRequest);
-		$controller->_set('response', $mockResponse);
-		$controller->_set('URIHelper', $mockURIHelper);
-		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);
-	}
-
 }
 ?>

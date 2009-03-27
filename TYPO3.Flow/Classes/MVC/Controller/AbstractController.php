@@ -221,12 +221,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param string $actionName Name of the action to forward to
 	 * @param string $controllerName Unqualified object name of the controller to forward to. If not specified, the current controller is used.
 	 * @param string $packageKey Key of the package containing the controller to forward to. If not specified, the current package is assumed.
+	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
+	 * @param integer $statusCode (optional) The HTTP status code for the redirect. Default is "303 See Other"
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments Arguments to pass to the target action
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL) {
+	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
 		$this->URIHelper->setRequest($this->request);
 
@@ -236,10 +238,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 			$subpackageKey = NULL;
 		}
 		$uri = $this->URIHelper->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
-		$this->response->setContent('<html><head><meta http-equiv="refresh" content="0;url=' . htmlentities($uri, ENT_QUOTES, 'utf-8') . '"/></head></html>');
-		$this->response->setStatus(303);
-		$this->response->setHeader('Location', (string)$uri);
-		throw new \F3\FLOW3\MVC\Exception\StopAction();
+		$this->redirectToURI($uri, $delay, $statusCode);
 	}
 
 	/**
