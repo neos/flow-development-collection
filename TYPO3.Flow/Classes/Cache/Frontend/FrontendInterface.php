@@ -47,12 +47,12 @@ interface FrontendInterface {
 	/**
 	 * Pattern an entry identifer must match.
 	 */
-	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%]{1,250}$/';
+	const PATTERN_ENTRYIDENTIFIER = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
 	/**
 	 * Pattern a tag must match.
 	 */
-	const PATTERN_TAG = '/^[a-zA-Z0-9_%]{1,250}$/';
+	const PATTERN_TAG = '/^[a-zA-Z0-9_%\-&]{1,250}$/';
 
 	/**
 	 * Returns this cache's identifier

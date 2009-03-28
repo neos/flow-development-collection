@@ -44,7 +44,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theConstructorAcceptsValidIdentifiers() {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
-		foreach (array('x', 'someValue', '123fivesixseveneight', 'ab_cd%', rawurlencode('package://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
+		foreach (array('x', 'someValue', '123fivesixseveneight', 'some&', 'ab_cd%', rawurlencode('package://some/äöü$&% sadf'), str_repeat('x', 250)) as $identifier) {
 			$abstractCache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 		}
 	}
@@ -55,7 +55,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theConstructorRejectsInvalidIdentifiers() {
 		$mockBackend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array('get', 'set', 'has', 'remove', 'findIdentifiersByTag', 'flush', 'flushByTag', 'collectGarbage'), array(), '', FALSE);
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $identifier) {
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $identifier) {
 			try {
 				$abstractCache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag', 'flush', 'flushByTag', 'collectGarbage'), array($identifier, $mockBackend));
 				$this->fail('Identifier "' . $identifier . '" was not rejected.');
@@ -139,7 +139,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $entryIdentifier) {
 			$this->assertFalse($cache->isValidEntryIdentifier($entryIdentifier), 'Invalid identifier "' . $entryIdentifier . '" was not rejected.');
 		}
 	}
@@ -152,7 +152,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
-		foreach (array('_', 'abcdef', 'foo', 'bar123', '3some', '_bl_a', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
+		foreach (array('_', 'abc-def', 'foo', 'bar123', '3some', '_bl_a', 'some&', 'one%TWO', str_repeat('x', 250)) as $entryIdentifier) {
 			$this->assertTrue($cache->isValidEntryIdentifier($entryIdentifier), 'Valid identifier "' . $entryIdentifier . '" was not accepted.');
 		}
 	}
@@ -165,7 +165,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $tag) {
+		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#') as $tag) {
 			$this->assertFalse($cache->isValidTag($tag), 'Invalid tag "' . $tag . '" was not rejected.');
 		}
 	}
@@ -178,7 +178,7 @@ class AbstractFrontendTest extends \F3\Testing\BaseTestCase {
 		$identifier = 'someCacheIdentifier';
 		$backend = $this->getMock('F3\FLOW3\Cache\Backend\AbstractBackend', array(), array(), '', FALSE);
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('__construct', 'get', 'set', 'has', 'remove', 'getByTag'), array($identifier, $backend));
-		foreach (array('abcdef', 'foo_baar', 'bar123', '3some', 'file%Thing', '%x%', str_repeat('x', 250)) as $tag) {
+		foreach (array('abcdef', 'foo-bar', 'foo_baar', 'bar123', '3some', 'file%Thing', 'some&', '%x%', str_repeat('x', 250)) as $tag) {
 			$this->assertTrue($cache->isValidTag($tag), 'Valid tag "' . $tag . '" was not accepted.');
 		}
 	}

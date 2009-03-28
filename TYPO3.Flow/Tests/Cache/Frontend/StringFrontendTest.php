@@ -39,24 +39,14 @@ namespace F3\FLOW3\Cache\Frontend;
 class StringFrontendTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @expectedException \InvalidArgumentException
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setRejectsInvalidIdentifiers() {
-		$theString = 'Just some value';
-		$backend = $this->getMock('F3\FLOW3\Cache\Backend\BackendInterface', array(), array(), '', FALSE);
-		$backend->expects($this->never())->method('set');
-
-		$cache = new \F3\FLOW3\Cache\Frontend\StringFrontend('StringFrontend', $backend);
-
-		foreach (array('', 'abc def', 'foo!', 'bar:', 'some/', 'bla*', 'one+', 'äöü', str_repeat('x', 251), 'x$', '\\a', 'b#', 'some&') as $entryIdentifier) {
-			try {
-				$cache->set($entryIdentifier, $theString);
-				$this->fail('set() did no reject the entry identifier "' . $entryIdentifier . '".');
-			} catch (\InvalidArgumentException $exception) {
-			}
-		}
+	public function setChecksIfTheIdentifierIsValid() {
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\StringFrontend', array('isValidEntryIdentifier'), array(), '', FALSE);
+		$cache->expects($this->once())->method('isValidEntryIdentifier')->with('foo')->will($this->returnValue(FALSE));
+		$cache->set('foo', 'bar');
 	}
 
 	/**

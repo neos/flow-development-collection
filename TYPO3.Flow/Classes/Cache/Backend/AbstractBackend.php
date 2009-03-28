@@ -38,6 +38,9 @@ namespace F3\FLOW3\Cache\Backend;
  */
 abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterface {
 
+	const DATETIME_EXPIRYTIME_UNLIMITED = '9999-12-31T23:59:59+0000';
+	const UNLIMITED_LIFETIME = 0;
+
 	/**
 	 * Reference to the cache frontend which uses this backend
 	 * @var \F3\FLOW3\Cache\Frontend\FrontendInterface
@@ -120,5 +123,22 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 		$this->defaultLifetime = $defaultLifetime;
 	}
 
+	/**
+	 * Calculates the expiry time by the given lifetime. If no lifetime is
+	 * specified, the default lifetime is used.
+	 *
+	 * @param integer $lifetime The lifetime in seconds
+	 * @return \DateTime The expiry time
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function calculateExpiryTime($lifetime = NULL) {
+		if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === NULL && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {
+			$expiryTime = new \DateTime(self::DATETIME_EXPIRYTIME_UNLIMITED, new \DateTimeZone('UTC'));
+		} else {
+			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
+			$expiryTime = new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
+		}
+		return $expiryTime;
+	}
 }
 ?>

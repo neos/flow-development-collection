@@ -79,6 +79,5 @@ class AbstractBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = new $className('Testing', array('someOption' => 'someValue'));
 		$this->assertSame('someValue', $backend->getSomeOption());
 	}
-
 }
 ?>

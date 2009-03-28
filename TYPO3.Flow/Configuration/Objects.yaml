@@ -106,6 +106,8 @@ F3\FLOW3\Cache\Frontend\VariableFrontend:
   scope: prototype
 F3\FLOW3\Cache\Frontend\StringFrontend:
   scope: prototype
+F3\FLOW3\Cache\Backend\TransientMemoryBackend:
+  scope: prototype
 
 #                                                                          #
 # Configuration                                                            #

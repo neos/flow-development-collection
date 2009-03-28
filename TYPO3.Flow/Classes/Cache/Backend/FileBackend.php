@@ -39,11 +39,10 @@ namespace F3\FLOW3\Cache\Backend;
  */
 class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
-	const SEPARATOR = '-';
+	const SEPARATOR = '@';
 
-	const FILENAME_EXPIRYTIME_FORMAT = 'YmdHis';
-	const FILENAME_EXPIRYTIME_GLOB = '??????????????';
-	const FILENAME_EXPIRYTIME_UNLIMITED = '99991231235959';
+	const EXPIRYTIME_FORMAT = 'YmdHis';
+	const EXPIRYTIME_LENGTH = 14;
 
 	/**
 	 * Directory where the files are stored.
@@ -149,15 +148,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1204481674);
 
-		if ($lifetime === 0 || ($lifetime === NULL && $this->defaultLifetime === 0)) {
-			$expiryTime = new \DateTime('9999-12-31T23:59:59+0000', new \DateTimeZone('UTC'));
-		} else {
-			if ($lifetime === NULL) $lifetime = $this->defaultLifetime;
-			$expiryTime = new \DateTime('now +' . $lifetime . ' seconds', new \DateTimeZone('UTC'));
-		}
+		$expirytime = $this->calculateExpiryTime($lifetime);
 		$cacheEntryPath = $this->renderCacheEntryPath($entryIdentifier);
-		$filename = $this->renderCacheFilename($entryIdentifier, $expiryTime);
-
 		if (!is_writable($cacheEntryPath)) {
 			try {
 				\F3\FLOW3\Utility\Files::createDirectoryRecursively($cacheEntryPath);
@@ -168,19 +160,21 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$this->remove($entryIdentifier);
 
-		$temporaryFilename = $filename . '.' . uniqid() . '.temp';
+		$data = $expirytime->format(self::EXPIRYTIME_FORMAT) . $data;
+		$temporaryFilename = uniqid() . '.temp';
 		$result = file_put_contents($cacheEntryPath . $temporaryFilename, $data);
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryFilename . '" could not be written.', 1204026251);
 		for ($i=0; $i<5; $i++) {
-			$result = rename($cacheEntryPath . $temporaryFilename, $cacheEntryPath . $filename);
+			$result = rename($cacheEntryPath . $temporaryFilename, $cacheEntryPath . $entryIdentifier);
 			if ($result === TRUE) break;
 		}
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $filename . '" could not be written.', 1222361632);
+		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $entryIdentifier . '" could not be written.', 1222361632);
 
 		foreach ($tags as $tag) {
 			$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
 			if (!is_writable($tagPath)) {
 				mkdir($tagPath);
+				if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
 			}
 			touch($tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier);
 		}
@@ -195,10 +189,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function get($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
-		if ($pathsAndFilenames === FALSE) return FALSE;
-		$pathAndFilename = array_pop($pathsAndFilenames);
-		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : file_get_contents($pathAndFilename);
+		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
+		return ($this->isCacheFileExpired($pathAndFilename)) ? FALSE : file_get_contents($pathAndFilename, NULL, NULL, self::EXPIRYTIME_LENGTH);
 	}
 
 	/**
@@ -207,12 +199,9 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function has($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
-		if ($pathsAndFilenames === FALSE) return FALSE;
-		return !$this->isCacheFileExpired(array_pop($pathsAndFilenames));
+		return !$this->isCacheFileExpired($this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier);
 	}
 
 	/**
@@ -224,21 +213,14 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function remove($entryIdentifier) {
-		$pathsAndFilenames = $this->findCacheFilesByIdentifier($entryIdentifier);
 		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
-		if ($pathsAndFilenames === FALSE) return FALSE;
 
-		foreach ($pathsAndFilenames as $pathAndFilename) {
-			$result = unlink ($pathAndFilename);
-			if ($result === FALSE) return FALSE;
-		}
-
-		$pathsAndFilenames = $this->findTagFilesByEntry($entryIdentifier);
-		if ($pathsAndFilenames === FALSE) return FALSE;
-
-		foreach ($pathsAndFilenames as $pathAndFilename) {
-			$result = unlink ($pathAndFilename);
-			if ($result === FALSE) return FALSE;
+		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
+		if (!file_exists($pathAndFilename)) return FALSE;
+		if (unlink ($pathAndFilename) === FALSE) return FALSE;
+		foreach($this->findTagFilesByEntry($entryIdentifier) as $pathAndFilename) {
+			if (!file_exists($pathAndFilename)) return FALSE;
+			if (unlink ($pathAndFilename) === FALSE) return FALSE;
 		}
 		return TRUE;
 	}
@@ -285,8 +267,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if ($filesFound === FALSE || count($filesFound) === 0) return;
 
 		foreach ($filesFound as $filename) {
-			list(,$entryIdentifier) = explode(self::SEPARATOR, basename($filename));
-			$this->remove($entryIdentifier);
+			$this->remove(basename($filename));
 		}
 	}
 
@@ -316,12 +297,12 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function isCacheFileExpired($cacheFilename) {
-		list($timestamp) = explode(self::SEPARATOR, basename($cacheFilename), 2);
-		return $timestamp < gmdate('YmdHis');
+		$timestamp = (file_exists($cacheFilename)) ? file_get_contents($cacheFilename, NULL, NULL, 0, self::EXPIRYTIME_LENGTH) : 1;
+		return $timestamp < gmdate(self::EXPIRYTIME_FORMAT);
 	}
 
 	/**
-	 * Does garbage collection for the given entry or all entries.
+	 * Does garbage collection
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -331,26 +312,12 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$pattern = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/*/*/*';
 		$filesFound = glob($pattern);
-		foreach ($filesFound as $cacheFile) {
-			$splitFilename = explode(self::SEPARATOR, basename($cacheFile), 2);
-			if ($splitFilename[0] < gmdate('YmdHis')) {
-				$this->remove($splitFilename[1]);
+		foreach ($filesFound as $cacheFilename) {
+			if ($this->isCacheFileExpired($cacheFilename)) {
+				$this->remove(basename($cacheFilename));
 			}
 		}
 		$this->systemLogger->log(sprintf('Cache %s: removed %s files during garbage collection', $this->cache->getIdentifier(), count($filesFound)), LOG_INFO);
-	}
-
-	/**
-	 * Renders a file name for the specified cache entry
-	 *
-	 * @param string $identifier Identifier for the cache entry
-	 * @param \DateTime $expiry Date and time specifying the expiration of the entry. Must be a UTC time.
-	 * @return string Filename of the cache data file
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function renderCacheFilename($identifier, \DateTime $expiryTime) {
-		$filename = $expiryTime->format(self::FILENAME_EXPIRYTIME_FORMAT) . self::SEPARATOR . $identifier;
-		return $filename;
 	}
 
 	/**
@@ -379,7 +346,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$pattern = $this->renderCacheEntryPath($entryIdentifier) . self::FILENAME_EXPIRYTIME_GLOB . self::SEPARATOR . $entryIdentifier;
+		$pattern = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
 		return $filesFound;
@@ -390,7 +357,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Tries to find the tag entries for the specified cache entry.
 	 *
 	 * @param string $identifier The cache entry identifier to find tag files for
-	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
+	 * @return array The file names (including path)
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
 	 */
@@ -399,9 +366,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$path = $this->cacheDirectory . $this->context . '/Tags/';
 		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
-		$filesFound = glob($pattern);
-		if ($filesFound === FALSE || count($filesFound) === 0) return FALSE;
-		return $filesFound;
+		return glob($pattern);
 	}
 }
 ?>
