@@ -200,6 +200,18 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function addNewArgumentCanAddArgumentsMarkedAsOptionalWithDefaultValues() {
+		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+
+		$defaultValue = 'Default Value 42';
+		$addedArgument = $arguments->addNewArgument('dummyName', 'Text', FALSE, $defaultValue);
+		$this->assertEquals($defaultValue, $addedArgument->getValue(), 'addNewArgument() did not store the default value in the argument.');
+	}
+
+	/**
+	 * @test
 	 * @expectedException \LogicException
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

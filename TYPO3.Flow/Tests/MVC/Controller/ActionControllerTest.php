@@ -118,6 +118,33 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function callActionMethodPassesDefaultValuesAsArguments() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+
+		$arguments = new \ArrayObject();
+		$optionalArgument = new \F3\FLOW3\MVC\Controller\Argument('name1', 'Text');
+		$optionalArgument->setDefaultValue('Default value');
+		$arguments[] = $optionalArgument;
+
+		$mockArgumentMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockArgumentMappingResults->expects($this->once())->method('hasErrors')->will($this->returnValue(FALSE));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'initializeAction'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('fooAction')->with('Default value');
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('response', $mockResponse);
+		$mockController->_set('arguments', $arguments);
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('argumentsMappingResults', $mockArgumentMappingResults);
+		$mockController->_call('callActionMethod');
+	}
+
+	/**
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @test
 	 */
@@ -246,8 +273,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'Text', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
@@ -264,6 +291,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 				'byReference' => FALSE,
 				'array' => TRUE,
 				'optional' => TRUE,
+				'defaultValue' => array(21),
 				'allowsNull' => FALSE
 			),
 			'arg3' => array(
@@ -271,6 +299,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 				'byReference' => FALSE,
 				'array' => FALSE,
 				'optional' => TRUE,
+				'defaultValue' => 42,
 				'allowsNull' => FALSE
 			)
 		);

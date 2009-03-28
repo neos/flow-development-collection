@@ -322,6 +322,18 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function settingDefaultValueReallySetsDefaultValue() {
+		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
+		$argument->injectObjectFactory($this->mockObjectFactory);
+		$argument->setDefaultValue(42);
+
+		$this->assertEquals(42, $argument->getValue(), 'The default value was not stored in the Argument.');
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setNewFilterChainAddsThePassedFiltersToTheCreatedFilterChain() {

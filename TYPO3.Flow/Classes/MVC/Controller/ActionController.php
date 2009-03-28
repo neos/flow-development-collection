@@ -163,8 +163,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
+			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 
-			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE));
+			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
 	}
 

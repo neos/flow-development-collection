@@ -107,6 +107,12 @@ class Argument {
 	protected $value = NULL;
 
 	/**
+	 * Default value. Used if argument is optional.
+	 * @var mixed
+	 */
+	protected $defaultValue = NULL;
+
+	/**
 	 * A custom validator, used supplementary to the base validation
 	 * @var \F3\FLOW3\Validation\Validator\ValidatorInterface
 	 */
@@ -302,6 +308,17 @@ class Argument {
 	}
 
 	/**
+	 * Sets the default value of the argument
+	 *
+	 * @param mixed $defaultValue Default value
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setDefaultValue($defaultValue) {
+		$this->defaultValue = $defaultValue;
+	}
+
+	/**
 	 * Sets a custom validator which is used supplementary to the base validation
 	 *
 	 * @param mixed $validator Object name of a validator or the actual validator object
@@ -438,13 +455,18 @@ class Argument {
 	}
 
 	/**
-	 * Returns the value of this argument
+	 * Returns the value of this argument. If the value is NULL, we use the defaultValue.
 	 *
 	 * @return object The value of this argument - if none was set, NULL is returned
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getValue() {
-		return $this->value;
+		if ($this->value === NULL) {
+			return $this->defaultValue;
+		} else {
+			return $this->value;
+		}
 	}
 
 	/**
