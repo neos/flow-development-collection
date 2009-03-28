@@ -256,6 +256,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected function redirectToURI($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
 
+		$uri = $this->request->getBaseURI() . (string)$uri;
 		$escapedUri = htmlentities($uri, ENT_QUOTES, 'utf-8');
 		$this->response->setContent('<html><head><meta http-equiv="refresh" content="' . intval($delay) . ';url=' . $escapedUri . '"/></head></html>');
 		$this->response->setStatus($statusCode);
