@@ -408,6 +408,7 @@ class Argument {
 		if (is_array($value) && $this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
 			if (isset($value['__identity'])) {
 				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
+				if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for the specified object was not sucessful.', 1237305720);
 				unset($value['__identity']);
 				if (count($value) === 0) {
 					$value = $existingObject;
@@ -429,7 +430,12 @@ class Argument {
 	}
 
 	/**
+	 * Finds an object from the repository by searching for its identity properties.
 	 *
+	 * @param array $identityProperties Property names and values to search for
+	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * FIXME Only works with a single property yet
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties) {
 		$query = $this->queryFactory->create($this->dataType);
@@ -444,29 +450,27 @@ class Argument {
 	}
 
 	/**
+	 * Finds an object from the repository by searching for its technical UUID.
 	 *
+	 * @param string $uuid The object's uuid
+	 * @return mixed Either the object matching the uuid or, if none or more than one object was found, FALSE
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function findObjectByIdentityUUID($uuid) {
 		$query = $this->queryFactory->create($this->dataType);
-		$query->matching($query->withUUID($uuid));
-		$objects = $query->execute();
+		$objects = $query->matching($query->withUUID($uuid))->execute();
 		if (count($objects) === 1 ) return current($objects);
-		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object with uuid "' . $uuid . '" resulted in ' . count($objects) . ' objects instead of one.', 1237305720);
+		return FALSE;
 	}
 
 	/**
 	 * Returns the value of this argument. If the value is NULL, we use the defaultValue.
 	 *
-	 * @return object The value of this argument - if none was set, NULL is returned
+	 * @return object The value of this argument - if none was set, the default value is returned
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function getValue() {
-		if ($this->value === NULL) {
-			return $this->defaultValue;
-		} else {
-			return $this->value;
-		}
+		return ($this->value === NULL) ? $this->defaultValue : $this->value;
 	}
 
 	/**

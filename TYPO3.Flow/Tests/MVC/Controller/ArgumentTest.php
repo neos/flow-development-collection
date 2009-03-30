@@ -108,24 +108,17 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueTriesToConvertAnIdentityArrayContainingAUUIDIntoTheRealObject() {
+		$object = new \stdClass();
+
 		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
 		$mockClassSchema->expects($this->once())->method('isAggregateRoot')->will($this->returnValue(TRUE));
 
-		$mockQuery = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		$mockQuery->expects($this->once())->method('matching')->with('constraint');
-		$mockQuery->expects($this->once())->method('withUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue('constraint'));
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('the object')));
-
-		$mockQueryFactory = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\QueryFactory', array(), array(), '', FALSE);
-		$mockQueryFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue($mockQuery));
-
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
-		$argument->_set('dataType', 'MyClass');
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('queryFactory', $mockQueryFactory);
+		$argument->expects($this->once())->method('findObjectByIdentityUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
 		$argument->setValue(array('__identity' => 'e104e469-9030-4b98-babf-3990f07dd3f1'));
 
-		$this->assertSame('the object', $argument->_get('value'));
+		$this->assertSame($object, $argument->_get('value'));
 	}
 
 	/**
