@@ -435,15 +435,29 @@ class Argument {
 	 * @param array $identityProperties Property names and values to search for
 	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * FIXME Only works with a single property yet
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties) {
 		$query = $this->queryFactory->create($this->dataType);
+		$equals = array();
 		foreach ($this->dataTypeClassSchema->getIdentityProperties() as $propertyName => $propertyType) {
-			# TODO build query for multiple properties
-			break;
+			if (isset($identityProperties[$propertyName])) {
+				if ($propertyType === 'string') {
+					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName], FALSE);
+				} else {
+					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName]);
+				}
+			}
 		}
-		$query->matching($query->equals($propertyName, $identityProperties[$propertyName], FALSE));
+		if (count($equals) === 1) {
+			$constraint = current($equals);
+		} else {
+			$constraint = $query->logicalAnd(current($equals), next($equals));
+			while (($equal = next($equals)) !== FALSE) {
+				$constraint = $query->logicalAnd($constraint, $equal);
+			}
+		}
+		$query->matching($constraint);
 		$objects = $query->execute();
 		if (count($objects) === 1 ) return current($objects);
 		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.', 1237305719);
