@@ -108,7 +108,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\PointcutFilterInterface 
 			default:
 				$visibilityMatches = TRUE;
 		}
-		$isNotFinal = !$this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName);
+		$isNotFinal = ($methodDeclaringClassName === NULL) || (!$this->reflectionService->isMethodFinal($methodDeclaringClassName, $methodName));
 
 		return $methodNameMatches && $visibilityMatches && $isNotFinal;
 	}

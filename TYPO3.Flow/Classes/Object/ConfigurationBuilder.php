@@ -99,7 +99,7 @@ class ConfigurationBuilder {
 					$methodName = 'set' . ucfirst($optionName);
 					$objectConfiguration->$methodName(trim($optionValue));
 				break;
-				case 'autoWiringMode':
+				case 'autowiring':
 					$methodName = 'set' . ucfirst($optionName);
 					$objectConfiguration->$methodName($optionValue === TRUE);
 				break;

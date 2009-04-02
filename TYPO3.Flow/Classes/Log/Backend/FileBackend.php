@@ -104,7 +104,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-		$message .= ' ' . ($className !== NULL ? $className . '->' : '') . ($methodName !== NULL ? $methodName : '?') . '()';
+		// $message .= ' ' . ($className !== NULL ? $className . '->' : '') . ($methodName !== NULL ? $methodName : '?') . '()';
 		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
 		if (!empty($additionalData)) {
 			$output .= $this->getFormattedVarDump($additionalData) . PHP_EOL;

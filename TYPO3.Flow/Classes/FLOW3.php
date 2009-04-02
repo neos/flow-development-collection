@@ -461,6 +461,7 @@ final class FLOW3 {
 	public function initializeReflection() {
 		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\Service');
 		$this->reflectionService->setCache($this->cacheManager->getCache('FLOW3_Reflection'));
+		$this->reflectionService->injectSystemLogger($this->systemLogger);
 
 		$availableClassNames = array();
 		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
@@ -606,9 +607,10 @@ final class FLOW3 {
 			$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
 		}
 		$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
+
+		$this->reflectionService->shutdown();
 		$this->systemLogger->log(sprintf('Shutting down FLOW3 ...', $this->context), LOG_INFO);
 		$this->objectManager->shutdown();
-
 	}
 
 	/**

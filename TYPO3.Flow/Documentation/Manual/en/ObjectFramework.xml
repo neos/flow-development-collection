@@ -1475,7 +1475,7 @@ class Foo {
           <title>Turning off autowiring support in Objects.yaml</title>
 
           <programlisting language="yaml">F3\MyPackage\MyObject:
-  autoWiringMode: off;</programlisting>
+  autowiring: off;</programlisting>
         </example>
       </section>
     </section>

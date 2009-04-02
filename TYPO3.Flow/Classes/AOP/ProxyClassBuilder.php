@@ -156,7 +156,6 @@ class ProxyClassBuilder {
 		if (count($interceptedMethods) < 1 && count($introducedInterfaces) < 1) return FALSE;
 
 		$this->addConstructorToInterceptedMethods($interceptedMethods, $targetClassName);
-		$this->addWakeupToInterceptedMethods($interceptedMethods, $targetClassName);
 
 		$proxyClassName = $this->renderProxyClassName($targetClassName, $context);
 		$proxyNamespace = $this->getProxyNamespace($targetClassName);
@@ -180,13 +179,12 @@ class ProxyClassBuilder {
 	}
 
 	/**
-	 * Returns the methods of the target class. If no constructor or wakeup method
-	 * exists in the target class, it will nonetheless be added to the list of methods.
+	 * Returns the methods of the target class. If no constructor exists in the target class,
+	 * it will nonetheless be added to the list of methods.
 	 *
 	 * @param string $targetClassName Name of the target class
 	 * @return array Method information with declaring class and method name pairs
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
@@ -196,7 +194,6 @@ class ProxyClassBuilder {
 		foreach ($existingMethodNames as $methodName) {
 			$methods[] = array($targetClassName, $methodName);
 		}
-		if (array_search('__wakeup', $existingMethodNames) === FALSE) $methods[] = array(NULL, '__wakeup');
 
 		return $methods;
 	}
@@ -245,7 +242,7 @@ class ProxyClassBuilder {
 			foreach ($advicesAndDeclaringClass['groupedAdvices'] as $adviceType => $advices) {
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t'" . $adviceType . "' => array(\n";
 				foreach ($advices as $advice) {
-					$methodsAndAdvicesArrayCode .= "\t\t\t\t\t\$this->objectFactory->create('" . get_class($advice) . "', '" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$this->objectManager),\n";
+					$methodsAndAdvicesArrayCode .= "\t\t\t\t\tnew \\" . get_class($advice) . "('" . $advice->getAspectObjectName() . "', '" . $advice->getAdviceMethodName() . "', \$this->objectManager),\n";
 				}
 				$methodsAndAdvicesArrayCode .= "\t\t\t\t),\n";
 			}
@@ -343,24 +340,6 @@ class ProxyClassBuilder {
 			$declaringClassName = (method_exists($targetClassName, '__construct')) ? $targetClassName : NULL;
 			$interceptedMethods['__construct']['groupedAdvices'] = array();
 			$interceptedMethods['__construct']['declaringClassName'] = $declaringClassName;
-		}
-	}
-
-	/**
-	 * Asserts that __wakeup exists, even if there is none in the original class
-	 * and even though no advice exists for it. If __wakeup had to be added,
-	 * it will be added to the intercepted methods array.
-	 *
-	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
-	 * @param $targetClassName Class the pointcut should match with
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function addWakeupToInterceptedMethods(array &$interceptedMethods, $targetClassName) {
-		$declaringClassName = (method_exists($targetClassName, '__wakeup')) ? $targetClassName : NULL;
-		if (!isset($interceptedMethods['__wakeup'])) {
-			$interceptedMethods['__wakeup']['groupedAdvices'] = array();
-			$interceptedMethods['__wakeup']['declaringClassName'] = $declaringClassName;
 		}
 	}
 

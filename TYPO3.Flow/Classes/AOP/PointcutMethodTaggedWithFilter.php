@@ -82,6 +82,8 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\PointcutFilterInte
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
+		if ($methodDeclaringClassName === NULL) return FALSE;
+
 		foreach ($this->reflectionService->getMethodTagsValues($methodDeclaringClassName, $methodName) as $tag => $values) {
 			$matchResult =  @preg_match('/^' . $this->methodTagFilterExpression . '$/', $tag);
 			if ($matchResult === FALSE) {

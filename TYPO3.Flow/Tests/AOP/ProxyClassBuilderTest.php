@@ -67,7 +67,7 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockIntroduction = $this->getMock('F3\FLOW3\AOP\Introduction', array(), array(), '', FALSE);
 
-		$methodsToMock = array('getMatchingIntroductions', 'getInterfaceNamesFromIntroductions', 'getMethodsFromTargetClass', 'getIntroducedMethodsFromIntroductions', 'addConstructorToInterceptedMethods', 'addWakeupToInterceptedMethods', 'getAdvicedMethodsInformation', 'getProxyNamespace', 'renderProxyClassName', 'buildClassAnnotationsCode', 'buildIntroducedInterfacesCode', 'buildMethodsInterceptorCode', 'buildMethodsAndAdvicesArrayCode');
+		$methodsToMock = array('getMatchingIntroductions', 'getInterfaceNamesFromIntroductions', 'getMethodsFromTargetClass', 'getIntroducedMethodsFromIntroductions', 'addConstructorToInterceptedMethods', 'getAdvicedMethodsInformation', 'getProxyNamespace', 'renderProxyClassName', 'buildClassAnnotationsCode', 'buildIntroducedInterfacesCode', 'buildMethodsInterceptorCode', 'buildMethodsAndAdvicesArrayCode');
 		$builder = $this->getMock('F3\FLOW3\AOP\ProxyClassBuilder', $methodsToMock, array(), '', FALSE);
 		$builder->setProxyClassTemplate($proxyClassTemplate);
 		$builder->expects($this->once())->method('getMatchingIntroductions')->with($aspectContainers, $targetClassName)->will($this->returnValue(array($mockIntroduction)));
@@ -75,7 +75,6 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		$builder->expects($this->once())->method('getInterfaceNamesFromIntroductions')->will($this->returnValue(array('class' => 'Foo', 'method' => 'Bar')));
 		$builder->expects($this->once())->method('getIntroducedMethodsFromIntroductions')->will($this->returnValue(array(array('IntroducedInterface', 'introducedMethod'))));
 		$builder->expects($this->once())->method('addConstructorToInterceptedMethods');
-		$builder->expects($this->once())->method('addWakeupToInterceptedMethods');
 		$builder->expects($this->once())->method('getAdvicedMethodsInformation')->will($this->returnValue($expectedAdvicedMethodsInformation));
 		$builder->expects($this->once())->method('getProxyNamespace')->with($targetClassName)->will($this->returnValue(__NAMESPACE__));
 		$builder->expects($this->once())->method('renderProxyClassName')->with($targetClassName, 'Testing')->will($this->returnValue($expectedProxyClassName));
@@ -106,7 +105,6 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 			array(NULL, '__construct'),
 			array($className, 'foo'),
 			array($className, 'bar'),
-			array(NULL, '__wakeup')
 		);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
@@ -159,10 +157,10 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 		\$this->targetMethodsAndGroupedAdvices = array(
 			'fooMethod' => array(
 				'$mockAdvice1ClassName' => array(
-					\$this->objectFactory->create('$mockAdvice1ClassName', 'Aspect1', 'advice1', \$this->objectManager),
+					new \\$mockAdvice1ClassName('Aspect1', 'advice1', \$this->objectManager),
 				),
 				'$mockAdvice2ClassName' => array(
-					\$this->objectFactory->create('$mockAdvice2ClassName', 'Aspect2', 'advice2', \$this->objectManager),
+					new \\$mockAdvice2ClassName('Aspect2', 'advice2', \$this->objectManager),
 				),
 			),
 		);" . chr(10);
@@ -305,37 +303,6 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 			'__construct' => array(
 				'groupedAdvices' => array(),
 				'declaringClassName' => $targetClassName
-			)
-		);
-		$this->assertSame($expectedInterceptedMethods, $actualInterceptedMethods);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function  addWakeupToInterceptedMethodsAssuresThatAWakeupMethodIsInTheListOfInterceptedMethods() {
-		$targetClassName = uniqid('TargetClass');
-		eval("class $targetClassName { }");
-
-		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
-
-		$actualInterceptedMethods = array(
-			'foo' => array(
-				'groupedAdvices' => array('x'),
-				'declaringClassName' => 'Foo'
-			)
-		);
-		$builder->_callRef('addWakeupToInterceptedMethods', $actualInterceptedMethods, $targetClassName);
-
-		$expectedInterceptedMethods = array(
-			'foo' => array(
-				'groupedAdvices' => array('x'),
-				'declaringClassName' => 'Foo'
-			),
-			'__wakeup' => array(
-				'groupedAdvices' => array(),
-				'declaringClassName' => NULL
 			)
 		);
 		$this->assertSame($expectedInterceptedMethods, $actualInterceptedMethods);
@@ -500,7 +467,6 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getProxyNameSpaceExtractsTheNamespaceOfTheGivenFullQualifiedClassName() {
-
 		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\ProxyClassBuilder'), array('dummy'), array(), '', FALSE);
 		$namespace = $builder->_call('getProxyNameSpace', __CLASS__);
 		$this->assertSame(__NAMESPACE__, $namespace);

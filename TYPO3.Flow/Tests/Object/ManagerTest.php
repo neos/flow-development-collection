@@ -389,24 +389,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Object\Exception\InvalidClass
-	 */
-	public function registerObjectRejectsAbstractClasses() {
-		$className = 'AbstractClass' . uniqid();
-		eval('abstract class ' . $className . ' {}');
-
-		$objectManager = new \F3\FLOW3\Object\Manager();
-		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
-		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
-		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
-
-		$objectManager->registerObject($className);
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectTypeAutomaticallySetsTheClassNameOfTheDefaultImplementationIfTheReflectionServiceFindsOne() {
 		$interfaceName = 'SomeInterface' . uniqid();

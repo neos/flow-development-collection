@@ -142,9 +142,9 @@ class Builder {
 
 			$setterProperties = $objectConfiguration->getProperties();
 
-			if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
-				$arguments = $this->autoWireArguments($arguments, $className);
-				$setterProperties = $this->autoWireProperties($setterProperties, $className);
+			if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
+				$arguments = $this->autowireArguments($arguments, $className);
+				$setterProperties = $this->autowireProperties($setterProperties, $className);
 			}
 			$preparedArguments = array();
 			$this->injectArguments($arguments, $preparedArguments);
@@ -153,12 +153,7 @@ class Builder {
 				$customFactory = $this->objectManager->getObject($customFactoryClassName);
 				$object = call_user_func_array(array($customFactory, $objectConfiguration->getFactoryMethodName()), $preparedArguments);
 			} else {
-				if (count($preparedArguments) > 0) {
-					$class = new \ReflectionClass($className);
-					$object = $class->newInstanceArgs($preparedArguments);
-				} else {
-					$object = new $className();
-				}
+				$object = $this->instantiateClass($className, $preparedArguments);
 			}
 
 			if (!is_object($object)) {
@@ -218,11 +213,34 @@ class Builder {
 	public function reinjectDependencies($object, \F3\FLOW3\Object\Configuration $objectConfiguration) {
 		$properties = $objectConfiguration->getProperties();
 		$className = $objectConfiguration->getClassName();
-		if ($objectConfiguration->getAutoWiringMode() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
-			$properties = $this->autoWireProperties($properties, $className);
+		if ($objectConfiguration->getAutowiring() === \F3\FLOW3\Object\Configuration::AUTOWIRING_MODE_ON && $className !== NULL) {
+			$properties = $this->autowireProperties($properties, $className);
 		}
 		$this->injectProperties($properties, $object);
 	}
+
+	/**
+	 * Speed optimized alternative to ReflectionClass::newInstanceArgs()
+	 *
+	 * @param string $className Name of the class to instantiate
+	 * @param array $arguments Arguments to pass to the constructor
+	 * @return object The object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function instantiateClass($className, array $arguments) {
+		switch (count($arguments)) {
+			case 0: return new $className();
+			case 1: return new $className($arguments[0]);
+			case 2: return new $className($arguments[0], $arguments[1]);
+			case 3: return new $className($arguments[0], $arguments[1], $arguments[2]);
+			case 4: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3]);
+			case 5: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4]);
+			case 6: return new $className($arguments[0], $arguments[1], $arguments[2], $arguments[3], $arguments[4], $arguments[5]);
+		}
+		$class = new \ReflectionClass($className);
+		return $class->newInstanceArgs($arguments);
+	}
+
 
 	/**
 	 * If mandatory constructor arguments have not been defined yet, this function tries to autowire
@@ -233,7 +251,7 @@ class Builder {
 	 * @return array The modified array of \F3\FLOW3\Object\ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireArguments(array $arguments, $className) {
+	protected function autowireArguments(array $arguments, $className) {
 		$constructorName = $this->reflectionService->getClassConstructorName($className);
 		if ($constructorName !== NULL) {
 			foreach ($this->reflectionService->getMethodParameters($className, $constructorName) as $parameterName => $parameterInformation) {
@@ -269,7 +287,7 @@ class Builder {
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function autoWireProperties(array $setterProperties, $className) {
+	protected function autowireProperties(array $setterProperties, $className) {
 		foreach (get_class_methods($className) as $methodName) {
 			if (substr($methodName, 0, 6) === 'inject') {
 				$propertyName = strtolower(substr($methodName, 6, 1)) . substr($methodName, 7);

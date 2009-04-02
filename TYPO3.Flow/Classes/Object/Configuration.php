@@ -93,7 +93,7 @@ class Configuration {
 	 * Mode of the autowiring feature. One of the AUTOWIRING_MODE_* constants
 	 * @var integer
 	 */
-	protected $autoWiringMode = self::AUTOWIRING_MODE_ON;
+	protected $autowiring = self::AUTOWIRING_MODE_ON;
 
 	/**
 	 * Name of the method to call during the initialization of the object (after dependencies are injected)
@@ -230,25 +230,25 @@ class Configuration {
 	}
 
 	/**
-	 * Setter function for property "autoWiringMode"
+	 * Setter function for property "autowiring"
 	 *
-	 * @param integer $autoWiringMode: One of the AUTOWIRING_MODE_* constants
+	 * @param integer $autowiring: One of the AUTOWIRING_MODE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setAutoWiringMode($autoWiringMode) {
-		if ($autoWiringMode < 0 || $autoWiringMode > 1)  throw new \InvalidArgumentException('Invalid auto wiring mode', 1167824101);
-		$this->autoWiringMode = $autoWiringMode;
+	public function setAutowiring($autowiring) {
+		if ($autowiring < 0 || $autowiring > 1)  throw new \InvalidArgumentException('Invalid auto wiring mode', 1167824101);
+		$this->autowiring = $autowiring;
 	}
 
 	/**
-	 * Returns the injection arguments / properties autoWiringMode for this object
+	 * Returns the injection arguments / properties autowiring for this object
 	 *
 	 * @return integer Value of one of the AUTOWIRING_MODE_* constants
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getAutoWiringMode() {
-		return $this->autoWiringMode;
+	public function getAutowiring() {
+		return $this->autowiring;
 	}
 
 	/**

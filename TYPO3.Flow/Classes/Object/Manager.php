@@ -280,11 +280,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 			$className = $objectName;
 		}
 		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
-		$useReflectionService = $this->reflectionService->isInitialized();
-		if (!$useReflectionService) $class = new \F3\FLOW3\Reflection\ClassReflection($className);
-
-		$classIsAbstract = $useReflectionService ? $this->reflectionService->isClassAbstract($className) : $class->isAbstract();
-		if ($classIsAbstract) throw new \F3\FLOW3\Object\Exception\InvalidClass('Cannot register the abstract class "' . $className . '" as an object.', 1200239129);
 
 		if ($object !== NULL) {
 			if (!is_object($object) || !$object instanceof $className) throw new \F3\FLOW3\Object\Exception\InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);
@@ -293,13 +288,8 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
 		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration($objectName, $className);
 
-		if ($useReflectionService) {
-			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
-				$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
-				$this->objectConfigurations[$objectName]->setScope($scope);
-			}
-		} elseif ($class->isTaggedWith('scope')) {
-			$scope = trim(implode('', $class->getTagValues('scope')));
+		if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
+			$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
 			$this->objectConfigurations[$objectName]->setScope($scope);
 		}
 		$this->registeredObjects[$objectName] = strtolower($objectName);

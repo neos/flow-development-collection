@@ -685,7 +685,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function autoWirePropertiesSetsInjectionPropertyForPropertiesAnnotatedWithInject() {
+	public function autowirePropertiesSetsInjectionPropertyForPropertiesAnnotatedWithInject() {
 		$className = 'F3\FLOW3\Tests\Object\Fixture\ClassWithSetterAndPropertyInjection';
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
@@ -696,7 +696,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
 		$mockObjectBuilder->injectReflectionService($mockReflectionService);
-		$actualProperties = $mockObjectBuilder->_call('autoWireProperties', array(), $className);
+		$actualProperties = $mockObjectBuilder->_call('autowireProperties', array(), $className);
 
 		$this->assertSame('F3\Coffee\Bar', $actualProperties['secondDependency']->getValue());
 	}
@@ -717,7 +717,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
 		$mockObjectBuilder->injectReflectionService($mockReflectionService);
-		$actualProperties = $mockObjectBuilder->_call('autoWireProperties', array(), $className);
+		$actualProperties = $mockObjectBuilder->_call('autowireProperties', array(), $className);
 
 		$this->assertSame('F3\FLOW3\Object\ManagerInterface', $actualProperties['firstDependency']->getValue());
 	}

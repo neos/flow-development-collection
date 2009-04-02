@@ -15,6 +15,7 @@
 #                                                                          #
 
 F3\FLOW3\AOP\Framework:
+  autowiring: off
   properties:
     reflectionService: object: F3\FLOW3\Reflection\Service
     pointcutExpressionParser: object: F3\FLOW3\AOP\PointcutExpressionParser
@@ -37,6 +38,7 @@ F3\FLOW3\AOP\Framework:
         arguments:
           1: value: FLOW3_AOP_ProxyBuildInformation
     configurationManager: object: F3\FLOW3\Configuration\Manager
+    proxyClassBuilder: object: F3\FLOW3\AOP\ProxyClassBuilder
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\AOP\AdvicedConstructorInterceptorBuilder: []
 F3\FLOW3\AOP\AdvicedMethodInterceptorBuilder: []
@@ -85,28 +87,39 @@ F3\FLOW3\AOP\PointcutSettingFilter:
 #                                                                          #
 
 F3\FLOW3\Cache\Manager:
+  autowiring: off
   properties: 
     cacheFactory: object: F3\FLOW3\Cache\Factory
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\Cache\Factory:
+  autowiring: off
   arguments:
     1: object: F3\FLOW3\Object\ManagerInterface
     2: object: F3\FLOW3\Object\FactoryInterface
 F3\FLOW3\Cache\Backend\FileBackend:
+  autowiring: off
   scope: prototype
   properties:
     environment: object: F3\FLOW3\Utility\Environment
     signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\Cache\Backend\MemcachedBackend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Backend\APCBackend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Backend\NullBackend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Frontend\VariableFrontend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Frontend\StringFrontend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Cache\Backend\TransientMemoryBackend:
+  autowiring: off
   scope: prototype
 
 #                                                                          #
@@ -121,12 +134,16 @@ F3\FLOW3\Configuration\Manager: []
 
 F3\FLOW3\Log\LoggerFactory: []
 F3\FLOW3\Log\Logger:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Log\Backend\FileBackend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Log\Backend\NullBackend:
+  autowiring: off
   scope: prototype
 F3\FLOW3\Log\SystemLoggerInterface:
+  autowiring: off
   factoryClassName: F3\FLOW3\Log\LoggerFactory
   className: F3\FLOW3\Log\Logger
   arguments:
@@ -140,6 +157,7 @@ F3\FLOW3\Log\SystemLoggerInterface:
 #                                                                          #
 
 F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime:
+  autowiring: off
   properties:
     cache:
       object:
@@ -150,6 +168,7 @@ F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime:
 
 F3\FLOW3\Monitor\FileMonitor:
   scope: prototype
+  autowiring: off
   properties:
     changeDetectionStrategy: object: FLOW3.monitor.fileMonitor.changeDetectionStrategy
     signalSlotDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
@@ -160,6 +179,7 @@ F3\FLOW3\Monitor\FileMonitor:
 #                                                                          #
 
 F3\FLOW3\Package\ManagerInterface:
+  autowiring: off
   className: F3\FLOW3\Package\Manager
   properties:
     packageMetaDataWriter: object: F3\FLOW3\Package\MetaData\WriterInterface
@@ -176,11 +196,15 @@ F3\FLOW3\Package\MetaData\ReaderInterface:
   className: F3\FLOW3\Package\MetaData\XMLReader
 
 F3\FLOW3\Package\MetaData\WriterInterface:
+  autowiring: off
   className: F3\FLOW3\Package\MetaData\XMLWriter
 
 #                                                                          #
 # Reflection                                                               #
 #                                                                          #
+
+F3\FLOW3\Reflection\Service:
+  autowiring: off
 
 #                                                                          #
 # Resource                                                                 #
@@ -223,13 +247,17 @@ F3\FLOW3\Session\SessionInterface:
 # SignalSlot                                                               #
 #                                                                          #
 
-F3\FLOW3\SignalSlot\Dispatcher: []
+F3\FLOW3\SignalSlot\Dispatcher:
+  autowiring: off
+  properties:
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 
 #                                                                          #
 # Utility                                                                  #
 #                                                                          #
 
 F3\FLOW3\Utility\Environment:
+  autowiring: off
   properties:
     temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase
 
