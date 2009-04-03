@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\AOP;
+namespace F3\FLOW3\Tests\Reflection\Fixture;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,52 +24,18 @@ namespace F3\FLOW3\AOP;
 
 /**
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Reflection
  * @version $Id$
  */
 
 /**
- * Contract and marker interface for the AOP Proxy classes
+ * Proxy of the implementation of dummy interface number 1 for the Reflection tests
  *
  * @package FLOW3
- * @subpackage AOP
+ * @subpackage Reflection
  * @version $Id$
- * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
-
-	/**
-	 * Invokes the joinpoint - calls the target methods.
-	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
-	 * @return mixed Result of the target (ie. original) method
-	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
-
-	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
-	 */
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
-
-	/**
-	 * Returns the value of an arbitrary property.
-	 * The method does not have to check if the property exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return mixed Value of the property
-	 */
-	public function FLOW3_AOP_Proxy_getProperty($propertyName);
-
-	/**
-	 * Sets the value of an arbitrary property.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $propertyValue Value to set
-	 * @return void
-	 */
-	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);}
-
+class ProxyOfImplementationOfDummyInterface1 extends ImplementationOfDummyInterface1 implements \F3\FLOW3\Object\ProxyInterface {
+}
 ?>

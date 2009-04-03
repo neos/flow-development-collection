@@ -133,6 +133,7 @@ class Builder {
 			$this->objectsBeingBuilt[$objectName] = TRUE;
 			$className = $objectConfiguration->getClassName();
 			$customFactoryClassName = $objectConfiguration->getFactoryClassName();
+			if (interface_exists($className) === TRUE) throw new \F3\FLOW3\Object\Exception\InvalidClass('No default implementation for the object type "' . $objectName . '" found in the object configuration. Cannot not instantiate interface ' . $className . '.', 1238761260);
 			if (class_exists($className) === FALSE && $customFactoryClassName === NULL) throw new \F3\FLOW3\Object\Exception\UnknownClass('Class "' . $className . '" which was specified in the object configuration of object "' . $objectName . '" does not exist.', 1229967561);
 
 			$arguments = $objectConfiguration->getArguments();

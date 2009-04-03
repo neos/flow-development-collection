@@ -279,7 +279,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 		if ($className === NULL) {
 			$className = $objectName;
 		}
-		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
+		if (!class_exists($className, TRUE) || interface_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClass('The specified class "' . $className . '" does not exist (or is no class) and therefore cannot be registered as an object.', 1200239063);
 
 		if ($object !== NULL) {
 			if (!is_object($object) || !$object instanceof $className) throw new \F3\FLOW3\Object\Exception\InvalidObject('The object instance must be a valid instance of the specified class (' . $className . ').', 1183742379);

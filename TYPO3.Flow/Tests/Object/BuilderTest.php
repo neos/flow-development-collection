@@ -175,6 +175,19 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidClass
+	 * @author Robert Lemke <robert@typo3.or>g
+	 * @see http://typo3.org/go/issue/3027
+	 */
+	public function createObjectThrowsExceptionIfObjectImplementationIsAnInterface() {
+		$interfaceName = uniqid('Test');
+		eval('namespace F3\Virtual; interface ' . $interfaceName . '{}');
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\Virtual\\' . $interfaceName);
+		$object = $this->objectBuilder->createObject('F3\FLOW3\Tests\Object\Fixture\BasicClass', $objectConfiguration);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function injectMethodIsPreferredOverSetMethod() {

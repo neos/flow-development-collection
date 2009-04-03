@@ -284,8 +284,21 @@ class Service {
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667823);
+		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interface . '" does not exist or is not the name of an interface.', 1238769559);
+
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
-		return (count($classNamesFound) === 1 ? current($classNamesFound) : FALSE);
+		if (count($classNamesFound) === 1) return current($classNamesFound);
+		if (count($classNamesFound) === 2 && isset($this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface'])) {
+			if (array_search($classNamesFound[0], $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return $classNamesFound[0];
+			if (array_search($classNamesFound[1], $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return $classNamesFound[1];
+			if ($interfaceName == 'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1') {
+				var_dump($classNamesFound);
+				var_dump($classNamesFound[1]);
+				var_dump($classNamesFound[1] instanceof \F3\FLOW3\Object\ProxyInterface);
+				var_dump(\F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1 instanceof \F3\FLOW3\Object\ProxyInterface);
+			}
+		}
+		return FALSE;
 	}
 
 	/**
@@ -299,6 +312,7 @@ class Service {
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667824);
+		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interface . '" does not exist or is not the name of an interface.', 1238769560);
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
 	}
 

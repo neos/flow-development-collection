@@ -34,6 +34,7 @@ require_once('Fixture/DummyInterface3.php');
 require_once('Fixture/ImplementationOfDummyInterface1.php');
 require_once('Fixture/Implementation1OfDummyInterface3.php');
 require_once('Fixture/Implementation2OfDummyInterface3.php');
+require_once('Fixture/ProxyOfImplementationOfDummyInterface1.php');
 require_once('Fixture/TaggedClass1.php');
 require_once('Fixture/TaggedClass2.php');
 require_once('Fixture/TaggedClass3.php');
@@ -152,6 +153,43 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface2');
 
 		$this->assertFalse($className);
+	}
+
+	/**
+	 * If two classes implement an interface, the Reflection Service checks if one of them is
+	 * a proxy (implements the Proxy marker interface). If that is the case, it's sure that the
+	 * other class is the original (target) class. In case these conditions are met, the name
+	 * of the proxy class is returned.
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see http://typo3.org/go/issue/3027
+	 */
+	public function getDefaultImplementationClassNameForInterfaceReturnsClassNameOfTheProxyIfTwoClassesWereFound() {
+		$classNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1',
+			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1',
+			'F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1',
+		);
+		$reflectionService = new \F3\FLOW3\Reflection\Service();
+		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
+		$reflectionService->initialize($classNames);
+		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
+		$this->assertEquals('F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1', $className, 'Proxy registered second.');
+
+		$classNames = array(
+			'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1',
+			'F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1',
+			'F3\FLOW3\Tests\Reflection\Fixture\ImplementationOfDummyInterface1',
+		);
+		$reflectionService = new \F3\FLOW3\Reflection\Service();
+		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
+		$reflectionService->injectSystemLogger($this->getMock('F3\FLOW3\Log\SystemLoggerInterface'));
+		$reflectionService->initialize($classNames);
+		$className = $reflectionService->getDefaultImplementationClassNameForInterface('F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1');
+
+		$this->assertEquals('F3\FLOW3\Tests\Reflection\Fixture\ProxyOfImplementationOfDummyInterface1', $className, 'Proxy registered first.');
 	}
 
 	/**
