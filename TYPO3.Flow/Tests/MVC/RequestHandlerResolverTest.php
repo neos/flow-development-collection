@@ -50,8 +50,10 @@ class RequestHandlerResolverTest extends \F3\Testing\BaseTestCase {
 		$mockRequestHandler2->expects($this->once())->method('getPriority')->will($this->returnValue(100));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('RequestHandler1')->will($this->returnValue($mockRequestHandler1));
-		$mockObjectManager->expects($this->at(1))->method('getObject')->with('RequestHandler2')->will($this->returnValue($mockRequestHandler2));
+		$mockObjectManager->expects($this->at(0))->method('isObjectRegistered')->with('RequestHandler1')->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->at(1))->method('getObject')->with('RequestHandler1')->will($this->returnValue($mockRequestHandler1));
+		$mockObjectManager->expects($this->at(2))->method('isObjectRegistered')->with('RequestHandler2')->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->at(3))->method('getObject')->with('RequestHandler2')->will($this->returnValue($mockRequestHandler2));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->once())
