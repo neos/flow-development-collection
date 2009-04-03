@@ -83,6 +83,8 @@ class RequestHandlerResolver {
 
 		$suitableRequestHandlers = array();
 		foreach ($availableRequestHandlerClassNames as $requestHandlerClassName) {
+			if (!$this->objectManager->isObjectRegistered($requestHandlerClassName)) continue;
+
 			$requestHandler = $this->objectManager->getObject($requestHandlerClassName);
 			if ($requestHandler->canHandleRequest()) {
 				$priority = $requestHandler->getPriority();
