@@ -67,9 +67,13 @@ class ProxyClassBuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockIntroduction = $this->getMock('F3\FLOW3\AOP\Introduction', array(), array(), '', FALSE);
 
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->once())->method('isClassImplementationOf')->with($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')->will($this->returnValue(FALSE));
+
 		$methodsToMock = array('getMatchingIntroductions', 'getInterfaceNamesFromIntroductions', 'getMethodsFromTargetClass', 'getIntroducedMethodsFromIntroductions', 'addConstructorToInterceptedMethods', 'getAdvicedMethodsInformation', 'getProxyNamespace', 'renderProxyClassName', 'buildClassAnnotationsCode', 'buildIntroducedInterfacesCode', 'buildMethodsInterceptorCode', 'buildMethodsAndAdvicesArrayCode');
 		$builder = $this->getMock('F3\FLOW3\AOP\ProxyClassBuilder', $methodsToMock, array(), '', FALSE);
 		$builder->setProxyClassTemplate($proxyClassTemplate);
+		$builder->injectReflectionService($mockReflectionService);
 		$builder->expects($this->once())->method('getMatchingIntroductions')->with($aspectContainers, $targetClassName)->will($this->returnValue(array($mockIntroduction)));
 		$builder->expects($this->once())->method('getMethodsFromTargetClass')->will($this->returnValue(array()));
 		$builder->expects($this->once())->method('getInterfaceNamesFromIntroductions')->will($this->returnValue(array('class' => 'Foo', 'method' => 'Bar')));
