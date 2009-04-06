@@ -386,7 +386,10 @@ class Framework {
 		foreach ($classNames as $className) {
 			if (!in_array(substr($className, 0, 12), $this->blacklistedSubPackages)) {
 				if (!$this->reflectionService->isClassReflected($className)) throw new \F3\FLOW3\AOP\Exception\UnknownClass('The class "' . $className . '" does not exist.', 1187348208);
-				if (!$this->reflectionService->isClassTaggedWith($className, 'aspect') && !$this->reflectionService->isClassAbstract($className) && !$this->reflectionService->isClassFinal($className)) {
+				if (!$this->reflectionService->isClassTaggedWith($className, 'aspect') &&
+					!$this->reflectionService->isClassAbstract($className) &&
+					!$this->reflectionService->isClassFinal($className) &&
+					!$this->reflectionService->isClassImplementationOf($className, 'F3\FLOW3\AOP\ProxyInterface')) {
 					$proxyableClasses[] = $className;
 				}
 			}

@@ -144,6 +144,8 @@ class ProxyClassBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function buildProxyClass($targetClassName, array $aspectContainers, $context) {
+		if ($this->reflectionService->isClassImplementationOf($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')) throw new \F3\FLOW3\AOP\Exception\InvalidTargetClass('Cannot proxy class "' . $targetClassName . '" because it is already an AOP proxy class.', 1238858632);
+
 		$introductions = $this->getMatchingIntroductions($aspectContainers, $targetClassName);
 		$introducedInterfaces = $this->getInterfaceNamesFromIntroductions($introductions);
 

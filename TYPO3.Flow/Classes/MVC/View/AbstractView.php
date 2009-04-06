@@ -44,7 +44,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Package\FactoryInterface
+	 * @var \F3\FLOW3\Package\ManagerInterface
 	 */
 	protected $packageManager;
 
