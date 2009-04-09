@@ -39,7 +39,7 @@ namespace F3\FLOW3\Cache\Backend;
  */
 class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
-	const SEPARATOR = '@';
+	const SEPARATOR = '^';
 
 	const EXPIRYTIME_FORMAT = 'YmdHis';
 	const EXPIRYTIME_LENGTH = 14;
