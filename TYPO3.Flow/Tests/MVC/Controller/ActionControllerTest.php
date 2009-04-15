@@ -41,6 +41,32 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function processRequestSticksToSpecifiedSequence() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
+
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array(
+			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'mapRequestArgumentsToControllerArguments', 'initializeView', 'callActionMethod'),
+			array(), '', FALSE);
+		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
+		$mockController->expects($this->at(1))->method('initializeActionMethodArguments');
+		$mockController->expects($this->at(2))->method('initializeAction');
+		$mockController->expects($this->at(3))->method('initializeFooAction');
+		$mockController->expects($this->at(4))->method('mapRequestArgumentsToControllerArguments');
+		$mockController->expects($this->at(5))->method('initializeView');
+		$mockController->expects($this->at(6))->method('callActionMethod');
+
+		$mockController->processRequest($mockRequest, $mockResponse);
+		$this->assertSame($mockRequest, $mockController->_get('request'));
+		$this->assertSame($mockResponse, $mockController->_get('response'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function callActionMethodAppendsStringsReturnedByActionMethodToTheResponseObject() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
 

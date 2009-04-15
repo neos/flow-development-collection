@@ -136,10 +136,15 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		$this->actionMethodName = $this->resolveActionMethodName();
 		$this->initializeActionMethodArguments();
-		$this->initializeArguments();
+
+		$this->initializeAction();
+		$actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
+		if (method_exists($this, $actionInitializationMethodName)) {
+			call_user_func(array($this, $actionInitializationMethodName));
+		}
+
 		$this->mapRequestArgumentsToControllerArguments();
 		if ($this->initializeView) $this->initializeView();
-		$this->initializeAction();
 		$this->callActionMethod();
 	}
 
