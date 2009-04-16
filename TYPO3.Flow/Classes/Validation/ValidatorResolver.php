@@ -56,16 +56,16 @@ class ValidatorResolver {
 	/**
 	 * Returns an object of an appropriate validator for the given class. If no validator is available
 	 * NULL is returned
+	 *
 	 * @param string The classname for which validator is needed
 	 * @return object The resolved validator object or NULL.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function resolveValidatorClass($dataType) {
+	public function resolveValidatorClassName($dataType) {
 		$dataType = $this->unifyDataType($dataType);
 
 		$resolvedClassName = '';
-
 		$possibleClassName = $dataType . 'Validator';
 		if ($this->objectManager->isObjectRegistered($possibleClassName)) {
 			return $possibleClassName;
@@ -83,16 +83,16 @@ class ValidatorResolver {
 	 * Get a validator for a given data type. Returns NULL if no validator was found,
 	 * or an instance of F3\FLOW3\Validation\Validator\ValidatorInterface.
 	 *
-	 * @param string $dataType Data type
+	 * @param string $validatorName Either one of the built-in data types or fully qualified validator class name
+	 * @param array $validatorOptions Options to be passed to the validator
 	 * @return F3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getValidator($dataType) {
-		$validatorClass = $this->resolveValidatorClass($dataType);
-		if ($validatorClass !== NULL) {
-			return $this->objectManager->getObject($validatorClass);
-		}
-		return NULL;
+	public function createValidator($validatorName, array $validatorOptions = array()) {
+		$validatorClassName = $this->resolveValidatorClassName($validatorName);
+		if ($validatorClassName === NULL) return NULL;
+		return $this->objectManager->getObject($validatorClassName, $validatorOptions);
 	}
 
 	/**

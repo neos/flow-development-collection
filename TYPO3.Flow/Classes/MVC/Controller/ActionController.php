@@ -49,6 +49,11 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 */
+	protected $validatorResolver;
+
+	/**
 	 * @var boolean If initializeView() should be called on an action invocation.
 	 */
 	protected $initializeView = TRUE;
@@ -110,6 +115,17 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	}
 
 	/**
+	 * Injects the validator resolver
+	 *
+	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+		$this->validatorResolver = $validatorResolver;
+	}
+
+	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
 	 * @param \F3\FLOW3\MVC\Request $request The current request
@@ -135,7 +151,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->response = $response;
 
 		$this->actionMethodName = $this->resolveActionMethodName();
+		if ($this->initializeView) $this->initializeView();
+
 		$this->initializeActionMethodArguments();
+		$this->initializeActionMethodValidators();
 
 		$this->initializeAction();
 		$actionInitializationMethodName = 'initialize' . ucfirst($this->actionMethodName);
@@ -144,7 +163,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		if ($this->initializeView) $this->initializeView();
 		$this->callActionMethod();
 	}
 
@@ -171,6 +189,53 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 
 			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
+		}
+	}
+
+	/**
+	 * Detects and registers any additional validators for arguments which were
+	 * specified in the @validate annotations of an action method
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	protected function initializeActionMethodValidators() {
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
+		if (isset($methodTagsValues['validate'])) {
+			foreach ($methodTagsValues['validate'] as $validateValue) {
+				$matches = array();
+				preg_match('/^\$(?P<argumentName>[a-zA-Z0-9]+)\s+(?P<validators>.*)$/', $validateValue, $matches);
+				$argumentName = $matches['argumentName'];
+				if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found custom validation rule for non existing argument "' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1239853108);
+
+				preg_match_all('/(?P<validatorName>[a-zA-Z0-9]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $matches['validators'], $matches, PREG_SET_ORDER);
+				foreach ($matches as $match) {
+					$validatorName = $match['validatorName'];
+					$validatorOptions = array();
+					$rawValidatorOptions = isset($match['validatorOptions']) ? explode(',', $match['validatorOptions']) : array();
+					foreach ($rawValidatorOptions as $rawValidatorOption) {
+						if (strpos($rawValidatorOption, '=') !== FALSE) {
+							list($optionName, $optionValue) = explode('=', $rawValidatorOption);
+							$validatorOptions[trim($optionName)] = trim($optionValue);
+						}
+					}
+					$newValidator = $this->validatorResolver->createValidator($validatorName, $validatorOptions);
+					if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . get_class($this) . '->' . $this->actionMethodName . '(): Could not resolve class name for  validator "' . $validatorName . '".', 1239853109);
+
+					$currentValidator = $this->arguments[$argumentName]->getValidator();
+					if ($currentValidator === NULL) {
+						$this->arguments[$argumentName]->setValidator($newValidator);
+					} elseif ($currentValidator instanceof \F3\FLOW3\Validation\Validator\ChainValidator) {
+						$currentValidator->addValidator($newValidator);
+					} else {
+						$this->arguments[$argumentName]->setValidator($this->validatorResolver->createValidator('Chain'));
+						$chain = $this->arguments[$argumentName]->getValidator();
+						$chain->addValidator($currentValidator);
+						$chain->addValidator($newValidator);
+					}
+				}
+			}
 		}
 	}
 

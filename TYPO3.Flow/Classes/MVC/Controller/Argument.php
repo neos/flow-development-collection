@@ -321,13 +321,12 @@ class Argument {
 	/**
 	 * Sets a custom validator which is used supplementary to the base validation
 	 *
-	 * @param mixed $validator Object name of a validator or the actual validator object
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The actual validator object
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setValidator($validator) {
-		$this->validator = ($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface) ? $validator : $this->objectManager->getObject($validator);
+	public function setValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+		$this->validator = $validator;
 		return $this;
 	}
 

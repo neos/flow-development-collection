@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation;
+namespace F3\FLOW3\Validation\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,49 +24,20 @@ namespace F3\FLOW3\Validation;
 
 /**
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  */
 
 /**
- * Testcase for the validator resolver
+ * A "No Such Validator" Exception
  *
  * @package FLOW3
- * @subpackage Tests
+ * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
+class NoSuchValidator extends \F3\FLOW3\Validation\Exception {
 
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function resolveValidatorClassNameThrowsExceptionIfNoValidatorIsAvailable() {
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
-		$this->assertEquals(NULL, $validatorResolver->resolveValidatorClassName('NotExistantClass'));
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function resolveValidatorReturnsTheCorrectValidator() {
-		$className = uniqid('Test');
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface', array(), array(), $className . 'Validator');
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockValidator));
-
-		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
-		$validator = $validatorResolver->createValidator($className);
-		$this->assertSame($mockValidator, $validator);
-	}
 }
 
 ?>
