@@ -318,7 +318,7 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @throws \F3\FLOW3\Configuration\Exception if $methodName does not start with "set" or number of arguments are empty
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function __call($methodName, $arguments) {
+	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) != 'set') {
 			throw new \F3\FLOW3\Configuration\Exception('Method "' . $methodName . '" does not exist.', 1213444319);
 		}
