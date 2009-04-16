@@ -111,18 +111,23 @@ class ClassSchema {
 	}
 
 	/**
-	 * Sets (defines) a specific property and its type.
+	 * Adds (defines) a specific property and its type.
 	 *
 	 * @param string $name Name of the property
 	 * @param string $type Type of the property (see ALLOWED_TYPES_PATTERN)
+	 * @param boolean $lazy Whether the property should be lazy-loaded when reconstituting
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setProperty($name, $type) {
+	public function addProperty($name, $type, $lazy = FALSE) {
 		$matches = array();
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$this->properties[$name] = ($matches[1] === 'int') ? 'integer' : $matches[1];
+			$type = ($matches[1] === 'int') ? 'integer' : $matches[1];
+			$this->properties[$name] = array(
+				'type' => $type,
+				'lazy' => $lazy
+			);
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
@@ -232,8 +237,11 @@ class ClassSchema {
 		if (!array_key_exists($propertyName, $this->properties)) {
 			throw new \InvalidArgumentException('Property "' . $propertyName . '" must be added to the class schema before it can be marked as identity property.', 1233775407);
 		}
+		if ($this->properties[$propertyName]['lazy'] === TRUE) {
+			throw new \InvalidArgumentException('Property "' . $propertyName . '" must not be makred for lazy loading to be marked as identity property.', 1239896904);
+		}
 
-		$this->identityProperties[$propertyName] = $this->properties[$propertyName];
+		$this->identityProperties[$propertyName] = $this->properties[$propertyName]['type'];
 	}
 
 	/**

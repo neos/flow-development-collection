@@ -85,15 +85,15 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function propertyTypesAreDetectedFromVarAnnotations() {
+	public function propertyDataIsDetectedFromVarAnnotations() {
 		$expectedProperties = array(
-			'someBoolean' => 'boolean',
-			'someString' => 'string',
-			'someInteger' => 'integer',
-			'someFloat' => 'float',
-			'someDate' => 'DateTime',
-			'someSplObjectStorage' => 'SplObjectStorage',
-			'someIdentifier' => 'string'
+			'someBoolean' => array('type' => 'boolean', 'lazy' => FALSE),
+			'someString' => array('type' => 'string', 'lazy' => FALSE),
+			'someInteger' => array('type' => 'integer', 'lazy' => FALSE),
+			'someFloat' => array('type' => 'float', 'lazy' => FALSE),
+			'someDate' => array('type' => 'DateTime', 'lazy' => FALSE),
+			'someSplObjectStorage' => array('type' => 'SplObjectStorage', 'lazy' => TRUE),
+			'someIdentifier' => array('type' => 'string', 'lazy' => FALSE)
 		);
 
 		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));

@@ -73,6 +73,7 @@ class Entity1 {
 
 	/**
 	 * @var \SplObjectStorage
+	 * @lazy
 	 */
 	protected $someSplObjectStorage;
 

@@ -88,7 +88,7 @@ class ClassSchemataBuilder {
 			$classSchema->setAggregateRoot($aggregateRoot);
 			foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
 				if (!$this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'var')) {
-					$classSchema->setProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')));
+					$classSchema->addProperty($propertyName, implode(' ', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), $this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'lazy'));
 				}
 				if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
 					$classSchema->setUUIDPropertyName($propertyName);

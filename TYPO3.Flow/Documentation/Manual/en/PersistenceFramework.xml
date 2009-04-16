@@ -20,7 +20,7 @@
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="PersistenceFramework_BlogDomainModel.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure></para>
@@ -83,9 +83,10 @@ class Blog {
     protected $title;
 
     /**
-     * @var array
+     * @var \SplObjectStorage
+     * @lazy
      */
-    protected $posts = array();
+    protected $posts;
 
   ...
 
@@ -97,9 +98,11 @@ class Blog {
     persisted as well by default. The persistence framework knows their types
     by looking at the <emphasis>@var</emphasis> annotation you use anyway when
     documenting your code (you do document your code, right?). In case of the
-    $posts array the persistence framework persists the objects held in that
-    array as independent objects. Apart from those annotations your domain
-    object's code is completely unaware of the persistence
+    $posts property the persistence framework persists the objects held in
+    that SplObjectStorage as independent objects. The
+    <emphasis>@lazy</emphasis> annotation is used when reconstituting a Blog
+    to avoid loading all the posts immediately. Apart from those annotations
+    your domain object's code is completely unaware of the persistence
     infrastructure.</para>
 
     <para>Let's conclude by taking a look at the BlogRepository code:<example>
@@ -184,11 +187,11 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
         <title>Persistence-related code annotations</title>
 
         <tgroup cols="3">
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="4*" />
+          <colspec colwidth="6*"/>
 
           <thead>
             <row>
@@ -257,6 +260,17 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
               <entry>Marks the variable as being relevant for determining the
               identity of an object in the domain.</entry>
             </row>
+
+            <row>
+              <entry>@lazy</entry>
+
+              <entry>Variable</entry>
+
+              <entry>When reconstituting the value of this property will be
+              loaded only when the property is used. Note: This is only
+              supported for properties of type
+              <classname>\SplObjectStorage</classname>.</entry>
+            </row>
           </tbody>
         </tgroup>
       </table></para>
@@ -296,7 +310,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
             <imageobject>
               <imagedata contentdepth="100%"
                          fileref="PersistenceFramework_PersistenceProcess.png"
-                         scalefit="1" width="100%"></imagedata>
+                         scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
         </figure>Keep in mind that the diagram omits some details like dirty
@@ -319,7 +333,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
             <imageobject>
               <imagedata contentdepth="100%"
                          fileref="PersistenceFramework_QueryProcess.png"
-                         scalefit="1" width="100%"></imagedata>
+                         scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
         </figure>For the developer the complexity is hidden between the
@@ -331,6 +345,40 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       and <classname>DataMapper</classname> are part of the FLOW3 persistence
       backend implementation that comes with the TYPO3 Content
       Repository.</para>
+    </section>
+
+    <section>
+      <title>On lazy loading of properties</title>
+
+      <para>When a property is marked for lazy loading, it will be popluated
+      by proxy object upon reconstitution of it's parent. When there is the
+      first interaction with that proxy, it replaces itself with the actual
+      object it represents. This has some implications you should be aware
+      of:<itemizedlist>
+          <listitem>
+            <para>Until it has replaced itself, you cannot check that value
+            with <function>instanceof</function> or expect it to pass type
+            hinting (as it will be a <classname>LazyLoadingProxy</classname>
+            and not the class you probably expect).</para>
+          </listitem>
+
+          <listitem>
+            <para>Replacement happens in the object containing the property,
+            so when you hand the property value to some method (maybe even
+            after coning it) it will continue to have the proxy. It can be
+            used like the real thing, but it will be costly (plus the
+            limitations mentioned above continue to apply).</para>
+          </listitem>
+        </itemizedlist>To explicitly "activate" a lazy loaded property you can
+      use code like the following:</para>
+
+      <example>
+        <title>Explictly activating a LazyLoadingProxy</title>
+
+        <programlisting>if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
+  $this-&gt;lazyProperty-&gt;_loadRealInstance();
+}</programlisting>
+      </example>
     </section>
   </section>
 </chapter>

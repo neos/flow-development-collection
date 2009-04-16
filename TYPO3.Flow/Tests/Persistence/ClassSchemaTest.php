@@ -47,12 +47,29 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
-		$classSchema->setProperty('a', 'string');
-		$classSchema->setProperty('b', 'integer');
+		$classSchema->addProperty('a', 'string');
+		$classSchema->addProperty('b', 'integer');
 
 		$this->assertTrue($classSchema->hasProperty('a'));
 		$this->assertTrue($classSchema->hasProperty('b'));
 		$this->assertFalse($classSchema->hasProperty('c'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getPropertiesReturnsAddedProperties() {
+		$expectedProperties = array(
+			'a' => array('type' => 'string', 'lazy' => FALSE),
+			'b' => array('type' => 'F3\FLOW3\SomeObject', 'lazy' => TRUE)
+		);
+
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', 'string');
+		$classSchema->addProperty('b', 'F3\FLOW3\SomeObject', TRUE);
+
+		$this->assertSame($expectedProperties, $classSchema->getProperties());
 	}
 
 	/**
@@ -69,11 +86,23 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \InvalidArgumentException
+	 */
+	public function markAsIdentityPropertyRejectsLazyLoadedProperties() {
+		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema->addProperty('lazyProperty', 'F3\FLOW3\SomeObject', TRUE);
+
+		$classSchema->markAsIdentityProperty('lazyProperty');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentityPropertiesReturnsNamesAndTypes() {
 		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
-		$classSchema->setProperty('a', 'string');
-		$classSchema->setProperty('b', 'integer');
+		$classSchema->addProperty('a', 'string');
+		$classSchema->addProperty('b', 'integer');
 
 		$classSchema->markAsIdentityProperty('a');
 
