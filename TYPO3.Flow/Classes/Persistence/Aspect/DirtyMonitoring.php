@@ -53,7 +53,13 @@ class DirtyMonitoring {
 	public function isEntityOrValueObject() {}
 
 	/**
-	 * @introduce F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject
+	 * @pointcut F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject && !within(F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface)
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function needsDirtyCheckingAspect() {}
+
+	/**
+	 * @introduce F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect
 	 */
 	public $dirtyMonitoringInterface;
 
@@ -73,7 +79,7 @@ class DirtyMonitoring {
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
-	 * @around method(.*->FLOW3_Persistence_isNew())
+	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isNew())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -89,7 +95,7 @@ class DirtyMonitoring {
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
 	 * @return boolean
-	 * @around method(.*->FLOW3_Persistence_isDirty())
+	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isDirty())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -121,7 +127,7 @@ class DirtyMonitoring {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @before method(.*->FLOW3_Persistence_memorizeCleanState())
+	 * @before F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_memorizeCleanState())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
@@ -136,9 +142,14 @@ class DirtyMonitoring {
 	}
 
 	/**
+	 * Mark object as new after cloning.
+	 * Note: this is done even if an object explicitly implements the
+	 * DirtyMonitoringInterface to make sure it is proxied by the AOP
+	 * framework (we need that to happen)
+	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint
 	 * @return void
-	 * @afterreturning F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject && method(.*->__clone())
+	 * @afterreturning method(.*->__clone())
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
