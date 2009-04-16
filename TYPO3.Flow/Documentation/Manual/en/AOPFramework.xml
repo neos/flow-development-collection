@@ -287,7 +287,7 @@
       <para>FLOW3 uses PHP's reflection capabilities to analyze declarations
       of aspects, pointcuts and advices and implements method interceptors as
       a dynamic proxy. In accordance to the GoF patterns<footnote>
-          <para>GoF means Group of Four and refers to the authors of the
+          <para>GoF means Gang of Four and refers to the authors of the
           classic book <citetitle>Design Patterns – Elements of Reusable
           Object-Oriented Software</citetitle></para>
         </footnote>, the proxy classes act as a placeholders for the target
@@ -370,10 +370,10 @@ class FooSecurityAspect {
       <programlisting language="php">   /**
 	 * A pointcut which matches all methods whose name starts with "delete".
 	 *
-	 * <co xml:id="co.pointcutdeclaration.1" />@pointcut method(.*-&gt;delete.*())
+	 * <co xml:id="co.pointcutdeclaration.1"/>@pointcut method(.*-&gt;delete.*())
 	 * @author John Doe &lt;john@typo3.org&gt;
 	 */
-	public function <co xml:id="co.pointcutdeclaration.2" />deleteMethods() {}</programlisting>
+	public function <co xml:id="co.pointcutdeclaration.2"/>deleteMethods() {}</programlisting>
 
       <calloutlist>
         <callout arearefs="co.pointcutdeclaration.1">
@@ -852,7 +852,7 @@ class PointcutTestingAspect {
             <imageobject>
               <imagedata contentdepth="100%"
                          fileref="AOPFramework_AdviceChain.png" scalefit="1"
-                         width="100%"></imagedata>
+                         width="100%"/>
             </imageobject>
           </mediaobject>
         </figure></para>
@@ -1058,7 +1058,7 @@ class IntroductionAspect {
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="AOPFramework_ProxyBuildingProcess.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>

@@ -12,9 +12,9 @@
   container for different matters: Most of them contain PHP code which adds
   certain functionality, others only contain documentation and yet other
   packages consist of templates, images or other resources. The <link
-  ns6:href="???">TYPO3 project</link> hosts a package repository which acts as
-  a convenient hub for interchanging FLOW3 based packages with other community
-  members.</para>
+  ns6:href="http://typo3.org/">TYPO3 project</link> hosts a package repository
+  which acts as a convenient hub for interchanging FLOW3 based packages with
+  other community members.</para>
 
   <note>
     <para>At the time of this writing the package repository for FLOW3 is
