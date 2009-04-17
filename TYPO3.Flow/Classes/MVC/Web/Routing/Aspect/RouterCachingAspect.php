@@ -101,9 +101,15 @@ class RouterCachingAspect {
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return string Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function cacheResolveCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');
+		foreach ($routeValues as $k => $v) {
+			if (is_object($v)) {
+				$routeValues[$k] = spl_object_hash($v);
+			}
+		}
 		\F3\FLOW3\Utility\Arrays::sortKeysRecursively($routeValues);
 
 		$cacheIdentifier = md5(http_build_query($routeValues));
