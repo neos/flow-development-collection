@@ -172,12 +172,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function createPackageCreatesPackageFolderAndReturnsPackage() {
 		$packageKey = 'YetAnotherTestPackage';
 
-		$mockPackageMetaWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$mockPackageMetaWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
+		$packageMetaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$packageMetaDataWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
 
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->injectPackageMetaDataWriter($mockPackageMetaWriter);
+		$packageManager->injectPackageMetaDataWriter($packageMetaDataWriter);
 		$packageManager->initialize();
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
@@ -193,30 +193,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Check creating a package creates the mandatory Package.xml
-	 * (this doesn't check the content of the file)
-	 *
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function createPackageCreatesPackageMetaDataFile() {
-		$this->markTestIncomplete();
-
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
-		$packagesPath = \vfsStream::url('testDirectory') . '/';
-
-		$packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
-
-		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
-		$this->assertTrue(is_file($packagePath . F3\FLOW3\Package\Package::DIRECTORY_METADATA . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO),
-			'Mandatory Package.xml was created');
-	}
-
-	/**
-	 * Check createPackage uses a meta writer to write the contents of the package meta to a file
-	 *
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -456,19 +432,25 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
-	public function removePackageRemovesPackageDirectoryFromFilesystem() {
-		$this->markTestIncomplete();
+	public function deletePackageDeletesPackageDirectoryFromFilesystem() {
+		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$metaDataWriter->expects($this->any())
+			->method('writePackageMetaData')
+			->will($this->returnValue('<package/>'));
 
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey);
+		$packageManager->createPackage($packageKey, NULL, $packagesPath);
 		$packagePath = $packageManager->getPackagePath($packageKey);
 
-		$packageManager->removePackage($packageKey);
+		$packageManager->deletePackage($packageKey);
 
-		$this->assertFalse(file_exists($packagePath), $packagePath);
+		$this->assertFalse(file_exists($packagePath), $packagePath, "Package directory was not deleted.");
 	}
 }
 ?>
