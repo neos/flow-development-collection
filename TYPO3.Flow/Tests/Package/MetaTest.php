@@ -44,9 +44,8 @@ class MetaDataTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function settingInvalidPackageStateThrowsInvalidArgumentException() {
-		$this->markTestIncomplete();
-#		$meta = new \F3\FLOW3\Package\MetaData('YetAnotherTestPackage');
-#		$meta->setState('Invalid');
+		$meta = new \F3\FLOW3\Package\MetaData('YetAnotherTestPackage');
+		$meta->setState('Invalid');
 	}
 }
 ?>

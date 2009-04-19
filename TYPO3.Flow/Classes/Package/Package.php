@@ -46,6 +46,8 @@ class Package implements PackageInterface {
 	const DIRECTORY_METADATA = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 	const DIRECTORY_TESTS = 'Tests/';
+	
+	const FILENAME_PACKAGEINFO = 'Package.xml';
 
 	/**
 	 * Unique key of this package

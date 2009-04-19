@@ -238,18 +238,23 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @param string $packageKey The package key of the new package
 	 * @param \F3\FLOW3\Package\MetaData $packageMetaData If specified, this package meta object is used for writing the Package.xml file
+	 * @param string $packagesPath If specified, the package will be created in this path, otherwise getLocalPackagesPath() is used
 	 * @return \F3\FLOW3\Package\Package The newly created package
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = NULL) {
+	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
 		if (!$this->isPackageKeyValid($packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('The package key "' . $packageKey . '" is invalid', 1220722210);
 		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExists('The package key "' . $packageKey . '" already exists', 1220722873);
-
+		
 		if ($packageMetaData === NULL) {
 			$packageMetaData = $this->objectFactory->create('F3\FLOW3\Package\MetaData', $packageKey);
 		}
 
-		$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/') . $packageKey . '/';
+		if ($packagesPath === '') {
+			$packagesPath = $this->getLocalPackagesPath();
+		}
+
+		$packagePath = $packagesPath . $packageKey . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
 
 		foreach (
@@ -273,6 +278,17 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
 		}
 		return $package;
+	}
+	
+	/**
+	 * Get the path of the local packages. Will be used to calculate the path
+	 * of a new package in createPackage(...).
+	 *
+	 * @return string The path of the local packages
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getLocalPackagesPath() {
+		return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/');
 	}
 
 	/**

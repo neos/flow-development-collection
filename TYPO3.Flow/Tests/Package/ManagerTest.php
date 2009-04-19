@@ -28,6 +28,8 @@ namespace F3\FLOW3\Package;
  * @version $Id$
  */
 
+require_once('vfs/vfsStream.php');
+
 /**
  * Testcase for the default package manager
  *
@@ -49,6 +51,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+
 		$this->packageManager = new \F3\FLOW3\Package\Manager();
 		$this->packageManager->initialize();
 	}
@@ -149,23 +154,42 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
 	}
+	
+	/**
+	 * FIXME do we test something like this?
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getLocalPackagesPathReturnsPathToLocalPackagesDirectory() {
+		$packagesPath = $this->packageManager->getLocalPackagesPath();
+		$this->assertEquals(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/'), $packagesPath);
+	}	
 
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageCreatesPackageFolderAndReturnsPackage() {
-		$this->markTestIncomplete();
+		$packageKey = 'YetAnotherTestPackage';
+
+		$mockPackageMetaWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$mockPackageMetaWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
 
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectObjectFactory($this->objectFactory);
+		$packageManager->injectPackageMetaDataWriter($mockPackageMetaWriter);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$package = $packageManager->createPackage('YetAnotherTestPackage');
+		$package = $packageManager->createPackage($packageKey, NULL, $packagesPath);
+
+		$packagePath = $packagesPath . $packageKey . '/';
+		$this->assertTrue(is_dir($packagePath), 'Path "' . $packagePath . '" should exist after createPackage');
 
 		$this->assertType('F3\FLOW3\Package\PackageInterface', $package);
-		$this->assertEquals('YetAnotherTestPackage', $package->getPackageKey());
+		$this->assertEquals($packageKey, $package->getPackageKey());
 
-		$this->assertTrue($packageManager->isPackageAvailable('YetAnotherTestPackage'));
+		$this->assertTrue($packageManager->isPackageAvailable($packageKey));
 	}
 
 	/**
@@ -179,9 +203,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->markTestIncomplete();
 
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$packageManager->createPackage('YetAnotherTestPackage');
+		$packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
 
 		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
 		$this->assertTrue(is_file($packagePath . F3\FLOW3\Package\Package::DIRECTORY_METADATA . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO),
@@ -194,23 +220,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function createPackageWithMetaDatadataUsesMetaDataWriter() {
-		$this->markTestIncomplete();
-
-		$metaWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
-		$metaWriter->expects($this->atLeastOnce())
+	public function createPackageWithMetaDataUsesMetaDataWriter() {
+		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$metaDataWriter->expects($this->atLeastOnce())
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager($metaWriter);
+		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$meta = $this->getMock('F3\FLOW3\Package\MetaData', array(), array('YetAnotherTestPackage'));
+		$metaData = $this->getMock('F3\FLOW3\Package\MetaData', array(), array('YetAnotherTestPackage'));
 
-		$packageManager->createPackage('YetAnotherTestPackage', $meta);
-
-		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
-		$this->assertStringEqualsFile($packagePath . F3\FLOW3\Package\Package::DIRECTORY_METADATA . F3\FLOW3\Package\Package::FILENAME_PACKAGEINFO, '<package/>');
+		$packageManager->createPackage('YetAnotherTestPackage', $metaData, $packagesPath);
 	}
 
 	/**
@@ -221,59 +245,76 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageCreatesClassesConfigurationDocumentationResourcesAndTestsFolders() {
-		$this->markTestIncomplete();
-
+		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$metaDataWriter->expects($this->any())
+			->method('writePackageMetaData')
+			->will($this->returnValue('<package/>'));
+		
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
-
-		$packageManager->createPackage('YetAnotherTestPackage');
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
+		
+		$packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
 
 		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
-		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_CLASSES));
-		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION));
-		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION));
-		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_RESOURCES));
-		$this->assertTrue(is_dir($packagePath . F3\FLOW3\Package\Package::DIRECTORY_TESTS));
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES), "Classes directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_RESOURCES), "Resources directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS), "Tests directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_METADATA), "Metadata directory was not created");
 	}
 
 	/**
+	 * Test creation of package with an invalid package key fails. 
+	 * 
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageThrowsExceptionForInvalidPackageKey() {
-		$this->markTestIncomplete();
-
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		try {
-			$packageManager->createPackage('Invalid_Package_Key');
+			$packageManager->createPackage('Invalid_Package_Key', NULL, $packagesPath);
 		} catch(Exception $exception) {
 			$this->assertEquals(1220722210, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
 		}
 
-		$this->assertFalse(is_dir(FLOW3_PATH_PACKAGES . 'Invalid_Package_Key'), 'Package folder with invalid package key was created');
+		$this->assertFalse(is_dir($packagesPath . 'Invalid_Package_Key'), 'Package folder with invalid package key was created');
 	}
 
 	/**
-	 * Check handling of duplicate package keys in package creation
+	 * Test handling of duplicate package keys in package creation.
 	 *
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageThrowsExceptionForExistingPackageKey() {
-		$this->markTestIncomplete();
+		$metaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
+		$metaDataWriter->expects($this->any())
+			->method('writePackageMetaData')
+			->will($this->returnValue('<package/>'));
 
 		$packageManager = new \F3\FLOW3\Package\Manager();
+		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
+		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
+		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
+		$packageManager->createPackage('TestPackage', NULL, $packagesPath);
+		
 		try {
-			$packageManager->createPackage('TestPackage');
+			$packageManager->createPackage('TestPackage', NULL, $packagesPath);
 		} catch(Exception $exception) {
 			$this->assertEquals(1220722873, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
 			return;
 		}
-		$this->fail('Create package didnt throw an exception for an existing package key');
+		$this->fail('Create package didn\'t throw an exception for an existing package key');
 	}
 
 	/**
@@ -300,8 +341,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageKeyValidationWorks() {
-		$this->markTestIncomplete();
-
 		$this->assertFalse($this->packageManager->isPackageKeyValid('Invalid_Package_Key'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('invalidPackageKey'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('1nvalidPackageKey'));
@@ -349,18 +388,16 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
-		$this->markTestIncomplete();
-
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
 
 		try {
-			$packageManager->removePackage('PrettyUnlikelyThatThisPackageExists');
+			$packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
 		} catch (Exception $exception) {
-			$this->assertEquals(1166543253, $exception->getCode(), 'removePackage() throwed an exception.');
+			$this->assertEquals(1166543253, $exception->getCode(), 'deletePackage() threw an exception.');
 			return;
 		}
-		$this->fail('removePackage() did not throw an exception while asking for the path to a non existent package.');
+		$this->fail('deletePackage() did not throw an exception while asking to remove a non existent package.');
 	}
 
 	/**
@@ -368,17 +405,16 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsProtected() {
-		$this->markTestIncomplete();
-
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->initialize();
+
 		try {
-			$packageManager->removePackage('PHP6');
+			$packageManager->deletePackage('PHP6');
 		} catch (Exception $exception) {
-			$this->assertEquals(1220722120, $exception->getCode(), 'removePackage() throwed an exception.');
+			$this->assertEquals(1220722120, $exception->getCode(), 'deletePackage() threw an exception.');
 			return;
 		}
-		$this->fail('removePackage() did not throw an exception while asking for removing a protected package.');
+		$this->fail('deletePackage() did not throw an exception while asking to remove a protected package.');
 	}
 
 	/**

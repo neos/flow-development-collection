@@ -37,7 +37,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * Package.xml file contained in the package
 	 *
 	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
-	 * @return MetaData A package meta instance with the metadata from the package.xml file.
+	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
