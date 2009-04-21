@@ -100,22 +100,31 @@ class ValidatorResolver {
 	 *
 	 * @param string $type Data type to unify
 	 * @return string unified data type
-	 * @author Sebastian Kurfürst <sebastian@typo3.org
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function unifyDataType($type) {
-		switch($type) {
+		switch ($type) {
 			case 'int' :
-			case 'integer' :
 				$type = 'Integer';
 				break;
 			case 'string' :
 				$type = 'Text';
 				break;
-			case 'array' :
-				$type = 'Array';
-			break;
+			case 'bool' :
+				$type = 'Boolean';
+				break;
+			case 'double' :
+				$type = 'Float';
+				break;
+			case 'numeric' :
+				$type = 'Number';
+				break;
+			case 'mixed' :
+				$type = 'Raw';
+				break;
 		}
-		return $type;
+		return ucfirst($type);
 	}
 }
 
