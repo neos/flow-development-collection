@@ -44,6 +44,16 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	protected $objectFactory;
 
 	/**
+	 * @var array
+	 */
+	protected $options = array();
+
+	/**
+	 * @var array
+	 */
+	protected $errors = array();
+
+	/**
 	 * Injector for the object factory
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
@@ -53,6 +63,26 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 		$this->objectFactory = $objectFactory;
 	}
 
+	/**
+	 * Sets options for the validator
+	 *
+	 * @param array $options Options for the validator
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setOptions(array $options) {
+		$this->options = $options;
+	}
+
+	/**
+	 * Returns an array of errors which occurred during the last isValid() call.
+	 *
+	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getErrors() {
+		return $this->errors;
+	}
 }
 
 ?>

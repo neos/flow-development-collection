@@ -266,5 +266,61 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$errors = $this->mappingResults->getErrors();
 		$this->assertSame('Error1', $errors['key3']->getMessage());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapAndValidateMapsTheGivenProperties() {
+		$propertyNames = array('foo', 'bar');
+		$source = array('foo' => 'fooValue', 'bar' => 'barValue');
+		$target = array();
+		$optionalPropertyNames = array();
+		$propertyValidators = array();
+
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockMappingResults->expects($this->any())->method('hasErrors')->will($this->returnValue(FALSE));
+		$mockMappingResults->expects($this->any())->method('hasWarnings')->will($this->returnValue(FALSE));
+
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('map'), array(), '', FALSE);
+		$mapper->_set('mappingResults', $mockMappingResults);
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$mapper->expects($this->once())->method('map');
+		$result = $mapper->mapAndValidate($propertyNames, $source, $target, $optionalPropertyNames, $propertyValidators);
+
+		$this->assertTrue($result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapAndValidateUsesTheSpecifiedValidatorsToValidateTheMappedProperties() {
+		$propertyNames = array('foo', 'bar');
+		$source = array('foo' => 'fooValue', 'bar' => 'barValue');
+		$target = array();
+		$optionalPropertyNames = array();
+		$mockError = $this->getMock('F3\FLOW3\Error\Error', array(), array(), '', FALSE);
+
+		$propertyValidators = array('bar' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'));
+		$propertyValidators['bar']->expects($this->once())->method('isValid')->with('barValue')->will($this->returnValue(FALSE));
+		$propertyValidators['bar']->expects($this->once())->method('getErrors')->will($this->returnValue(array($mockError)));
+
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('hasErrors'), array(), '', FALSE);
+		$mockMappingResults->expects($this->once())->method('hasErrors')->will($this->returnValue(TRUE));
+
+
+		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($mockMappingResults));
+		$this->mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue($mockError));
+
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('dummy'), array(), '', FALSE);
+		$mapper->_set('mappingResults', $mockMappingResults);
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$result = $mapper->mapAndValidate($propertyNames, $source, $target, $optionalPropertyNames, $propertyValidators);
+
+		$this->assertFalse($result);
+	}
 }
 ?>

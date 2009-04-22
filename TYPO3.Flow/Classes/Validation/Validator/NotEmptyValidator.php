@@ -41,23 +41,21 @@ class NotEmptyValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 	/**
 	 * Checks if the given property ($propertyValue) is not empty (NULL or empty string).
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($value) {
+		$this->errors = array();
 		if ($value === NULL) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was NULL.', 1221560910));
+			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was NULL.', 1221560910);
 			return FALSE;
 		}
 		if ($value === '') {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was empty.', 1221560718));
+			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was empty.', 1221560718);
 			return FALSE;
 		}
 		return TRUE;

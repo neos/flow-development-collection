@@ -205,6 +205,8 @@ F3\FLOW3\Package\MetaData\WriterInterface:
 
 F3\FLOW3\Reflection\Service:
   autowiring: off
+  properties:
+    settings: setting: FLOW3
 
 #                                                                          #
 # Resource                                                                 #

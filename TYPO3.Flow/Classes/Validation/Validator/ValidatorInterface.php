@@ -42,18 +42,31 @@ interface ValidatorInterface {
 	/**
 	 * Checks if the given value is valid according to the validator.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE and any errors can
+	 * be retrieved through the getErrors() method.
 	 *
-	 * Depending on the validator implementation, additional options may be passed
-	 * in an array.
+	 * Note that all implementations of this method should set $this->errors() to an
+	 * empty array before validating.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array());
+	public function isValid($value);
+
+	/**
+	 * Sets validation options for the validator
+	 *
+	 * @param array $validationOptions The validation options
+	 * @return void
+	 */
+	public function setOptions(array $validationOptions);
+
+	/**
+	 * Returns an array of errors which occurred during the last isValid() call.
+	 *
+	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 */
+	public function getErrors();
 }
 
 ?>

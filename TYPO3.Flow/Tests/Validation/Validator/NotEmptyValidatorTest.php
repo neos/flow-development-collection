@@ -44,9 +44,7 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function notEmptyValidatorReturnsTrueForASimpleString() {
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($notEmptyValidator->isValid('a not empty string', $validationErrors));
+		$this->assertTrue($notEmptyValidator->isValid('a not empty string'));
 	}
 
 	/**
@@ -60,9 +58,8 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($notEmptyValidator->isValid('', $validationErrors));
+		$this->assertFalse($notEmptyValidator->isValid(''));
 	}
 
 	/**
@@ -76,9 +73,8 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($notEmptyValidator->isValid(NULL, $validationErrors));
+		$this->assertFalse($notEmptyValidator->isValid(NULL));
 	}
 
 	/**
@@ -92,9 +88,9 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$notEmptyValidator->isValid('', $validationErrors);
+		$notEmptyValidator->isValid('');
+		$validationErrors = $notEmptyValidator->getErrors();
 
 		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
 		$this->assertEquals(1221560718, $validationErrors[0]->getCode());
@@ -110,9 +106,7 @@ class NotEmptyValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$notEmptyValidator = new \F3\FLOW3\Validation\Validator\NotEmptyValidator();
 		$notEmptyValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$notEmptyValidator->isValid(NULL, $validationErrors);
+		$notEmptyValidator->isValid(NULL);
 	}
 }
 

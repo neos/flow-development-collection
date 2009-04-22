@@ -63,9 +63,7 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function emailAddressValidatorReturnsTrueForAValidEmailAddress($address) {
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($emailAddressValidator->isValid($address, $validationErrors));
+		$this->assertTrue($emailAddressValidator->isValid($address));
 	}
 
 	/**
@@ -94,9 +92,8 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
 		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($emailAddressValidator->isValid($address, $validationErrors));
+		$this->assertFalse($emailAddressValidator->isValid($address));
 	}
 
 	/**
@@ -109,9 +106,8 @@ class EmailAddressValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$emailAddressValidator = new \F3\FLOW3\Validation\Validator\EmailAddressValidator();
 		$emailAddressValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$emailAddressValidator->isValid('notAValidMail@Address', $validationErrors);
+		$emailAddressValidator->isValid('notAValidMail@Address');
 	}
 
 }

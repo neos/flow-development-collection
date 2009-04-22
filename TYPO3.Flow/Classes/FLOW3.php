@@ -57,9 +57,12 @@ final class FLOW3 {
 	/**
 	 * The version of the FLOW3 framework
 	 */
-	const VERSION = '0.2.0';
+	const VERSION = '1.0.0dev';
 
-	const MINIMUM_PHP_VERSION = '5.3.0beta1';
+	/**
+	 * Required PHP version
+	 */
+	const MINIMUM_PHP_VERSION = '5.3.0RC1';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
@@ -69,28 +72,21 @@ final class FLOW3 {
 	protected $context;
 
 	/**
-	 * The configuration manager
-	 *
 	 * @var \F3\FLOW3\Configuration\Manager
 	 */
 	protected $configurationManager;
 
 	/**
-	 * An instance of the object manager
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
 
 	/**
-	 * A reference to the object factory
-	 *
 	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * A reference to the package manager
-	 *
 	 * @var \F3\FLOW3\Package\ManagerInterface
 	 */
 	protected $packageManager;
@@ -102,15 +98,11 @@ final class FLOW3 {
 	protected $FLOW3Package;
 
 	/**
-	 * Instance of the class loader
-	 *
 	 * @var \F3\FLOW3\Resource\ClassLoader
 	 */
 	protected $classLoader;
 
 	/**
-	 * Instance of the reflection service
-	 *
 	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;

@@ -62,9 +62,7 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function floatValidatorReturnsTrueForAValidFloat($address) {
 		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($floatValidator->isValid($address, $validationErrors));
+		$this->assertTrue($floatValidator->isValid($address));
 	}
 
 	/**
@@ -91,9 +89,7 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$floatValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($floatValidator->isValid($address, $validationErrors));
+		$this->assertFalse($floatValidator->isValid($address));
 	}
 
 	/**
@@ -106,9 +102,8 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
 		$floatValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$floatValidator->isValid(123456, $validationErrors);
+		$floatValidator->isValid(123456);
 	}
 
 }

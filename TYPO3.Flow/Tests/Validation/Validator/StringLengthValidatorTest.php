@@ -44,9 +44,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stgringLengthValidatorReturnsTrueForAStringShorterThanMaxLengthAndLongerThanMinLength() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('this is a very simple string', $validationErrors, array('minLength' => 0, 'maxLength' => 50)));
+		$stringLengthValidator->setOptions(array('minimum' => 0, 'maximum' => 50));
+		$this->assertTrue($stringLengthValidator->isValid('this is a very simple string'));
 	}
 
 	/**
@@ -58,9 +57,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
 		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($stringLengthValidator->isValid('this is a very short string', $validationErrors, array('minLength' => 50, 'maxLength' => 100)));
+		$stringLengthValidator->setOptions(array('minimum' => 50, 'maximum' => 100));
+		$this->assertFalse($stringLengthValidator->isValid('this is a very short string'));
 	}
 
 	/**
@@ -72,9 +70,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
 		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($stringLengthValidator->isValid('this is a very short string', $validationErrors, array('minLength' => 5, 'maxLength' => 10)));
+		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 10));
+		$this->assertFalse($stringLengthValidator->isValid('this is a very short string'));
 	}
 
 	/**
@@ -83,9 +80,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLongerThanThanMinLengthAndMaxLengthNotSpecified() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('this is a very short string', $validationErrors, array('minLength' => 5)));
+		$stringLengthValidator->setOptions(array('minimum' => 5));
+		$this->assertTrue($stringLengthValidator->isValid('this is a very short string'));
 	}
 
 	/**
@@ -94,9 +90,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringShorterThanThanMaxLengthAndMinLengthNotSpecified() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('this is a very short string', $validationErrors, array('maxLength' => 100)));
+		$stringLengthValidator->setOptions(array('maximum' => 100));
+		$this->assertTrue($stringLengthValidator->isValid('this is a very short string'));
 	}
 
 	/**
@@ -105,9 +100,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLengthEqualToMaxLengthAndMinLengthNotSpecified() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('1234567890', $validationErrors, array('maxLength' => 10)));
+		$stringLengthValidator->setOptions(array('maximum' => 10));
+		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
 
 	/**
@@ -116,9 +110,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLengthEqualToMinLengthAndMaxLengthNotSpecified() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('1234567890', $validationErrors, array('minLength' => 10)));
+		$stringLengthValidator->setOptions(array('minimum' => 10));
+		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
 
 	/**
@@ -127,9 +120,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueIfMinLengthAndMaxLengthAreEqualAndTheGivenStringMatchesThisValue() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('1234567890', $validationErrors, array('minLength' => 10, 'maxLength' => 10)));
+		$stringLengthValidator->setOptions(array('minimum' => 10, 'maximum' => 10));
+		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
 
 	/**
@@ -138,9 +130,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueIfTheStringLengthIsEqualToMaxLength() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('1234567890', $validationErrors, array('minLength' => 1, 'maxLength' => 10)));
+		$stringLengthValidator->setOptions(array('minimum' => 1, 'maximum' => 10));
+		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
 
 	/**
@@ -149,9 +140,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorReturnsTrueIfTheStringLengthIsEqualToMinLength() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($stringLengthValidator->isValid('1234567890', $validationErrors, array('minLength' => 10, 'maxLength' => 100)));
+		$stringLengthValidator->setOptions(array('minimum' => 10, 'maximum' => 100));
+		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
 
 	/**
@@ -161,9 +151,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$stringLengthValidator->isValid('1234567890', $validationErrors, array('minLength' => 101, 'maxLength' => 100));
+		$stringLengthValidator->setOptions(array('minimum' => 101, 'maximum' => 100));
+		$stringLengthValidator->isValid('1234567890');
 	}
 
 	/**
@@ -172,13 +161,13 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorInsertsAnErrorObjectIfValidationFails() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create');//->with('F3\FLOW3\Validation\Error', 'The length of the given string was not between minLength and maxLength.', 1238108067);
+		$mockObjectFactory->expects($this->once())->method('create');//->with('F3\FLOW3\Validation\Error', 'The length of the given string was not between minimum and maximum.', 1238108067);
 
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
 		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$stringLengthValidator->setOptions(array('minimum' => 50, 'maximum' => 100));
 
-		$stringLengthValidator->isValid('this is a very short string', $validationErrors, array('minLength' => 50, 'maxLength' => 100));
+		$stringLengthValidator->isValid('this is a very short string');
 	}
 
 	/**
@@ -187,7 +176,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = uniqid('TestClass');
 
@@ -200,8 +189,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 		');
 
 		$object = new $className();
-
-		$this->assertTrue($stringLengthValidator->isValid($object, $validationErrors, array('minLength' => 5, 'maxLength' => 100)));
+		$this->assertTrue($stringLengthValidator->isValid($object));
 	}
 
 	/**
@@ -211,7 +199,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfTheGivenObjectCanNotBeConvertedToAString() {
 		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = uniqid('TestClass');
 
@@ -222,8 +210,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 		');
 
 		$object = new $className();
-
-		$stringLengthValidator->isValid($object, $validationErrors, array('minLength' => 5, 'maxLength' => 100));
+		$stringLengthValidator->isValid($object);
 	}
 }
 

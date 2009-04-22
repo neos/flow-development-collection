@@ -105,16 +105,26 @@ class Mapper {
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
 	 * @param object $target The target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
+	 * @param array $propertyValidators An array of property names and their validators. They'll be used to validate each property
 	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
 	 * @see getMappingResults()
 	 * @see map()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
+	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), array $propertyValidators = array()) {
+		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
+		foreach ($propertyNames as $propertyName) {
+			if (isset($source[$propertyName]) &&
+				array_key_exists($propertyName, $propertyValidators) &&
+				$propertyValidators[$propertyName] !== NULL &&
+				!$propertyValidators[$propertyName]->isValid($source[$propertyName])) {
+				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName': " .
+					implode('. ', $propertyValidators[$propertyName]->getErrors()) , 1240257603), $propertyName);
+			}
+		}
+		if ($this->mappingResults->hasErrors()) return FALSE;
+
 		$this->map($propertyNames, $source, $target, $optionalPropertyNames);
-
-		# TODO validate the results
-
 		return (!$this->mappingResults->hasErrors() && !$this->mappingResults->hasWarnings());
 	}
 
@@ -142,10 +152,10 @@ class Mapper {
 		foreach ($propertyNames as $propertyName) {
 			if (isset($source[$propertyName])) {
 				if (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $source[$propertyName]) === FALSE) {
-					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set on target object." , 1236783102), $propertyName);
+					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			} elseif (!in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Required property '$propertyName' did not exist in the source." , 1236785359), $propertyName);
+				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
 			}
 		}
 		return (!$this->mappingResults->hasErrors() && !$this->mappingResults->hasWarnings());

@@ -49,9 +49,9 @@ class Chain implements \F3\FLOW3\Validation\FilterInterface {
 	 *
 	 * @param object The subject that should be filtered
 	 */
-	public function filter($subject, \F3\FLOW3\Validation\Errors &$errors) {
+	public function filter($subject) {
 		foreach ($this->filters as $filter) {
-			$filter->filter($subject, $errors);
+			$filter->filter($subject);
 		}
 	}
 

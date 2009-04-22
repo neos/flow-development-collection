@@ -44,9 +44,7 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberValidatorReturnsTrueForASimpleInteger() {
 		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($numberValidator->isValid(1029437, $validationErrors));
+		$this->assertTrue($numberValidator->isValid(1029437));
 	}
 
 	/**
@@ -60,9 +58,8 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
 		$numberValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($numberValidator->isValid('not a number', $validationErrors));
+		$this->assertFalse($numberValidator->isValid('not a number'));
 	}
 
 	/**
@@ -75,9 +72,7 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
 		$numberValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$numberValidator->isValid('this is not a number', $validationErrors);
+		$numberValidator->isValid('this is not a number');
 	}
 }
 

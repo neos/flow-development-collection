@@ -42,10 +42,10 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequestSticksToSpecifiedSequence() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request', array(), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response', array(), array(), '', FALSE);
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array(
 			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeView', 'callActionMethod'),

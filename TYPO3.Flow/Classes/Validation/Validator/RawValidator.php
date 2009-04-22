@@ -42,13 +42,32 @@ class RawValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface 
 	 * Always returns TRUE
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors Not used
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($value) {
 		return TRUE;
 	}
+
+	/**
+	 * Sets options for the validator
+	 *
+	 * @param array $options Not used
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setOptions(array $options) {
+	}
+
+	/**
+	 * Returns an array of errors which occurred during the last isValid() call.
+	 *
+	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getErrors() {
+		return array();
+	}
+
 }
 ?>

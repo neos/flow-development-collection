@@ -233,7 +233,9 @@ class Service {
 		if ($this->initialized) throw new \F3\FLOW3\Reflection\Exception('The Reflection Service can only be initialized once.', 1232044696);
 
 		$this->loadFromCache();
-		if ($this->detectClassChanges === TRUE) $this->forgetChangedClasses();
+		if ($this->detectClassChanges === TRUE) {
+			$this->forgetChangedClasses();
+		}
 		$this->reflectEmergedClasses($classNamesToReflect);
 
 		$this->initialized = TRUE;
@@ -289,14 +291,9 @@ class Service {
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
 		if (count($classNamesFound) === 1) return current($classNamesFound);
 		if (count($classNamesFound) === 2 && isset($this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface'])) {
-			if (array_search($classNamesFound[0], $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return $classNamesFound[0];
-			if (array_search($classNamesFound[1], $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return $classNamesFound[1];
-			if ($interfaceName == 'F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1') {
-				var_dump($classNamesFound);
-				var_dump($classNamesFound[1]);
-				var_dump($classNamesFound[1] instanceof \F3\FLOW3\Object\ProxyInterface);
-				var_dump(\F3\FLOW3\Tests\Reflection\Fixture\DummyInterface1 instanceof \F3\FLOW3\Object\ProxyInterface);
-			}
+			if (array_search(current($classNamesFound), $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return current($classNamesFound);
+			next($classNamesFound);
+			if (array_search(current($classNamesFound), $this->interfaceImplementations['F3\FLOW3\Object\ProxyInterface']) !== FALSE) return current($classNamesFound);
 		}
 		return FALSE;
 	}

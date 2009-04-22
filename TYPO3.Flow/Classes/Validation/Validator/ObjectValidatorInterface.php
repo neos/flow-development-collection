@@ -40,49 +40,36 @@ namespace F3\FLOW3\Validation\Validator;
 interface ObjectValidatorInterface extends \F3\FLOW3\Validation\Validator\ValidatorInterface {
 
 	/**
-	 * Checks if objects of the given type can be validated by the validator implementation
+	 * Checks the given object can be validated by the validator implementation
 	 *
-	 * @param string $className Name of the class which should be validated.
-	 * @return boolean TRUE if this validator can validate instances of the given class or FALSE if it can't
+	 * @param object $object The object to be checked
+	 * @return boolean TRUE if this validator can validate instances of the given object or FALSE if it can't
 	 */
-	public function canValidateType($className);
+	public function canValidate($object);
 
 	/**
 	 * Checks if the specified property of the given object is valid.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
-	 *
-	 * Depending on the validator implementation, additional options may be passed
-	 * in an array.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param object $object The object containing the property to validate
 	 * @param string $propertyName Name of the property to validate
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasValidProperty($object, $propertyName, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array());
+	public function hasValidProperty($object, $propertyName);
 
 	/**
 	 * Checks if the given value would be valid as the specified property of the given class.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
-	 *
-	 * Depending on the validator implementation, additional options may be passed
-	 * in an array.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param string $className Name of the class which would contain the property
 	 * @param string $propertyName Name of the property
 	 * @param string $propertyValue The value to validate as a potential property of the given class
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidProperty($className, $propertyName, $propertyValue, \F3\FLOW3\Validation\Errors $errorsm, array $validationOptions = array());
+	public function isValidProperty($className, $propertyName, $propertyValue);
 }
 
 ?>

@@ -44,9 +44,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($alphanumericValidator->isValid('12ssDF34daweidf', $validationErrors));
+		$this->assertTrue($alphanumericValidator->isValid('12ssDF34daweidf'));
 	}
 
 	/**
@@ -58,9 +56,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
 		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($alphanumericValidator->isValid('adsf%&/$jklsfdö', $validationErrors));
+		$this->assertFalse($alphanumericValidator->isValid('adsf%&/$jklsfdö'));
 	}
 
 	/**
@@ -73,9 +69,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
 		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$alphanumericValidator->isValid('adsf%&/$jklsfdö', $validationErrors);
+		$alphanumericValidator->isValid('adsf%&/$jklsfdö');
 	}
 }
 

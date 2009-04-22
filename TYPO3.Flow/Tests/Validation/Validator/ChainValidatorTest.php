@@ -55,17 +55,20 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function allValidatorsInTheChainAreInvocedCorrectly() {
+	public function allValidatorsInTheChainAreInvokedCorrectly() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorObject->expects($this->once())->method('isValid');
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
+
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('isValid');
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValid('some subject', new \F3\FLOW3\Validation\Errors());
+		$validatorChain->isValid('some subject');
 	}
 
 	/**
@@ -76,13 +79,16 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
+
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorChain->isValid('some subject', new \F3\FLOW3\Validation\Errors()));
+		$this->assertTrue($validatorChain->isValid('some subject'));
 	}
 
 	/**
@@ -98,7 +104,6 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$index = $validatorChain->addValidator($secondValidatorObject);
 
 		$validatorChain->removeValidator($index);
-
 		$validatorChain->getValidator($index);
 	}
 

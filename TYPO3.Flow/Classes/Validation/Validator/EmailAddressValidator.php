@@ -40,7 +40,6 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 
 	/**
 	 * Checks if the given value is a valid email address.
-	 * Any errors will be stored in the given errors object.
 	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * The regexp is a modified version of the last one shown on
@@ -134,11 +133,11 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * (from http://ex-parrot.com/~pdw/Mail-RFC822-Address.html)
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($value) {
+		$this->errors = array();
 		if(is_string($value) && preg_match('
 				/
 					[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&\'*+\/=?^_`{|}~-]+)*
@@ -150,7 +149,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 					)
 					\b
 				/ix', $value)) return TRUE;
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "' . $value . '"', 1221559976));
+		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);
 		return FALSE;
 	}
 }

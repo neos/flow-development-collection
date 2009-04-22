@@ -54,32 +54,6 @@ class ValidatorResolver {
 	}
 
 	/**
-	 * Returns an object of an appropriate validator for the given class. If no validator is available
-	 * NULL is returned
-	 *
-	 * @param string The classname for which validator is needed
-	 * @return object The resolved validator object or NULL.
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	public function resolveValidatorClassName($dataType) {
-		$dataType = $this->unifyDataType($dataType);
-
-		$resolvedClassName = '';
-		$possibleClassName = $dataType . 'Validator';
-		if ($this->objectManager->isObjectRegistered($possibleClassName)) {
-			return $possibleClassName;
-		}
-
-		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $dataType . 'Validator';
-		if ($this->objectManager->isObjectRegistered($possibleClassName)) {
-			return $possibleClassName;
-		}
-
-		return NULL;
-	}
-
-	/**
 	 * Get a validator for a given data type. Returns NULL if no validator was found,
 	 * or an instance of F3\FLOW3\Validation\Validator\ValidatorInterface.
 	 *
@@ -90,9 +64,28 @@ class ValidatorResolver {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function createValidator($validatorName, array $validatorOptions = array()) {
-		$validatorClassName = $this->resolveValidatorClassName($validatorName);
-		if ($validatorClassName === NULL) return NULL;
-		return $this->objectManager->getObject($validatorClassName, $validatorOptions);
+		$validatorClassName = $this->resolveValidatorObjectName($validatorName);
+		if ($validatorClassName === FALSE) return NULL;
+		$validator = $this->objectManager->getObject($validatorClassName);
+		$validator->setOptions($validatorOptions);
+		return ($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface) ? $validator : NULL;
+	}
+
+	/**
+	 * Returns an object of an appropriate validator for the given class. If no validator is available
+	 * NULL is returned
+	 *
+	 * @param string $validatorName Either the fully qualified class name of the validator or the short name of a built-in validator
+	 * @return string Name of the validator object or FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function resolveValidatorObjectName($validatorName) {
+		if ($this->objectManager->isObjectRegistered($validatorName)) return $validatorName;
+
+		$possibleClassName = 'F3\FLOW3\Validation\Validator\\' . $this->unifyDataType($validatorName) . 'Validator';
+		if ($this->objectManager->isObjectRegistered($possibleClassName)) return $possibleClassName;
+
+		return FALSE;
 	}
 
 	/**

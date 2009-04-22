@@ -78,6 +78,16 @@ class Error {
 	public function getCode() {
 		return $this->code;
 	}
+
+	/**
+	 * Converts this error into a string
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return $this->message . ' (#' . $this->code . ')';
+	}
 }
 
 ?>

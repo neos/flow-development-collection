@@ -47,10 +47,10 @@ class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
 		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 
-		$this->assertTrue($regularExpressionValidator->isValid('simple1expression', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
-		$this->assertFalse($regularExpressionValidator->isValid('simple1expressions', $validationErrors, array('regularExpression' => '/^simple[0-9]expression$/')));
+		$this->assertTrue($regularExpressionValidator->isValid('simple1expression'));
+		$this->assertFalse($regularExpressionValidator->isValid('simple1expressions'));
 	}
 
 	/**
@@ -59,13 +59,13 @@ class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132);
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130);
 
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator('/^simple[0-9]expression$/');
+		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
 		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
+		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 
-		$regularExpressionValidator->isValid('some subject that will not match', $validationErrors);
+		$regularExpressionValidator->isValid('some subject that will not match');
 	}
 }
 

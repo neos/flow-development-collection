@@ -40,43 +40,80 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveValidatorClassNameReturnsNullIfNoValidatorIsAvailable() {
+	public function resolveValidatorObjectNameReturnsFalseIfValidatorCantBeResolved() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
-		$this->assertEquals(NULL, $validatorResolver->resolveValidatorClassName('NotExistantClass'));
+		$mockObjectManager->expects($this->at(0))->method('isObjectRegistered')->with('Foo')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(1))->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\FooValidator')->will($this->returnValue(FALSE));
+
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('dummy'), array($mockObjectManager));
+		$this->assertSame(FALSE, $validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function resolveValidatorReturnsTheCorrectValidator() {
-		$className = uniqid('Test');
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface', array(), array(), $className . 'Validator');
+	public function resolveValidatorObjectNameReturnsTheGivenArgumentIfAnObjectOfThatNameIsRegistered() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
-		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnValue($mockValidator));
+		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->with('Foo')->will($this->returnValue(TRUE));
 
-		$validatorResolver = new \F3\FLOW3\Validation\ValidatorResolver($mockObjectManager);
-		$validator = $validatorResolver->createValidator($className);
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('dummy'), array($mockObjectManager));
+		$this->assertSame('Foo', $validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resolveValidatorObjectNameCanResolveShortNamesOfBuiltInValidators() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->at(0))->method('isObjectRegistered')->with('Foo')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(1))->method('isObjectRegistered')->with('F3\FLOW3\Validation\Validator\FooValidator')->will($this->returnValue(TRUE));
+
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('dummy'), array($mockObjectManager));
+		$this->assertSame('F3\FLOW3\Validation\Validator\FooValidator', $validatorResolver->_call('resolveValidatorObjectName', 'Foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createValidatorResolvesAndReturnsAValidatorAndPassesTheGivenOptions() {
+		$className = uniqid('Test');
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface', array(), array(), $className);
+		$mockValidator->expects($this->once())->method('setOptions')->with(array('foo' => 'bar'));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->any())->method('getObject')->with($className)->will($this->returnValue($mockValidator));
+
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array($mockObjectManager));
+		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($className)->will($this->returnValue($className));
+		$validator = $validatorResolver->createValidator($className, array('foo' => 'bar'));
 		$this->assertSame($mockValidator, $validator);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createValidatorReturnsNullIfAValidatorCouldNotBeResolved() {
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver',array('resolveValidatorObjectName'), array(), '', FALSE);
+		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('Foo')->will($this->returnValue(FALSE));
+		$validator = $validatorResolver->createValidator('Foo', array('foo' => 'bar'));
+		$this->assertNull($validator);
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolveValidatorClassNameCallsUnifyDataType() {
+	public function resolveValidatorObjectNameCallsUnifyDataType() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
-		$mockValidator = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('unifyDataType'), array($mockObjectManager));
+		$mockValidator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('unifyDataType'), array($mockObjectManager));
 		$mockValidator->expects($this->once())->method('unifyDataType')->with('someDataType');
-		$mockValidator->resolveValidatorClassName('someDataType');
+		$mockValidator->_call('resolveValidatorObjectName', 'someDataType');
 	}
 
 	/**

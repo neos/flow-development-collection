@@ -45,16 +45,25 @@ class ObjectValidatorChainValidator implements \F3\FLOW3\Validation\Validator\Ob
 	protected $validators = array();
 
 	/**
-	 * Checks if classes of the given type can be validated with this validator chain.
-	 * All chained validators have to be able to validate the given class.
-	 *
-	 * @param string $className Name of the class which should be validated.
-	 * @return boolean TRUE if this validator chain can validate instances of the given class or FALSE if it can't
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @var array
 	 */
-	public function canValidateType($className) {
+	protected $options = array();
+
+	/**
+	 * @var array
+	 */
+	protected $errors = array();
+
+	/**
+	 * Checks if the given object can be validated with this validator chain.
+	 * All chained validators have to be able to validate the given object.
+	 *
+	 * @param object $object The object to be checked
+	 * @return boolean TRUE if this validator can validate instances of the given object or FALSE if it can't
+	 */
+	public function canValidate($object) {
 		foreach ($this->validators as $validator) {
-			if ($validator->canValidateType($className) !== TRUE) return FALSE;
+			if ($validator->canValidate($object) !== TRUE) return FALSE;
 		}
 		return FALSE;
 	}
@@ -64,44 +73,59 @@ class ObjectValidatorChainValidator implements \F3\FLOW3\Validation\Validator\Ob
 	 * object. If validation succeeds completely, this method returns TRUE. If at
 	 * least one error occurred, the result is FALSE.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The object that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValid($object, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($object) {
+		$this->errors = array();
 		$objectIsValid = TRUE;
 		foreach ($this->validators as $validator) {
-			$objectIsValid &= $validator->isValid($object, $errors);
+			$objectIsValid &= $validator->isValid($object);
+			$this->errors = array_merge($this->errors, $validator->getErrors());
 		}
 		return (boolean)$objectIsValid;
 	}
 
 	/**
+	 * Sets options for the validator
+	 *
+	 * @param array $options Not used
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setOptions(array $options) {
+	}
+
+	/**
+	 * Returns an array of errors which occurred during the last isValid() call.
+	 *
+	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getErrors() {
+		return $this->errors;
+	}
+
+	/**
 	 * Checks if the specified property of the given object is valid.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
-	 *
-	 * Depending on the validator implementation, additional options may be passed
-	 * in an array.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param object $object The object containing the property to validate
 	 * @param string $propertyName Name of the property to validate
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function hasValidProperty($object, $propertyName, \F3\FLOW3\Validation\Errors $errors,  array $validationOptions = array()) {
+	public function hasValidProperty($object, $propertyName) {
+		$this->errors = array();
 		$propertyIsValid = TRUE;
 		foreach ($this->validators as $validator) {
-			$propertyIsValid &= $validator->hasValidProperty($object, $propertyName, $errors);
+			$propertyIsValid &= $validator->hasValidProperty($object, $propertyName);
+			$this->errors = array_merge($this->errors, $validator->getErrors());
 		}
 		return (boolean)$propertyIsValid;
 	}
@@ -109,24 +133,20 @@ class ObjectValidatorChainValidator implements \F3\FLOW3\Validation\Validator\Ob
 	/**
 	 * Checks if the given value would be valid as the specified property of the given class.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
-	 *
-	 * Depending on the validator implementation, additional options may be passed
-	 * in an array.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param string $className Name of the class which would contain the property
 	 * @param string $propertyName Name of the property
 	 * @param string $propertyValue The value to validate as a potential property of the given class
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions An optional array of further options, specific to the validator implementation
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValidProperty($className, $propertyName, $propertyValue, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValidProperty($className, $propertyName, $propertyValue) {
+		$this->errors = array();
 		$propertyIsValid = TRUE;
 		foreach ($this->validators as $validator) {
-			$propertyIsValid &= $validator->isValidProperty($className, $propertyName, $propertyValue, $errors);
+			$propertyIsValid &= $validator->isValidProperty($className, $propertyName, $propertyValue);
+			$this->errors = array_merge($this->errors, $validator->getErrors());
 		}
 		return (boolean)$propertyIsValid;
 	}

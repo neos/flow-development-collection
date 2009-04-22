@@ -42,7 +42,7 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function addingFilterssToAValidatorChainWorks() {
+	public function addingFiltersToAValidatorChainWorks() {
 		$filterChain = new \F3\FLOW3\Validation\Filter\Chain();
 		$filterObject = $this->getMock('F3\FLOW3\Validation\FilterInterface');
 
@@ -65,7 +65,7 @@ class ChainTest extends \F3\Testing\BaseTestCase {
 		$filterChain->addFilter($filterObject);
 		$filterChain->addFilter($secondFilterObject);
 
-		$filterChain->filter('some subject', new \F3\FLOW3\Validation\Errors());
+		$filterChain->filter('some subject');
 	}
 
 	/**

@@ -60,9 +60,7 @@ class IntegerValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function integerValidatorReturnsTrueForAValidInteger($integer) {
 		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($integerValidator->isValid($integer, $validationErrors));
+		$this->assertTrue($integerValidator->isValid($integer));
 	}
 
 	/**
@@ -91,9 +89,8 @@ class IntegerValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
 		$integerValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($integerValidator->isValid($integer, $validationErrors));
+		$this->assertFalse($integerValidator->isValid($integer));
 	}
 
 	/**
@@ -106,9 +103,8 @@ class IntegerValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$integerValidator = new \F3\FLOW3\Validation\Validator\IntegerValidator();
 		$integerValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$integerValidator->isValid('not a number', $validationErrors);
+		$integerValidator->isValid('not a number');
 	}
 
 }

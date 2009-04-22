@@ -31,38 +31,39 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * Validator based on regular expressions
  *
+ * The regular expression is specified in the options by using the array key "regularExpression"
+ *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($value) matches the given regular expression.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Contains the regular expression (key: 'regularExpression')
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
-		if (!isset($validationOptions['regularExpression'])) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132));
+	public function isValid($value) {
+		$this->errors = array();
+		if (!isset($this->options['regularExpression'])) {
+			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132);
 			return FALSE;
 		}
-		$result = preg_match($validationOptions['regularExpression'], $value);
+		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $value . '"', 1221565130));
+			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
 			return FALSE;
 		}
 		if ($result === FALSE) {
-			$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression "' . $validationOptions['regularExpression'] . '" contained an error.', 1221565131));
+			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression "' . $this->options['regularExpression'] . '" contained an error.', 1221565131);
 			return FALSE;
 		}
 		return TRUE;

@@ -176,20 +176,8 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->initializeArguments();
+		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-	}
-
-	/**
-	 * Initializes (registers / defines) arguments of this controller.
-	 *
-	 * Override this method to add arguments which can later be accessed
-	 * by the action methods.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function initializeArguments() {
 	}
 
 	/**
@@ -286,6 +274,17 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
+	 * Collects the base validators which were defined for the data type of each
+	 * controller argument and adds them to the argument's validator chain.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeControllerArgumentsBaseValidators() {
+
+	}
+
+	/**
 	 * Maps arguments delivered by the request object to the local controller arguments.
 	 *
 	 * @return void
@@ -293,11 +292,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		$optionalPropertyNames = array();
+		$validators = array();
 		$allPropertyNames = $this->arguments->getArgumentNames();
 		foreach ($allPropertyNames as $propertyName) {
 			if ($this->arguments[$propertyName]->isRequired() === FALSE) $optionalPropertyNames[] = $propertyName;
+			$validators[$propertyName] = $this->arguments[$propertyName]->getValidator();
 		}
-		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames);
+		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validators);
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 }

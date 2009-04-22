@@ -456,6 +456,37 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
       </section>
 
       <section>
+        <title>Argument Validation</title>
+
+        <para>All arguments passed to the action methods will automatically
+        validated through their base validation rules defined in the
+        respective models. Additional validation rules can be defined by using
+        the <varname>@validate</varname> annotation. The syntax is similar to
+        a regulare <varname>@validate</varname> declaration with the addition
+        that the argument name must be specified:</para>
+
+        <example>
+          <title>Additional validation rules in an action method</title>
+
+          <programlisting>/**
+ * An example action method
+ *
+ * @param string $emailAddress Some email address
+ * @param string $streetName Some street name
+ * @param F3\Foo\Customer $customer A customer object
+ * @return void
+ * @validate $emailAddress EmailAddress
+ * @validate $streeName AlphaNumeric, StringLength(minimum = 5, maximum = 100)
+ * @validate $customer F3\Foo\PlatinumCustomerValidator
+ */
+public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $customer) {
+   
+}
+</programlisting>
+        </example>
+      </section>
+
+      <section>
         <title>Action Methods</title>
 
         <para>$this-&gt;indexActionMethodName</para>

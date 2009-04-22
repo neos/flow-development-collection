@@ -41,19 +41,17 @@ class NumberValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	/**
 	 * Checks if the given value is a valid number.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($value) {
+		$this->errors = array();
 		if (is_numeric($value)) return TRUE;
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $value . '"', 1221563685));
+		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "' . $value . '"', 1221563685);
 		return FALSE;
 	}
 }

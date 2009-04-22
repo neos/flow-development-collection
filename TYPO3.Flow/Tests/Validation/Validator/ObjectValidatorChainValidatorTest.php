@@ -47,7 +47,6 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 
 		$index = $validatorChain->addValidator($validatorObject);
-
 		$this->assertEquals($validatorObject, $validatorChain->getValidator($index));
 	}
 
@@ -56,17 +55,19 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function canValidateTypeAsksAllValidatorsInTheChainCorrectly() {
+	public function canValidateAsksAllValidatorsInTheChainCorrectly() {
+		$object = new \stdclass();
+
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
-		$validatorObject->expects($this->once())->method('canValidateType')->with('SomeClass')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->once())->method('canValidate')->with($object)->will($this->returnValue(TRUE));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
-		$secondValidatorObject->expects($this->once())->method('canValidateType')->with('SomeClass')->will($this->returnValue(FALSE));
+		$secondValidatorObject->expects($this->once())->method('canValidate')->with($object)->will($this->returnValue(FALSE));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$result = $validatorChain->canValidateType('SomeClass');
+		$result = $validatorChain->canValidate($object);
 		$this->assertFalse($result);
 	}
 
@@ -78,13 +79,15 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$validatorObject->expects($this->once())->method('isValidProperty');
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('isValidProperty');
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValidProperty('some class', 'some property', 'some value', new \F3\FLOW3\Validation\Errors);
+		$validatorChain->isValidProperty('some class', 'some property', 'some value');
 	}
 
 	/**
@@ -95,13 +98,15 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$validatorObject->expects($this->once())->method('hasValidProperty');
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('hasValidProperty');
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->hasValidProperty('some object', 'some property', new \F3\FLOW3\Validation\Errors);
+		$validatorChain->hasValidProperty('some object', 'some property');
 	}
 
 	/**
@@ -112,13 +117,15 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$validatorObject->expects($this->once())->method('isValid');
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$secondValidatorObject->expects($this->once())->method('isValid');
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->isValid('some object', new \F3\FLOW3\Validation\Errors);
+		$validatorChain->isValid('some object');
 	}
 
 	/**
@@ -129,13 +136,15 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$validatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('isValidProperty')->will($this->returnValue(TRUE));
+		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
 
-		$this->assertTrue($validatorChain->isValidProperty('some class', 'some property', 'some value', new \F3\FLOW3\Validation\Errors));
+		$this->assertTrue($validatorChain->isValidProperty('some class', 'some property', 'some value'));
 	}
 
 	/**
@@ -151,7 +160,6 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$index = $validatorChain->addValidator($secondValidatorObject);
 
 		$validatorChain->removeValidator($index);
-
 		$validatorChain->getValidator($index);
 	}
 
@@ -162,7 +170,6 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function accessingANotExistingObjectValidatorIndexThrowsException() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
-
 		$validatorChain->getValidator(100);
 	}
 
@@ -173,7 +180,6 @@ class ObjectValidatorChainValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function removingANotExistingObjectValidatorIndexThrowsException() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ObjectValidatorChainValidator();
-
 		$validatorChain->removeValidator(100);
 	}
 }

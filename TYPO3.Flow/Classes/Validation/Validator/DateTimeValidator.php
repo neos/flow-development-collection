@@ -41,20 +41,17 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 	/**
 	 * Checks if the given value is a valid DateTime object.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
 	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
-		if ($value instanceof \DateTime) {
-			return TRUE;
-		}
-		$errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid DateTime. Got: "' .gettype($value) . '"', 1238087674));
+	public function isValid($value) {
+		$this->errors = array();
+		if ($value instanceof \DateTime) return TRUE;
+		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid DateTime. Got: "' .gettype($value) . '"', 1238087674);
 		return FALSE;
 	}
 }

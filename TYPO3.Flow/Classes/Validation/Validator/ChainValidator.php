@@ -42,7 +42,17 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	/**
 	 * @var array
 	 */
+	protected $options = array();
+
+	/**
+	 * @var array
+	 */
 	protected $validators = array();
+
+	/**
+	 * @var array
+	 */
+	protected $errors = array();
 
 	/**
 	 * Checks if the given value is valid according to the validators of the chain..
@@ -51,17 +61,37 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	 * be stored in the given errors object.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions Not used
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
+	public function isValid($value) {
+		$this->errors = array();
 		$subjectIsValid = TRUE;
 		foreach ($this->validators as $validator) {
-			$subjectIsValid &= $validator->isValid($value, $errors);
+			$subjectIsValid &= $validator->isValid($value);
+			$this->errors = array_merge($this->errors, $validator->getErrors());
 		}
 		return (boolean)$subjectIsValid;
+	}
+
+	/**
+	 * Sets options for the validator
+	 *
+	 * @param array $options Not used
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setOptions(array $options) {
+	}
+
+	/**
+	 * Returns an array of errors which occurred during the last isValid() call.
+	 *
+	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getErrors() {
+		return $this->errors;
 	}
 
 	/**

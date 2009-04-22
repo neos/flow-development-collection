@@ -35,42 +35,46 @@ namespace F3\FLOW3\Validation\Validator;
  * @subpackage Validation
  * @version $Id: TextValidator.php 1990 2009-03-12 13:59:17Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($value) is a valid string and its length
-	 * is between 'minLength' (defaults to 0 if not specified) and 'maxLength' (defaults to infinite if not specified)
-	 * to be specified in the $validationOptions.
+	 * is between 'minimum' (defaults to 0 if not specified) and 'maximum' (defaults to infinite if not specified)
+	 * to be specified in the validation options.
 	 *
-	 * If at least one error occurred, the result is FALSE and any errors will
-	 * be stored in the given errors object.
+	 * If at least one error occurred, the result is FALSE.
 	 *
 	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @param array $validationOptions array with the keys 'minLength' and 'maxLength'
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @throws F3\FLOW3\Validation\Exception\InvalidValidationOptions
 	 * @throws F3\FLOW3\Validation\Exception\InvalidSubject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function isValid($value, \F3\FLOW3\Validation\Errors $errors, array $validationOptions = array()) {
-		if (isset($validationOptions['minLength'])
-			&& isset($validationOptions['maxLength'])
-			&& $validationOptions['maxLength'] < $validationOptions['minLength']) {
-
-			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptions('The \'maxLength\' is shorter than the \'minLength\' in the StringLengthValidator.', 1238107096);
+	public function isValid($value) {
+		$this->errors = array();
+		if (isset($this->options['minimum']) && isset($this->options['maximum'])
+			&& $this->options['maximum'] < $this->options['minimum']) {
+			throw new \F3\FLOW3\Validation\Exception\InvalidValidationOptions('The \'maximum\' is shorter than the \'minimum\' in the StringLengthValidator.', 1238107096);
 		}
 
 		if (is_object($value) && !method_exists($value, '__toString')) throw new \F3\FLOW3\Validation\Exception\InvalidSubject('The given object could not be converted to a string.', 1238110957);
 
 		$stringLength = \F3\PHP6\Functions::strlen($value);
-
 		$isValid = TRUE;
-		if (isset($validationOptions['minLength']) && $stringLength < $validationOptions['minLength']) $isValid = FALSE;
-		if (isset($validationOptions['maxLength']) && $stringLength > $validationOptions['maxLength']) $isValid = FALSE;
+		if (isset($this->options['minimum']) && $stringLength < $this->options['minimum']) $isValid = FALSE;
+		if (isset($this->options['maximum']) && $stringLength > $this->options['maximum']) $isValid = FALSE;
 
-		if ($isValid === FALSE) $errors->append($this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string was not between minLength and maxLength.', 1238108067));
+		if ($isValid === FALSE) {
+			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
+				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string was not between ' . $this->options['minimum'] . ' and ' . $this->options['minimum'] . ' characters.', 1238108067);
+			} elseif (isset($this->options['minimum'])) {
+				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string less than ' . $this->options['minimum'] . ' characters.', 1238108068);
+			} else {
+				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string exceeded ' . $this->options['maximum'] . ' characters.', 1238108069);
+			}
+		}
 
 		return $isValid;
 	}

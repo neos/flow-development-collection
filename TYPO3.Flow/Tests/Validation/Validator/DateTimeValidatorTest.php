@@ -44,9 +44,7 @@ class DateTimeValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function dateTimeValidatorReturnsTrueForAValidDateTimeObject() {
 		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($dateTimeValidator->isValid(new \DateTime, $validationErrors));
+		$this->assertTrue($dateTimeValidator->isValid(new \DateTime));
 	}
 
 	/**
@@ -60,9 +58,8 @@ class DateTimeValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
 		$dateTimeValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($dateTimeValidator->isValid('blah', $validationErrors));
+		$this->assertFalse($dateTimeValidator->isValid('blah'));
 	}
 
 }

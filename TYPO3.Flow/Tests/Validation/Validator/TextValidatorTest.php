@@ -44,9 +44,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function textValidatorReturnsTrueForASimpleString() {
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertTrue($textValidator->isValid('this is a very simple string', $validationErrors));
+		$this->assertTrue($textValidator->isValid('this is a very simple string'));
 	}
 
 	/**
@@ -58,9 +56,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors));
+		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>'));
 	}
 
 	/**
@@ -72,9 +68,8 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertFalse($textValidator->isValid('%3cspan style="color: #BBBBBB;"%3ea nice text%3c/span%3e', $validationErrors));
+		$this->assertFalse($textValidator->isValid('%3cspan style="color: #BBBBBB;"%3ea nice text%3c/span%3e'));
 	}
 
 	/**
@@ -87,9 +82,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
 		$textValidator->injectObjectFactory($mockObjectFactory);
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
-
-		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>', $validationErrors);
+		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>');
 	}
 }
 

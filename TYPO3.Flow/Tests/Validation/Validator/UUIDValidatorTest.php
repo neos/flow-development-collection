@@ -43,11 +43,10 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function validatorAcceptsCorrectUUIDs() {
-		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 
-		$this->assertTrue($validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1', $errors));
-		$this->assertTrue($validator->isValid('533548ca-8914-4a19-9404-ef390a6ce387', $errors));
+		$this->assertTrue($validator->isValid('e104e469-9030-4b98-babf-3990f07dd3f1'));
+		$this->assertTrue($validator->isValid('533548ca-8914-4a19-9404-ef390a6ce387'));
 	}
 
 	/**
@@ -57,11 +56,10 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	public function tooShortUUIDIsRejected() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
-		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
-		$this->assertFalse($validator->isValid('e104e469-9030-4b98-babf-3990f07', $errors));
+		$this->assertFalse($validator->isValid('e104e469-9030-4b98-babf-3990f07'));
 	}
 
 	/**
@@ -71,11 +69,10 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	public function UUIDWithOtherThanHexValuesIsRejected() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
-		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
-		$this->assertFalse($validator->isValid('e104e469-9030-4g98-babf-3990f07dd3f1', $errors));
+		$this->assertFalse($validator->isValid('e104e469-9030-4g98-babf-3990f07dd3f1'));
 	}
 
 	/**
@@ -87,11 +84,10 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid UUID. Got: "e104e469-9030-4b98-babf-3990f07"', 1221565853);
 
-		$errors = new \F3\FLOW3\Validation\Errors();
 		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
 		$validator->injectObjectFactory($mockObjectFactory);
 
-		$validator->isValid('e104e469-9030-4b98-babf-3990f07', $errors);
+		$validator->isValid('e104e469-9030-4b98-babf-3990f07');
 	}
 }
 

@@ -44,13 +44,12 @@ class RawValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theRawValidatorAlwaysReturnsTRUE() {
 		$rawValidator = new \F3\FLOW3\Validation\Validator\RawValidator();
-		$validationErrors = new \F3\FLOW3\Validation\Errors();
 
-		$this->assertTrue($rawValidator->isValid('simple1expression', $validationErrors));
-		$this->assertTrue($rawValidator->isValid('', $validationErrors));
-		$this->assertTrue($rawValidator->isValid(NULL, $validationErrors));
-		$this->assertTrue($rawValidator->isValid(FALSE, $validationErrors));
-		$this->assertTrue($rawValidator->isValid(new \ArrayObject(), $validationErrors));
+		$this->assertTrue($rawValidator->isValid('simple1expression'));
+		$this->assertTrue($rawValidator->isValid(''));
+		$this->assertTrue($rawValidator->isValid(NULL));
+		$this->assertTrue($rawValidator->isValid(FALSE));
+		$this->assertTrue($rawValidator->isValid(new \ArrayObject()));
 	}
 }
 

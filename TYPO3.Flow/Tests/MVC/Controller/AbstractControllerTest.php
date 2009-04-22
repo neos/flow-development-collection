@@ -148,5 +148,50 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$controller->_call('throwStatus', 404, 'File Really Not Found', '<h1>All wrong!</h1><p>Sorry, the file does not exist.</p>');
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapRequestArgumentsToControllerArgumentsPreparesInformationAndValidatorsAndMapsAndValidates() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockValidators = array(
+			'foo' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
+			'bar' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
+		);
+
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
+		$mockArgumentFoo->expects($this->any())->method('getName')->will($this->returnValue('foo'));
+		$mockArgumentFoo->expects($this->once())->method('getValidator')->will($this->returnValue($mockValidators['foo']));
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar'));
+		$mockArgumentBar->expects($this->any())->method('getName')->will($this->returnValue('bar'));
+		$mockArgumentBar->expects($this->once())->method('getValidator')->will($this->returnValue($mockValidators['bar']));
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument($mockArgumentFoo);
+		$mockArguments->addArgument($mockArgumentBar);
+
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockRequest->expects($this->once())->method('getArguments')->will($this->returnValue(array('requestFoo', 'requestBar')));
+
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
+
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
+		$mockPropertyMapper->expects($this->once())->method('mapAndValidate')->
+			with(array('foo', 'bar'), array('requestFoo', 'requestBar'), $mockArguments, array(), $mockValidators)->
+			will($this->returnValue(TRUE));
+		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('propertyMapper', $mockPropertyMapper);
+
+		$controller->_call('mapRequestArgumentsToControllerArguments');
+
+		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
+	}
 }
 ?>
