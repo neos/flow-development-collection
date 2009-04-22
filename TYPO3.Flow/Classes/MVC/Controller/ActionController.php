@@ -133,7 +133,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canProcessRequest(\F3\FLOW3\MVC\Request $request) {
-		if (!$request instanceof \F3\FLOW3\MVC\Web\Request) return FALSE;
 		return parent::canProcessRequest($request);
 	}
 
