@@ -1441,7 +1441,7 @@ class Foo {
         <example>
           <title>Nesting object configuration</title>
 
-          <programlisting language="yaml">F3\MyPackage\Controller\DefaultController:
+          <programlisting language="yaml">F3\MyPackage\Controller\StandardController:
   properties:
     cache:
       object:

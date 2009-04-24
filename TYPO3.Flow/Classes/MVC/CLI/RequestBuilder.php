@@ -81,7 +81,7 @@ class RequestBuilder {
 		if ($this->environment->getCommandLineArgumentCount() < 2) {
 			$request->setControllerPackageKey('FLOW3');
 			$request->setControllerSubpackageKey('MVC');
-			$request->setControllerName('Default');
+			$request->setControllerName('Standard');
 			return $request;
 		}
 

@@ -49,13 +49,13 @@ class ProcessorTest extends \F3\Testing\BaseTestCase {
 		<base href="###BASEURI###" />
 		<style type="text/css">
 			.F3_WidgetLibrary_Widgets_FloatingWindow {
-				background-image: url(DefaultView_FloatingWindow.png);
+				background-image: url(StandardView_FloatingWindow.png);
 			}
 		</style>
 		<link rel="stylesheet" href="SomeCoolStyle.css" />
 	</head>
 	<body>
-		<img src="DefaultView_Package.png" class="DefaultView_Package" />
+		<img src="StandardView_Package.png" class="StandardView_Package" />
 		<a href="http://test.invalid/">do not change this link</a>
 		<a href="/an/absolute/URL/">nor this link</a>
 		<a href="#samePage">nor that link</a>
@@ -68,13 +68,13 @@ class ProcessorTest extends \F3\Testing\BaseTestCase {
 		<base href="###BASEURI###" />
 		<style type="text/css">
 			.F3_WidgetLibrary_Widgets_FloatingWindow {
-				background-image: url(test/prefix/to/insert/DefaultView_FloatingWindow.png);
+				background-image: url(test/prefix/to/insert/StandardView_FloatingWindow.png);
 			}
 		</style>
 		<link rel="stylesheet" href="test/prefix/to/insert/SomeCoolStyle.css" />
 	</head>
 	<body>
-		<img src="test/prefix/to/insert/DefaultView_Package.png" class="DefaultView_Package" />
+		<img src="test/prefix/to/insert/StandardView_Package.png" class="StandardView_Package" />
 		<a href="http://test.invalid/">do not change this link</a>
 		<a href="/an/absolute/URL/">nor this link</a>
 		<a href="#samePage">nor that link</a>

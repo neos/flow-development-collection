@@ -78,7 +78,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	public function simpleCLIAccessBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('FLOW3');
 		$this->mockRequest->expects($this->once())->method('setControllerSubpackageKey')->with('MVC');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 
 		$this->environment->SERVER['argc'] = 1;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -113,7 +113,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 3;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 
 		$request = $this->requestBuilder->build();
 	}
@@ -126,13 +126,13 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function checkIfCLIAccessWithPackageControllerAndActionNameBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 
 		$this->environment->SERVER['argc'] = 4;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'list';
 
 		$request = $this->requestBuilder->build();
@@ -146,7 +146,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function CLIAccessWithPackageControllerActionAndArgumentsBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->exactly(2))->method('setArgument');
 		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
@@ -155,7 +155,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=value2';
@@ -171,7 +171,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function checkIfCLIAccessWithPackageControllerActionAndArgumentsToleratesSpaces() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->exactly(4))->method('setArgument');
 		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
@@ -182,7 +182,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 12;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=';
 		$this->environment->SERVER['argv'][5] = 'value';
@@ -204,7 +204,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function CLIAccessWithShortArgumentsBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->exactly(3))->method('setArgument');
 		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('d', 'valued');
@@ -214,7 +214,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 10;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '-d';
 		$this->environment->SERVER['argv'][5] = 'valued';
@@ -234,7 +234,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function CLIAccessWithArgumentsWithAndWithoutValuesBuildsCorrectRequest() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Default');
+		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
 		$this->mockRequest->expects($this->exactly(14))->method('setArgument');
 		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
@@ -255,7 +255,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 27;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'list';
 		$this->environment->SERVER['argv'][4] = '--test-argument=value';
 		$this->environment->SERVER['argv'][5] = '--test-argument2=';
@@ -335,7 +335,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->environment->SERVER['argc'] = 7;
 		$this->environment->SERVER['argv'][0] = 'index.php';
 		$this->environment->SERVER['argv'][1] = 'TestPackage';
-		$this->environment->SERVER['argv'][2] = 'Default';
+		$this->environment->SERVER['argv'][2] = 'Standard';
 		$this->environment->SERVER['argv'][3] = 'index';
 		$this->environment->SERVER['argv'][4] = '--';
 		$this->environment->SERVER['argv'][5] = 'file1';

@@ -104,9 +104,9 @@
   Demo/
     Classes/
       Controller/
-        DefaultController.php</literallayout>
+        StandardController.php</literallayout>
 
-      <para>The DefaultController class looks as simple as this (leaving out
+      <para>The StandardController class looks as simple as this (leaving out
       the very recommended comments):</para>
 
       <example>
@@ -114,7 +114,7 @@
 
         <programlisting language="PHP">namespace F3\Demo\Controller;
 
-class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
    public function indexAction() {
       return "Hello World!";
    }
@@ -136,18 +136,19 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
   Demo/
     Classes/
       Controller/
-        DefaultController.php
+        StandardController.php
       View/
-        DefaultIndex.php</literallayout>
+        Standard/
+          Index.php</literallayout>
 
       <para>The view's code is equally trivial:</para>
 
       <example>
         <title>Hello World! view</title>
 
-        <programlisting language="php">namespace F3\Demo\View;
+        <programlisting language="php">namespace F3\Demo\View\Standard;
 
-class DefaultIndex extends \F3\FLOW3\MVC\View\AbstractView {
+class Index extends \F3\FLOW3\MVC\View\AbstractView {
    public function render() {
       return "Hello World!";
    }
@@ -163,7 +164,7 @@ class DefaultIndex extends \F3\FLOW3\MVC\View\AbstractView {
 
         <programlisting language="php">namespace F3\Demo\Controller;
 
-class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
    public function indexAction() {
       return $this-&gt;view-&gt;render();
    }
@@ -185,9 +186,9 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
           directory <filename>Controller</filename> just below the
           <filename>Classes</filename> directory of your package. They can
           have arbitrary names while the
-          <classname>DefaultController</classname> has a special meaning: If
+          <classname>StandardController</classname> has a special meaning: If
           the package was specified in the request but no controller, the
-          <classname>DefaultController</classname> will be used.</para>
+          <classname>StandardController</classname> will be used.</para>
         </listitem>
 
         <listitem>
@@ -207,15 +208,18 @@ class DefaultController extends \F3\FLOW3\MVC\Controller\ActionController {
   Demo/
     Classes/
       Controller/
-        DefaultController.php
+        StandardController.php
         CustomerController.php
         OrderController.php
       View/
-        DefaultIndex.php
-        CustomerIndex.php
-        CustomerList.php
-        CustomerDetails.php
-        OrderList.php</literallayout>
+        Standard/
+          Index.php
+        Customer/
+          Index.php
+          List.php
+          Details.php
+        Order/
+          List.php</literallayout>
       </example>
 
       <para>Adhering to these conventions has the advantage that the classname
@@ -517,7 +521,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       </section>
 
       <section>
-        <title>Default Controller</title>
+        <title>Standard Controller</title>
 
         <para></para>
       </section>
@@ -553,7 +557,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       <title>Special Views</title>
 
       <section>
-        <title>Default View</title>
+        <title>Standard View</title>
 
         <para></para>
       </section>
@@ -613,7 +617,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
             <replaceable>action</replaceable>]</emphasis></para>
 
             <para>First part is always the package. If only the package is
-            given, it's default controller's index action is called.</para>
+            given, it's StandardController's index action is called.</para>
 
             <para>If at least three command parts are given, the last two
             sepcify controller and action. Anything in between specifys a sub
@@ -623,8 +627,8 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
                 <para><literal>testing cli run</literal> would call the "run"
                 action of the "cli" controller in the "Testing" package</para>
 
-                <para><literal>typo3cr admin setup default</literal> would
-                call the "setup" controller's "default" action in the
+                <para><literal>typo3cr admin setup foo</literal> would
+                call the "setup" controller's "foo" action in the
                 subpackage "admin" of the package "TYPO3CR"</para>
               </example></para>
           </listitem>

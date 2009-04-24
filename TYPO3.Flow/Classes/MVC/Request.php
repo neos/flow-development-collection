@@ -80,7 +80,7 @@ class Request {
 	/**
 	 * @var string Object name of the controller which is supposed to handle this request.
 	 */
-	protected $controllerName = 'Default';
+	protected $controllerName = 'Standard';
 
 	/**
 	 * @var string Name of the action the controller is supposed to take.

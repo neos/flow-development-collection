@@ -180,14 +180,15 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->at(0))->method('getControllerPackageKey')->will($this->returnValue('Foo'));
 		$mockRequest->expects($this->at(1))->method('getControllerSubpackageKey')->will($this->returnValue(''));
 		$mockRequest->expects($this->at(2))->method('getControllerName')->will($this->returnValue('Test'));
+		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('list'));
 		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('html'));
 
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 		$mockView->expects($this->exactly(1))->method('setRequest')->with($mockRequest);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('f3\foo\view\testhtml')->will($this->returnValue(FALSE));
-		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('f3\foo\view\test')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('f3\foo\view\test\listhtml')->will($this->returnValue(FALSE));
+		$mockObjectManager->expects($this->at(1))->method('getCaseSensitiveObjectName')->with('f3\foo\view\test\list')->will($this->returnValue(FALSE));
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\View\EmptyView')->will($this->returnValue($mockView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);

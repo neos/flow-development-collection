@@ -338,9 +338,9 @@
     <filename>Classes</filename> directory will be detected and registered.
     However, this only works if you follow the naming rules equally for the
     class name as well as the file name. An example for a valid class name is
-    <classname>\F3\MyPackage\Controller\DefaultController</classname> while
+    <classname>\F3\MyPackage\Controller\StandardController</classname> while
     the file containing this class would be named
-    <filename>DefaultController.php</filename> and is expected to be in a
+    <filename>StandardController.php</filename> and is expected to be in a
     directory <filename>MyPackage/Classes/Controller</filename>.</para>
 
     <para>All details about naming files, classes, methods and variables

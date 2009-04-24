@@ -270,7 +270,7 @@ public function getContextName() {
             </listitem>
 
             <listitem>
-              <para><classname>\F3\Foo\Controller\DefaultController</classname></para>
+              <para><classname>\F3\Foo\Controller\StandardController</classname></para>
             </listitem>
 
             <listitem>

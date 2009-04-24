@@ -76,7 +76,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @var string
 	 */
-	protected $viewObjectNamePattern = 'F3\@package\View\@controller@action@format';
+	protected $viewObjectNamePattern = 'F3\@package\View\@controller\@action@format';
 
 	/**
 	 * Name of the action method
