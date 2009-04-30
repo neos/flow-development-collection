@@ -52,7 +52,7 @@ class AlphanumericValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	public function isValid($value) {
 		$this->errors = array();
 		if (is_string($value) && preg_match('/^[a-z0-9]*$/i', $value)) return TRUE;
-		$this->addError('The given subject was not a valid integer. Got: "' . $value . '"', 1221551320);
+		$this->addError('The given subject was not a valid alphanumeric string. Got: "' . $value . '"', 1221551320);
 		return FALSE;
 	}
 }
