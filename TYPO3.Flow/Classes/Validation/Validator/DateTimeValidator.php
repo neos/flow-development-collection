@@ -51,7 +51,7 @@ class DateTimeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator
 	public function isValid($value) {
 		$this->errors = array();
 		if ($value instanceof \DateTime) return TRUE;
-		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid DateTime. Got: "' .gettype($value) . '"', 1238087674);
+		$this->addError('The given subject was not a valid DateTime. Got: "' .gettype($value) . '"', 1238087674);
 		return FALSE;
 	}
 }

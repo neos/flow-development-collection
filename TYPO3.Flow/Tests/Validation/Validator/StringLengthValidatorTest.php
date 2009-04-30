@@ -43,7 +43,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stgringLengthValidatorReturnsTrueForAStringShorterThanMaxLengthAndLongerThanMinLength() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 0, 'maximum' => 50));
 		$this->assertTrue($stringLengthValidator->isValid('this is a very simple string'));
 	}
@@ -53,10 +53,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsFalseForAStringShorterThanThanMinLength() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 50, 'maximum' => 100));
 		$this->assertFalse($stringLengthValidator->isValid('this is a very short string'));
 	}
@@ -66,10 +63,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsFalseForAStringLongerThanThanMaxLength() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 10));
 		$this->assertFalse($stringLengthValidator->isValid('this is a very short string'));
 	}
@@ -79,7 +73,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLongerThanThanMinLengthAndMaxLengthNotSpecified() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 5));
 		$this->assertTrue($stringLengthValidator->isValid('this is a very short string'));
 	}
@@ -89,7 +83,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringShorterThanThanMaxLengthAndMinLengthNotSpecified() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('maximum' => 100));
 		$this->assertTrue($stringLengthValidator->isValid('this is a very short string'));
 	}
@@ -99,7 +93,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLengthEqualToMaxLengthAndMinLengthNotSpecified() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('maximum' => 10));
 		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
@@ -109,7 +103,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueForAStringLengthEqualToMinLengthAndMaxLengthNotSpecified() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 10));
 		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
@@ -119,7 +113,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueIfMinLengthAndMaxLengthAreEqualAndTheGivenStringMatchesThisValue() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 10, 'maximum' => 10));
 		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
@@ -129,7 +123,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueIfTheStringLengthIsEqualToMaxLength() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 1, 'maximum' => 10));
 		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
@@ -139,7 +133,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorReturnsTrueIfTheStringLengthIsEqualToMinLength() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 10, 'maximum' => 100));
 		$this->assertTrue($stringLengthValidator->isValid('1234567890'));
 	}
@@ -150,7 +144,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfMinLengthIsGreaterThanMaxLength() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 101, 'maximum' => 100));
 		$stringLengthValidator->isValid('1234567890');
 	}
@@ -160,11 +154,8 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorInsertsAnErrorObjectIfValidationFails() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create');//->with('F3\FLOW3\Validation\Error', 'The length of the given string was not between minimum and maximum.', 1238108067);
-
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
-		$stringLengthValidator->injectObjectFactory($mockObjectFactory);
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
+		$stringLengthValidator->expects($this->once())->method('addError');
 		$stringLengthValidator->setOptions(array('minimum' => 50, 'maximum' => 100));
 
 		$stringLengthValidator->isValid('this is a very short string');
@@ -175,7 +166,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorCanHandleAnObjectWithAToStringMethod() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = uniqid('TestClass');
@@ -198,7 +189,7 @@ class StringLengthValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function stringLengthValidatorThrowsAnExceptionIfTheGivenObjectCanNotBeConvertedToAString() {
-		$stringLengthValidator = new \F3\FLOW3\Validation\Validator\StringLengthValidator();
+		$stringLengthValidator = $this->getMock('F3\FLOW3\Validation\Validator\StringLengthValidator', array('addError'), array(), '', FALSE);
 		$stringLengthValidator->setOptions(array('minimum' => 5, 'maximum' => 100));
 
 		$className = uniqid('TestClass');

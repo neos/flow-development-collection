@@ -24,50 +24,44 @@ namespace F3\FLOW3\Validation\Validator;
 
 /**
  * @package FLOW3
- * @subpackage Validation
+ * @subpackage Tests
  * @version $Id$
  */
 
 /**
- * Validator for general numbers
+ * Testcase for the Generic Object Validator
  *
  * @package FLOW3
- * @subpackage Validation
+ * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class GenericObjectValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid number in the given range.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @return boolean TRUE if the value is within the range, otherwise FALSE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isValid($value) {
-		$this->errors = array();
-		if (!is_numeric($value)) {
-			$this->addError('The given subject was not a valid number. Got: "' . $value . '"', 1221563685);
-			return FALSE;
-		}
+	public function isValidReturnsFalseIfTheValueIsNoObject() {
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array('addError'), array(), '', FALSE);
+		$this->assertFalse($validator->isValid('foo'));
+	}
 
-		$startRange = (isset($this->options['startRange'])) ? intval($this->options['startRange']) : 0;
-		$endRange = (isset($this->options['endRange'])) ? intval($this->options['endRange']) : PHP_INT_MAX;
-		if ($startRange > $endRange) {
-			$x = $startRange;
-			$startRange = $endRange;
-			$endRange = $x;
-		}
-		if ($value >= $startRange && $value <= $endRange) return TRUE;
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isValidChecksAllPropertiesForWhichAPropertyValidatorExists() {
+		$mockPropertyValidators = array('foo' => 'validator', 'bar' => 'validator');
+		$mockObject = new \stdClass;
 
-		$this->addError('The given subject was not in the valid range (' . $startRange . ' - ' . $endRange . '). Got: "' . $value . '"', 1221561046);
-		return FALSE;
+		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\GenericObjectValidator'), array('addError', 'isPropertyValid'), array(), '', FALSE);
+		$validator->_set('propertyValidators', $mockPropertyValidators);
+
+		$validator->expects($this->at(0))->method('isPropertyValid')->with($mockObject, 'foo')->will($this->returnValue(TRUE));
+		$validator->expects($this->at(1))->method('isPropertyValid')->with($mockObject, 'bar')->will($this->returnValue(TRUE));
+
+		$validator->isValid($mockObject);
 	}
 }
 

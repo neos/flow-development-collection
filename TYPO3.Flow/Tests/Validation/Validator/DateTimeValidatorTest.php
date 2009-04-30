@@ -39,8 +39,8 @@ namespace F3\FLOW3\Validation\Validator;
 class DateTimeValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function dateTimeValidatorReturnsTrueForAValidDateTimeObject() {
 		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
@@ -48,17 +48,11 @@ class DateTimeValidatorTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function dateTimeValidatorReturnsFalseForAnInvalidDateTimeObject() {
-		$error = new \F3\FLOW3\Validation\Error('', 1238087674);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$dateTimeValidator = new \F3\FLOW3\Validation\Validator\DateTimeValidator();
-		$dateTimeValidator->injectObjectFactory($mockObjectFactory);
-
+		$dateTimeValidator = $this->getMock('F3\FLOW3\Validation\Validator\DateTimeValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($dateTimeValidator->isValid('blah'));
 	}
 

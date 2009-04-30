@@ -40,30 +40,29 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function addingValidatorsToAValidatorChainWorks() {
-		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
-		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$proxyClassName = $this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\ChainValidator');
+		$validatorChain = new $proxyClassName;
 
-		$index = $validatorChain->addValidator($validatorObject);
-
-		$this->assertEquals($validatorObject, $validatorChain->getValidator($index));
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorChain->addValidator($mockValidator);
+		$this->assertTrue($validatorChain->_get('validators')->contains($mockValidator));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function allValidatorsInTheChainAreInvokedCorrectly() {
+	public function allValidatorsInTheChainAreCalledIfEachOfThemReturnsTrue() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$validatorObject->expects($this->once())->method('isValid');
-		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
+		$validatorObject->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
-		$secondValidatorObject->expects($this->once())->method('isValid');
-		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
+		$secondValidatorObject->expects($this->once())->method('isValid')->will($this->returnValue(TRUE));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
@@ -79,11 +78,9 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
-		$validatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$secondValidatorObject->expects($this->any())->method('isValid')->will($this->returnValue(TRUE));
-		$secondValidatorObject->expects($this->once())->method('getErrors')->will($this->returnValue(array()));
 
 		$validatorChain->addValidator($validatorObject);
 		$validatorChain->addValidator($secondValidatorObject);
@@ -93,40 +90,68 @@ class ChainValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Validation\Exception\InvalidChainIndex
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function removingAValidatorOfTheValidatorChainWorks() {
+	public function validatorChainImmediatelyReturnsFalseIfOneValidatorsReturnFalse() {
 		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
 		$validatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorObject->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
+
 		$secondValidatorObject = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$secondValidatorObject->expects($this->never())->method('isValid');
+
 		$validatorChain->addValidator($validatorObject);
-		$index = $validatorChain->addValidator($secondValidatorObject);
+		$validatorChain->addValidator($secondValidatorObject);
 
-		$validatorChain->removeValidator($index);
-		$validatorChain->getValidator($index);
+		$this->assertFalse($validatorChain->isValid('some subject'));
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Validation\Exception\InvalidChainIndex
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function accessingANotExistingValidatorIndexThrowsException() {
-		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
+	public function removingAValidatorOfTheValidatorChainWorks() {
+		$validatorChain = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\Validator\ChainValidator'), array('dummy'), array(), '', TRUE);
 
-		$validatorChain->getValidator(100);
+		$validator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+
+		$validatorChain->addValidator($validator1);
+		$validatorChain->addValidator($validator2);
+
+		$validatorChain->removeValidator($validator1);
+
+		$this->assertFalse($validatorChain->_get('validators')->contains($validator1));
+		$this->assertTrue($validatorChain->_get('validators')->contains($validator2));
 	}
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException F3\FLOW3\Validation\Exception\InvalidChainIndex
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @expectedException F3\FLOW3\Validation\Exception\NoSuchValidator
 	 */
 	public function removingANotExistingValidatorIndexThrowsException() {
-		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator();
+		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator;
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validatorChain->removeValidator($validator);
+	}
 
-		$validatorChain->removeValidator(100);
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function countReturnesTheNumberOfValidatorsContainedInThechain() {
+		$validatorChain = new \F3\FLOW3\Validation\Validator\ChainValidator;
+
+		$validator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$validator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+
+		$this->assertSame(0, count($validatorChain));
+
+		$validatorChain->addValidator($validator1);
+		$validatorChain->addValidator($validator2);
+
+		$this->assertSame(2, count($validatorChain));
 	}
 }
 

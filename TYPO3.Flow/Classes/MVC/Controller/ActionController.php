@@ -39,11 +39,6 @@ namespace F3\FLOW3\MVC\Controller;
 class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
-	 */
-	protected $objectManager;
-
-	/**
 	 * @var \F3\FLOW3\Reflection\Service
 	 */
 	protected $reflectionService;
@@ -89,18 +84,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @var string
 	 */
 	protected $errorMethodName = 'errorAction';
-
-	/**
-	 * Injects the object manager
-	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
-		$this->objectManager = $objectManager;
-	}
 
 	/**
 	 * Injects the reflection service
@@ -203,41 +186,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @internal
 	 */
 	protected function initializeActionMethodValidators() {
-		$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
-		if (isset($methodTagsValues['validate'])) {
-			foreach ($methodTagsValues['validate'] as $validateValue) {
-				$matches = array();
-				preg_match('/^\$(?P<argumentName>[a-zA-Z0-9]+)\s+(?P<validators>.*)$/', $validateValue, $matches);
-				$argumentName = $matches['argumentName'];
-				if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found custom validation rule for non existing argument "' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1239853108);
-
-				preg_match_all('/(?P<validatorName>[a-zA-Z0-9]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $matches['validators'], $matches, PREG_SET_ORDER);
-				foreach ($matches as $match) {
-					$validatorName = $match['validatorName'];
-					$validatorOptions = array();
-					$rawValidatorOptions = isset($match['validatorOptions']) ? explode(',', $match['validatorOptions']) : array();
-					foreach ($rawValidatorOptions as $rawValidatorOption) {
-						if (strpos($rawValidatorOption, '=') !== FALSE) {
-							list($optionName, $optionValue) = explode('=', $rawValidatorOption);
-							$validatorOptions[trim($optionName)] = trim($optionValue);
-						}
-					}
-					$newValidator = $this->validatorResolver->createValidator($validatorName, $validatorOptions);
-					if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . get_class($this) . '->' . $this->actionMethodName . '(): Could not resolve class name for  validator "' . $validatorName . '".', 1239853109);
-
-					$currentValidator = $this->arguments[$argumentName]->getValidator();
-					if ($currentValidator === NULL) {
-						$this->arguments[$argumentName]->setValidator($newValidator);
-					} elseif ($currentValidator instanceof \F3\FLOW3\Validation\Validator\ChainValidator) {
-						$currentValidator->addValidator($newValidator);
-					} else {
-						$this->arguments[$argumentName]->setValidator($this->validatorResolver->createValidator('Chain'));
-						$chain = $this->arguments[$argumentName]->getValidator();
-						$chain->addValidator($currentValidator);
-						$chain->addValidator($newValidator);
-					}
-				}
-			}
+		$validatorChains = $this->validatorResolver->buildMethodArgumentsValidatorChains(get_class($this), $this->actionMethodName);
+		foreach ($validatorChains as $argumentName => $validatorChain) {
+			if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found custom validation rule for non existing argument "' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1239853108);
+			$this->arguments[$argumentName]->setValidator($validatorChain);
 		}
 	}
 

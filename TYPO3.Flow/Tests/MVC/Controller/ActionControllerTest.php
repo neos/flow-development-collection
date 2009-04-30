@@ -48,16 +48,17 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array(
-			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeView', 'callActionMethod'),
+			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeControllerArgumentsBaseValidators', 'initializeView', 'callActionMethod'),
 			array(), '', FALSE);
 		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
 		$mockController->expects($this->at(1))->method('initializeActionMethodArguments');
 		$mockController->expects($this->at(2))->method('initializeActionMethodValidators');
 		$mockController->expects($this->at(3))->method('initializeAction');
 		$mockController->expects($this->at(4))->method('initializeFooAction');
-		$mockController->expects($this->at(5))->method('mapRequestArgumentsToControllerArguments');
-		$mockController->expects($this->at(6))->method('initializeView');
-		$mockController->expects($this->at(7))->method('callActionMethod');
+		$mockController->expects($this->at(5))->method('initializeControllerArgumentsBaseValidators');
+		$mockController->expects($this->at(6))->method('mapRequestArgumentsToControllerArguments');
+		$mockController->expects($this->at(7))->method('initializeView');
+		$mockController->expects($this->at(8))->method('callActionMethod');
 
 		$mockController->processRequest($mockRequest, $mockResponse);
 		$this->assertSame($mockRequest, $mockController->_get('request'));
@@ -357,42 +358,27 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function initializeActionMethodValidatorsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
-		$methodTagsValues = array(
-			'param' => array(
-				'string $arg1',
-				'array $arg2',
-			),
-			'validate' => array(
-				'$arg1 Foo(bar = baz), Bar',
-				'$arg2 Quux'
-			)
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+
+		$validatorChains = array(
+			'arg1' => $chain1,
+			'arg2' => $chain2
 		);
 
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
-
-		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
-		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
-		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
-
-		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$mockChainValidator->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
-
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
-		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg1'));
-		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg2'));
-
-		$mockArguments['arg2'] = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
-
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
-		$mockValidatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
-		$mockValidatorResolver->expects($this->at(1))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
-		$mockValidatorResolver->expects($this->at(2))->method('createValidator')->with('Chain')->will($this->returnValue($mockChainValidator));
-		$mockValidatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
+		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorChains')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
 
-		$mockController->injectReflectionService($mockReflectionService);
+		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+		$mockArgument->expects($this->at(0))->method('setValidator')->with($chain1);
+		$mockArgument->expects($this->at(1))->method('setValidator')->with($chain1);
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments->expects($this->at(0))->method('offsetExists')->with('arg1')->will($this->returnValue(TRUE));
+		$mockArguments->expects($this->at(1))->method('offsetGet')->with('arg1')->will($this->returnValue($mockArgument));
+		$mockArguments->expects($this->at(2))->method('offsetExists')->with('arg2')->will($this->returnValue(TRUE));
+		$mockArguments->expects($this->at(3))->method('offsetGet')->with('arg2')->will($this->returnValue($mockArgument));
+
 		$mockController->injectValidatorResolver($mockValidatorResolver);
 		$mockController->_set('actionMethodName', 'fooAction');
 		$mockController->_set('arguments', $mockArguments);

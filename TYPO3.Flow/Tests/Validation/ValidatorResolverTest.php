@@ -107,6 +107,201 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getBaseValidatorCachesTheResultOfTheBuildBaseValidatorChainCalls() {
+		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('buildBaseValidatorChain'), array(), '', FALSE);
+		$validatorResolver->expects($this->once())->method('buildBaseValidatorChain')->with('F3\Virtual\Foo')->will($this->returnValue($mockChainValidator));
+
+		$result = $validatorResolver->getBaseValidatorChain('F3\Virtual\Foo');
+		$this->assertSame($mockChainValidator, $result, '#1');
+
+		$result = $validatorResolver->getBaseValidatorChain('F3\Virtual\Foo');
+		$this->assertSame($mockChainValidator, $result, '#2');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildMethodArgumentsValidatorChainsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
+
+		$methodTagsValues = array(
+			'param' => array(
+				'string $arg1',
+				'array $arg2',
+			),
+			'validate' => array(
+				'$arg1 Foo(bar = baz), Bar',
+				'$arg2 Quux'
+			)
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
+
+		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
+		$chain1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
+
+		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg1'));
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg2'));
+
+		$mockArguments['arg2'] = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Chain')->will($this->returnValue($chain1));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Chain')->will($this->returnValue($chain2));
+
+		$validatorResolver->injectReflectionService($mockReflectionService);
+
+		$result = $validatorResolver->buildMethodArgumentsValidatorChains(get_class($mockController), 'fooAction');
+		$this->assertSame(array('arg1' => $chain1, 'arg2' => $chain2), $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildBaseValidatorChainAddsCustomValidatorToTheReturnedChain() {
+		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+
+		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$mockChainValidator->expects($this->once())->method('addValidator')->with($mockValidator);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockChainValidator));
+		$mockObjectManager->expects($this->at(1))->method('getObject')->with('F3\Virtual\FooValidator')->will($this->returnValue($mockValidator));
+
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName'), array($mockObjectManager));
+		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('F3\Virtual\FooValidator')->will($this->returnValue('F3\Virtual\FooValidator'));
+
+		$result = $validatorResolver->_call('buildBaseValidatorChain', 'F3\Virtual\Foo');
+		$this->assertSame($mockChainValidator, $result);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildBaseValidatorChainAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedChain() {
+		$mockObject = $this->getMock('stdClass');
+		$className = get_class($mockObject);
+
+		$propertyTagsValues = array(
+			'foo' => array(
+				'var' => array('string'),
+				'validate' => array(
+					'Foo(bar = baz), Bar',
+					'Baz'
+				)
+			),
+			'bar' => array(
+				'var' => array('integer'),
+				'validate' => array(
+					'Quux'
+				)
+			)
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('foo', 'bar')));
+		$mockReflectionService->expects($this->at(1))->method('getPropertyTagsValues')->with($className, 'foo')->will($this->returnValue($propertyTagsValues['foo']));
+		$mockReflectionService->expects($this->at(2))->method('getPropertyTagsValues')->with($className, 'bar')->will($this->returnValue($propertyTagsValues['bar']));
+
+		$mockObjectValidator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE);
+
+		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$mockChainValidator->expects($this->once())->method('addValidator')->with($mockObjectValidator);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockChainValidator));
+
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
+		$validatorResolver->injectReflectionService($mockReflectionService);
+
+		$validatorResolver->expects($this->at(0))->method('resolveValidatorObjectName')->with($className . 'Validator')->will($this->returnValue(FALSE));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('GenericObject')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(5))->method('createValidator')->with('Quux')->will($this->returnValue($mockObjectValidator));
+
+		$result = $validatorResolver->_call('buildBaseValidatorChain', $className);
+		$this->assertSame($mockChainValidator, $result);
+	}
+
+	/**
+	 * test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function buildMethodArgumentsValidatorChainsBuildsAChainFromValidateAnnotationsOfTheSpecifiedMethod() {
+		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
+
+		$methodTagsValues = array(
+			'param' => array(
+				'string $arg1',
+				'array $arg2',
+			),
+			'validate' => array(
+				'$arg1 Foo(bar = baz), Bar',
+				'$arg2 Quux'
+			)
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->once())->method('getMethodTagsValues')->with(get_class($mockController), 'fooAction')->will($this->returnValue($methodTagsValues));
+
+		$mockFooValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
+		$chain1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
+
+		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg1'));
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg2'));
+
+		$mockArguments['arg2'] = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Chain')->will($this->returnValue($chain1));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Chain')->will($this->returnValue($chain2));
+
+		$validatorResolver->injectReflectionService($mockReflectionService);
+
+		$result = $validatorResolver->buildMethodArgumentsValidatorChains(get_class($mockController), 'fooAction');
+		$this->assertSame(array('arg1' => $chain1, 'arg2' => $chain2), $result);
+	}
+
+	/**
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function resolveValidatorObjectNameCallsUnifyDataType() {

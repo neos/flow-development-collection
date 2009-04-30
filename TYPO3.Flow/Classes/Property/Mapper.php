@@ -98,34 +98,35 @@ class Mapper {
 	 * validators. If the result object is not valid, the operation will be undone (the target object remains
 	 * unchanged) and this method returns FALSE.
 	 *
-	 * If in doubt, always prefer this method to the map() method because skipping validation can easily become
+	 * If in doubt, always prefer this method over the map() method because skipping validation can easily become
 	 * a security issue.
 	 *
 	 * @param array $propertyNames Names of the properties to map.
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
 	 * @param object $target The target object
+	 * @param \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
-	 * @param array $propertyValidators An array of property names and their validators. They'll be used to validate each property
 	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
 	 * @see getMappingResults()
 	 * @see map()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), array $propertyValidators = array()) {
-		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
-		foreach ($propertyNames as $propertyName) {
-			if (isset($source[$propertyName]) &&
-				array_key_exists($propertyName, $propertyValidators) &&
-				$propertyValidators[$propertyName] !== NULL &&
-				!$propertyValidators[$propertyName]->isValid($source[$propertyName])) {
-				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName': " .
-					implode('. ', $propertyValidators[$propertyName]->getErrors()) , 1240257603), $propertyName);
-			}
-		}
+	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
+		$backupProperties = array();
+
+		$this->map($propertyNames, $source, $backupProperties, $optionalPropertyNames);
 		if ($this->mappingResults->hasErrors()) return FALSE;
 
 		$this->map($propertyNames, $source, $target, $optionalPropertyNames);
-		return (!$this->mappingResults->hasErrors() && !$this->mappingResults->hasWarnings());
+		if ($this->mappingResults->hasErrors()) return FALSE;
+
+		if ($targetObjectValidator->isValid($target) !== TRUE) {
+			$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Validation errors: ' . implode('. ', $targetObjectValidator->getErrors()), 1240257603), '*');
+			$backupMappingResult = $this->mappingResults;
+			$this->map($propertyNames, $backupProperties, $source, $optionalPropertyNames);
+			$this->mappingResults = $backupMappingResult;
+		}
+		return (!$this->mappingResults->hasErrors());
 	}
 
 	/**
@@ -140,18 +141,28 @@ class Mapper {
 	 * @param object $target The target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
 	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
-	 * @see getMapAndValidate()
+	 * @see mapAndValidate()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
-		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
+		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
+		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 
-		if (is_array($source)) $source = new \ArrayObject($source);
-		if (!$source instanceof \ArrayAccess) $source = new \ArrayObject(\F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($source));
-		if (!is_object($target)) throw new \F3\FLOW3\Property\Exception\InvalidTargetObject('The target object must be a valid object, ' . gettype($target) . ' given.', 1187807099);
+		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
+		$propertyValues = array();
+
 		foreach ($propertyNames as $propertyName) {
-			if (isset($source[$propertyName])) {
-				if (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $source[$propertyName]) === FALSE) {
+			if (is_array($source) || $source instanceof \ArrayAccess) {
+				if (isset($source[$propertyName])) $propertyValues[$propertyName] = $source[$propertyName];
+			} else {
+				$propertyValues[$propertyName] = \F3\FLOW3\Reflection\ObjectAccess::getProperty($source, $propertyName);
+			}
+		}
+		foreach ($propertyNames as $propertyName) {
+			if (isset($propertyValues[$propertyName])) {
+				if (is_array($target)) {
+					$target[$propertyName] = $source[$propertyName];
+				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValues[$propertyName]) === FALSE) {
 					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
 			} elseif (!in_array($propertyName, $optionalPropertyNames)) {

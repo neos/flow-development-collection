@@ -52,13 +52,7 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberValidatorReturnsFalseForAString() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
-		$numberValidator->injectObjectFactory($mockObjectFactory);
-
+		$numberValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($numberValidator->isValid('not a number'));
 	}
 
@@ -66,12 +60,9 @@ class NumberValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "this is not a number"', 1221563685);
-
-		$numberValidator = new \F3\FLOW3\Validation\Validator\NumberValidator();
-		$numberValidator->injectObjectFactory($mockObjectFactory);
+	public function numberValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
+		$numberValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberValidator', array('addError'), array(), '', FALSE);
+		$numberValidator->expects($this->once())->method('addError')->with('The given subject was not a valid number. Got: "this is not a number"', 1221563685);
 		$numberValidator->isValid('this is not a number');
 	}
 }

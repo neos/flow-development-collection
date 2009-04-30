@@ -52,7 +52,7 @@ class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	public function isValid($value) {
 		$this->errors = array();
 		if ($value !== filter_var($value, FILTER_SANITIZE_STRING)) {
-			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid text (contained XML tags). Got: "' . $value . '"', 1221565786);
+			$this->addError('The given subject was not a valid text (contained XML tags). Got: "' . $value . '"', 1221565786);
 			return FALSE;
 		}
 		return TRUE;

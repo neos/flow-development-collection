@@ -72,7 +72,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
 
@@ -153,20 +153,51 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mapRequestArgumentsToControllerArgumentsPreparesInformationAndValidatorsAndMapsAndValidates() {
+	public function initializeControllerArgumentsBaseValidatorsRegistersValidatorsDeclaredInTheArgumentModels() {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
 		$mockValidators = array(
 			'foo' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
-			'bar' => $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface'),
 		);
+
+		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver->expects($this->at(0))->method('getBaseValidatorChain')->with('FooType')->will($this->returnValue($mockValidators['foo']));
+		$mockValidatorResolver->expects($this->at(1))->method('getBaseValidatorChain')->with('BarType')->will($this->returnValue(NULL));
+
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
+		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('FooType'));
+		$mockArgumentFoo->expects($this->once())->method('setValidator')->with($mockValidators['foo']);
+
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar'));
+		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('BarType'));
+		$mockArgumentBar->expects($this->never())->method('setValidator');
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument($mockArgumentFoo);
+		$mockArguments->addArgument($mockArgumentBar);
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->injectValidatorResolver($mockValidatorResolver);
+		$controller->_call('initializeControllerArgumentsBaseValidators');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapRequestArgumentsToControllerArgumentsPreparesInformationAndValidatorsAndMapsAndValidates() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockValidator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array(), array(), '', FALSE);
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Controller\ArgumentsValidator')->will($this->returnValue($mockValidator));
 
 		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
 		$mockArgumentFoo->expects($this->any())->method('getName')->will($this->returnValue('foo'));
-		$mockArgumentFoo->expects($this->once())->method('getValidator')->will($this->returnValue($mockValidators['foo']));
 		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar'));
 		$mockArgumentBar->expects($this->any())->method('getName')->will($this->returnValue('bar'));
-		$mockArgumentBar->expects($this->once())->method('getValidator')->will($this->returnValue($mockValidators['bar']));
 
 		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
 		$mockArguments->addArgument($mockArgumentFoo);
@@ -179,7 +210,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array(), array(), '', FALSE);
 		$mockPropertyMapper->expects($this->once())->method('mapAndValidate')->
-			with(array('foo', 'bar'), array('requestFoo', 'requestBar'), $mockArguments, array(), $mockValidators)->
+			with(array('foo', 'bar'), array('requestFoo', 'requestBar'), $mockArguments, array(), $mockValidator)->
 			will($this->returnValue(TRUE));
 		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
 
@@ -188,6 +219,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('propertyMapper', $mockPropertyMapper);
+		$controller->_set('objectManager', $mockObjectManager);
 
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 

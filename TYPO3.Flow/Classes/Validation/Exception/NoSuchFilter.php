@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Validator;
+namespace F3\FLOW3\Validation\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,46 +29,15 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator for general numbers
+ * A "No Such Filter" Exception
  *
  * @package FLOW3
  * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
+class NoSuchFilter extends \F3\FLOW3\Validation\Exception {
 
-	/**
-	 * Returns TRUE, if the given property ($propertyValue) is a valid number in the given range.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param mixed $value The value that should be validated
-	 * @param \F3\FLOW3\Validation\Errors $errors An Errors object which will contain any errors which occurred during validation
-	 * @return boolean TRUE if the value is within the range, otherwise FALSE
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function isValid($value) {
-		$this->errors = array();
-		if (!is_numeric($value)) {
-			$this->addError('The given subject was not a valid number. Got: "' . $value . '"', 1221563685);
-			return FALSE;
-		}
-
-		$startRange = (isset($this->options['startRange'])) ? intval($this->options['startRange']) : 0;
-		$endRange = (isset($this->options['endRange'])) ? intval($this->options['endRange']) : PHP_INT_MAX;
-		if ($startRange > $endRange) {
-			$x = $startRange;
-			$startRange = $endRange;
-			$endRange = $x;
-		}
-		if ($value >= $startRange && $value <= $endRange) return TRUE;
-
-		$this->addError('The given subject was not in the valid range (' . $startRange . ' - ' . $endRange . '). Got: "' . $value . '"', 1221561046);
-		return FALSE;
-	}
 }
 
 ?>

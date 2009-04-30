@@ -52,10 +52,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function textValidatorReturnsFalseForAStringWithHTML() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$textValidator->injectObjectFactory($mockObjectFactory);
+		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>'));
 	}
 
@@ -64,11 +61,7 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function textValidatorReturnsFalseForAStringWithPercentEncodedHTML() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$textValidator->injectObjectFactory($mockObjectFactory);
-
+		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($textValidator->isValid('%3cspan style="color: #BBBBBB;"%3ea nice text%3c/span%3e'));
 	}
 
@@ -76,12 +69,9 @@ class TextValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function textValidatorCreatesTheCorrectErrorObjectIfTheSubjectContainsHTMLEntities() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid text (contained XML tags). Got: "<span style="color: #BBBBBB;">a nice text</span>"', 1221565786);
-
-		$textValidator = new \F3\FLOW3\Validation\Validator\TextValidator();
-		$textValidator->injectObjectFactory($mockObjectFactory);
+	public function textValidatorCreatesTheCorrectErrorIfTheSubjectContainsHTMLEntities() {
+		$textValidator = $this->getMock('F3\FLOW3\Validation\Validator\TextValidator', array('addError'), array(), '', FALSE);
+		$textValidator->expects($this->once())->method('addError')->with('The given subject was not a valid text (contained XML tags). Got: "<span style="color: #BBBBBB;">a nice text</span>"', 1221565786);
 		$textValidator->isValid('<span style="color: #BBBBBB;">a nice text</span>');
 	}
 }

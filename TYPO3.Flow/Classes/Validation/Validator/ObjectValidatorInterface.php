@@ -57,19 +57,7 @@ interface ObjectValidatorInterface extends \F3\FLOW3\Validation\Validator\Valida
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function hasValidProperty($object, $propertyName);
-
-	/**
-	 * Checks if the given value would be valid as the specified property of the given class.
-	 *
-	 * If at least one error occurred, the result is FALSE.
-	 *
-	 * @param string $className Name of the class which would contain the property
-	 * @param string $propertyName Name of the property
-	 * @param string $propertyValue The value to validate as a potential property of the given class
-	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
-	 */
-	public function isValidProperty($className, $propertyName, $propertyValue);
+	public function isPropertyValid($object, $propertyName);
 }
 
 ?>

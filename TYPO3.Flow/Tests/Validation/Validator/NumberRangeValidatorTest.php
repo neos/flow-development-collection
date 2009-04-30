@@ -54,14 +54,8 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
 		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 1000));
-
 		$this->assertFalse($numberRangeValidator->isValid(1000.1));
 	}
 
@@ -70,9 +64,8 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
 		$numberRangeValidator->setOptions(array('startRange' => 1000, 'endRange' => 0));
-
 		$this->assertTrue($numberRangeValidator->isValid(100));
 	}
 
@@ -81,14 +74,8 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function numberRangeValidatorReturnsFalseForAString() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221563685);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
 		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 1000));
-
 		$this->assertFalse($numberRangeValidator->isValid('not a number'));
 	}
 
@@ -96,35 +83,22 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorObjectForANumberOutOfRange() {
-		$error = new \F3\FLOW3\Validation\Error('', 1221561046);
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($error));
-
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
+	public function numberRangeValidatorCreatesTheCorrectErrorForANumberOutOfRange() {
+		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
+		$numberRangeValidator->expects($this->once())->method('addError')->with('The given subject was not in the valid range (1 - 42). Got: "4711"', 1221561046);
 		$numberRangeValidator->setOptions(array('startRange' => 1, 'endRange' => 42));
-
 		$numberRangeValidator->isValid(4711);
-		$validationErrors = $numberRangeValidator->getErrors();
-
-		$this->assertType('F3\FLOW3\Validation\Error', $validationErrors[0]);
-		$this->assertEquals(1221561046, $validationErrors[0]->getCode());
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function numberRangeValidatorCreatesTheCorrectErrorObjectForAStringSubject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid number. Got: "this is not between 1 an 42"', 1221563685);
-
-		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
+	public function numberRangeValidatorCreatesTheCorrectErrorForAStringSubject() {
+		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
+		$numberRangeValidator->expects($this->once())->method('addError')->with('The given subject was not a valid number. Got: "this is not between 0 an 42"', 1221563685);
 		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 42));
-		$numberRangeValidator->injectObjectFactory($mockObjectFactory);
-
-		$numberRangeValidator->isValid('this is not between 1 an 42');
+		$numberRangeValidator->isValid('this is not between 0 an 42');
 	}
 }
 

@@ -54,16 +54,16 @@ class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\Abstract
 	public function isValid($value) {
 		$this->errors = array();
 		if (!isset($this->options['regularExpression'])) {
-			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression was empty.', 1221565132);
+			$this->addError('The regular expression was empty.', 1221565132);
 			return FALSE;
 		}
 		$result = preg_match($this->options['regularExpression'], $value);
 		if ($result === 0) {
-			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
+			$this->addError('The given subject did not match the pattern. Got: "' . $value . '"', 1221565130);
 			return FALSE;
 		}
 		if ($result === FALSE) {
-			$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The regular expression "' . $this->options['regularExpression'] . '" contained an error.', 1221565131);
+			$this->addError('The regular expression "' . $this->options['regularExpression'] . '" contained an error.', 1221565131);
 			return FALSE;
 		}
 		return TRUE;

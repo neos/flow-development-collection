@@ -29,7 +29,7 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator to chain many validators
+ * A generic object validator which allows for specifying property validators
  *
  * @package FLOW3
  * @subpackage Validation
@@ -37,34 +37,15 @@ namespace F3\FLOW3\Validation\Validator;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
+class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectValidator {
 
 	/**
 	 * @var array
 	 */
-	protected $options = array();
+	protected $propertyValidators = array();
 
 	/**
-	 * @var \SPLObjectStorage
-	 */
-	protected $validators;
-
-	/**
-	 * @var array
-	 */
-	protected $errors = array();
-
-	/**
-	 * Constructs the validator chain
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->validators = new \SPLObjectStorage();
-	}
-
-	/**
-	 * Checks if the given value is valid according to the validators of the chain ..
+	 * Checks if the given value is valid according to the property validators
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -73,8 +54,46 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isValid($value) {
-		foreach ($this->validators as $validator) {
-			if ($validator->isValid($value) === FALSE) {
+		if (!is_object($value)) {
+			$this->addError('Value is no object.', 1241099148);
+			return FALSE;
+		}
+
+		foreach (array_keys($this->propertyValidators) as $propertyName) {
+			if ($this->isPropertyValid($value, $propertyName) === FALSE) {
+				return FALSE;
+			}
+		}
+		return TRUE;
+	}
+
+	/**
+	 * Checks the given object can be validated by the validator implementation
+	 *
+	 * @param object $object The object to be checked
+	 * @return boolean TRUE if the given value is an object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function canValidate($object) {
+		return is_object($object);
+	}
+
+	/**
+	 * Checks if the specified property of the given object is valid.
+	 *
+	 * If at least one error occurred, the result is FALSE.
+	 *
+	 * @param object $object The object containing the property to validate
+	 * @param string $propertyName Name of the property to validate
+	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isPropertyValid($object, $propertyName) {
+		if (!is_object($object)) throw new \InvalidArgumentException('Object expected, ' . gettype($object) . ' given.', 1241099149);
+		if (!isset($this->propertyValidators[$propertyName])) return TRUE;
+
+		foreach ($this->propertyValidators[$propertyName] as $validator) {
+			if ($validator->isValid(\F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName)) === FALSE) {
 				$this->errors = $validator->getErrors();
 				return FALSE;
 			}
@@ -83,55 +102,18 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	}
 
 	/**
-	 * Does nothing.
+	 * Adds the given validator for validation of the specified property.
 	 *
-	 * @param array $options Not used
+	 * @param string $propertyName Name of the property to validate
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The property validator
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setOptions(array $options) {
-	}
-
-	/**
-	 * Returns an array of errors which occurred during the last isValid() call.
-	 *
-	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getErrors() {
-		return $this->errors;
-	}
-
-	/**
-	 * Adds a new validator to the chain.
-	 *
-	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function addValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
-		$this->validators->attach($validator);
-	}
-
-	/**
-	 * Removes the specified validator.
-	 *
-	 * @param \F3\FLOW3\Validation\ValidatorInterface $validator The validator to remove
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function removeValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
-		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Cannot remove validator because its not in the chain.', 1207020177);
-		$this->validators->detach($validator);
-	}
-
-	/**
-	 * Returns the number of validators contained in this chain.
-	 *
-	 * @return integer The number of validators
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function count() {
-		return count($this->validators);
+	public function addPropertyValidator($propertyName, \F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
+		if (!isset($this->propertyValidators[$propertyName])) {
+			$this->propertyValidators[$propertyName] = new \SPLObjectStorage;
+		}
+		$this->propertyValidators[$propertyName]->attach($validator);
 	}
 }
 

@@ -42,7 +42,7 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function alphanumericValidatorReturnsTrueForAAlphanumericString() {
+	public function alphanumericValidatorReturnsTrueForAnAlphanumericString() {
 		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
 		$this->assertTrue($alphanumericValidator->isValid('12ssDF34daweidf'));
 	}
@@ -52,23 +52,17 @@ class AlphanumericValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function integerValidatorReturnsFalseForAStringWithSpecialCharacters() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
-		$this->assertFalse($alphanumericValidator->isValid('adsf%&/$jklsfdö'));
+	$alphanumericValidator = $this->getMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('addError'), array(), '', FALSE);
+	$this->assertFalse($alphanumericValidator->isValid('adsf%&/$jklsfdö'));
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function integerValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid integer. Got: "adsf%&/$jklsfdö"', 1221551320);
-
-		$alphanumericValidator = new \F3\FLOW3\Validation\Validator\AlphanumericValidator();
-		$alphanumericValidator->injectObjectFactory($mockObjectFactory);
+	public function integerValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
+		$alphanumericValidator = $this->getMock('F3\FLOW3\Validation\Validator\AlphanumericValidator', array('addError'), array(), '', FALSE);
+		$alphanumericValidator->expects($this->once())->method('addError')->with('The given subject was not a valid integer. Got: "adsf%&/$jklsfdö"', 1221551320);
 		$alphanumericValidator->isValid('adsf%&/$jklsfdö');
 	}
 }

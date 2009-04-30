@@ -85,10 +85,7 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider invalidFloats
 	 */
 	public function floatValidatorReturnsFalseForAnInvalidFloat($address) {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
+		$floatValidator = $this->getMock('F3\FLOW3\Validation\Validator\FloatValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($floatValidator->isValid($address));
 	}
 
@@ -96,13 +93,10 @@ class FloatValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function floatValidatorCreatesTheCorrectErrorObjectForAnInvalidSubject() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid float. Got: "123456"', 1221560288);
-
+	public function floatValidatorCreatesTheCorrectErrorForAnInvalidSubject() {
 		$floatValidator = new \F3\FLOW3\Validation\Validator\FloatValidator();
-		$floatValidator->injectObjectFactory($mockObjectFactory);
-
+		$floatValidator = $this->getMock('F3\FLOW3\Validation\Validator\FloatValidator', array('addError'), array(), '', FALSE);
+		$floatValidator->expects($this->once())->method('addError')->with('The given subject was not a valid float. Got: "123456"', 1221560288);
 		$floatValidator->isValid(123456);
 	}
 

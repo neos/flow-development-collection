@@ -149,7 +149,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 					)
 					\b
 				/ix', $value)) return TRUE;
-		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);
+		$this->addError('The given subject was not a valid email address. Got: "' . $value . '"', 1221559976);
 		return FALSE;
 	}
 }

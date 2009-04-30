@@ -54,11 +54,7 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tooShortUUIDIsRejected() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
-		$validator->injectObjectFactory($mockObjectFactory);
-
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UUIDValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($validator->isValid('e104e469-9030-4b98-babf-3990f07'));
 	}
 
@@ -67,11 +63,7 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function UUIDWithOtherThanHexValuesIsRejected() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
-		$validator->injectObjectFactory($mockObjectFactory);
-
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UUIDValidator', array('addError'), array(), '', FALSE);
 		$this->assertFalse($validator->isValid('e104e469-9030-4g98-babf-3990f07dd3f1'));
 	}
 
@@ -80,13 +72,9 @@ class UUIDValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function UUIDValidatorCreatesTheCorrectErrorObjectIfTheSubjectIsInvalid() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject was not a valid UUID. Got: "e104e469-9030-4b98-babf-3990f07"', 1221565853);
-
-		$validator = new \F3\FLOW3\Validation\Validator\UUIDValidator();
-		$validator->injectObjectFactory($mockObjectFactory);
-
+	public function UUIDValidatorCreatesTheCorrectErrorIfTheSubjectIsInvalid() {
+		$validator = $this->getMock('F3\FLOW3\Validation\Validator\UUIDValidator', array('addError'), array(), '', FALSE);
+		$validator->expects($this->once())->method('addError')->with('The given subject was not a valid UUID. Got: "e104e469-9030-4b98-babf-3990f07"', 1221565853);
 		$validator->isValid('e104e469-9030-4b98-babf-3990f07');
 	}
 }

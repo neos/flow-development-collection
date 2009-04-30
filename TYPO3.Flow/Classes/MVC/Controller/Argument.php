@@ -319,6 +319,16 @@ class Argument {
 	}
 
 	/**
+	 * Returns the default value of this argument
+	 *
+	 * @return mixed The default value
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getDefaultValue() {
+		return $this->defaultValue;
+	}
+
+	/**
 	 * Sets a custom validator which is used supplementary to the base validation
 	 *
 	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The actual validator object

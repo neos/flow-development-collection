@@ -48,9 +48,9 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
-	 * @throws F3\FLOW3\Validation\Exception\InvalidValidationOptions
 	 * @throws F3\FLOW3\Validation\Exception\InvalidSubject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isValid($value) {
 		$this->errors = array();
@@ -68,11 +68,11 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 
 		if ($isValid === FALSE) {
 			if (isset($this->options['minimum']) && isset($this->options['maximum'])) {
-				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string was not between ' . $this->options['minimum'] . ' and ' . $this->options['minimum'] . ' characters.', 1238108067);
+				$this->addError('The length of the given string was not between ' . $this->options['minimum'] . ' and ' . $this->options['maximum'] . ' characters.', 1238108067);
 			} elseif (isset($this->options['minimum'])) {
-				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string less than ' . $this->options['minimum'] . ' characters.', 1238108068);
+				$this->addError('The length of the given string less than ' . $this->options['minimum'] . ' characters.', 1238108068);
 			} else {
-				$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', 'The length of the given string exceeded ' . $this->options['maximum'] . ' characters.', 1238108069);
+				$this->addError('The length of the given string exceeded ' . $this->options['maximum'] . ' characters.', 1238108069);
 			}
 		}
 

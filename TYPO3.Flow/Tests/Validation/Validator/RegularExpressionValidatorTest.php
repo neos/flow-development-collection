@@ -43,10 +43,7 @@ class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function regularExpressionValidatorMatchesABasicExpressionCorrectly() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
+		$regularExpressionValidator = $this->getMock('F3\FLOW3\Validation\Validator\RegularExpressionValidator', array('addError'), array(), '', FALSE);
 		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
 
 		$this->assertTrue($regularExpressionValidator->isValid('simple1expression'));
@@ -57,14 +54,10 @@ class RegularExpressionValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function regularExpressionValidatorCreatesTheCorrectErrorObjectIfTheExpressionDidNotMatch() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\Validation\Error', 'The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130);
-
-		$regularExpressionValidator = new \F3\FLOW3\Validation\Validator\RegularExpressionValidator();
-		$regularExpressionValidator->injectObjectFactory($mockObjectFactory);
+	public function regularExpressionValidatorCreatesTheCorrectErrorIfTheExpressionDidNotMatch() {
+		$regularExpressionValidator = $this->getMock('F3\FLOW3\Validation\Validator\RegularExpressionValidator', array('addError'), array(), '', FALSE);
+		$regularExpressionValidator->expects($this->once())->method('addError')->with('The given subject did not match the pattern. Got: "some subject that will not match"', 1221565130);
 		$regularExpressionValidator->setOptions(array('regularExpression' => '/^simple[0-9]expression$/'));
-
 		$regularExpressionValidator->isValid('some subject that will not match');
 	}
 }

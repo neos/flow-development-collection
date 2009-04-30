@@ -44,6 +44,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\Object\ManagerInterface
+	 */
+	protected $objectManager;
+
+	/**
 	 * @var \F3\FLOW3\MVC\View\Helper\URIHelper
 	 */
 	protected $URIHelper;
@@ -64,6 +69,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @var \F3\FLOW3\Property\Mapper
 	 */
 	protected $propertyMapper;
+
+	/**
+	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 */
+	protected $validatorResolver;
 
 	/**
 	 * The current request
@@ -121,6 +131,18 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
+	 * Injects the object manager
+	 *
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
 	 * Injects the property mapper
 	 *
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper The property mapper
@@ -140,6 +162,17 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	public function injectURIHelper(\F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper) {
 		$this->URIHelper = $URIHelper;
+	}
+
+	/**
+	 * Injects the validator resolver
+	 *
+	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
+		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
@@ -281,7 +314,10 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeControllerArgumentsBaseValidators() {
-
+		foreach ($this->arguments as $argument) {
+			$validator = $this->validatorResolver->getBaseValidatorChain($argument->getDataType());
+			if ($validator !== NULL) $argument->setValidator($validator);
+		}
 	}
 
 	/**
@@ -292,13 +328,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		$optionalPropertyNames = array();
-		$validators = array();
 		$allPropertyNames = $this->arguments->getArgumentNames();
 		foreach ($allPropertyNames as $propertyName) {
 			if ($this->arguments[$propertyName]->isRequired() === FALSE) $optionalPropertyNames[] = $propertyName;
-			$validators[$propertyName] = $this->arguments[$propertyName]->getValidator();
 		}
-		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validators);
+
+		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
+		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validator);
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 }

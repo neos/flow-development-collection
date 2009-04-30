@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Validation\Exception;
+namespace F3\FLOW3\Property\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,20 +24,19 @@ namespace F3\FLOW3\Validation\Exception;
 
 /**
  * @package FLOW3
- * @subpackage Validation
+ * @subpackage Property
  * @version $Id$
  */
 
 /**
- * An "Invalid Chain Index" Exception for a validator chain
+ * An "Invalid Target" Exception
  *
  * @package FLOW3
- * @subpackage Validation
+ * @subpackage Property
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class InvalidChainIndex extends \F3\FLOW3\Validation\Exception {
+class InvalidTarget extends \F3\FLOW3\Security\Exception {
 
 }
-
 ?>
