@@ -44,7 +44,7 @@ class RequestFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsCalledIfTheRequestPatternMatches() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$requestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -62,7 +62,7 @@ class RequestFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternDoesNotMatch() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$requestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -80,7 +80,7 @@ class RequestFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSetIncerceptorIsNotCalledIfTheRequestPatternCannotMatchTheRequest() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$requestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -98,7 +98,7 @@ class RequestFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theFilterReturnsTrueIfThePatternMatched() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$requestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorInterface');
 
@@ -115,7 +115,7 @@ class RequestFilterTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theFilterReturnsFalseIfThePatternDidNotMatch() {
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$requestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface');
 		$interceptor = $this->getMock('F3\FLOW3\Security\Authorization\InterceptorInterface');
 

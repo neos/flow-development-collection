@@ -58,7 +58,7 @@ class WebRedirectTest extends \F3\Testing\BaseTestCase {
 		$entryPoint = new WebRedirect();
 
 		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\CLI\Request')));
-		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\Request')));
+		$this->assertFalse($entryPoint->canForward($this->getMock('F3\FLOW3\MVC\RequestInterface')));
 	}
 
 	/**

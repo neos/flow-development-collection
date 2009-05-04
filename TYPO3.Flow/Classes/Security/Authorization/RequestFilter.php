@@ -29,7 +29,7 @@ namespace F3\FLOW3\Security\Authorization;
  */
 
 /**
- * A RequestFilter is configured to match specific \F3\FLOW3\MVC\Requests and call
+ * A RequestFilter is configured to match specific \F3\FLOW3\MVC\RequestInterfaces and call
  * a \F3\FLOW3\Security\Authorization\InterceptorInterface if needed.
  *
  * @package FLOW3
@@ -86,11 +86,11 @@ class RequestFilter {
 	/**
 	 * Tries to match the given request against this filter and calls the set security interceptor on success.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request to be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be matched
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function filterRequest(\F3\FLOW3\MVC\Request $request) {
+	public function filterRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {
 			$this->securityInterceptor->invoke();
 			return TRUE;

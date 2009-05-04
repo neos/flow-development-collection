@@ -42,20 +42,20 @@ interface ControllerInterface {
 	/**
 	 * Checks if the current request type is supported by the controller.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\Request $request);
+	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Processes a general request. The result can be returned by altering the given response.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request object
-	 * @param \F3\FLOW3\MVC\Response $response The response, modified by the controller
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by the controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
 
 }
 ?>

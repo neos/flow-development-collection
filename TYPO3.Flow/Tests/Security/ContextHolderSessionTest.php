@@ -107,7 +107,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	public function currentRequestIsSetInTheSecurityContext() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$mockContext->expects($this->once())->method('setRequest')->with($mockRequest);
@@ -129,7 +129,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
@@ -155,7 +155,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$token3ClassName = uniqid('token3');
 
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
@@ -189,7 +189,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function initializeContextCallsUpdateCredentialsOnAllTokens() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
@@ -219,7 +219,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function theSecurityContextHolderSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
@@ -252,7 +252,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$authenticationToken5ClassName = uniqid('authenticationToken5');
 		$authenticationToken6ClassName = uniqid('authenticationToken6');
 
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
 		$matchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));

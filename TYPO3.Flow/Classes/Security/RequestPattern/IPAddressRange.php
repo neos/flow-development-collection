@@ -29,7 +29,7 @@ namespace F3\FLOW3\Security\RequestPattern;
  */
 
 /**
- * This class holds an ipAddressRange pattern an decides, if a \F3\FLOW3\MVC\Request object matches against this pattern
+ * This class holds an ipAddressRange pattern an decides, if a \F3\FLOW3\MVC\RequestInterface object matches against this pattern
  *
  * @package FLOW3
  * @subpackage Security
@@ -47,11 +47,11 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(\F3\FLOW3\MVC\Request $request) {
+	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request) {
 		return TRUE;
 	}
 
@@ -77,14 +77,14 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	}
 
 	/**
-	 * Matches a \F3\FLOW3\MVC\Request against its set ip address range
+	 * Matches a \F3\FLOW3\MVC\RequestInterface against its set ip address range
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(\F3\FLOW3\MVC\Request $request) {
+	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		return FALSE;
 	}
 }

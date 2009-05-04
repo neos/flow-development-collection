@@ -35,57 +35,39 @@ namespace F3\FLOW3\MVC;
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Robert Lemke <robert@typo3.org>
  * @scope prototype
  */
-class Response implements \F3\FLOW3\MVC\ResponseInterface {
-
-	/**
-	 * @var string The response content
-	 */
-	protected $content = NULL;
+interface ResponseInterface {
 
 	/**
 	 * Overrides and sets the content of the response
 	 *
 	 * @param string $content The response content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setContent($content) {
-		$this->content = $content;
-	}
+	public function setContent($content);
 
 	/**
 	 * Appends content to the already existing content.
 	 *
 	 * @param string $content More response content
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function appendContent($content) {
-		$this->content .= $content;
-	}
+	public function appendContent($content);
 
 	/**
 	 * Returns the response content without sending it.
 	 *
 	 * @return string The response content
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getContent() {
-		return $this->content;
-	}
+	public function getContent();
 
 	/**
 	 * Sends the response
 	 *
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function send() {
-		if ($this->content !== NULL) {
-			echo $this->getContent();
-		}
-	}
+	public function send();
 }
 ?>

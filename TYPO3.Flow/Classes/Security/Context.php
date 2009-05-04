@@ -65,7 +65,7 @@ class Context {
 	protected $authenticateAllTokens = FALSE;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Request
+	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
 	protected $request;
 
@@ -100,11 +100,11 @@ class Context {
 	/**
 	 * Sets the request the context is used for.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Request $request) {
+	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 	}
 

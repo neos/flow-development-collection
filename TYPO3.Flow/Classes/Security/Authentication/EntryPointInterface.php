@@ -43,11 +43,11 @@ interface EntryPointInterface {
 	 * Returns TRUE if the given request can be authenticated by the authentication provider
 	 * represented by this entry point
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canForward(\F3\FLOW3\MVC\Request $request);
+	public function canForward(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Sets the options array
@@ -61,11 +61,11 @@ interface EntryPointInterface {
 	/**
 	 * Starts the authentication. (e.g. redirect to login page or send 401 HTTP header)
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
-	 * @param \F3\FLOW3\MVC\Response $response The current response
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
 	 */
-	public function startAuthentication(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response);
+	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
 }
 
 ?>

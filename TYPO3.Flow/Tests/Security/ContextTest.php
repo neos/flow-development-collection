@@ -56,7 +56,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
 		$matchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));
@@ -137,7 +137,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
 
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
 		$matchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));
@@ -212,7 +212,7 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$settings = array();
 		$settings['security']['authentication']['authenticateAllTokens'] = FALSE;
 
-		$request = $this->getMock('F3\FLOW3\MVC\Request');
+		$request = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 
 		$matchingRequestPattern = $this->getMock('F3\FLOW3\Security\RequestPatternInterface', array(), array(), $matchingRequestPatternClassName);
 		$matchingRequestPattern->expects($this->any())->method('canMatch')->will($this->returnValue(TRUE));

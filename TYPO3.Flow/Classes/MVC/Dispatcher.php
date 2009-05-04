@@ -62,7 +62,7 @@ class Dispatcher {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function dispatch(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+	public function dispatch(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);

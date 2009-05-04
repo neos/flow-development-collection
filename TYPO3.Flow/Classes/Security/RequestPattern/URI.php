@@ -48,11 +48,11 @@ class URI implements \F3\FLOW3\Security\RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(\F3\FLOW3\MVC\Request $request) {
+	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request) {
 		if ($request instanceof \F3\FLOW3\MVC\Web\Request) return TRUE;
 		return FALSE;
 	}
@@ -79,14 +79,14 @@ class URI implements \F3\FLOW3\Security\RequestPatternInterface {
 	}
 
 	/**
-	 * Matches a \F3\FLOW3\MVC\Request against its set URL pattern rules
+	 * Matches a \F3\FLOW3\MVC\RequestInterface against its set URL pattern rules
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function matchRequest(\F3\FLOW3\MVC\Request $request) {
+	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		if (!($request instanceof \F3\FLOW3\MVC\Web\Request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('The given request type is not supported.', 1216903641);
 
 		return (boolean)preg_match('/^' . str_replace('/', '\/', $this->URIPattern) . '$/', $request->getRequestURI()->getPath());

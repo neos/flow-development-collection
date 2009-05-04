@@ -176,7 +176,7 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Converts the first element of the input array to an argument name for a \F3\FLOW3\MVC\Request object.
+	 * Converts the first element of the input array to an argument name for a \F3\FLOW3\MVC\RequestInterface object.
 	 *
 	 * @param array array of the remaining command line arguments
 	 * @return string converted argument name

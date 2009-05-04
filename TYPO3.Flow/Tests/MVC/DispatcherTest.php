@@ -43,13 +43,13 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatchCallsTheControllersProcessRequestMethodUntilTheIsDispatchedFlagInTheRequestObjectIsSet() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('FooController'));
 		$mockRequest->expects($this->at(0))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockRequest->expects($this->at(2))->method('isDispatched')->will($this->returnValue(FALSE));
 		$mockRequest->expects($this->at(4))->method('isDispatched')->will($this->returnValue(TRUE));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
 
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 		$mockController->expects($this->exactly(2))->method('processRequest')->with($mockRequest, $mockResponse);
@@ -71,11 +71,11 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$requestCallBack = function() use (&$requestCallCounter) {
 			return ($requestCallCounter++ < 101) ? FALSE : TRUE;
 		};
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Request');
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockRequest->expects($this->any())->method('getControllerObjectName')->will($this->returnValue('FooController'));
 		$mockRequest->expects($this->any())->method('isDispatched')->will($this->returnCallBack($requestCallBack, '__invoke'));
 
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Response');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
 		$mockController = $this->getMock('F3\FLOW3\MVC\Controller\ControllerInterface', array('processRequest', 'canProcessRequest'));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);

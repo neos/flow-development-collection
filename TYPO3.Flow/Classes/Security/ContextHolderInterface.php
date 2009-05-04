@@ -62,10 +62,10 @@ interface ContextHolderInterface {
 	 * loaded from a session. The AuthenticationManager has to be instanciated here, to set the authentication
 	 * tokens.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request the context should be initialized for
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 */
-	public function initializeContext(\F3\FLOW3\MVC\Request $request);
+	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Clears the current security context.

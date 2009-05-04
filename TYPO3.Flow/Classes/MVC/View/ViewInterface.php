@@ -41,10 +41,10 @@ interface ViewInterface {
 	/**
 	 * Sets the current request
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Request $request);
+	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Returns an View Helper instance.

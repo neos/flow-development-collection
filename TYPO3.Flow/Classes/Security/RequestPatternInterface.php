@@ -42,11 +42,11 @@ interface RequestPatternInterface {
 	/**
 	 * Returns TRUE, if this pattern can match against the given request object.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canMatch(\F3\FLOW3\MVC\Request $request);
+	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request);
 
 	/**
 	 * Returns the set pattern
@@ -65,12 +65,12 @@ interface RequestPatternInterface {
 	public function setPattern($pattern);
 
 	/**
-	 * Matches a \F3\FLOW3\MVC\Request against its set pattern rules
+	 * Matches a \F3\FLOW3\MVC\RequestInterface against its set pattern rules
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request that should be matched
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 */
-	public function matchRequest(\F3\FLOW3\MVC\Request $request);
+	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request);
 }
 
 ?>

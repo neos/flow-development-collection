@@ -59,7 +59,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Request
+	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
 	protected $request;
 
@@ -104,11 +104,11 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	/**
 	 * Sets the current request
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Request $request) {
+	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 	}
 

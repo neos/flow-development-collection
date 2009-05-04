@@ -43,10 +43,10 @@ interface FirewallInterface {
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request to be analyzed
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
 	 */
-	public function blockIllegalRequests(\F3\FLOW3\MVC\Request $request);
+	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request);
 }
 
 ?>

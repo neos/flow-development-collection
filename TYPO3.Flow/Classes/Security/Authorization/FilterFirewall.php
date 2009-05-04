@@ -96,12 +96,12 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * Analyzes a request against the configured firewall rules and blocks
 	 * any illegal request.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request to be analyzed
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied if the
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function blockIllegalRequests(\F3\FLOW3\MVC\Request $request) {
+	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request) {
 		$filterMatched = FALSE;
 		foreach($this->filters as $filter) {
 			if($filter->filterRequest($request)) $filterMatched = TRUE;

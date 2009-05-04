@@ -59,11 +59,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	protected $requestBuilder;
 
 	/**
-	 * @var \F3\FLOW3\MVC\RequestProcessorChainManager
-	 */
-	protected $requestProcessorChainManager;
-
-	/**
 	 * Constructs the Web Request Handler
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory

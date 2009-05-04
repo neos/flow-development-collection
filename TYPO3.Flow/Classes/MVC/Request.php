@@ -37,7 +37,7 @@ namespace F3\FLOW3\MVC;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class Request {
+class Request implements \F3\FLOW3\MVC\RequestInterface {
 
 	const PATTERN_MATCH_FORMAT = '/^[a-z0-9]{1,5}$/';
 

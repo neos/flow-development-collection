@@ -133,12 +133,12 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Initializes the security context for the given request. It is loaded from the session.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request the context should be initialized for
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeContext(\F3\FLOW3\MVC\Request $request) {
+	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request) {
 		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
 		if (!($context instanceof \F3\FLOW3\Security\Context)) {
 			$context =  $this->objectFactory->create('F3\FLOW3\Security\Context');
@@ -205,11 +205,11 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * Filters all tokens that don't match for the given request.
 	 *
 	 * @param array $tokens The token array to be filtered
-	 * @param \F3\FLOW3\MVC\Request $request The request object
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
 	 * @return array The filtered token array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\Request $request) {
+	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\RequestInterface $request) {
 		$activeTokens = array();
 
 		foreach ($tokens as $token) {

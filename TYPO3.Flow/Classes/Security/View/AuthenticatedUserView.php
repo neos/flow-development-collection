@@ -39,7 +39,7 @@ namespace F3\FLOW3\Security\View;
 class AuthenticatedUserView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Request
+	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
 	protected $request;
 

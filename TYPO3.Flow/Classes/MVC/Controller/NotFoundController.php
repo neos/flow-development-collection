@@ -48,13 +48,13 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Processes a generic request and fills the response with the default view
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request
-	 * @param \F3\FLOW3\MVC\Response $response The response
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$request->setDispatched(TRUE);
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :

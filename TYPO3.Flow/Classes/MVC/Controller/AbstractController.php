@@ -77,13 +77,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * The current request
-	 * @var \F3\FLOW3\MVC\Request
+	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
 	protected $request;
 
 	/**
 	 * The response which will be returned by this action controller
-	 * @var \F3\FLOW3\MVC\Response
+	 * @var \F3\FLOW3\MVC\ResponseInterface
 	 */
 	protected $response;
 
@@ -182,11 +182,11 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * replace / modify the supporteRequestTypes property or override this
 	 * method.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The current request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function canProcessRequest(\F3\FLOW3\MVC\Request $request) {
+	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		foreach ($this->supportedRequestTypes as $supportedRequestType) {
 			if ($request instanceof $supportedRequestType) return TRUE;
 		}
@@ -196,13 +196,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Processes a general request. The result can be returned by altering the given response.
 	 *
-	 * @param \F3\FLOW3\MVC\Request $request The request object
-	 * @param \F3\FLOW3\MVC\Response $response The response, modified by this handler
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\Request $request, \F3\FLOW3\MVC\Response $response) {
+	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
 
 		$this->request = $request;

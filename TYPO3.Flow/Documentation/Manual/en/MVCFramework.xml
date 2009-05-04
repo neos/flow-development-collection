@@ -170,6 +170,13 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
    }
 }</programlisting>
       </example>
+
+      <para>Some notes about the view: Although a view class written in PHP is
+      the most basic way to implement a view, it is not the most common way
+      you'll take. In practice you'll want to use <package>Fluid</package>,
+      FLOW3's powerful templating engine which allows you to write views in
+      plain HTML and still have all the power like loops and conditions.
+      </para>
     </section>
 
     <section>
@@ -253,17 +260,18 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
       format).</para>
 
       <para>Depending on that, the controller
-      <classname>\F3\Demo\Controller\CustomerController</classname> (Pattern:
+      <classname>\F3\Demo\Controller\CustomerController</classname> (pattern:
       '<code>F3\@package\Controller\@controllerController'</code>) and its
       method <methodname>listAction()</methodname> will be used. The
       corresponding view is <classname>\F3\Demo\View\CustomerList</classname>
       (Pattern:
       <code>'F3\@package\View\@controller@action@format'</code>).</para>
 
-      <para>If you have a look at the view pattern, you see, that you can
-      easily add a view that creates an xml-output by creating the class
-      <classname>\F3\Demo\View\CustomerListXML</classname>. You will get the
-      xml-output by calling the URI
+      <para>By looking at the view pattern you easily see that you it's fairly
+      easily to address a view which renders a different format, for example
+      XML. All you need to do is creating a class called
+      <classname>\F3\Demo\View\CustomerListXML</classname>. To see the output
+      of this new view, just use the URI
       <uri>http://localhost/demo/customer/list.xml</uri>.</para>
     </section>
   </section>
@@ -357,62 +365,56 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
     </section>
 
     <section>
-      <title>Request Processors</title>
-
-      <para>Requests which were built by the request builder usually fit the
-      most common needs. For special demands it is possible to postprocess the
-      request object before it is sent to the dispatcher. Request processors
-      can be registered through the Request Processor Chain Manager and are -
-      as the name suggests - invoked in a chain.</para>
-    </section>
-
-    <section>
       <title>Request Dispatcher</title>
 
       <para>The final task of the MVC framework consists in dispatching the
-      request to the controller specified in the request object. The request
-      dispatcher will try to call the action specified in the request object
-      and if none was specified fall back on a default action.</para>
+      request to the controller specified in the request object. Dispatching
+      means that the request and response object is passed to the controller
+      specified in the request object and after the controller did its job,
+      control is returned to the request handler which eventually sends the
+      response.</para>
 
-      <note>
-        <para>There are more features planned for the dispatcher, but at the
-        time of this writing they have not yet been implemented.</para>
-      </note>
+      <para>The dispatch method itself is a loop which tries to invoke a
+      controller until a flag in the request object indicates that the request
+      has been dispatched. In most cases this loop has only one cycle: the
+      action method specified in the request is called and the action
+      controller automatically sets the <varname>dispatched</varname> flag
+      which leads to exiting the dispatch loop. However, when the controller
+      wants to forward or redirect the request to another controller or
+      action, the respective information is written to the request object and
+      the <varname>dispatched</varname> flag remains unset. Therefore the
+      dispatcher calls the next controller which hopefully can finally process
+      the request and exits the dispatch loop.</para>
+
+      <para>The dispatcher comes with a safeguard which assures that the
+      dispatching process does not end up in an endless loop.</para>
     </section>
 
     <section>
       <title>Request Types</title>
 
       <para>FLOW3 supports the most important request types out of the box.
-      Additional request types can easily be implemented by extending the
-      <classname>\F3\FLOW3\MVC\Request</classname> class and registering a
-      request handling which can handle the new request type (and takes care
-      of building the request object). Here are the request types which come
-      with the default FLOW3 distribution:</para>
+      Additional request types can easily be implemented by implementing the
+      <interfacename>\F3\FLOW3\MVC\RequestInterface</interfacename> or
+      extending the <classname>\F3\FLOW3\MVC\Request</classname> class and
+      registering a request handling which can handle the new request type
+      (and takes care of building the request object). Here are the request
+      types which come with the default FLOW3 distribution:</para>
 
       <section>
         <title>Web Request / Response</title>
 
-        <para>Web requests are the most common request types. Currently only
-        the basic features are implemented, but further options - especially
-        for the web response - are in the pipeline.</para>
+        <para>Web requests are the most common request types. Additional to
+        the common request functionality, this request type delivers
+        information about the request method, request URI and the base
+        URI.</para>
       </section>
 
       <section>
         <title>CLI Request / Response</title>
 
         <para>Requests from the command line are recognized by the used SAPI
-        (Server Application Programming Interface). This request type is
-        basically the same as the generic request type and mainly exists as a
-        marker.</para>
-      </section>
-
-      <section>
-        <title>AJAX Request / Response</title>
-
-        <note>
-          <para>This request type has not yet been implemented</para>
-        </note>
+        (Server Application Programming Interface).</para>
       </section>
     </section>
   </section>
@@ -420,43 +422,176 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
   <section>
     <title>Controller</title>
 
-    <para></para>
+    <para>The main responsibility of a controller is to process a request and
+    deliver a meaningful response. The
+    <interfacename>\F3\FLOW3\MVC\Controller\ControllerInterface</interfacename>
+    therefore only contains two methods:</para>
+
+    <programlisting>/**
+ * Checks if the current request type is supported by the controller.
+ *
+ * @param \F3\FLOW3\MVC\RequestInterface $request The current request
+ * @return boolean TRUE if this request type is supported, otherwise FALSE
+ */
+public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request);
+
+/**
+ * Processes a general request. The result can be returned by altering the given response.
+ *
+ * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+ * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by the controller
+ * @return void
+ * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
+ */
+public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
+</programlisting>
+
+    <para>However, only few applications will implement the whole request
+    processing logic themselves. Most of the time you'll be extending the
+    Action Controller.</para>
 
     <section>
       <title>Action Controller</title>
 
-      <para>Setting $this-&gt;viewObjectName to a view object name overrides
-      the automatic resolving of the view name. Can be used for definining a
-      standard view, for example \F3\Fluid\View\TemplateView.</para>
-
-      <para></para>
+      <para>The
+      <classname>\F3\FLOW3\MVC\Controller\ActionController</classname>
+      processes a request by calling action methods. Actions are the
+      foundation of your application's workflow and logic. Which action is
+      called is usually determined by the URI as you have already seen in the
+      short hello world example.</para>
 
       <section>
         <title>Initialization Methods</title>
 
-        <para>initializeController</para>
+        <para>Before an action method is called, the view, validation and
+        arguments are initialized. The following methods can be extended or
+        overloaded to hook into this initialization process:</para>
 
-        <para>initializeAction</para>
+        <itemizedlist>
+          <listitem>
+            <para><methodname>initializedView()</methodname> is called in
+            order to resolve, set and initialize a view which matches the
+            current action.</para>
+          </listitem>
 
-        <para>initializeView</para>
+          <listitem>
+            <para><methodname>initializedAction()</methodname> is called after
+            the view has been initialized and the automatic registration of
+            arguments is done. At that point, the argument's values are still
+            empty and have not been validated.</para>
+          </listitem>
+
+          <listitem>
+            <para><methodname>initializedFooAction()</methodname> where
+            <methodname>Foo</methodname> is the name of the action, is called
+            only before an action of that name is called.</para>
+          </listitem>
+        </itemizedlist>
+
+        <para>Action arguments are usually registered automatically (see
+        below). If you wish to register additional arguments manually, you may
+        do that in one of the <methodname>initialize*Action()</methodname>
+        methods.</para>
       </section>
 
       <section>
         <title>Configuration</title>
 
-        <para></para>
+        <para>The settings of the package containing your controller are
+        automatically injected into the action controller and can be accessed
+        through the <varname>$this-&gt;settings</varname> variable. Please
+        note that this variable contains all settings of the package as an
+        array, not only settings specific to your controller.</para>
+
+        <para>You should not modify the settings array because any information
+        you'd add would be lost anyway and is invisible to other parts of your
+        application.</para>
       </section>
 
       <section>
         <title>Supported Request Types</title>
 
-        <para></para>
+        <para>The action controller generally supports any kind of request,
+        which means that theoretically you need only one controller for web
+        and CLI requests. In practice you might want to structure your
+        application so that a controller is responsable for only one request
+        type. If that is the case, you can define the supported request types
+        by setting the <property>supportedRequestTypes</property> property of
+        your class:</para>
+
+        <example>
+          <title>Defining the supported request types</title>
+
+          <programlisting>/**
+ * My web-specific controller
+ *
+ * @package Demo
+ * @subpackage Controller
+ */
+class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
+
+   /**
+    * @var array
+    */
+   protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+
+</programlisting>
+        </example>
       </section>
 
       <section>
         <title>Arguments</title>
 
-        <para></para>
+        <para>An action usually needs some more information about what it's
+        supposed to do. This information comes in form of GET or POST
+        arguments in case of a web request or via command line options if
+        we're dealing with a CLI request. Because there are even more ways to
+        pass information to an action and because this information needs
+        special care to assure a secure application, these arguments are
+        abstracted by FLOW3 in form of controller arguments.</para>
+
+        <para>The basic rule in FLOW3 is: an action method only gets those
+        arguments it asked for which have always values which are allowed for
+        the declared data type. Therefore arguments need to be registered and
+        it is not possible to access PHP's superglobals
+        <varname>$_GET</varname> and <varname>$_POST</varname>
+        directly.</para>
+
+        <para>Fortunately argument registration is very easy in FLOW3. It's
+        just a matter declaring the arguments in your action method
+        signature:</para>
+
+        <example>
+          <title>Declaring arguments in an action method</title>
+
+          <programlisting>/**
+ * An example action method
+ *
+ * @param string $emailAddress Some email address
+ * @param string $streetName Some street name
+ * @param F3\Foo\Customer $customer A customer object
+ * @return void
+ */
+public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $customer) {
+   
+}
+</programlisting>
+        </example>
+
+        <para>FLOW3 will automatically register the arguments
+        <parameter>$emailAddress</parameter>,
+        <parameter>$streetName</parameter> and
+        <parameter>$customer</parameter>. Their expected data types are
+        <classname>Text</classname>, <classname>Text</classname> and
+        <classname>\F3\Foo\customer</classname> respectively.</para>
+
+        <para>In essence this means that if you send a GET parameter
+        <parameter>emailAddress</parameter> with your request, it will end up
+        in <parameter>$emailAddress</parameter> if it is a valid
+        <classname>Text</classname> (which means: no HTML, no JavaScript, no
+        danger). Even the <parameter>$customer</parameter> argument will
+        contain a real <classname>Customer</classname> object if enough
+        information has been sent with the request.</para>
       </section>
 
       <section>
@@ -502,6 +637,10 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
         <title>Action View</title>
 
         <para>- $this-&gt;initializeView = TRUE | FALSE</para>
+
+        <para>Setting $this-&gt;viewObjectName to a view object name overrides
+        the automatic resolving of the view name. Can be used for definining a
+        standard view, for example \F3\Fluid\View\TemplateView.</para>
       </section>
     </section>
 
@@ -627,9 +766,9 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
                 <para><literal>testing cli run</literal> would call the "run"
                 action of the "cli" controller in the "Testing" package</para>
 
-                <para><literal>typo3cr admin setup foo</literal> would
-                call the "setup" controller's "foo" action in the
-                subpackage "admin" of the package "TYPO3CR"</para>
+                <para><literal>typo3cr admin setup foo</literal> would call
+                the "setup" controller's "foo" action in the subpackage
+                "admin" of the package "TYPO3CR"</para>
               </example></para>
           </listitem>
         </varlistentry>
