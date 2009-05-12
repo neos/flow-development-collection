@@ -241,29 +241,29 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setNewValidatorChainCreatesANewValidatorChainObject() {
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ChainValidator')));
+	public function setNewValidatorConjunctionCreatesANewValidatorConjunctionObject() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator')));
 
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
 		$argument->injectObjectFactory($this->mockObjectFactory);
-		$argument->setNewValidatorChain(array());
+		$argument->setNewValidatorConjunction(array());
 
-		$this->assertType('F3\FLOW3\Validation\Validator\ChainValidator', $argument->getValidator(), 'The returned validator is not a chain as expected.');
+		$this->assertType('F3\FLOW3\Validation\Validator\ConjunctionValidator', $argument->getValidator(), 'The returned validator is not a chain as expected.');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNewValidatorChainAddsThePassedValidatorsToTheCreatedValidatorChain() {
+	public function setNewValidatorConjunctionAddsThePassedValidatorsToTheCreatedValidatorChain() {
 		$mockValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
-		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$mockValidatorChain->expects($this->at(0))->method('addValidator')->with($mockValidator1);
 		$mockValidatorChain->expects($this->at(1))->method('addValidator')->with($mockValidator2);
 
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockValidatorChain));
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
 
 		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->exactly(2))->method('getObject')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
@@ -272,22 +272,22 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument->_set('objectManager', $this->mockObjectManager);
 		$argument->_set('objectFactory', $this->mockObjectFactory);
 
-		$argument->setNewValidatorChain(array('Validator1', 'Validator2'));
+		$argument->setNewValidatorConjunction(array('Validator1', 'Validator2'));
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setNewValidatorChainCanHandleShortValidatorNames() {
+	public function setNewValidatorConjunctionCanHandleShortValidatorNames() {
 		$mockValidator1 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 		$mockValidator2 = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
-		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$mockValidatorChain->expects($this->at(0))->method('addValidator')->with($mockValidator1);
 		$mockValidatorChain->expects($this->at(1))->method('addValidator')->with($mockValidator2);
 
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockValidatorChain));
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockValidatorChain));
 
 		$this->mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(FALSE));
 		$this->mockObjectManager->expects($this->exactly(2))->method('getObject')->will($this->onConsecutiveCalls($mockValidator1, $mockValidator2));
@@ -296,7 +296,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument->_set('objectManager', $this->mockObjectManager);
 		$argument->_set('objectFactory', $this->mockObjectFactory);
 
-		$argument->setNewValidatorChain(array('Validator1', 'Validator2'));
+		$argument->setNewValidatorConjunction(array('Validator1', 'Validator2'));
 	}
 
 	/**

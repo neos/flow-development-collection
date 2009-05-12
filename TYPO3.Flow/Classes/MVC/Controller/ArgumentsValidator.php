@@ -73,7 +73,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 
 	/**
 	 * Checks if the specified property (ie. the argument) of the given arguments
-	 * object is valid. Validity is checked by first invoking the validation chain
+	 * object is valid. Validity is checked by first invoking the validation conjunction
 	 * defined in the argument object.
 	 *
 	 * If at least one error occurred, the result is FALSE.
@@ -87,14 +87,14 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079562);
 		$argument = $arguments[$argumentName];
 
-		$validatorChain = $argument->getValidator();
-		if ($validatorChain === NULL) return TRUE;
+		$validatorConjunction = $argument->getValidator();
+		if ($validatorConjunction === NULL) return TRUE;
 
 		$argumentValue = $argument->getValue();
 		if ($argumentValue === $argument->getDefaultValue() && $argument->isRequired() === FALSE) return TRUE;
 
-		if ($validatorChain->isValid($argumentValue) === FALSE) {
-			$this->errors = $validatorChain->getErrors();
+		if ($validatorConjunction->isValid($argumentValue) === FALSE) {
+			$this->errors = $validatorConjunction->getErrors();
 			return FALSE;
 		}
 		return TRUE;

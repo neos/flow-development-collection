@@ -161,8 +161,8 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
-		$mockValidatorResolver->expects($this->at(0))->method('getBaseValidatorChain')->with('FooType')->will($this->returnValue($mockValidators['foo']));
-		$mockValidatorResolver->expects($this->at(1))->method('getBaseValidatorChain')->with('BarType')->will($this->returnValue(NULL));
+		$mockValidatorResolver->expects($this->at(0))->method('getBaseValidatorConjunction')->with('FooType')->will($this->returnValue($mockValidators['foo']));
+		$mockValidatorResolver->expects($this->at(1))->method('getBaseValidatorConjunction')->with('BarType')->will($this->returnValue(NULL));
 
 		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
 		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('FooType'));

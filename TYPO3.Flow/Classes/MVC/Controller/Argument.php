@@ -341,14 +341,14 @@ class Argument {
 	}
 
 	/**
-	 * Create and set a validator chain
+	 * Create and set a validator conjunction
 	 *
 	 * @param array Object names of the validators
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setNewValidatorChain(array $objectNames) {
-		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ChainValidator');
+	public function setNewValidatorConjunction(array $objectNames) {
+		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 		foreach ($objectNames as $objectName) {
 			if (!$this->objectManager->isObjectRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Validator\\' . $objectName;
 			$this->validator->addValidator($this->objectManager->getObject($objectName));

@@ -108,7 +108,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function isPropertyValidChecksValidatorChainDefinedInAnArgument() {
+	public function isPropertyValidChecksValidatorConjunctionDefinedInAnArgument() {
 		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
 		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);

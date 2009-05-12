@@ -358,8 +358,8 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function initializeActionMethodValidatorsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
-		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 
 		$validatorChains = array(
 			'arg1' => $chain1,
@@ -367,7 +367,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
-		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorChains')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
+		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
 
 		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 		$mockArgument->expects($this->at(0))->method('setValidator')->with($chain1);

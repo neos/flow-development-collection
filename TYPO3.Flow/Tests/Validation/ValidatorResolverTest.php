@@ -109,24 +109,24 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getBaseValidatorCachesTheResultOfTheBuildBaseValidatorChainCalls() {
-		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
+	public function getBaseValidatorCachesTheResultOfTheBuildBaseValidatorConjunctionCalls() {
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 
-		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('buildBaseValidatorChain'), array(), '', FALSE);
-		$validatorResolver->expects($this->once())->method('buildBaseValidatorChain')->with('F3\Virtual\Foo')->will($this->returnValue($mockChainValidator));
+		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('buildBaseValidatorConjunction'), array(), '', FALSE);
+		$validatorResolver->expects($this->once())->method('buildBaseValidatorConjunction')->with('F3\Virtual\Foo')->will($this->returnValue($mockConjunctionValidator));
 
-		$result = $validatorResolver->getBaseValidatorChain('F3\Virtual\Foo');
-		$this->assertSame($mockChainValidator, $result, '#1');
+		$result = $validatorResolver->getBaseValidatorConjunction('F3\Virtual\Foo');
+		$this->assertSame($mockConjunctionValidator, $result, '#1');
 
-		$result = $validatorResolver->getBaseValidatorChain('F3\Virtual\Foo');
-		$this->assertSame($mockChainValidator, $result, '#2');
+		$result = $validatorResolver->getBaseValidatorConjunction('F3\Virtual\Foo');
+		$this->assertSame($mockConjunctionValidator, $result, '#2');
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodArgumentsValidatorChainsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
+	public function buildMethodArgumentsValidatorConjunctionsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
 		$methodTagsValues = array(
@@ -147,12 +147,12 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 
-		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$chain1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
-		$chain1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
+		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$conjunction1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
+		$conjunction1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
 
-		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$chain2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
+		$conjunction2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$conjunction2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
@@ -164,43 +164,43 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
-		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Chain')->will($this->returnValue($chain1));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
-		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Chain')->will($this->returnValue($chain2));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction2));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);
 
-		$result = $validatorResolver->buildMethodArgumentsValidatorChains(get_class($mockController), 'fooAction');
-		$this->assertSame(array('arg1' => $chain1, 'arg2' => $chain2), $result);
+		$result = $validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($mockController), 'fooAction');
+		$this->assertSame(array('arg1' => $conjunction1, 'arg2' => $conjunction2), $result);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildBaseValidatorChainAddsCustomValidatorToTheReturnedChain() {
+	public function buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction() {
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
-		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$mockChainValidator->expects($this->once())->method('addValidator')->with($mockValidator);
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockValidator);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockChainValidator));
+		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
 		$mockObjectManager->expects($this->at(1))->method('getObject')->with('F3\Virtual\FooValidator')->will($this->returnValue($mockValidator));
 
 		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName'), array($mockObjectManager));
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with('F3\Virtual\FooValidator')->will($this->returnValue('F3\Virtual\FooValidator'));
 
-		$result = $validatorResolver->_call('buildBaseValidatorChain', 'F3\Virtual\Foo');
-		$this->assertSame($mockChainValidator, $result);
+		$result = $validatorResolver->_call('buildBaseValidatorConjunction', 'F3\Virtual\Foo');
+		$this->assertSame($mockConjunctionValidator, $result);
 	}
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildBaseValidatorChainAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedChain() {
+	public function buildBaseValidatorConjunctionAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedConjunction() {
 		$mockObject = $this->getMock('stdClass');
 		$className = get_class($mockObject);
 
@@ -227,11 +227,11 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$mockObjectValidator = $this->getMock('F3\FLOW3\Validation\Validator\GenericObjectValidator', array(), array(), '', FALSE);
 
-		$mockChainValidator = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$mockChainValidator->expects($this->once())->method('addValidator')->with($mockObjectValidator);
+		$mockConjunctionValidator = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$mockConjunctionValidator->expects($this->once())->method('addValidator')->with($mockObjectValidator);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ChainValidator')->will($this->returnValue($mockChainValidator));
+		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
 
 		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
 		$validatorResolver->injectReflectionService($mockReflectionService);
@@ -243,15 +243,15 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(5))->method('createValidator')->with('Quux')->will($this->returnValue($mockObjectValidator));
 
-		$result = $validatorResolver->_call('buildBaseValidatorChain', $className);
-		$this->assertSame($mockChainValidator, $result);
+		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $className);
+		$this->assertSame($mockConjunctionValidator, $result);
 	}
 
 	/**
 	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function buildMethodArgumentsValidatorChainsBuildsAChainFromValidateAnnotationsOfTheSpecifiedMethod() {
+	public function buildMethodArgumentsValidatorConjunctionsBuildsAConjunctionFromValidateAnnotationsOfTheSpecifiedMethod() {
 		$mockObject = $this->getMock('stdClass', array('fooMethod'), array(), '', FALSE);
 
 		$methodTagsValues = array(
@@ -272,12 +272,12 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockBarValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 		$mockQuuxValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
 
-		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$chain1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
-		$chain1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
+		$conjunction1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$conjunction1->expects($this->at(0))->method('addValidator')->with($mockFooValidator);
+		$conjunction1->expects($this->at(1))->method('addValidator')->with($mockBarValidator);
 
-		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ChainValidator', array(), array(), '', FALSE);
-		$chain2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
+		$conjunction2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$conjunction2->expects($this->at(0))->method('addValidator')->with($mockQuuxValidator);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
@@ -289,15 +289,15 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 
 		$validatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array('createValidator'), array(), '', FALSE);
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
-		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Chain')->will($this->returnValue($chain1));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
-		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Chain')->will($this->returnValue($chain2));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction2));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);
 
-		$result = $validatorResolver->buildMethodArgumentsValidatorChains(get_class($mockController), 'fooAction');
-		$this->assertSame(array('arg1' => $chain1, 'arg2' => $chain2), $result);
+		$result = $validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($mockController), 'fooAction');
+		$this->assertSame(array('arg1' => $conjunction1, 'arg2' => $conjunction2), $result);
 	}
 
 	/**

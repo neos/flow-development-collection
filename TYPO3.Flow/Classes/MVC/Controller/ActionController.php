@@ -186,10 +186,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @internal
 	 */
 	protected function initializeActionMethodValidators() {
-		$validatorChains = $this->validatorResolver->buildMethodArgumentsValidatorChains(get_class($this), $this->actionMethodName);
-		foreach ($validatorChains as $argumentName => $validatorChain) {
+		$validatorConjunctions = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
+		foreach ($validatorConjunctions as $argumentName => $validatorConjunction) {
 			if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found custom validation rule for non existing argument "' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1239853108);
-			$this->arguments[$argumentName]->setValidator($validatorChain);
+			$this->arguments[$argumentName]->setValidator($validatorConjunction);
 		}
 	}
 

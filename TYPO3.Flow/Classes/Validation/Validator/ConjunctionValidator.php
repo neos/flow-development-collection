@@ -29,7 +29,8 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Validator to chain many validators
+ * Validator to chain many validators in a conjunction (logical and). So every
+ * validator has to be valid, to make the whole conjunction valid.
  *
  * @package FLOW3
  * @subpackage Validation
@@ -37,7 +38,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
+class ConjunctionValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
 
 	/**
 	 * @var array
@@ -55,7 +56,7 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	protected $errors = array();
 
 	/**
-	 * Constructs the validator chain
+	 * Constructs the validator conjunction
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -64,7 +65,7 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	}
 
 	/**
-	 * Checks if the given value is valid according to the validators of the chain ..
+	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *
 	 * If at least one error occurred, the result is FALSE.
 	 *
@@ -73,13 +74,14 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function isValid($value) {
+		$result = TRUE;
 		foreach ($this->validators as $validator) {
 			if ($validator->isValid($value) === FALSE) {
-				$this->errors = $validator->getErrors();
-				return FALSE;
+				$this->errors = array_merge($this->errors, $validator->getErrors());
+				$result = FALSE;
 			}
 		}
-		return TRUE;
+		return $result;
 	}
 
 	/**
@@ -103,7 +105,7 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	}
 
 	/**
-	 * Adds a new validator to the chain.
+	 * Adds a new validator to the conjunction.
 	 *
 	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
 	 * @return void
@@ -120,12 +122,12 @@ class ChainValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterfac
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function removeValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
-		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Cannot remove validator because its not in the chain.', 1207020177);
+		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Cannot remove validator because its not in the conjunction.', 1207020177);
 		$this->validators->detach($validator);
 	}
 
 	/**
-	 * Returns the number of validators contained in this chain.
+	 * Returns the number of validators contained in this conjunction.
 	 *
 	 * @return integer The number of validators
 	 * @author Robert Lemke <robert@typo3.org>

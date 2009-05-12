@@ -308,14 +308,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * Collects the base validators which were defined for the data type of each
-	 * controller argument and adds them to the argument's validator chain.
+	 * controller argument and adds them to the argument's validator conjunction.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeControllerArgumentsBaseValidators() {
 		foreach ($this->arguments as $argument) {
-			$validator = $this->validatorResolver->getBaseValidatorChain($argument->getDataType());
+			$validator = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
 			if ($validator !== NULL) $argument->setValidator($validator);
 		}
 	}
