@@ -29,7 +29,7 @@ namespace F3\FLOW3\Validation\Validator;
  */
 
 /**
- * Abstract junction validator with many validators
+ * An abstract composite validator with consisting of other validators
  *
  * @package FLOW3
  * @subpackage Validation
@@ -37,7 +37,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-abstract class AbstractJunctionValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
+abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Validator\ValidatorInterface, \Countable {
 
 	/**
 	 * @var array

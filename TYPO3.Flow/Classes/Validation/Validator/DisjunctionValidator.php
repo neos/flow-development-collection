@@ -39,7 +39,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractJunctionValidator {
+class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompositeValidator {
 	/**
 	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *
