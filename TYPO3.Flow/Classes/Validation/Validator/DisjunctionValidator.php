@@ -25,20 +25,21 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: ConjunctionValidator.php 2203 2009-05-12 18:44:47Z networkteam_hlubek $
  */
 
 /**
- * Validator to chain many validators in a conjunction (logical and). So every
- * validator has to be valid, to make the whole conjunction valid.
+ * Validator to chain many validators in a disjunction (logical or). So only one
+ * validator has to be valid, to make the whole disjunction valid. Errors are
+ * only returned if all validators failed.
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id$
+ * @version $Id: ConjunctionValidator.php 2203 2009-05-12 18:44:47Z networkteam_hlubek $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractJunctionValidator {
+class DisjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractJunctionValidator {
 	/**
 	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *
@@ -47,14 +48,19 @@ class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractJuncti
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isValid($value) {
-		$result = TRUE;
+		$result = FALSE;
 		foreach ($this->validators as $validator) {
 			if ($validator->isValid($value) === FALSE) {
 				$this->errors = array_merge($this->errors, $validator->getErrors());
-				$result = FALSE;
+			} else {
+				$result = TRUE;
 			}
+		}
+		if ($result === TRUE) {
+			$this->errors = array();
 		}
 		return $result;
 	}
