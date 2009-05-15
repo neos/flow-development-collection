@@ -44,7 +44,7 @@ interface ViewInterface {
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
 	 */
-	public function setControllerContext($controllerContext);
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
 	/**
 	 * Returns an View Helper instance.

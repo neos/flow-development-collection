@@ -187,7 +187,6 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 */
 	public function resolve(array $routeValues) {
 		$this->createRoutesFromConfiguration();
-
 		foreach (array_reverse($this->routes) as $routeName => $route) {
 			if ($route->resolves($routeValues)) {
 				return $route->getMatchingURI();
@@ -211,7 +210,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 				$route->setName($routeName);
 				$route->setUriPattern($routeConfiguration['uriPattern']);
 				if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
-				if (isset($routeConfiguration['routeParts'])) $route->setRoutePartConfiguration($routeConfiguration['routeParts']);
+				if (isset($routeConfiguration['routeParts'])) $route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
 				$this->routes[$routeName] = $route;
 			}
 			$this->routesCreated = TRUE;

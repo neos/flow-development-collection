@@ -108,7 +108,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function setControllerContext($controllerContext) {
+	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
 	}
 

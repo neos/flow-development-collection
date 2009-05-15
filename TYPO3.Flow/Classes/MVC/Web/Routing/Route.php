@@ -114,6 +114,11 @@ class Route {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Constructor
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
@@ -123,6 +128,17 @@ class Route {
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
 		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the Persistence Manager
+	 *
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @return void
+	 * @author Robert Lemke <rober@typo3.org>
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -358,7 +374,14 @@ class Route {
 			}
 		}
 		if (count($routeValues) > 0) {
-			$matchingURI .= '?' . http_build_query($routeValues);
+			foreach ($routeValues as $key => $routeValue) {
+				if (is_object($routeValue)) {
+					$uuid = $this->persistenceManager->getBackend()->getUUIDByObject($routeValue);
+					if ($uuid === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Route value ' . $this->name . ' is an object but does is unknown to the persistence manager.', 1242417960);
+					$routeValues[$key] = $uuid;
+				}
+			}
+			$matchingURI .= '?' . http_build_query($routeValues, NULL, '&');
 		}
 		$this->matchingURI = strtolower($matchingURI);
 		return TRUE;

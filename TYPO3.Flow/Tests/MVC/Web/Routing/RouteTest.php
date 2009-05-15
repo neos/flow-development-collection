@@ -737,5 +737,13 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals('_resolve_invoked_/value2', $route->getMatchingURI());
 	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function resolvesConvertsObjectValuesIntoAUUIDIdentity() {
+		$this->markTestIncomplete();
+	}
 }
 ?>

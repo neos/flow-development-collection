@@ -40,28 +40,12 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  implements \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface {
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
-	 */
-	protected $persistenceManager;
-
-	/**
 	 * The split string represents the end of a Dynamic Route Part.
 	 * If it is empty, Route Part will be equal to the remaining request path.
 	 *
 	 * @var string
 	 */
 	protected $splitString = '';
-
-	/**
-	 * Injects the Persistence Manager
-	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
-	 * @return void
-	 * @author Robert Lemke <rober@typo3.org>
-	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
-	}
 
 	/**
 	 * Sets split string of the Route Part.
@@ -171,9 +155,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 		}
 		$valueToResolve = $this->findValueToResolve($routeValues);
 		if (!$this->resolveValue($valueToResolve)) {
-			if (!is_object($valueToResolve) || !$this->resolveIdentityValueFromObject($valueToResolve)) {
-				return FALSE;
-			}
+			return FALSE;
 		}
 		unset($routeValues[$this->name]);
 		return TRUE;
@@ -204,26 +186,10 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart  impl
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function resolveValue($value) {
-		if (!isset($value)) {
+		if ($value === NULL || is_object($value)) {
 			return FALSE;
 		}
 		$this->value = $value;
-		return TRUE;
-	}
-
-	/**
-	 * Tries to determine the identity (currently uuid only) of the given
-	 * object and sets this->value with a identity array accordingly.
-	 *
-	 * @param object $object
-	 * @return boolean TRUE if the identity could be resolved, otherwise FALSE
-	 * @see resolve()
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function resolveIdentityValueFromObject($object) {
-		$uuid = $this->persistenceManager->getBackend()->getUUIDByObject($object);
-		if ($uuid === NULL) return FALSE;
-		$this->value =  array('__uuid' => $uuid);
 		return TRUE;
 	}
 }
