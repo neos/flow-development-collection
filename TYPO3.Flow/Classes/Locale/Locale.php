@@ -57,6 +57,7 @@ class Locale {
 
 	/**
 	 * The language identifier - a BCP47, ISO 639-3 or 639-5 code
+	 * Like the standard says, we use "mul" to label multilanguage content
 	 *
 	 * @var string
 	 * @see http://rfc.net/bcp47.html
@@ -75,8 +76,9 @@ class Locale {
 
 	/**
 	 * The region identifier - an ISO 3166-1-alpha-2 code or a UN M.49 three digit code
+	 * Note: We use "ZZ" for "unknown region" or "global"
 	 *
-	 * @var unknown_type
+	 * @var string
 	 * @see http://www.iso.org/iso/country_codes/iso_3166_code_lists.htm
 	 * @see http://en.wikipedia.org/wiki/UN_M.49
 	 */
