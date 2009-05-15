@@ -54,10 +54,10 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		$request->setDispatched(TRUE);
+		parent::processRequest($request, $response);
+		$this->initializeView();
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
-				$this->defaultView->setRequest($request);
 				$response->setContent($this->defaultView->render());
 				break;
 			default :
@@ -69,6 +69,13 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 					"Have fun! The FLOW3 Development Team\n"
 				);
 		}
+	}
+	
+	/**
+	 * Initialize the view
+	 */
+	protected function initializeView() {
+		$this->defaultView->setControllerContext($this->controllerContext);
 	}
 }
 
