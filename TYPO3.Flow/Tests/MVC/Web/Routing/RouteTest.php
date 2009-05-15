@@ -92,9 +92,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	public function settingNonExistingRoutePartHandlerThrowsException() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('{key1}/{key2}');
-		$route->setRoutePartHandlers(
+		$route->setRoutePartsConfiguration(
 			array(
-				'key1' => 'Non_Existing_RoutePartHandler',
+				'key1' => array(
+					'handler' => 'Non_Existing_RoutePartHandler',
+				)
 			)
 		);
 		$route->parse();
@@ -108,9 +110,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	public function settingInvalidRoutePartHandlerThrowsException() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('{key1}/{key2}');
-		$route->setRoutePartHandlers(
+		$route->setRoutePartsConfiguration(
 			array(
-				'key1' => 'F3\FLOW3\MVC\Web\Routing\StaticRoutePart',
+				'key1' => array(
+					'handler' => 'F3\FLOW3\MVC\Web\Routing\StaticRoutePart',
+				)
 			)
 		);
 		$route->parse();
@@ -344,9 +348,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler');
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('{key1}/{key2}');
-		$route->setRoutePartHandlers(
+		$route->setRoutePartsConfiguration(
 			array(
-				'key1' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
+				'key1' => array(
+					'handler' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
+				)
 			)
 		);
 		$route->matches('foo/bar');
@@ -659,13 +665,14 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeCantBeResolvedIfUriPatternContainsLessValuesThanAreSpecified() {
+	public function routeAppendsAdditionalQueryParametersIfUriPatternContainsLessValuesThanAreSpecified() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('{key1}-{key2}/{key3}.{key4}.{@format}');
 		$route->setDefaults(array('@format' => 'xml'));
 		$routeValues = array('key1' => 'value1', 'key2' => 'value2', 'key3' => 'value3', 'key4' => 'value4', 'nonexistingkey' => 'foo');
 
-		$this->assertFalse($route->resolves($routeValues));
+		$this->assertTrue($route->resolves($routeValues));
+		$this->assertEquals('value1-value2/value3.value4.xml?nonexistingkey=foo', $route->getMatchingURI());
 	}
 
 	/**
@@ -718,9 +725,11 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 		$this->objectManager->registerObject('F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler');
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setUriPattern('{key1}/{key2}');
-		$route->setRoutePartHandlers(
+		$route->setRoutePartsConfiguration(
 			array(
-				'key1' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
+				'key1' => array(
+					'handler' => 'F3\FLOW3\MVC\Fixture\Web\Routing\MockRoutePartHandler',
+				)
 			)
 		);
 		$routeValues = array('key2' => 'value2');

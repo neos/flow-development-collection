@@ -40,6 +40,85 @@ namespace F3\FLOW3\MVC\Web\Routing;
 interface RoutePartInterface {
 
 	/**
+	 * Sets name of the Route Part.
+	 * 
+	 * @param string $name
+	 * @return void
+	 */
+	public function setName($partName);
+
+	/**
+	 * Returns name of the Route Part.
+	 * 
+	 * @return string
+	 */
+	public function getName();
+
+	/**
+	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
+	 * 
+	 * @return boolean
+	 */
+	public function hasValue();
+
+	/**
+	 * Returns value of the Route Part. Before match() is called this returns NULL.
+	 * 
+	 * @return mixed
+	 */
+	public function getValue();
+
+	/**
+	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
+	 * 
+	 * @return boolean
+	 */
+	public function hasDefaultValue();
+
+	/**
+	 * Sets default value of the Route Part.
+	 * 
+	 * @param mixed $defaultValue
+	 * @return void
+	 */
+	public function setDefaultValue($defaultValue);
+
+	/**
+	 * Gets default value of the Route Part.
+	 * 
+	 * @return mixed $defaultValue
+	 */
+	public function getDefaultValue();
+
+	/**
+	 * Specifies whether this Route part is optional.
+	 * 
+	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
+	 * @return void
+	 */
+	public function setOptional($isOptional);
+
+	/**
+	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
+	 * @see setOptional()
+	 */
+	public function isOptional();
+
+	/**
+	 * Defines options for this Route Part.
+	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.
+	 * 
+	 * @param array $options
+	 * @return void
+	 */
+	public function setOptions(array $options);
+
+	/**
+	 * @return array options of this Route Part.
+	 */
+	public function getOptions();
+
+	/**
 	 * Checks whether this Route Part corresponds to the given $requestPath.
 	 * This method does not only check if the Route Part matches. It can also
 	 * shorten the $requestPath by the matching substring when matching is successful.

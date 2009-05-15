@@ -60,21 +60,18 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	protected $defaultValue = NULL;
 
 	/**
-	 * Specifies whether this Route part is optional. Which means it's put in parentheses in the routes URI pattern.
+	 * Specifies whether this Route Part is optional. Which means it's put in parentheses in the routes URI pattern.
 	 *
 	 * @var boolean
 	 */
 	protected $isOptional = FALSE;
 
 	/**
-	 * Returns name of the Route Part.
-	 * 
-	 * @return string
-	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * Contains options for this Route Part.
+	 *
+	 * @var array
 	 */
-	public function getName() {
-		return $this->name;
-	}
+	protected $options = array();
 
 	/**
 	 * Sets name of the Route Part.
@@ -85,6 +82,16 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 */
 	public function setName($partName) {
 		$this->name = $partName;
+	}
+
+	/**
+	 * Returns name of the Route Part.
+	 * 
+	 * @return string
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getName() {
+		return $this->name;
 	}
 
 	/**
@@ -118,6 +125,17 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	}
 
 	/**
+	 * Sets default value of the Route Part.
+	 * 
+	 * @param mixed $defaultValue
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setDefaultValue($defaultValue) {
+		$this->defaultValue = $defaultValue;
+	}
+
+	/**
 	 * Gets default value of the Route Part.
 	 * 
 	 * @return mixed $defaultValue
@@ -127,15 +145,16 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 		return $this->defaultValue;
 	}
 
+
 	/**
-	 * Sets default value of the Route Part.
+	 * Specifies whether this Route part is optional.
 	 * 
-	 * @param mixed $defaultValue
+	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setDefaultValue($defaultValue) {
-		$this->defaultValue = $defaultValue;
+	public function setOptional($isOptional) {
+		$this->isOptional = $isOptional;
 	}
 
 	/**
@@ -150,14 +169,22 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	}
 
 	/**
-	 * Specifies whether this Route part is optional.
+	 * Defines options for this Route Part.
+	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.
 	 * 
-	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
+	 * @param array $options
 	 * @return void
-	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setOptional($isOptional) {
-		$this->isOptional = $isOptional;
+	public function setOptions(array $options) {
+		$this->options = $options;
 	}
+
+	/**
+	 * @return array options of this Route Part.
+	 */
+	public function getOptions() {
+		return $this->options;
+	}
+
 }
 ?>

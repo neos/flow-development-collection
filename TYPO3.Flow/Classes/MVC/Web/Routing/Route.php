@@ -81,12 +81,12 @@ class Route {
 	protected $matchingURI;
 
 	/**
-	 * Contains associative array of custom Route Part handler classnames
-	 * (key: Route Part name, value: Route Part handler classname)
+	 * Contains associative array of Route Part options
+	 * (key: Route Part name, value: array of Route Part options)
 	 *
 	 * @var array
 	 */
-	protected $routePartHandlers = array();
+	protected $routePartsConfiguration = array();
 
 	/**
 	 * Indicates whether this route is parsed.
@@ -159,6 +159,16 @@ class Route {
 	}
 
 	/**
+	 * Returns default values for this Route.
+	 *
+	 * @return array Route defaults
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getDefaults() {
+		return $this->defaults;
+	}
+
+	/**
 	 * Sets the URI pattern this route should match with
 	 *
 	 * @param string $uriPattern
@@ -172,6 +182,16 @@ class Route {
 	}
 
 	/**
+	 * Returns the URI pattern this route should match with
+	 *
+	 * @return string the URI pattern
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getUriPattern() {
+		return $this->uriPattern;
+	}
+
+	/**
 	 * By default all Dynamic Route Parts are resolved by
 	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart.
 	 * But you can specify different classes to handle particular Route Parts.
@@ -179,15 +199,24 @@ class Route {
 	 * Note: Route Part handlers must implement
 	 * \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface.
 	 *
-	 * Usage: setRoutePartHandlers(array('@controller' =>
-	 *            'F3\Package\Subpackage\MyRoutePartHandler'));
+	 * Usage: setRoutePartsConfiguration(array('@controller' =>
+	 *            array('handler' => 'F3\Package\Subpackage\MyRoutePartHandler')));
 	 *
-	 * @param array $routePartHandlers Route Part handler classnames
+	 * @param array $routePartsConfiguration Route Parts configuration options
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setRoutePartHandlers(array $routePartHandlers) {
-		$this->routePartHandlers = $routePartHandlers;
+	public function setRoutePartsConfiguration(array $routePartsConfiguration) {
+		$this->routePartsConfiguration = $routePartsConfiguration;
+	}
+
+	/**
+	 *
+	 * @return array $routePartsConfiguration
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getRoutePartsConfiguration() {
+		return $this->routePartsConfiguration;
 	}
 
 	/**
@@ -329,7 +358,7 @@ class Route {
 			}
 		}
 		if (count($routeValues) > 0) {
-			return FALSE;
+			$matchingURI .= '?' . http_build_query($routeValues);
 		}
 		$this->matchingURI = strtolower($matchingURI);
 		return TRUE;
@@ -374,8 +403,8 @@ class Route {
 					if ($lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 						throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
 					}
-					if (isset($this->routePartHandlers[$routePartName])) {
-						$routePart = $this->objectManager->getObject($this->routePartHandlers[$routePartName]);
+					if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
+						$routePart = $this->objectManager->getObject($this->routePartsConfiguration[$routePartName]['handler']);
 						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
 							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface"', 1218480972);
 						}
@@ -394,6 +423,9 @@ class Route {
 			}
 			$routePart->setName($routePartName);
 			$routePart->setOptional($currentRoutePartIsOptional);
+			if (isset($this->routePartsConfiguration[$routePartName]['options'])) {
+				$routePart->setOptions($this->routePartsConfiguration[$routePartName]['options']);
+			}
 
 			$this->routeParts[] = $routePart;
 			if (!empty($match['optionalEnd'])) {
