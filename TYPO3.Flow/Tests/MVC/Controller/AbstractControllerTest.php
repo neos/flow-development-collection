@@ -37,17 +37,6 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AbstractControllerTest extends \F3\Testing\BaseTestCase {
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function initializeObjectSetsCurrentPackage() {
-		$packageKey = uniqid('Test');
-		$controller = $this->getMock('F3\FLOW3\MVC\Controller\AbstractController', array(), array($this->getMock('F3\FLOW3\Object\FactoryInterface')), 'F3\\' . $packageKey . '\Controller', TRUE);
-		$this->assertSame($packageKey, $this->readAttribute($controller, 'packageKey'));
-	}
-
 	/**
 	 * @test
 	 * @expectedException F3\FLOW3\MVC\Exception\UnsupportedRequestType
@@ -72,10 +61,65 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'setupControllerContext'), array(), '', FALSE);
 		$controller->processRequest($mockRequest, $mockResponse);
 	}
 
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function processRequestSetsControllerContext() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller->processRequest($mockRequest, $mockResponse);
+		
+		$controllerContext = $controller->_get('controllerContext');
+		
+		$this->assertNotNull($controllerContext);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function controllerContextForProcessedRequestContainsRequestAndResponse() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller->processRequest($mockRequest, $mockResponse);
+		
+		$controllerContext = $controller->_get('controllerContext');
+		
+		$this->assertEquals($mockRequest, $controllerContext->getRequest());
+		$this->assertEquals($mockResponse, $controllerContext->getResponse());
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function controllerContextForProcessedRequestContainsArgumentsAndArgumentsMappingResults() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
+		
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('argumentsMappingResults', $mockMappingResults);
+		$controller->processRequest($mockRequest, $mockResponse);
+		
+		$controllerContext = $controller->_get('controllerContext');
+		
+		$this->assertEquals($mockArguments, $controllerContext->getArguments());
+		$this->assertEquals($mockMappingResults, $controllerContext->getArgumentsMappingResults());
+	}
+	
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction

@@ -39,9 +39,11 @@ namespace F3\FLOW3\MVC\View\Helper;
 interface HelperInterface {
 
 	/**
-	 * Sets the current request
+	 * Sets the current controller context
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Web\Request $request);
+	public function setControllerContext($controllerContext);
 }
 
 ?>

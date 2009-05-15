@@ -55,10 +55,10 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		$request->setDispatched(TRUE);
+		parent::processRequest($request, $response);
+		$this->initializeView();
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
-				$this->notFoundView->setRequest($request);
 				$response->setStatus(404);
 				$response->setContent($this->notFoundView->render());
 				break;
@@ -68,6 +68,13 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 					"No controller could be resolved which would match your request.\n"
 				);
 		}
+	}
+	
+	/**
+	 * Initialize the view
+	 */
+	protected function initializeView() {
+		$this->notFoundView->setControllerContext($this->controllerContext);
 	}
 }
 

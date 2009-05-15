@@ -59,9 +59,9 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
-	protected $request;
+	protected $controllerContext;
 
 	/**
 	 * @var array of \F3\FLOW3\MVC\View\Helper\HelperInterface
@@ -102,14 +102,14 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	}
 
 	/**
-	 * Sets the current request
+	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
-		$this->request = $request;
+	public function setControllerContext($controllerContext) {
+		$this->controllerContext = $controllerContext;
 	}
 
 	/**
@@ -126,7 +126,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 			if (!$viewHelper instanceof \F3\FLOW3\MVC\View\Helper\HelperInterface) {
 				throw new \F3\FLOW3\MVC\Exception\InvalidViewHelper('View Helpers must implement interface "\F3\FLOW3\MVC\View\Helper\HelperInterface"', 1222895456);
 			}
-			$viewHelper->setRequest($this->request);
+			$viewHelper->setControllerContext($this->controllerContext);
 			$this->viewHelpers[$viewHelperClassName] = $viewHelper;
 		}
 		return $this->viewHelpers[$viewHelperClassName];

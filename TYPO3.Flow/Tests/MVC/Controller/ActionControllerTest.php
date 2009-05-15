@@ -47,8 +47,10 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 
+		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
+		
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array(
-			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeControllerArgumentsBaseValidators', 'initializeView', 'callActionMethod'),
+			'initializeFooAction', 'initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeControllerArgumentsBaseValidators', 'setupControllerContext', 'initializeView', 'callActionMethod'),
 			array(), '', FALSE);
 		$mockController->expects($this->at(0))->method('resolveActionMethodName')->will($this->returnValue('fooAction'));
 		$mockController->expects($this->at(1))->method('initializeActionMethodArguments');
@@ -58,11 +60,25 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->expects($this->at(5))->method('initializeControllerArgumentsBaseValidators');
 		$mockController->expects($this->at(6))->method('mapRequestArgumentsToControllerArguments');
 		$mockController->expects($this->at(7))->method('initializeView');
-		$mockController->expects($this->at(8))->method('callActionMethod');
+		$mockController->expects($this->at(8))->method('setupControllerContext');
+		$mockController->expects($this->at(9))->method('callActionMethod');
 
 		$mockController->processRequest($mockRequest, $mockResponse);
 		$this->assertSame($mockRequest, $mockController->_get('request'));
 		$this->assertSame($mockResponse, $mockController->_get('response'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function processRequestCallsSetupControllerContext() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('initializeAction', 'resolveActionMethodName', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'mapRequestArgumentsToControllerArguments', 'initializeControllerArgumentsBaseValidators', 'initializeView', 'callActionMethod', 'setupControllerContext'),	array(), '', FALSE);
+		$mockController->expects($this->once())->method('setupControllerContext');
+		$mockController->processRequest($mockRequest, $mockResponse);
 	}
 
 	/**
@@ -183,9 +199,12 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->at(2))->method('getControllerName')->will($this->returnValue('Test'));
 		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('list'));
 		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('html'));
-
+		
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
+		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
+		
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
-		$mockView->expects($this->exactly(1))->method('setRequest')->with($mockRequest);
+		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->at(0))->method('getCaseSensitiveObjectName')->with('f3\foo\view\test\listhtml')->will($this->returnValue(FALSE));
@@ -194,6 +213,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
+		$mockController->_set('controllerContext', $mockControllerContext);
 		$mockController->_set('objectManager', $mockObjectManager);
 
 		$mockController->_call('initializeView');

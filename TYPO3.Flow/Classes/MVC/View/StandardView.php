@@ -37,12 +37,6 @@ namespace F3\FLOW3\MVC\View;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
-
-	/**
-	 * @var \F3\FLOW3\MVC\RequestInterface
-	 */
-	protected $request;
-
 	/**
 	 * Renders the default view
 	 *
@@ -51,13 +45,13 @@ class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
 	 */
 	public function render() {
-		if (!is_object($this->request)) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
+		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
 
 		$template = $this->objectFactory->create('F3\FLOW3\MVC\View\Template');
 		$template->setTemplateResource($this->resourceManager->getResource('file://FLOW3/Public/MVC/StandardView_Template.html')->getContent());
 
-		if ($this->request instanceof \F3\FLOW3\MVC\Web\Request) {
-			$template->setMarkerContent('baseuri', $this->request->getBaseURI());
+		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
+			$template->setMarkerContent('baseuri', $this->controllerContext->getRequest()->getBaseURI());
 		}
 		return $template->render();
 	}

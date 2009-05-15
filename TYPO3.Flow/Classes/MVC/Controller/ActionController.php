@@ -135,7 +135,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->response = $response;
 
 		$this->actionMethodName = $this->resolveActionMethodName();
-		if ($this->initializeView) $this->initializeView();
 
 		$this->initializeActionMethodArguments();
 		$this->initializeControllerArgumentsBaseValidators();
@@ -148,6 +147,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
+		$this->setupControllerContext();
+		if ($this->initializeView) $this->initializeView();
 		$this->callActionMethod();
 	}
 
@@ -251,7 +252,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 
 		$this->view = $this->objectManager->getObject($viewObjectName);
-		$this->view->setRequest($this->request);
+		$this->view->setControllerContext($this->controllerContext);
 	}
 
 	/**

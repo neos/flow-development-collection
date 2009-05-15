@@ -88,9 +88,9 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	public function URIFor($actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $options = array()) {
 		$routeValues = $arguments;
 		$routeValues['@action'] = $actionName;
-		$routeValues['@controller'] = ($controllerName === NULL) ? $this->request->getControllerName() : $controllerName;
-		$routeValues['@package'] = ($packageKey === NULL) ? $this->request->getControllerPackageKey() : $packageKey;
-		$currentSubpackageKey = $this->request->getControllerSubpackageKey();
+		$routeValues['@controller'] = ($controllerName === NULL) ? $this->controllerContext->getRequest()->getControllerName() : $controllerName;
+		$routeValues['@package'] = ($packageKey === NULL) ? $this->controllerContext->getRequest()->getControllerPackageKey() : $packageKey;
+		$currentSubpackageKey = $this->controllerContext->getRequest()->getControllerSubpackageKey();
 		if ($subpackageKey === NULL && strlen($currentSubpackageKey)) {
 			$routeValues['@subpackage'] = $currentSubpackageKey;
 		} else if (strlen($subpackageKey)) {

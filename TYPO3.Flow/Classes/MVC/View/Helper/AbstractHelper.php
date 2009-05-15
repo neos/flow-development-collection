@@ -39,15 +39,17 @@ namespace F3\FLOW3\MVC\View\Helper;
 abstract class AbstractHelper implements \F3\FLOW3\MVC\View\Helper\HelperInterface {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
 	 */
-	protected $request;
+	protected $controllerContext;
 
 	/**
-	 * Sets the current request
+	 * Sets the current controller context
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
+	 * @return void
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Web\Request $request) {
-		$this->request = $request;
+	public function setControllerContext($controllerContext) {
+		$this->controllerContext = $controllerContext;
 	}
 }
 

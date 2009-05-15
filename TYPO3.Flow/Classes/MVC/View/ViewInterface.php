@@ -39,12 +39,12 @@ namespace F3\FLOW3\MVC\View;
 interface ViewInterface {
 
 	/**
-	 * Sets the current request
+	 * Sets the current controller context
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request
+	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
 	 */
-	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request);
+	public function setControllerContext($controllerContext);
 
 	/**
 	 * Returns an View Helper instance.

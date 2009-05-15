@@ -54,12 +54,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $URIHelper;
 
 	/**
-	 * Key of the package this controller belongs to
-	 * @var string
-	 */
-	protected $packageKey;
-
-	/**
 	 * Contains the settings of the current package
 	 * @var array
 	 */
@@ -106,6 +100,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+	
+	/**
+	 * A context with controller information
+	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
+	 */
+	protected $controllerContext;
 
 	/**
 	 * Constructs the controller.
@@ -116,7 +116,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 		$this->objectFactory = $objectFactory;
-		list(, $this->packageKey) = explode('\\', get_class($this));
 	}
 
 	/**
@@ -211,6 +210,23 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
+		$this->setupControllerContext();
+	}
+
+	/**
+	 * Initialize the controller context
+	 * @return void
+	 */
+	protected function setupControllerContext() {
+		$this->controllerContext = new \F3\FLOW3\MVC\Controller\ControllerContext();
+		$this->controllerContext->setRequest($this->request);
+		$this->controllerContext->setResponse($this->response);
+		if ($this->arguments !== NULL) {
+			$this->controllerContext->setArguments($this->arguments);
+		}
+		if ($this->argumentsMappingResults !== NULL) {
+			$this->controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
+		}
 	}
 
 	/**
@@ -251,7 +267,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
-		$this->URIHelper->setRequest($this->request);
+		$this->URIHelper->setControllerContext($this->controllerContext);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
