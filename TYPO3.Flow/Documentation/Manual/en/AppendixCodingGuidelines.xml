@@ -214,12 +214,248 @@ public function getContextName() {
       </section>
 
       <section>
-        <title>Namespace names</title>
+        <title>Namespace and Class names</title>
 
-        <para>Only the characters a-z, A-Z and 0-9 are allowed for namespace
-        names – don't use special characters. All namespace names are written
-        in <classname>UpperCamelCase</classname>, all uppercase names are
-        allowed for well established abbreviations.</para>
+        <para><itemizedlist>
+            <listitem>
+              <para>Only the characters a-z, A-Z and 0-9 are allowed for
+              namespace and class names – don't use special characters.</para>
+            </listitem>
+
+            <listitem>
+              <para>All namespace and class names are written in
+              <classname>UpperCamelCase</classname>, all uppercase names are
+              allowed only for well established abbreviations.</para>
+            </listitem>
+
+            <listitem>
+              <para>The unqualified class name must be meant literally even
+              without the namespace.</para>
+            </listitem>
+
+            <listitem>
+              <para>The main purpose of namespaces is categorization and
+              ordering</para>
+            </listitem>
+
+            <listitem>
+              <para>Class names must be nouns, never adjectives.</para>
+            </listitem>
+
+            <listitem>
+              <para>The name of abstract classes should start with the word
+              "Abstract".</para>
+            </listitem>
+          </itemizedlist></para>
+
+        <para>A few examples follow:</para>
+
+        <table>
+          <title>Incorrect naming of namespaces and classes</title>
+
+          <tgroup cols="3">
+            <colspec colwidth="3*"/>
+
+            <colspec colwidth="2*"/>
+
+            <colspec colwidth="5*"/>
+
+            <thead>
+              <row>
+                <entry>Fully qualified class name </entry>
+
+                <entry>Unqualified class name</entry>
+
+                <entry>Remarks</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>\F3\FLOW3\Session\PHP</entry>
+
+                <entry>PHP</entry>
+
+                <entry>The class is not a representation of PHP!</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Cache\Backend\File</entry>
+
+                <entry>File</entry>
+
+                <entry>The class doesn't represent a file!</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Session\Interface</entry>
+
+                <entry>Interface</entry>
+
+                <entry>Not allowed, "Interface" is a reserved keyword</entry>
+              </row>
+
+              <row>
+                <entry>\F3\Foo\Controller\Default</entry>
+
+                <entry>Default</entry>
+
+                <entry>Not allowed, "Default" is a reserved keyword</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <table>
+          <title>Correct naming of namespaces and classes</title>
+
+          <tgroup cols="3">
+            <colspec colwidth="3*"/>
+
+            <colspec colwidth="2*"/>
+
+            <colspec colwidth="5*"/>
+
+            <thead>
+              <row>
+                <entry>Fully qualified class name</entry>
+
+                <entry>Unqualified class name</entry>
+
+                <entry>Remarks</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>\F3\FLOW3\Session\PHPSession</entry>
+
+                <entry>PHPSession</entry>
+
+                <entry>That's a PHP Session</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Cache\Backend\FileBackend</entry>
+
+                <entry>FileBackend</entry>
+
+                <entry>A File Backend</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Session\SessionInterface</entry>
+
+                <entry>SessionInterface</entry>
+
+                <entry>Interface for a session</entry>
+              </row>
+
+              <row>
+                <entry>\F3\Foo\Controller\StandardController</entry>
+
+                <entry>StandardController</entry>
+
+                <entry>The standard controller</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+
+        <table>
+          <title>Edge cases in naming of namespaces and classes</title>
+
+          <tgroup cols="3">
+            <colspec colwidth="3*"/>
+
+            <colspec colwidth="2*"/>
+
+            <colspec colwidth="5*"/>
+
+            <thead>
+              <row>
+                <entry>Fully qualified class name</entry>
+
+                <entry>Unqualified class name</entry>
+
+                <entry>Remarks</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>\F3\FLOW3\Object\Manager</entry>
+
+                <entry>Manager</entry>
+
+                <entry>If it's the only manager in that namespace, it's
+                okay</entry>
+              </row>
+
+              <row>
+                <entry>\F3\Foo\Bar\Builder</entry>
+
+                <entry>Builder</entry>
+
+                <entry>If it's clear what the builder builds (Bar?), it's
+                okay</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Object\Builder</entry>
+
+                <entry>Builder</entry>
+
+                <entry>Problem: There's a "ConfigurationBuilder" in the same
+                namespace, therefore better rename the Builder to
+                ObjectBuilder</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Object\Factory</entry>
+
+                <entry>Factory</entry>
+
+                <entry>As long as it is the only factory in that namespace,
+                okay</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\MVC\ControllerInterface</entry>
+
+                <entry>ControllerInterface</entry>
+
+                <entry>Consequently the interface belongs to all the
+                controllers in the Controller sub namespace</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\MVC\Controller\ControllerInterface</entry>
+
+                <entry/>
+
+                <entry>Better</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Cache\AbstractBackend</entry>
+
+                <entry>AbstractBackend</entry>
+
+                <entry>Same here: In reality this class belongs to the
+                backends</entry>
+              </row>
+
+              <row>
+                <entry>\F3\FLOW3\Cache\Backend\AbstractBackend</entry>
+
+                <entry/>
+
+                <entry>Better</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
 
         <note>
           <para>When specifying class names to PHP, always reference the
@@ -231,75 +467,6 @@ public function getContextName() {
           PHP notion of names in strings always being seen as fully
           qualified.</para>
         </note>
-      </section>
-
-      <section>
-        <title>Class names</title>
-
-        <para>Only the characters a-z, A-Z and 0-9 are allowed for class names
-        – don't use special characters.</para>
-
-        <para>All class names are written in
-        <classname>UpperCamelCase</classname>, all uppercase names are allowed
-        for well established abbreviations. Class names must be nouns, never
-        adjectives.</para>
-
-        <para>The name of abstract classes should start with the word
-        "Abstract".</para>
-
-        <para>A few examples follow:</para>
-
-        <example>
-          <title>Correct naming of classes</title>
-
-          <itemizedlist>
-            <listitem>
-              <para><classname>\F3\FLOW3\Object</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\FLOW3\Object\Manager</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\MyPackage\MyObject\MySubObject</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\MyPackage\MyObject\MyHTMLParser</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\Foo\Controller\StandardController</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\MyPackage\MyObject\AbstractLogger</classname></para>
-            </listitem>
-          </itemizedlist>
-        </example>
-
-        <example>
-          <title>Incorrect naming of classes</title>
-
-          <itemizedlist>
-            <listitem>
-              <para><classname>\myClass</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\Urlwrapper</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\someObject\classname</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\MyPackage\MyObjectMySubObject</classname></para>
-            </listitem>
-          </itemizedlist>
-        </example>
       </section>
 
       <section>
@@ -331,28 +498,6 @@ public function getContextName() {
 
             <listitem>
               <para><classname>\F3\MyPackage\MyObject\MyHTMLParserInterface</classname></para>
-            </listitem>
-          </itemizedlist>
-        </example>
-
-        <example>
-          <title>Incorrect naming of interfaces</title>
-
-          <itemizedlist>
-            <listitem>
-              <para><classname>\myInterface</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\Urlwrapper</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\IsomeObject\classname</classname></para>
-            </listitem>
-
-            <listitem>
-              <para><classname>\F3\FLOW3\Object\Manager\Interface</classname></para>
             </listitem>
           </itemizedlist>
         </example>
@@ -494,8 +639,8 @@ public function getContextName() {
         <para>As a special exception you may use variable names like
         <varname>$i</varname>, <varname>$j</varname> and <varname>$k</varname>
         for numeric indexes in <function>for</function> loops if it's clear
-        what they mean on the first sight. But even then you might want to
-        avoid them.</para>
+        what they mean on the first sight. But even then you should want to
+        avoid them...</para>
       </section>
 
       <section>
