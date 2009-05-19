@@ -39,12 +39,14 @@ namespace F3\FLOW3\MVC\Controller;
 class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Request The current request
+	 * The current request
+	 * @var \F3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Response The response which will be returned by this action controller
+	 * The response which will be returned by this action controller
+	 * @var \F3\FLOW3\MVC\Web\Response
 	 */
 	protected $response;
 

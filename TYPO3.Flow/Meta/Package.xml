@@ -24,6 +24,7 @@
 				<system type="PHPExtension">session</system>
 				<package>PHP6</package>
 				<package>YAML</package>
+				<package>Fluid</package>
 		</depends>
 		<conflicts>
 				<system maxVersion="0.9.4" type="PHPExtension">eAccelerator</system>

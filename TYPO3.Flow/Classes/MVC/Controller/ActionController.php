@@ -54,24 +54,27 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $initializeView = TRUE;
 
 	/**
-	 * By default a view with the same name as the current action is provided. Contains NULL if none was found.
+	 * By default a Fluid\TemplateView is provided, if a template is available,
+	 * then a view with the same name as the current action will be looked up.
+	 * If none is available the $defaultViewObjectName will be used and finally
+	 * an EmptyView will be created.
 	 * @var \F3\FLOW3\MVC\View\ViewInterface
 	 */
 	protected $view = NULL;
 
 	/**
-	 * By default $this->viewObjectNamePattern is used to find a matching view object.
-	 * If no custom view class can be found, $this->defaultViewObjectName will be used.
-	 * @var string
-	 */
-	protected $defaultViewObjectName = NULL;
-
-	/**
-	 * Pattern after which the view object name is built
-	 *
+	 * Pattern after which the view object name is built if no Fluid template
+	 * is found.
 	 * @var string
 	 */
 	protected $viewObjectNamePattern = 'F3\@package\View\@controller\@action@format';
+
+	/**
+	 * The default view object to use if neither a Fluid template nor an action
+	 * specific view object could be found.
+	 * @var string
+	 */
+	protected $defaultViewObjectName = NULL;
 
 	/**
 	 * Name of the action method
@@ -246,13 +249,17 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	protected function initializeView() {
-		$viewObjectName = ($this->defaultViewObjectName === NULL) ? $this->resolveViewObjectName() : $this->defaultViewObjectName;
-		if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
-
-		$this->view = $this->objectManager->getObject($viewObjectName);
+		$this->view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
 		$this->view->setControllerContext($this->controllerContext);
+		if ($this->view->hasTemplate() === FALSE) {
+			$viewObjectName = $this->resolveViewObjectName();
+			if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
+			$this->view = $this->objectManager->getObject($viewObjectName);
+			$this->view->setControllerContext($this->controllerContext);
+		}
 	}
 
 	/**
