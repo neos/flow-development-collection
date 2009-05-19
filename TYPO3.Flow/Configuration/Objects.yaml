@@ -182,6 +182,7 @@ F3\FLOW3\Package\ManagerInterface:
   autowiring: off
   className: F3\FLOW3\Package\Manager
   properties:
+    objectFactory: object: F3\FLOW3\Object\FactoryInterface
     packageMetaDataWriter: object: F3\FLOW3\Package\MetaData\WriterInterface
 
 F3\FLOW3\Package\Controller\ManagerController: []

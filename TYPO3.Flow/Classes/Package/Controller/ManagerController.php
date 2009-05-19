@@ -34,7 +34,6 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var F3\FLOW3\Package\ManagerInterface
-	 * @inject
 	 */
 	protected $packageManager;
 
@@ -43,6 +42,16 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\CLI\Request');
 
+	/**
+	 * Injects the package manager
+	 *
+	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
+	 * @return void
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+	
 	/**
 	 * Default action (no arguments given)
 	 * Forwards to the helpAction.
@@ -64,6 +73,9 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function createAction($packageKey) {
 		if ($packageKey === '') {
 			return $this->helpAction();
+		}
+		if (!$this->packageManager->isPackageKeyValid($packageKey)) {
+			return 'The package key "' . $packageKey . '" is not valid.' . PHP_EOL;
 		}
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
