@@ -54,10 +54,13 @@ class Manager {
 	protected $systemLogger;
 
 	/**
-	 * @var array Registered Caches
+	 * @var array
 	 */
 	protected $caches = array();
 
+	/**
+	 * @var array
+	 */
 	protected $cacheConfigurations = array(
 		'Default' => array(
 			'frontend' => 'F3\FLOW3\Cache\Frontend\VariableFrontend',

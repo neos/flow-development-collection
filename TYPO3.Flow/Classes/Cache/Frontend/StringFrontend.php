@@ -46,17 +46,18 @@ class StringFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @param string $entryIdentifier An identifier used for this cache entry
 	 * @param string $string The variable to cache
 	 * @param array $tags Tags to associate with this cache entry
+	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function set($entryIdentifier, $string, $tags = array()) {
+	public function set($entryIdentifier, $string, $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233057566);
 		if (!is_string($string)) throw new \F3\FLOW3\Cache\Exception\InvalidData('Only strings can be digested by the StringCache. Thanks.', 1222808333);
 		foreach ($tags as $tag) {
 			if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057512);
 		}
 
-		$this->backend->set($entryIdentifier, $string, $tags);
+		$this->backend->set($entryIdentifier, $string, $tags, $lifetime);
 	}
 
 	/**
