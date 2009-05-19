@@ -58,7 +58,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
-		$this->publicResourcePath = uniqid('TestResources') . '/';
+		$this->publicResourcePath = 'Resources/' . uniqid('Test') . '/';
 		$metadataCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 
 		$this->publisher = new \F3\FLOW3\Resource\Publisher();
