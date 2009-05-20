@@ -49,10 +49,10 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 			'theOneAndOnlyResource' => 'method(F3\Foo\BasicClass->setSomeProperty()) || notExistingResource',
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 
@@ -78,10 +78,10 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 		);
 
-		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
-		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite')->will($this->returnValue($mockPointcutFilterComposite));
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
 

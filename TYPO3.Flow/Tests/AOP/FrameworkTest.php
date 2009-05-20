@@ -113,7 +113,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes'));
 
-		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\PointcutExpressionParser', array('parse'), array(), '', FALSE);
+		$mockPointcutExpressionParser = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutExpressionParser', array('parse'), array(), '', FALSE);
 		$mockPointcutExpressionParser->expects($this->any())->method('parse')->will($this->returnCallBack(array($this, 'pointcutFilterCompositeCallBack')));
 
 		$this->mockObjectFactory->expects($this->any())->method('create')->will($this->returnCallBack(array($this, 'objectFactoryCallBack')));
@@ -126,20 +126,20 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		$this->assertType('F3\FLOW3\AOP\AspectContainer', $container);
 		$this->assertSame('F3\FLOW3\Tests\AOP\Fixture\AspectClassWithAllAdviceTypes', $container->getClassName());
 		$advisors = $container->getAdvisors();
-		$this->assertType('F3\FLOW3\AOP\AroundAdvice', $advisors[0]->getAdvice());
+		$this->assertType('F3\FLOW3\AOP\Advice\AroundAdvice', $advisors[0]->getAdvice());
 		$this->assertSame('fooAround', $advisors[0]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\BeforeAdvice', $advisors[1]->getAdvice());
+		$this->assertType('F3\FLOW3\AOP\Advice\BeforeAdvice', $advisors[1]->getAdvice());
 		$this->assertSame('fooBefore', $advisors[1]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\AfterReturningAdvice', $advisors[2]->getAdvice());
+		$this->assertType('F3\FLOW3\AOP\Advice\AfterReturningAdvice', $advisors[2]->getAdvice());
 		$this->assertSame('fooAfterReturning', $advisors[2]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\AfterThrowingAdvice', $advisors[3]->getAdvice());
+		$this->assertType('F3\FLOW3\AOP\Advice\AfterThrowingAdvice', $advisors[3]->getAdvice());
 		$this->assertSame('fooAfterThrowing', $advisors[3]->getPointcut()->getPointcutExpression());
-		$this->assertType('F3\FLOW3\AOP\AfterAdvice', $advisors[4]->getAdvice());
+		$this->assertType('F3\FLOW3\AOP\Advice\AfterAdvice', $advisors[4]->getAdvice());
 		$this->assertSame('fooAfter', $advisors[4]->getPointcut()->getPointcutExpression());
 
 		$pointcuts = $container->getPointcuts();
 		$this->assertTrue(count($pointcuts) === 1);
-		$this->assertType('F3\FLOW3\AOP\Pointcut', $pointcuts[0]);
+		$this->assertType('F3\FLOW3\AOP\Pointcut\Pointcut', $pointcuts[0]);
 		$this->assertSame('fooPointcut', $pointcuts[0]->getPointcutExpression());
 
 		$introductions = $container->getIntroductions();
@@ -152,11 +152,11 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * call back for buildAspectContainerDetectsAllSupportedKindsOfAdviceAndPointcutsAndIntroductions
-	 * @return \F3\FLOW3\AOP\PointcutFilterComposite but only as a mock!
+	 * @return \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite but only as a mock!
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pointcutFilterCompositeCallBack() {
-		return $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), func_get_args());
+		return $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), func_get_args());
 	}
 
 	/**
@@ -170,7 +170,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 		switch ($objectName) {
 			case 'F3\FLOW3\AOP\Advisor' :
 				return new \F3\FLOW3\AOP\Advisor(current($arguments), next($arguments));
-			case 'F3\FLOW3\AOP\Pointcut' :
+			case 'F3\FLOW3\AOP\Pointcut\Pointcut' :
 			default :
 				return $this->getMock($objectName, array('dummy'), $arguments, '', TRUE);
 		}

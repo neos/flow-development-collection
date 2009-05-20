@@ -55,7 +55,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);
@@ -99,7 +99,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$mockFilter = $this->getMock('F3\FLOW3\AOP\PointcutFilterComposite', array(), array(), '', FALSE);
+		$mockFilter = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
 		$mockFilter->expects($this->once())->method('matches')->with('Foo', 'bar', 'Baz')->will($this->returnValue(TRUE));
 
 		$mockPolicyExpressionParser = $this->getMock('F3\FLOW3\Security\ACL\PolicyExpressionParser', array(), array(), '', FALSE);

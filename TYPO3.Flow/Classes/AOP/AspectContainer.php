@@ -117,7 +117,7 @@ class AspectContainer {
 	 * does not contain the pointcuts which were made out of the pointcut
 	 * expressions for the advisors!
 	 *
-	 * @return array Array of \F3\FLOW3\AOP\Pointcut objects
+	 * @return array Array of \F3\FLOW3\AOP\Pointcut\Pointcut objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcuts() {
@@ -149,11 +149,11 @@ class AspectContainer {
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\Pointcut $pointcut: The poincut to add
+	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut: The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function addPointcut(\F3\FLOW3\AOP\Pointcut $pointcut) {
+	public function addPointcut(\F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;
 	}
 }

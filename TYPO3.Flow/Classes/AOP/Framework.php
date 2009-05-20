@@ -61,12 +61,12 @@ class Framework {
 
 	/**
 	 * An instance of the pointcut expression parser
-	 * @var \F3\FLOW3\AOP\PointcutExpressionParserInterface
+	 * @var \F3\FLOW3\AOP\Pointcut\PointcutExpressionParserInterface
 	 */
 	protected $pointcutExpressionParser;
 
 	/**
-	 * @var \F3\FLOW3\AOP\ProxyClassBuilder
+	 * @var \F3\FLOW3\AOP\Builder\ProxyClassBuilder
 	 */
 	protected $proxyClassBuilder;
 
@@ -140,11 +140,11 @@ class Framework {
 	/**
 	 * Injects an instance of the pointcut expression parser
 	 *
-	 * @param \F3\FLOW3\AOP\PointcutExpressionParser $pointcutExpressionParser
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectPointcutExpressionParser(\F3\FLOW3\AOP\PointcutExpressionParser $pointcutExpressionParser) {
+	public function injectPointcutExpressionParser(\F3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
 	}
 
@@ -195,11 +195,11 @@ class Framework {
 	/**
 	 * Injects the proxy class builder
 	 *
-	 * @param \F3\FLOW3\AOP\ProxyClassBuilder $proxyClassBuilder
+	 * @param \F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function injectProxyClassBuilder(\F3\FLOW3\AOP\ProxyClassBuilder $proxyClassBuilder) {
+	public function injectProxyClassBuilder(\F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
 		$this->proxyClassBuilder = $proxyClassBuilder;
 	}
 
@@ -319,7 +319,7 @@ class Framework {
 	 *
 	 * @param string $aspectClassName Name of the aspect class where the pointcut has been declared
 	 * @param string $pointcutMethodName Method name of the pointcut
-	 * @return mixed The \F3\FLOW3\AOP\Pointcut or FALSE if none was found
+	 * @return mixed The \F3\FLOW3\AOP\Pointcut\Pointcut or FALSE if none was found
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
@@ -349,7 +349,7 @@ class Framework {
 	 * target class has no adviced methods, an empty array is returned.
 	 *
 	 * @param string $targetClassName Name of the target class
-	 * @return mixed An array of method names and their advices as array of \F3\FLOW3\AOP\AdviceInterface
+	 * @return mixed An array of method names and their advices as array of \F3\FLOW3\AOP\Advice\AdviceInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
@@ -436,42 +436,42 @@ class Framework {
 					switch ($tagName) {
 						case 'around' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$advice = $this->objectFactory->create('F3\FLOW3\AOP\AroundAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\Advice\AroundAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'before' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$advice = $this->objectFactory->create('F3\FLOW3\AOP\BeforeAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\Advice\BeforeAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterreturning' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$advice = $this->objectFactory->create('F3\FLOW3\AOP\AfterReturningAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\Advice\AfterReturningAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'afterthrowing' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$advice = $this->objectFactory->create('F3\FLOW3\AOP\AfterThrowingAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\Advice\AfterThrowingAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'after' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$advice = $this->objectFactory->create('F3\FLOW3\AOP\AfterAdvice', $aspectClassName, $methodName);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
+							$advice = $this->objectFactory->create('F3\FLOW3\AOP\Advice\AfterAdvice', $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName);
 							$advisor = $this->objectFactory->create('F3\FLOW3\AOP\Advisor', $advice, $pointcut);
 							$aspectContainer->addAdvisor($advisor);
 						break;
 						case 'pointcut' :
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($tagValue);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName, $methodName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $tagValue, $pointcutFilterComposite, $aspectClassName, $methodName);
 							$aspectContainer->addPointcut($pointcut);
 						break;
 					}
@@ -487,7 +487,7 @@ class Framework {
 							if (!is_array($splittedTagValue) || count($splittedTagValue) != 2)  throw new \F3\FLOW3\AOP\Exception('The introduction in class "' . $aspectClassName . '" does not contain the two required parameters.', 1172694761);
 							$pointcutExpression = trim($splittedTagValue[1]);
 							$pointcutFilterComposite = $this->pointcutExpressionParser->parse($pointcutExpression);
-							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut', $pointcutExpression, $pointcutFilterComposite, $aspectClassName);
+							$pointcut = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\Pointcut', $pointcutExpression, $pointcutFilterComposite, $aspectClassName);
 							$interfaceName = trim($splittedTagValue[0]);
 							$introduction = $this->objectFactory->create('F3\FLOW3\AOP\Introduction', $aspectClassName, $interfaceName, $pointcut);
 							$aspectContainer->addIntroduction($introduction);

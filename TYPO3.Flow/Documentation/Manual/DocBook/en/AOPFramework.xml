@@ -591,7 +591,7 @@ class FooSecurityAspect {
         <para>If the built-in filters don't suit your needs you can even
         define your own custom filters. All you need to do is create a class
         implementing the
-        <interfacename>\F3\FLOW3\AOP\PointcutFilterInterface</interfacename>
+        <interfacename>\F3\FLOW3\AOP\Pointcut\PointcutFilterInterface</interfacename>
         and develop your own logic for the <methodname>matches()</methodname>
         method. The custom filter can then be invoked by using the
         <methodname>filter()</methodname> designator:</para>

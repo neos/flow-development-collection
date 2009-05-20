@@ -123,7 +123,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 		$this->reflectionService = $reflectionService;
 		if (!isset($this->registeredObjects['F3\FLOW3\Reflection\Service'])) {
 			$this->registeredObjects['F3\FLOW3\Reflection\Service'] = 'f3\flow3\reflection\service';
-			$this->objectConfigurations['F3\FLOW3\Reflection\Service'] = new \F3\FLOW3\Object\Configuration('F3\FLOW3\Reflection\Service');
+			$this->objectConfigurations['F3\FLOW3\Reflection\Service'] = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Reflection\Service');
 		}
 		$this->singletonObjectsRegistry->putObject('F3\FLOW3\Reflection\Service', $this->reflectionService);
 		$this->objectBuilder->injectReflectionService($this->reflectionService);
@@ -286,7 +286,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 			$this->singletonObjectsRegistry->putObject($objectName, $object);
 		}
 
-		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration($objectName, $className);
+		$this->objectConfigurations[$objectName] = new \F3\FLOW3\Object\Configuration\Configuration($objectName, $className);
 
 		if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
 			$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
@@ -304,7 +304,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 */
 	public function registerObjectType($objectName) {
 		$className = $this->reflectionService->getDefaultImplementationClassNameForInterface($objectName);
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
 		if ($className !== FALSE) {
 			$objectConfiguration->setClassName($className);
 			if ($this->reflectionService->isClassTaggedWith($className, 'scope')) {
@@ -398,7 +398,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered objects.
 	 *
-	 * @return arrray Array of \F3\FLOW3\Object\Configuration objects, indexed by object name
+	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfigurations() {
@@ -409,7 +409,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * Returns the configuration object of a certain object
 	 *
 	 * @param string $objectName: Name of the object to fetch the configuration for
-	 * @return \F3\FLOW3\Object\Configuration The object configuration
+	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered
 	 */
@@ -428,7 +428,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations) {
 		foreach ($newObjectConfigurations as $newObjectConfiguration) {
-			if (!$newObjectConfiguration instanceof \F3\FLOW3\Object\Configuration) throw new \InvalidArgumentException('The new object configuration must be an instance of \F3\FLOW3\Object\Configuration', 1167826954);
+			if (!$newObjectConfiguration instanceof \F3\FLOW3\Object\Configuration\Configuration) throw new \InvalidArgumentException('The new object configuration must be an instance of \F3\FLOW3\Object\Configuration\Configuration', 1167826954);
 			$objectName = $newObjectConfiguration->getObjectName();
 			if (!isset($this->objectConfigurations[$objectName]) || $this->objectConfigurations[$objectName] !== $newObjectConfiguration) {
 				$this->setObjectConfiguration($newObjectConfiguration);
@@ -439,11 +439,11 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Sets the object configuration for a specific object.
 	 *
-	 * @param \F3\FLOW3\Object\Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration $newObjectConfiguration) {
+	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration) {
 		$objectName = $newObjectConfiguration->getObjectName();
 		$this->objectConfigurations[$newObjectConfiguration->getObjectName()] = clone $newObjectConfiguration;
 		$this->registeredObjects[$objectName] = strtolower($objectName);
@@ -471,17 +471,17 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
 	/**
 	 * Returns straight-value constructor arguments for an object by creating appropriate
-	 * \F3\FLOW3\Object\ConfigurationArgument objects.
+	 * \F3\FLOW3\Object\Configuration\ConfigurationArgument objects.
 	 *
 	 * @param array $argumentValues: Array of argument values. Index must start at "0" for parameter "1" etc.
-	 * @return array An array of \F3\FLOW3\Object\ConfigurationArgument which can be passed to the object builder
+	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
 	 */
 	protected function getOverridingArguments(array $argumentValues) {
 		$argumentObjects = array();
 		foreach ($argumentValues as $index => $value) {
-			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
+			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
 		}
 		return $argumentObjects;
 	}

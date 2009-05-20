@@ -45,7 +45,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setUp() {
-		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
 
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array('getObject', 'getObjectConfiguration', 'reinjectDependencies'), array(), '', FALSE);

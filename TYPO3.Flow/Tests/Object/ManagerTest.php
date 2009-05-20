@@ -127,8 +127,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration('F3\Foo\Bar\Fixture\Object');
-		$objectConfiguration->setScope(\F3\FLOW3\Object\Configuration::SCOPE_PROTOTYPE);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\Foo\Bar\Fixture\Object');
+		$objectConfiguration->setScope(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE);
 		$objectManager->setObjectConfiguration($objectConfiguration);
 
 		$retrievedObject = $objectManager->getObject('F3\Foo\Bar\Fixture\Object');
@@ -213,14 +213,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function getObjectPassesAdditionalArgumentsToTheObjectBuilder() {
 		$someObject = new \ArrayObject();
 		$arguments = array(
-			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'arg1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, $someObject, \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
+			1 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'arg1', \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			2 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(2, $someObject, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE)
 		);
 
 		$className = 'SomeClass' . uniqid();
 		eval('class ' . $className . ' {}');
 
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($className);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($className);
 		$objectConfiguration->setConfigurationSourceHint('F3\FLOW3\Object\Manager');
 
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
@@ -360,8 +360,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectConfiguration1 = $objectManager->getObjectConfiguration($className1);
 		$objectConfiguration2 = $objectManager->getObjectConfiguration($className2);
 
-		$this->assertEquals(\F3\FLOW3\Object\Configuration::SCOPE_SINGLETON, $objectConfiguration1->getScope());
-		$this->assertEquals(\F3\FLOW3\Object\Configuration::SCOPE_PROTOTYPE, $objectConfiguration2->getScope());
+		$this->assertEquals(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_SINGLETON, $objectConfiguration1->getScope());
+		$this->assertEquals(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $objectConfiguration2->getScope());
 	}
 
 	/**
@@ -453,7 +453,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager->registerObjectType($interfaceName);
 		$objectConfiguration = $objectManager->getObjectConfiguration($interfaceName);
-		$this->assertEquals(\F3\FLOW3\Object\Configuration::SCOPE_PROTOTYPE, $objectConfiguration->getScope());
+		$this->assertEquals(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $objectConfiguration->getScope());
 	}
 
 
@@ -532,10 +532,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function setObjectConfigurationsReplacesAllButOnlyThoseConfigurationsWhichAreSpecified() {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 
-		$configuration1 = new \F3\FLOW3\Object\Configuration('Configuration1');
-		$configuration2 = new \F3\FLOW3\Object\Configuration('Configuration2');
-		$newConfiguration2 = new \F3\FLOW3\Object\Configuration('Configuration2');
-		$newConfiguration3 = new \F3\FLOW3\Object\Configuration('Configuration3');
+		$configuration1 = new \F3\FLOW3\Object\Configuration\Configuration('Configuration1');
+		$configuration2 = new \F3\FLOW3\Object\Configuration\Configuration('Configuration2');
+		$newConfiguration2 = new \F3\FLOW3\Object\Configuration\Configuration('Configuration2');
+		$newConfiguration3 = new \F3\FLOW3\Object\Configuration\Configuration('Configuration3');
 
 		$objectManager->setObjectConfigurations(array($configuration1, $configuration2));
 		$objectManager->setObjectConfigurations(array($newConfiguration2, $newConfiguration3));
@@ -565,7 +565,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function setObjectConfigurationRegistersYetUnknownObjectsFromObjectConfiguration() {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$this->assertFalse($objectManager->isObjectRegistered('Foo'));
-		$configuration = new \F3\FLOW3\Object\Configuration('Foo');
+		$configuration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
 		$objectManager->setObjectConfiguration($configuration);
 		$this->assertTrue($objectManager->isObjectRegistered('Foo'));
 	}
@@ -577,7 +577,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function getObjectConfigurationReturnsACloneOfTheOriginalConfigurationObject() {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 
-		$originalConfiguration = new \F3\FLOW3\Object\Configuration('Foo');
+		$originalConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
 		$objectManager->setObjectConfiguration($originalConfiguration);
 
 		$this->assertNotSame($originalConfiguration, $objectManager->getObjectConfiguration('Foo'));

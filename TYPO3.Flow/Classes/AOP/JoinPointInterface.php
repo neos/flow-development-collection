@@ -88,7 +88,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the advice chain related to this join point
 	 *
-	 * @return \F3\FLOW3\AOP\AdviceChainInterface The advice chain
+	 * @return \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain
 	 */
 	public function getAdviceChain();
 

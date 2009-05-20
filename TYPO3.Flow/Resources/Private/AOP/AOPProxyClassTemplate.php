@@ -96,7 +96,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * Advice chains are only used in combination with Around advices.
 	 *
 	 * @param string $methodName: Method to return the advice chains for
-	 * @return mixed The advice chains  (array of \F3\FLOW3\AOP\AdviceChain) or NULL
+	 * @return mixed The advice chains  (array of \F3\FLOW3\AOP\Advice\AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function FLOW3_AOP_Proxy_getAdviceChains($methodName) {
@@ -107,8 +107,8 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 			} else {
 				if (isset($this->targetMethodsAndGroupedAdvices[$methodName])) {
 					$groupedAdvices = $this->targetMethodsAndGroupedAdvices[$methodName];
-					if (isset($groupedAdvices['F3\FLOW3\AOP\AroundAdvice'])) {
-						$this->groupedAdviceChains[$methodName]['F3\FLOW3\AOP\AroundAdvice'] = new \F3\FLOW3\AOP\AdviceChain($groupedAdvices['F3\FLOW3\AOP\AroundAdvice'], $this);
+					if (isset($groupedAdvices['F3\FLOW3\AOP\Advice\AroundAdvice'])) {
+						$this->groupedAdviceChains[$methodName]['F3\FLOW3\AOP\Advice\AroundAdvice'] = new \F3\FLOW3\AOP\Advice\AdviceChain($groupedAdvices['F3\FLOW3\AOP\Advice\AroundAdvice'], $this);
 						$adviceChains = $this->groupedAdviceChains[$methodName];
 					}
 				}

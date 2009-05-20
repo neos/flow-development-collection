@@ -18,7 +18,7 @@ F3\FLOW3\AOP\Framework:
   autowiring: off
   properties:
     reflectionService: object: F3\FLOW3\Reflection\Service
-    pointcutExpressionParser: object: F3\FLOW3\AOP\PointcutExpressionParser
+    pointcutExpressionParser: object: F3\FLOW3\AOP\Pointcut\PointcutExpressionParser
     proxyClassCodesCache:
       object:
         factoryClassName: F3\FLOW3\Cache\Manager
@@ -38,48 +38,46 @@ F3\FLOW3\AOP\Framework:
         arguments:
           1: value: FLOW3_AOP_ProxyBuildInformation
     configurationManager: object: F3\FLOW3\Configuration\Manager
-    proxyClassBuilder: object: F3\FLOW3\AOP\ProxyClassBuilder
+    proxyClassBuilder: object: F3\FLOW3\AOP\Builder\ProxyClassBuilder
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
-F3\FLOW3\AOP\AdvicedConstructorInterceptorBuilder: []
-F3\FLOW3\AOP\AdvicedMethodInterceptorBuilder: []
+F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder: []
+F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder: []
 F3\FLOW3\AOP\Advisor:
   scope: prototype
-F3\FLOW3\AOP\AfterReturningAdvice:
+F3\FLOW3\AOP\Advice\AfterReturningAdvice:
   scope: prototype
-F3\FLOW3\AOP\AfterThrowingAdvice:
+F3\FLOW3\AOP\Advice\AfterThrowingAdvice:
   scope: prototype
-F3\FLOW3\AOP\AfterAdvice:
+F3\FLOW3\AOP\Advice\AfterAdvice:
   scope: prototype
-F3\FLOW3\AOP\AroundAdvice:
+F3\FLOW3\AOP\Advice\AroundAdvice:
   scope: prototype
-F3\FLOW3\AOP\BeforeAdvice:
+F3\FLOW3\AOP\Advice\BeforeAdvice:
   scope: prototype
-F3\FLOW3\AOP\EmptyConstructorInterceptorBuilder: []
-F3\FLOW3\AOP\EmptyMethodInterceptorBuilder: []
+F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder: []
+F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder: []
 F3\FLOW3\AOP\Introduction:
   scope: prototype
-F3\FLOW3\AOP\ProxyClassBuilder: []
-F3\FLOW3\AOP\Pointcut:
+F3\FLOW3\AOP\Builder\ProxyClassBuilder: []
+F3\FLOW3\AOP\Pointcut\Pointcut:
+  className: F3\FLOW3\AOP\Pointcut\Pointcut
   scope: prototype
-F3\FLOW3\AOP\Pointcut:
-  className: F3\FLOW3\AOP\Pointcut
+F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutClassNameFilter:
+F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutClassTaggedWithFilter:
+F3\FLOW3\AOP\Pointcut\PointcutClassTypeFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutClassTypeFilter:
+F3\FLOW3\AOP\Pointcut\PointcutExpressionParser: []
+F3\FLOW3\AOP\Pointcut\PointcutFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutExpressionParser: []
-F3\FLOW3\AOP\PointcutFilter:
+F3\FLOW3\AOP\Pointcut\PointcutFilterComposite:
   scope: prototype
-F3\FLOW3\AOP\PointcutFilterComposite:
+F3\FLOW3\AOP\Pointcut\PointcutMethodNameFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutMethodNameFilter:
+F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter:
   scope: prototype
-F3\FLOW3\AOP\PointcutMethodTaggedWithFilter:
-  scope: prototype
-F3\FLOW3\AOP\PointcutSettingFilter:
+F3\FLOW3\AOP\Pointcut\PointcutSettingFilter:
   scope: prototype
 
 #                                                                          #

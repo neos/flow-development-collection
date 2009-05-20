@@ -36,7 +36,7 @@ namespace F3\FLOW3\Security\ACL;
  * @version $Id:$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
+class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser {
 
 	/**
 	 * @var array The resources array from the configuration.
@@ -59,14 +59,14 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 	 *
 	 * @param string $pointcutExpression The pointcut expression to parse
 	 * @param array $trace A trace of all visited pointcut expression, used for circular reference detection
-	 * @return \F3\FLOW3\AOP\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
+	 * @return \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function parse($pointcutExpression, $trace = array()) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
-		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\PointcutFilterComposite');
+		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
 		$pointcutExpressionParts = preg_split(parent::PATTERN_SPLITBYOPERATOR, $pointcutExpression, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 		for ($partIndex = 0; $partIndex < count($pointcutExpressionParts); $partIndex += 2) {
@@ -93,12 +93,12 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\PointcutExpressionParser {
 	 *
 	 * @param string $operator The operator
 	 * @param string $pointcutExpression The pointcut expression (value of the designator)
-	 * @param \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @return void
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function parseDesignatorPointcut($operator, $pointcutExpression, \F3\FLOW3\AOP\PointcutFilterComposite $pointcutFilterComposite, $trace = array()) {
+	protected function parseDesignatorPointcut($operator, $pointcutExpression, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $trace = array()) {
 		if (!isset($this->resourcesTree[$pointcutExpression])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);
 
 		$pointcutFilterComposite->addFilter($operator, $this->parse($this->resourcesTree[$pointcutExpression], $trace));

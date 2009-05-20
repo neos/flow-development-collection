@@ -52,7 +52,7 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 		};
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockSecurityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
 
@@ -81,7 +81,7 @@ class RequestDispatchingAspectTest extends \F3\Testing\BaseTestCase {
 		};
 
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
-		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\AdviceChain', array(), array(), '', FALSE);
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
 		$mockFirewall = $this->getMock('F3\FLOW3\Security\Authorization\FirewallInterface');
 		$mockSecurityContextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
 

@@ -204,7 +204,7 @@ class BasicClass {
 	 * @param  array $someArray: Some array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @see    \F3\FLOW3\AOP\AdvicedMethodInterceptorBuilderTest
+	 * @see    \F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest
 	 */
 	public function methodWhichExpectsAnArrayArgument(array $someArray) {
 	}

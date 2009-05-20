@@ -214,8 +214,8 @@ final class FLOW3 {
 	 */
 	public function initializeConfiguration() {
 		$configurationSources = array(
-			new \F3\FLOW3\Configuration\Source\PHP(),
-			new \F3\FLOW3\Configuration\Source\YAML()
+			new \F3\FLOW3\Configuration\Source\PHPSource(),
+			new \F3\FLOW3\Configuration\Source\YAMLSource()
 		);
 		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context, $configurationSources);
 		$this->configurationManager->loadFLOW3Settings();
@@ -262,7 +262,7 @@ final class FLOW3 {
 		$objectConfigurations = array();
 		$rawFLOW3ObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $this->FLOW3Package);
 		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
-			$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'Package FLOW3 (pre-initialization)');
+			$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'Package FLOW3 (pre-initialization)');
 		}
 		$this->objectManager->setObjectConfigurations($objectConfigurations);
 		$this->objectManager->initialize();
@@ -682,7 +682,7 @@ final class FLOW3 {
 				}
 				if (is_array($rawObjectConfiguration)) {
 					$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
-					$objectConfigurations[$objectName] = \F3\FLOW3\Object\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+					$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
 				}
 			}
 		}

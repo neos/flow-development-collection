@@ -50,7 +50,7 @@ class Introduction {
 	protected $interfaceName;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Pointcut The poincut this introduction applies to
+	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut The poincut this introduction applies to
 	 */
 	protected $pointcut;
 
@@ -59,11 +59,11 @@ class Introduction {
 	 *
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
 	 * @param string $interface Name of the interface to introduce
-	 * @param \F3\FLOW3\AOP\Pointcut $pointcut The pointcut for this introduction
+	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($declaringAspectClassName, $interfaceName, \F3\FLOW3\AOP\Pointcut $pointcut) {
+	public function __construct($declaringAspectClassName, $interfaceName, \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->declaringAspectClassName = $declaringAspectClassName;
 		$this->interfaceName = $interfaceName;
 		$this->pointcut = $pointcut;
@@ -82,7 +82,7 @@ class Introduction {
 	/**
 	 * Returns the poincut this introduction applies to
 	 *
-	 * @return \F3\FLOW3\AOP\Pointcut The pointcut
+	 * @return \F3\FLOW3\AOP\Pointcut\Pointcut The pointcut
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcut() {

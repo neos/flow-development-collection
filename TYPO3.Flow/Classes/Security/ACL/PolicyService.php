@@ -37,7 +37,7 @@ namespace F3\FLOW3\Security\ACL;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PolicyService implements \F3\FLOW3\AOP\PointcutFilterInterface {
+class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface $objectFactory The object manager

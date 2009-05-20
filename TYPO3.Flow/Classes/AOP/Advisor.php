@@ -41,23 +41,23 @@ namespace F3\FLOW3\AOP;
 class Advisor {
 
 	/**
-	 * @var \F3\FLOW3\AOP\AdviceInterface: The advisor's advice
+	 * @var \F3\FLOW3\AOP\Advice\AdviceInterface: The advisor's advice
 	 */
 	protected $advice;
 
 	/**
-	 * @var \F3\FLOW3\AOP\Pointcut: The pointcut for the advice
+	 * @var \F3\FLOW3\AOP\Pointcut\Pointcut: The pointcut for the advice
 	 */
 	protected $pointcut;
 
 	/**
 	 * Initializes the advisor with an advice and a pointcut
 	 *
-	 * @param \F3\FLOW3\AOP\AdviceInterface $advice: The advice to weave in
-	 * @param \F3\FLOW3\AOP\Pointcut $pointcut: The pointcut where the advice should be inserted
+	 * @param \F3\FLOW3\AOP\Advice\AdviceInterface $advice: The advice to weave in
+	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut: The pointcut where the advice should be inserted
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\AOP\AdviceInterface $advice, \F3\FLOW3\AOP\Pointcut $pointcut) {
+	public function __construct(\F3\FLOW3\AOP\Advice\AdviceInterface $advice, \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->advice = $advice;
 		$this->pointcut = $pointcut;
 	}
@@ -65,7 +65,7 @@ class Advisor {
 	/**
 	 * Returns the advisor's advice
 	 *
-	 * @return \F3\FLOW3\AOP\AdviceInterface The advice
+	 * @return \F3\FLOW3\AOP\Advice\AdviceInterface The advice
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getAdvice() {
@@ -75,7 +75,7 @@ class Advisor {
 	/**
 	 * Returns the advisor's pointcut
 	 *
-	 * @return \F3\FLOW3\AOP\Pointcut The pointcut
+	 * @return \F3\FLOW3\AOP\Pointcut\Pointcut The pointcut
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPointcut() {

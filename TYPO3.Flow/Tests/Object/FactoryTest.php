@@ -73,7 +73,7 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function createCallsObjectBuilderAsExpected() {
 		$objectName = 'F3\Virtual\BasicClass';
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
 		$objectConfiguration->setScope('prototype');
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
@@ -102,7 +102,7 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function createThrowsExceptionWhenAskedForNonPrototype() {
 		$objectName = 'F3\Virtual\BasicClass';
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
 
@@ -117,12 +117,12 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function createPassesArgumentsToObjectBuilder() {
 		$objectName = 'F3\Virtual\BasicClass';
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
 		$objectConfiguration->setScope('prototype');
 		$overridingArguments = array(
-			1 => new \F3\FLOW3\Object\ConfigurationArgument(1, 'test1', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			2 => new \F3\FLOW3\Object\ConfigurationArgument(2, 'test2', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
-			3 => new \F3\FLOW3\Object\ConfigurationArgument(3, 'test3', \F3\FLOW3\Object\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			1 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'test1', \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			2 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(2, 'test2', \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
+			3 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(3, 'test3', \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
 		);
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));
@@ -141,7 +141,7 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 		$object = new $className;
 
 		$objectName = 'F3\Virtual\BasicClass';
-		$objectConfiguration = new \F3\FLOW3\Object\Configuration($objectName);
+		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration($objectName);
 		$objectConfiguration->setScope('prototype');
 		$this->mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
 		$this->mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with($objectName)->will($this->returnValue($objectConfiguration));

@@ -148,7 +148,7 @@ interface ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered objects.
 	 *
-	 * @return arrray Array of \F3\FLOW3\Object\Configuration objects, indexed by object name
+	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
 	 */
 	public function getObjectConfigurations();
 
@@ -156,7 +156,7 @@ interface ManagerInterface {
 	 * Returns the configuration object of a certain object
 	 *
 	 * @param string $objectName: Name of the object to fetch the configuration for
-	 * @return \F3\FLOW3\Object\Configuration The object configuration
+	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
 	 */
 	public function getObjectConfiguration($objectName);
 
@@ -180,10 +180,10 @@ interface ManagerInterface {
 	 *       configured. Trying to configure an unregistered object will
 	 *       result in an exception thrown.
 	 *
-	 * @param \F3\FLOW3\Object\Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
 	 */
-	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration $newObjectConfiguration);
+	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration);
 
 	/**
 	 * Sets the name of the class implementing the specified object.
