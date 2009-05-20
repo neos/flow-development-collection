@@ -99,6 +99,17 @@ class TransientSession implements \F3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Returns TRUE if $key is available.
+	 *
+	 * @param string $key
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasKey($key) {
+		return array_key_exists($key, $this->data);
+	}
+
+	/**
 	 * Stores the given data under the given key in the session
 	 *
 	 * @param object $data The data to be stored

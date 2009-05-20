@@ -89,6 +89,18 @@ class TransientSessionTest extends \F3\Testing\BaseTestCase {
 		$session->destroy();
 		$this->assertNull($session->getData('theKey'));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function hasKeyReturnsTrueOrFalseAccordingToAvailableKeys() {
+		$session = new \F3\FLOW3\Session\TransientSession();
+		$session->start();
+		$session->putData('theKey', 'some data');
+		$this->assertTrue($session->hasKey('theKey'));
+		$this->assertFalse($session->hasKey('noKey'));
+	}
 }
 
 

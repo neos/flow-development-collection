@@ -60,9 +60,16 @@ interface SessionInterface {
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @throws \F3\FLOW3\Session\Exception\NotExistingKey
 	 */
 	public function getData($key);
+
+	/**
+	 * Returns TRUE if $key is available.
+	 *
+	 * @param string $key
+	 * @return boolean
+	 */
+	public function hasKey($key);
 
 	/**
 	 * Stores the given data under the given key in the session
