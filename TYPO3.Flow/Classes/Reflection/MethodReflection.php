@@ -50,6 +50,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * @param  string $methodName Name of the method to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($className, $methodName) {
 		parent::__construct($className, $methodName);
@@ -60,6 +61,7 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getDeclaringClass() {
 		return new \F3\FLOW3\Reflection\ClassReflection(parent::getDeclaringClass()->getName());
@@ -72,6 +74,7 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @return array of \F3\FLOW3\Reflection\ParameterReflection Parameter reflection objects of the parameters of this method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getParameters() {
 		$extendedParameters = array();
@@ -87,6 +90,7 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
+	 * @internal
 	 */
 	public function isTaggedWith($tag) {
 		$result = $this->getDocCommentParser()->isTaggedWith($tag);
@@ -98,6 +102,7 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @return array Tags and values
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -109,6 +114,7 @@ class MethodReflection extends \ReflectionMethod {
 	 * @param string $tag Tag name to check for
 	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -120,6 +126,7 @@ class MethodReflection extends \ReflectionMethod {
 	 *
 	 * @return \F3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

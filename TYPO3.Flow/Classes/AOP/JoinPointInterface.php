@@ -44,6 +44,7 @@ interface JoinPointInterface {
 	 * Returns the reference to the proxy class instance
 	 *
 	 * @return \F3\FLOW3\AOP\ProxyInterface
+	 * @internal
 	 */
 	public function getProxy();
 
@@ -51,6 +52,7 @@ interface JoinPointInterface {
 	 * Returns the class name of the target class this join point refers to
 	 *
 	 * @return string The class name
+	 * @internal
 	 */
 	public function getClassName();
 
@@ -58,6 +60,7 @@ interface JoinPointInterface {
 	 * Returns the method name of the method this join point refers to
 	 *
 	 * @return string The method name
+	 * @internal
 	 */
 	public function getMethodName();
 
@@ -65,6 +68,7 @@ interface JoinPointInterface {
 	 * Returns an array of arguments which have been passed to the target method
 	 *
 	 * @return array Array of arguments
+	 * @internal
 	 */
 	public function getMethodArguments();
 
@@ -73,6 +77,7 @@ interface JoinPointInterface {
 	 *
 	 * @param  string $argumentName: Name of the argument
 	 * @return mixed Value of the argument
+	 * @internal
 	 */
 	public function getMethodArgument($argumentName);
 
@@ -82,6 +87,7 @@ interface JoinPointInterface {
 	 *
 	 * @param string $argumentName: Name of the argument to check
 	 * @return boolean TRUE if the argument exists
+	 * @internal
 	 */
 	public function isMethodArgument($argumentName);
 
@@ -89,6 +95,7 @@ interface JoinPointInterface {
 	 * Returns the advice chain related to this join point
 	 *
 	 * @return \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain
+	 * @internal
 	 */
 	public function getAdviceChain();
 
@@ -98,6 +105,7 @@ interface JoinPointInterface {
 	 * Only makes sense for After Throwing advices.
 	 *
 	 * @return object The exception thrown or NULL
+	 * @internal
 	 */
 	public function getException();
 
@@ -106,6 +114,7 @@ interface JoinPointInterface {
 	 * available for afterReturning advices.
 	 *
 	 * @return mixed Result of the method invocation
+	 * @internal
 	 */
 	public function getResult();
 

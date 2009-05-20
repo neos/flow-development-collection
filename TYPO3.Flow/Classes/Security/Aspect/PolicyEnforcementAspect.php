@@ -58,6 +58,7 @@ class PolicyEnforcementAspect {
 	 * @param \F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation $afterInvocationInterceptor The after invocation interceptor
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement $policyEnforcementInterceptor, \F3\FLOW3\Security\Authorization\Interceptor\AfterInvocation $afterInvocationInterceptor) {
 		$this->policyEnforcementInterceptor = $policyEnforcementInterceptor;
@@ -73,6 +74,7 @@ class PolicyEnforcementAspect {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed The result of the target method if it has not been intercepted
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function enforcePolicy(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->policyEnforcementInterceptor->setJoinPoint($joinPoint);

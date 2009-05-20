@@ -62,6 +62,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -73,6 +74,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @param \F3\FLOW3\Object\Builder $objectBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
@@ -117,7 +119,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
-	 * @internal
 	 */
 	static public function convertArgumentValuesToArgumentObjects(array $argumentValues) {
 		$argumentObjects = array();
@@ -132,6 +133,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __clone() {
 		$this->objectBuilder = clone $this->objectBuilder;

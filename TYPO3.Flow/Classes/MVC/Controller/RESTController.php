@@ -71,6 +71,7 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function resolveActionMethodName() {
 		if ($this->request->getControllerActionName() === 'index') {

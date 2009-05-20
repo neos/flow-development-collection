@@ -74,6 +74,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @param \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(
 					\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder,
@@ -91,6 +92,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->joinPoint = $joinPoint;
@@ -102,6 +104,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @return boolean TRUE if the security checks was passed
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function invoke() {
 

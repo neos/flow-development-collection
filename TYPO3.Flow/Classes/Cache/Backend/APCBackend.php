@@ -81,7 +81,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param mixed $options Configuration options - unused here
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 *
 	 */
 	public function __construct($context, $options = array()) {
 		if (!extension_loaded('apc')) throw new \F3\FLOW3\Cache\Exception('The PHP extension "apc" must be installed and loaded in order to use the APC backend.', 1232985414);
@@ -94,6 +93,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -105,6 +105,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -115,6 +116,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
@@ -136,7 +138,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 **/
+	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
@@ -309,7 +311,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Dmitry Dulepov
+	 * @author Dmitry Dulepov <dmitry.@typo3.org>
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
@@ -335,7 +337,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Dmitry Dulepov
+	 * @author Dmitry Dulepov <dmitry@typo3.org>
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 			// Get tags for this identifier

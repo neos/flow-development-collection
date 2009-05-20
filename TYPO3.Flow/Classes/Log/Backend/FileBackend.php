@@ -133,6 +133,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @return string text output
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	protected function getFormattedVarDump($var, $spaces=4) {
 		if ($spaces > 100) {

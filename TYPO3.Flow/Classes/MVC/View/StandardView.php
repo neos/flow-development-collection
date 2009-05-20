@@ -36,7 +36,7 @@ namespace F3\FLOW3\MVC\View;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
+final class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
 	/**
 	 * Renders the default view
 	 *

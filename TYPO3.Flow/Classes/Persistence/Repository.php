@@ -257,6 +257,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return string Class name of the repository. If it is proxied, it's still the (target) class name.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return get_class($this);

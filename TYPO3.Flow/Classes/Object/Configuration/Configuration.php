@@ -120,6 +120,7 @@ class Configuration {
 	 * @param string $className: Name of the class which provides the functionality of this object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($objectName, $className = NULL) {
 		$backtrace = debug_backtrace();
@@ -138,6 +139,7 @@ class Configuration {
 	 *
 	 * @return string object name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getObjectName() {
 		return $this->objectName;
@@ -149,6 +151,7 @@ class Configuration {
 	 * @param string $className: Name of the class which provides the functionality for this object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setClassName($className) {
 		$this->className = $className;
@@ -159,6 +162,7 @@ class Configuration {
 	 *
 	 * @return string Name of the implementing class of this object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -169,6 +173,7 @@ class Configuration {
 	 *
 	 * @param string $className Valid class name of a factory
 	 * @return void
+	 * @internal
 	 */
 	public function setFactoryClassName($className) {
 		if (!class_exists($className, TRUE)) throw new \F3\FLOW3\Object\Exception\InvalidClass('"' . $className . '" is not a valid class name or a class of that name does not exist.', 1229697796);
@@ -180,6 +185,7 @@ class Configuration {
 	 *
 	 * @return string The factory class name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getFactoryClassName() {
 		return $this->factoryClassName;
@@ -191,6 +197,7 @@ class Configuration {
 	 * @param string $methodName The factory method name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setFactoryMethodName($methodName) {
 		if (!is_string($methodName) || $methodName === '') throw new \InvalidArgumentException('No valid factory method name specified.', 1229700126);
@@ -202,6 +209,7 @@ class Configuration {
 	 *
 	 * @return string The factory method name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getFactoryMethodName() {
 		return $this->factoryMethodName;
@@ -213,6 +221,7 @@ class Configuration {
 	 * @param string $scope: Name of the scope
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setScope($scope) {
 		if (!is_string($scope))  throw new \InvalidArgumentException('Scope must be a string value.', 1167820928);
@@ -224,6 +233,7 @@ class Configuration {
 	 *
 	 * @return string The scope ("prototype", "singleton" ...)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getScope() {
 		return $this->scope;
@@ -235,6 +245,7 @@ class Configuration {
 	 * @param integer $autowiring: One of the AUTOWIRING_MODE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setAutowiring($autowiring) {
 		if ($autowiring < 0 || $autowiring > 1)  throw new \InvalidArgumentException('Invalid auto wiring mode', 1167824101);
@@ -246,6 +257,7 @@ class Configuration {
 	 *
 	 * @return integer Value of one of the AUTOWIRING_MODE_* constants
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getAutowiring() {
 		return $this->autowiring;
@@ -257,6 +269,7 @@ class Configuration {
 	 * @param string $lifecycleInitializationMethodName: Name of the method to call after setter injection
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setLifecycleInitializationMethodName($lifecycleInitializationMethodName) {
 		if (!is_string($lifecycleInitializationMethodName))  throw new \InvalidArgumentException('Invalid lifecycle initialization method name.', 1172047877);
@@ -268,6 +281,7 @@ class Configuration {
 	 *
 	 * @return string The name of the intialization method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getLifecycleInitializationMethodName() {
 		return $this->lifecycleInitializationMethodName;
@@ -278,6 +292,7 @@ class Configuration {
 	 *
 	 * @param string $lifecycleDestructionMethodName Name of the method to call during shutdown of the framework
 	 * @return void
+	 * @internal
 	 */
 	public function setLifecycleShutdownMethodName($lifecycleShutdownMethodName) {
 		$this->lifecycleShutdownMethodName = $lifecycleShutdownMethodName;
@@ -288,6 +303,7 @@ class Configuration {
 	 *
 	 * @return string The name of the shutdown method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getLifecycleShutdownMethodName() {
 		return $this->lifecycleShutdownMethodName;
@@ -299,6 +315,7 @@ class Configuration {
 	 * @param array $properties Array of \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setProperties(array $properties) {
 		foreach ($properties as $value) {
@@ -311,6 +328,7 @@ class Configuration {
 	 *
 	 * @return array Array of \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -322,6 +340,7 @@ class Configuration {
 	 * @param array $property A \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setProperty(\F3\FLOW3\Object\Configuration\ConfigurationProperty $property) {
 		$this->properties[$property->getName()] = $property;
@@ -335,6 +354,7 @@ class Configuration {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function setArguments(array $arguments) {
 		if ($arguments === array()) {
@@ -352,6 +372,7 @@ class Configuration {
 	 * @param A \F3\FLOW3\Object\Configuration\ConfigurationArgument $argument The argument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setArgument(\F3\FLOW3\Object\Configuration\ConfigurationArgument $argument) {
 		$this->arguments[$argument->getIndex()] = $argument;
@@ -362,6 +383,7 @@ class Configuration {
 	 *
 	 * @return array A sorted array of \F3\FLOW3\Object\Configuration\ConfigurationArgument objects with the argument position as index
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getArguments() {
 		if (count($this->arguments) < 1 ) return array();
@@ -382,6 +404,7 @@ class Configuration {
 	 * @param string $hint The hint - e.g. the file name of the configuration file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setConfigurationSourceHint($hint) {
 		$this->configurationSourceHint = $hint;
@@ -392,6 +415,7 @@ class Configuration {
 	 *
 	 * @return string The hint - e.g. the file name of the configuration file
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getConfigurationSourceHint() {
 		return $this->configurationSourceHint;

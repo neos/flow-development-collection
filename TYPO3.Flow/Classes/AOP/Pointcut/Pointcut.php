@@ -89,6 +89,7 @@ class Pointcut {
 	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($pointcutExpression, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $aspectClassName, $pointcutMethodName = NULL) {
 		$this->pointcutExpression = $pointcutExpression;
@@ -108,6 +109,7 @@ class Pointcut {
 	 * @return boolean TRUE if class and method match this point cut, otherwise FALSE
 	 * @throws F3\FLOW3\AOP\Exception\CircularPointcutReference if a circular pointcut reference was detected
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcutQueryIdentifier === $pointcutQueryIdentifier) {
@@ -128,6 +130,7 @@ class Pointcut {
 	 *
 	 * @return string The pointcut expression
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getPointcutExpression() {
 		return $this->pointcutExpression;
@@ -138,6 +141,7 @@ class Pointcut {
 	 *
 	 * @return string The aspect class name where the pointcut was declared
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getAspectClassName() {
 		return $this->aspectClassName;
@@ -148,6 +152,7 @@ class Pointcut {
 	 *
 	 * @return string The pointcut method name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getPointcutMethodName() {
 		return $this->pointcutMethodName;

@@ -81,6 +81,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -92,6 +93,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param array $settings Settings of the FLOW3 package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -103,6 +105,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param F3\FLOW3\Cache\Frontend\VariableFrontend $cache The cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -114,6 +117,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param F3\FLOW3\Security\ACL\PolicyExpressionParser $parser
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectPolicyExpressionParser(\F3\FLOW3\Security\ACL\PolicyExpressionParser $parser) {
 		$this->policyExpressionParser = $parser;
@@ -124,6 +128,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		$this->roles = $this->settings['security']['policy']['roles'];
@@ -143,6 +148,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @return boolean TRUE if the names match, otherwise FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->settings['security']['enable'] === FALSE) return FALSE;
@@ -178,6 +184,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @return array Array of roles
 	 * @throws \F3\FLOW3\Security\Exception\NoEntryInPolicy
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getRoles(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
@@ -199,6 +206,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param string $privilegeType If set we check only for this type of privilege
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getPrivileges(\F3\FLOW3\Security\ACL\Role $role, \F3\FLOW3\AOP\JoinPointInterface $joinPoint, $privilegeType = '') {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
@@ -220,6 +228,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param string $privilegeType If set, only the privilege of the given type will be parsed
 	 * @return array Parsed privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function parsePrivileges($methodIdentifier, $role, $privilegeType) {
 		$privileges = array();
@@ -243,6 +252,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function shutdownObject() {
 		$tags = array('F3_FLOW3_AOP');

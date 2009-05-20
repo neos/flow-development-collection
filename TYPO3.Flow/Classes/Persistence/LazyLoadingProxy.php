@@ -25,7 +25,7 @@ namespace F3\FLOW3\Persistence;
 /**
  * @package FLOW3
  * @subpackage Persistence
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ namespace F3\FLOW3\Persistence;
  *
  * @package FLOW3
  * @subpackage Persistence
- * @version $Id:$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class LazyLoadingProxy {
@@ -68,6 +68,7 @@ class LazyLoadingProxy {
 	 * @param string $propertyName The name of the proxied property in it's parent
 	 * @param \Closure $population The closure to invoke in case the object represented by this proxy is really needed.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __construct($parent, $propertyName, \Closure $population) {
 		$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent = $parent;
@@ -80,6 +81,7 @@ class LazyLoadingProxy {
 	 *
 	 * @return object The instance (hopefully) returned by the $population closure
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function _loadRealInstance() {
 		$realInstance = $this->F3_FLOW3_Persistence_LazyLoadingProxy_population->__invoke();
@@ -94,6 +96,7 @@ class LazyLoadingProxy {
 	 * @param array $arguments The arguments given to the call
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __call($methodName, $arguments) {
 		$realInstance = $this->_loadRealInstance();
@@ -106,6 +109,7 @@ class LazyLoadingProxy {
 	 * @param string $propertyName The name of the property to get
 	 * @return mixed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __get($propertyName) {
 		$realInstance = $this->_loadRealInstance();
@@ -119,6 +123,7 @@ class LazyLoadingProxy {
 	 * @param mixed $value The value for the property to set
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __set($propertyName, $value) {
 		$realInstance = $this->_loadRealInstance();
@@ -131,6 +136,7 @@ class LazyLoadingProxy {
 	 * @param string $propertyName The name of the property to check
 	 * @return boolean
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __isset($propertyName) {
 		$realInstance = $this->_loadRealInstance();
@@ -143,6 +149,7 @@ class LazyLoadingProxy {
 	 * @param string $propertyName The name of the property to unset
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __unset($propertyName) {
 		$realInstance = $this->_loadRealInstance();

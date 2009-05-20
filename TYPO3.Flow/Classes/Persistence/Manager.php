@@ -79,6 +79,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 *
 	 * @param \F3\FLOW3\Persistence\BackendInterface $backend the backend to use for persistence
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Persistence\BackendInterface $backend) {
 		$this->backend = $backend;
@@ -90,6 +91,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -101,6 +103,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param \F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder The class schemata builder
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function injectClassSchemataBuilder(\F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder) {
 		$this->classSchemataBuilder = $classSchemataBuilder;
@@ -112,6 +115,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param \F3\FLOW3\Persistence\Session $session The persistence session
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSession(\F3\FLOW3\Persistence\Session $session) {
 		$this->session = $session;
@@ -123,6 +127,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -133,6 +138,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
@@ -147,6 +153,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 *
 	 * @return \F3\FLOW3\Persistence\Session
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getSession() {
 		return $this->session;
@@ -168,6 +175,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @param mixed $classNameOrObject The class name or an object
 	 * @return \F3\FLOW3\Persistence\ClassSchema
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getClassSchema($classNameOrObject) {
 		$className = is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject;

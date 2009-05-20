@@ -124,6 +124,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -135,6 +136,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -153,11 +155,27 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
+	 * Setter for compression flags bit
+	 *
+	 * @param boolean $useCompression
+	 * @return void
+	 * @author Christian Jul Jensen <julle@typo3.org>
+	 */
+	protected function setCompression($useCompression) {
+		if ($useCompression === TRUE) {
+			$this->flags ^= MEMCACHE_COMPRESSED;
+		} else {
+			$this->flags &= ~MEMCACHE_COMPRESSED;
+		}
+	}
+
+	/**
 	 * Initializes the identifier prefix
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @author Dmitry Dulepov
+	 * @author Dmitry Dulepov <dmitry@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		if (!count($this->servers)) throw new \F3\FLOW3\Cache\Exception('No servers were given to Memcache', 1213115903);
@@ -186,21 +204,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Setter for compression flags bit
-	 *
-	 * @param boolean $useCompression
-	 * @return void
-	 * @author Christian Jul Jensen <julle@typo3.org>
-	 */
-	protected function setCompression($useCompression) {
-		if ($useCompression === TRUE) {
-			$this->flags ^= MEMCACHE_COMPRESSED;
-		} else {
-			$this->flags &= ~MEMCACHE_COMPRESSED;
-		}
-	}
-
-	/**
 	 * Saves data in the cache.
 	 *
 	 * Note on lifetime: the number of seconds may not exceed 2592000 (30 days),
@@ -216,7 +219,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 **/
+	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
@@ -319,7 +322,8 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param string $identifier Identifier to find tags by
 	 * @return array Array with tags
-	 * @author Dmitry Dulepov
+	 * @author Dmitry Dulepov <dmitry@typo3.org>
+	 * @internal
 	 */
 	protected function findTagsByIdentifier($identifier) {
 		$tags = $this->memcache->get($this->identifierPrefix . 'ident_' . $identifier);
@@ -358,6 +362,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function getTagIndex() {
 		$tagIndex = $this->memcache->get($this->identifierPrefix . 'tagIndex');
@@ -369,6 +374,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function setTagIndex(array $tags) {
 		$this->memcache->set($this->identifierPrefix . 'tagIndex', array_unique($tags), 0, 0);
@@ -380,6 +386,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function addTagsToTagIndex(array $tags) {
 		if (count($tags)) {
@@ -393,6 +400,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function removeTagsFromTagIndex(array $tags) {
 		if (count($tags)) {
@@ -407,6 +415,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Dmitry Dulepov
+	 * @internal
 	 */
 	protected function addIdentifierToTags($entryIdentifier, array $tags) {
 		foreach ($tags as $tag) {
@@ -433,6 +442,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Dmitry Dulepov
+	 * @internal
 	 */
 	protected function removeIdentifierFromAllTags($entryIdentifier) {
 			// Get tags for this identifier

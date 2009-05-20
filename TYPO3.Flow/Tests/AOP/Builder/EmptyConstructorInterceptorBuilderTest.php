@@ -64,7 +64,6 @@ class EmptyConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * Non-advised constructor interceptor.
 	 * ' . '
-	 * @return void
 	 */
 	public function __construct(PARAMETERSCODE1, \F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
 		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;

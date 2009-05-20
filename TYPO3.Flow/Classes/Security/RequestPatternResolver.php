@@ -49,6 +49,7 @@ class RequestPatternResolver {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -61,6 +62,7 @@ class RequestPatternResolver {
 	 * @return string The class name of the request pattern, NULL if no class was found.
 	 * @throws \F3\FLOW3\Security\Exception\NoRequestPatternFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function resolveRequestPatternClass($name) {
 		$resolvedClassName = '';

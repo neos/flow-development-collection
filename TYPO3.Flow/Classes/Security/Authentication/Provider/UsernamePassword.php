@@ -44,6 +44,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
 		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword) return TRUE;
@@ -55,6 +56,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 *
 	 * @return string The classname of the token this provider is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getTokenClassNames() {
 		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword');
@@ -66,6 +68,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInte
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);

@@ -61,6 +61,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	 * @param \F3\FLOW3\Security\Authorization\AfterInvocationManagerInterface $afterInvocationManager The after invocation manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(
 		\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder,
@@ -75,6 +76,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 
@@ -86,6 +88,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	 * @param mixed The result of the intercepted method
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setResult($result) {
 		$this->result = $result;
@@ -97,6 +100,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	 * @return boolean TRUE if the security checks was passed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo Implement interception logic
+	 * @internal
 	 */
 	public function invoke() {
 		return $this->result;

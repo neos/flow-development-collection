@@ -43,6 +43,7 @@ interface InterceptorInterface {
 	 * Invokes the security interception (e.g. calls a \F3\FLOW3\Security\Ahtorization\AccessDecisionManagerInterface)
 	 *
 	 * @return boolean TRUE if the security checks was passed
+	 * @internal
 	 */
 	public function invoke();
 }

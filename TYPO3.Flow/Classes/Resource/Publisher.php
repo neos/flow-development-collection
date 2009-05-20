@@ -71,6 +71,7 @@ class Publisher {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -82,6 +83,7 @@ class Publisher {
 	 * @param string $path
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function initializeMirrorDirectory($path) {
 		$this->publicResourcePath = FLOW3_PATH_PUBLIC . $path;
@@ -98,6 +100,7 @@ class Publisher {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function setMetadataCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache) {
 		$this->resourceMetadataCache = $metadataCache;
@@ -109,6 +112,7 @@ class Publisher {
 	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $statusCache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function setStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
 		$this->resourceStatusCache = $statusCache;
@@ -120,6 +124,7 @@ class Publisher {
 	 * @param integer $strategy One of the CACHE_STRATEGY constants from \F3\FLOW3\Resource\Manager
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function setCacheStrategy($strategy) {
 		$this->cacheStrategy = $strategy;
@@ -130,6 +135,7 @@ class Publisher {
 	 *
 	 * @param \F3\FLOW3\Property\DataType\URI $URI
 	 * @return unknown
+	 * @internal
 	 */
 	public function getMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
 		$metadata = array();
@@ -152,6 +158,7 @@ class Publisher {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function mirrorResourcesDirectory($sourcePath, $relativeDestinationPath) {
 		$cacheEntryIdentifier = md5($sourcePath);
@@ -200,6 +207,7 @@ class Publisher {
 	 * @param \F3\FLOW3\Property\DataType\URI $URI
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function extractResourceMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
 		$explodedPath = explode('/',dirname($URI->getPath()));
@@ -231,6 +239,7 @@ class Publisher {
 	 * @param string $URIString
 	 * @return \F3\FLOW3\Property\DataType\URI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function createURI($URIString) {
 		return new \F3\FLOW3\Property\DataType\URI($URIString);

@@ -90,6 +90,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @param \F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver The authentication entry point resolver
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager,
 			\F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver,
@@ -108,6 +109,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @param array $settings The settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		if (!isset($settings['security']['authentication']['providers'])) return;
@@ -122,6 +124,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @param \F3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext) {
 		$this->securityContext = $securityContext;
@@ -133,6 +136,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getTokens() {
 		return $this->tokens;
@@ -151,6 +155,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AuthenticationRequired
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function authenticate() {
 		$allTokensAreAuthenticated = TRUE;
@@ -183,6 +188,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo resolve and set authentication entry point and user details service in the tokens
+	 * @internal
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providers) {
 		foreach ($providers as $provider) {

@@ -43,6 +43,7 @@ interface PackageInterface {
 	 * Returns the package meta object of this package.
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
+	 * @internal
 	 */
 	public function getPackageMetaData();
 

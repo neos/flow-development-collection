@@ -47,6 +47,7 @@ class ErrorHandler {
 	 * Constructs this error handler - registers itself as the default error handler.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct() {
 		set_error_handler(array($this, 'handleError'));
@@ -58,6 +59,7 @@ class ErrorHandler {
 	 * @param array $exceptionalErros An array of E_* error levels
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setExceptionalErrors(array $exceptionalErrors) {
 		$this->exceptionalErrors = $exceptionalErrors;
@@ -73,6 +75,7 @@ class ErrorHandler {
 	 * @return void
 	 * @throws \F3\FLOW3\Error\Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
 		$errorLevels = array (

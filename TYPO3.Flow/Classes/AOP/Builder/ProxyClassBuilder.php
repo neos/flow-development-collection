@@ -63,6 +63,7 @@ class ProxyClassBuilder {
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -74,6 +75,7 @@ class ProxyClassBuilder {
 	 * @param EmptyConstructorInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEmptyConstructorInterceptorBuilder(\F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['EmptyConstructor'] = $builder;
@@ -85,6 +87,7 @@ class ProxyClassBuilder {
 	 * @param AdvicedConstructorInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectAdvicedConstructorInterceptorBuilder(\F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['AdvicedConstructor'] = $builder;
@@ -96,6 +99,7 @@ class ProxyClassBuilder {
 	 * @param EmptyMethodInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEmptyMethodInterceptorBuilder(\F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['EmptyMethod'] = $builder;
@@ -107,6 +111,7 @@ class ProxyClassBuilder {
 	 * @param AdvicedMethodInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectAdvicedMethodInterceptorBuilder(\F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder $builder) {
 		$this->methodInterceptorBuilders['AdvicedMethod'] = $builder;
@@ -118,6 +123,7 @@ class ProxyClassBuilder {
 	 * @param string $proxyClassTemplate Template to use for building proxy classes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setProxyClassTemplate($proxyClassTemplate) {
 		$this->proxyClassTemplate = $proxyClassTemplate;
@@ -128,6 +134,7 @@ class ProxyClassBuilder {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		$this->proxyClassTemplate = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/AOP/AOPProxyClassTemplate.php');
@@ -142,6 +149,7 @@ class ProxyClassBuilder {
 	 * @return mixed An array containing the proxy class name and its source code if a proxy class has been built, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function buildProxyClass($targetClassName, array $aspectContainers, $context) {
 		if ($this->reflectionService->isClassImplementationOf($targetClassName, 'F3\FLOW3\AOP\ProxyInterface')) throw new \F3\FLOW3\AOP\Exception\InvalidTargetClass('Cannot proxy class "' . $targetClassName . '" because it is already an AOP proxy class.', 1238858632);
@@ -187,6 +195,7 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName Name of the target class
 	 * @return array Method information with declaring class and method name pairs
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getMethodsFromTargetClass($targetClassName) {
 		$methods = array();
@@ -207,6 +216,7 @@ class ProxyClassBuilder {
 	 * @param array $introducedInterfaces Names of introduced interfaces
 	 * @return string A comma separated list of the above
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function buildIntroducedInterfacesCode(array $introducedInterfaces) {
 		$introducedInterfacesCode = '';
@@ -234,6 +244,7 @@ class ProxyClassBuilder {
 	 * @return string PHP code for the content of an array of target method names and advice objects
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see buildProxyClass()
+	 * @internal
 	 */
 	protected function buildMethodsAndAdvicesArrayCode(array $methodsAndGroupedAdvices) {
 		if (count($methodsAndGroupedAdvices) < 1) return '';
@@ -267,6 +278,7 @@ class ProxyClassBuilder {
 	 * @param $targetClassName The target class the pointcut should match with
 	 * @return string Methods interceptor PHP code
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function buildMethodsInterceptorCode(array $interceptedMethods, $targetClassName) {
 		$methodsInterceptorCode = '';
@@ -288,6 +300,7 @@ class ProxyClassBuilder {
 	 * @param array $aspectContainers All aspects to take into consideration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function addAdvicedMethodsToInterceptedMethods(array &$interceptedMethods, array $methods, $targetClassName, array $aspectContainers) {
 		$pointcutQueryIdentifier = 0;
@@ -316,6 +329,7 @@ class ProxyClassBuilder {
 	 * @param array $methodsFromIntroducedInterfaces An array of class and method names from introduced interfaces
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function addIntroducedMethodsToInterceptedMethods(array &$interceptedMethods, array $methodsFromIntroducedInterfaces) {
 		foreach ($methodsFromIntroducedInterfaces as $interfaceAndMethodName) {
@@ -336,6 +350,7 @@ class ProxyClassBuilder {
 	 * @param $targetClassName Name of the class in question
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function addConstructorToInterceptedMethods(array &$interceptedMethods, $targetClassName) {
 		if (!isset($interceptedMethods['__construct'])) {
@@ -353,6 +368,7 @@ class ProxyClassBuilder {
 	 * @param  string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getMatchingIntroductions(array $aspectContainers, $targetClassName) {
 		$introductions = array();
@@ -373,6 +389,7 @@ class ProxyClassBuilder {
 	 * @param array $introductions An array of introductions
 	 * @return array Array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getInterfaceNamesFromIntroductions(array $introductions) {
 		$interfaceNames = array();
@@ -388,6 +405,7 @@ class ProxyClassBuilder {
 	 * @param array $introductions An array of \F3\FLOW3\AOP\Introduction
 	 * @return array An array of method information (interface, method name)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getIntroducedMethodsFromIntroductions(array $introductions) {
 		$methods = array();
@@ -411,6 +429,7 @@ class ProxyClassBuilder {
 	 * @param array $interceptedMethods An array of intercepted methods and their grouped Advices etc.
 	 * @return array Method names and an array of advice names in the form of "AspectClassName::adviceName"
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getAdvicedMethodsInformation(array $interceptedMethods) {
 		$advicedMethodsInformation = array();
@@ -433,6 +452,7 @@ class ProxyClassBuilder {
 	 * @param string $className Name of the class containing the annotations
 	 * @return string PHP code snippet containing the annotations
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function buildClassAnnotationsCode($className) {
 		$annotationsCode = '';
@@ -449,6 +469,7 @@ class ProxyClassBuilder {
 	 * @param string $context The current application context
 	 * @return string Name for the proxy class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function renderProxyClassName($targetClassName, $context) {
 		$targetClassNameArray = explode('\\', $targetClassName);
@@ -470,6 +491,7 @@ class ProxyClassBuilder {
 	 * @param string $targetClassName Name of the proxied class
 	 * @return string Name for the proxy namespace
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function getProxyNamespace($targetClassName) {
 		$targetClassNameArray = explode('\\', $targetClassName);

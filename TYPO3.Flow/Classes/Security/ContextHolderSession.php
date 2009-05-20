@@ -63,6 +63,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 *
 	 * @param \F3\FLOW3\Session\SessionInterface $session An readily initialized session
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Session\SessionInterface $session) {
 		$this->session = $session;
@@ -74,6 +75,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -85,6 +87,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -96,6 +99,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
@@ -107,6 +111,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setContext(\F3\FLOW3\Security\Context $securityContext) {
 		$this->session->putData('F3\FLOW3\Security\ContextHolderSession', $securityContext);
@@ -119,6 +124,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getContext() {
 		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
@@ -137,6 +143,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request) {
 		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
@@ -161,6 +168,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function clearContext() {
 		$this->setContext(NULL);
@@ -175,6 +183,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @params array Array of tokens resotored from the session
 	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function mergeTokens($managerTokens, $sessionTokens) {
 		$resultTokens = array();
@@ -208,6 +217,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
 	 * @return array The filtered token array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function filterInactiveTokens(array $tokens, \F3\FLOW3\MVC\RequestInterface $request) {
 		$activeTokens = array();
@@ -239,6 +249,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo Remove manual DI. Should be handled by a session scope
+	 * @internal
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
@@ -254,6 +265,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token we should inject some objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
 		$objectConfiguration = $this->objectManager->getObjectConfiguration(get_class($token));

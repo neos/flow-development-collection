@@ -45,6 +45,7 @@ class ParameterReflection extends \ReflectionParameter {
 	 * @param  string $propertyName: Name of the property to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($function, $parameterName) {
 		parent::__construct($function, $parameterName);
@@ -55,6 +56,7 @@ class ParameterReflection extends \ReflectionParameter {
 	 *
 	 * @return \F3\FLOW3\Reflection\ClassReflection The declaring class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getDeclaringClass() {
 		return new \F3\FLOW3\Reflection\ClassReflection(parent::getDeclaringClass()->getName());
@@ -66,6 +68,7 @@ class ParameterReflection extends \ReflectionParameter {
 	 * @return \F3\FLOW3\Reflection\ClassReflection The parameter class
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getClass() {
 		try {

@@ -77,6 +77,7 @@ class Mapper {
 	 * @param \F3\FLOW3\Object\FactoryInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -88,6 +89,7 @@ class Mapper {
 	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;

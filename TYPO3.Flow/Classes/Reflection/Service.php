@@ -182,6 +182,7 @@ class Service {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -193,6 +194,7 @@ class Service {
 	 * @param array $settings Settings of the FLOW3 package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['reflection']['detectClassChanges'])) {
@@ -206,6 +208,7 @@ class Service {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -217,6 +220,7 @@ class Service {
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function isInitialized() {
 		return $this->initialized;
@@ -228,6 +232,7 @@ class Service {
 	 * @param array $classNamesToReflect Names of available classes to consider in this reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize(array $classNamesToReflect) {
 		if ($this->initialized) throw new \F3\FLOW3\Reflection\Exception('The Reflection Service can only be initialized once.', 1232044696);
@@ -246,6 +251,7 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function shutdown() {
 		if ($this->cachedClassNames !== $this->reflectedClassNames) {
@@ -640,6 +646,7 @@ class Service {
 	 * @param array $classNamesToReflect Names of all classes which should be known by this service. Class names = values of the array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function reflectEmergedClasses(array $classNamesToReflect) {
 		$classNamesToReflect = array_unique($classNamesToReflect);
@@ -659,6 +666,7 @@ class Service {
 	 * @param string $className Full qualified name of the class to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function reflectClass($className) {
 		$this->log('Reflecting class "' . $className . '" (' . ($this->initialized ? '' : 'not ') . 'initialized)', LOG_DEBUG);
@@ -724,6 +732,7 @@ class Service {
 	 * @return array Parameter information array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @internal
 	 */
 	protected function convertParameterReflectionToArray(\ReflectionParameter $parameter, \ReflectionMethod $method = NULL) {
 		$parameterInformation = array(
@@ -762,6 +771,7 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function forgetChangedClasses() {
 		foreach (array_keys($this->reflectedClassNames) as $className) {
@@ -777,6 +787,7 @@ class Service {
 	 * @param string $className Name of the class to forget
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function forgetClass($className) {
 		foreach ($this->interfaceImplementations as $interfaceName => $interfaceImplementations) {
@@ -815,6 +826,7 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function loadFromCache() {
 		if ($this->cache->has('ReflectionData')) {
@@ -831,6 +843,7 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function saveToCache() {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
@@ -873,6 +886,7 @@ class Service {
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function log($message, $severity = 6, $additionalData = NULL) {
 		if (is_object($this->systemLogger)) $this->systemLogger->log($message, $severity, $additionalData);

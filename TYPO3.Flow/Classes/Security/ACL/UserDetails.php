@@ -44,6 +44,7 @@ class UserDetails implements \F3\FLOW3\Security\Authentication\UserDetailsInterf
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\UserDetailsInterface $userDetails The UserDetails object that should be compared with $this.
 	 * @return boolean TRUE if the two UserDetails are equal.
+	 * @internal
 	 */
 	public function compare(\F3\FLOW3\Security\Authentication\UserDetailsInterface $userDetails) {
 
@@ -53,6 +54,7 @@ class UserDetails implements \F3\FLOW3\Security\Authentication\UserDetailsInterf
 	 * Returns the string representation of this user
 	 *
 	 * @return string The string representation of this user.
+	 * @internal
 	 */
 	public function getName() {
 
@@ -66,6 +68,7 @@ class UserDetails implements \F3\FLOW3\Security\Authentication\UserDetailsInterf
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo: This should be filled by configuration
+	 * @internal
 	 */
 	public function addRole(\F3\FLOW3\Security\ACL\Role $role, \F3\FLOW3\Security\RequestPatternInterface $requestPattern = NULL) {
 
@@ -75,6 +78,7 @@ class UserDetails implements \F3\FLOW3\Security\Authentication\UserDetailsInterf
 	 * Returns an array of \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfaces (roles), the user currently has.
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfaces (e.g. Roles), the user currently has.
+	 * @internal
 	 */
 	public function getAuthorities() {
 

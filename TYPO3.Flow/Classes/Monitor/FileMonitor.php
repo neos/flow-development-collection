@@ -78,6 +78,7 @@ class FileMonitor {
 	 * @param F3\FLOW3\Monitor\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectChangeDetectionStrategy(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
@@ -90,6 +91,7 @@ class FileMonitor {
 	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher The Signal Slot Dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
 		$this->signalSlotDispatcher = $signalSlotDispatcher;
@@ -101,6 +103,7 @@ class FileMonitor {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;

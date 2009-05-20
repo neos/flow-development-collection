@@ -145,6 +145,7 @@ class Argument {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -156,6 +157,7 @@ class Argument {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -167,6 +169,7 @@ class Argument {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -178,6 +181,7 @@ class Argument {
 	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -189,6 +193,7 @@ class Argument {
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
@@ -199,6 +204,7 @@ class Argument {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		$this->setDataType($this->dataType);
@@ -372,6 +378,7 @@ class Argument {
 	 * @param mixed $filter Object name of a filter or the actual filter object
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setFilter($filter) {
 		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->getObject($filter);
@@ -384,6 +391,7 @@ class Argument {
 	 * @param array Object names of the filters
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setNewFilterChain(array $objectNames) {
 		$this->filter = $this->objectFactory->create('F3\FLOW3\Validation\Filter\Chain');
@@ -400,6 +408,7 @@ class Argument {
 	 *
 	 * @return \F3\FLOW3\Validation\FilterInterface The set filter, NULL if none was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getFilter() {
 		return $this->filter;
@@ -412,6 +421,7 @@ class Argument {
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setValue($value) {
 		if (is_array($value) && $this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
@@ -439,12 +449,33 @@ class Argument {
 	}
 
 	/**
+	 * Returns the value of this argument. If the value is NULL, we use the defaultValue.
+	 *
+	 * @return object The value of this argument - if none was set, the default value is returned
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getValue() {
+		return ($this->value === NULL) ? $this->defaultValue : $this->value;
+	}
+
+	/**
+	 * Returns a string representation of this argument's value
+	 *
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __toString() {
+		return (string)$this->value;
+	}
+
+	/**
 	 * Finds an object from the repository by searching for its identity properties.
 	 *
 	 * @param array $identityProperties Property names and values to search for
 	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties) {
 		$query = $this->queryFactory->create($this->dataType);
@@ -478,32 +509,13 @@ class Argument {
 	 * @param string $uuid The object's uuid
 	 * @return mixed Either the object matching the uuid or, if none or more than one object was found, FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function findObjectByIdentityUUID($uuid) {
 		$query = $this->queryFactory->create($this->dataType);
 		$objects = $query->matching($query->withUUID($uuid))->execute();
 		if (count($objects) === 1 ) return current($objects);
 		return FALSE;
-	}
-
-	/**
-	 * Returns the value of this argument. If the value is NULL, we use the defaultValue.
-	 *
-	 * @return object The value of this argument - if none was set, the default value is returned
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getValue() {
-		return ($this->value === NULL) ? $this->defaultValue : $this->value;
-	}
-
-	/**
-	 * Returns a string representation of this argument's value
-	 *
-	 * @return string
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __toString() {
-		return (string)$this->value;
 	}
 }
 ?>

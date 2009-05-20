@@ -71,6 +71,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -148,6 +149,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Property\DataType\URI $requestURI URI of this web request
 	 * @return \F3\FLOW3\Property\DataType\URI The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function detectBaseURI(\F3\FLOW3\Property\DataType\URI $requestURI) {
 		$baseURI = clone $requestURI;

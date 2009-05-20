@@ -66,6 +66,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 * @internal
 	 */
 	protected $validatorResolver;
 
@@ -100,7 +101,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
-	
+
 	/**
 	 * A context with controller information
 	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
@@ -112,6 +113,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
@@ -124,6 +126,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param array $settings Settings container of the current package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -147,6 +150,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper The property mapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
@@ -158,6 +162,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper The URI helper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectURIHelper(\F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper) {
 		$this->URIHelper = $URIHelper;
@@ -169,6 +174,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
@@ -216,6 +222,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Initialize the controller context
 	 * @return void
+	 * @internal
 	 */
 	protected function setupControllerContext() {
 		$this->controllerContext = new \F3\FLOW3\MVC\Controller\ControllerContext();
@@ -252,7 +259,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Forwards the request to another action and / or controller.
 	 *
-	 * NOTE: This method only supports web requests and will thrown an exception
+	 * NOTE: This method only supports web requests and will throw an exception
 	 * if used with other request types.
 	 *
 	 * @param string $actionName Name of the action to forward to
@@ -281,7 +288,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Redirects the web request to another uri.
 	 *
-	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 * NOTE: This method only supports web requests and will throw an exception if used with other request types.
 	 *
 	 * @param mixed $uri Either a string representation of a URI or a \F3\FLOW3\Property\DataType\URI object
 	 * @param integer $delay (optional) The delay in seconds. Default is no delay.
@@ -304,7 +311,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Sends the specified HTTP status immediately.
 	 *
-	 * NOTE: This method only supports web requests and will thrown an exception if used with other request types.
+	 * NOTE: This method only supports web requests and will throw an exception if used with other request types.
 	 *
 	 * @param integer $statusCode The HTTP status code
 	 * @param string $statusMessage A custom HTTP status message
@@ -328,8 +335,9 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
-	public function initializeControllerArgumentsBaseValidators() {
+	protected function initializeControllerArgumentsBaseValidators() {
 		foreach ($this->arguments as $argument) {
 			$validator = $this->validatorResolver->getBaseValidatorConjunction($argument->getDataType());
 			if ($validator !== NULL) $argument->setValidator($validator);
@@ -341,6 +349,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		$optionalPropertyNames = array();

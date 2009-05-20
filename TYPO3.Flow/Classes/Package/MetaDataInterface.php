@@ -41,42 +41,50 @@ interface MetaDataInterface {
 
 	/**
 	 * @return string The package key
+	 * @internal
 	 */
 	public function getPackageKey();
 
 	/**
 	 * @return string The package title
+	 * @internal
 	 */
 	public function getTitle();
 
 	/**
 	 * @return string The package version
+	 * @internal
 	 */
 	public function getVersion();
 
 	/**
 	 * @return string The package description
+	 * @internal
 	 */
 	public function getDescription();
 
 	/**
 	 * @return string The package state
+	 * @internal
 	 */
 	public function getState();
 
 	/**
 	 * @return Array of string The package categories
+	 * @internal
 	 */
 	public function getCategories();
 
 	/**
 	 * @return Array of F3\FLOW3\Package\MetaData\Party The package parties
+	 * @internal
 	 */
 	public function getParties();
 
 	/**
 	 * @param string $constraintType: Type of the constraints to get: depends, conflicts, suggests
 	 * @return Array of F3\FLOW3\Package\MetaData\Constraint Package constraints
+	 * @internal
 	 */
 	public function getConstraintsByType($constraintType);
 
@@ -84,6 +92,7 @@ interface MetaDataInterface {
 	 * Get all constraints
 	 *
 	 * @return array An array of array of \F3\FLOW3\Package\MetaData\Constraint Package constraints
+	 * @internal
 	 */
 	public function getConstraints();
 }

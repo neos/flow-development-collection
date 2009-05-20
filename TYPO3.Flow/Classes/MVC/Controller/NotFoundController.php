@@ -69,7 +69,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 				);
 		}
 	}
-	
+
 	/**
 	 * Initialize the view
 	 */

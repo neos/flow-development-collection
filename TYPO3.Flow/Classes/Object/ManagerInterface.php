@@ -43,6 +43,7 @@ interface ManagerInterface {
 	 * which are configured for it.
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function shutdown();
 
@@ -59,6 +60,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $context: Name of the context
 	 * @return void
+	 * @internal
 	 */
 	public function setContext($context);
 
@@ -74,6 +76,7 @@ interface ManagerInterface {
 	 * Returns a reference to the object factory used by the object manager.
 	 *
 	 * @return \F3\FLOW3\Object\FactoryInterface
+	 * @internal
 	 */
 	public function getObjectFactory();
 
@@ -149,6 +152,7 @@ interface ManagerInterface {
 	 * Returns an array of configuration objects for all registered objects.
 	 *
 	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
+	 * @internal
 	 */
 	public function getObjectConfigurations();
 
@@ -157,6 +161,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $objectName: Name of the object to fetch the configuration for
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
+	 * @internal
 	 */
 	public function getObjectConfiguration($objectName);
 
@@ -170,6 +175,7 @@ interface ManagerInterface {
 	 *
 	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
 	 * @return void
+	 * @internal
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations);
 
@@ -182,6 +188,7 @@ interface ManagerInterface {
 	 *
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
+	 * @internal
 	 */
 	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration);
 
@@ -193,6 +200,7 @@ interface ManagerInterface {
 	 * @param string $objectName: Name of the object to set the class name for
 	 * @param string $className: Name of the class to set
 	 * @return void
+	 * @internal
 	 */
 	public function setObjectClassName($objectName, $className);
 }

@@ -77,6 +77,7 @@ class AspectContainer {
 	 * @param  string $className: Name of the aspect class
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($className) {
 		$this->className = $className;
@@ -87,6 +88,7 @@ class AspectContainer {
 	 *
 	 * @return string Name of the aspect class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -97,6 +99,7 @@ class AspectContainer {
 	 *
 	 * @return array Array of \F3\FLOW3\AOP\Advisor objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getAdvisors() {
 		return $this->advisors;
@@ -107,6 +110,7 @@ class AspectContainer {
 	 *
 	 * @return array Array of \F3\FLOW3\AOP\Introduction objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getIntroductions() {
 		return $this->introductions;
@@ -119,6 +123,7 @@ class AspectContainer {
 	 *
 	 * @return array Array of \F3\FLOW3\AOP\Pointcut\Pointcut objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getPointcuts() {
 		return $this->pointcuts;
@@ -130,6 +135,7 @@ class AspectContainer {
 	 * @param \F3\FLOW3\AOP\Advisor $advisor: The advisor to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function addAdvisor(\F3\FLOW3\AOP\Advisor $advisor) {
 		$this->advisors[] = $advisor;
@@ -141,6 +147,7 @@ class AspectContainer {
 	 * @param \F3\FLOW3\AOP\Introduction $introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function addIntroduction(\F3\FLOW3\AOP\Introduction $introduction) {
 		$this->introductions[] = $introduction;
@@ -152,6 +159,7 @@ class AspectContainer {
 	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut: The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function addPointcut(\F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->pointcuts[] = $pointcut;

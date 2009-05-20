@@ -70,6 +70,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager,
 			\F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver,
@@ -86,6 +87,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * @param array $settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->rejectAll = $settings['security']['firewall']['rejectAll'];
@@ -100,6 +102,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied if the
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request) {
 		$filterMatched = FALSE;
@@ -115,6 +118,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	 * @param array $filterConfiguration The filter configuration
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function buildFiltersFromSettings($filterSettings) {
 		foreach($filterSettings as $singleFilterSettings) {

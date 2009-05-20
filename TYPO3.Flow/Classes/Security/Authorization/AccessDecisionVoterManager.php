@@ -68,6 +68,7 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -80,6 +81,7 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @param array $settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->createAccessDecisionVoters($settings['security']['authorization']['accessDecisionVoters']);
@@ -91,6 +93,7 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getAccessDecisionVoters() {
 		return $this->accessDecisionVoters();
@@ -105,6 +108,7 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @internal
 	 */
 	public function decide(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$denyVotes = 0;
@@ -138,6 +142,7 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @param array Array of access decision voter classes
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function createAccessDecisionVoters($voterClasses) {
 		foreach ($voterClasses as $voterClass) {

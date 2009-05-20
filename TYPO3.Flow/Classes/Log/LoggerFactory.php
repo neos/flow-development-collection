@@ -50,6 +50,7 @@ class LoggerFactory {
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;

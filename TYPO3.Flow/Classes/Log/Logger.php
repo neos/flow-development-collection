@@ -48,6 +48,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * Constructs the logger
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct() {
 		$this->backends = new \SplObjectStorage();
@@ -110,6 +111,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function shutdownObject() {
 		foreach ($this->backends as $backend) {

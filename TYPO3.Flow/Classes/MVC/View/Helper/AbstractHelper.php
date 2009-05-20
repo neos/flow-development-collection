@@ -47,6 +47,7 @@ abstract class AbstractHelper implements \F3\FLOW3\MVC\View\Helper\HelperInterfa
 	 * Sets the current controller context
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
+	 * @internal
 	 */
 	public function setControllerContext($controllerContext) {
 		$this->controllerContext = $controllerContext;

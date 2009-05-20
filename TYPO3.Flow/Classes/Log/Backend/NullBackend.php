@@ -65,6 +65,7 @@ class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Does nothing
 	 *
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function close() {}
 

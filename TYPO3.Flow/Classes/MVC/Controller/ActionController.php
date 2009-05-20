@@ -40,11 +40,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * @var \F3\FLOW3\Reflection\Service
+	 * @internal
 	 */
 	protected $reflectionService;
 
 	/**
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
+	 * @internal
 	 */
 	protected $validatorResolver;
 
@@ -106,6 +108,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
@@ -203,7 +206,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';

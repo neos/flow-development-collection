@@ -56,6 +56,7 @@ class OpenSSLRSAKey {
 	 * @param string $keyString The private key string
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct($modulus, $keyString) {
 		$this->modulus = $modulus;
@@ -67,6 +68,7 @@ class OpenSSLRSAKey {
 	 *
 	 * @return string The modulus
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getModulus() {
 		return $this->modulus;
@@ -77,6 +79,7 @@ class OpenSSLRSAKey {
 	 *
 	 * @return string The key string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getKeyString() {
 		return $this->keyString;

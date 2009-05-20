@@ -45,6 +45,7 @@ interface SourceInterface {
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the dot and file extension
 	 * @return \F3\FLOW3\Configuration\Container
 	 * @throws \F3\FLOW3\Configuration\Exception\NoSuchFile if the specified file does not exist
+	 * @internal
 	 */
 	public function load($pathAndFilename);
 }

@@ -63,6 +63,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @param string $methodVisibility The method visibility modifier (public, protected or private). Specifiy NULL if you don't care.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
@@ -76,6 +77,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -91,6 +93,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matchResult = preg_match('/^' . $this->methodNameFilterExpression . '$/', $methodName);

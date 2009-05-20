@@ -40,6 +40,7 @@ interface ExceptionHandlerInterface {
 
 	/**
 	 * Constructs this exception handler - registers itself as the default exception handler.
+	 * @internal
 	 */
 	public function __construct();
 
@@ -48,6 +49,7 @@ interface ExceptionHandlerInterface {
 	 *
 	 * @param \Exception $exception: The exception object
 	 * @return void
+	 * @internal
 	 */
 	public function handleException(\Exception $exception);
 

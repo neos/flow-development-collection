@@ -66,6 +66,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * @param string $settingComparisonExpression Path (and optional condition) leading to the setting
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct($settingComparisonExpression) {
 		$this->settingComparisonExpression = $settingComparisonExpression;
@@ -77,6 +78,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -87,6 +89,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		$this->parseConfigurationOptionPath($this->settingComparisonExpression);
@@ -102,6 +105,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if (is_bool($this->actualSettingValue)) {
@@ -118,6 +122,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * @param settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function parseConfigurationOptionPath($settingComparisonExpression) {
 		$settingComparisonExpression = preg_split(self::PATTERN_SPLITBYEQUALSIGN, $settingComparisonExpression);

@@ -36,6 +36,7 @@ namespace F3\FLOW3\Object;
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @internal
  */
 interface RegistryInterface {
 
@@ -43,33 +44,37 @@ interface RegistryInterface {
 	 * Returns an object from the registry. If an instance of the required
 	 * object does not exist yet, an exception is thrown.
 	 *
-	 * @param  string		$objectName: Name of the object to return an object of
-	 * @return object		The object
+	 * @param string $objectName Name of the object to return an object of
+	 * @return object The object
+	 * @internal
 	 */
 	public function getObject($objectName);
 
 	/**
 	 * Put an object into the registry.
 	 *
-	 * @param  string		$objectName: Name of the object the object is made for
-	 * @param  object		$object: The object to store in the registry
+	 * @param string $objectName Name of the object the object is made for
+	 * @param object $object The object to store in the registry
 	 * @return void
+	 * @internal
 	 */
 	public function putObject($objectName, $object);
 
 	/**
 	 * Remove an object from the registry.
 	 *
-	 * @param  string		$objectName: Name of the object to remove the object for
+	 * @param string $objectName Name of the object to remove the object for
 	 * @return void
+	 * @internal
 	 */
 	public function removeObject($objectName);
 
 	/**
 	 * Checks if an object of the given object already exists in the object registry.
 	 *
-	 * @param  string		$objectName: Name of the object to check for an object
-	 * @return boolean		TRUE if an object exists, otherwise FALSE
+	 * @param string $objectName Name of the object to check for an object
+	 * @return boolean TRUE if an object exists, otherwise FALSE
+	 * @internal
 	 */
 	public function objectExists($objectName);
 }

@@ -49,6 +49,7 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;

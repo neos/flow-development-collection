@@ -81,6 +81,7 @@ class Context {
 	 * @param array $settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->authenticateAllTokens = $settings['security']['authentication']['authenticateAllTokens'];
@@ -92,6 +93,7 @@ class Context {
 	 * @param array $authenticationTokens Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setAuthenticationTokens(array $tokens) {
 		$this->activeTokens = $tokens;
@@ -103,6 +105,7 @@ class Context {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
@@ -113,6 +116,7 @@ class Context {
 	 *
 	 * @return boolean TRUE, if all active tokens have to be authenticated.
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function authenticateAllTokens() {
 		return $this->authenticateAllTokens;
@@ -125,6 +129,7 @@ class Context {
 	 *
 	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getAuthenticationTokens() {
 		if ($this->separateTokensPerformed === FALSE) $this->separateActiveAndInactiveTokens();
@@ -140,6 +145,7 @@ class Context {
 	 * @param string $className The class name
 	 * @return array Array of set \F3\FLOW3\Authentication\Token objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getAuthenticationTokensOfType($className) {
 		$activeTokens = array();
@@ -160,6 +166,7 @@ class Context {
 	 *
 	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthorityInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getGrantedAuthorities() {
 		$grantedAuthorities = array();
@@ -175,6 +182,7 @@ class Context {
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function separateActiveAndInactiveTokens() {
 		$this->separateTokensPerformed = TRUE;
@@ -206,6 +214,7 @@ class Context {
 	 *
 	 * @return array Names of the instance variables to serialize
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __sleep() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);

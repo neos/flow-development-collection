@@ -44,6 +44,7 @@ interface ReaderInterface {
 	 *
 	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
 	 * @return \F3\FLOW3\Package\MetaData A package meta instance
+	 * @internal
 	 */
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package);
 

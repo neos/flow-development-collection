@@ -46,6 +46,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @return boolean If writing the XML file was successful returns TRUE, otherwise FALSE
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
@@ -110,6 +111,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @param \F3\FLOW3\Package\MetaData\AbstractParty $party The party to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function writeParty(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$xml->startElement($party->getPartyType());
@@ -138,6 +140,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 * @param \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to write
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());

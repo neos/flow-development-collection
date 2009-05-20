@@ -39,6 +39,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @param \F3\FLOW3\Package\PackageInterface $package The package to read metadata for
 	 * @return MetaData A package meta data instance with the data from the package's Package.xml file.
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getPackageMetaDataPath();
@@ -68,6 +69,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function readCategories(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->categories) && count($xml->categories)) {
@@ -84,6 +86,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function readParties(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		if (isset($xml->parties) && count($xml->parties)) {
@@ -112,6 +115,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @param \F3\FLOW3\Package\MetaData $meta The meta information
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function readConstraints(\SimpleXMLElement $xml, \F3\FLOW3\Package\MetaData $meta) {
 		foreach ($meta->getConstraintTypes() as $constraintType) {

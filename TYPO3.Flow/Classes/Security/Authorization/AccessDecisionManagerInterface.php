@@ -46,6 +46,7 @@ interface AccessDecisionManagerInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @internal
 	 */
 	public function decide(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 }

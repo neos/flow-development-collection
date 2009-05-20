@@ -57,6 +57,7 @@ class AdviceChain {
 	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy A reference to the proxy object using the advice chain
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(&$advices, \F3\FLOW3\AOP\ProxyInterface &$proxy) {
 		$this->advices = $advices;
@@ -72,6 +73,7 @@ class AdviceChain {
 	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point (ie. the context)
 	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function &proceed(\F3\FLOW3\AOP\JoinPointInterface &$joinPoint) {
 		$this->adviceIndex++;
@@ -88,6 +90,7 @@ class AdviceChain {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function rewind() {
 		$this->adviceIndex = -1;

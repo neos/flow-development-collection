@@ -51,6 +51,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param array $arguments
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function setCLIArguments(array $arguments) {
 		$this->CLIArguments = $arguments;
@@ -61,6 +62,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getCLIArguments() {
 		return $this->CLIArguments;

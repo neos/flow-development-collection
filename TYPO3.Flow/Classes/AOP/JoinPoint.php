@@ -87,6 +87,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\AOP\ProxyInterface $proxy, $className, $methodName, $methodArguments, $adviceChain = NULL, $result = NULL, $exception = NULL) {
 		if ($adviceChain !== NULL && !$adviceChain instanceof \F3\FLOW3\AOP\Advice\AdviceChain) throw new \InvalidArgumentException('The advice chain must be an instance of \F3\FLOW3\AOP\Advice\AdviceChain.', 1171482537);
@@ -105,6 +106,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return \F3\FLOW3\AOP\ProxyInterface
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getProxy() {
 		return $this->proxy;
@@ -115,6 +117,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return string The class name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -125,6 +128,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return string The method name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getMethodName() {
 		return $this->methodName;
@@ -135,6 +139,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return array Array of arguments
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getMethodArguments() {
 		return $this->methodArguments;
@@ -146,6 +151,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @param  string $argumentName: Name of the argument
 	 * @return mixed Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getMethodArgument($argumentName) {
 		if (!isset($this->methodArguments[$argumentName])) throw new \RuntimeException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
@@ -159,6 +165,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @param  string $argumentName: Name of the argument to check
 	 * @return boolean TRUE if the argument exists
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function isMethodArgument($argumentName) {
 		return isset($this->methodArguments[$argumentName]);
@@ -169,6 +176,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return \F3\FLOW3\AOP\Advice\AdviceChainInterface The advice chain
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getAdviceChain() {
 		return $this->adviceChain;
@@ -181,6 +189,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return mixed The exception thrown or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getException() {
 		return $this->exception;
@@ -192,6 +201,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 *
 	 * @return mixed Result of the method invocation
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getResult() {
 		return $this->result;

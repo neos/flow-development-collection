@@ -45,6 +45,7 @@ class AccessGrant implements \F3\FLOW3\Security\Authorization\AccessDecisionVote
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @internal
 	 */
 	public function vote(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 

@@ -53,6 +53,7 @@ class ClassFileManipulator {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -66,6 +67,7 @@ class ClassFileManipulator {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Fix code for case of existing $targetClassFilePathAndName
+	 * @internal
 	 */
 	public function manipulate(&$classFilePathAndName) {
 		$checksum = md5_file($classFilePathAndName);
@@ -118,6 +120,7 @@ class ClassFileManipulator {
 	 * @param string &$targetCode Target source code for replacement
 	 * @return boolean Returns TRUE if the new operator really has been replaced, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function replaceNewOperator(array $tokens, &$index, &$targetCode) {
 		$index++;
@@ -165,6 +168,7 @@ class ClassFileManipulator {
 	 * @param integer &$index The current index in the tokens array - the expected starting position is one token after the opening bracket.
 	 * @return string returns the content between the parentheses
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function parseConstructorArguments(array $tokens, &$index) {
 		$index++;

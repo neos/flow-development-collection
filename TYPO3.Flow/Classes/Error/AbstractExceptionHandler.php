@@ -54,6 +54,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -63,6 +64,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 * Sets the path and file name of a file used to dump the backtrace.
 	 *
 	 * @param string $pathAndFilename
+	 * @internal
 	 */
 	public function setBacktracePathAndFilename($pathAndFilename) {
 		$this->backtracePathAndFilename = $pathAndFilename;
@@ -73,6 +75,7 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	 *
 	 * @param \Exception $exception: The exception object
 	 * @return void
+	 * @internal
 	 */
 	public function handleException(\Exception $exception) {
 		if (is_object($this->systemLogger)) {

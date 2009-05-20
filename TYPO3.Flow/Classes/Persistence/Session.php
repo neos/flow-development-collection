@@ -49,6 +49,7 @@ class Session {
 	 * Constructs a new Session
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __construct() {
 		$this->reconstitutedObjects = new \SplObjectStorage();
@@ -60,6 +61,7 @@ class Session {
 	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function registerReconstitutedObject($object) {
 		$this->reconstitutedObjects->attach($object);
@@ -71,6 +73,7 @@ class Session {
 	 * @param object $object
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function unregisterReconstitutedObject($object) {
 		$this->reconstitutedObjects->detach($object);
@@ -81,6 +84,7 @@ class Session {
 	 *
 	 * @return array All reconstituted objects
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getReconstitutedObjects() {
 		return $this->reconstitutedObjects;

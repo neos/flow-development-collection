@@ -87,6 +87,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param \F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry The singleton objects registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSingletonObjectsRegistry(\F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry) {
 		$this->singletonObjectsRegistry = $singletonObjectsRegistry;
@@ -98,6 +99,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param \F3\FLOW3\Object\Builder $objectBuilder The object builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
@@ -117,6 +119,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService The Reflection Service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		if (!is_object($this->singletonObjectsRegistry) && !is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry or Object Builder has been injected into the Object Manager', 1231252863);
@@ -137,6 +140,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -147,6 +151,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize() {
 		if (!is_object($this->reflectionService)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
@@ -172,6 +177,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function shutdown() {
 		foreach ($this->shutdownObjects as $objectAndMethodName) {
@@ -197,6 +203,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @return void
 	 * @throws \InvalidArgumentException if $context is not a valid string.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setContext($context) {
 		if (!is_string($context)) throw new \InvalidArgumentException('Context must be given as string.', 1210857671);
@@ -219,6 +226,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 *
 	 * @return \F3\FLOW3\Object\FactoryInterface
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getObjectFactory() {
 		return $this->objectFactory;
@@ -400,6 +408,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 *
 	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getObjectConfigurations() {
 		return $this->objectConfigurations;
@@ -412,6 +421,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered
+	 * @internal
 	 */
 	public function getObjectConfiguration($objectName) {
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" is not registered.', 1167993004);
@@ -425,6 +435,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations) {
 		foreach ($newObjectConfigurations as $newObjectConfiguration) {
@@ -442,6 +453,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration) {
 		$objectName = $newObjectConfiguration->getObjectName();
@@ -460,6 +472,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject on trying to set the class name of an unknown object
 	 * @throws \F3\FLOW3\Object\Exception\UnknownClass if the class does not exist
+	 * @internal
 	 */
 	public function setObjectClassName($objectName, $className) {
 		if (!$this->isObjectRegistered($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Tried to set class name of non existent object "' . $objectName . '"', 1185524488);
@@ -477,6 +490,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
+	 * @internal
 	 */
 	protected function getOverridingArguments(array $argumentValues) {
 		$argumentObjects = array();
@@ -491,6 +505,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __clone() {
 		$this->singletonObjectsRegistry = clone $this->singletonObjectsRegistry;

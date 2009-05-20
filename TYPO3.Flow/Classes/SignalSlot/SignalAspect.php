@@ -50,6 +50,7 @@ class SignalAspect {
 	 * @param \F3\FLOW3\SignalSlot\Dispatcher $dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $dispatcher) {
 		$this->dispatcher = $dispatcher;
@@ -62,6 +63,7 @@ class SignalAspect {
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function forwardSignalToDispatcher(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$this->dispatcher->dispatch($joinPoint->getClassName(), $joinPoint->getMethodName(), $joinPoint->getMethodArguments());

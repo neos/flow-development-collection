@@ -78,6 +78,7 @@ class Builder {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService The Reflection Service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -89,6 +90,7 @@ class Builder {
 	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -100,6 +102,7 @@ class Builder {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -111,6 +114,7 @@ class Builder {
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -126,6 +130,7 @@ class Builder {
 	 * @return object
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function createObject($objectName, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration, array $overridingArguments = array()) {
 		if (isset ($this->objectsBeingBuilt[$objectName])) throw new \F3\FLOW3\Object\Exception\CannotBuildObject('Circular object dependency for object "' . $objectName . '".', 1168505928);
@@ -181,6 +186,7 @@ class Builder {
 	 * @throws \F3\FLOW3\Object\Exception\CannotReconstituteObject
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function createEmptyObject($objectName, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$className = $objectConfiguration->getClassName();
@@ -210,6 +216,7 @@ class Builder {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function reinjectDependencies($object, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$properties = $objectConfiguration->getProperties();
@@ -227,6 +234,7 @@ class Builder {
 	 * @param array $arguments Arguments to pass to the constructor
 	 * @return object The object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function instantiateClass($className, array $arguments) {
 		switch (count($arguments)) {
@@ -251,6 +259,7 @@ class Builder {
 	 * @param string $className Class name of the object object which contains the methods supposed to be analyzed
 	 * @return array The modified array of \F3\FLOW3\Object\Configuration\ConfigurationArgument
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function autowireArguments(array $arguments, $className) {
 		$constructorName = $this->reflectionService->getClassConstructorName($className);
@@ -287,6 +296,7 @@ class Builder {
 	 * @return array The modified array of \F3\FLOW3\Object\Configuration\ConfigurationProperty
 	 * @throws \F3\FLOW3\Object\Exception\CannotBuildObject if a required property could not be autowired.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function autowireProperties(array $setterProperties, $className) {
 		foreach (get_class_methods($className) as $methodName) {
@@ -333,6 +343,7 @@ class Builder {
 	 * @param array &$preparedArguments An empty array passed by reference: Will contain constructor parameters as strings to be used in a new statement
 	 * @return void  The result is stored in the $preparedArguments array
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function injectArguments($arguments, &$preparedArguments) {
 		foreach ($arguments as $argument) {
@@ -379,6 +390,7 @@ class Builder {
 	 * @param object $object The recently created instance of the current object. Dependencies will be injected to it.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function injectProperties($properties, $object) {
 		foreach ($properties as $propertyName => $property) {
@@ -434,6 +446,7 @@ class Builder {
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration: The object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function callLifecycleInitializationMethod($object, \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration) {
 		$lifecycleInitializationMethodName = $objectConfiguration->getLifecycleInitializationMethodName();

@@ -50,6 +50,7 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request) {
 		return TRUE;
@@ -60,6 +61,7 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	 *
 	 * @return string The set pattern
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getPattern() {
 		return $this->ipAddressRange;
@@ -71,6 +73,7 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	 * @param string $ipAddressRange The ip address range
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setPattern($ipAddressRange) {
 		$this->ipAddressRange = $ipAddressRange;
@@ -83,6 +86,7 @@ class IPAddressRange implements \F3\FLOW3\Security\RequestPatternInterface {
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
 	 * @throws \F3\FLOW3\Security\Exception\RequestTypeNotSupported
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		return FALSE;

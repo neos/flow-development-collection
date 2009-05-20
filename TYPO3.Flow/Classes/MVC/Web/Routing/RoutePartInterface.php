@@ -44,6 +44,7 @@ interface RoutePartInterface {
 	 * 
 	 * @param string $name
 	 * @return void
+	 * @internal
 	 */
 	public function setName($partName);
 
@@ -51,6 +52,7 @@ interface RoutePartInterface {
 	 * Returns name of the Route Part.
 	 * 
 	 * @return string
+	 * @internal
 	 */
 	public function getName();
 
@@ -58,6 +60,7 @@ interface RoutePartInterface {
 	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
 	 * 
 	 * @return boolean
+	 * @internal
 	 */
 	public function hasValue();
 
@@ -65,6 +68,7 @@ interface RoutePartInterface {
 	 * Returns value of the Route Part. Before match() is called this returns NULL.
 	 * 
 	 * @return mixed
+	 * @internal
 	 */
 	public function getValue();
 
@@ -72,6 +76,7 @@ interface RoutePartInterface {
 	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
 	 * 
 	 * @return boolean
+	 * @internal
 	 */
 	public function hasDefaultValue();
 
@@ -80,6 +85,7 @@ interface RoutePartInterface {
 	 * 
 	 * @param mixed $defaultValue
 	 * @return void
+	 * @internal
 	 */
 	public function setDefaultValue($defaultValue);
 
@@ -87,6 +93,7 @@ interface RoutePartInterface {
 	 * Gets default value of the Route Part.
 	 * 
 	 * @return mixed $defaultValue
+	 * @internal
 	 */
 	public function getDefaultValue();
 
@@ -95,12 +102,14 @@ interface RoutePartInterface {
 	 * 
 	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
+	 * @internal
 	 */
 	public function setOptional($isOptional);
 
 	/**
 	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
 	 * @see setOptional()
+	 * @internal
 	 */
 	public function isOptional();
 
@@ -110,11 +119,13 @@ interface RoutePartInterface {
 	 * 
 	 * @param array $options
 	 * @return void
+	 * @internal
 	 */
 	public function setOptions(array $options);
 
 	/**
 	 * @return array options of this Route Part.
+	 * @internal
 	 */
 	public function getOptions();
 
@@ -126,6 +137,7 @@ interface RoutePartInterface {
 	 *
 	 * @param string $requestPath The request path to be matched - without query parameters, host and fragment.
 	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
+	 * @internal
 	 */
 	public function match(&$requestPath);
 
@@ -137,6 +149,7 @@ interface RoutePartInterface {
 	 *
 	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
 	 * @return boolean TRUE if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
+	 * @internal
 	 */
 	public function resolve(array &$routeValues);
 }

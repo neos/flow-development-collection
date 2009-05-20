@@ -86,6 +86,7 @@ class Environment {
 	 * variables and unsets the orginals.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct() {
 		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
@@ -333,6 +334,7 @@ class Environment {
 	 * @return string The full path to the temporary directory
 	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writeable
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);

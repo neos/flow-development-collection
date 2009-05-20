@@ -55,6 +55,7 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	 * @param string $methodTagFilterExpression A regular expression which defines which method tags should match
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($methodTagFilterExpression) {
 		$this->methodTagFilterExpression = $methodTagFilterExpression;
@@ -66,6 +67,7 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -80,6 +82,7 @@ class PointcutMethodTaggedWithFilter implements \F3\FLOW3\AOP\Pointcut\PointcutF
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($methodDeclaringClassName === NULL) return FALSE;

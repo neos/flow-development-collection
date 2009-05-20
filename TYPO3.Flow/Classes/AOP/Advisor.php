@@ -56,6 +56,7 @@ class Advisor {
 	 * @param \F3\FLOW3\AOP\Advice\AdviceInterface $advice: The advice to weave in
 	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut: The pointcut where the advice should be inserted
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\AOP\Advice\AdviceInterface $advice, \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut) {
 		$this->advice = $advice;
@@ -67,6 +68,7 @@ class Advisor {
 	 *
 	 * @return \F3\FLOW3\AOP\Advice\AdviceInterface The advice
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getAdvice() {
 		return $this->advice;
@@ -77,6 +79,7 @@ class Advisor {
 	 *
 	 * @return \F3\FLOW3\AOP\Pointcut\Pointcut The pointcut
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getPointcut() {
 		return $this->pointcut;

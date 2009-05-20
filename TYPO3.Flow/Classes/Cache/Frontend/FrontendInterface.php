@@ -108,6 +108,7 @@ interface FrontendInterface {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @internal
 	 */
 	public function remove($entryIdentifier);
 

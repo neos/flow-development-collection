@@ -44,6 +44,7 @@ interface GrantedAuthorityInterface {
 	 * the AccessDecisionManager has to support this special GrantedAuthority.
 	 *
 	 * @return string The string representation of the GrantedAuthority
+	 * @internal
 	 */
 	public function getAuthority();
 }

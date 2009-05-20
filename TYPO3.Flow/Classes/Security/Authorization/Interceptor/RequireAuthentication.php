@@ -54,6 +54,7 @@ class RequireAuthentication implements \F3\FLOW3\Security\Authorization\Intercep
 	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication Manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
@@ -64,6 +65,7 @@ class RequireAuthentication implements \F3\FLOW3\Security\Authorization\Intercep
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function invoke() {
 		$this->authenticationManager->authenticate();

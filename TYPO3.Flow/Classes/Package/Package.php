@@ -46,7 +46,7 @@ class Package implements PackageInterface {
 	const DIRECTORY_METADATA = 'Meta/';
 	const DIRECTORY_RESOURCES = 'Resources/';
 	const DIRECTORY_TESTS = 'Tests/';
-	
+
 	const FILENAME_PACKAGEINFO = 'Package.xml';
 
 	/**
@@ -84,6 +84,7 @@ class Package implements PackageInterface {
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKey if an invalid package key was passed
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($packageKey, $packagePath) {
 		if (!preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
@@ -100,6 +101,7 @@ class Package implements PackageInterface {
 	 * @param \F3\FLOW3\Package\Meat\ReaderInterface $metaReader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectMetaDataReader(\F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader) {
 		$this->metaDataReader = $metaDataReader;
@@ -110,6 +112,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getPackageMetaData() {
 		if ($this->packageMetaData === NULL) {
@@ -123,6 +126,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
@@ -199,6 +203,7 @@ class Package implements PackageInterface {
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
+	 * @internal
 	 */
 	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
 		$classFiles = array();

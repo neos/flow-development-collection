@@ -62,6 +62,7 @@ abstract class AbstractConstraint {
 	 * @param string $minVersion
 	 * @param string $maxVersion
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function __construct($constraintType, $value, $minVersion = null, $maxVersion = null) {
 		$this->constraintType = $constraintType;
@@ -73,6 +74,7 @@ abstract class AbstractConstraint {
 	/**
 	 * @return string The constraint name or value
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getValue() {
 		return $this->value;
@@ -81,6 +83,7 @@ abstract class AbstractConstraint {
 	/**
 	 * @return string The minimum version
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getMinVersion() {
 		return $this->minVersion;
@@ -89,6 +92,7 @@ abstract class AbstractConstraint {
 	/**
 	 * @return string The maximum version
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getMaxVersion() {
 		return $this->maxVersion;
@@ -97,6 +101,7 @@ abstract class AbstractConstraint {
 	/**
 	 * @return string The constraint type (depends, conflicts, suggests)
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getConstraintType() {
 		return $this->constraintType;

@@ -43,7 +43,7 @@ interface DynamicRoutePartInterface extends \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 * Sets split string of the Route Part.
 	 * The split string represents the border of a Dynamic Route Part.
 	 * If it is empty, Route Part will be equal to the remaining request path.
-	 * 
+	 *
 	 * @param string $splitString
 	 * @return void
 	 */

@@ -49,6 +49,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @param array The resources array from the configuration.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function setResourcesTree($resourcesTree) {
 		$this->resourcesTree = $resourcesTree;
@@ -62,6 +63,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @return \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function parse($pointcutExpression, $trace = array()) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
@@ -97,6 +99,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @return void
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function parseDesignatorPointcut($operator, $pointcutExpression, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite, $trace = array()) {
 		if (!isset($this->resourcesTree[$pointcutExpression])) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('The given resource was not defined: ' . $pointcutExpression . '".', 1222014591);

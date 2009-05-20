@@ -84,6 +84,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @param \F3\FLOW3\Utility\Environment $environment A reference to the environment
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
@@ -97,6 +98,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -108,6 +110,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @param array $configuration The routes configuration
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function setRoutesConfiguration(array $routesConfiguration) {
 		$this->routesConfiguration = $routesConfiguration;
@@ -122,6 +125,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
 		$matchResults = $this->findMatchResults($request->getRequestURI()->getPath());
@@ -162,6 +166,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @return array results of the matching route
 	 * @see route()
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	protected function findMatchResults($requestPath) {
 		$this->createRoutesFromConfiguration();
@@ -184,6 +189,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function resolve(array $routeValues) {
 		$this->createRoutesFromConfiguration();
@@ -201,6 +207,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	protected function createRoutesFromConfiguration() {
 		if ($this->routesCreated === FALSE) {
@@ -226,6 +233,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
 		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {

@@ -45,6 +45,7 @@ interface ManagerInterface {
 	 *   - building the package registry
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function initialize();
 

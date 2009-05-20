@@ -48,6 +48,7 @@ class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 	 * @param string $minVersion
 	 * @param string $maxVersion
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function __construct($constraintType, $type, $value = NULL, $minVersion = NULL, $maxVersion = NULL) {
 		if (!strlen($value)) $value = NULL;
@@ -58,6 +59,7 @@ class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 	/**
 	 * @return string The system constraint type
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getType() {
 		return $this->type;
@@ -67,6 +69,7 @@ class SystemConstraint extends \F3\FLOW3\Package\MetaData\AbstractConstraint {
 	 * @return string The constraint scope
 	 * @see \F3\FLOW3\Package\MetaData\Constraint\getConstraintScope()
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getConstraintScope() {
 		return \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM;

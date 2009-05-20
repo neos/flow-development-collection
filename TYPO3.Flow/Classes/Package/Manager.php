@@ -79,6 +79,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param \F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter A package meta data writer instance to write package metadata
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function injectPackageMetaDataWriter(\F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter) {
 		$this->packageMetaDataWriter = $packageMetaDataWriter;
@@ -90,6 +91,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -100,6 +102,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize() {
 		$this->scanAvailablePackages();
@@ -228,6 +231,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey The package key to check for protection
 	 * @return boolean If the package key is protected
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function isPackageKeyProtected($packageKey) {
 		return in_array($packageKey, $this->protectedPackages);
@@ -245,7 +249,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
 		if (!$this->isPackageKeyValid($packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('The package key "' . $packageKey . '" is invalid', 1220722210);
 		if ($this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\PackageKeyAlreadyExists('The package key "' . $packageKey . '" already exists', 1220722873);
-		
+
 		if ($packageMetaData === NULL) {
 			$packageMetaData = $this->objectFactory->create('F3\FLOW3\Package\MetaData', $packageKey);
 		}
@@ -279,7 +283,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 		}
 		return $package;
 	}
-	
+
 	/**
 	 * Get the path of the local packages. Will be used to calculate the path
 	 * of a new package in createPackage(...).
@@ -345,6 +349,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function scanAvailablePackages() {
 		$availablePackages = array('FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3));

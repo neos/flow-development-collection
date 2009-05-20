@@ -48,6 +48,7 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @return string The rendered view
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function render() {
 		$baseURI = $this->request->getBaseURI();

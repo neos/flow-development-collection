@@ -45,6 +45,7 @@ interface WriterInterface {
 	 * @param \F3\FLOW3\Package\PackageInterface $package The package - also contains information about where to write the Package meta file
 	 * @param \F3\FLOW3\Package\MetaDataInterface $meta The MetaData object containing the information to write
 	 * @return void
+	 * @internal
 	 */
 	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta);
 

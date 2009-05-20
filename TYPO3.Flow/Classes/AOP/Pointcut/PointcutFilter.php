@@ -69,6 +69,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param string $aspectClassName Name of the aspect class containing the pointcut
 	 * @param string $pointcutMethodName Name of the method which acts as an anchor for the pointcut name and expression
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($aspectClassName, $pointcutMethodName) {
 		$this->aspectClassName = $aspectClassName;
@@ -81,6 +82,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param \F3\FLOW3\AOP\Framework $aopFramework
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectAOPFramework(\F3\FLOW3\AOP\Framework $aopFramework) {
 		$this->aopFramework = $aopFramework;
@@ -95,6 +97,7 @@ class PointcutFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->pointcut === NULL) {

@@ -42,6 +42,7 @@ interface ManagerInterface {
 	 * Initializes the persistence manager
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function initialize();
 
@@ -49,6 +50,7 @@ interface ManagerInterface {
 	 * Returns the current persistence session
 	 *
 	 * @return \F3\FLOW3\Persistence\Session
+	 * @internal
 	 */
 	public function getSession();
 
@@ -56,6 +58,7 @@ interface ManagerInterface {
 	 * Returns the persistence backend
 	 *
 	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @internal
 	 */
 	public function getBackend();
 
@@ -64,6 +67,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $className
 	 * @return \F3\FLOW3\Persistence\ClassSchema
+	 * @internal
 	 */
 	public function getClassSchema($className);
 
@@ -72,6 +76,7 @@ interface ManagerInterface {
 	 * session into the backend
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function persistAll();
 }

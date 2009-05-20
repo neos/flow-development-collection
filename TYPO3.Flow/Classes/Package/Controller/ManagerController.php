@@ -47,6 +47,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
 	 * @return void
+	 * @internal
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -58,6 +59,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @internal
 	 */
 	public function indexAction() {
 		return $this->helpAction();
@@ -69,6 +71,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @internal
 	 */
 	public function createAction($packageKey) {
 		if ($packageKey === '') {
@@ -90,6 +93,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function deleteAction($packageKey) {
 		if ($packageKey === '') {
@@ -108,6 +112,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @internal
 	 */
 	public function activateAction($packageKey) {
 		if ($packageKey === '') {
@@ -124,6 +129,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @internal
 	 */
 	public function deactivateAction($packageKey) {
 		if ($packageKey === '') {
@@ -139,6 +145,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @internal
 	 */
 	public function helpAction() {
 		return PHP_EOL .

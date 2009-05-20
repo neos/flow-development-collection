@@ -95,6 +95,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * @param \F3\FLOW3\SignalSlot\Dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSignalDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher) {
 		$this->signalDispatcher = $signalDispatcher;
@@ -130,6 +131,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * @param integer $lifetime The lifetime in seconds
 	 * @return \DateTime The expiry time
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function calculateExpiryTime($lifetime = NULL) {
 		if ($lifetime === self::UNLIMITED_LIFETIME || ($lifetime === NULL && $this->defaultLifetime === self::UNLIMITED_LIFETIME)) {

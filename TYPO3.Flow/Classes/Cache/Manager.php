@@ -84,6 +84,7 @@ class Manager {
 	 * @param array $cacheConfigurations The cache configurations to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setCacheConfigurations(array $cacheConfigurations) {
 		foreach ($cacheConfigurations as $identifier => $configuration) {
@@ -98,6 +99,7 @@ class Manager {
 	 * @param \F3\FLOW3\Cache\Factory $cacheFactory The cache factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectCacheFactory(\F3\FLOW3\Cache\Factory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
@@ -110,6 +112,7 @@ class Manager {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -120,6 +123,7 @@ class Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize() {
 		foreach ($this->cacheConfigurations as $identifier => $configuration) {
@@ -152,6 +156,7 @@ class Manager {
 	 * @param string $identifier Identifies which cache to return
 	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
 	 * @throws \F3\FLOW3\Cache\Exception\NoSuchCache
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCache($identifier) {
 		if (!isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);

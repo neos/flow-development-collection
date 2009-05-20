@@ -51,6 +51,7 @@ class ClassSchemataBuilder {
 	 *
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -64,6 +65,7 @@ class ClassSchemataBuilder {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws \F3\FLOW3\Persistence\Exception\InvalidClass if one of the specified classes does not exist
+	 * @internal
 	 */
 	public function build(array $classNames) {
 		$classSchemata = array();

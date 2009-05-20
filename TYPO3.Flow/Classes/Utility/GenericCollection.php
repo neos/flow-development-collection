@@ -65,6 +65,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @param string element type. Only objects of this type can be added to this collection.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function __construct($elementType) {
 		$this->elementType = $elementType;
@@ -75,6 +76,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return integer Option count
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function count() {
 		return $this->iteratorCount;
@@ -85,6 +87,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed The current element or FALSE if at the end of elements array.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function current() {
 		return current($this->elements);
@@ -95,6 +98,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed The current array index or FALSE if at the end of elements array.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function key() {
 		return key($this->elements);
@@ -105,6 +109,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed the next element
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function next() {
 		$this->iteratorIndex ++;
@@ -116,6 +121,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed the first element or FALSE if elements array is empty.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function rewind() {
 		$this->iteratorIndex = 0;
@@ -127,6 +133,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return boolean TRUE If the current index is valid, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function valid() {
 		return $this->iteratorIndex < $this->iteratorCount;
@@ -138,6 +145,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $key
 	 * @return boolean TRUE if the key exists in elements array otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function offsetExists($key) {
 		return array_key_exists($key, $this->elements);
@@ -149,6 +157,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $key Index of the element to retrieve
 	 * @return mixed The element at the given index
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function offsetGet($key) {
 		return $this->elements[$key];
@@ -163,6 +172,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see checkElementType()
 	 * @see getElementType()
+	 * @internal
 	 */
 	public function offsetSet($key, $element) {
 		if (!$element instanceof $this->elementType) {
@@ -178,6 +188,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $key index of the element to unset
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function offsetUnset($key) {
 		unset($this->elements[$key]);
@@ -192,6 +203,7 @@ class GenericCollection implements \Countable, \Iterator, \ArrayAccess {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see checkElementType()
 	 * @see getElementType()
+	 * @internal
 	 */
 	public function append($element) {
 		if (!$element instanceof $this->elementType) {

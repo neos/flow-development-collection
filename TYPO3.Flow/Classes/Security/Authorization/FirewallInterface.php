@@ -45,6 +45,7 @@ interface FirewallInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be analyzed
 	 * @return void
+	 * @internal
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\MVC\RequestInterface $request);
 }

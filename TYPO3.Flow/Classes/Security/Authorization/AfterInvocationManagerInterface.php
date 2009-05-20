@@ -46,6 +46,7 @@ interface AfterInvocationManagerInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint of the returning method
 	 * @return boolean TRUE if access is granted, FALSE if the manager abstains from decision
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 * @internal
 	 */
 	public function process(\F3\FLOW3\Security\Context $securityContext, $object, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
@@ -54,6 +55,7 @@ interface AfterInvocationManagerInterface {
 	 *
 	 * @param string $className The classname that should be checked
 	 * @return boolean TRUE if this access decision manager can decide on objects with the given classname
+	 * @internal
 	 */
 	public function supports($className);
 }

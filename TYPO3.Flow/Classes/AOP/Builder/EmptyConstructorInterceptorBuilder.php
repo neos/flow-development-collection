@@ -47,6 +47,7 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 	 * @param array
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName !== '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789011);
@@ -65,7 +66,6 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 	/**
 	 * Non-advised constructor interceptor.
 	 * ' . $parametersDocumentation . '
-	 * @return void
 	 */
 	public function __construct(' . $parametersCode . (strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
 		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;

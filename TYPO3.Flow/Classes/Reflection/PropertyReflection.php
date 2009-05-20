@@ -50,6 +50,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 * @param string $propertyName Name of the property to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($className, $propertyName) {
 		parent::__construct($className, $propertyName);
@@ -61,6 +62,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *
 	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
+	 * @internal
 	 */
 	public function isTaggedWith($tag) {
 		$result = $this->getDocCommentParser()->isTaggedWith($tag);
@@ -72,6 +74,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *
 	 * @return array Tags and values
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -82,6 +85,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *
 	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -100,6 +104,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *   $prop = new ReflectionProperty('Foo', 'y'); // y is private member
 	 *   $prop->setAccessible(true);
 	 *   var_dump($prop->getValue($obj)); // int(2)
+	 * @internal
 	 */
 	public function getValue($object = NULL) {
 		if (!is_object($object)) throw new \F3\FLOW3\Reflection\Exception('$object is of type ' . gettype($object) . ', instance of class ' . $this->class . ' expected.', 1210859212);
@@ -116,6 +121,7 @@ class PropertyReflection extends \ReflectionProperty {
 	 *
 	 * @return \F3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

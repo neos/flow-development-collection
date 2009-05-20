@@ -53,6 +53,7 @@ class Service {
 	 *
 	 * @param array $settings The FLOW3 settings
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(array $settings) {
 		$this->settings = $settings;
@@ -64,6 +65,7 @@ class Service {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -74,6 +76,7 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initialize() {
 		$locale = $this->objectFactory->create('F3\FLOW3\Locale\Locale', $this->settings['locale']['defaultLocaleIdentifier']);

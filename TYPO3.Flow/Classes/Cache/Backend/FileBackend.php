@@ -67,6 +67,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -78,6 +79,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -87,6 +89,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Initializes the default cache directory
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function initializeObject() {
 		if ($this->cacheDirectory === '') {
@@ -328,6 +331,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $identifier Identifier for the cache entry
 	 * @return string Absolute path leading to the directory containing the cache entry
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function renderCacheEntryPath($identifier) {
 		$identifierHash = sha1($identifier);
@@ -343,6 +347,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
+	 * @internal
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -361,6 +366,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return array The file names (including path)
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
+	 * @internal
 	 */
 	protected function findTagFilesByEntry($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);

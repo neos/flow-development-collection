@@ -39,6 +39,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_declareMethodsAndAdvices() {
 ###METHODS_AND_ADVICES_ARRAY_CODE###
@@ -50,6 +51,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
@@ -62,6 +64,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 *
 	 * @return string Name of the target class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return '###TARGET_CLASS_NAME###';
@@ -74,6 +77,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
 		return $this->$propertyName;
@@ -86,6 +90,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @param mixed $propertyValue Value to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
 		$this->$propertyName = $propertyValue;
@@ -98,6 +103,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @param string $methodName: Method to return the advice chains for
 	 * @return mixed The advice chains  (array of \F3\FLOW3\AOP\Advice\AdviceChain) or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function FLOW3_AOP_Proxy_getAdviceChains($methodName) {
 		$adviceChains = NULL;

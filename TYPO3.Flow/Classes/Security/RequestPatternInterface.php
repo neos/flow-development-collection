@@ -45,6 +45,7 @@ interface RequestPatternInterface {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if this pattern can match
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function canMatch(\F3\FLOW3\MVC\RequestInterface $request);
 
@@ -53,6 +54,7 @@ interface RequestPatternInterface {
 	 *
 	 * @return string The set pattern
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getPattern();
 
@@ -61,6 +63,7 @@ interface RequestPatternInterface {
 	 *
 	 * @param object $pattern The pattern (match) configuration
 	 * @return void
+	 * @internal
 	 */
 	public function setPattern($pattern);
 
@@ -69,6 +72,7 @@ interface RequestPatternInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request that should be matched
 	 * @return boolean TRUE if the pattern matched, FALSE otherwise
+	 * @internal
 	 */
 	public function matchRequest(\F3\FLOW3\MVC\RequestInterface $request);
 }

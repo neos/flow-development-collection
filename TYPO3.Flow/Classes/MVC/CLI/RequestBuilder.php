@@ -61,6 +61,7 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
 		$this->objectManager = $objectManager;
@@ -75,6 +76,7 @@ class RequestBuilder {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function build() {
 		$request = $this->objectFactory->create('F3\FLOW3\MVC\CLI\Request');
@@ -106,6 +108,7 @@ class RequestBuilder {
 	 * @param array $command
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function setControllerOptions(\F3\FLOW3\MVC\CLI\Request $request, array $command) {
 		if ($command['package'] !== NULL) $request->setControllerPackageKey($command['package']);
@@ -131,6 +134,7 @@ class RequestBuilder {
 	 * @param array $rawCommandLineArguments
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function parseRawCommandLineArguments(array $rawCommandLineArguments) {
 		$commandLineArguments = array('command' => array(), 'options' => array(), 'arguments' => array());
@@ -182,6 +186,7 @@ class RequestBuilder {
 	 * @return string converted argument name
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function convertCommandLineOptionToRequestArgumentName($commandLineOption) {
 		$explodedOption = explode('=', $commandLineOption, 2);
@@ -201,6 +206,7 @@ class RequestBuilder {
 	 * @param array Array of the remaining command line arguments
 	 * @return string The value of the first argument
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	protected function getValueOfCurrentCommandLineOption($currentArgument, array &$rawCommandLineArguments) {
 		if (isset($rawCommandLineArguments[0]) && $rawCommandLineArguments[0][0] === '-' && (strpos($currentArgument, '=') === FALSE)) {
@@ -231,6 +237,7 @@ class RequestBuilder {
 	 * @param array $command
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
 		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('CLI access needs 0, 1 or at least 3 command parts.', 1222252361);

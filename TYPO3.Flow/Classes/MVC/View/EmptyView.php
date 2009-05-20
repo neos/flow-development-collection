@@ -37,13 +37,14 @@ namespace F3\FLOW3\MVC\View;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
+final class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
 	 * Renders the empty view
 	 *
 	 * @return string An empty string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function render() {
 		return '';
@@ -59,6 +60,7 @@ class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __call($methodName, array $arguments) {
 	}

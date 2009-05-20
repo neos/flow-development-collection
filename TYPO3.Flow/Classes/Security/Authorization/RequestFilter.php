@@ -57,6 +57,7 @@ class RequestFilter {
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor The interceptor called on pattern match
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Security\RequestPatternInterface $pattern, \F3\FLOW3\Security\Authorization\InterceptorInterface $securityInterceptor) {
 		$this->pattern = $pattern;
@@ -68,6 +69,7 @@ class RequestFilter {
 	 *
 	 * @return \F3\FLOW3\Security\RequestPatternInterface The set request pattern
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getRequestPattern() {
 		return $this->pattern;
@@ -78,6 +80,7 @@ class RequestFilter {
 	 *
 	 * @return \F3\FLOW3\Security\Authorization\InterceptorInterface The set security interceptor
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function getSecurityInterceptor() {
 		return $this->securityInterceptor;
@@ -89,6 +92,7 @@ class RequestFilter {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to be matched
 	 * @return boolean Returns TRUE if the filter matched, FALSE otherwise
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function filterRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		if($this->pattern->canMatch($request) && $this->pattern->matchRequest($request)) {

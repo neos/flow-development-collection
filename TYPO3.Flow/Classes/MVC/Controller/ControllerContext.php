@@ -51,7 +51,7 @@ class ControllerContext {
 	 * @var \F3\FLOW3\MVC\Controller\Arguments
 	 */
 	protected $arguments;
-	
+
 	/**
 	 * @var \F3\FLOW3\Property\MappingResults
 	 */
@@ -64,16 +64,17 @@ class ControllerContext {
 	public function getRequest() {
 		return $this->request;
 	}
-	
+
 	/**
 	 * Set the request of the controller
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
-	 * @return void 
+	 * @return void
+	 * @internal
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 	}
-	
+
 	/**
 	 * Get the response of the controller
 	 * @return \F3\FLOW3\MVC\RequestInterface
@@ -85,7 +86,8 @@ class ControllerContext {
 	/**
 	 * Set the response of the controller
 	 * @param \F3\FLOW3\MVC\ResponseInterface $request
-	 * @return void 
+	 * @return void
+	 * @internal
 	 */
 	public function setResponse(\F3\FLOW3\MVC\ResponseInterface $response) {
 		$this->response = $response;
@@ -102,12 +104,13 @@ class ControllerContext {
 	/**
 	 * Set the arguments of the controller
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
-	 * @return void 
+	 * @return void
+	 * @internal
 	 */
 	public function setArguments(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
 		$this->arguments = $arguments;
 	}
-	
+
 	/**
 	 * Get the arguments mapping results of the controller
 	 * @return \F3\FLOW3\Property\MappingResults
@@ -119,11 +122,12 @@ class ControllerContext {
 	/**
 	 * Set the arguments mapping results of the controller
 	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
-	 * @return void 
+	 * @return void
+	 * @internal
 	 */
 	public function setArgumentsMappingResults(\F3\FLOW3\Property\MappingResults $argumentsMappingResults) {
 		$this->argumentsMappingResults = $argumentsMappingResults;
 	}
-	
+
 }
 ?>

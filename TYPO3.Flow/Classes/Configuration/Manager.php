@@ -86,6 +86,7 @@ class Manager {
 	 *
 	 * @param string $context The application context to fetch configuration for.
 	 * @param array $configurationSources An array of configuration sources
+	 * @internal
 	 */
 	public function __construct($context, array $configurationSources) {
 		$this->context = $context;
@@ -97,6 +98,7 @@ class Manager {
 	 *
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
 	 * @return void
+	 * @internal
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -127,8 +129,8 @@ class Manager {
 	 * needed way earlier in the bootstrap than the package's settings.
 	 *
 	 * @return void
-	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function loadFLOW3Settings() {
 		$settings = array();
@@ -154,8 +156,8 @@ class Manager {
 	 * @param array $packages An array of Package object
 	 * @return void
 	 * @see getSettings()
-	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function loadGlobalSettings(array $packages) {
 		$settings = array();
@@ -186,8 +188,8 @@ class Manager {
 	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $packages An array of Package objects to consider
 	 * @return void
-	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function loadSpecialConfiguration($configurationType, array $packages) {
 		foreach ($packages as $packageKey => $package) {
@@ -215,8 +217,8 @@ class Manager {
 	 * @param \F3\FLOW3\Package\Package $package The package to return the configuration for
 	 * @return array The configuration
 	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
-	 * @internal
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getSpecialConfiguration($configurationType, $package = NULL) {
 		switch ($configurationType) {
@@ -260,6 +262,7 @@ class Manager {
 	 * @param array &$settings The settings to post process. The results are stored directly in the given array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function postProcessSettings(&$settings) {
 		foreach ($settings as $key => $setting) {

@@ -108,6 +108,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -119,6 +120,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the package manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -130,6 +132,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param array $settings The FLOW3 settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -191,6 +194,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidPackageKey if the package key is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setControllerPackageKey($packageKey) {
 		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
@@ -214,6 +218,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $subpackageKey The subpackage key.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function setControllerSubpackageKey($subpackageKey) {
 		$this->controllerSubpackageKey = $subpackageKey;
@@ -236,6 +241,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $controllerName Name of the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setControllerName($controllerName) {
 		if (!is_string($controllerName)) throw new \F3\FLOW3\MVC\Exception\InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
@@ -263,6 +269,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionName if the action name is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new \F3\FLOW3\MVC\Exception\InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
@@ -287,6 +294,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param mixed $value The new value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || \F3\PHP6\Functions::strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentName('Invalid argument name.', 1210858767);
@@ -300,6 +308,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = $arguments;
@@ -345,6 +354,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function setFormat($format) {
 		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);

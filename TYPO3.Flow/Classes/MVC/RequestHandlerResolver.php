@@ -54,6 +54,7 @@ class RequestHandlerResolver {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -65,6 +66,7 @@ class RequestHandlerResolver {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -77,6 +79,7 @@ class RequestHandlerResolver {
 	 * @return \F3\FLOW3\MVC\RequestHandler A request handler
 	 * @throws \F3\FLOW3\MVC\Exception
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function resolveRequestHandler() {
 		$availableRequestHandlerClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\MVC\RequestHandlerInterface');

@@ -42,6 +42,7 @@ interface HelperInterface {
 	 * Sets the current controller context
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
+	 * @internal
 	 */
 	public function setControllerContext($controllerContext);
 }

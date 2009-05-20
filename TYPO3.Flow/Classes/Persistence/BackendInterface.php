@@ -43,6 +43,7 @@ interface BackendInterface {
 	 *
 	 * @param array $classSchemata the class schemata the backend will be handling
 	 * @return void
+	 * @internal
 	 */
 	public function initialize(array $classSchemata);
 
@@ -51,6 +52,7 @@ interface BackendInterface {
 	 *
 	 * @param \SplObjectStorage $objects
 	 * @return void
+	 * @internal
 	 */
 	public function setAggregateRootObjects(\SplObjectStorage $objects);
 
@@ -59,6 +61,7 @@ interface BackendInterface {
 	 *
 	 * @param \SplObjectStorage $objects
 	 * @return void
+	 * @internal
 	 */
 	public function setDeletedObjects(\SplObjectStorage $objects);
 
@@ -66,6 +69,7 @@ interface BackendInterface {
 	 * Commits the current persistence session
 	 *
 	 * @return void
+	 * @internal
 	 */
 	public function commit();
 
@@ -75,6 +79,7 @@ interface BackendInterface {
 	 *
 	 * @param object $object
 	 * @return string The identifier for the object if it is known, or NULL
+	 * @internal
 	 */
 	public function getUUIDByObject($object);
 
@@ -83,6 +88,7 @@ interface BackendInterface {
 	 *
 	 * @param object $object The object to check
 	 * @return boolean TRUE if the object is new, FALSE if the object exists in the repository
+	 * @internal
 	 */
 	public function isNewObject($object);
 
@@ -100,6 +106,7 @@ interface BackendInterface {
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
 	 * @return void
+	 * @internal
 	 */
 	public function replaceObject($existingObject, $newObject);
 }

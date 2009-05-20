@@ -48,6 +48,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @param  string $className: Name of the class to reflect
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct($className) {
 		parent::__construct($className);
@@ -61,6 +62,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @param  long $filter: A filter mask
 	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getMethods($filter = NULL) {
 		$extendedMethods = array();
@@ -79,6 +81,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the named method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getMethod($name) {
 		$parentMethod = parent::getMethod($name);
@@ -93,6 +96,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection object of the constructor method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getConstructor() {
 		$parentConstructor = parent::getConstructor();
@@ -108,6 +112,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @param  long $filter: A filter mask
 	 * @return array of \F3\FLOW3\Reflection\PropertyReflection Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getProperties($filter = NULL) {
 		$extendedProperties = array();
@@ -126,6 +131,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @param  string $name: Name of the property
 	 * @return \F3\FLOW3\Reflection\PropertyReflection Property reflection object of the specified property in this class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getProperty($name) {
 		return new \F3\FLOW3\Reflection\PropertyReflection($this->getName(), $name);
@@ -138,6 +144,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return array of \F3\FLOW3\Reflection\ClassReflection Class reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getInterfaces() {
 		$extendedInterfaces = array();
@@ -155,6 +162,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return \F3\FLOW3\Reflection\ClassReflection Reflection of the parent class - if any
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getParentClass() {
 		$parentClass = parent::getParentClass();
@@ -168,6 +176,7 @@ class ClassReflection extends \ReflectionClass {
 	 * @param  string $tag: Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function isTaggedWith($tag) {
 		$result = $this->getDocCommentParser()->isTaggedWith($tag);
@@ -179,6 +188,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return array Tags and values
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagsValues() {
 		return $this->getDocCommentParser()->getTagsValues();
@@ -188,6 +198,7 @@ class ClassReflection extends \ReflectionClass {
 	 * Returns the values of the specified tag
 	 * @return array Values of the given tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function getTagValues($tag) {
 		return $this->getDocCommentParser()->getTagValues($tag);
@@ -199,6 +210,7 @@ class ClassReflection extends \ReflectionClass {
 	 *
 	 * @return \F3\FLOW3\Reflection\DocCommentParser
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function getDocCommentParser() {
 		if (!is_object($this->docCommentParser)) {

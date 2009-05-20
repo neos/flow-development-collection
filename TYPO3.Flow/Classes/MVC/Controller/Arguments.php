@@ -55,6 +55,7 @@ class Arguments extends \ArrayObject {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -230,6 +231,7 @@ class Arguments extends \ArrayObject {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) !== 'set') throw new \LogicException('Unknown method "' . $methodName . '".', 1210858451);
@@ -255,6 +257,7 @@ class Arguments extends \ArrayObject {
 	 * @param string argument name
 	 * @return string long argument name or empty string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function translateToLongArgumentName($argumentName) {
 		if (in_array($argumentName, $this->getArgumentNames())) return $argumentName;

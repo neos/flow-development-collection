@@ -117,6 +117,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @return array All constraint types
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getConstraintTypes() {
 		return self::$CONSTRAINT_TYPES;
@@ -127,6 +128,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @return array The package states
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getStates() {
 		return self::$STATES;
@@ -140,6 +142,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param string $packageKey The package key
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function __construct($packageKey) {
 		$this->packageKey = $packageKey;
@@ -148,6 +151,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return string The package key
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
@@ -156,6 +160,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return string The package title
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getTitle() {
 		return $this->title;
@@ -165,6 +170,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param string $title: The package title
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setTitle($title) {
 		$this->title = $title;
@@ -173,6 +179,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return string The package version
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getVersion() {
 		return $this->version;
@@ -182,6 +189,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param string $version: The package version to set
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setVersion($version) {
 		$this->version = $version;
@@ -190,6 +198,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return string The package description
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getDescription() {
 		return $this->description;
@@ -199,6 +208,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param string $description: The package description to set
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setDescription($description) {
 		$this->description = $description;
@@ -210,6 +220,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @return string The package state
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getState() {
 		return $this->state;
@@ -220,6 +231,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @todo Only accept valid states
+	 * @internal
 	 */
 	public function setState($state) {
 		if(!in_array($state, self::$STATES)) {
@@ -231,6 +243,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return Array of string The package categories
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getCategories() {
 		return $this->categories;
@@ -241,6 +254,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @param string $category
 	 * @return void
+	 * @internal
 	 */
 	public function addCategory($category) {
 		$this->categories[] = $category;
@@ -249,6 +263,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * @return Array of F3\FLOW3\Package\MetaData\AbstractParty The package parties
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getParties() {
 		return $this->parties;
@@ -260,6 +275,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param F3\FLOW3\Package\MetaData\AbstractParty $party
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function addParty(\F3\FLOW3\Package\MetaData\AbstractParty $party) {
 		$this->parties[] = $party;
@@ -270,6 +286,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 *
 	 * @return array Package constraints
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getConstraints() {
 		return $this->constraints;
@@ -281,6 +298,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param string $constraintType Type of the constraints to get: depends, conflicts, suggests
 	 * @return array Package constraints
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function getConstraintsByType($constraintType) {
 		if (!isset($this->constraints[$constraintType])) return array();
@@ -293,6 +311,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @param F3\FLOW3\Package\MetaData\AbstractConstraint $constraint The constraint to add
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function addConstraint(\F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$this->constraints[$constraint->getConstraintType()][] = $constraint;

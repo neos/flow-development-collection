@@ -44,6 +44,7 @@ class TextResource extends \F3\FLOW3\Resource\AbstractResource {
 	 *
 	 * @return string|binary Resource content (text)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
 	 */
 	public function getContent() {
 	}
