@@ -37,6 +37,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ControllerContext {
+
 	/**
 	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
@@ -59,6 +60,7 @@ class ControllerContext {
 
 	/**
 	 * Get the request of the controller
+	 *
 	 * @return \F3\FLOW3\MVC\RequestInterface
 	 */
 	public function getRequest() {
@@ -67,6 +69,7 @@ class ControllerContext {
 
 	/**
 	 * Set the request of the controller
+	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @internal
@@ -77,6 +80,7 @@ class ControllerContext {
 
 	/**
 	 * Get the response of the controller
+	 *
 	 * @return \F3\FLOW3\MVC\RequestInterface
 	 */
 	public function getResponse() {
@@ -85,6 +89,7 @@ class ControllerContext {
 
 	/**
 	 * Set the response of the controller
+	 *
 	 * @param \F3\FLOW3\MVC\ResponseInterface $request
 	 * @return void
 	 * @internal
@@ -95,6 +100,7 @@ class ControllerContext {
 
 	/**
 	 * Get the arguments of the controller
+	 *
 	 * @return \F3\FLOW3\MVC\Controller\Arguments
 	 */
 	public function getArguments() {
@@ -103,6 +109,7 @@ class ControllerContext {
 
 	/**
 	 * Set the arguments of the controller
+	 *
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
 	 * @return void
 	 * @internal
@@ -113,6 +120,7 @@ class ControllerContext {
 
 	/**
 	 * Get the arguments mapping results of the controller
+	 *
 	 * @return \F3\FLOW3\Property\MappingResults
 	 */
 	public function getArgumentsMappingResults() {
@@ -121,6 +129,7 @@ class ControllerContext {
 
 	/**
 	 * Set the arguments mapping results of the controller
+	 *
 	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
 	 * @return void
 	 * @internal
