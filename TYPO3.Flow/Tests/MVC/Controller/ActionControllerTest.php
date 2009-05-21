@@ -193,6 +193,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function initializeViewUsesFluidTemplateViewIfTemplateIsAvailable() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array(), array(), '', FALSE);
 
 		$mockFluidTemplateView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface', array('setControllerContext', 'getViewHelper', 'assign', 'render', 'hasTemplate'));
@@ -203,6 +204,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('session', $mockSession);
 		$mockController->_set('controllerContext', $mockControllerContext);
 		$mockController->_set('objectManager', $mockObjectManager);
 
@@ -223,6 +225,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->at(3))->method('getControllerActionName')->will($this->returnValue('list'));
 		$mockRequest->expects($this->once())->method('getFormat')->will($this->returnValue('html'));
 
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext', array('getRequest'), array(), '', FALSE);
 		$mockControllerContext->expects($this->any())->method('getRequest')->will($this->returnValue($mockRequest));
 
@@ -240,6 +243,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
+		$mockController->_set('session', $mockSession);
 		$mockController->_set('controllerContext', $mockControllerContext);
 		$mockController->_set('objectManager', $mockObjectManager);
 

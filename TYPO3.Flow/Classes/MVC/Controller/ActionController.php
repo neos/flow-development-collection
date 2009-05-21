@@ -262,6 +262,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$this->view = $this->objectManager->getObject($viewObjectName);
 			$this->view->setControllerContext($this->controllerContext);
 		}
+		$this->view->assign('flashMessages', $this->getCurrentFlashMessages());
 	}
 
 	/**

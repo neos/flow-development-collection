@@ -109,6 +109,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $controllerContext;
 
 	/**
+	 * @var \F3\FLOW3\Session\SessionInterface
+	 * @internal
+	 */
+	protected $session;
+
+	/**
 	 * Constructs the controller.
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
@@ -178,6 +184,18 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
+	}
+
+	/**
+	 * Injects the session
+	 *
+	 * @param \F3\FLOW3\Session\SessionInterface $session
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
+		$this->session = $session;
 	}
 
 	/**
@@ -361,6 +379,44 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
 		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validator);
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
+	}
+
+	/**
+	 * Returns current flash messages from the seesion, making sure to always
+	 * return an array.
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getFlashMessagesFromSession() {
+		$flashMessages = $this->session->getData('FLOW3_AbstractController_flashMessages');
+		return is_array($flashMessages) ? $flashMessages : array();
+	}
+
+	/**
+	 * Add a flash message to the queue. It will live until the next call to
+	 * getCurrentFlashMessages() in the current session.
+	 *
+	 * @param mixed $message anything serializable, should be "stringy"
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function queueFlashMessage($message) {
+		$queuedFlashMessages = $this->getFlashMessagesFromSession();
+		$queuedFlashMessages[] = $message;
+		$this->session->putData('FLOW3_AbstractController_flashMessages', $queuedFlashMessages);
+	}
+
+	/**
+	 * Returns queued flash messages and clear queue.
+	 *
+	 * @return array an array with flash messages or NULL if none available
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getCurrentFlashMessages() {
+		$queuedFlashMessages = $this->getFlashMessagesFromSession();
+		$this->session->putData('FLOW3_AbstractController_flashMessages', NULL);
+		return $queuedFlashMessages;
 	}
 }
 

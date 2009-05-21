@@ -75,9 +75,9 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->processRequest($mockRequest, $mockResponse);
-		
+
 		$controllerContext = $controller->_get('controllerContext');
-		
+
 		$this->assertNotNull($controllerContext);
 	}
 
@@ -88,12 +88,12 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	public function controllerContextForProcessedRequestContainsRequestAndResponse() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		
+
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->processRequest($mockRequest, $mockResponse);
-		
+
 		$controllerContext = $controller->_get('controllerContext');
-		
+
 		$this->assertEquals($mockRequest, $controllerContext->getRequest());
 		$this->assertEquals($mockResponse, $controllerContext->getResponse());
 	}
@@ -108,18 +108,18 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
-		
+
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('argumentsMappingResults', $mockMappingResults);
 		$controller->processRequest($mockRequest, $mockResponse);
-		
+
 		$controllerContext = $controller->_get('controllerContext');
-		
+
 		$this->assertEquals($mockArguments, $controllerContext->getArguments());
 		$this->assertEquals($mockMappingResults, $controllerContext->getArgumentsMappingResults());
 	}
-	
+
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
@@ -268,6 +268,52 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 
 		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getFlashMessagesFromSessionAlwaysReturnsAnArray() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
+		$mockSession->expects($this->any())->method('getData')->will($this->onConsecutiveCalls(array(), NULL, '', FALSE, 1, new \stdClass()));
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('session', $mockSession);
+
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function queueFlashMessageAddsToExistingMessagesAndPutsResultIntoSession() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
+		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('1st message')));
+		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', array('1st message', '2nd message'));
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('session', $mockSession);
+
+		$controller->_call('queueFlashMessage', '2nd message');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getCurrentFlashMessagesReturnsExistingMessagesAndRemovesThemFromSession() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
+		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('message')));
+		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', NULL);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('session', $mockSession);
+
+		$this->assertSame(array('message'), $controller->_call('getCurrentFlashMessages'));
 	}
 }
 ?>
