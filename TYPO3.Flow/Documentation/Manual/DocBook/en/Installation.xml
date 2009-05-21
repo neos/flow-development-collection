@@ -7,101 +7,103 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Installation</title>
 
-  <para>some blabla about PHP version 5.3</para>
+  <para>FLOW3 is based on the newest technologies of tomorrow like for example
+  namespaces. These technologies aren't available in the stable PHP 5.2
+  releases at the moment, but are implemented in PHP 5.3. It has no final
+  release until now, so operating system distributors do not provide PHP 5.3
+  packages. You can find instructions to install the newest release candidate
+  of PHP 5.3 for widely used operating systems in the appendixes.</para>
 
   <section>
-    <title>Server-Requirements</title>
+    <title>Requirements</title>
 
-    <para>PHP 5.3 (but not 6)</para>
+    <para>The following minimum requirements are operating system independent.
+    Developers told about working instances on Debian Linux, MacOS, Windows XP
+    and Windows Vista.</para>
 
-    <para>PHP-configuration:</para>
+    <itemizedlist>
+      <listitem>
+        <para>PHP 5.3 RC2 or newer (but not PHP 6)</para>
+      </listitem>
 
-    <para>modules: mbstring, pdo...</para>
+      <listitem>
+        <para>PHP modules: mbstring, pdo, sqlite</para>
+      </listitem>
 
-    <para>php.ini: magic_quotes_gpc</para>
+      <listitem>
+        <para>PHP configuration: magic_quotes_gpc = off</para>
+      </listitem>
 
-    <para>Apache-modules:</para>
+      <listitem>
+        <para>Apache modules: mod_rewrite</para>
+      </listitem>
 
-    <para>mod_rewrite</para>
+      <listitem>
+        <para>Apache configuration: AllowOverride FileInfo</para>
+      </listitem>
+    </itemizedlist>
 
-    <para>IIS: ??</para>
+    <para>(Other webservers (f.e. IIS) could work, but have not been tested
+    until now)</para>
   </section>
 
   <section>
-    <title>Installing FLOW3</title>
+    <title>Installion of FLOW3</title>
 
-    <para>(if you have the requirements up and running. Otherwise see
-    below...)</para>
+    <para>These steps require the server requirements to be set up.
+    Instruction on how to do that can be found in the appendixes.</para>
 
-    <para>download distribution</para>
+    <procedure>
+      <step>
+        <para>TODO: Download the FLOW3 distribution from <link
+        linkend="???">http://flow3.typo3.org/download/</link> </para>
+      </step>
 
-    <para>unzip to htdocs</para>
+      <step>
+        <para>TODO: Unzip / un-phar it to the document root of the webserver
+        (often "htdocs")</para>
+      </step>
 
-    <para>symlink global packages?</para>
+      <step>
+        <para>It is highly recommended to change the document root of the
+        webserver to the "FLOW3/Public" subfolder of the FLOW3
+        distribution</para>
+      </step>
 
-    <para>add virtual host to public folder (http://flow3/ for this
-    documentation)</para>
+      <step>
+        <para>On Unix like operating systems the webserver needs write
+        permissions for some subfolders. The FLOW3 distribution provides a
+        helper script, which sets the permissions. Change to the top level
+        folder of the FLOW3 distribution, where you can find the script
+        <filename>setfilepermissions.sh</filename>. Execute this script
+        providing the webserver user and group as parameters. On Debian Linux
+        (lenny) the commando would look like this:</para>
 
-    <para>configure database connection?</para>
+        <para><command>./setfilepermissions.sh www-data
+        www-data</command></para>
+      </step>
+    </procedure>
 
-    <para>call uri: ....</para>
+    <para>Now you can check if FLOW3 works by pointing your browser to
+    <emphasis>http://<replaceable>localhost/</replaceable></emphasis>
+    (localhost will be used as servername in the following instructions,
+    change it if you are working on a remote system). If everything works you
+    should see the default view of the MVC framework. It may take some time on
+    the first call, because FLOW3 needs to initialize itself and to create
+    caching data.</para>
 
-    <para>if you don't have virtual hosts for some reason, you might also use
-    localhost/flow3/whatever, though this is not recommended</para>
+    <para><note>
+        <para>The persistence framework / content repository stores its data
+        in a already set up sqlite database by default. It can be changed to a
+        real database like for example MySQL. It requires some configuration
+        which will be covered here later.</para>
+      </note>TODO: testing plus typo3cr-uri</para>
 
-    <para>testing plus typo3cr-uri</para>
+    <para>TODO: Tip: Configuration of the cache to C:\t\1\ on windows because
+    of the long filenames</para>
 
-    <para></para>
-
-    <para>As you see, the main action is to get the server running as long as
-    PHP 5.3 is not stable. You'll find detailled descriptions on how to do
-    that in the sections below.</para>
-
-    <para>Tip: Configuration of the cache to C:\t\1\ on windows because of the
-    long filenames</para>
-
-    <para>Tip: If you see the XAMPP-default-page after calling the uri, you
-    might forgot to add the port-number to the uri.</para>
-  </section>
-
-  <section>
-    <title>Setup the Server</title>
-
-    <para>usually not part of this document, but as you have to work on a not
-    stable php-version...... trying to get everyone working with flow3 as easy
-    as possible...</para>
-
-    <section>
-      <title>Debian</title>
-
-      <para></para>
-    </section>
-
-    <section>
-      <title>Mac</title>
-
-      <para>reference to document from Thomas</para>
-    </section>
-
-    <section>
-      <title>Windows (Apache)</title>
-
-      <para>Based on xampp x.x:</para>
-
-      <para>download, install</para>
-
-      <para>PHP 5.3 on port 81: maybe just reference to wiki?</para>
-
-      <para>Differences between XP/Vista? (bääh)</para>
-
-      <para>Tip: Symlinks on Windows with... (Vista?)</para>
-    </section>
-
-    <section>
-      <title>Windows (IIS)</title>
-
-      <para></para>
-    </section>
+    <para>TODO: Tip: If you see the XAMPP-default-page after calling the uri,
+    you might forgot to add the port-number to the uri.</para>
   </section>
 
   <section>
@@ -113,6 +115,6 @@
     have to install some nightly build, if you don't want to see all those red
     syntax-error-symbols in your php-files.</para>
 
-    <para>windows - mac - ubuntu?</para>
+    <para>TODO: windows - mac - ubuntu?</para>
   </section>
 </chapter>
