@@ -64,11 +64,25 @@ class MappingResults {
 	/**
 	 * Returns all errors that occured so far
 	 *
-	 * @return array Array of \F3\FLOW3\Error\Error objects
+	 * @return array Array of \F3\FLOW3\Error\Error objects indexed by property names
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getErrors() {
 		return $this->errors;
+	}
+	
+	/**
+	 * Return the error for a specific property
+	 * @param string $propertyName The property name
+	 * @return \F3\FLOW3\Error\Error The error that occured for the property or NULL if no error occured
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getErrorForProperty($propertyName) {
+		if (isset($this->errors[$propertyName])) {
+			return $this->errors[$propertyName];
+		} else {
+			return NULL;
+		}
 	}
 
 	/**

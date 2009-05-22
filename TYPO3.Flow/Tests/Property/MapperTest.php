@@ -295,16 +295,13 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function mapAndValidateUsesTheSpecifiedValidatorsToValidateTheMappedProperties() {
 		$propertyNames = array('foo', 'bar');
 		$source = array('foo' => 'fooValue', 'bar' => 'barValue');
 		$target = array();
 		$optionalPropertyNames = array();
-
-		$mockError = $this->getMock('F3\FLOW3\Error\Error', array(), array(), '', FALSE);
-
-		$this->mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Error\Error')->will($this->returnValue($mockError));
 
 		$mockValidator = $this->getMock('F3\FLOW3\Validation\Validator\ObjectValidatorInterface');
 		$mockValidator->expects($this->any())->method('isValid')->will($this->returnValue(FALSE));
@@ -313,10 +310,11 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
 		$mockMappingResults->expects($this->at(0))->method('hasErrors')->will($this->returnValue(FALSE));
 		$mockMappingResults->expects($this->at(1))->method('hasErrors')->will($this->returnValue(FALSE));
-		$mockMappingResults->expects($this->at(2))->method('addError')->with($mockError);
-		$mockMappingResults->expects($this->at(3))->method('hasErrors')->will($this->returnValue(TRUE));
+		$mockMappingResults->expects($this->at(2))->method('hasErrors')->will($this->returnValue(TRUE));
 
-		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('map'), array(), '', FALSE);
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('map', 'addErrorsFromObjectValidator'), array(), '', FALSE);
+		$mapper->expects($this->once())->method('addErrorsFromObjectValidator')->with(array('Some error message'));
+		
 		$mapper->_set('mappingResults', $mockMappingResults);
 		$mapper->injectObjectFactory($this->mockObjectFactory);
 
@@ -325,6 +323,23 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 
 		$result = $mapper->mapAndValidate($propertyNames, $source, $target, $optionalPropertyNames, $mockValidator);
 		$this->assertFalse($result);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function addErrorsFromObjectValidatorAddsErrorsForIndividualPropertiesFromPropertyErrors() {
+		$mockError = $this->getMock('F3\FLOW3\Validation\PropertyError', array('dummy'), array('foo'));
+
+		$errors = array('foo' => $mockError);
+		
+		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array(), array(), '', FALSE);
+		$mockMappingResults->expects($this->once())->method('addError')->with($mockError, 'foo');
+		
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('dummy'), array(), '', FALSE);
+		$mapper->_set('mappingResults', $mockMappingResults);
+		$mapper->_call('addErrorsFromObjectValidator', $errors);
 	}
 }
 ?>

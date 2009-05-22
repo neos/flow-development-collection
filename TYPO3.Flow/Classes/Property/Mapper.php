@@ -53,6 +53,8 @@ namespace F3\FLOW3\Property;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
+use F3\FLOW3\Validation;
+
 class Mapper {
 
 	/**
@@ -112,6 +114,7 @@ class Mapper {
 	 * @see getMappingResults()
 	 * @see map()
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
 		$backupProperties = array();
@@ -123,12 +126,28 @@ class Mapper {
 		if ($this->mappingResults->hasErrors()) return FALSE;
 
 		if ($targetObjectValidator->isValid($target) !== TRUE) {
-			$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Validation errors: ' . implode('. ', $targetObjectValidator->getErrors()), 1240257603), '*');
+			$this->addErrorsFromObjectValidator($targetObjectValidator->getErrors());
 			$backupMappingResult = $this->mappingResults;
 			$this->map($propertyNames, $backupProperties, $source, $optionalPropertyNames);
 			$this->mappingResults = $backupMappingResult;
 		}
 		return (!$this->mappingResults->hasErrors());
+	}
+	
+	/**
+	 * Add errors to the mapping result from an object validator (property errors).
+	 * 
+	 * @param array Array of \F3\FLOW3\Validation\PropertyError 
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @return void
+	 */
+	protected function addErrorsFromObjectValidator($errors) {
+		foreach ($errors as $error) {
+			if ($error instanceof \F3\FLOW3\Validation\PropertyError) {
+				$propertyName = $error->getPropertyName();
+				$this->mappingResults->addError($error, $propertyName);
+			}
+		}
 	}
 
 	/**
