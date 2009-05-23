@@ -140,6 +140,9 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
+		$this->URIBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$this->URIBuilder->setRequest($request);
+
 		$this->actionMethodName = $this->resolveActionMethodName();
 
 		$this->initializeActionMethodArguments();
@@ -153,7 +156,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->setupControllerContext();
 		if ($this->initializeView) $this->initializeView();
 		$this->callActionMethod();
 	}
@@ -255,12 +257,13 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function initializeView() {
 		$this->view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
-		$this->view->setControllerContext($this->controllerContext);
+		$controllerContext = $this->buildControllerContext();
+		$this->view->setControllerContext($controllerContext);
 		if ($this->view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
 			if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
 			$this->view = $this->objectManager->getObject($viewObjectName);
-			$this->view->setControllerContext($this->controllerContext);
+			$this->view->setControllerContext($controllerContext);
 		}
 		$this->view->assign('flashMessages', $this->getCurrentFlashMessages());
 	}

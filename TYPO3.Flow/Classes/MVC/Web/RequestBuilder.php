@@ -111,6 +111,7 @@ class RequestBuilder {
 	 *
 	 * @return \F3\FLOW3\MVC\Web\Request The web request as an object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
 	 */
 	public function build() {
@@ -118,12 +119,43 @@ class RequestBuilder {
 		$request->injectEnvironment($this->environment);
 		$request->setRequestURI($this->environment->getRequestURI());
 		$request->setMethod($this->environment->getRequestMethod());
+		$this->setArgumentsFromRawRequestData($request);
 
 		$routesConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
 
 		return $request;
+	}
+
+	/**
+	 * Takes the raw request data and - depending on the request method
+	 * maps them into the request object. Afterwards all mapped arguments
+	 * can be retrieved by the getArgument(s) method, no matter if they
+	 * have been GET, POST or PUT arguments before.
+	 *
+	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
+		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
+			$request->setArgument($argumentName, $argumentValue);
+		}
+		switch ($request->getMethod()) {
+			case 'POST' :
+				foreach ($this->environment->getRawPOSTArguments() as $argumentName => $argumentValue) {
+					$request->setArgument($argumentName, $argumentValue);
+				}
+			break;
+#			case 'PUT' :
+#				$putArguments = array();
+#				parse_str(file_get_contents("php://input"), $putArguments);
+#				foreach ($putArguments as $argumentName => $argumentValue) {
+#					$request->setArgument($argumentName, $argumentValue);
+#				}
+#			break;
+		}
 	}
 }
 ?>

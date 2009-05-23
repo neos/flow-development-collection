@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\View\Helper;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,14 +29,20 @@ namespace F3\FLOW3\MVC\View\Helper;
  */
 
 /**
- * A URI/Link Helper
+ * A URI Builder
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
+class URIBuilder {
+
+	/**
+	 * @var \F3\FLOW3\MVC\RequestInterface
+	 */
+	protected $request;
 
 	/**
 	 * @var \F3\FLOW3\MVC\Web\Routing\RouterInterface
@@ -44,34 +50,25 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	protected $router;
 
 	/**
+	 * Sets the current request
+	 * 
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
+		$this->request = $request;
+	}
+
+	/**
 	 * Injects the Router
 	 *
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
-	}
-
-	/**
-	 * Creates a link by making use of the Routers reverse routing mechanism.
-	 *
-	 * @param string $label Inner HTML of the generated link. Label is htmlspecialchared by default
-	 * @param string $actionName Name of the action to be called
-	 * @param array $arguments Additional arguments
-	 * @param string $controllerName Name of the target controller. If not set, current controller is used
-	 * @param string $packageKey Name of the target package. If not set, current package is used
-	 * @param string $subpackageKey Name of the target subpackage. If not set, current subpackage is used
-	 * @param array $options Further options
-	 * @return string the HTML code for the generated link
-	 * @see UIRFor()
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function linkTo($label, $actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $options = array()) {
-		$link = '<a href="' . $this->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey, $options) . '">' . htmlspecialchars($label) . '</a>';
-		return $link;
 	}
 
 	/**
@@ -82,23 +79,34 @@ class URIHelper extends \F3\FLOW3\MVC\View\Helper\AbstractHelper {
 	 * @param string $controllerName Name of the target controller. If not set, current controller is used
 	 * @param string $packageKey Name of the target package. If not set, current package is used
 	 * @param string $subpackageKey Name of the target subpackage. If not set, current subpackage is used
-	 * @param array $options Further options
-	 * @return string the HTML code for the generated link
+	 * @param string $section Anchor to be appended to the resulting URI
+	 * @return string the resolved URI
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function URIFor($actionName, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $options = array()) {
+	public function URIFor($actionName = NULL, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $section = '') {
 		$routeValues = $arguments;
-		$routeValues['@action'] = $actionName;
-		$routeValues['@controller'] = ($controllerName === NULL) ? $this->controllerContext->getRequest()->getControllerName() : $controllerName;
-		$routeValues['@package'] = ($packageKey === NULL) ? $this->controllerContext->getRequest()->getControllerPackageKey() : $packageKey;
-		$currentSubpackageKey = $this->controllerContext->getRequest()->getControllerSubpackageKey();
-		if ($subpackageKey === NULL && strlen($currentSubpackageKey)) {
-			$routeValues['@subpackage'] = $currentSubpackageKey;
-		} else if (strlen($subpackageKey)) {
+		if ($actionName !== NULL) {
+			$routeValues['@action'] = $actionName;
+		}
+		if ($controllerName === NULL) {
+			$controllerName = $this->request->getControllerName();
+		}
+		$routeValues['@controller'] = $controllerName;
+		if ($packageKey === NULL) {
+			$packageKey = $this->request->getControllerPackageKey();
+		}
+		$routeValues['@package'] = $packageKey;
+		if (strlen($subpackageKey) === 0) {
+			$subpackageKey = $this->request->getControllerSubpackageKey();
+		}
+		if (strlen($subpackageKey) > 0) {
 			$routeValues['@subpackage'] = $subpackageKey;
 		}
-		$URIString = $this->router->resolve($routeValues);
-		return $URIString;
+		$uri = $this->router->resolve($routeValues);
+		if ($section !== '') {
+			$uri .= '#' . $section;
+		}
+		return $uri;
 	}
 }
 

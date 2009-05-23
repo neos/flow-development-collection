@@ -47,15 +47,6 @@ interface ViewInterface {
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
 	/**
-	 * Returns an View Helper instance.
-	 * View Helpers must implement the interface \F3\FLOW3\MVC\View\Helper\HelperInterface
-	 *
-	 * @param string $viewHelperObjectName the full name of the View Helper object including namespace
-	 * @return \F3\FLOW3\MVC\View\Helper\HelperInterface The View Helper instance
-	 */
-	public function getViewHelper($viewHelperObjectName);
-
-	/**
 	 * Add a variable to the view data collection.
 	 * Can be chained, so $this->view->assign(..., ...)->assign(..., ...); is possible,
 	 *

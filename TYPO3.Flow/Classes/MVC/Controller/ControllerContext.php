@@ -35,6 +35,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @subpackage MVC
  * @version $Id: AbstractController.php 2203 2009-05-12 18:44:47Z networkteam_hlubek $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 class ControllerContext {
 
@@ -52,90 +53,116 @@ class ControllerContext {
 	 * @var \F3\FLOW3\MVC\Controller\Arguments
 	 */
 	protected $arguments;
-
+	
 	/**
 	 * @var \F3\FLOW3\Property\MappingResults
 	 */
 	protected $argumentsMappingResults;
 
 	/**
-	 * Get the request of the controller
-	 *
-	 * @return \F3\FLOW3\MVC\RequestInterface
+	 * @var \F3\FLOW3\MVC\Web\Routing\URIBuilder
 	 */
-	public function getRequest() {
-		return $this->request;
-	}
+	protected $URIBuilder;
 
 	/**
 	 * Set the request of the controller
-	 *
+	 * 
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
-	 * @internal
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 	}
 
 	/**
-	 * Get the response of the controller
-	 *
+	 * Get the request of the controller
+	 * 
 	 * @return \F3\FLOW3\MVC\RequestInterface
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getResponse() {
-		return $this->response;
+	public function getRequest() {
+		return $this->request;
 	}
 
 	/**
 	 * Set the response of the controller
-	 *
+	 * 
 	 * @param \F3\FLOW3\MVC\ResponseInterface $request
 	 * @return void
-	 * @internal
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setResponse(\F3\FLOW3\MVC\ResponseInterface $response) {
 		$this->response = $response;
 	}
 
 	/**
-	 * Get the arguments of the controller
-	 *
-	 * @return \F3\FLOW3\MVC\Controller\Arguments
+	 * Get the response of the controller
+	 * 
+	 * @return \F3\FLOW3\MVC\RequestInterface
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getArguments() {
-		return $this->arguments;
+	public function getResponse() {
+		return $this->response;
 	}
 
 	/**
 	 * Set the arguments of the controller
-	 *
+	 * 
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
 	 * @return void
-	 * @internal
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function setArguments(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
 		$this->arguments = $arguments;
 	}
 
 	/**
+	 * Get the arguments of the controller
+	 * 
+	 * @return \F3\FLOW3\MVC\Controller\Arguments
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getArguments() {
+		return $this->arguments;
+	}
+
+	/**
+	 * Set the arguments mapping results of the controller
+	 * 
+	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function setArgumentsMappingResults(\F3\FLOW3\Property\MappingResults $argumentsMappingResults) {
+		$this->argumentsMappingResults = $argumentsMappingResults;
+	}
+
+	/**
 	 * Get the arguments mapping results of the controller
-	 *
+	 * 
 	 * @return \F3\FLOW3\Property\MappingResults
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getArgumentsMappingResults() {
 		return $this->argumentsMappingResults;
 	}
 
 	/**
-	 * Set the arguments mapping results of the controller
-	 *
-	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
+	 * \F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder
 	 * @return void
-	 * @internal
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setArgumentsMappingResults(\F3\FLOW3\Property\MappingResults $argumentsMappingResults) {
-		$this->argumentsMappingResults = $argumentsMappingResults;
+	public function setURIBuilder(\F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder) {
+		$this->URIBuilder = $URIBuilder;
+	}
+
+	/**
+	 * @return \F3\FLOW3\MVC\Web\Routing\URIBuilder
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getURIBuilder() {
+		return $this->URIBuilder;
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\View\Helper;
+namespace F3\FLOW3\MVC\Web\Routing;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,22 +29,21 @@ namespace F3\FLOW3\MVC\View\Helper;
  */
 
 /**
- * View Helper interface
+ * Testcase for the URI Helper
  *
  * @package FLOW3
  * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface HelperInterface {
+class URIBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Sets the current controller context
-	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
-	 * @return void
-	 * @internal
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setControllerContext($controllerContext);
+	public function xy() {
+		$this->markTestIncomplete('Yet no test case has been written for the URI builder.');
+	}
 }
-
 ?>

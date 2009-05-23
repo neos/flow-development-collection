@@ -41,21 +41,25 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @inject
 	 */
 	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
+	 * @inject
 	 */
 	protected $environment;
 
 	/**
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 * @inject
 	 */
 	protected $systemLogger;
 
@@ -78,31 +82,11 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected $routesCreated = FALSE;
 
 	/**
-	 * Constructor
-	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
-	 * @param \F3\FLOW3\Utility\Environment $environment A reference to the environment
-	 * @author Robert Lemke <robert@typo3.org>
+	 * The current request. Will be set in route()
+	 * @var \F3\FLOW3\MVC\Web\Request
 	 * @internal
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Utility\Environment $environment) {
-		$this->objectManager = $objectManager;
-		$this->objectFactory = $objectFactory;
-		$this->environment = $environment;
-	}
-
-	/**
-	 * Injects the system logger
-	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
-		$this->systemLogger = $systemLogger;
-	}
+	protected $request;
 
 	/**
 	 * Sets the routes configuration.
@@ -128,41 +112,57 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @internal
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request) {
-		$matchResults = $this->findMatchResults($request->getRequestURI()->getPath());
+		$this->request = $request;
+		$requestPath = $this->request->getRequestPath();
+		$matchResults = $this->findMatchResults($requestPath);
 		if ($matchResults !== NULL) {
+			$this->setControllerKeysAndFormat($matchResults);
 			foreach ($matchResults as $argumentName => $argumentValue) {
-				if ($argumentName[0] === '@') {
-					switch ($argumentName) {
-						case '@package' :
-							$request->setControllerPackageKey($argumentValue);
-						break;
-						case '@subpackage' :
-							$request->setControllerSubpackageKey($argumentValue);
-						break;
-						case '@controller' :
-							$request->setControllerName($argumentValue);
-						break;
-						case '@action' :
-							$request->setControllerActionName($argumentValue);
-						break;
-						case '@format' :
-							$request->setFormat($argumentValue);
-						break;
-					}
-				} else {
-					$request->setArgument($argumentName, $argumentValue);
+				if ($argumentName[0] !== '@') {
+					$this->request->setArgument($argumentName, $argumentValue);
 				}
 			}
 		}
-		$this->setArgumentsFromRawRequestData($request);
+		$this->setControllerKeysAndFormat($this->request->getArguments());
+	}
+
+	/**
+	 * Sets package key, subpackage key, controller name, action name and format of the current request.
+	 *
+	 * @param array $arguments
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @see \F3\FLOW3\MVC\Web\Request
+	 */
+	protected function setControllerKeysAndFormat(array $arguments) {
+		foreach($arguments as $argumentName => $argumentValue) {
+			switch ($argumentName) {
+				case '@package' :
+					$this->request->setControllerPackageKey($argumentValue);
+				break;
+				case '@subpackage' :
+					$this->request->setControllerSubpackageKey($argumentValue);
+				break;
+				case '@controller' :
+					$this->request->setControllerName($argumentValue);
+				break;
+				case '@action' :
+					$this->request->setControllerActionName($argumentValue);
+				break;
+				case '@format' :
+					$this->request->setFormat($argumentValue);
+				break;
+			}
+		}
 	}
 
 	/**
 	 * Iterates through all configured routes and calls matches() on them.
 	 * Returns the matchResults of the matching route or NULL if no matching
 	 * route could be found.
+	 * Note: calls of this message are cached by RouterCachingAspect
 	 *
-	 * @param string $request The request path
+	 * @param string $requestPath The request path
 	 * @return array results of the matching route
 	 * @see route()
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -185,6 +185,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * Builds the corresponding uri (excluding protocol and host) by iterating
 	 * through all configured routes and calling their respective resolves()
 	 * method. If no matching route is found, an empty string is returned.
+	 * Note: calls of this message are cached by RouterCachingAspect
 	 *
 	 * @param array $routeValues Key/value pairs to be resolved. E.g. array('@package' => 'MyPackage', '@controller' => 'MyController');
 	 * @return string
@@ -221,37 +222,6 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 				$this->routes[$routeName] = $route;
 			}
 			$this->routesCreated = TRUE;
-		}
-	}
-
-	/**
-	 * Takes the raw request data and - depending on the request method
-	 * maps them into the request object. Afterwards all mapped arguments
-	 * can be retrieved by the getArgument(s) method, no matter if they
-	 * have been GET, POST or PUT arguments before.
-	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
-		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {
-			$request->setArgument($argumentName, $argumentValue);
-		}
-		switch ($request->getMethod()) {
-			case 'POST' :
-				foreach ($this->environment->getRawPOSTArguments() as $argumentName => $argumentValue) {
-					$request->setArgument($argumentName, $argumentValue);
-				}
-			break;
-#			case 'PUT' :
-#				$putArguments = array();
-#				parse_str(file_get_contents("php://input"), $putArguments);
-#				foreach ($putArguments as $argumentName => $argumentValue) {
-#					$request->setArgument($argumentName, $argumentValue);
-#				}
-#			break;
 		}
 	}
 }

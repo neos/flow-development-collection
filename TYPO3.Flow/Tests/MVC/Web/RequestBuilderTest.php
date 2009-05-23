@@ -78,10 +78,13 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function setUp() {
 		$this->mockRequestURI = $this->getMock('F3\FLOW3\Property\DataType\URI', array(), array(), '', FALSE);
+		$this->mockRequestURI->expects($this->once())->method('getArguments')->will($this->returnValue(array('someArgument' => 'GETArgument')));
+
 		$this->mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array(), array(), '', FALSE);
 		$this->mockEnvironment->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
 
-		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array('injectEnvironment', 'setRequestURI', 'setMethod'), array(), '', FALSE);
+		$this->mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
+		$this->mockRequest->expects($this->any())->method('getRequestURI')->will($this->returnValue($this->mockRequestURI));
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
@@ -132,6 +135,35 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockEnvironment->expects($this->any())->method('getRequestMethod')->will($this->returnValue('GET'));
 		$this->mockRequest->expects($this->once())->method('setMethod')->with($this->equalTo('GET'));
 		$this->builder->build();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function buildSetGETArgumentsFromRequest() {
+		$this->mockRequest->expects($this->once())->method('setArgument')->with('someArgument', 'GETArgument');
+		$this->builder->build();
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function buildSetPOSTArgumentsFromRequest() {
+		$argument = NULL;
+		$setArgumentCallback = function() use (&$argument) {
+			$args = func_get_args();
+
+			if ($args[0] === 'someArgument') {
+				$argument = $args[1];
+			}
+		};
+		$this->mockRequest->expects($this->any())->method('getMethod')->will($this->returnValue('POST'));
+		$this->mockEnvironment->expects($this->any())->method('getRawPOSTArguments')->will($this->returnValue(array('someArgument' => 'POSTArgument')));
+		$this->mockRequest->expects($this->exactly(2))->method('setArgument')->will($this->returnCallback($setArgumentCallback));
+		$this->builder->build();
+		$this->assertEquals('POSTArgument', $argument);
 	}
 }
 ?>

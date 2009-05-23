@@ -74,7 +74,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Initialize the view
 	 */
 	protected function initializeView() {
-		$this->notFoundView->setControllerContext($this->controllerContext);
+		$this->notFoundView->setControllerContext($this->buildControllerContext());
 	}
 }
 

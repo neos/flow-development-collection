@@ -64,11 +64,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	protected $controllerContext;
 
 	/**
-	 * @var array of \F3\FLOW3\MVC\View\Helper\HelperInterface
-	 */
-	protected $viewHelpers;
-
-	/**
 	 * @var array view data collection.
 	 * @see assign()
 	 */
@@ -113,26 +108,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
-	}
-
-	/**
-	 * Returns an View Helper instance.
-	 * View Helpers must implement the interface \F3\FLOW3\MVC\View\Helper\HelperInterface
-	 *
-	 * @param string $viewHelperClassName the full name of the View Helper Class including namespace
-	 * @return \F3\FLOW3\MVC\View\Helper\HelperInterface The View Helper instance
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function getViewHelper($viewHelperClassName) {
-		if (!isset($this->viewHelpers[$viewHelperClassName])) {
-			$viewHelper = $this->objectManager->getObject($viewHelperClassName);
-			if (!$viewHelper instanceof \F3\FLOW3\MVC\View\Helper\HelperInterface) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidViewHelper('View Helpers must implement interface "\F3\FLOW3\MVC\View\Helper\HelperInterface"', 1222895456);
-			}
-			$viewHelper->setControllerContext($this->controllerContext);
-			$this->viewHelpers[$viewHelperClassName] = $viewHelper;
-		}
-		return $this->viewHelpers[$viewHelperClassName];
 	}
 
 	/**

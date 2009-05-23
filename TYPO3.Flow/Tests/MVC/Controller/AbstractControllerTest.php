@@ -37,6 +37,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class AbstractControllerTest extends \F3\Testing\BaseTestCase {
+
 	/**
 	 * @test
 	 * @expectedException F3\FLOW3\MVC\Exception\UnsupportedRequestType
@@ -61,65 +62,47 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'setupControllerContext'), array(), '', FALSE);
-		$controller->processRequest($mockRequest, $mockResponse);
-	}
+		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
 
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function processRequestSetsControllerContext() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\URIBuilder')->will($this->returnValue($mockURIBuilder));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$controller->_set('objectFactory', $mockObjectFactory);
 		$controller->processRequest($mockRequest, $mockResponse);
-
-		$controllerContext = $controller->_get('controllerContext');
-
-		$this->assertNotNull($controllerContext);
 	}
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function controllerContextForProcessedRequestContainsRequestAndResponse() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
-		$controller->processRequest($mockRequest, $mockResponse);
-
-		$controllerContext = $controller->_get('controllerContext');
-
-		$this->assertEquals($mockRequest, $controllerContext->getRequest());
-		$this->assertEquals($mockResponse, $controllerContext->getResponse());
-	}
-
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function controllerContextForProcessedRequestContainsArgumentsAndArgumentsMappingResults() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-
+	public function buildControllerContextCreatesControllerContextWithRequiredPropeties() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
+		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
+		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
+		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
+		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext');
+		$mockControllerContext->expects($this->once())->method('setRequest')->with($mockRequest);
+		$mockControllerContext->expects($this->once())->method('setResponse')->with($mockResponse);
+		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
+		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
+		$mockControllerContext->expects($this->once())->method('setURIBuilder')->with($mockURIBuilder);
+		
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('objectFactory', $mockObjectFactory);
+		$controller->_set('URIBuilder', $mockURIBuilder);
+		$controller->_set('request', $mockRequest);
+		$controller->_set('response', $mockResponse);
 		$controller->_set('arguments', $mockArguments);
-		$controller->_set('argumentsMappingResults', $mockMappingResults);
-		$controller->processRequest($mockRequest, $mockResponse);
-
-		$controllerContext = $controller->_get('controllerContext');
-
-		$this->assertEquals($mockArguments, $controllerContext->getArguments());
-		$this->assertEquals($mockMappingResults, $controllerContext->getArgumentsMappingResults());
+		$controller->_set('argumentsMappingResults', $mockArgumentsMappingResults);
+		$controller->_call('buildControllerContext');
 	}
-
+	
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
@@ -158,19 +141,21 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function redirectRedirectsToTheSpecifiedAction() {
 		$arguments = array('foo' => 'bar');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
-		$mockURIHelper = $this->getMock('F3\FLOW3\MVC\View\Helper\URIHelper');
-		$mockURIHelper->expects($this->once())->method('URIFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
+
+		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$mockURIBuilder->expects($this->once())->method('URIFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('redirectToURI'), array(), '', FALSE);
 		$controller->expects($this->once())->method('redirectToURI')->with('the uri');
+		$controller->_set('URIBuilder', $mockURIBuilder);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);
-		$controller->_set('URIHelper', $mockURIHelper);
 		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);
 	}
 

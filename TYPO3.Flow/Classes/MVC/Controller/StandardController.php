@@ -77,7 +77,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @internal
 	 */
 	protected function initializeView() {
-		$this->defaultView->setControllerContext($this->controllerContext);
+		$this->defaultView->setControllerContext($this->buildControllerContext());
 	}
 }
 

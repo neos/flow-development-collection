@@ -123,6 +123,16 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
+	 * Returns the request path of the URI
+	 *
+	 * @return string
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getRequestPath() {
+		return $this->requestURI->getPath();
+	}
+
+	/**
 	 * Sets the base URI for this request.
 	 *
 	 * @param \F3\FLOW3\Property\DataType\URI $baseURI New base URI

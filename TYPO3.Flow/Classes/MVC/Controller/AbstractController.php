@@ -49,9 +49,9 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\Helper\URIHelper
+	 * @var \F3\FLOW3\MVC\Web\Routing\URIBuilder
 	 */
-	protected $URIHelper;
+	protected $URIBuilder;
 
 	/**
 	 * Contains the settings of the current package
@@ -101,12 +101,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @var array
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
-
-	/**
-	 * A context with controller information
-	 * @var \F3\FLOW3\MVC\Controller\ControllerContext
-	 */
-	protected $controllerContext;
 
 	/**
 	 * @var \F3\FLOW3\Session\SessionInterface
@@ -160,18 +154,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
-	}
-
-	/**
-	 * Injects the URI helper
-	 *
-	 * @param \F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper The URI helper
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	public function injectURIHelper(\F3\FLOW3\MVC\View\Helper\URIHelper $URIHelper) {
-		$this->URIHelper = $URIHelper;
 	}
 
 	/**
@@ -232,26 +214,33 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
+		$this->URIBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$this->URIBuilder->setRequest($request);
+
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
-		$this->setupControllerContext();
 	}
 
 	/**
 	 * Initialize the controller context
-	 * @return void
+	 * 
+	 * @return \F3\FLOW3\MVC\Controller\ControllerContext ControllerContext to be passed to the view
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
 	 */
-	protected function setupControllerContext() {
-		$this->controllerContext = new \F3\FLOW3\MVC\Controller\ControllerContext();
-		$this->controllerContext->setRequest($this->request);
-		$this->controllerContext->setResponse($this->response);
+	protected function buildControllerContext() {
+		$controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext');
+		$controllerContext->setRequest($this->request);
+		$controllerContext->setResponse($this->response);
 		if ($this->arguments !== NULL) {
-			$this->controllerContext->setArguments($this->arguments);
+			$controllerContext->setArguments($this->arguments);
 		}
 		if ($this->argumentsMappingResults !== NULL) {
-			$this->controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
+			$controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
 		}
+		$controllerContext->setURIBuilder($this->URIBuilder);
+		return $controllerContext;
 	}
 
 	/**
@@ -292,14 +281,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
-		$this->URIHelper->setControllerContext($this->controllerContext);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
 			list($packageKey, $subpackageKey) = explode('\\', $packageKey, 2);
 		} else {
 			$subpackageKey = NULL;
 		}
-		$uri = $this->URIHelper->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+		$uri = $this->URIBuilder->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
 		$this->redirectToURI($uri, $delay, $statusCode);
 	}
 

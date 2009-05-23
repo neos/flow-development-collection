@@ -45,11 +45,16 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 	public function processRequestRegistersAnIdArgument() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
+		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\URIBuilder')->will($this->returnValue($mockURIBuilder));
 
 		$mockArguments = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'initializeView'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'initializeView', 'buildControllerContext'), array(), '', FALSE);
 		$controller->_set('arguments', $mockArguments);
+		$controller->_set('objectFactory', $mockObjectFactory);
 		$controller->processRequest($mockRequest, $mockResponse);
 
 		$this->assertTrue(isset($mockArguments['id']));
