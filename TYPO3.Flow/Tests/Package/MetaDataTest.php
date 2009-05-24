@@ -33,7 +33,7 @@ namespace F3\FLOW3\Package;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id$
+ * @version $Id: MetaTest.php 2169 2009-04-19 17:32:32Z networkteam_hlubek $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class MetaDataTest extends \F3\Testing\BaseTestCase {

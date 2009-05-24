@@ -192,7 +192,14 @@ F3\FLOW3\Package\Package:
   autowiring: off
   scope: prototype
   properties:
+    objectFactory: object: F3\FLOW3\Object\FactoryInterface
     metaDataReader: object: F3\FLOW3\Package\MetaData\ReaderInterface
+
+F3\FLOW3\Package\Documentation:
+  scope: prototype
+
+F3\FLOW3\Package\Documentation\Format:
+  scope: prototype
 
 F3\FLOW3\Package\MetaData\ReaderInterface:
   className: F3\FLOW3\Package\MetaData\XMLReader

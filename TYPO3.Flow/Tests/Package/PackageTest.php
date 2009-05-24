@@ -28,6 +28,8 @@ namespace F3\FLOW3\Package;
  * @version $Id$
  */
 
+require_once('vfs/vfsStream.php');
+
 /**
  * Testcase for the package class
  *
@@ -86,6 +88,60 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		$packageMetaDataPath = $package->getPackageMetaDataPath();
 
 		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_METADATA, $packageMetaDataPath);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageDocumentationPathReturnsPathToDocumentationDirectory() {
+		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
+		$packageDocumentationPath = $package->getPackageDocumentationPath();
+
+		$this->assertEquals($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION, $packageDocumentationPath);
+	}
+	
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageDocumentationsScansDocumentationDirectoryAndCreatesDocumentationObjects() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+
+		$packagePath = \vfsStream::url('testDirectory') . '/';
+		
+		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . 'Documentation/Manual/DocBook/en');
+		
+		$mockDocumentation = $this->getMock('F3\FLOW3\Package\Documentation', array('dummy'), array(), '', FALSE);
+		
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())
+			->method('create')
+			->with('F3\FLOW3\Package\Documentation', 'Manual', $packagePath . 'Documentation/Manual/')
+			->will($this->returnValue($mockDocumentation));
+		
+		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
+		$package->injectObjectFactory($mockObjectFactory);
+		$documentations = $package->getPackageDocumentations();	
+		
+		$this->assertEquals(array('Manual' => $mockDocumentation), $documentations);
+	}
+	
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageDocumentationsReturnsEmptyArrayIfDocumentationDirectoryDoesntExist() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+
+		$packagePath = \vfsStream::url('testDirectory') . '/';
+		
+		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
+		$documentations = $package->getPackageDocumentations();	
+		
+		$this->assertEquals(array(), $documentations);
 	}
 }
 ?>

@@ -62,6 +62,11 @@ class Package implements PackageInterface {
 	protected $packagePath;
 
 	/**
+	 * @var \F3\FLOW3\Object\FactoryInterface
+	 */
+	protected $objectFactory;
+
+	/**
 	 * @var \F3\FLOW3\Package\MetaData\ReaderInterface
 	 */
 	protected $metaDataReader;
@@ -93,6 +98,18 @@ class Package implements PackageInterface {
 
 		$this->packageKey = $packageKey;
 		$this->packagePath = $packagePath;
+	}
+
+	/**
+	 * Injects the Object Factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
 	}
 
 	/**
@@ -195,6 +212,41 @@ class Package implements PackageInterface {
 		return $this->packagePath . self::DIRECTORY_METADATA;
 	}
 
+	/**
+	 * Returns the full path to the package's documentation directory
+	 *
+	 * @return string Full path to the package's documentation directory
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageDocumentationPath() {
+		return $this->packagePath . self::DIRECTORY_DOCUMENTATION;
+	}
+
+	/**
+	 * Returns the available documentations for this package
+	 *
+	 * @return array Array of \F3\FLOW3\Package\Documentation
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageDocumentations() {
+		$documentations = array();
+		$documentationPath = $this->getPackageDocumentationPath();
+		if (is_dir($documentationPath)) {
+			$documentationsDirectoryIterator = new \DirectoryIterator($documentationPath);
+			$documentationsDirectoryIterator->rewind();
+			while ($documentationsDirectoryIterator->valid()) {
+				$filename = $documentationsDirectoryIterator->getFilename();
+				if ($filename[0] != '.' && $documentationsDirectoryIterator->isDir()) {
+					$filename = $documentationsDirectoryIterator->getFilename();
+					$documentation = $this->objectFactory->create('F3\FLOW3\Package\Documentation', $this, $filename, $documentationPath . $filename . '/');
+					$documentations[$filename] = $documentation;
+				}
+				$documentationsDirectoryIterator->next();
+			}
+		}	
+		return $documentations;
+	}
+	
 	/**
 	 * Builds and returns an array of class names => file names of all
 	 * *.php files in the package's Classes directory and its sub-
