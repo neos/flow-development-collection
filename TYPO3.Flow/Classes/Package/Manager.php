@@ -352,7 +352,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @internal
 	 */
 	protected function scanAvailablePackages() {
-		$availablePackages = array('FLOW3' => new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3));
+		$availablePackages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
 
 		$localPackagesParentPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/'));
 		$globalPackagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../'));
@@ -374,7 +374,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 				$filename = $packagesDirectoryIterator->getFilename();
 				if ($filename[0] != '.' && $filename != 'FLOW3') {
 					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
-					$availablePackages[$filename] = new \F3\FLOW3\Package\Package($filename, $packagePath);
+					$availablePackages[$filename] = $this->objectFactory->create('F3\FLOW3\Package\Package', $filename, $packagePath);
 				}
 				$packagesDirectoryIterator->next();
 			}

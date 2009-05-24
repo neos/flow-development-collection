@@ -98,7 +98,7 @@ class Package implements PackageInterface {
 	/**
 	 * Injects a MetaData file reader
 	 *
-	 * @param \F3\FLOW3\Package\Meat\ReaderInterface $metaReader
+	 * @param \F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
@@ -108,7 +108,7 @@ class Package implements PackageInterface {
 	}
 
 	/**
-	 * Returns the package meta object of this package.
+	 * Returns the package meta data object of this package.
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
 	 * @author Robert Lemke <robert@typo3.org>
@@ -188,7 +188,7 @@ class Package implements PackageInterface {
 	/**
 	 * Returns the full path to the package's meta data directory
 	 *
-	 * @return string Path to the package's meta information file
+	 * @return string Full path to the package's meta data directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageMetaDataPath() {

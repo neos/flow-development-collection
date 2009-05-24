@@ -68,7 +68,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 		$xml->writeElement('version', $meta->getVersion());
 		$xml->writeElement('state', $meta->getState());
 
-		if(count($meta->getCategories())) {
+		if (count($meta->getCategories())) {
 			$xml->startElement('categories');
 			foreach ($meta->getCategories() as $category) {
 				$xml->writeElement('category', $category);
@@ -76,7 +76,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 			$xml->endElement();
 		}
 
-		if(count($meta->getParties())) {
+		if (count($meta->getParties())) {
 			$xml->startElement('parties');
 			foreach ($meta->getParties() as $party) {
 				$this->writeParty($xml, $party);
@@ -84,7 +84,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 			$xml->endElement();
 		}
 
-		if(count($meta->getConstraints())) {
+		if (count($meta->getConstraints())) {
 			$xml->startElement('constraints');
 			foreach ($meta->getConstraintTypes() as $constraintType) {
 				$constraints = $meta->getConstraintsByType($constraintType);
@@ -123,8 +123,8 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 
 		switch ($party->getPartyType()) {
 			case 'person':
-				if(strlen($party->getCompany())) $xml->writeElement('company', $party->getCompany());
-				if(strlen($party->getRepositoryUserName())) $xml->writeElement('repositoryUserName', $party->getRepositoryUserName());
+				if (strlen($party->getCompany())) $xml->writeElement('company', $party->getCompany());
+				if (strlen($party->getRepositoryUserName())) $xml->writeElement('repositoryUserName', $party->getRepositoryUserName());
 			break;
 			case 'company':
 			break;
@@ -145,18 +145,18 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	protected function writeConstraint(\XMLWriter $xml, \F3\FLOW3\Package\MetaData\AbstractConstraint $constraint) {
 		$xml->startElement($constraint->getConstraintScope());
 
-		if(strlen($constraint->getMinVersion())) $xml->writeAttribute('minVersion', $constraint->getMinVersion());
-		if(strlen($constraint->getMaxVersion())) $xml->writeAttribute('maxVersion', $constraint->getMaxVersion());
+		if (strlen($constraint->getMinVersion())) $xml->writeAttribute('minVersion', $constraint->getMinVersion());
+		if (strlen($constraint->getMaxVersion())) $xml->writeAttribute('maxVersion', $constraint->getMaxVersion());
 
-		switch($constraint->getConstraintScope()) {
-			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM:
+		switch ($constraint->getConstraintScope()) {
+			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_SYSTEM :
 				if(strlen($constraint->getType())) $xml->writeAttribute('type', $constraint->getType());
 			break;
-			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE:
+			case \F3\FLOW3\Package\MetaData::CONSTRAINT_SCOPE_PACKAGE :
 			break;
 		}
 
-		if(strlen($constraint->getValue())) $xml->text($constraint->getValue());
+		if (strlen($constraint->getValue())) $xml->text($constraint->getValue());
 
 		$xml->endElement();
 	}

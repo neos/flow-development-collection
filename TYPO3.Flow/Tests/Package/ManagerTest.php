@@ -28,6 +28,8 @@ namespace F3\FLOW3\Package;
  * @version $Id$
  */
 
+use F3\Testing;
+
 require_once('vfs/vfsStream.php');
 
 /**
@@ -55,6 +57,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
 		$this->packageManager = new \F3\FLOW3\Package\Manager();
+		$this->packageManager->injectObjectFactory($this->objectFactory);
 		$this->packageManager->initialize();
 	}
 
@@ -364,11 +367,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->initialize();
-
 		try {
-			$packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
+			$this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
 		} catch (Exception $exception) {
 			$this->assertEquals(1166543253, $exception->getCode(), 'deletePackage() threw an exception.');
 			return;
@@ -381,11 +381,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsProtected() {
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->initialize();
-
 		try {
-			$packageManager->deletePackage('PHP6');
+			$this->packageManager->deletePackage('PHP6');
 		} catch (Exception $exception) {
 			$this->assertEquals(1220722120, $exception->getCode(), 'deletePackage() threw an exception.');
 			return;
@@ -451,6 +448,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageManager->deletePackage($packageKey);
 
 		$this->assertFalse(file_exists($packagePath), $packagePath, "Package directory was not deleted.");
+	}
+	
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function scanAvailablePackagesUsesObjectFactoryToCreateNewPackages() {
+		$this->markTestIncomplete('Has to be implemented.');		
 	}
 }
 ?>

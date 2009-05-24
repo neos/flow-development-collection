@@ -74,7 +74,7 @@ class XMLWriterTest extends \F3\Testing\BaseTestCase {
 
 		$metaWriter = new \F3\FLOW3\Package\MetaData\XMLWriter();
 		$metaWriter->writePackageMetaData($mockPackage, $meta);
-		$this->assertXmlFileEqualsXmlFile($packageMetaDataPath . 'Package.xml', __DIR__ . '/../Fixtures/XMLWriterTest_Package.xml');
+		$this->assertXmlFileEqualsXmlFile($packageMetaDataPath . 'Package.xml', __DIR__ . '/../Fixtures/XMLWriterTest/Package.xml');
 	}
 }
 ?>

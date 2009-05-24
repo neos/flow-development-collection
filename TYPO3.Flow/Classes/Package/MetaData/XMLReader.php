@@ -31,7 +31,7 @@ namespace F3\FLOW3\Package\MetaData;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
-
+	
 	/**
 	 * Read the package metadata for the given package from the
 	 * Package.xml file contained in the package
@@ -44,7 +44,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getPackageMetaDataPath();
 
-		$xml = simplexml_load_file($packageInfoPath);
+		$xml = simplexml_load_file($packageInfoPath . 'Package.xml');
 
 		$meta = new \F3\FLOW3\Package\MetaData($package->getPackageKey());
 
