@@ -100,19 +100,269 @@ phpinfo();
     </section>
 
     <section>
-      <title>Windows</title>
+      <title>Windows (based on xampp)</title>
 
-      <para>TODO:</para>
+      <section>
+        <title>Install xampp</title>
 
-      <para>Based on xampp x.x:</para>
+        <para>These instructions are based on xampp 1.7.1. They will probably
+        work with earlier versions as well. If you have installed xampp
+        already, just go on with the next section. If you have another
+        PHP/Apache-Environment, reading the next section will probably also
+        help you a lot to get PHP 5.3 running.</para>
 
-      <para>download, install</para>
+        <para><caution>
+            <para>These instructions are not meant for live-systems. For those
+            you'll be probably the best administrator yourself.</para>
+          </caution>TODO (need a clean PC first...)</para>
+      </section>
 
-      <para>PHP 5.3 on port 81: maybe just reference to wiki?</para>
+      <section>
+        <title>Install PHP 5.3 on Port 81</title>
 
-      <para>Differences between XP/Vista? (bääh)</para>
+        <section>
+          <title>Download and unzip PHP 5.3</title>
 
-      <para>Tip: Symlinks on Windows with... (Vista?)</para>
+          <para>Download the windows binaries. You need the file
+          php-5.3-win32-ts-VC6-x86-latest.zip (PHP 5.3 - Windows x86 VC6
+          (thread safe))) from the "windows-binaries-download-page":
+          http://windows.php.net/snapshots/#php-5.3-win32-ts-VC6-x86.</para>
+
+          <para>Add the folder C:\xampp\php\php5.3.0rc2. Extract the content
+          of the zip-file into this new folder.</para>
+        </section>
+
+        <section>
+          <title>Apache Configuration</title>
+
+          <para>Later you will start another apache process that should have
+          its own configuration and its own log files.</para>
+
+          <para>So, what you do first, is</para>
+
+          <para><itemizedlist>
+              <listitem>
+                <para>Copy the folder C:\xampp\apache\conf\ to
+                C:\xampp\apache\conf-php5.3.0rc2\.</para>
+              </listitem>
+
+              <listitem>
+                <para>Create a new folder
+                C:\xampp\apche\logs-php5.3.0rc2\.</para>
+              </listitem>
+            </itemizedlist>Now change the files the new folder
+          conf-php5.3.0rc2\:</para>
+
+          <section>
+            <title>httpd.conf</title>
+
+            <itemizedlist>
+              <listitem>
+                <para>Change the port from 80 to 81: Listen 81</para>
+              </listitem>
+
+              <listitem>
+                <para>Adjust the includes of the configuration files: Search
+                for conf/ and replace it with conf-php5.3.0rc2/.</para>
+              </listitem>
+
+              <listitem>
+                <para>Adjust the log file directory: Search for logs/ and
+                replace it with logs-php5.3.0rc2/.</para>
+              </listitem>
+
+              <listitem>
+                <para>Add the configuration for using another PidFile
+                (otherwise you might get some more entries in the error-log)
+                by adding the following line. A good place is below
+                ServerRoot:</para>
+
+                <para><programlisting>PidFile logs-php5.3.0rc2/httpd.pid</programlisting></para>
+              </listitem>
+
+              <listitem>
+                <para>Activate the module mod_rewrite by uncommenting the
+                line:<programlisting>LoadModule rewrite_module modules/mod_rewrite.so</programlisting></para>
+              </listitem>
+            </itemizedlist>
+          </section>
+
+          <section>
+            <title>extra\httpd-ssl.comf</title>
+
+            <para>Change the SSL-Port: Listen 4343</para>
+          </section>
+
+          <section>
+            <title>extra\httpd-xampp.conf</title>
+
+            <para>Here you tell the apache which .dll-files it should use as
+            PHP-module.</para>
+
+            <itemizedlist>
+              <listitem>
+                <para>Revome or uncomment this line:</para>
+
+                <para><code>LoadModule php5_module
+                "C:/xampp/apache/bin/php5apache2.dll"</code></para>
+              </listitem>
+
+              <listitem>
+                <para>Add the following lines:<programlisting>#php5.3.0rc2 settings:
+		#Preload the PHP interpreter dll so that apache can find it, even if it's not in the path
+		LoadFile "C:/xampp/php/php5.3.0rc2/php5ts.dll"
+		
+		#Load the sapi module for Apache
+		LoadModule php5_module "C:/xampp/php/php5.3.0rc2/php5apache2_2.dll"
+		
+		#Specify the directory that the php.ini is stored in
+		PHPIniDir "C:/xampp/php/php5.3.0rc2"</programlisting></para>
+              </listitem>
+            </itemizedlist>
+          </section>
+
+          <section>
+            <title>extra\httpd-vhosts.conf</title>
+
+            <para>Configure the VirtualHosts. Make them reference to the
+            Public-folder of your FLOW3 installation.</para>
+
+            <programlisting>NameVirtualHost *:81
+		
+		&lt;VirtualHost *:81&gt;
+		    DocumentRoot "C:/xampp/htdocs/" 
+		    ServerName localhost
+		&lt;/VirtualHost&gt;
+		
+		&lt;VirtualHost *:81&gt;
+		    DocumentRoot "C:/xampp/htdocs/blog/Public/" 
+		    ServerName blog.flow3.local
+		&lt;/VirtualHost&gt;</programlisting>
+          </section>
+        </section>
+
+        <section>
+          <title>PHP Configuration</title>
+
+          <para>Copy the file C:\xampp\php\php5.3.0rc2\php.ini-dist in the
+          same folder and rename it to php.ini. There change the following
+          things:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Activate some extensions FLOW3 needs:</para>
+
+              <programlisting>extension=php_mbstring.dll
+		extension=php_pdo_sqlite.dll</programlisting>
+            </listitem>
+
+            <listitem>
+              <para>Set the folder, where the extensions are stored:</para>
+
+              <programlisting>extension_dir = 'C:\xampp\php\php5.3.0rc2\ext\'</programlisting>
+
+              <caution>
+                <para>You need to use single quotes here as PHP 5.3 doesn't
+                like double quotes (though the examples still use
+                them...)</para>
+              </caution>
+            </listitem>
+
+            <listitem>
+              <para>FLOW3 will ask you to deactivate magic quotes, so just do
+              it:</para>
+
+              <programlisting>magic_quotes_gpc = Off</programlisting>
+            </listitem>
+          </itemizedlist>
+        </section>
+      </section>
+
+      <section>
+        <title>Start the (second) Apache</title>
+
+        <section>
+          <title>Just start it using the prompt</title>
+
+          <para>Open a DOS prompt and switch to the folder
+          C:\xampp\apache\bin\.</para>
+
+          <para>Start the apache telling him the other configuration
+          file:</para>
+
+          <programlisting>apache -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
+
+          <para>Don't close the prompt.</para>
+
+          <para>You can stop the apache with the key combination CTRL+v in the
+          prompt.</para>
+        </section>
+
+        <section>
+          <title>Install as a service</title>
+
+          <para>Open a DOS prompt and switch to the folder
+          C:\xampp\apache\bin\.</para>
+
+          <para>Install the service:</para>
+
+          <programlisting>apache -k install -n Apache2.2-php5.3.0rc2 -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
+
+          <para>Now you can start the service using the service-administration
+          in the Windows control panel or in the prompt:</para>
+
+          <programlisting>net start Apache2.2-php5.3.0rc2</programlisting>
+        </section>
+
+        <section>
+          <title>Verify the Success</title>
+
+          <para>Call phpinfo() for both ports:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>http://localhost:81/xampp/phpinfo.php</para>
+            </listitem>
+
+            <listitem>
+              <para>http://localhost/xampp/phpinfo.php</para>
+            </listitem>
+          </itemizedlist>
+
+          <para>Check, if the PHP-version is correct and the right php.ini is
+          used.</para>
+        </section>
+
+        <section>
+          <title>Solve Problems</title>
+
+          <para>If you have problems starting the apache, there are two places
+          that mostly help solving them:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Check the error-log of the apache. (Did you choose the
+              right log-file (you should see the start of the apache in
+              their)?)</para>
+            </listitem>
+
+            <listitem>
+              <para>Have a look at the events in the Windows control panel.
+              Usually you find more detailled information here than in the
+              error-log if the apache crashed.</para>
+            </listitem>
+          </itemizedlist>
+        </section>
+      </section>
+
+      <section>
+        <title>Hints for Vista-Users</title>
+
+        <para>do we really need that?? :-))</para>
+
+        <para>Mmmmh... maybe I know someone who can setup a virtual
+        machine.....</para>
+      </section>
     </section>
   </section>
 </appendix>
