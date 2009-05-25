@@ -40,10 +40,20 @@ namespace F3\FLOW3\MVC\Controller;
 class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\MVC\View\NotFoundView
 	 */
 	protected $notFoundView;
+
+	/**
+	 * Injects the NotFoundView.
+	 *
+	 * @param \F3\FLOW3\MVC\View\NotFoundView $notFoundView
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectNotFoundView(\F3\FLOW3\MVC\View\NotFoundView $notFoundView) {
+		$this->notFoundView = $notFoundView;
+	}
 
 	/**
 	 * Processes a generic request and fills the response with the default view

@@ -40,10 +40,20 @@ namespace F3\FLOW3\MVC\Controller;
 class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
-	 * @inject
 	 * @var \F3\FLOW3\MVC\View\StandardView
 	 */
-	protected $defaultView;
+	protected $standardView;
+
+	/**
+	 * Injects the StandardView.
+	 *
+	 * @param \F3\FLOW3\MVC\View\StandardView $notFoundView
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectNotFoundView(\F3\FLOW3\MVC\View\StandardView $standardView) {
+		$this->standardView = $standardView;
+	}
 
 	/**
 	 * Processes a generic request and fills the response with the default view
@@ -59,7 +69,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->initializeView();
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
-				$response->setContent($this->defaultView->render());
+				$response->setContent($this->standardView->render());
 				break;
 			default :
 				$response->setContent(
@@ -71,13 +81,13 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 				);
 		}
 	}
-	
+
 	/**
 	 * Initialize the view
 	 * @internal
 	 */
 	protected function initializeView() {
-		$this->defaultView->setControllerContext($this->buildControllerContext());
+		$this->standardView->setControllerContext($this->buildControllerContext());
 	}
 }
 
