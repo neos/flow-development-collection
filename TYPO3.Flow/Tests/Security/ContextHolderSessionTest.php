@@ -149,9 +149,9 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
 		$token1ClassName = uniqid('token1');
-		$token1CloneClassName = '\F3\FLOW3\Security\Authentication\\' . $token1ClassName;
+		$token1CloneClassName = 'F3\FLOW3\Security\Authentication\\' . $token1ClassName;
 		$token2ClassName = uniqid('token2');
-		$token2CloneClassName = '\F3\FLOW3\Security\Authentication\\' . $token2ClassName;
+		$token2CloneClassName = 'F3\FLOW3\Security\Authentication\\' . $token2ClassName;
 		$token3ClassName = uniqid('token3');
 
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
