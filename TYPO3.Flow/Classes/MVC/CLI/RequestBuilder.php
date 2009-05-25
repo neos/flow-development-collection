@@ -96,7 +96,7 @@ class RequestBuilder {
 			$request->setArgument($optionName, $optionValue);
 		}
 
-		$request->setCLIArguments($commandLineArguments['arguments']);
+		$request->setCommandLineArguments($commandLineArguments['arguments']);
 
 		return $request;
 	}
@@ -240,7 +240,7 @@ class RequestBuilder {
 	 * @internal
 	 */
 	protected function buildCommandArrayFromRawCommandData(array $rawCommand) {
-		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('CLI access needs 0, 1 or at least 3 command parts.', 1222252361);
+		if (count($rawCommand) === 2) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('For CLI calls you need to specify either only a package or package, controller and action.', 1222252361);
 
 		$command = array(
 			'package' => NULL,
@@ -248,8 +248,6 @@ class RequestBuilder {
 			'controller' => NULL,
 			'action' => NULL
 		);
-
-		if (count($rawCommand) === 0) return $command;
 
 		$command['package'] = array_shift($rawCommand);
 		if (count($rawCommand) === 0) return $command;

@@ -43,7 +43,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * Arguments given to a CLI request (i.e. anything not specifying command or options)
 	 * @var array
 	 */
-	protected $CLIArguments = array();
+	protected $commandLineArguments = array();
 
 	/**
 	 * Sets the arguments given to this request.
@@ -53,8 +53,8 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @internal
 	 */
-	public function setCLIArguments(array $arguments) {
-		$this->CLIArguments = $arguments;
+	public function setCommandLineArguments(array $arguments) {
+		$this->commandLineArguments = $arguments;
 	}
 
 	/**
@@ -62,10 +62,9 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
-	public function getCLIArguments() {
-		return $this->CLIArguments;
+	public function getCommandLineArguments() {
+		return $this->commandLineArguments;
 	}
 }
 ?>

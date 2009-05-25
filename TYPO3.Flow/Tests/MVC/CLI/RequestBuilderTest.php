@@ -311,7 +311,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function argumentsAreDetectedAfterOptions() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -330,7 +330,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function argumentsAreDetectedIfNoOptionsAreGivenWithFullCommand() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
 		$this->environment->SERVER['argc'] = 7;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -350,7 +350,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function argumentsAreDetectedIfNoOptionsAreGiven() {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
-		$this->mockRequest->expects($this->once())->method('setCLIArguments')->with(array('file1', 'file2'));
+		$this->mockRequest->expects($this->once())->method('setCommandLineArguments')->with(array('file1', 'file2'));
 
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
