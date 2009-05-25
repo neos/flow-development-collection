@@ -70,6 +70,7 @@ class ControllerContext {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
@@ -91,6 +92,7 @@ class ControllerContext {
 	 * @param \F3\FLOW3\MVC\ResponseInterface $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setResponse(\F3\FLOW3\MVC\ResponseInterface $response) {
 		$this->response = $response;
@@ -112,6 +114,7 @@ class ControllerContext {
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setArguments(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
 		$this->arguments = $arguments;
@@ -133,6 +136,7 @@ class ControllerContext {
 	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	public function setArgumentsMappingResults(\F3\FLOW3\Property\MappingResults $argumentsMappingResults) {
 		$this->argumentsMappingResults = $argumentsMappingResults;
@@ -152,6 +156,7 @@ class ControllerContext {
 	 * \F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
 	 */
 	public function setURIBuilder(\F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder) {
 		$this->URIBuilder = $URIBuilder;
