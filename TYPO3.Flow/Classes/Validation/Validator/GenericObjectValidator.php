@@ -92,7 +92,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	public function isPropertyValid($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('Object expected, ' . gettype($object) . ' given.', 1241099149);
 		if (!isset($this->propertyValidators[$propertyName])) return TRUE;
-		
+
 		$result = TRUE;
 		foreach ($this->propertyValidators[$propertyName] as $validator) {
 			if ($validator->isValid(\F3\FLOW3\Reflection\ObjectAccess::getProperty($object, $propertyName)) === FALSE) {
@@ -102,12 +102,13 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * @param array $errors Array of \F3\FLOW3\Validation\Error
 	 * @param string $propertyName Name of the property to add errors
 	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com> 
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
 	 */
 	protected function addErrorsForProperty($errors, $propertyName) {
 		if (!isset($this->errors[$propertyName])) {

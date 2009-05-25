@@ -101,12 +101,12 @@ class Format {
 	/**
 	 * Returns the available languages for this documentation format
 	 *
-	 * @return array Array of string language codes 
+	 * @return array Array of string language codes
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getAvailableLanguages() {
 		$languages = array();
-		
+
 		$languagesDirectoryIterator = new \DirectoryIterator($this->formatPath);
 		$languagesDirectoryIterator->rewind();
 		while ($languagesDirectoryIterator->valid()) {
@@ -117,7 +117,7 @@ class Format {
 			}
 			$languagesDirectoryIterator->next();
 		}
-		
+
 		return $languages;
 	}
 }

@@ -137,6 +137,7 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
 		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {

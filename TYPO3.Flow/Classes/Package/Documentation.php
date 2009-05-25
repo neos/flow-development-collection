@@ -42,7 +42,7 @@ class Documentation {
 	 * @var \F3\FLOW3\Package\PackageInterface Reference to the package of this documentation
 	 */
 	protected $package;
-	
+
 	/**
 	 * @var string The documentation name
 	 */
@@ -123,7 +123,7 @@ class Documentation {
 	 */
 	public function getDocumentationFormats() {
 		$documentationFormats = array();
-		
+
 		$documentationFormatsDirectoryIterator = new \DirectoryIterator($this->documentationPath);
 		$documentationFormatsDirectoryIterator->rewind();
 		while ($documentationFormatsDirectoryIterator->valid()) {
@@ -134,7 +134,7 @@ class Documentation {
 			}
 			$documentationFormatsDirectoryIterator->next();
 		}
-		
+
 		return $documentationFormats;
 	}
 }

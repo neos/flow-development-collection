@@ -246,7 +246,7 @@ class Package implements PackageInterface {
 		}	
 		return $documentations;
 	}
-	
+
 	/**
 	 * Builds and returns an array of class names => file names of all
 	 * *.php files in the package's Classes directory and its sub-

@@ -41,25 +41,21 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
-	 * @inject
 	 */
 	protected $objectManager;
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
-	 * @inject
 	 */
 	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Utility\Environment
-	 * @inject
 	 */
 	protected $environment;
 
 	/**
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
-	 * @inject
 	 */
 	protected $systemLogger;
 
@@ -87,6 +83,54 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 * @internal
 	 */
 	protected $request;
+
+	/**
+	 * Injects the object manager
+	 *
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+		$this->objectManager = $objectManager;
+	}
+
+	/**
+	 * Injects the object factory
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
+		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
+	}
 
 	/**
 	 * Sets the routes configuration.

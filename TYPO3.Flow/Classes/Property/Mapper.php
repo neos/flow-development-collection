@@ -53,8 +53,6 @@ namespace F3\FLOW3\Property;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-use F3\FLOW3\Validation;
-
 class Mapper {
 
 	/**
@@ -133,13 +131,14 @@ class Mapper {
 		}
 		return (!$this->mappingResults->hasErrors());
 	}
-	
+
 	/**
 	 * Add errors to the mapping result from an object validator (property errors).
-	 * 
+	 *
 	 * @param array Array of \F3\FLOW3\Validation\PropertyError 
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @return void
+	 * @internal
 	 */
 	protected function addErrorsFromObjectValidator($errors) {
 		foreach ($errors as $error) {

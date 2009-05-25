@@ -38,6 +38,7 @@ namespace F3\FLOW3\Validation;
  * @scope prototype
  */
 class PropertyError extends \F3\FLOW3\Validation\Error {
+
 	/**
 	 * @var string The default (english) error message.
 	 */
@@ -57,22 +58,22 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 * @var array An array of \F3\FLOW3\Validation\Error for the property
 	 */
 	protected $errors = array();
-	
+
 	/**
 	 * Create a new property error with the given property name
-	 * 
+	 *
 	 * @param string $propertyName The property name
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function __construct($propertyName) {
 		$this->propertyName = $propertyName;
-		
+
 		$this->message .= ' ' . $propertyName;
 	}
 
 	/**
 	 * Add errors
-	 * 
+	 *
 	 * @param array $errors Array of \F3\FLOW3\Validation\Error for the property
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -80,17 +81,17 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	public function addErrors($errors) {
 		$this->errors = array_merge($this->errors, $errors);
 	}
-	
+
 	/**
 	 * Get all errors for the property
-	 * 
+	 *
 	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occured for the property
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getErrors() {
 		return $this->errors;
 	}
-	
+
 	/**
 	 * Get the property name
 	 * @return string The property name for this error

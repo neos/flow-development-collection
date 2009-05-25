@@ -53,7 +53,7 @@ class ControllerContext {
 	 * @var \F3\FLOW3\MVC\Controller\Arguments
 	 */
 	protected $arguments;
-	
+
 	/**
 	 * @var \F3\FLOW3\Property\MappingResults
 	 */
@@ -78,7 +78,7 @@ class ControllerContext {
 
 	/**
 	 * Get the request of the controller
-	 * 
+	 *
 	 * @return \F3\FLOW3\MVC\RequestInterface
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -88,7 +88,7 @@ class ControllerContext {
 
 	/**
 	 * Set the response of the controller
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\ResponseInterface $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -100,7 +100,7 @@ class ControllerContext {
 
 	/**
 	 * Get the response of the controller
-	 * 
+	 *
 	 * @return \F3\FLOW3\MVC\RequestInterface
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -110,7 +110,7 @@ class ControllerContext {
 
 	/**
 	 * Set the arguments of the controller
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -122,7 +122,7 @@ class ControllerContext {
 
 	/**
 	 * Get the arguments of the controller
-	 * 
+	 *
 	 * @return \F3\FLOW3\MVC\Controller\Arguments
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -132,7 +132,7 @@ class ControllerContext {
 
 	/**
 	 * Set the arguments mapping results of the controller
-	 * 
+	 *
 	 * @param \F3\FLOW3\Property\MappingResults $argumentsMappingResults
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -144,7 +144,7 @@ class ControllerContext {
 
 	/**
 	 * Get the arguments mapping results of the controller
-	 * 
+	 *
 	 * @return \F3\FLOW3\Property\MappingResults
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
