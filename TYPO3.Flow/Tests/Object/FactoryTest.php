@@ -37,6 +37,8 @@ namespace F3\FLOW3\Object;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
+use F3\Testing;
+
 class FactoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
@@ -149,6 +151,15 @@ class FactoryTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectBuilder->expects($this->once())->method('createObject')->will($this->returnValue($object));
 
 		$this->objectFactory->create($objectName);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \InvalidArgumentException
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function createThrowsAnExceptionIfTheObjectNameBeginsWithABackslash() {
+		$this->objectFactory->create('\F3\Virtual\Foo');
 	}
 }
 ?>
