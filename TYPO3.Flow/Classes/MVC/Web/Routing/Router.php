@@ -215,7 +215,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected function findMatchResults($requestPath) {
 		$this->createRoutesFromConfiguration();
 
-		foreach (array_reverse($this->routes) as $route) {
+		foreach ($this->routes as $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
 				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the request path "' . $requestPath . '".', LOG_NOTICE);
@@ -238,7 +238,8 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	 */
 	public function resolve(array $routeValues) {
 		$this->createRoutesFromConfiguration();
-		foreach (array_reverse($this->routes) as $routeName => $route) {
+
+		foreach ($this->routes as $route) {
 			if ($route->resolves($routeValues)) {
 				return $route->getMatchingURI();
 			}
@@ -257,13 +258,15 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	protected function createRoutesFromConfiguration() {
 		if ($this->routesCreated === FALSE) {
 			$this->routes = array();
-			foreach ($this->routesConfiguration as $routeName => $routeConfiguration) {
+			foreach ($this->routesConfiguration as $routeConfiguration) {
 				$route = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
-				$route->setName($routeName);
+				if (isset($routeConfiguration['name'])) {
+					$route->setName($routeConfiguration['name']);
+				}
 				$route->setUriPattern($routeConfiguration['uriPattern']);
 				if (isset($routeConfiguration['defaults'])) $route->setDefaults($routeConfiguration['defaults']);
 				if (isset($routeConfiguration['routeParts'])) $route->setRoutePartsConfiguration($routeConfiguration['routeParts']);
-				$this->routes[$routeName] = $route;
+				$this->routes[] = $route;
 			}
 			$this->routesCreated = TRUE;
 		}

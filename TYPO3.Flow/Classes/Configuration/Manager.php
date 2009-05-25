@@ -189,12 +189,23 @@ class Manager {
 	 * @param array $packages An array of Package objects to consider
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
 	 */
 	public function loadSpecialConfiguration($configurationType, array $packages) {
-		foreach ($packages as $packageKey => $package) {
-			foreach ($this->configurationSources as $configurationSource) {
-				$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load($package->getConfigurationPath() . $configurationType));
+		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
+			$subRoutesConfiguration = array();
+			foreach ($packages as $packageKey => $package) {
+				$subRoutesConfiguration[$packageKey] = array();
+				foreach ($this->configurationSources as $configurationSource) {
+					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $configurationSource->load($package->getConfigurationPath() . $configurationType));
+				}
+			}
+		} else {
+			foreach ($packages as $packageKey => $package) {
+				foreach ($this->configurationSources as $configurationSource) {
+					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load($package->getConfigurationPath() . $configurationType));
+				}
 			}
 		}
 		foreach ($this->configurationSources as $configurationSource) {
@@ -202,6 +213,9 @@ class Manager {
 		}
 		foreach ($this->configurationSources as $configurationSource) {
 			$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+		}
+		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
+			$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType], $subRoutesConfiguration);
 		}
 		$this->postProcessSettings($this->configurations[$configurationType]);
 	}
@@ -220,7 +234,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	public function getSpecialConfiguration($configurationType, $package = NULL) {
+	public function getSpecialConfiguration($configurationType, \F3\FLOW3\Package\Package $package = NULL) {
 		switch ($configurationType) {
 			case self::CONFIGURATION_TYPE_ROUTES :
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
@@ -229,8 +243,8 @@ class Manager {
 			case self::CONFIGURATION_TYPE_PACKAGES :
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				if (!is_object($package)) throw new \InvalidArgumentException('No package specified.', 1233336279);
-			break;
-			default:
+				break;
+			default :
 				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
 		}
 		$configuration = array();
@@ -264,7 +278,7 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	protected function postProcessSettings(&$settings) {
+	protected function postProcessSettings(array &$settings) {
 		foreach ($settings as $key => $setting) {
 			if (is_array($setting)) {
 				$this->postProcessSettings($settings[$key]);
@@ -278,6 +292,72 @@ class Manager {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Loads specified sub routes and builds composite routes.
+	 *
+	 * @param array $routesConfiguration
+	 * @param array $subRoutesConfiguration
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
+	 */
+	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration, array $subRoutesConfiguration) {
+		$mergedRoutesConfiguration = array();
+		foreach ($routesConfiguration as $routeConfiguration) {
+			if (!isset($routeConfiguration['subRoutes'])) {
+				$mergedRoutesConfiguration[] = $routeConfiguration;
+				continue;
+			}
+			$mergedSubRoutesConfiguration = array($routeConfiguration);
+			foreach($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
+				if (!isset($subRouteOptions['package']) || !isset($subRoutesConfiguration[$subRouteOptions['package']])) {
+					continue;
+				}
+				$packageSubRoutesConfiguration = $subRoutesConfiguration[$subRouteOptions['package']];
+				$mergedSubRoutesConfiguration = $this->buildSubrouteConfigurations($mergedSubRoutesConfiguration, $packageSubRoutesConfiguration, $subRouteKey);
+			}
+			$mergedRoutesConfiguration = array_merge($mergedRoutesConfiguration, $mergedSubRoutesConfiguration);
+		}
+		$routesConfiguration = $mergedRoutesConfiguration;
+	}
+
+	/**
+	 * Merges all routes in $routesConfiguration with the sub routes in $subRoutesConfiguration
+	 *
+	 * @param array $routesConfiguration
+	 * @param array $subRoutesConfiguration
+	 * @param string $subRouteKey the key of the sub route: <subRouteKey>
+	 * @return array the merged route configuration
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @internal
+	 */
+	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
+		$mergedSubRoutesConfiguration = array();
+		foreach($subRoutesConfiguration as $subRouteConfiguration) {
+			foreach($routesConfiguration as $routeConfiguration) {
+				$name = isset($routeConfiguration['name']) ? $routeConfiguration['name'] : $routeConfiguration;
+				$name .= ' :: ';
+				$name .= isset($subRouteConfiguration['name']) ? $subRouteConfiguration['name'] : 'Subroute';
+				$uriPattern = str_replace('<' . $subRouteKey . '>', $subRouteConfiguration['uriPattern'], $routeConfiguration['uriPattern']);
+				$defaults = isset($routeConfiguration['defaults']) ? $routeConfiguration['defaults'] : array();
+				if (isset($subRouteConfiguration['defaults'])) {
+					$defaults = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($defaults, $subRouteConfiguration['defaults']);
+				}
+				$routeParts = isset($routeConfiguration['routeParts']) ? $routeConfiguration['routeParts'] : array();
+				if (isset($subRouteConfiguration['routeParts'])) {
+					$routeParts = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($routeParts, $subRouteConfiguration['routeParts']);
+				}
+				$mergedSubRoutesConfiguration[] = array(
+					'name' => $name,
+					'uriPattern' => $uriPattern,
+					'defaults' => $defaults,
+					'routeParts' => $routeParts
+				);
+			}
+		}
+		return $mergedSubRoutesConfiguration;
 	}
 }
 ?>

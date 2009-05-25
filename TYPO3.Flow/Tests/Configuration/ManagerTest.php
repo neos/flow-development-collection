@@ -238,10 +238,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSpecialConfigurationOnlySupportsSpecialConfigurationTypes() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
 		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load'));
 
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
-		$manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, 'FLOW3');
+		$manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $mockPackage);
 	}
 }
 ?>

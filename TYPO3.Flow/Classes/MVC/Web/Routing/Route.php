@@ -387,6 +387,11 @@ class Route {
 				unset($routeValues[$key]);
 			}
 		}
+
+			// turn URI to lowercase. @todo this should be configurable
+		$matchingURI = \F3\PHP6\Functions::strtolower($matchingURI);
+
+			// add query string
 		if (count($routeValues) > 0) {
 			foreach ($routeValues as $key => $routeValue) {
 				if (is_object($routeValue)) {
@@ -397,7 +402,7 @@ class Route {
 			}
 			$matchingURI .= '?' . http_build_query($routeValues, NULL, '&');
 		}
-		$this->matchingURI = strtolower($matchingURI);
+		$this->matchingURI = $matchingURI;
 		return TRUE;
 	}
 
@@ -416,10 +421,10 @@ class Route {
 		$this->routeParts = array();
 		$currentRoutePartIsOptional = FALSE;
 		if (substr($this->uriPattern, -1) === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" ends with a slash, which is not allowed. You can put the trailing slash in brackets to make it optional.', 1234782997);
 		}
 		if ($this->uriPattern[0] === '/') {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" starts with a slash, which is not allowed.', 1234782983);
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" starts with a slash, which is not allowed.', 1234782983);
 		}
 
 		$matches = array();
@@ -431,7 +436,7 @@ class Route {
 			$routePartName = $match['content'];
 			if (!empty($match['optionalStart'])) {
 				if ($lastRoutePart !== NULL && $lastRoutePart->isOptional()) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
+					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive optional Route sections, which is not allowed.', 1234562050);
 				}
 				$currentRoutePartIsOptional = TRUE;
 			}
@@ -439,12 +444,12 @@ class Route {
 			switch ($routePartType) {
 				case self::ROUTEPART_TYPE_DYNAMIC:
 					if ($lastRoutePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
-						throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
+						throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('the URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains succesive Dynamic Route Parts, which is not allowed.', 1218446975);
 					}
 					if (isset($this->routePartsConfiguration[$routePartName]['handler'])) {
 						$routePart = $this->objectManager->getObject($this->routePartsConfiguration[$routePartName]['handler']);
 						if (!$routePart instanceof \F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface) {
-							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface"', 1218480972);
+							throw new \F3\FLOW3\MVC\Exception\InvalidRoutePartHandler('routePart handlers must implement "\F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface" in route "' . $this->getName() . '"', 1218480972);
 						}
 					} else {
 						$routePart = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
@@ -468,14 +473,14 @@ class Route {
 			$this->routeParts[] = $routePart;
 			if (!empty($match['optionalEnd'])) {
 				if (!$currentRoutePartIsOptional) {
-					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" contains an unopened optional section.', 1234564495);
+					throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unopened optional section.', 1234564495);
 				}
 				$currentRoutePartIsOptional = FALSE;
 			}
 			$lastRoutePart = $routePart;
 		}
 		if ($currentRoutePartIsOptional) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" contains an unterminated optional section.', 1234563922);
+			throw new \F3\FLOW3\MVC\Exception\InvalidUriPattern('The URI pattern "' . $this->uriPattern . '" of route "' . $this->getName() . '" contains an unterminated optional section.', 1234563922);
 		}
 		$this->isParsed = TRUE;
 	}
