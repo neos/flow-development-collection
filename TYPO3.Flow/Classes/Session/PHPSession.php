@@ -39,6 +39,11 @@ namespace F3\FLOW3\Session;
 class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * The session Id
 	 *
 	 * @var string
@@ -64,6 +69,17 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Starts the session, if is has not been already started
 	 *
 	 * @return void
@@ -72,6 +88,11 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
+			$sessionsPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+			if (!file_exists($sessionsPath)) {
+				mkdir($sessionsPath);
+			}
+			session_save_path($sessionsPath);
 			session_start();
 			$this->sessionId = session_id();
 			$this->started = TRUE;
