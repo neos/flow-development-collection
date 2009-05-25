@@ -223,7 +223,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * Initialize the controller context
-	 * 
+	 *
 	 * @return \F3\FLOW3\MVC\Controller\ControllerContext ControllerContext to be passed to the view
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -366,30 +366,45 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
 		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validator);
+		$this->mapIdentityUUIDsToRealObjects($this->arguments);
+
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
 
 	/**
-	 * Returns current flash messages from the seesion, making sure to always
-	 * return an array.
+	 * Checks if the current value of a controller argument is a UUID. If that is the case
+	 * and if the argument's data type is a class, this function tries to retrieve the real
+	 * object from the data type's repository. If no object was found, the argument's value
+	 * is left untouched.
 	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments to check and map
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
-	protected function getFlashMessagesFromSession() {
-		$flashMessages = $this->session->getData('FLOW3_AbstractController_flashMessages');
-		return is_array($flashMessages) ? $flashMessages : array();
+	protected function mapIdentityUUIDsToRealObjects(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
+		foreach ($arguments as $argument) {
+			$currentValue = $argument->getValue();
+			$dataType = $argument->getDataType();
+			if (is_string($currentValue)
+				&& strpos($dataType, '\\') !== FALSE
+				&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $currentValue) === 1) {
+					$argument->setValue(array('__identity' => $currentValue));
+			}
+		}
 	}
 
 	/**
 	 * Add a flash message to the queue. It will live until the next call to
-	 * getCurrentFlashMessages() in the current session.
+	 * popFlashMessages() in the current session.
 	 *
 	 * @param mixed $message anything serializable, should be "stringy"
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function queueFlashMessage($message) {
+	protected function pushFlashMessage($message) {
+		if (!is_string($message)) throw new \InvalidArgumentException('The flash message must be string, ' . gettype($message) . ' given.', 1243258395);
+
 		$queuedFlashMessages = $this->getFlashMessagesFromSession();
 		$queuedFlashMessages[] = $message;
 		$this->session->putData('FLOW3_AbstractController_flashMessages', $queuedFlashMessages);
@@ -401,11 +416,25 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return array an array with flash messages or NULL if none available
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function getCurrentFlashMessages() {
+	protected function popFlashMessages() {
 		$queuedFlashMessages = $this->getFlashMessagesFromSession();
 		$this->session->putData('FLOW3_AbstractController_flashMessages', NULL);
 		return $queuedFlashMessages;
 	}
+
+	/**
+	 * Returns current flash messages from the seesion, making sure to always
+	 * return an array.
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	protected function getFlashMessagesFromSession() {
+		$flashMessages = $this->session->getData('FLOW3_AbstractController_flashMessages');
+		return is_array($flashMessages) ? $flashMessages : array();
+	}
+
 }
 
 ?>

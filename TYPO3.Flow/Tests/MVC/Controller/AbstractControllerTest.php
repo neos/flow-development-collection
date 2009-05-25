@@ -89,7 +89,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
 		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
 		$mockControllerContext->expects($this->once())->method('setURIBuilder')->with($mockURIBuilder);
-		
+
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
 
@@ -102,7 +102,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_set('argumentsMappingResults', $mockArgumentsMappingResults);
 		$controller->_call('buildControllerContext');
 	}
-	
+
 	/**
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
@@ -243,7 +243,8 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 			will($this->returnValue(TRUE));
 		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('mapIdentityUUIDsToRealObjects'), array(), '', FALSE);
+		$controller->expects($this->once())->method('mapIdentityUUIDsToRealObjects')->with($mockArguments);
 
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
@@ -253,6 +254,31 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 
 		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapIdentityUUIDsToRealObjectsDetectsUUIDsAndSetsArgumentValuesToRealObjects() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('foo'));
+		$mockArgumentFoo->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18a'));
+		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('F3\Virtual\Foo'));
+		$mockArgumentFoo->expects($this->once())->method('setValue')->with(array('__identity' => '33baefe1-95f0-4e13-ad14-28812bccb18a'));
+
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('bar'));
+		$mockArgumentBar->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18b'));
+		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('string'));
+		$mockArgumentBar->expects($this->never())->method('setValue');
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument($mockArgumentFoo);
+		$mockArguments->addArgument($mockArgumentBar);
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_call('mapIdentityUUIDsToRealObjects', $mockArguments);
 	}
 
 	/**
@@ -277,28 +303,28 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function queueFlashMessageAddsToExistingMessagesAndPutsResultIntoSession() {
+	public function pushFlashMessageAddsToExistingMessagesAndPutsResultIntoSession() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('1st message')));
 		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', array('1st message', '2nd message'));
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('session', $mockSession);
 
-		$controller->_call('queueFlashMessage', '2nd message');
+		$controller->_call('pushFlashMessage', '2nd message');
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getCurrentFlashMessagesReturnsExistingMessagesAndRemovesThemFromSession() {
+	public function popFlashMessagesReturnsExistingMessagesAndRemovesThemFromSession() {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('message')));
 		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', NULL);
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('session', $mockSession);
 
-		$this->assertSame(array('message'), $controller->_call('getCurrentFlashMessages'));
+		$this->assertSame(array('message'), $controller->_call('popFlashMessages'));
 	}
 }
 ?>
