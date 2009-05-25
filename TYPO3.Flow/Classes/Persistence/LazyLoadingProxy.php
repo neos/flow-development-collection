@@ -47,7 +47,7 @@ class LazyLoadingProxy {
 	private $F3_FLOW3_Persistence_LazyLoadingProxy_parent;
 
 	/**
-	 * The anem of the property represented by thos proxy.
+	 * The name of the property represented by this proxy.
 	 *
 	 * @var string
 	 */
@@ -66,7 +66,7 @@ class LazyLoadingProxy {
 	 *
 	 * @param object $parent The object instance this proxy is part of
 	 * @param string $propertyName The name of the proxied property in it's parent
-	 * @param \Closure $population The closure to invoke in case the object represented by this proxy is really needed.
+	 * @param \Closure $population The closure to invoke in case the object represented by this proxy is really needed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @internal
 	 */
