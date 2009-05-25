@@ -115,14 +115,17 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		
 		$mockDocumentation = $this->getMock('F3\FLOW3\Package\Documentation', array('dummy'), array(), '', FALSE);
 		
+		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
+		
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())
 			->method('create')
-			->with('F3\FLOW3\Package\Documentation', 'Manual', $packagePath . 'Documentation/Manual/')
+			->with('F3\FLOW3\Package\Documentation', $package, 'Manual', $packagePath . 'Documentation/Manual/')
 			->will($this->returnValue($mockDocumentation));
-		
-		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
+
 		$package->injectObjectFactory($mockObjectFactory);
+
+
 		$documentations = $package->getPackageDocumentations();	
 		
 		$this->assertEquals(array('Manual' => $mockDocumentation), $documentations);
