@@ -148,9 +148,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
-		$this->mockRequest->expects($this->exactly(2))->method('setArgument');
-		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
-		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
+		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('testArgument' => 'value', 'testArgument2' => 'value2'));
 
 		$this->environment->SERVER['argc'] = 6;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -173,11 +171,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
-		$this->mockRequest->expects($this->exactly(4))->method('setArgument');
-		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
-		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
-		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('testArgument3', 'value3');
-		$this->mockRequest->expects($this->at(6))->method('setArgument')->with('testArgument4', 'value4');
+		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('testArgument' => 'value', 'testArgument2' => 'value2', 'testArgument3' => 'value3', 'testArgument4' => 'value4'));
 
 		$this->environment->SERVER['argc'] = 12;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -206,10 +200,7 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
-		$this->mockRequest->expects($this->exactly(3))->method('setArgument');
-		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('d', 'valued');
-		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('f', 'valuef');
-		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('a', 'valuea');
+		$this->mockRequest->expects($this->once())->method('setArguments')->with(array('d' => 'valued', 'f' => 'valuef', 'a' => 'valuea'));
 
 		$this->environment->SERVER['argc'] = 10;
 		$this->environment->SERVER['argv'][0] = 'index.php';
@@ -236,21 +227,22 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockRequest->expects($this->once())->method('setControllerPackageKey')->with('TestPackage');
 		$this->mockRequest->expects($this->once())->method('setControllerName')->with('Standard');
 		$this->mockRequest->expects($this->once())->method('setControllerActionName')->with('list');
-		$this->mockRequest->expects($this->exactly(14))->method('setArgument');
-		$this->mockRequest->expects($this->at(3))->method('setArgument')->with('testArgument', 'value');
-		$this->mockRequest->expects($this->at(4))->method('setArgument')->with('testArgument2', 'value2');
-		$this->mockRequest->expects($this->at(5))->method('setArgument')->with('k', NULL);
-		$this->mockRequest->expects($this->at(6))->method('setArgument')->with('testArgument3', 'value3');
-		$this->mockRequest->expects($this->at(7))->method('setArgument')->with('testArgument4', 'value4');
-		$this->mockRequest->expects($this->at(8))->method('setArgument')->with('f', 'valuef');
-		$this->mockRequest->expects($this->at(9))->method('setArgument')->with('d', 'valued');
-		$this->mockRequest->expects($this->at(10))->method('setArgument')->with('a', 'valuea');
-		$this->mockRequest->expects($this->at(11))->method('setArgument')->with('c', NULL);
-		$this->mockRequest->expects($this->at(12))->method('setArgument')->with('testArgument7', NULL);
-		$this->mockRequest->expects($this->at(13))->method('setArgument')->with('testArgument5', 5);
-		$this->mockRequest->expects($this->at(14))->method('setArgument')->with('testArgument6', NULL);
-		$this->mockRequest->expects($this->at(15))->method('setArgument')->with('j', 'kjk');
-		$this->mockRequest->expects($this->at(16))->method('setArgument')->with('m', NULL);
+		$this->mockRequest->expects($this->once())->method('setArguments')->with(array(
+			'testArgument' => 'value',
+			'testArgument2' => 'value2',
+			'k' => NULL,
+			'testArgument3' => 'value3',
+			'testArgument4' => 'value4',
+			'f' => 'valuef',
+			'd' => 'valued',
+			'a' => 'valuea',
+			'c' => NULL,
+			'testArgument7' => NULL,
+			'testArgument5' => 5,
+			'testArgument6' => NULL,
+			'j' => 'kjk',
+			'm' => NULL
+		));
 
 		$this->environment->SERVER['argc'] = 27;
 		$this->environment->SERVER['argv'][0] = 'index.php';
