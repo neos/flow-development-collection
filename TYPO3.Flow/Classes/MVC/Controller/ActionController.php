@@ -51,11 +51,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $validatorResolver;
 
 	/**
-	 * @var boolean If initializeView() should be called on an action invocation.
-	 */
-	protected $initializeView = TRUE;
-
-	/**
 	 * By default a Fluid\TemplateView is provided, if a template is available,
 	 * then a view with the same name as the current action will be looked up.
 	 * If none is available the $defaultViewObjectName will be used and finally
@@ -156,7 +151,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
-		if ($this->initializeView) $this->initializeView();
+		$this->view = $this->resolveView();
+		if ($this->view !== NULL) $this->initializeView($this->view);
 		$this->callActionMethod();
 	}
 
@@ -255,17 +251,18 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function initializeView() {
-		$this->view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
+	protected function resolveView() {
+		$view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
 		$controllerContext = $this->buildControllerContext();
-		$this->view->setControllerContext($controllerContext);
-		if ($this->view->hasTemplate() === FALSE) {
+		$view->setControllerContext($controllerContext);
+		if ($view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
 			if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
-			$this->view = $this->objectManager->getObject($viewObjectName);
-			$this->view->setControllerContext($controllerContext);
+			$view = $this->objectManager->getObject($viewObjectName);
+			$view->setControllerContext($controllerContext);
 		}
-		$this->view->assign('flashMessages', $this->popFlashMessages());
+		$view->assign('flashMessages', $this->popFlashMessages());
+		return $view;
 	}
 
 	/**
@@ -294,6 +291,19 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$viewObjectName = $this->defaultViewObjectName;
 		}
 		return $viewObjectName;
+	}
+
+	/**
+	 * Initializes the view before invoking an action method.
+	 *
+	 * Override this method to solve assign variables common for all actions
+	 * or prepare the view in another way before the action is called.
+	 *
+	 * @param \F3\FLOW3\MVC\View\ViewInterface $view The view to be initialized
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function initializeView(\F3\FLOW3\MVC\View\ViewInterface $view) {
 	}
 
 	/**

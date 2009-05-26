@@ -633,15 +633,6 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
         <para></para>
       </section>
 
-      <section>
-        <title>Action View</title>
-
-        <para>- $this-&gt;initializeView = TRUE | FALSE</para>
-
-        <para>Setting $this-&gt;viewObjectName to a view object name overrides
-        the automatic resolving of the view name. Can be used for definining a
-        standard view, for example \F3\Fluid\View\TemplateView.</para>
-      </section>
     </section>
 
     <section>

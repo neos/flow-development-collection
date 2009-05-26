@@ -66,7 +66,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);
-		$this->initializeView();
+		$this->standardView->setControllerContext($this->buildControllerContext());
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
 				$response->setContent($this->standardView->render());
@@ -80,14 +80,6 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 					"Have fun! The FLOW3 Development Team\n"
 				);
 		}
-	}
-
-	/**
-	 * Initialize the view
-	 * @internal
-	 */
-	protected function initializeView() {
-		$this->standardView->setControllerContext($this->buildControllerContext());
 	}
 }
 

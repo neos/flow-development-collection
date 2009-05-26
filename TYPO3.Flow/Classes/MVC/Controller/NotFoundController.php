@@ -66,7 +66,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);
-		$this->initializeView();
+		$this->notFoundView->setControllerContext($this->buildControllerContext());
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
 				$response->setStatus(404);
@@ -78,13 +78,6 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 					"No controller could be resolved which would match your request.\n"
 				);
 		}
-	}
-
-	/**
-	 * Initialize the view
-	 */
-	protected function initializeView() {
-		$this->notFoundView->setControllerContext($this->buildControllerContext());
 	}
 }
 
