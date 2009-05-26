@@ -92,10 +92,7 @@ class RequestBuilder {
 		$commandLineArguments = $this->parseRawCommandLineArguments($rawCommandLineArguments);
 
 		$this->setControllerOptions($request, $commandLineArguments['command']);
-		foreach ($commandLineArguments['options'] as $optionName => $optionValue) {
-			$request->setArgument($optionName, $optionValue);
-		}
-
+		$request->setArguments($commandLineArguments['options']);
 		$request->setCommandLineArguments($commandLineArguments['arguments']);
 
 		return $request;

@@ -373,9 +373,9 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * Checks if the current value of a controller argument is a UUID. If that is the case
-	 * and if the argument's data type is a class, this function tries to retrieve the real
-	 * object from the data type's repository. If no object was found, the argument's value
-	 * is left untouched.
+	 * and if the argument's data type is a class (i.e. it contains a backslash), this
+	 * function replaces the value by an identity array so Controller\Argument can fetch
+	 * the corresponding object in setValue() later.
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments to check and map
 	 * @return void

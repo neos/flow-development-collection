@@ -133,7 +133,7 @@ class Arguments extends \ArrayObject {
 	 */
 	public function offsetGet($offset) {
 		$translatedOffset = $this->translateToLongArgumentName($offset);
-		if ($translatedOffset === '') throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('The argument "' . $offset . '" does not exist.', 1216909923);
+		if ($translatedOffset === '') throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $offset . '" does not exist.', 1216909923);
 		return parent::offsetGet($translatedOffset);
 	}
 
@@ -182,7 +182,6 @@ class Arguments extends \ArrayObject {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getArgument($argumentName) {
-		if (!$this->offsetExists($argumentName)) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $argumentName . '" does not exist.', 1195815178);
 		return $this->offsetGet($argumentName);
 	}
 

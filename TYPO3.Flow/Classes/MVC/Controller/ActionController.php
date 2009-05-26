@@ -164,7 +164,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Implementation of the arguments initilization in the action controller:
 	 * Automatically registers arguments of the current action
 	 *
-	 * Don't override this method - use initializeArguments() instead.
+	 * Don't override this method - use initializeAction() instead.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

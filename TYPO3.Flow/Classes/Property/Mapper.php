@@ -135,7 +135,7 @@ class Mapper {
 	/**
 	 * Add errors to the mapping result from an object validator (property errors).
 	 *
-	 * @param array Array of \F3\FLOW3\Validation\PropertyError 
+	 * @param array Array of \F3\FLOW3\Validation\PropertyError
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @return void
 	 * @internal
