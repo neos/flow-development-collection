@@ -80,7 +80,7 @@ mvc:
 persistence:
   
   # Whether to enable FLOW3's persistence manager or not.
-  enable: n
+  enable: y
 
 reflection:
 
