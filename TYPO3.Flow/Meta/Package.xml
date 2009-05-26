@@ -3,7 +3,7 @@
 	<key>FLOW3</key>
 	<title>FLOW3</title>
 	<description></description>
-	<version>0.0.1</version>
+	<version>1.0.0-dev</version>
 	<state>Development</state>
 	<categories/>
 	<parties>
@@ -17,12 +17,12 @@
 	</parties>
 	<constraints>
 		<depends>
-				<system minVersion="5.3.0beta1" type="PHP"/>
+				<system minVersion="5.3.0-beta1" type="PHP"/>
 				<system minVersion="1.2.0" type="PHPExtension">zlib</system>
 				<system type="PHPExtension">SPL</system>
 				<system minVersion="1.2.0" type="PHPExtension">json</system>
 				<system type="PHPExtension">session</system>
-				<package>PHP6</package>
+				<package minVersion="1.0.0">PHP6</package>
 				<package>YAML</package>
 				<package>Fluid</package>
 		</depends>
