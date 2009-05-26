@@ -36,8 +36,6 @@ namespace F3\FLOW3\Security\Controller;
  * @version $Id: $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-use F3\FLOW3\MVC\Controller;
-
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
