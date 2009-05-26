@@ -42,7 +42,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	/**
 	 * @var string The default (english) error message.
 	 */
-	protected $message = 'Validation errors for property';
+	protected $message = 'Validation errors for property "%s"';
 
 	/**
 	 * @var string The error code
@@ -67,8 +67,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 */
 	public function __construct($propertyName) {
 		$this->propertyName = $propertyName;
-
-		$this->message .= ' ' . $propertyName;
+		$this->message = sprintf($this->message, $propertyName);
 	}
 
 	/**

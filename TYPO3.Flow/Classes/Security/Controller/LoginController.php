@@ -36,6 +36,8 @@ namespace F3\FLOW3\Security\Controller;
  * @version $Id: $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
+use F3\FLOW3\MVC\Controller;
+
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
@@ -100,14 +102,14 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 		if (!$userIsAuthenticated) {
 			$loginView = $this->objectManager->getObject('F3\FLOW3\Security\View\LoginView');
-			$loginView->setRequest($this->request);
+			$loginView->assign('baseURI', $this->request->getBaseURI());
 			$loginForm = $loginView->render();
 			$loginForm = str_replace('###PUBLIC_KEY_PASSWORD###', $publicKeyPassword->getModulus(), $loginForm);
 			$loginForm = str_replace('###PUBLIC_KEY_USERNAME###', $publicKeyUsername->getModulus(), $loginForm);
 			return $loginForm;
 		} else {
 			$authenticatedUserView = $this->objectManager->getObject('F3\FLOW3\Security\View\AuthenticatedUserView');
-			$authenticatedUserView->setRequest($this->request);
+			$authenticatedUserView->assign('baseURI', $this->request->getBaseURI());
 			return $authenticatedUserView->render();
 		}
 	}

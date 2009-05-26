@@ -39,11 +39,6 @@ namespace F3\FLOW3\Security\View;
 class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 
 	/**
-	 * @var \F3\FLOW3\MVC\RequestInterface
-	 */
-	protected $request;
-
-	/**
 	 * Renders the login view
 	 *
 	 * @return string The rendered view
@@ -51,7 +46,7 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @internal
 	 */
 	public function render() {
-		$baseURI = $this->request->getBaseURI();
+		$baseURI = $this->viewData['baseURI'];
 
 		return "
 		<?xml version=\"1.0\" encoding=\"UTF-8\" ?>

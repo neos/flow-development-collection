@@ -9,7 +9,7 @@
 
 --
   name: 'Login with action'
-  uriPattern: '/login/{@action}'
+  uriPattern: 'flow3/login/{@action}'
   defaults:
     @package:    'FLOW3'
     @subpackage: 'Security'
@@ -17,9 +17,55 @@
 
 --
   name: 'Login'
-  uriPattern: '/login'
+  uriPattern: 'flow3/login'
   defaults:
     @package:    'FLOW3'
     @subpackage: 'Security'
     @controller: 'Login'
     @action:     'index'
+    
+
+##
+# Default route to map the first three URL segments to package, controller and action 
+# including optional format-suffix
+
+--
+  name: 'default with action and format'
+  uriPattern: '{@package}/{@controller}/{@action}(.{@format})'
+  defaults:
+    @format:     'html'
+
+##
+# Default route to map the first two URL segments to package and controller
+# optional third URL segment is mapped to action
+
+--
+  name: 'default'
+  uriPattern: '{@package}/{@controller}(/{@action})'
+  defaults:
+    @action:     'index'
+    @format:     'html'
+
+##
+# Default route with just the package
+
+--
+  name: 'default with package'
+  uriPattern: '{@package}'
+  defaults:
+    @controller: 'Standard'
+    @action:     'index'
+    @format:     'html'
+
+##
+# Fallback route
+
+--
+  name: 'fallback'
+  uriPattern: ''
+  defaults:
+    @package:    'FLOW3'
+    @subpackage: 'MVC'
+    @controller: 'Standard'
+    @action:     'index'
+    @format:     'html'
