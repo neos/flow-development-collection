@@ -61,7 +61,7 @@ class Dispatcher {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param ManagerInterface $objectManager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
