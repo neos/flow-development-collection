@@ -14,83 +14,176 @@
     <para>PHP 5.3 is not released at the time this was written, so you won't
     find it in the mostly used operating systems. Here we will describe they
     way to install the most recent release candidate on three operating
-    systems: Debian Linux (lenny), MacOS and Windows (XP and Vista).</para>
+    systems: Debian Linux (lenny/etch), MacOS and Windows (XP and
+    Vista).</para>
 
     <section>
-      <title>Debian Linux (lenny)</title>
+      <title>Debian Linux</title>
 
-      <para>At the moment we are using the PHP 5.3 RC2 packages provided by
-      dotdeb.org until PHP 5.3 gets into the normal stable release of Debian.
-      You should not do this in your production environment, since you will
+      <para>At the moment there are no official packages for PHP5.3 available.
+      Therefore you will have to adjust your packages sources as follows. You
+      should not do this in your production environment, since you will
       overwrite your stable and tested PHP 5.2 packages!</para>
 
-      <para>First the apt sources need to be expanded to get the dotdeb.org
-      packages. To do that you have to edit your
-      <emphasis>/etc/apt/sources.list</emphasis> and add these lines:</para>
+      <bridgehead>Package Sources for debian lenny:</bridgehead>
 
-      <para><code>deb http://php53.dotdeb.org stable all</code></para>
+      <para>Currently you can use the PHP 5.3 RC2 packages provided by
+      dotdeb.org to install PHP 5.3 on Debian lenny. To do that you have to
+      edit your /etc/apt/sources.list and add these lines:</para>
 
-      <para><code>deb-src http://php53.dotdeb.org stable all</code></para>
+      <programlisting><code># PHP 5.3 packages by dotdeb
+deb http://php53.dotdeb.org stable all
+deb-src http://php53.dotdeb.org stable all</code></programlisting>
 
-      <para>After that you have to update aptitude's cache by</para>
+      <bridgehead>Package Sources for debian etch:</bridgehead>
 
-      <para><command>aptitude update</command></para>
+      <para>As dotdeb doesn't provide packages for debian etch, netlogix
+      backported the lenny packages to etch. Packages are available from
+      <filename>ftp://ftp.hosting.netlogix.de/php5.3/debian/</filename>.</para>
 
-      <para>It may happen that your Debian installation already has PHP 5
-      packages installed. You need to "upgrade" to get them updated with the
-      ones by dotdeb.org:</para>
+      <para>Open <filename>/etc/apt/sources.list</filename> in your favourite
+      editor and add the following lines to the file:</para>
 
-      <para><command>aptitude upgrade</command></para>
+      <para><programlisting># PHP 5.3 packages backported by netlogix
+deb ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php
+deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></para>
 
-      <para>Now you are ready to install the required apache and php packages
-      (don't mind if some of them are already installed, aptitude will handle
-      that)</para>
+      <bridgehead>Installing the packages:</bridgehead>
 
-      <para><command>aptitude install apache2.. libapache.. php5
-      php5-sqlite...</command></para>
+      <para>To install the packages you'll have to do the following:</para>
 
-      <para>Start apache to check if it works:</para>
+      <para><orderedlist>
+          <listitem>
+            <para>Update the package cache:</para>
 
-      <para><command>/etc/init.d/apache2 start</command></para>
+            <para><command>aptitude update</command></para>
+          </listitem>
 
-      <para>Now point your web browser to <emphasis>http://&lt;ip or hostname
-      of your server&gt;/</emphasis>. If everything is ok, you should see a
-      simple "It works!".</para>
+          <listitem>
+            <para>(Optional) If you already have PHP installed on your system,
+            issue a</para>
 
-      <para>To get PHP 5 working, its module needs to get activated:</para>
+            <para><command>aptitude dist-upgrade</command></para>
 
-      <para><command>a2enmod php5</command></para>
+            <para>to update the installed version to PHP 5.3.</para>
+          </listitem>
 
-      <para><command>/etc/init.d/apache2 restart</command></para>
+          <listitem>
+            <para>Install the necessary packages:</para>
 
-      <para>To check it, a simple phpinfo file needs to be created. Create an
-      empty file named <filename>phpinfo.php</filename> under
-      <filename>/var/www</filename> and add these lines to it:</para>
+            <para><command>aptitude install apache2 php5 libapache2-mod-php5
+            php5-sqlite</command></para>
 
-      <programlisting language="php">&lt;?php
-phpinfo();
-?&gt;</programlisting>
+            <para>This will install PHP 5.3, the Apache webserver and the
+            necessary dependencies onto your system. You will be asked a
+            question about installing untrusted packages onto your system. If
+            you want to continue, say "<emphasis>yes</emphasis>".</para>
+          </listitem>
 
-      <para>Notice the long PHP open tag. You have to use it, because the
-      short open tag is switched off by default in php.ini! Point your browser
-      to <emphasis>http://&lt;ip or hostname of your
-      server&gt;/phpinfo.php</emphasis> and you should see a typical phpinfo
-      output. Check if it shows the correct version PHP 5.3 RC2. After that
-      you should delete the file.</para>
+          <listitem>
+            <para>Optional: If you want to use MySQL as persistence backend
+            you'll also need to install the mysql-pdo driver:</para>
 
-      <para>At this point you have a working LAMP environment with PHP 5.3, so
-      FLOW3 can be installed.</para>
+            <para><command>aptitude install php5-mysql</command></para>
+          </listitem>
+        </orderedlist><bridgehead>Configuring and starting the apache
+      webserver:</bridgehead></para>
 
-      <note>
-        <para>For a comfortable and secure environment the DocRoot of apache's
-        default webserver instance (or the vhost you are using) should be
-        changed to the "Public" folder of FLOW3. If you use the default
-        webserver edit
-        <filename>/etc/apache2/sites-available/default</filename> and change
-        every use of <filename>/var/www</filename> to
-        <filename>/var/www/FLOW3/Public</filename>. Finally reload the
-        webserver:</para>
-      </note>
+      <para>These are some recommended configuration options:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Enable the required apache modules:</para>
+
+          <para><command>a2endmod php5</command></para>
+
+          <para><command>a2enmod rewrite</command></para>
+        </listitem>
+
+        <listitem>
+          <para>Adjust the vhost to allow the FLOW3 .htacces files to
+          configure your environment. The vhost configuration files reside in
+          /etc/apache2/sites-available/:</para>
+
+          <programlisting>&lt;Directory /var/www/&gt;
+    Options Indexes FollowSymLinks MultiViews
+    AllowOverride All      # Make sure to set this directive correctly
+    Order allow,deny
+    allow from all
+    # This directive allows us to have apache2's default start page
+    # in /apache2-default/, but still have / go to the right place
+    RedirectMatch ^/$ /apache2-default/
+&lt;/Directory&gt;</programlisting>
+
+          <para><note>
+              <para>For a comfortable and secure environment the document root
+              of apache's default webserver instance (or the vhost you are
+              using) should be changed to the "Public" folder of FLOW3. To do
+              that, make sure to change every use of
+              <filename>/var/www</filename> to
+              <filename>/var/www/<replaceable>&lt;your FLOW3
+              directory&gt;</replaceable>/Public</filename> in your vhost
+              configuration.</para>
+            </note></para>
+        </listitem>
+
+        <listitem>
+          <para>Start (or restart) apache by issuing one of these
+          commands:</para>
+
+          <para><command>/etc/init.d/apache2 start</command></para>
+
+          <para>or</para>
+
+          <para><command>/etc/init.d/apache2 restart</command></para>
+        </listitem>
+      </orderedlist>
+
+      <bridgehead>Testing the installation:</bridgehead>
+
+      <orderedlist>
+        <listitem>
+          <para>Check that your apache installation is working. Point a
+          browser to <filename>http://<replaceable>&lt;ip or
+          hostname&gt;</replaceable>/</filename>, e.g.</para>
+
+          <para><command>lynx http://localhost/</command></para>
+
+          <para>You should see a page displaying the words <literal>"It
+          works!"</literal>.</para>
+
+          <para><note>
+              <para>Make sure to remove the <code>RedirectMatch</code>
+              directive (see example above) from your vhost configuration,
+              after you have tested you apache installation. You will need to
+              reload the apache configuration after doing this by issuing
+              <command>/etc/init.d/apache2 reload</command>.</para>
+            </note></para>
+        </listitem>
+
+        <listitem>
+          <para>Test your PHP 5.3 installation by creating a phpinfo.php file
+          in your Apache document root, e.g. by issuing the following
+          command:</para>
+
+          <para><command>echo '&lt;?php phpinfo(); ?&gt;' &gt;
+          /var/www/phpinfo.php</command></para>
+
+          <para>Then fire up your browser and go to
+          <filename>http://<replaceable>&lt;ip or
+          hostname&gt;</replaceable>/phpinfo.php</filename>. You should see a
+          phpinfo page with the correct version number (PHP 5.3RC2) at the
+          top.</para>
+
+          <note>
+            <para>Notice the long PHP open tag. You have to use it, because
+            the short open tag is switched off by default in php.ini!</para>
+          </note>
+        </listitem>
+      </orderedlist>
+
+      <para>Congratulations, you now have a working PHP 5.3 installation on
+      your debian system, so FLOW3 can be installed.</para>
     </section>
 
     <section>
