@@ -207,6 +207,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
+		foreach (get_class_methods($this) as $existingMethodName) {
+			if (strtolower($existingMethodName) === strtolower($actionMethodName)) {
+				$actionMethodName = $existingMethodName;
+				break;
+			}
+		}
 		if (!method_exists($this, $actionMethodName)) throw new \F3\FLOW3\MVC\Exception\NoSuchAction('An action "' . $actionMethodName . '" does not exist in controller "' . get_class($this) . '".', 1186669086);
 		return $actionMethodName;
 	}
