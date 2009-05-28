@@ -51,11 +51,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $validatorResolver;
 
 	/**
-	 * @var F3\FLOW3\MVC\Web\Routing\URIBuilder
-	 */
-	protected $URIBuilder;
-
-	/**
 	 * By default a Fluid\TemplateView is provided, if a template is available,
 	 * then a view with the same name as the current action will be looked up.
 	 * If none is available the $defaultViewObjectName will be used and finally
