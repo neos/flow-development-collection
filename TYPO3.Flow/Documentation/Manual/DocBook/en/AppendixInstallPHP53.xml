@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appendix version="5.0" xmlns="http://docbook.org/ns/docbook"
+<appendix version="5.0" xml:id="appendix.install.php53"
+          xmlns="http://docbook.org/ns/docbook"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:xi="http://www.w3.org/2001/XInclude"
           xmlns:svg="http://www.w3.org/2000/svg"
@@ -11,101 +12,100 @@
   <section>
     <title>Introduction</title>
 
-    <para>PHP 5.3 is not released at the time this was written, so you won't
-    find it in the mostly used operating systems. Here we will describe they
-    way to install the most recent release candidate on three operating
-    systems: Debian Linux (lenny/etch), MacOS and Windows (XP and
+    <para>PHP 5.3 is not released at the time this is written, so you won't
+    find it in precompiled for most operating systems. Here we will describe
+    they way to install the most recent release candidate on three operating
+    systems: Debian Linux (Lenny/Etch), MacOS and Windows (XP and
     Vista).</para>
+  </section>
 
-    <section>
-      <title>Debian Linux</title>
+  <section>
+    <title>Installation on Debian Linux</title>
 
-      <para>At the moment there are no official packages for PHP5.3 available.
-      Therefore you will have to adjust your packages sources as follows. You
-      should not do this in your production environment, since you will
-      overwrite your stable and tested PHP 5.2 packages!</para>
+    <para>At the moment there are no official packages for PHP5.3 available.
+    Therefore you will have to adjust your packages sources as follows. You
+    should not do this in your production environment, since you will
+    overwrite your stable and tested PHP 5.2 packages!</para>
 
-      <bridgehead>Package Sources for debian lenny:</bridgehead>
+    <bridgehead>Package Sources for Debian Lenny:</bridgehead>
 
-      <para>Currently you can use the PHP 5.3 RC2 packages provided by
-      dotdeb.org to install PHP 5.3 on Debian lenny. To do that you have to
-      edit your /etc/apt/sources.list and add these lines:</para>
+    <para>Currently you can use the PHP 5.3 RC2 packages provided by
+    dotdeb.org to install PHP 5.3 on Debian Lenny. To do that you have to edit
+    your /etc/apt/sources.list and add these lines:</para>
 
-      <programlisting><code># PHP 5.3 packages by dotdeb
+    <programlisting><code># PHP 5.3 packages by dotdeb
 deb http://php53.dotdeb.org stable all
 deb-src http://php53.dotdeb.org stable all</code></programlisting>
 
-      <bridgehead>Package Sources for debian etch:</bridgehead>
+    <bridgehead>Package Sources for Debian Etch:</bridgehead>
 
-      <para>As dotdeb doesn't provide packages for debian etch, netlogix
-      backported the lenny packages to etch. Packages are available from
-      <filename>ftp://ftp.hosting.netlogix.de/php5.3/debian/</filename>.</para>
+    <para>As dotdeb doesn't provide packages for Debian Etch, netlogix
+    backported the Lenny packages to Etch. Packages are available from
+    <uri>ftp://ftp.hosting.netlogix.de/php5.3/debian/</uri>.</para>
 
-      <para>Open <filename>/etc/apt/sources.list</filename> in your favourite
-      editor and add the following lines to the file:</para>
+    <para>Open <filename>/etc/apt/sources.list</filename> in your favourite
+    editor and add the following lines to the file:</para>
 
-      <para><programlisting># PHP 5.3 packages backported by netlogix
+    <para><programlisting># PHP 5.3 packages backported by netlogix
 deb ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php
 deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></para>
 
-      <bridgehead>Installing the packages:</bridgehead>
+    <bridgehead>Installing the packages:</bridgehead>
 
-      <para>To install the packages you'll have to do the following:</para>
+    <para>To install the packages you'll have to do the following:<procedure>
+        <step>
+          <para>Update the package cache:</para>
 
-      <para><orderedlist>
-          <listitem>
-            <para>Update the package cache:</para>
+          <para><command>aptitude update</command></para>
+        </step>
 
-            <para><command>aptitude update</command></para>
-          </listitem>
+        <step>
+          <para>If you already have PHP installed on your system, use the
+          following command to update the installed version to PHP 5.3:</para>
 
-          <listitem>
-            <para>(Optional) If you already have PHP installed on your system,
-            issue a</para>
+          <para><command>aptitude dist-upgrade</command></para>
 
-            <para><command>aptitude dist-upgrade</command></para>
+          <para>If you do not have PHP installed already, use this to install
+          the necessary packages:</para>
 
-            <para>to update the installed version to PHP 5.3.</para>
-          </listitem>
+          <para><command>aptitude install apache2 php5 libapache2-mod-php5
+          php5-sqlite</command></para>
 
-          <listitem>
-            <para>Install the necessary packages:</para>
+          <para>This will install PHP 5.3, the Apache webserver and the
+          necessary dependencies onto your system. You will be asked a
+          question about installing untrusted packages onto your system. If
+          you want to continue, say "<emphasis>yes</emphasis>".</para>
+        </step>
 
-            <para><command>aptitude install apache2 php5 libapache2-mod-php5
-            php5-sqlite</command></para>
+        <step>
+          <para>Optional: If you want to use MySQL as persistence backend
+          you'll also need to install the mysql-pdo driver:</para>
 
-            <para>This will install PHP 5.3, the Apache webserver and the
-            necessary dependencies onto your system. You will be asked a
-            question about installing untrusted packages onto your system. If
-            you want to continue, say "<emphasis>yes</emphasis>".</para>
-          </listitem>
+          <para><command>aptitude install php5-mysql</command></para>
+        </step>
+      </procedure></para>
 
-          <listitem>
-            <para>Optional: If you want to use MySQL as persistence backend
-            you'll also need to install the mysql-pdo driver:</para>
+    <para><bridgehead>Configuring and starting the apache
+    webserver:</bridgehead></para>
 
-            <para><command>aptitude install php5-mysql</command></para>
-          </listitem>
-        </orderedlist><bridgehead>Configuring and starting the apache
-      webserver:</bridgehead></para>
+    <para>These are some recommended configuration options:</para>
 
-      <para>These are some recommended configuration options:</para>
+    <procedure>
+      <step>
+        <para>Enable the required apache modules:</para>
 
-      <orderedlist>
-        <listitem>
-          <para>Enable the required apache modules:</para>
+        <para><command>a2enmod php5</command></para>
 
-          <para><command>a2endmod php5</command></para>
+        <para><command>a2enmod rewrite</command></para>
+      </step>
 
-          <para><command>a2enmod rewrite</command></para>
-        </listitem>
+      <step>
+        <para>Adjust the vhost to allow the FLOW3
+        <filename>.htaccess</filename> files to configure your environment.
+        The vhost configuration files reside in
+        <filename>/etc/apache2/sites-available/</filename>:</para>
 
-        <listitem>
-          <para>Adjust the vhost to allow the FLOW3 .htacces files to
-          configure your environment. The vhost configuration files reside in
-          /etc/apache2/sites-available/:</para>
-
-          <programlisting>&lt;Directory /var/www/&gt;
+        <programlisting>&lt;Directory /var/www/&gt;
     Options Indexes FollowSymLinks MultiViews
     AllowOverride All      # Make sure to set this directive correctly
     Order allow,deny
@@ -115,346 +115,417 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
     RedirectMatch ^/$ /apache2-default/
 &lt;/Directory&gt;</programlisting>
 
-          <para><note>
-              <para>For a comfortable and secure environment the document root
-              of apache's default webserver instance (or the vhost you are
-              using) should be changed to the "Public" folder of FLOW3. To do
-              that, make sure to change every use of
-              <filename>/var/www</filename> to
-              <filename>/var/www/<replaceable>&lt;your FLOW3
-              directory&gt;</replaceable>/Public</filename> in your vhost
-              configuration.</para>
-            </note></para>
-        </listitem>
+        <para><note>
+            <para>For a comfortable and secure environment the document root
+            of apache's default webserver instance (or the vhost you are
+            using) should be changed to the "Public" folder of FLOW3. To do
+            that, make sure to change every use of
+            <filename>/var/www</filename> to
+            <filename>/var/www/<replaceable>&lt;your FLOW3
+            directory&gt;</replaceable>/Public</filename> in your vhost
+            configuration.</para>
+          </note></para>
+      </step>
 
-        <listitem>
-          <para>Start (or restart) apache by issuing one of these
-          commands:</para>
+      <step>
+        <para>Start (or restart) apache by issuing one of these
+        commands:</para>
 
-          <para><command>/etc/init.d/apache2 start</command></para>
+        <para><command>/etc/init.d/apache2 start</command></para>
 
-          <para>or</para>
+        <para>or</para>
 
-          <para><command>/etc/init.d/apache2 restart</command></para>
-        </listitem>
-      </orderedlist>
+        <para><command>/etc/init.d/apache2 restart</command></para>
+      </step>
+    </procedure>
 
-      <bridgehead>Testing the installation:</bridgehead>
+    <bridgehead>Testing the installation:</bridgehead>
 
-      <orderedlist>
-        <listitem>
-          <para>Check that your apache installation is working. Point a
-          browser to <filename>http://<replaceable>&lt;ip or
-          hostname&gt;</replaceable>/</filename>, e.g.</para>
+    <procedure>
+      <step>
+        <para>Check that your apache installation is working. Point a browser
+        to <filename>http://<replaceable>&lt;ip or
+        hostname&gt;</replaceable>/</filename>, e.g.</para>
 
-          <para><command>lynx http://localhost/</command></para>
+        <para><command>lynx http://localhost/</command></para>
 
-          <para>You should see a page displaying the words <literal>"It
-          works!"</literal>.</para>
+        <para>You should see a page displaying the words <literal>"It
+        works!"</literal>.</para>
 
-          <para><note>
-              <para>Make sure to remove the <code>RedirectMatch</code>
-              directive (see example above) from your vhost configuration,
-              after you have tested you apache installation. You will need to
-              reload the apache configuration after doing this by issuing
-              <command>/etc/init.d/apache2 reload</command>.</para>
-            </note></para>
-        </listitem>
+        <para><note>
+            <para>Make sure to remove the <code>RedirectMatch</code> directive
+            (see example above) from your vhost configuration, after you have
+            tested you apache installation. You will need to reload the apache
+            configuration after doing this by issuing
+            <command>/etc/init.d/apache2 reload</command>.</para>
+          </note></para>
+      </step>
 
-        <listitem>
-          <para>Test your PHP 5.3 installation by creating a phpinfo.php file
-          in your Apache document root, e.g. by issuing the following
-          command:</para>
+      <step>
+        <para>Test your PHP 5.3 installation by creating a phpinfo.php file in
+        your Apache document root, e.g. by issuing the following
+        command:</para>
 
-          <para><command>echo '&lt;?php phpinfo(); ?&gt;' &gt;
-          /var/www/phpinfo.php</command></para>
+        <para><command>echo '&lt;?php phpinfo(); ?&gt;' &gt;
+        /var/www/phpinfo.php</command></para>
 
-          <para>Then fire up your browser and go to
-          <filename>http://<replaceable>&lt;ip or
-          hostname&gt;</replaceable>/phpinfo.php</filename>. You should see a
-          phpinfo page with the correct version number (PHP 5.3RC2) at the
-          top.</para>
+        <para>Then fire up your browser and go to
+        <filename>http://<replaceable>&lt;ip or
+        hostname&gt;</replaceable>/phpinfo.php</filename>. You should see a
+        phpinfo page with the correct version number (PHP 5.3RC2) at the
+        top.</para>
 
-          <note>
-            <para>Notice the long PHP open tag. You have to use it, because
-            the short open tag is switched off by default in php.ini!</para>
-          </note>
-        </listitem>
-      </orderedlist>
+        <note>
+          <para>Notice the long PHP open tag. You have to use it, because the
+          short open tag is switched off by default in php.ini!</para>
+        </note>
+      </step>
+    </procedure>
 
-      <para>Congratulations, you now have a working PHP 5.3 installation on
-      your debian system, so FLOW3 can be installed.</para>
+    <para>Congratulations, you now have a working PHP 5.3 installation on your
+    debian system, so FLOW3 can be installed.</para>
+  </section>
+
+  <section>
+    <title>Installation on MacOS</title>
+
+    <para>This part explains how to install PHP 5.3 using MacPorts. For this
+    you need to have Xcode installed, you can download and install it from
+    <uri>http://developer.apple.com/mac/</uri> (you need a free ADC login for
+    that). After you have Xcode installed, install MacPorts as described on
+    <uri>http://www.macports.org/install.php#pkg</uri>. You might want to
+    install Porticus from <uri>http://porticus.alittledrop.com/</uri> which
+    provides a nice user interface for installing and removing packages with
+    MacPorts. For the next steps we'll assume you use a terminal session,
+    though.</para>
+
+    <procedure>
+      <step>
+        <para>First of all install PHP 5.3 itself. Along with the port name
+        some variants are specified, those enable additional
+        functionality:</para>
+
+        <screenco>
+          <areaspec>
+            <area coords="1" xml:id="mp.selfupdate"/>
+
+            <area coords="2" xml:id="mp.install"/>
+          </areaspec>
+
+          <screen><command>sudo port -d selfupdate</command>
+<command>sudo port install php5-devel +apache2 +sqlite +pear +mysql5 +postgresql83</command></screen>
+
+          <calloutlist>
+            <callout arearefs="mp.selfupdate">
+              <para>This tells MacPorts to update itself and the information
+              about available ports.</para>
+            </callout>
+
+            <callout arearefs="mp.install">
+              <para>Install PHP 5.3 and PEAR including support for Apache 2,
+              MySQL 5, PostgreSQL 8.3, SQLite.</para>
+            </callout>
+          </calloutlist>
+        </screenco>
+
+        <para>You can leave out the MySQL and PostgreSQL variants for the
+        start, they are not strictly needed. The whole install can take a long
+        time, as everything will be downloaded and compiled on your machine.
+        An install from scratch can easily take more than one hour.</para>
+      </step>
+
+      <step>
+        <para>Now activate the PHP in Apache.<screen><command>cd /opt/local/apache2/modules</command>
+<command>sudo /opt/local/apache2/bin/apxs -a -e -n "php5" libphp5.so</command></screen></para>
+      </step>
+
+      <step>
+        <para>Now you need to assign the <literal>php</literal> file extension
+        with the PHP interpreter. For this edit
+        <filename>/opt/local/apache2/conf/httpd.conf</filename> and add
+        <literal>AddType application/x-httpd-php .php</literal> inside the
+        <literal>&lt;IfModule mime_module&gt;</literal> block.</para>
+      </step>
+
+      <step>
+        <para>Create a little test script with <command>echo '&lt;?php
+        phpinfo(); ?&gt;' &gt;
+        /opt/local/apache2/htdocs/phpinfo.php</command></para>
+      </step>
+
+      <step>
+        <para>Now you can start Apache with <command>sudo
+        /opt/local/etc/LaunchDaemons/org.macports.apache2/apache2.wrapper
+        start</command></para>
+      </step>
+
+      <step>
+        <para>Call <uri>http://localhost/phpinfo.php</uri> and check if you
+        have PHP 5.3 up and running.</para>
+      </step>
+    </procedure>
+  </section>
+
+  <section>
+    <title>Installation on Windows (based on xampp)</title>
+
+    <section>
+      <title>Install xampp</title>
+
+      <para>These instructions are based on xampp 1.7.1. They will probably
+      work with earlier versions as well. If you have installed xampp already,
+      just go on with the next section. If you have another
+      PHP/Apache-Environment, reading the next section will probably also help
+      you a lot to get PHP 5.3 running.</para>
+
+      <para><caution>
+          <para>These instructions are not meant for live-systems. For those
+          you'll be probably the best administrator yourself.</para>
+        </caution>TODO (need a clean PC first...)</para>
     </section>
 
     <section>
-      <title>MacOS</title>
+      <title>Install PHP 5.3 on Port 81</title>
 
-      <para>TODO</para>
+      <section>
+        <title>Download and unzip PHP 5.3</title>
+
+        <para>Download the windows binaries. You need the file
+        <filename>php-5.3-win32-ts-VC6-x86-latest.zip</filename> (PHP 5.3 -
+        Windows x86 VC6 (thread safe))) from the
+        "windows-binaries-download-page":
+        http://windows.php.net/snapshots/#php-5.3-win32-ts-VC6-x86.</para>
+
+        <para>Add the folder <filename>C:\xampp\php\php5.3.0rc2</filename>.
+        Extract the content of the ZIP file into this new folder.</para>
+      </section>
+
+      <section>
+        <title>Apache Configuration</title>
+
+        <para>Later you will start another apache process that should have its
+        own configuration and its own log files.</para>
+
+        <para>So, what you do first, is</para>
+
+        <para><itemizedlist>
+            <listitem>
+              <para>Copy the folder <filename>C:\xampp\apache\conf\</filename>
+              to <filename>C:\xampp\apache\conf-php5.3.0rc2\</filename></para>
+            </listitem>
+
+            <listitem>
+              <para>Create a new folder
+              <filename>C:\xampp\apche\logs-php5.3.0rc2\</filename></para>
+            </listitem>
+          </itemizedlist>Now change the files the new folder
+        <filename>conf-php5.3.0rc2\</filename>:</para>
+
+        <section>
+          <title>httpd.conf</title>
+
+          <itemizedlist>
+            <listitem>
+              <para>Change the port from 80 to 81: <literal>Listen
+              81</literal></para>
+            </listitem>
+
+            <listitem>
+              <para>Adjust the includes of the configuration files: Search for
+              <literal>conf/</literal> and replace it with
+              <literal>conf-php5.3.0rc2/</literal></para>
+            </listitem>
+
+            <listitem>
+              <para>Adjust the log file directory: Search for
+              <literal>logs/</literal> and replace it with
+              <literal>logs-php5.3.0rc2/</literal></para>
+            </listitem>
+
+            <listitem>
+              <para>Add the configuration for using another PidFile (otherwise
+              you might get some more entries in the error-log) by adding the
+              following line. A good place is below ServerRoot:</para>
+
+              <para><programlisting>PidFile logs-php5.3.0rc2/httpd.pid</programlisting></para>
+            </listitem>
+
+            <listitem>
+              <para>Activate the module mod_rewrite by uncommenting the
+              line:<programlisting>LoadModule rewrite_module modules/mod_rewrite.so</programlisting></para>
+            </listitem>
+          </itemizedlist>
+        </section>
+
+        <section>
+          <title>extra\httpd-ssl.comf</title>
+
+          <para>Change the SSL-Port: <literal>Listen 4343</literal></para>
+        </section>
+
+        <section>
+          <title>extra\httpd-xampp.conf</title>
+
+          <para>Here you tell the apache which .dll-files it should use as
+          PHP-module.</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>Revome or uncomment this line:</para>
+
+              <para><code>LoadModule php5_module
+              "C:/xampp/apache/bin/php5apache2.dll"</code></para>
+            </listitem>
+
+            <listitem>
+              <para>Add the following lines:<programlisting>#php5.3.0rc2 settings:
+#Preload the PHP interpreter dll so that apache can find it, even if it's not in the path
+LoadFile "C:/xampp/php/php5.3.0rc2/php5ts.dll"
+
+#Load the sapi module for Apache
+LoadModule php5_module "C:/xampp/php/php5.3.0rc2/php5apache2_2.dll"
+
+#Specify the directory that the php.ini is stored in
+PHPIniDir "C:/xampp/php/php5.3.0rc2"</programlisting></para>
+            </listitem>
+          </itemizedlist>
+        </section>
+
+        <section>
+          <title>extra\httpd-vhosts.conf</title>
+
+          <para>Configure the VirtualHosts. Make them reference to the
+          <filename>Public</filename> folder of your FLOW3
+          installation.</para>
+
+          <programlisting>NameVirtualHost *:81
+
+&lt;VirtualHost *:81&gt;
+    DocumentRoot "C:/xampp/htdocs/" 
+    ServerName localhost
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:81&gt;
+    DocumentRoot "C:/xampp/htdocs/blog/Public/" 
+    ServerName blog.flow3.local
+&lt;/VirtualHost&gt;</programlisting>
+        </section>
+      </section>
+
+      <section>
+        <title>PHP Configuration</title>
+
+        <para>Copy the file
+        <filename>C:\xampp\php\php5.3.0rc2\php.ini-dist</filename> in the same
+        folder and rename it to <filename>php.ini</filename>. There change the
+        following things:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>Activate some extensions FLOW3 needs:</para>
+
+            <programlisting>extension=php_mbstring.dll
+extension=php_pdo_sqlite.dll</programlisting>
+          </listitem>
+
+          <listitem>
+            <para>Set the folder, where the extensions are stored:</para>
+
+            <programlisting>extension_dir = 'C:\xampp\php\php5.3.0rc2\ext\'</programlisting>
+
+            <caution>
+              <para>You need to use single quotes here as PHP 5.3 doesn't like
+              double quotes (though the examples still use them...)</para>
+            </caution>
+          </listitem>
+
+          <listitem>
+            <para>FLOW3 will ask you to deactivate magic quotes, so just do
+            it:</para>
+
+            <programlisting>magic_quotes_gpc = Off</programlisting>
+          </listitem>
+        </itemizedlist>
+      </section>
     </section>
 
     <section>
-      <title>Windows (based on xampp)</title>
+      <title>Start the (second) Apache</title>
 
       <section>
-        <title>Install xampp</title>
+        <title>Just start it using the prompt</title>
 
-        <para>These instructions are based on xampp 1.7.1. They will probably
-        work with earlier versions as well. If you have installed xampp
-        already, just go on with the next section. If you have another
-        PHP/Apache-Environment, reading the next section will probably also
-        help you a lot to get PHP 5.3 running.</para>
+        <para>Open a DOS prompt and switch to the folder
+        <filename>C:\xampp\apache\bin\</filename>.</para>
 
-        <para><caution>
-            <para>These instructions are not meant for live-systems. For those
-            you'll be probably the best administrator yourself.</para>
-          </caution>TODO (need a clean PC first...)</para>
+        <para>Start the apache telling him the other configuration
+        file:</para>
+
+        <programlisting>apache -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
+
+        <para>Don't close the prompt.</para>
+
+        <para>You can stop the apache with the key combination <keycombo
+            action="simul">
+            <keycap>Ctrl</keycap>
+
+            <keycap>v</keycap>
+          </keycombo> in the prompt.</para>
       </section>
 
       <section>
-        <title>Install PHP 5.3 on Port 81</title>
+        <title>Install as a service</title>
 
-        <section>
-          <title>Download and unzip PHP 5.3</title>
+        <para>Open a DOS prompt and switch to the folder
+        C:\xampp\apache\bin\.</para>
 
-          <para>Download the windows binaries. You need the file
-          php-5.3-win32-ts-VC6-x86-latest.zip (PHP 5.3 - Windows x86 VC6
-          (thread safe))) from the "windows-binaries-download-page":
-          http://windows.php.net/snapshots/#php-5.3-win32-ts-VC6-x86.</para>
+        <para>Install the service:</para>
 
-          <para>Add the folder C:\xampp\php\php5.3.0rc2. Extract the content
-          of the zip-file into this new folder.</para>
-        </section>
+        <programlisting>apache -k install -n Apache2.2-php5.3.0rc2 -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
 
-        <section>
-          <title>Apache Configuration</title>
+        <para>Now you can start the service using the service-administration
+        in the Windows control panel or in the prompt:</para>
 
-          <para>Later you will start another apache process that should have
-          its own configuration and its own log files.</para>
-
-          <para>So, what you do first, is</para>
-
-          <para><itemizedlist>
-              <listitem>
-                <para>Copy the folder C:\xampp\apache\conf\ to
-                C:\xampp\apache\conf-php5.3.0rc2\.</para>
-              </listitem>
-
-              <listitem>
-                <para>Create a new folder
-                C:\xampp\apche\logs-php5.3.0rc2\.</para>
-              </listitem>
-            </itemizedlist>Now change the files the new folder
-          conf-php5.3.0rc2\:</para>
-
-          <section>
-            <title>httpd.conf</title>
-
-            <itemizedlist>
-              <listitem>
-                <para>Change the port from 80 to 81: Listen 81</para>
-              </listitem>
-
-              <listitem>
-                <para>Adjust the includes of the configuration files: Search
-                for conf/ and replace it with conf-php5.3.0rc2/.</para>
-              </listitem>
-
-              <listitem>
-                <para>Adjust the log file directory: Search for logs/ and
-                replace it with logs-php5.3.0rc2/.</para>
-              </listitem>
-
-              <listitem>
-                <para>Add the configuration for using another PidFile
-                (otherwise you might get some more entries in the error-log)
-                by adding the following line. A good place is below
-                ServerRoot:</para>
-
-                <para><programlisting>PidFile logs-php5.3.0rc2/httpd.pid</programlisting></para>
-              </listitem>
-
-              <listitem>
-                <para>Activate the module mod_rewrite by uncommenting the
-                line:<programlisting>LoadModule rewrite_module modules/mod_rewrite.so</programlisting></para>
-              </listitem>
-            </itemizedlist>
-          </section>
-
-          <section>
-            <title>extra\httpd-ssl.comf</title>
-
-            <para>Change the SSL-Port: Listen 4343</para>
-          </section>
-
-          <section>
-            <title>extra\httpd-xampp.conf</title>
-
-            <para>Here you tell the apache which .dll-files it should use as
-            PHP-module.</para>
-
-            <itemizedlist>
-              <listitem>
-                <para>Revome or uncomment this line:</para>
-
-                <para><code>LoadModule php5_module
-                "C:/xampp/apache/bin/php5apache2.dll"</code></para>
-              </listitem>
-
-              <listitem>
-                <para>Add the following lines:<programlisting>#php5.3.0rc2 settings:
-		#Preload the PHP interpreter dll so that apache can find it, even if it's not in the path
-		LoadFile "C:/xampp/php/php5.3.0rc2/php5ts.dll"
-		
-		#Load the sapi module for Apache
-		LoadModule php5_module "C:/xampp/php/php5.3.0rc2/php5apache2_2.dll"
-		
-		#Specify the directory that the php.ini is stored in
-		PHPIniDir "C:/xampp/php/php5.3.0rc2"</programlisting></para>
-              </listitem>
-            </itemizedlist>
-          </section>
-
-          <section>
-            <title>extra\httpd-vhosts.conf</title>
-
-            <para>Configure the VirtualHosts. Make them reference to the
-            Public-folder of your FLOW3 installation.</para>
-
-            <programlisting>NameVirtualHost *:81
-		
-		&lt;VirtualHost *:81&gt;
-		    DocumentRoot "C:/xampp/htdocs/" 
-		    ServerName localhost
-		&lt;/VirtualHost&gt;
-		
-		&lt;VirtualHost *:81&gt;
-		    DocumentRoot "C:/xampp/htdocs/blog/Public/" 
-		    ServerName blog.flow3.local
-		&lt;/VirtualHost&gt;</programlisting>
-          </section>
-        </section>
-
-        <section>
-          <title>PHP Configuration</title>
-
-          <para>Copy the file C:\xampp\php\php5.3.0rc2\php.ini-dist in the
-          same folder and rename it to php.ini. There change the following
-          things:</para>
-
-          <itemizedlist>
-            <listitem>
-              <para>Activate some extensions FLOW3 needs:</para>
-
-              <programlisting>extension=php_mbstring.dll
-		extension=php_pdo_sqlite.dll</programlisting>
-            </listitem>
-
-            <listitem>
-              <para>Set the folder, where the extensions are stored:</para>
-
-              <programlisting>extension_dir = 'C:\xampp\php\php5.3.0rc2\ext\'</programlisting>
-
-              <caution>
-                <para>You need to use single quotes here as PHP 5.3 doesn't
-                like double quotes (though the examples still use
-                them...)</para>
-              </caution>
-            </listitem>
-
-            <listitem>
-              <para>FLOW3 will ask you to deactivate magic quotes, so just do
-              it:</para>
-
-              <programlisting>magic_quotes_gpc = Off</programlisting>
-            </listitem>
-          </itemizedlist>
-        </section>
+        <programlisting>net start Apache2.2-php5.3.0rc2</programlisting>
       </section>
 
       <section>
-        <title>Start the (second) Apache</title>
+        <title>Verify the Success</title>
 
-        <section>
-          <title>Just start it using the prompt</title>
+        <para>Call phpinfo() for both ports:</para>
 
-          <para>Open a DOS prompt and switch to the folder
-          C:\xampp\apache\bin\.</para>
+        <itemizedlist>
+          <listitem>
+            <para><uri>http://localhost:81/xampp/phpinfo.php</uri></para>
+          </listitem>
 
-          <para>Start the apache telling him the other configuration
-          file:</para>
+          <listitem>
+            <para><uri>http://localhost/xampp/phpinfo.php</uri></para>
+          </listitem>
+        </itemizedlist>
 
-          <programlisting>apache -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
-
-          <para>Don't close the prompt.</para>
-
-          <para>You can stop the apache with the key combination CTRL+v in the
-          prompt.</para>
-        </section>
-
-        <section>
-          <title>Install as a service</title>
-
-          <para>Open a DOS prompt and switch to the folder
-          C:\xampp\apache\bin\.</para>
-
-          <para>Install the service:</para>
-
-          <programlisting>apache -k install -n Apache2.2-php5.3.0rc2 -f .\conf-php5.3.0rc2\httpd.conf</programlisting>
-
-          <para>Now you can start the service using the service-administration
-          in the Windows control panel or in the prompt:</para>
-
-          <programlisting>net start Apache2.2-php5.3.0rc2</programlisting>
-        </section>
-
-        <section>
-          <title>Verify the Success</title>
-
-          <para>Call phpinfo() for both ports:</para>
-
-          <itemizedlist>
-            <listitem>
-              <para>http://localhost:81/xampp/phpinfo.php</para>
-            </listitem>
-
-            <listitem>
-              <para>http://localhost/xampp/phpinfo.php</para>
-            </listitem>
-          </itemizedlist>
-
-          <para>Check, if the PHP-version is correct and the right php.ini is
-          used.</para>
-        </section>
-
-        <section>
-          <title>Solve Problems</title>
-
-          <para>If you have problems starting the apache, there are two places
-          that mostly help solving them:</para>
-
-          <itemizedlist>
-            <listitem>
-              <para>Check the error-log of the apache. (Did you choose the
-              right log-file (you should see the start of the apache in
-              their)?)</para>
-            </listitem>
-
-            <listitem>
-              <para>Have a look at the events in the Windows control panel.
-              Usually you find more detailled information here than in the
-              error-log if the apache crashed.</para>
-            </listitem>
-          </itemizedlist>
-        </section>
+        <para>Check, if the PHP version is correct and the right
+        <filename>php.ini</filename> is used.</para>
       </section>
 
       <section>
-        <title>Hints for Vista-Users</title>
+        <title>Solve Problems</title>
 
-        <para>do we really need that?? :-))</para>
+        <para>If you have problems starting the apache, there are two places
+        that mostly help solving them:</para>
 
-        <para>Mmmmh... maybe I know someone who can setup a virtual
-        machine.....</para>
+        <itemizedlist>
+          <listitem>
+            <para>Check the error log of the apache. (Did you choose the right
+            log file? you should see the start of the apache in there.)</para>
+          </listitem>
+
+          <listitem>
+            <para>Have a look at the events in the Windows control panel.
+            Usually you find more detailled information here than in the error
+            log if the apache crashed.</para>
+          </listitem>
+        </itemizedlist>
       </section>
     </section>
   </section>

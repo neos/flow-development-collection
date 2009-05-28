@@ -80,4 +80,6 @@
 
   <xi:include href="AppendixCodingGuidelines.xml" />
 
+  <xi:include href="AppendixInstallPHP53.xml" />
+
 </book>

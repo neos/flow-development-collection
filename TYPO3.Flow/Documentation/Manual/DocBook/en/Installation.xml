@@ -45,6 +45,9 @@
 
     <para>(Other webservers (f.e. IIS) could work, but have not been tested
     until now)</para>
+
+    <para>We have written <link linkend="appendix.install.php53">installation
+    instructions for PHP 5.3</link> that might be helpful for you.</para>
   </section>
 
   <section>
@@ -55,8 +58,8 @@
 
     <procedure>
       <step>
-        <para>TODO: Download the FLOW3 distribution from <link
-        linkend="???">http://flow3.typo3.org/download/</link> </para>
+        <para>TODO: Download the FLOW3 distribution from
+        <uri>http://flow3.typo3.org/download/</uri></para>
       </step>
 
       <step>
@@ -77,7 +80,7 @@
         folder of the FLOW3 distribution, where you can find the script
         <filename>setfilepermissions.sh</filename>. Execute this script
         providing the webserver user and group as parameters. On Debian Linux
-        (lenny) the commando would look like this:</para>
+        (Lenny) the commando would look like this:</para>
 
         <para><command>./setfilepermissions.sh www-data
         www-data</command></para>
@@ -85,36 +88,42 @@
     </procedure>
 
     <para>Now you can check if FLOW3 works by pointing your browser to
-    <emphasis>http://<replaceable>localhost/</replaceable></emphasis>
-    (localhost will be used as servername in the following instructions,
-    change it if you are working on a remote system). If everything works you
-    should see the default view of the MVC framework. It may take some time on
-    the first call, because FLOW3 needs to initialize itself and to create
-    caching data.</para>
+    <uri>http://<replaceable>localhost/</replaceable></uri>
+    (<replaceable>localhost</replaceable> will be used as servername in the
+    following instructions, change it if you are working on a remote system).
+    If everything works you should see the default view of the MVC framework.
+    It may take some time on the first call, because FLOW3 needs to initialize
+    itself and to create caching data.</para>
 
     <para><note>
         <para>The persistence framework / content repository stores its data
-        in a already set up sqlite database by default. It can be changed to a
-        real database like for example MySQL. It requires some configuration
-        which will be covered here later.</para>
-      </note>TODO: testing plus typo3cr-uri</para>
+        in an already set up sqlite database by default. It can be changed to
+        a real database like for example MySQL. This requires some
+        configuration which will be covered here later.</para>
+      </note></para>
 
-    <para>TODO: Tip: Configuration of the cache to C:\t\1\ on windows because
-    of the long filenames</para>
+    <tip>
+      <para>testing plus typo3cr-uri</para>
+    </tip>
 
-    <para>TODO: Tip: If you see the XAMPP-default-page after calling the uri,
-    you might forgot to add the port-number to the uri.</para>
+    <tip>
+      <para>Change the configuration of the cache to C:\t\1\ on Windows to
+      avoid errors because of the long filenames</para>
+    </tip>
+
+    <tip>
+      <para>If you see the XAMPP default page after calling the FLOW3 URI, you
+      might have forgotten to add the port number.</para>
+    </tip>
   </section>
 
   <section>
     <title>Setup Eclipse PDT for PHP 5.3</title>
 
     <para>PHP 5.3 introduced the support of namespaces. This is a completly
-    new syntax in PHP which is not yet supported by (most?) editors. Even the
+    new syntax in PHP which is not supported by most editors (yet). Even the
     stable version of Eclipse PDT doesn't support namespaces syntax. So you
-    have to install some nightly build, if you don't want to see all those red
-    syntax-error-symbols in your php-files.</para>
-
-    <para>TODO: windows - mac - ubuntu?</para>
+    have to install some build of PDT 2.1, if you don't want to see all those
+    red syntax-error-symbols in your php-files.</para>
   </section>
 </chapter>
