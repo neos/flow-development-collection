@@ -218,10 +218,11 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		foreach ($this->routes as $route) {
 			if ($route->matches($requestPath)) {
 				$matchResults = $route->getMatchResults();
-				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the request path "' . $requestPath . '".', LOG_NOTICE);
+				$this->systemLogger->log('Router route(): Route "' . $route->getName() . '" matched the request path "' . $requestPath . '".', LOG_DEBUG);
 				return $matchResults;
 			}
 		}
+		$this->systemLogger->log('Router route(): No route matched the request path "' . $requestPath . '".', LOG_NOTICE);
 		return NULL;
 	}
 

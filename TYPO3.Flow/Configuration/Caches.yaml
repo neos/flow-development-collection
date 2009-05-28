@@ -39,6 +39,8 @@ FLOW3_Security_Cryptography_RSAWallet:
   backendOptions:
     defaultLifetime: 30
 FLOW3_Object_Configurations: []
-FLOW3_MVC_Web_Routing_FindMatchResults: []
+FLOW3_MVC_Web_Routing_FindMatchResults:
+  backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend
 FLOW3_MVC_Web_Routing_Resolve:
   frontend: F3\FLOW3\Cache\Frontend\StringFrontend
+  backend: F3\FLOW3\Cache\Backend\TransientMemoryBackend

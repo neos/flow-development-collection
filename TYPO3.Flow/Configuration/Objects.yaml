@@ -173,6 +173,25 @@ F3\FLOW3\Monitor\FileMonitor:
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 
 #                                                                          #
+# MVC                                                                      #
+#                                                                          #
+
+F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
+  properties:
+    findMatchResultsCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_MVC_Web_Routing_FindMatchResults
+    resolveCache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_MVC_Web_Routing_Resolve
+
+#                                                                          #
 # Package                                                                  #
 #                                                                          #
 
@@ -271,22 +290,3 @@ F3\FLOW3\Utility\Environment:
   autowiring: off
   properties:
     temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase
-
-#                                                                          #
-# Routing                                                                  #
-#                                                                          #
-
-F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
-  properties:
-    findMatchResultsCache:
-      object:
-        factoryClassName: F3\FLOW3\Cache\Manager
-        factoryMethodName: getCache
-        arguments:
-          1: value: FLOW3_MVC_Web_Routing_FindMatchResults
-    resolveCache:
-      object:
-        factoryClassName: F3\FLOW3\Cache\Manager
-        factoryMethodName: getCache
-        arguments:
-          1: value: FLOW3_MVC_Web_Routing_Resolve
