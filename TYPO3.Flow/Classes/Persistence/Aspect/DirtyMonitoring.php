@@ -78,6 +78,20 @@ class DirtyMonitoring {
 	}
 
 	/**
+	 * After returning advice, making sure we have an UUID for each and every entity.
+	 *
+	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @return void
+	 * @afterreturning classTaggedWith(entity) && method(.*->__construct())
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function setUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$proxy = $joinPoint->getProxy();
+		$proxy->FLOW3_AOP_Proxy_setProperty('FLOW3_Persistence_Entity_UUID', \F3\FLOW3\Utility\Algorithms::generateUUID());
+	}
+
+	/**
 	 * Around advice, implements the FLOW3_Persistence_isNew() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
