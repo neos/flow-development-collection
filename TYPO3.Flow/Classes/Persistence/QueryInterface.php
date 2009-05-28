@@ -29,7 +29,14 @@ namespace F3\FLOW3\Persistence;
  */
 
 /**
- * A persistence query interface
+ * A persistence query interface.
+ *
+ * The main point when implementing this is to make sure that methods with a
+ * return type of "object" return something that can be fed to matching() and
+ * all constraint-generating methods (like logicalAnd(), equals(), like(), ...).
+ *
+ * This allows for code like
+ * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
  * @package FLOW3
  * @subpackage Persistence
@@ -39,6 +46,12 @@ namespace F3\FLOW3\Persistence;
 interface QueryInterface {
 
 	/**
+	 * Constants representing the direction when ordering result sets.
+	 */
+	const ORDER_ASCENDING = 'ASC';
+	const ORDER_DESCENDING = 'DESC';
+
+	/**
 	 * Executes the query against the backend and returns the result
 	 *
 	 * @return array The query result, an array of objects
@@ -46,101 +59,132 @@ interface QueryInterface {
 	public function execute();
 
 	/**
-	 * The constraint used to limit the result set
+	 * Sets the property names to order the result by. Expected like this:
+	 * array(
+	 *  'foo' => \F3\FLOW3\Persistence\QueryInterface::ORDER_ASCENDING,
+	 *  'bar' => \F3\FLOW3\Persistence\QueryInterface::ORDER_DESCENDING
+	 * )
 	 *
-	 * @param mixed $constraint Some constraint, depending on the backend
+	 * @param array $orderings The property names to order by
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setOrderings(array $orderings);
+
+	/**
+	 * Sets the maximum size of the result set to limit. Returns $this to allow
+	 * for chaining (fluid interface)
+	 *
+	 * @param integer $limit
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setLimit($limit);
+
+	/**
+	 * Sets the start offset of the result set to offset. Returns $this to
+	 * allow for chaining (fluid interface)
+	 *
+	 * @param integer $offset
+	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 */
+	public function setOffset($offset);
+
+	/**
+	 * The constraint used to limit the result set. Returns $this to allow
+	 * for chaining (fluid interface)
+	 *
+	 * @param object $constraint Some constraint, depending on the backend
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 */
 	public function matching($constraint);
 
 	/**
-	 * Performs a logical conjunction of the two given constraints
+	 * Performs a logical conjunction of the two given constraints.
 	 *
-	 * @param mixed $constraint1
-	 * @param mixed $constraint2
-	 * @return unknown
+	 * @param object $constraint1 First constraint
+	 * @param object $constraint2 Second constraint
+	 * @return object
 	 */
 	public function logicalAnd($constraint1, $constraint2);
 
 	/**
 	 * Performs a logical disjunction of the two given constraints
 	 *
-	 * @param mixed $constraint1
-	 * @param mixed $constraint2
-	 * @return unknown
+	 * @param object $constraint1 First constraint
+	 * @param object $constraint2 Second constraint
+	 * @return object
 	 */
 	public function logicalOr($constraint1, $constraint2);
 
 	/**
 	 * Performs a logical negation of the given constraint
 	 *
-	 * @param mixed $constraint
-	 * @return unknown
+	 * @param object $constraint Constraint to negate
+	 * @return object
 	 */
 	public function logicalNot($constraint);
 
 	/**
 	 * Matches against the (internal) identifier.
 	 *
-	 * @param string $uuid An identifier
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @param string $uuid An identifier to match against
+	 * @return object
 	 */
 	public function withUUID($uuid);
 
 	/**
 	 * Returns an equals criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function equals($property, $operand, $caseSensitive = TRUE);
+	public function equals($propertyName, $operand, $caseSensitive = TRUE);
 
 	/**
 	 * Returns a like criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function like($property, $operand);
+	public function like($propertyName, $operand);
 
 	/**
 	 * Returns a less than criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function lessThan($property, $operand);
+	public function lessThan($propertyName, $operand);
 
 	/**
 	 * Returns a less or equal than criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function lessThanOrEqual($property, $operand);
+	public function lessThanOrEqual($propertyName, $operand);
 
 	/**
 	 * Returns a greater than criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function greaterThan($property, $operand);
+	public function greaterThan($propertyName, $operand);
 
 	/**
 	 * Returns a greater than or equal criterion used for matching objects against a query
 	 *
-	 * @param string $property The name of the property to compare against
+	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
-	 * @return \F3\FLOW3\Persistence\OperatorInterface
+	 * @return object
 	 */
-	public function greaterThanOrEqual($property, $operand);
+	public function greaterThanOrEqual($propertyName, $operand);
 
 }
 ?>
