@@ -45,12 +45,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Validation\ValidatorResolver
-	 * @internal
-	 */
-	protected $validatorResolver;
-
-	/**
 	 * By default a Fluid\TemplateView is provided, if a template is available,
 	 * then a view with the same name as the current action will be looked up.
 	 * If none is available the $defaultViewObjectName will be used and finally
@@ -95,18 +89,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the validator resolver
-	 *
-	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
-		$this->validatorResolver = $validatorResolver;
 	}
 
 	/**
