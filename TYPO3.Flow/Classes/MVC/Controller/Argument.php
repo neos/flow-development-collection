@@ -424,7 +424,9 @@ class Argument {
 	 * @internal
 	 */
 	public function setValue($value) {
-		if (is_array($value) && $this->dataTypeClassSchema !== NULL && $this->dataTypeClassSchema->isAggregateRoot()) {
+		if (is_array($value) && $this->dataTypeClassSchema !== NULL) {
+			if (!$this->dataTypeClassSchema->isAggregateRoot()) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Identity could not be converted to an object because there is no repository to find ' . $this->dataType . ' objects.', 1243511488);
+
 			if (isset($value['__identity'])) {
 				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
 				if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for the specified object was not sucessful.', 1237305720);
