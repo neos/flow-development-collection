@@ -44,20 +44,23 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
 		$packageInfoPath = $package->getPackageMetaDataPath();
 
-		$xml = simplexml_load_file($packageInfoPath . 'Package.xml');
-
 		$meta = new \F3\FLOW3\Package\MetaData($package->getPackageKey());
 
-		$meta->setVersion((string)$xml->version);
-		$meta->setTitle((string)$xml->title);
-		$meta->setDescription((string)$xml->description);
-		$meta->setState((string)$xml->state);
+		$xml = simplexml_load_file(\F3\FLOW3\Utility\Files::concatenatePaths(array($packageInfoPath, 'Package.xml')));
+		if ($xml === FALSE) {
+			$meta->setDescription('[Package.xml could not be read.]');
+		} else {
+			$meta->setVersion((string)$xml->version);
+			$meta->setTitle((string)$xml->title);
+			$meta->setDescription((string)$xml->description);
+			$meta->setState((string)$xml->state);
 
-		$this->readCategories($xml, $meta);
+			$this->readCategories($xml, $meta);
 
-		$this->readParties($xml, $meta);
+			$this->readParties($xml, $meta);
 
-		$this->readConstraints($xml, $meta);
+			$this->readConstraints($xml, $meta);
+		}
 
 		return $meta;
 	}
