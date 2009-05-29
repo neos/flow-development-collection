@@ -55,7 +55,7 @@ interface RequestInterface {
 	 * The dispatcher will try to dispatch the request again if it has not been
 	 * addressed yet.
 	 *
-	 * @return boolean TRUE if this request has been disptached sucessfully
+	 * @return boolean TRUE if this request has been disptached successfully
 	 */
 	public function isDispatched();
 

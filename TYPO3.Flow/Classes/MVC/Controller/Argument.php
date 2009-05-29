@@ -427,7 +427,7 @@ class Argument {
 		if (is_array($value) && $this->dataTypeClassSchema !== NULL) {
 			if (isset($value['__identity'])) {
 				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
-				if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for the specified object was not sucessful.', 1237305720);
+				if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for the specified object was not successful.', 1237305720);
 				unset($value['__identity']);
 				if (count($value) === 0) {
 					$value = $existingObject;
