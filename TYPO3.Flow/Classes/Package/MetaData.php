@@ -234,9 +234,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 * @internal
 	 */
 	public function setState($state) {
-		if($state !== '' && !in_array($state, self::$STATES)) {
-			throw new \InvalidArgumentException('"' . $state . '" is not a valid package state for package key "' . $this->packageKey . '"', 1222810884);
-		}
 		$this->state = $state;
 	}
 
