@@ -86,6 +86,12 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG     => 'DEBUG    ',
 		);
 
+		if (!file_exists($this->fileHandle)) {
+			$fileHandle = fopen($this->logFileURL, 'at');
+			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1243588980);
+			fclose($fileHandle);
+			chmod($this->logFileURL, 0660);
+		}
 		$this->fileHandle = fopen($this->logFileURL, 'at');
 		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1229448440);
 	}
