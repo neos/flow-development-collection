@@ -40,6 +40,11 @@ namespace F3\FLOW3\MVC\Controller;
 class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
+	 * @var array
+	 */
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request', 'F3\FLOW3\MVC\Cli\Request');
+
+	/**
 	 * @var \F3\FLOW3\MVC\View\NotFoundView
 	 */
 	protected $notFoundView;

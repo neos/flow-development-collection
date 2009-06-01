@@ -111,8 +111,8 @@
       following lines to the file
       <filename>Configuration/FLOW3.yaml</filename> in your FLOW3-Distribution
       (the indenting must be done with two spaces):<programlisting>utility:
-  environment:
-    temporaryDirectoryBase: C:/t/x/</programlisting></para>
+  environment:
+    temporaryDirectoryBase: C:/t/x/</programlisting></para>
     </tip>
 
     <tip>

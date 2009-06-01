@@ -321,7 +321,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
 
             <listitem>
               <para>Create a new folder
-              <filename>C:\xampp\apche\logs-php5.3\</filename></para>
+              <filename>C:\xampp\apache\logs-php5.3\</filename></para>
             </listitem>
           </itemizedlist>Now change the files the new folder
         <filename>conf-php5.3.0\</filename>:</para>
@@ -530,7 +530,7 @@ extension=php_pdo_sqlite.dll</programlisting>
 
           <listitem>
             <para>Have a look at the events in the Windows control panel.
-            Usually you find more detailled information here than in the error
+            Usually you find more detailed information here than in the error
             log, if the apache crashed.</para>
           </listitem>
         </itemizedlist>

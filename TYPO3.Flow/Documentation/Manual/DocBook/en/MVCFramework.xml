@@ -115,9 +115,9 @@
         <programlisting language="PHP">namespace F3\Demo\Controller;
 
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
-   public function indexAction() {
-      return "Hello World!";
-   }
+	public function indexAction() {
+		return 'Hello World!';
+	}
 }</programlisting>
       </example>
 
@@ -149,9 +149,9 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
         <programlisting language="php">namespace F3\Demo\View\Standard;
 
 class Index extends \F3\FLOW3\MVC\View\AbstractView {
-   public function render() {
-      return "Hello World!";
-   }
+	public function render() {
+		return 'Hello World from your view!';
+	}
 }</programlisting>
       </example>
 
@@ -165,9 +165,9 @@ class Index extends \F3\FLOW3\MVC\View\AbstractView {
         <programlisting language="php">namespace F3\Demo\Controller;
 
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
-   public function indexAction() {
-      return $this-&gt;view-&gt;render();
-   }
+	public function indexAction() {
+		return $this-&gt;view-&gt;render();
+	}
 }</programlisting>
       </example>
 
@@ -175,8 +175,8 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
       the most basic way to implement a view, it is not the most common way
       you'll take. In practice you'll want to use <package>Fluid</package>,
       FLOW3's powerful templating engine which allows you to write views in
-      plain HTML and still have all the power like loops and conditions.
-      </para>
+      plain HTML and still have all the power like loops and
+      conditions.</para>
     </section>
 
     <section>
@@ -267,10 +267,10 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
       (Pattern:
       <code>'F3\@package\View\@controller@action@format'</code>).</para>
 
-      <para>By looking at the view pattern you easily see that you it's fairly
+      <para>By looking at the view pattern you easily see that it's fairly
       easily to address a view which renders a different format, for example
       XML. All you need to do is creating a class called
-      <classname>\F3\Demo\View\CustomerListXML</classname>. To see the output
+      <classname>\F3\Demo\View\Customer\ListXML</classname>. To see the output
       of this new view, just use the URI
       <uri>http://localhost/demo/customer/list.xml</uri>.</para>
     </section>
@@ -615,7 +615,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
  * @param F3\Foo\Customer $customer A customer object
  * @return void
  * @validate $emailAddress EmailAddress
- * @validate $streeName AlphaNumeric, StringLength(minimum = 5, maximum = 100)
+ * @validate $streeName Alphanumeric, StringLength(minimum = 5, maximum = 100)
  * @validate $customer F3\Foo\PlatinumCustomerValidator
  */
 public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $customer) {
@@ -632,7 +632,6 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
 
         <para></para>
       </section>
-
     </section>
 
     <section>
@@ -715,7 +714,368 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
   <section>
     <title>Routing</title>
 
-    <para></para>
+    <para>As you can read in the beginning of this chapter, in FLOW3 the
+    dispatcher passes the request to a controller which then calls the
+    respective action. But how to tell, what controller of what package is the
+    right one for the current request? This is were the routing framework
+    comes into play.</para>
+
+    <section>
+      <title>Router</title>
+
+      <para>The request builder asks the router for the correct package,
+      controller and action. Therefore it passes the current request path to
+      the routers <methodname>match</methodname> method. The router then
+      iterates through all configured routes and invokes their
+      <methodname>matches</methodname> method. The first route that matches,
+      determines which action will be called with what parameters.</para>
+
+      <para>The same works for the opposite direction: If a link is generated
+      the router calls the <methodname>resolve</methodname> method of all
+      routes until one route can return the correct URI for the specified
+      arguments.</para>
+
+      <para><note>
+          <para>If no matching route can be found, the
+          <methodname>indexAction</methodname> of the
+          <classname>StandardController</classname> of the
+          <package>FLOW3</package> package is called.</para>
+        </note></para>
+    </section>
+
+    <section>
+      <title>Route</title>
+
+      <para>A route describes the way from your browser to the controller -
+      and back.</para>
+
+      <para>With the <emphasis>URI pattern</emphasis> you can define how a
+      route is represented in the browsers address bar. By setting
+      <emphasis>defaults</emphasis> you can specify package, controller and
+      action that should apply when a request matches the route. Besides you
+      can set arbitrary default values that will be available in your
+      controller. They are called <emphasis>defaults</emphasis> because you
+      can overwrite them by so called <emphasis>dynamic route
+      parts</emphasis>.</para>
+
+      <para>But let's start with an easy example:</para>
+
+      <para><example>
+          <title>Simple route - Routes.yaml</title>
+
+          <para><programlisting>--
+  name: 'Homepage'
+  uriPattern: ''
+  defaults:
+    @package: Demo</programlisting></para>
+
+          <note>
+            <para>name is optional, but it's recommended to set a name for all
+            routes to make debugging easier.</para>
+          </note>
+
+          <para>If you insert these lines at the beginning of the file
+          <filename>Configurations/Routes.yaml</filename>, the
+          <methodname>indexAction</methodname> of the
+          <classname>StandardController</classname> in your
+          <package>Demo</package> package will be called when you open up the
+          homepage of your FLOW3 installation
+          (<uri>http://localhost/).</uri></para>
+
+          <para><note>
+              <para>You don't have to specify action and controller in this
+              example as the <methodname>indexAction</methodname> of the
+              <classname>StandardController</classname> is always called by
+              default.</para>
+            </note></para>
+        </example></para>
+
+      <section>
+        <title>URI pattern</title>
+
+        <para>The URI pattern defines the appearance of the URI. In a simple
+        setup the pattern only consists of <emphasis>static route
+        parts</emphasis> and is equal to the actual URI (without protocol and
+        host).</para>
+
+        <para>In order to reduce the amount of routes that have to be created,
+        you are allowed to insert markers, so called <emphasis>dynamic route
+        parts</emphasis>, that will be repaced by the routing framework. You
+        can even mark route parts <emphasis>optional</emphasis>.</para>
+
+        <para>But first things first.</para>
+
+        <section>
+          <title>Static route parts</title>
+
+          <para>A static route part is really simple - it will be mapped
+          one-to-one to the resulting URI without transformation.</para>
+
+          <para>Let's create a route that calls the listAction of the
+          CustomerController when browsing to
+          <uri>http://localhost/my/demo</uri>:</para>
+
+          <para><example>
+              <title>Simple route with static route parts -
+              Configuration/Routes.yaml</title>
+
+              <para><programlisting>--
+  name: 'Static demo route'
+  uriPattern: 'my/demo'
+  defaults:
+    @package:    Demo
+    @controller: Customer
+    @action:     list</programlisting></para>
+            </example></para>
+        </section>
+
+        <section>
+          <title>Dynamic route parts</title>
+
+          <para>Dynamic route parts are enclosed in curly brackets and define
+          parts of the URI that are not fixed.</para>
+
+          <para>Let's add some dynamics to the previous example:</para>
+
+          <para><example>
+              <title>Simple route with static and dynamic route parts -
+              Configuration/Routes.yaml</title>
+
+              <para><programlisting>--
+  name: 'Dynamic demo route'
+  uriPattern: 'my/demo/{@action}'
+  defaults:
+    @package:    Demo
+    @controller: Customer</programlisting>Now
+              <uri>http://localhost/my/demo/list</uri> calls the
+              <methodname>listAction</methodname> just like in the previous
+              example.</para>
+
+              <para>With <uri>http://localhost/my/demo/index</uri> you'd
+              invoke the <methodname>indexAction</methodname> and so
+              on.</para>
+
+              <para><note>
+                  <para>It's not allowed to have successive dynamic route
+                  parts in the URI pattern because it wouldn't be possible to
+                  determine the end of the first dynamic route part
+                  then.</para>
+                </note></para>
+
+              <para>The @-prefix should reveal that action has a special
+              meaning here. Other predefined keys are @package, @subpackage,
+              @controller and @format. But you can use dynamic route parts to
+              set any kind of arguments:</para>
+
+              <example>
+                <title>dynamic parameters - Configuration/Routes.yaml</title>
+
+                <para><programlisting>--
+  name: 'Dynamic demo route'
+  uriPattern: 'clients/{sortOrder}.{@format}'
+  defaults:
+    @package:    Demo
+    @controller: Customer
+    @action:     list</programlisting>Browsing to
+                <uri>http://localhost/clients/descending.xml</uri> would call
+                the <methodname>listAction</methodname> in your
+                <classname>Customer</classname> controller and the request
+                argument "sortOrder" had the value of "descending".</para>
+
+                <para>By default, dynamic route parts match anything apart
+                from empty strings. If you have more specialized requirements
+                you can create your custom route part handlers.</para>
+              </example>
+            </example></para>
+        </section>
+
+        <section>
+          <title>Route part handler</title>
+
+          <para>Route part handlers are classes that implement
+          <interfacename>F3\FLOW3\MVC\Web\Routing\DynamicRoutePartInterface</interfacename>.
+          But for most cases it will be sufficient to extend
+          <classname>F3\FLOW3\MVC\Web\Routing\DynamicRoutePart</classname> and
+          overwrite the methods <methodname>matchValue</methodname> and
+          <methodname>resolveValue</methodname>.</para>
+
+          <para>Let's have a look at the (very simple) route part handler of
+          the blog example:</para>
+
+          <example>
+            <title>BlogRoutePartHandler.php</title>
+
+            <programlisting language="PHP">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+
+	/**
+	 * While matching, converts the blog title into an identifer array
+	 *
+	 * @param string $value value to match, the blog title
+	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
+	 */
+	protected function matchValue($value) {
+		if ($value === NULL || $value === '') return FALSE;
+		$this-&gt;value = array('__identity' =&gt; array('name' =&gt; $value));
+		return TRUE;
+	}
+
+	/**
+	 * Resolves the name of the blog
+	 *
+	 * @param \F3\Blog\Domain\Model\Blog $value The Blog object
+	 * @return boolean TRUE if the name of the blog could be resolved and stored in $this-&gt;value, otherwise FALSE.
+	 */
+	protected function resolveValue($value) {
+		if (!$value instanceof \F3\Blog\Domain\Model\Blog) return FALSE;
+		$this-&gt;value = $value-&gt;getName();
+		return TRUE;
+	}
+}</programlisting>
+          </example>
+
+          <para>The corresponding route might look like this:</para>
+
+          <example>
+            <title>Route with route part handlers -
+            Configuration/Routes.yaml</title>
+
+            <para><programlisting>--
+  name: 'Blog route'
+  uriPattern: 'blogs/{blog}/{@action}'
+  defaults:
+    @package:    Blog
+    @controller: Blog
+  routeParts:
+    blog:
+      handler: F3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting></para>
+
+            <para>Have a look at the blog example for a working setup.</para>
+          </example>
+        </section>
+
+        <section>
+          <title>Optional route parts</title>
+
+          <para>By putting one or more route parts in round brackets you mark
+          them optional. The following route matches
+          <uri>http://localhost/my/demo/ </uri>and
+          <uri>http://localhost/my/demo/list.html</uri>.</para>
+
+          <example>
+            <title>Route with optional route parts -
+            Configuration/Routes.yaml</title>
+
+            <para><programlisting>--
+  name: 'Dynamic demo route'
+  uriPattern: 'my/demo(/{@action}.html)'
+  defaults:
+    @package:    'Demo'
+    @controller: 'Customer'
+    @action:     'list'</programlisting></para>
+
+            <para><note>
+                <para><uri>http://localhost/my/demo/list</uri> won't match
+                here, because either all optional parts have to match - or
+                none.</para>
+              </note><note>
+                <para>You have to define default values for all optional
+                dynamic route parts.</para>
+              </note></para>
+          </example>
+        </section>
+      </section>
+    </section>
+
+    <section>
+      <title>Subroutes</title>
+
+      <para>For security reasons and to avoid confusion, only routes
+      configured in your global configuration folder are active. But FLOW3
+      supports what we call subroutes enabling you to provide custom routes
+      with your package and reference them in the global routing setup.</para>
+
+      <para>Imagine following routes in the <filename>Routes.yaml</filename>
+      file inside your demo package:</para>
+
+      <example>
+        <title>Demo Subroutes - Demo/Configuration/Routes.yaml</title>
+
+        <para><programlisting>--
+  name: 'Customer routes'
+  uriPattern: '/clients/{@action}'
+  defaults:
+    @controller: Customer
+
+--
+  name: 'Standard routes'
+  uriPattern: '/{@action}'
+  defaults:
+    @controller: Standard
+
+--
+  name: 'Fallback'
+  uriPattern: ''
+  defaults:
+    @controller: Standard
+    @action:     index</programlisting></para>
+
+        <para>And in your global <filename>Routes.yaml</filename>:</para>
+
+        <example>
+          <title>Referencing subroutes - Configuration/Routes.yaml</title>
+
+          <para><programlisting>--
+  name: 'Demo subroutes'
+  uriPattern: 'demo&lt;DemoSubroutes&gt;(.{@format})'
+  defaults:
+    @package: Demo
+    @format:  html
+  subRoutes:
+    DemoSubroutes:
+      package: Demo</programlisting></para>
+
+          <para>As you can see, you can reference subroutes by putting parts
+          of the URI pattern in angle brackets (like &lt;subRoutes&gt;). With
+          the subRoutes setting you specify where to load the subroutes
+          from.</para>
+
+          <para>Internally the ConfigurationManager merges toghether the main
+          route with its subroutes:</para>
+
+          <example>
+            <title>Composite routes</title>
+
+            <para><programlisting>--
+  name: 'Demo subroutes :: Customer routes'
+  uriPattern: 'demo/clients/{@action}(.{@format})'
+  defaults:
+    @package: Demo
+    @format:  html
+    @controller: Customer
+
+--
+  name: 'Demo subroutes :: Standard routes'
+  uriPattern: 'demo/{@action}(.{@format})'
+  defaults:
+    @package: Demo
+    @format:  html
+    @controller: Standard
+
+--
+  name: 'Demo subroutes :: Fallback'
+  uriPattern: 'demo(.{@format})'
+  defaults:
+    @package: Demo
+    @format:  html
+    @controller: Standard
+    @action:     index</programlisting></para>
+
+            <para>You can even reference multiple subroutes from one route -
+            that will create one route for all possible combinations.</para>
+          </example>
+        </example>
+      </example>
+    </section>
   </section>
 
   <section>

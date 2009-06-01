@@ -435,7 +435,7 @@ class SomeClass {
 	 * @return void
 	 */
 	public function injectSettings(array $settings) {
-		$this-&gt;configurationManager = $configurationManager;
+		$this-&gt;settings = $settings;
 	}
 
 	/**
