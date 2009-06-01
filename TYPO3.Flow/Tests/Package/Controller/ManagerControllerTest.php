@@ -36,8 +36,6 @@ namespace F3\FLOW3\Package\Controller;
  * @version $Id: ManagerTest.php 1987 2009-03-12 09:07:04Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-use F3\Testing;
-
 class ManagerControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
@@ -47,7 +45,7 @@ class ManagerControllerTest extends \F3\Testing\BaseTestCase {
 	public function indexActionReturnsHelperAction() {
 		$controller = $this->getMock('F3\FLOW3\Package\Controller\ManagerController', array('helpAction'), array(), '', FALSE);
 		$controller->expects($this->once())->method('helpAction')->will($this->returnValue('some help'));
-		
+
 		$response = $controller->indexAction();
 		$this->assertEquals('some help', $response);
 	}
@@ -60,13 +58,13 @@ class ManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$packageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
 		$packageManager->expects($this->once())->method('isPackageKeyValid')->with('SomeNewPackage')->will($this->returnValue(FALSE));
 		$packageManager->expects($this->never())->method('createPackage');
-		
+
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\ManagerController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $packageManager);
-		
+
 		$controller->createAction('SomeNewPackage');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -76,13 +74,13 @@ class ManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$packageManager->expects($this->any())->method('isPackageKeyValid')->will($this->returnValue(TRUE));
 		$packageManager->expects($this->once())->method('isPackageAvailable')->with('SomeNewPackage')->will($this->returnValue(TRUE));
 		$packageManager->expects($this->never())->method('createPackage');
-		
+
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\ManagerController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $packageManager);
-		
+
 		$controller->createAction('SomeNewPackage');
 	}
-	
+
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -92,10 +90,10 @@ class ManagerControllerTest extends \F3\Testing\BaseTestCase {
 		$packageManager->expects($this->any())->method('isPackageKeyValid')->will($this->returnValue(TRUE));
 		$packageManager->expects($this->any())->method('isPackageAvailable')->will($this->returnValue(FALSE));
 		$packageManager->expects($this->once())->method('createPackage')->with('SomeNewPackage');
-		
+
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Controller\ManagerController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('packageManager', $packageManager);
-		
+
 		$controller->createAction('SomeNewPackage');
 	}
 }

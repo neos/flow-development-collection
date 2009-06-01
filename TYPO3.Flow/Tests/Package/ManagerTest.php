@@ -28,8 +28,6 @@ namespace F3\FLOW3\Package;
  * @version $Id$
  */
 
-use F3\Testing;
-
 require_once('vfs/vfsStream.php');
 
 /**
@@ -157,7 +155,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals('TestPackage', $packageManager->getCaseSensitivePackageKey('testpackage'));
 	}
-	
+
 	/**
 	 * FIXME do we test something like this?
 	 * @test
@@ -166,7 +164,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function getLocalPackagesPathReturnsPathToLocalPackagesDirectory() {
 		$packagesPath = $this->packageManager->getLocalPackagesPath();
 		$this->assertEquals(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/'), $packagesPath);
-	}	
+	}
 
 	/**
 	 * @test
@@ -228,13 +226,13 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$metaDataWriter->expects($this->any())
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
-		
+
 		$packageManager = new \F3\FLOW3\Package\Manager();
 		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packageManager->injectObjectFactory($this->objectFactory);
 		$packageManager->initialize();
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
-		
+
 		$packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
 
 		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
@@ -247,8 +245,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Test creation of package with an invalid package key fails. 
-	 * 
+	 * Test creation of package with an invalid package key fails.
+	 *
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -286,7 +284,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		$packageManager->createPackage('TestPackage', NULL, $packagesPath);
-		
+
 		try {
 			$packageManager->createPackage('TestPackage', NULL, $packagesPath);
 		} catch(Exception $exception) {
@@ -449,13 +447,13 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertFalse(file_exists($packagePath), $packagePath, "Package directory was not deleted.");
 	}
-	
+
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function scanAvailablePackagesUsesObjectFactoryToCreateNewPackages() {
-		$this->markTestIncomplete('Has to be implemented.');		
+		$this->markTestIncomplete('Has to be implemented.');
 	}
 }
 ?>
