@@ -121,6 +121,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
+	 * @internal
 	 */
 	static public function convertArgumentValuesToArgumentObjects(array $argumentValues) {
 		$argumentObjects = array();
