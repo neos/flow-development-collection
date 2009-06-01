@@ -6,18 +6,18 @@ namespace F3\Kickstart\Service;
  * This script belongs to the FLOW3 package "Kickstart".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
- * the terms of the GNU Lesser General Public License as published by the *
- * Free Software Foundation, either version 3 of the License, or (at your *
+ * the terms of the GNU General Public License as published by the Free   *
+ * Software Foundation, either version 3 of the License, or (at your      *
  * option) any later version.                                             *
  *                                                                        *
  * This script is distributed in the hope that it will be useful, but     *
  * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHAN-    *
- * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser       *
- * General Public License for more details.                               *
+ * TABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General      *
+ * Public License for more details.                                       *
  *                                                                        *
- * You should have received a copy of the GNU Lesser General Public       *
- * License along with the script.                                         *
- * If not, see http://www.gnu.org/licenses/lgpl.html                      *
+ * You should have received a copy of the GNU General Public License      *
+ * along with the script.                                                 *
+ * If not, see http://www.gnu.org/licenses/gpl.html                       *
  *                                                                        *
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
@@ -43,7 +43,7 @@ class GeneratorService {
 	 * @inject
 	 */
 	protected $objectFactory;
-	
+
 	/**
 	 * @var \F3\FLOW3\Package\ManagerInterface
 	 * @inject
@@ -63,7 +63,7 @@ class GeneratorService {
 
 	/**
 	 * Generate a controller with the given name for the given package
-	 *  
+	 *
 	 * @param $packageKey
 	 * @param $controllerName
 	 * @return string
@@ -81,11 +81,11 @@ class GeneratorService {
 		$contextVariables['packageKey'] = $packageKey;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-		
+
 		$controllerFilename = $controllerClassName . '.php';
 
 		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Controller/';
-		
+
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
@@ -97,7 +97,7 @@ class GeneratorService {
 
 	/**
 	 * Generate a view with the given name for the given package and controller
-	 *  
+	 *
 	 * @param $packageKey
 	 * @param $controllerName
 	 * @param $viewName
@@ -116,11 +116,11 @@ class GeneratorService {
 		$contextVariables['viewName'] = $viewName;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
-		
+
 		$viewFilename = $viewName . '.html';
 
 		$viewPath = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/' . $controllerName . '/';
-		
+
 		$targetPathAndFilename = $viewPath . $viewFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
@@ -131,7 +131,7 @@ class GeneratorService {
 	/**
 	 * Generate a file with the given content and add it to the
 	 * generated files
-	 * 
+	 *
 	 * @param string $targetPathAndFilename
 	 * @param string $fileContent
 	 * @return void
@@ -141,18 +141,18 @@ class GeneratorService {
 		if (!is_dir(dirname($targetPathAndFilename))) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
-		
+
 		file_put_contents($targetPathAndFilename, $fileContent);
 
 		$flow3BasePath = realpath(FLOW3_PATH_PUBLIC . '../');
 		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen($flow3BasePath) + 1);
-		
-		$this->generatedFiles[] = '+ ' . $relativeTargetPathAndFilename; 
+
+		$this->generatedFiles[] = '+ ' . $relativeTargetPathAndFilename;
 	}
-	
+
 	/**
 	 * Render the given template file with the given variables
-	 * 
+	 *
 	 * @param string $templatePathAndFilename
 	 * @param array $contextVariables
 	 * @return string
@@ -164,15 +164,15 @@ class GeneratorService {
 			throw new \F3\Fluid\Core\RuntimeException('The template file "' . $templatePathAndFilename . '" could not be loaded.', 1225709595);
 		}
 		$parsedTemplate = $this->templateParser->parse($templateSource);
-		
+
 		$renderingContext = $this->buildRenderingContext($contextVariables);
-		
+
 		return $parsedTemplate->render($renderingContext);
 	}
 
 	/**
 	 * Build the rendering context
-	 * 
+	 *
 	 * @param array $contextVariables
 	 */
 	protected function buildRenderingContext($contextVariables) {
