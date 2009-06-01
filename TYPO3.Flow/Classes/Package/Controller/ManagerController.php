@@ -71,6 +71,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param string $packageKey The package key of the package to create
 	 * @return void
 	 * @author Tobias Liebig <mail_typo3@etobi.de>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
 	 */
 	public function createAction($packageKey) {
@@ -84,7 +85,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
 		$this->packageManager->createPackage($packageKey);
-		return 'New package "' . $packageKey . '" created.' . PHP_EOL;
+		return 'New package "' . $packageKey . '" created at "' . $this->packageManager->getPackagePath($packageKey) . '".' . PHP_EOL;
 	}
 
 	/**
@@ -150,7 +151,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function helpAction() {
 		return PHP_EOL .
 			'FLOW3 Package CLI Controller' . PHP_EOL .
-			'Usage: php index.php FLOW3 Package <command> --package-key=<PACKAGE>' . PHP_EOL.
+			'Usage: php index.php FLOW3 Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
 			PHP_EOL .
 			'<command>:' . PHP_EOL .
 			'  create     - create a new package' . PHP_EOL.
