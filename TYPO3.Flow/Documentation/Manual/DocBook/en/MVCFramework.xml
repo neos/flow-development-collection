@@ -55,7 +55,7 @@
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="MVCFramework_ModelViewController.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -300,7 +300,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="MVCFramework_RequestResponseWorkflow.png"
-                       scalefit="1" width="100%"></imagedata>
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -630,7 +630,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
 
         <para>$this-&gt;indexActionMethodName</para>
 
-        <para></para>
+        <para/>
       </section>
     </section>
 
@@ -640,19 +640,19 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       <section>
         <title>Abstract Controller</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
         <title>Request Handling Controller</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
         <title>Standard Controller</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
@@ -674,12 +674,12 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
   <section>
     <title>View</title>
 
-    <para></para>
+    <para/>
 
     <section>
       <title>Template View</title>
 
-      <para></para>
+      <para/>
     </section>
 
     <section>
@@ -688,13 +688,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       <section>
         <title>Standard View</title>
 
-        <para></para>
+        <para/>
       </section>
 
       <section>
         <title>Empty View</title>
 
-        <para></para>
+        <para/>
       </section>
     </section>
   </section>
@@ -702,19 +702,19 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
   <section>
     <title>Helpers</title>
 
-    <para></para>
+    <para/>
   </section>
 
   <section>
     <title>Model</title>
 
-    <para></para>
+    <para/>
   </section>
 
   <section>
     <title>Routing</title>
 
-    <para>As you can read in the beginning of this chapter, in FLOW3 the
+    <para>As explained in the beginning of this chapter, in FLOW3 the
     dispatcher passes the request to a controller which then calls the
     respective action. But how to tell, what controller of what package is the
     right one for the current request? This is were the routing framework
@@ -724,7 +724,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       <title>Router</title>
 
       <para>The request builder asks the router for the correct package,
-      controller and action. Therefore it passes the current request path to
+      controller and action. For this it passes the current request path to
       the routers <methodname>match</methodname> method. The router then
       iterates through all configured routes and invokes their
       <methodname>matches</methodname> method. The first route that matches,
