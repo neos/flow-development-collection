@@ -96,16 +96,23 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="WelcomeScreen.png"
-                         scalefit="1" width="100%"/>
+                         scalefit="1" width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </screenshot>
       </figure></para>
 
     <tip>
-      <para>On Windows systems change the configuration of the cache to
-      <filename>C:\t\1\</filename> to avoid errors because of the long
-      filenames</para>
+      <para>On Windows systems PHP causes problems with long filenames. To
+      avoid errors you should change the configuration of the cache to a place
+      that leads to a very short absolute filepath, for example
+      <filename>C:\t\</filename> or <filename>C:\t\x\</filename> (if you want
+      to install more than one instance of FLOW3). Do that by adding the
+      following lines to the file
+      <filename>Configuration/FLOW3.yaml</filename> in your FLOW3-Distribution
+      (the indenting must be done with two spaces):<programlisting>utility:
+  environment:
+    temporaryDirectoryBase: C:/t/x/</programlisting></para>
     </tip>
 
     <tip>
@@ -127,7 +134,7 @@
     <para>PHP 5.3 introduced the support of namespaces. This is a completly
     new syntax in PHP which is not supported by most editors (yet). Even the
     stable version of Eclipse PDT doesn't support namespaces syntax. So you
-    have to install some build of PDT 2.1, if you don't want to see all those
-    red syntax-error-symbols in your php-files.</para>
+    have to install some Release Candidate of PDT 2.1, if you don't want to
+    see all those red syntax-error-symbols in your php-files.</para>
   </section>
 </chapter>
