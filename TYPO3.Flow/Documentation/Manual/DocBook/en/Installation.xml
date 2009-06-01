@@ -27,7 +27,7 @@
       </listitem>
 
       <listitem>
-        <para>PHP modules: mbstring, pdo, sqlite</para>
+        <para>PHP modules: mbstring, pdo_sqlite</para>
       </listitem>
 
       <listitem>
