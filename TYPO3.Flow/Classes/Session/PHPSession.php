@@ -74,6 +74,7 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
