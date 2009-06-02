@@ -103,6 +103,7 @@ class Environment {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
 	 */
 	public function initializeObject() {
 		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
