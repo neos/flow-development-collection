@@ -25,7 +25,7 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: TextValidator.php 1990 2009-03-12 13:59:17Z robert $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: TextValidator.php 1990 2009-03-12 13:59:17Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

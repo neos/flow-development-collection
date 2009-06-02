@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Exception;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id: F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken.php 1264 2008-09-19 18:27:06Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Exception;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id: F3_FLOW3_Security_Exception_UnsupportedAuthenticationToken.php 1264 2008-09-19 18:27:06Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class VoterNotFound extends \F3\FLOW3\Security\Exception {

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Validation\Validator;
 /**
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: ConjunctionValidator.php 2203 2009-05-12 18:44:47Z networkteam_hlubek $
+ * @version $Id$
  */
 
 /**
@@ -35,7 +35,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @package FLOW3
  * @subpackage Validation
- * @version $Id: ConjunctionValidator.php 2203 2009-05-12 18:44:47Z networkteam_hlubek $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */

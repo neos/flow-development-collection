@@ -25,7 +25,7 @@ namespace F3\FLOW3\AOP\Advice;
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: F3_FLOW3_AOP_AfterReturningAdvice.php 1599 2008-12-10 14:39:10Z k-fish $
+ * @version $Id$
  */
 
 /**

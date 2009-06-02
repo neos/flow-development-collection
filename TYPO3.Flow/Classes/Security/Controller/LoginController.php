@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Controller;
 /**
  * @package FLOW3
  * @subpackage MVC
- * @version $Id: $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Controller;
  *
  * @package FLOW3
  * @subpackage MVC
- * @version $Id: $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {

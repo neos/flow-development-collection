@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authentication\Provider;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Security_Authentication_Provider_UsernamePasswordTest.php 1707 2009-01-07 10:37:30Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: F3_FLOW3_Security_Authentication_Provider_UsernamePasswordTest.php 1707 2009-01-07 10:37:30Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class RSAUsernamePasswordTest extends \F3\Testing\BaseTestCase {

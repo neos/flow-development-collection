@@ -25,7 +25,7 @@ namespace F3\FLOW3\Package;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: PackageTest.php 1977 2009-03-09 15:34:48Z k-fish $
+ * @version $Id$
  */
 
 require_once('vfs/vfsStream.php');
@@ -35,7 +35,7 @@ require_once('vfs/vfsStream.php');
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: PackageTest.php 1977 2009-03-09 15:34:48Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class DocumentationTest extends \F3\Testing\BaseTestCase {

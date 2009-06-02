@@ -25,7 +25,7 @@ namespace F3\FLOW3\Package\Controller;
 /**
  * @package FLOW3
  * @subpackage Package
- * @version $Id: ManagerTest.php 1987 2009-03-12 09:07:04Z robert $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Package\Controller;
  *
  * @package FLOW3
  * @subpackage Package
- * @version $Id: ManagerTest.php 1987 2009-03-12 09:07:04Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ManagerControllerTest extends \F3\Testing\BaseTestCase {

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authentication\Token;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id: F3_FLOW3_Security_Authentication_Token_UsernamePassword.php 1707 2009-01-07 10:37:30Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Authentication\Token;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id: F3_FLOW3_Security_Authentication_Token_UsernamePassword.php 1707 2009-01-07 10:37:30Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype
  * @todo here we also need a user details service and an authentication entry point

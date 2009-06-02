@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id: RequestPatternResolver.php 1811 2009-01-28 12:04:49Z robert $
+ * @version $Id$
  */
 
 /**
@@ -34,7 +34,7 @@ namespace F3\FLOW3\Security\Authentication;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id: RequestPatternResolver.php 1811 2009-01-28 12:04:49Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class EntryPointResolver {

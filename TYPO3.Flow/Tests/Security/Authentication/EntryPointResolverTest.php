@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authentication;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: RequestPatternResolverTest.php 1886 2009-02-09 16:08:54Z robert $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Authentication;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id: RequestPatternResolverTest.php 1886 2009-02-09 16:08:54Z robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class EntryPointResolverTest extends \F3\Testing\BaseTestCase {

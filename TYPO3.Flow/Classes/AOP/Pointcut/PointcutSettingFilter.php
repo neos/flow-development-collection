@@ -25,7 +25,7 @@ namespace F3\FLOW3\AOP\Pointcut;
 /**
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: F3_FLOW3_AOP_PointcutClassTaggedWithFilter.php 1599 2008-12-10 14:39:10Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\AOP\Pointcut;
  *
  * @package FLOW3
  * @subpackage AOP
- * @version $Id: robert $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
