@@ -25,7 +25,7 @@ namespace F3\Kickstart\Service;
 /**
  * @package Kickstart
  * @subpackage Service
- * @version $Id: DocBookManualRenderService.php 2465 2009-05-29 11:40:02Z k-fish $
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\Kickstart\Service;
  *
  * @package Kickstart
  * @subpackage Service
- * @version $Id: DocBookManualRenderService.php 2465 2009-05-29 11:40:02Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class GeneratorService {

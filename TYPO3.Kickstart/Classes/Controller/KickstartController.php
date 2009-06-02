@@ -24,14 +24,14 @@ namespace F3\Kickstart\Controller;
 
 /**
  * @package Kickstart
- * @version $Id: ManualController.php 2465 2009-05-29 11:40:02Z k-fish $
+ * @version $Id$
  */
 
 /**
  * Controller for the Kickstart generator
  *
  * @package Kickstart
- * @version $Id: ManualController.php 2465 2009-05-29 11:40:02Z k-fish $
+ * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
 class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
