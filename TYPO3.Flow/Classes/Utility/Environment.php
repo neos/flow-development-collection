@@ -77,7 +77,7 @@ class Environment {
 	 * The base path of $temporaryDirectory. This property can (and should) be set from outside.
 	 * @var string
 	 */
-	protected $temporaryDirectoryBase = '/tmp/';
+	protected $temporaryDirectoryBase;
 
 	/**
 	 * @var string
@@ -92,6 +92,19 @@ class Environment {
 	 * @internal
 	 */
 	public function __construct() {
+		if (!defined('FLOW3_SAPITYPE')) {
+			define('FLOW3_SAPITYPE', $this->getSAPIType());
+		}
+	}
+
+	/**
+	 * Initializes the environment instance, replacing superglobals to avoid
+	 * their use.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObject() {
 		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
 			$this->SERVER = $_SERVER;
 			$this->GET = $_GET;
@@ -101,9 +114,6 @@ class Environment {
 			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the API of ' . __CLASS__ . ' instead of accessing the superglobal directly.');
 			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
-		}
-		if (!defined('FLOW3_SAPITYPE')) {
-			define('FLOW3_SAPITYPE', $this->getSAPIType());
 		}
 	}
 

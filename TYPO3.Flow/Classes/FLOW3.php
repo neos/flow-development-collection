@@ -77,11 +77,6 @@ final class FLOW3 {
 	protected $configurationManager;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
-	 */
-	protected $environment;
-
-	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
@@ -167,7 +162,6 @@ final class FLOW3 {
 	 */
 	public function initialize() {
 		$this->initializeClassLoader();
-		$this->initializeEnvironment();
 		$this->initializeConfiguration();
 		$this->initializeError();
 		$this->initializeObjectFramework();
@@ -215,18 +209,6 @@ final class FLOW3 {
 	}
 
 	/**
-	 * Initializes the Environment
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 * @internal
-	 */
-	public function initializeEnvironment() {
-		$this->environment = new \F3\FLOW3\Utility\Environment;
-	}
-
-	/**
 	 * Initializes the configuration manager and the FLOW3 settings
 	 *
 	 * @return void
@@ -235,6 +217,9 @@ final class FLOW3 {
 	 * @internal
 	 */
 	public function initializeConfiguration() {
+			// define FLOW3_SAPI
+		new \F3\FLOW3\Utility\Environment();
+
 		$configurationSources = array(
 			new \F3\FLOW3\Configuration\Source\PHPSource(),
 			new \F3\FLOW3\Configuration\Source\YAMLSource()
@@ -296,7 +281,6 @@ final class FLOW3 {
 		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
 
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
-		$singletonObjectsRegistry->putObject('F3\FLOW3\Utility\Environment', $this->environment);
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\Manager', $this->configurationManager);
 	}
 
