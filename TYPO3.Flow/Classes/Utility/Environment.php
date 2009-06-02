@@ -46,6 +46,9 @@ namespace F3\FLOW3\Utility;
  */
 class Environment {
 
+	const SAPI_TYPE_WEB = 'Web';
+	const SAPI_TYPE_CLI = 'CLI';
+
 	/**
 	 * A local copy of the _SERVER super global
 	 * @var array
@@ -98,6 +101,9 @@ class Environment {
 			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the API of ' . __CLASS__ . ' instead of accessing the superglobal directly.');
 			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');
 			$_POST = new \F3\FLOW3\Utility\SuperGlobalReplacement('_POST', 'Please use the Request object which is built by the Request Handler instead of accessing the _POST superglobal directly.');
+		}
+		if (!defined('FLOW3_SAPITYPE')) {
+			define('FLOW3_SAPITYPE', $this->getSAPIType());
 		}
 	}
 
@@ -270,11 +276,34 @@ class Environment {
 	 * Common SAPIS are "apache", "isapi", "cli", "cgi" etc.
 	 *
 	 * @return string A lower case string identifying the SAPI used
-	 * @see php_sapi_name()/PHP_SAPI
+	 * @see php_sapi_name()/PHP_SAPI, getNormalizedSAPIName()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getSAPIName() {
 		return $this->SAPIName;
+	}
+
+	/**
+	 * Returns the type of SAPI used by PHP.
+	 *
+	 * Instead of returning the raw value like in getSAPIName(), this
+	 * function returns only one of the following values:
+	 *
+	 * "Web" if the API used is some kind of web server
+	 * "CLI" if the command line interface is used
+	 *
+	 * Use the SAPI_TYPE_* constants for checking for a certain SAPI type.
+	 *
+	 * @return string The kind of API used
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getSAPIType() {
+		switch($this->SAPIName) {
+			case 'cli' :
+				return self::SAPI_TYPE_CLI;
+			default:
+				return self::SAPI_TYPE_WEB;
+		}
 	}
 
 	/**

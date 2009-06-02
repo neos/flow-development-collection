@@ -100,7 +100,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * (additional) request types.
 	 * @var array
 	 */
-	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Web\Request');
+	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
 
 	/**
 	 * @var \F3\FLOW3\Session\SessionInterface

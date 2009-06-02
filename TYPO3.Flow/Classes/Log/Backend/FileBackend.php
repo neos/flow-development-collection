@@ -37,6 +37,8 @@ namespace F3\FLOW3\Log\Backend;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
+use F3\FLOW3\Utility;
+
 class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 
 	/**
@@ -49,6 +51,11 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @var string
 	 */
 	protected $logFileURL = '';
+
+	/**
+	 * @var boolean
+	 */
+	protected $createParentDirectories = FALSE;
 
 	/**
 	 * @var resource
@@ -65,6 +72,20 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function setLogFileURL($logFileURL) {
 		$this->logFileURL = $logFileURL;
+	}
+
+	/**
+	 * Sets the flag telling if parent directories in the path leading to
+	 * the log file URL should be created if they don't exist.
+	 *
+	 * The default is to not create parent directories automatically.
+	 *
+	 * @param boolean $flag TRUE if parent directories should be created
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setCreateParentDirectories($flag) {
+		$this->createParentDirectories = ($flag === TRUE);
 	}
 
 	/**
@@ -87,6 +108,12 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 		);
 
 		if (!file_exists($this->logFileURL)) {
+			$logPath = dirname($this->logFileURL);
+			if (!is_dir($logPath)) {
+				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access because the parent directory does not exist.', 1243931200);
+				\F3\FLOW3\Utility\Files::createDirectoryRecursively($logPath);
+			}
+
 			$this->fileHandle = fopen($this->logFileURL, 'at');
 			if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1243588980);
 

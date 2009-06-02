@@ -77,6 +77,11 @@ final class FLOW3 {
 	protected $configurationManager;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
@@ -162,6 +167,7 @@ final class FLOW3 {
 	 */
 	public function initialize() {
 		$this->initializeClassLoader();
+		$this->initializeEnvironment();
 		$this->initializeConfiguration();
 		$this->initializeError();
 		$this->initializeObjectFramework();
@@ -206,6 +212,18 @@ final class FLOW3 {
 		$this->classLoader = new \F3\FLOW3\Resource\ClassLoader();
 		$this->classLoader->setPackages($initialPackages);
 		spl_autoload_register(array($this->classLoader, 'loadClass'));
+	}
+
+	/**
+	 * Initializes the Environment
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 * @internal
+	 */
+	public function initializeEnvironment() {
+		$this->environment = new \F3\FLOW3\Utility\Environment;
 	}
 
 	/**
@@ -278,6 +296,7 @@ final class FLOW3 {
 		$this->objectManager->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
 
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
+		$singletonObjectsRegistry->putObject('F3\FLOW3\Utility\Environment', $this->environment);
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\Manager', $this->configurationManager);
 	}
 
@@ -585,7 +604,7 @@ final class FLOW3 {
 	 */
 	public function initializeResources() {
 		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		if ($environment->getSAPIName() !== 'cli') {
+		if ($environment->getSAPIType() === \F3\FLOW3\Utility\Environment::SAPI_TYPE_WEB) {
 			$this->detectAlteredResources();
 			$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
 			$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');

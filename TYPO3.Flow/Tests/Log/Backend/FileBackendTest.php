@@ -61,6 +61,28 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\Log\Exception\CouldNotOpenResource
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function openDoesNotCreateParentDirectoriesByDefault() {
+		$logFileURL = \vfsStream::url('testDirectory') . '/foo/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$backend->open();
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function openCreatesParentDirectoriesIfTheOptionSaysSo() {
+		$logFileURL = \vfsStream::url('testDirectory') . '/foo/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL, 'createParentDirectories' => TRUE));
+		$backend->open();
+		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('foo'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function appendRendersALogEntryAndAppendsItToTheLogfile() {
