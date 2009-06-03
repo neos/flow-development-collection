@@ -85,20 +85,21 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
-	 * This constructor copies the superglobals $_SERVER, $_GET, $_POST to local
-	 * variables and unsets the orginals.
+	 * This constructor defines FLOW3_SAPITYPE
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
 	public function __construct() {
+		$this->SAPIName = PHP_SAPI;
 		if (!defined('FLOW3_SAPITYPE')) {
 			define('FLOW3_SAPITYPE', $this->getSAPIType());
 		}
 	}
 
 	/**
-	 * Initializes the environment instance, replacing superglobals to avoid
+	 * Initializes the environment instance. Copies the superglobals $_SERVER,
+	 * $_GET, $_POST to local variables and replaces the superglobals to avoid
 	 * their use.
 	 *
 	 * @return void
@@ -110,7 +111,6 @@ class Environment {
 			$this->SERVER = $_SERVER;
 			$this->GET = $_GET;
 			$this->POST = $_POST;
-			$this->SAPIName = PHP_SAPI;
 
 			$_SERVER = new \F3\FLOW3\Utility\SuperGlobalReplacement('_SERVER', 'Please use the API of ' . __CLASS__ . ' instead of accessing the superglobal directly.');
 			$_GET = new \F3\FLOW3\Utility\SuperGlobalReplacement('_GET', 'Please use the Request object which is built by the Request Handler instead of accessing the _GET superglobal directly.');

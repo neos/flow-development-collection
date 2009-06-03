@@ -135,5 +135,14 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment->_set('SAPIName', $SAPIName);
 		$this->assertSame($normalizedSAPIName, $environment->getSAPIType());
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getSAPINameReturnsNotNullOnFreshlyConstructedEnvironment() {
+		$environment = new \F3\FLOW3\Utility\Environment();
+		$this->assertNotNull($environment->getSAPIName());
+	}
 }
 ?>
