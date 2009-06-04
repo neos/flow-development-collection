@@ -71,12 +71,25 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	}
 
 	/**
+	 * Returns TRUE if the property exists..
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean TRUE if the property exists
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_hasProperty($propertyName) {
+		return ﻿property_exists($this, $propertyName);
+	}
+
+	/**
 	 * Returns the value of an arbitrary property.
 	 * The method does not have to check if the property exists.
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @see FLOW3_AOP_Proxy_hasProperty()
 	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_getProperty($propertyName) {

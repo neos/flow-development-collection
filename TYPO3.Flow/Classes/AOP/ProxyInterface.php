@@ -57,6 +57,15 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
 
 	/**
+	 * Returns TRUE if the property exists..
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean TRUE if the property exists
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_hasProperty($propertyName);
+
+	/**
 	 * Returns the value of an arbitrary property.
 	 * The method does not have to check if the property exists.
 	 *
