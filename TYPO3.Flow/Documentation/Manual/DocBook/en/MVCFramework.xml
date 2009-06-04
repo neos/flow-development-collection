@@ -569,10 +569,10 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
  *
  * @param string $emailAddress Some email address
  * @param string $streetName Some street name
- * @param F3\Foo\Customer $customer A customer object
+ * @param F3\Foo\Model\Customer $customer A customer object
  * @return void
  */
-public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $customer) {
+public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer $customer) {
    
 }
 </programlisting>
@@ -601,7 +601,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
         validated through their base validation rules defined in the
         respective models. Additional validation rules can be defined by using
         the <varname>@validate</varname> annotation. The syntax is similar to
-        a regulare <varname>@validate</varname> declaration with the addition
+        a regular <varname>@validate</varname> declaration with the addition
         that the argument name must be specified:</para>
 
         <example>
@@ -612,13 +612,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
  *
  * @param string $emailAddress Some email address
  * @param string $streetName Some street name
- * @param F3\Foo\Customer $customer A customer object
+ * @param F3\Foo\Model\Customer $customer A customer object
  * @return void
  * @validate $emailAddress EmailAddress
  * @validate $streeName Alphanumeric, StringLength(minimum = 5, maximum = 100)
- * @validate $customer F3\Foo\PlatinumCustomerValidator
+ * @validate $customer F3\Foo\Validator\PlatinumCustomerValidator
  */
-public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $customer) {
+public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer $customer) {
    
 }
 </programlisting>
@@ -758,37 +758,33 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       can overwrite them by so called <emphasis>dynamic route
       parts</emphasis>.</para>
 
-      <para>But let's start with an easy example:</para>
-
-      <para><example>
+      <para>But let's start with an easy example:<example>
           <title>Simple route - Routes.yaml</title>
 
-          <para><programlisting>--
+          <programlisting>--
   name: 'Homepage'
   uriPattern: ''
   defaults:
-    @package: Demo</programlisting></para>
+    @package: Demo</programlisting>
+        </example><note>
+          <para>name is optional, but it's recommended to set a name for all
+          routes to make debugging easier.</para>
+        </note></para>
 
-          <note>
-            <para>name is optional, but it's recommended to set a name for all
-            routes to make debugging easier.</para>
-          </note>
+      <para>If you insert these lines at the beginning of the file
+      <filename>Configurations/Routes.yaml</filename>, the
+      <methodname>indexAction</methodname> of the
+      <classname>StandardController</classname> in your
+      <package>Demo</package> package will be called when you open up the
+      homepage of your FLOW3 installation
+      (<uri>http://localhost/).</uri></para>
 
-          <para>If you insert these lines at the beginning of the file
-          <filename>Configurations/Routes.yaml</filename>, the
-          <methodname>indexAction</methodname> of the
-          <classname>StandardController</classname> in your
-          <package>Demo</package> package will be called when you open up the
-          homepage of your FLOW3 installation
-          (<uri>http://localhost/).</uri></para>
-
-          <para><note>
-              <para>You don't have to specify action and controller in this
-              example as the <methodname>indexAction</methodname> of the
-              <classname>StandardController</classname> is always called by
-              default.</para>
-            </note></para>
-        </example></para>
+      <para><note>
+          <para>You don't have to specify action and controller in this
+          example as the <methodname>indexAction</methodname> of the
+          <classname>StandardController</classname> is always called by
+          default.</para>
+        </note></para>
 
       <section>
         <title>URI pattern</title>
@@ -813,9 +809,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
 
           <para>Let's create a route that calls the listAction of the
           CustomerController when browsing to
-          <uri>http://localhost/my/demo</uri>:</para>
-
-          <para><example>
+          <uri>http://localhost/my/demo</uri>:<example>
               <title>Simple route with static route parts -
               Configuration/Routes.yaml</title>
 
@@ -835,9 +829,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
           <para>Dynamic route parts are enclosed in curly brackets and define
           parts of the URI that are not fixed.</para>
 
-          <para>Let's add some dynamics to the previous example:</para>
-
-          <para><example>
+          <para>Let's add some dynamics to the previous example:<example>
               <title>Simple route with static and dynamic route parts -
               Configuration/Routes.yaml</title>
 
@@ -846,47 +838,43 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
   uriPattern: 'my/demo/{@action}'
   defaults:
     @package:    Demo
-    @controller: Customer</programlisting>Now
-              <uri>http://localhost/my/demo/list</uri> calls the
-              <methodname>listAction</methodname> just like in the previous
-              example.</para>
+    @controller: Customer</programlisting></para>
+            </example>Now <uri>http://localhost/my/demo/list</uri> calls the
+          <methodname>listAction</methodname> just like in the previous
+          example.</para>
 
-              <para>With <uri>http://localhost/my/demo/index</uri> you'd
-              invoke the <methodname>indexAction</methodname> and so
-              on.</para>
+          <para>With <uri>http://localhost/my/demo/index</uri> you'd invoke
+          the <methodname>indexAction</methodname> and so on.</para>
 
-              <para><note>
-                  <para>It's not allowed to have successive dynamic route
-                  parts in the URI pattern because it wouldn't be possible to
-                  determine the end of the first dynamic route part
-                  then.</para>
-                </note></para>
+          <para><note>
+              <para>It's not allowed to have successive dynamic route parts in
+              the URI pattern because it wouldn't be possible to determine the
+              end of the first dynamic route part then.</para>
+            </note></para>
 
-              <para>The @-prefix should reveal that action has a special
-              meaning here. Other predefined keys are @package, @subpackage,
-              @controller and @format. But you can use dynamic route parts to
-              set any kind of arguments:</para>
+          <para>The @-prefix should reveal that action has a special meaning
+          here. Other predefined keys are @package, @subpackage, @controller
+          and @format. But you can use dynamic route parts to set any kind of
+          arguments:<example>
+              <title>dynamic parameters - Configuration/Routes.yaml</title>
 
-              <example>
-                <title>dynamic parameters - Configuration/Routes.yaml</title>
-
-                <para><programlisting>--
+              <programlisting>--
   name: 'Dynamic demo route'
   uriPattern: 'clients/{sortOrder}.{@format}'
   defaults:
     @package:    Demo
     @controller: Customer
-    @action:     list</programlisting>Browsing to
-                <uri>http://localhost/clients/descending.xml</uri> would call
-                the <methodname>listAction</methodname> in your
-                <classname>Customer</classname> controller and the request
-                argument "sortOrder" had the value of "descending".</para>
-
-                <para>By default, dynamic route parts match anything apart
-                from empty strings. If you have more specialized requirements
-                you can create your custom route part handlers.</para>
-              </example>
+    @action:     list</programlisting>
             </example></para>
+
+          <para>Browsing to <uri>http://localhost/clients/descending.xml</uri>
+          would call the <methodname>listAction</methodname> in your
+          <classname>Customer</classname> controller and the request argument
+          "sortOrder" had the value of "descending".</para>
+
+          <para>By default, dynamic route parts match anything apart from
+          empty strings. If you have more specialized requirements you can
+          create your custom route part handlers.</para>
         </section>
 
         <section>
@@ -900,12 +888,10 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
           <methodname>resolveValue</methodname>.</para>
 
           <para>Let's have a look at the (very simple) route part handler of
-          the blog example:</para>
+          the blog example:<example>
+              <title>BlogRoutePartHandler.php</title>
 
-          <example>
-            <title>BlogRoutePartHandler.php</title>
-
-            <programlisting language="PHP">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+              <programlisting language="PHP">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * While matching, converts the blog title into an identifer array
@@ -931,15 +917,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
 		return TRUE;
 	}
 }</programlisting>
-          </example>
+            </example></para>
 
-          <para>The corresponding route might look like this:</para>
+          <para>The corresponding route might look like this:<example>
+              <title>Route with route part handlers -
+              Configuration/Routes.yaml</title>
 
-          <example>
-            <title>Route with route part handlers -
-            Configuration/Routes.yaml</title>
-
-            <para><programlisting>--
+              <programlisting>--
   name: 'Blog route'
   uriPattern: 'blogs/{blog}/{@action}'
   defaults:
@@ -947,10 +931,10 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
     @controller: Blog
   routeParts:
     blog:
-      handler: F3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting></para>
+      handler: F3\Blog\RoutePartHandlers\BlogRoutePartHandler</programlisting>
+            </example></para>
 
-            <para>Have a look at the blog example for a working setup.</para>
-          </example>
+          <para>Have a look at the blog example for a working setup.</para>
         </section>
 
         <section>
@@ -972,16 +956,17 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
     @package:    'Demo'
     @controller: 'Customer'
     @action:     'list'</programlisting></para>
-
-            <para><note>
-                <para><uri>http://localhost/my/demo/list</uri> won't match
-                here, because either all optional parts have to match - or
-                none.</para>
-              </note><note>
-                <para>You have to define default values for all optional
-                dynamic route parts.</para>
-              </note></para>
           </example>
+
+          <note>
+            <para><uri>http://localhost/my/demo/list</uri> won't match here,
+            because either all optional parts have to match - or none.</para>
+          </note>
+
+          <note>
+            <para>You have to define default values for all optional dynamic
+            route parts.</para>
+          </note>
         </section>
       </section>
     </section>
@@ -995,12 +980,10 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
       with your package and reference them in the global routing setup.</para>
 
       <para>Imagine following routes in the <filename>Routes.yaml</filename>
-      file inside your demo package:</para>
+      file inside your demo package:<example>
+          <title>Demo Subroutes - Demo/Configuration/Routes.yaml</title>
 
-      <example>
-        <title>Demo Subroutes - Demo/Configuration/Routes.yaml</title>
-
-        <para><programlisting>--
+          <programlisting>--
   name: 'Customer routes'
   uriPattern: '/clients/{@action}'
   defaults:
@@ -1017,14 +1000,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
   uriPattern: ''
   defaults:
     @controller: Standard
-    @action:     index</programlisting></para>
+    @action:     index</programlisting>
+        </example></para>
 
-        <para>And in your global <filename>Routes.yaml</filename>:</para>
-
-        <example>
+      <para>And in your global <filename>Routes.yaml</filename>:<example>
           <title>Referencing subroutes - Configuration/Routes.yaml</title>
 
-          <para><programlisting>--
+          <programlisting>--
   name: 'Demo subroutes'
   uriPattern: 'demo&lt;DemoSubroutes&gt;(.{@format})'
   defaults:
@@ -1032,20 +1014,18 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
     @format:  html
   subRoutes:
     DemoSubroutes:
-      package: Demo</programlisting></para>
+      package: Demo</programlisting>
+        </example></para>
 
-          <para>As you can see, you can reference subroutes by putting parts
-          of the URI pattern in angle brackets (like &lt;subRoutes&gt;). With
-          the subRoutes setting you specify where to load the subroutes
-          from.</para>
+      <para>As you can see, you can reference subroutes by putting parts of
+      the URI pattern in angle brackets (like &lt;subRoutes&gt;). With the
+      subRoutes setting you specify where to load the subroutes from.</para>
 
-          <para>Internally the ConfigurationManager merges toghether the main
-          route with its subroutes:</para>
+      <para>Internally the ConfigurationManager merges toghether the main
+      route with its subroutes:<example>
+          <title>Composite routes</title>
 
-          <example>
-            <title>Composite routes</title>
-
-            <para><programlisting>--
+          <programlisting>--
   name: 'Demo subroutes :: Customer routes'
   uriPattern: 'demo/clients/{@action}(.{@format})'
   defaults:
@@ -1068,13 +1048,11 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
     @package: Demo
     @format:  html
     @controller: Standard
-    @action:     index</programlisting></para>
+    @action:     index</programlisting>
 
-            <para>You can even reference multiple subroutes from one route -
-            that will create one route for all possible combinations.</para>
-          </example>
-        </example>
-      </example>
+          <para>You can even reference multiple subroutes from one route -
+          that will create one route for all possible combinations.</para>
+        </example></para>
     </section>
   </section>
 
@@ -1169,8 +1147,8 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Customer $cust
 
       <para>Rendering the FLOW3 documentation to HTML:</para>
 
-      <para><code>php index.php doctools render render -p FLOW3 -o
-      flow3-manual/</code></para>
+      <para><code>php index.php doctools manual render -f html -o
+      flow3-manual/ FLOW3</code></para>
     </example>
   </section>
 </chapter>

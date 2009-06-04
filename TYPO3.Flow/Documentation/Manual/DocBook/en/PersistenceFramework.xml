@@ -180,6 +180,63 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
   </section>
 
   <section>
+    <title>Conventions for file and class names</title>
+
+    <para>To allow FLOW3 to detect the object type a repository is responsible
+    for certain conventions need to be followed:<itemizedlist>
+        <listitem>
+          <para>Domain models should reside in a <filename>Model</filename>
+          directory</para>
+        </listitem>
+
+        <listitem>
+          <para>Repositories should reside in a
+          <filename>Repository</filename> directory and be named
+          <classname>*Repository</classname></para>
+        </listitem>
+
+        <listitem>
+          <para>Aside from <literal>Model</literal> versus
+          <literal>Repository</literal> the qualified class class names should
+          be the same for corresponding classes</para>
+        </listitem>
+
+        <listitem>
+          <para>Repositories must implement
+          <classname>\F3\FLOW3\Persistence\Repository</classname> (which is
+          the case when extending
+          <classname>\F3\FLOW3\Persistence\Repository</classname>)</para>
+        </listitem>
+      </itemizedlist></para>
+
+    <example>
+      <title>Conventions for model and repository naming</title>
+
+      <literallayout>\F3
+  \Blog
+    \Domain
+      \Model
+        Blog
+        Post
+      \Repository
+        BlogRepository
+        PostRepository
+
+\Domain
+  \Model
+    \Content
+      Page
+    Site
+    StructureNode
+  \Repository   
+    \Content
+      PageRepository
+    SiteRepository
+    StructureNodeRepository</literallayout>
+    </example>
+  </section>
+
+  <section>
     <title>Persistence-related annotations</title>
 
     <para>The following table lists all annotations used by the persistence
