@@ -79,7 +79,7 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_hasProperty($propertyName) {
-		return ﻿property_exists($this, $propertyName);
+		return property_exists($this, $propertyName);
 	}
 
 	/**
