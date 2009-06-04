@@ -120,18 +120,27 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @test
+	 * dataProvider for createQueryCallsQueryFactoryWithExpectedType
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createQueryCallsQueryFactoryWithExpectedType() {
-		$fakeRepositoryClassName = 'ExpectedTypeRepository';
-		$expectedType = 'ExpectedType';
+	public function modelAndRepositoryClassNames() {
+		return array(
+			array('\F3\Blog\Domain\Repository\BlogRepository', '\F3\Blog\Domain\Model\Blog'),
+			array('﻿\Domain\Repository\Content\PageRepository', '﻿\Domain\Model\Content\Page')
+		);
+	}
 
+	/**
+	 * @test
+	 * @dataProvider modelAndRepositoryClassNames
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQueryCallsQueryFactoryWithExpectedClassName($repositoryClassName, $modelClassName) {
 		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with($expectedType);
+		$mockQueryFactory->expects($this->once())->method('create')->with($modelClassName);
 
 		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('FLOW3_AOP_Proxy_getProxyTargetClassName'));
-		$repository->expects($this->once())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue($fakeRepositoryClassName));
+		$repository->expects($this->once())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue($repositoryClassName));
 		$repository->injectQueryFactory($mockQueryFactory);
 
 		$repository->createQuery();

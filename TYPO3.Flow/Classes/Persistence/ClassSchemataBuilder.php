@@ -76,7 +76,8 @@ class ClassSchemataBuilder {
 			$aggregateRoot = FALSE;
 			if ($this->reflectionService->isClassTaggedWith($className, 'entity')) {
 				$modelType = \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY;
-				if ($this->reflectionService->isClassReflected($className . 'Repository')) {
+				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
+				if ($this->reflectionService->isClassReflected($possibleRepositoryClassName)) {
 					$aggregateRoot = TRUE;
 				}
 			} elseif ($this->reflectionService->isClassTaggedWith($className, 'valueobject')) {

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Persistence\Fixture;
+namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,7 +29,7 @@ namespace F3\FLOW3\Tests\Persistence\Fixture;
  */
 
 /**
- * A model fixture used for testing the persistence manager
+ * A model fixture which is used for testing the class schema builder
  *
  * @package FLOW3
  * @subpackage Persistence
@@ -37,84 +37,76 @@ namespace F3\FLOW3\Tests\Persistence\Fixture;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  */
-class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
+class Entity1 {
+
+	/**
+	 * An identifier property
+	 *
+	 * @var string
+	 * @uuid
+	 */
+	protected $someIdentifier;
 
 	/**
 	 * Just a normal string
 	 *
 	 * @var string
+	 * @identity
 	 */
-	public $someString;
+	protected $someString;
 
 	/**
 	 * @var integer
 	 */
-	public $someInteger;
+	protected $someInteger;
 
 	/**
-	 * Returns the name of the class this proxy extends.
-	 *
-	 * @return string Name of the target class
+	 * @var float
 	 */
-	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return 'F3\FLOW3\Tests\Persistence\Fixture\CleanEntity';
+	protected $someFloat;
+
+	/**
+	 * @var \DateTime
+	 * @identity
+	 */
+	protected $someDate;
+
+	/**
+	 * @var \SplObjectStorage
+	 * @lazy
+	 */
+	protected $someSplObjectStorage;
+
+	/**
+	 * A transient string
+	 *
+	 * @var string
+	 * @transient
+	 */
+	protected $someTransientString;
+
+	/**
+	 * @var boolean
+	 */
+	protected $someBoolean;
+
+	/**
+	 * Just an empty constructor
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+
 	}
 
 	/**
-	 * Invokes the joinpoint - calls the target methods.
+	 * Just a dummy method
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
-	 * @return mixed Result of the target (ie. original) method
-	 */
-	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-
-	}
-
-	/**
-	 * Returns TRUE if the property exists..
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return boolean TRUE if the property exists
-	 */
-	public function FLOW3_AOP_Proxy_hasProperty($propertyName) {
-		return property_exists($this, $propertyName);
-	}
-
-	/**
-	 * Returns the value of an arbitrary property.
-	 * The method does not have to check if the property exists.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @return mixed Value of the property
-	 */
-	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
-		return $this->$propertyName;
-	}
-
-	/**
-	 * Sets the value of an arbitrary property.
-	 *
-	 * @param string $propertyName Name of the property
-	 * @param mixed $propertyValue Value to set
 	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
+	public function someDummyMethod() {
 
 	}
-
-	/**
-	 * Returns TRUE as this is a DirtyEntity
-	 *
-	 * @return boolean
-	 */
-	public function FLOW3_Persistence_isDirty() {
-		return FALSE;
-	}
-
-	/**
-	 * Dummy method for mock creation
-	 * @return void
-	 */
-	public function FLOW3_Persistence_memorizeCleanState() {}
 }
 ?>

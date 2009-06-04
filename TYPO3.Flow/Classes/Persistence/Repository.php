@@ -212,7 +212,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function createQuery() {
-		$type = str_replace('Repository', '', $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
+		$type = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
 		return $this->queryFactory->create($type);
 	}
 

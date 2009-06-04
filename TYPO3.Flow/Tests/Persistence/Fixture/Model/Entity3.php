@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Persistence\Fixture;
+namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -29,23 +29,77 @@ namespace F3\FLOW3\Tests\Persistence\Fixture;
  */
 
 /**
- * A model fixture which is used for testing the class schema builder
+ * A model fixture used for testing the persistence manager
  *
  * @package FLOW3
  * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @valueobject
+ * @entity
  */
-class ValueObject1 {
+class Entity3 implements \F3\FLOW3\AOP\ProxyInterface {
 
 	/**
-	 * Some string
+	 * Just a normal string
 	 *
 	 * @var string
 	 */
-	protected $aString;
+	public $someString;
 
-	protected $propertyWithoutAnnotation;
+	/**
+	 * @var integer
+	 */
+	public $someInteger;
+
+	/**
+	 * Returns the name of the class this proxy extends.
+	 *
+	 * @return string Name of the target class
+	 */
+	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
+		return 'F3\FLOW3\Tests\Persistence\Fixture\Model\Entity3';
+	}
+
+	/**
+	 * Invokes the joinpoint - calls the target methods.
+	 *
+	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
+	 * @return mixed Result of the target (ie. original) method
+	 */
+	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+
+	}
+
+	/**
+	 * Returns TRUE if the property exists.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return boolean TRUE if the property exists
+	 */
+	public function FLOW3_AOP_Proxy_hasProperty($propertyName) {
+		return property_exists($this, $propertyName);
+	}
+
+	/**
+	 * Returns the value of an arbitrary property.
+	 * The method does not have to check if the property exists.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @return mixed Value of the property
+	 */
+	public function FLOW3_AOP_Proxy_getProperty($propertyName) {
+		return $this->$propertyName;
+	}
+
+	/**
+	 * Sets the value of an arbitrary property.
+	 *
+	 * @param string $propertyName Name of the property
+	 * @param mixed $propertyValue Value to set
+	 * @return void
+	 */
+	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {
+
+	}
 }
 ?>

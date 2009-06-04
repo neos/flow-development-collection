@@ -28,10 +28,10 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  */
 
-require_once('Fixture/Entity2.php');
-require_once('Fixture/Entity3.php');
-require_once('Fixture/DirtyEntity.php');
-require_once('Fixture/CleanEntity.php');
+require_once('Fixture/Model/Entity2.php');
+require_once('Fixture/Model/Entity3.php');
+require_once('Fixture/Model/DirtyEntity.php');
+require_once('Fixture/Model/CleanEntity.php');
 
 /**
  * Testcase for the Persistence Manager
@@ -86,10 +86,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllFindsObjectReferences() {
-		$entity31 = new \F3\FLOW3\Tests\Persistence\Fixture\Entity3;
-		$entity32 = new \F3\FLOW3\Tests\Persistence\Fixture\Entity3;
-		$entity33 = new \F3\FLOW3\Tests\Persistence\Fixture\Entity3;
-		$entity2 = new \F3\FLOW3\Tests\Persistence\Fixture\Entity2;
+		$entity31 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\Entity3;
+		$entity32 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\Entity3;
+		$entity33 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\Entity3;
+		$entity2 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\Entity2;
 		$entity2->someString = 'Entity2';
 		$entity2->someInteger = 42;
 		$entity2->someReference = $entity31;
@@ -122,7 +122,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllFindsReconstitutedObjects() {
-		$dirtyEntity = new \F3\FLOW3\Tests\Persistence\Fixture\DirtyEntity();
+		$dirtyEntity = new \F3\FLOW3\Tests\Persistence\Fixture\Model\DirtyEntity();
 		$session = new \F3\FLOW3\Persistence\Session();
 		$session->registerReconstitutedObject($dirtyEntity);
 
@@ -131,9 +131,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-			// this is the really important assertion!
 		$objectStorage = new \SplObjectStorage();
 		$objectStorage->attach($dirtyEntity);
+			// this is the really important assertion!
 		$mockBackend->expects($this->once())->method('setAggregateRootObjects')->with($objectStorage);
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
@@ -149,8 +149,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function persistAllFetchesRemovedObjects() {
-		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity();
-		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\CleanEntity();
+		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
+		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 
 		$repository = new \F3\FLOW3\Persistence\Repository;
 		$repository->remove($entity1);

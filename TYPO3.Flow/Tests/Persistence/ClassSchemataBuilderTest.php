@@ -28,8 +28,8 @@ namespace F3\FLOW3\Persistence;
  * @version $Id$
  */
 
-require_once('Fixture/Entity1.php');
-require_once('Fixture/ValueObject1.php');
+require_once('Fixture/Model/Entity1.php');
+require_once('Fixture/Model/ValueObject1.php');
 
 /**
  * Testcase for the Class Schema Builder
@@ -61,7 +61,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->reflectionService = new \F3\FLOW3\Reflection\Service();
 		$this->reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$this->reflectionService->initialize(
-			array('F3\FLOW3\Tests\Persistence\Fixture\Entity1', 'F3\FLOW3\Tests\Persistence\Fixture\ValueObject1')
+			array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1', 'F3\FLOW3\Tests\Persistence\Fixture\Model\ValueObject1')
 		);
 		$this->builder = new \F3\FLOW3\Persistence\ClassSchemataBuilder($this->reflectionService);
 	}
@@ -73,7 +73,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	public function classSchemaOnlyContainsNonTransientProperties() {
 		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier', 'someSplObjectStorage');
 
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$actualProperties = array_keys($builtClassSchema->getProperties());
 		sort($expectedProperties);
@@ -96,7 +96,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 			'someIdentifier' => array('type' => 'string', 'lazy' => FALSE)
 		);
 
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$actualProperties = $builtClassSchema->getProperties();
 		asort($expectedProperties);
@@ -109,7 +109,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeEntityIsRecognizedByEntityAnnotation() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 	}
@@ -119,7 +119,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\ValueObject1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\ValueObject1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_VALUEOBJECT);
 	}
@@ -129,9 +129,9 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaContainsNameOfItsRelatedClass() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
-		$this->assertEquals($builtClassSchema->getClassName(), 'F3\FLOW3\Tests\Persistence\Fixture\Entity1');
+		$this->assertEquals($builtClassSchema->getClassName(), 'F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1');
 	}
 
 	/**
@@ -139,7 +139,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function uuidPropertyNameIsDetectedFromAnnotation() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getUUIDPropertyName(), 'someIdentifier');
 	}
@@ -149,7 +149,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 */
 	public function uuidPropertyNameIsSetAsRegularPropertyAsWell() {
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertTrue(array_key_exists('someIdentifier', $builtClassSchema->getProperties()));
 	}
@@ -163,7 +163,7 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 			'someString' => 'string',
 			'someDate' => 'DateTime'
 		);
-		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $this->builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 
 		$this->assertSame($builtClassSchema->getIdentityProperties(), $expectedIdentityProperties);
@@ -175,15 +175,15 @@ class ClassSchemataBuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function aggregateRootIsDetectedForEntities() {
 		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('isClassReflected'));
-		$reflectionService->expects($this->at(0))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Entity1')->will($this->returnValue(TRUE));
-		$reflectionService->expects($this->at(1))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Entity1Repository')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(0))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1')->will($this->returnValue(TRUE));
+		$reflectionService->expects($this->at(1))->method('isClassReflected')->with('F3\FLOW3\Tests\Persistence\Fixture\Repository\Entity1Repository')->will($this->returnValue(TRUE));
 		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
 		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Persistence\Fixture\Entity1', 'F3\FLOW3\Tests\Persistence\Fixture\ValueObject1')
+			array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1', 'F3\FLOW3\Tests\Persistence\Fixture\Model\ValueObject1')
 		);
 		$builder = new \F3\FLOW3\Persistence\ClassSchemataBuilder($reflectionService);
 
-		$builtClassSchemata = $builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Entity1'));
+		$builtClassSchemata = $builder->build(array('F3\FLOW3\Tests\Persistence\Fixture\Model\Entity1'));
 		$builtClassSchema = array_pop($builtClassSchemata);
 		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Persistence\ClassSchema::MODELTYPE_ENTITY);
 		$this->assertTrue($builtClassSchema->isAggregateRoot());

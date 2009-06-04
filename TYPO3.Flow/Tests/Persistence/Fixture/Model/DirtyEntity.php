@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Persistence\Fixture;
+namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -37,7 +37,7 @@ namespace F3\FLOW3\Tests\Persistence\Fixture;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @entity
  */
-class Entity2 implements \F3\FLOW3\AOP\ProxyInterface {
+class DirtyEntity implements \F3\FLOW3\AOP\ProxyInterface {
 
 	/**
 	 * Just a normal string
@@ -52,22 +52,12 @@ class Entity2 implements \F3\FLOW3\AOP\ProxyInterface {
 	public $someInteger;
 
 	/**
-	 * @var \F3\FLOW3\Tests\Persistence\Fixture\Entity3
-	 */
-	public $someReference;
-
-	/**
-	 * @var array
-	 */
-	public $someReferenceArray = array();
-
-	/**
 	 * Returns the name of the class this proxy extends.
 	 *
 	 * @return string Name of the target class
 	 */
 	public function FLOW3_AOP_Proxy_getProxyTargetClassName() {
-		return 'F3\FLOW3\Tests\Persistence\Fixture\Entity2';
+		return 'F3\FLOW3\Tests\Persistence\Fixture\Model\DirtyEntity';
 	}
 
 	/**
@@ -112,5 +102,19 @@ class Entity2 implements \F3\FLOW3\AOP\ProxyInterface {
 
 	}
 
+	/**
+	 * Returns TRUE as this is a DirtyEntity
+	 *
+	 * @return boolean
+	 */
+	public function FLOW3_Persistence_isDirty() {
+		return TRUE;
+	}
+
+	/**
+	 * Dummy method for mock creation
+	 * @return void
+	 */
+	public function FLOW3_Persistence_memorizeCleanState() {}
 }
 ?>
