@@ -34,7 +34,7 @@ namespace F3\Kickstart\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
+class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var \F3\FLOW3\Package\ManagerInterface
@@ -82,7 +82,7 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function helpAction() {
 		$this->response->appendContent(
 			'FLOW3 Kickstart Generator' . PHP_EOL .
-			'Usage: php index.php kickstart controller --package-key <package-key> [--controller-name <controller-name>]' . PHP_EOL .  PHP_EOL
+			'Usage: php Public/index.php kickstart generator generateController --package-key <package-key> [--controller-name <controller-name>]' . PHP_EOL .  PHP_EOL
 		);
 	}
 
@@ -94,9 +94,9 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function controllerAction($packageKey, $controllerName = 'Standard') {
+	public function generateControllerAction($packageKey, $controllerName = 'Standard') {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
-			return 'Package "' . $packageKey . '" is not available.';
+			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
 		$generatedFiles = $this->generatorService->generateController($packageKey, $controllerName);
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
