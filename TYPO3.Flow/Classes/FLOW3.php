@@ -55,14 +55,9 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
 final class FLOW3 {
 
 	/**
-	 * The version of the FLOW3 framework
-	 */
-	const VERSION = '1.0.0dev';
-
-	/**
 	 * Required PHP version
 	 */
-	const MINIMUM_PHP_VERSION = '5.3.0RC1';
+	const MINIMUM_PHP_VERSION = '5.3.0RC2';
 	const MAXIMUM_PHP_VERSION = '5.9.9';
 
 	/**
