@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xmlns="http://docbook.org/ns/docbook"
+<chapter version="5.0" xml:id="flow3.chapter.configurationframework"
+         xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
          xmlns:ns4="http://www.w3.org/2000/svg"
