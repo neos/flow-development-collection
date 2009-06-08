@@ -28,6 +28,8 @@ namespace F3\FLOW3\Configuration\Source;
  * @version $Id$
  */
 
+require_once('vfs/vfsStream.php');
+
 /**
  * Testcase for the YAML configuration source
  *
@@ -37,6 +39,16 @@ namespace F3\FLOW3\Configuration\Source;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class YAMLTest extends \F3\Testing\BaseTestCase {
+
+	/**
+	 * Sets up this test case
+	 *
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function setUp() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+	}
 
 	/**
 	 * @test
@@ -57,6 +69,34 @@ class YAMLTest extends \F3\Testing\BaseTestCase {
 		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function saveWritesArrayToGivenFileAsYAML() {
+		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
+		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
+		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
+
+		$yaml = 'configurationFileHasBeenLoaded: true' . PHP_EOL;
+		$this->assertContains($yaml, file_get_contents($pathAndFilename), 'Configuration was not written to the file.');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
+		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
+		$comment = '# This comment should stay' . PHP_EOL;
+		file_put_contents($pathAndFilename . '.yaml', $comment);
+
+		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
+		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
+
+		$this->assertContains($comment, file_get_contents($pathAndFilename), 'Header comment was removed from file.');
 	}
 }
 ?>

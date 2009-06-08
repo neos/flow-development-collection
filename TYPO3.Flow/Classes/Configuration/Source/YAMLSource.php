@@ -35,7 +35,7 @@ namespace F3\FLOW3\Configuration\Source;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class YAMLSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
+class YAMLSource implements \F3\FLOW3\Configuration\Source\WritableSourceInterface {
 
 	/**
 	 * Loads the specified configuration file and returns its content as an
@@ -58,6 +58,47 @@ class YAMLSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 			$configuration = array();
 		}
 		return $configuration;
+	}
+
+	/**
+	 * Save the specified configuration array to the given file in YAML format.
+	 *
+	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension (i.e. ".yaml")
+	 * @param array $configuration The configuration to save
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function save($pathAndFilename, $configuration) {
+		$header = '';
+		if (file_exists($pathAndFilename . '.yaml')) {
+			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
+		}
+		$yaml = \F3\YAML\YAML::dump($configuration);
+		file_put_contents($pathAndFilename, $header . PHP_EOL . $yaml);
+	}
+
+	/**
+	 * Read the header part from the given file. That means, every line
+	 * until the first non comment or space is found at the beginning.
+	 * 
+	 * @param string $pathAndFilename
+	 * @return string The header of the given YAML file
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	protected function getHeaderFromFile($pathAndFilename) {
+		$header = '';
+		$line = '';
+		$fileHandle = fopen($pathAndFilename, 'r');
+		while ($line = fgets($fileHandle)) {
+			if (preg_match('/^#|\s*/', $line)) {
+				$header .= $line;
+			} else {
+				break;
+			}
+		}
+		fclose($fileHandle);
+		return $header;
 	}
 }
 ?>
