@@ -152,13 +152,20 @@ class DirtyMonitoring {
 	 */
 	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
-		$cleanProperties = array();
-		$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
+		$propertyName = $joinPoint->getMethodArgument('propertyName');
 
-		foreach ($propertyNames as $propertyName) {
-			$cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+		if ($propertyName === NULL) {
+			$cleanProperties = array();
+			$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
+
+			foreach ($propertyNames as $propertyName) {
+				$cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			}
+			$proxy->FLOW3_Persistence_cleanProperties = $cleanProperties;
+		} else {
+			$proxy->FLOW3_Persistence_cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
 		}
-		$proxy->FLOW3_Persistence_cleanProperties = $cleanProperties;
+
 	}
 
 	/**

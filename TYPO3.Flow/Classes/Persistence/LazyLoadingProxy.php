@@ -86,6 +86,7 @@ class LazyLoadingProxy {
 	public function _loadRealInstance() {
 		$realInstance = $this->F3_FLOW3_Persistence_LazyLoadingProxy_population->__invoke();
 		$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_AOP_Proxy_setProperty($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName, $realInstance);
+		$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_Persistence_memorizeCleanState($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName);
 		return $realInstance;
 	}
 

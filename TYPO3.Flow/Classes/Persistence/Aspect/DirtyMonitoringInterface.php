@@ -57,13 +57,14 @@ interface DirtyMonitoringInterface {
 	public function FLOW3_Persistence_isDirty($propertyName);
 
 	/**
-	 * Resets the dirty flags of all properties to signal that the object is
-	 * clean again after being persisted.
+	 * Resets the dirty flags of properties to signal that the object is clean
+	 * clean (e.g. after being persisted).
 	 *
+	 * @param string $propertyName Name of the property to mark clean, if NULL all will be marked clean
 	 * @return void
 	 * @internal
 	 */
-	public function FLOW3_Persistence_memorizeCleanState();
+	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL);
 
 	/**
 	 * Introduces a clone method

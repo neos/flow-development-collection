@@ -154,7 +154,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * @internal
 	 */
 	public function getMethodArgument($argumentName) {
-		if (!isset($this->methodArguments[$argumentName])) throw new \RuntimeException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
+		if (!array_key_exists($argumentName, $this->methodArguments)) throw new \RuntimeException('The argument "' . $argumentName . '" does not exist in method ' . $this->className . '->' . $this->methodName, 1172750905);
 		return $this->methodArguments[$argumentName];
 	}
 

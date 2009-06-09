@@ -25,7 +25,7 @@ namespace F3\FLOW3\Persistence;
 /**
  * @package FLOW3
  * @subpackage Persistence
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Persistence;
  *
  * @package FLOW3
  * @subpackage Persistence
- * @version $Id:$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
@@ -45,7 +45,7 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	public function lazyLoadingProxyReplacesItselfInParentOnLoad() {
 		$realObject = new \stdClass();
 		$closure = function() use ($realObject) { return $realObject; };
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$parent->expects($this->once())->method('FLOW3_AOP_Proxy_setProperty')->with('lazyLoadedProperty', $realObject);
 		$proxy = new \F3\FLOW3\Persistence\LazyLoadingProxy($parent, 'lazyLoadedProperty', $closure);
 		$parent->lazyLoadedProperty = $proxy;
@@ -58,10 +58,25 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function lazyLoadingProxyCallsMemorizeCleanStateOnParentOnLoad() {
+		$realObject = new \stdClass();
+		$closure = function() use ($realObject) { return $realObject; };
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
+		$parent->expects($this->once())->method('FLOW3_Persistence_memorizeCleanState')->with('lazyLoadedProperty');
+		$proxy = new \F3\FLOW3\Persistence\LazyLoadingProxy($parent, 'lazyLoadedProperty', $closure);
+		$parent->lazyLoadedProperty = $proxy;
+
+		$proxy->_loadRealInstance();
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function lazyLoadingProxyCallsLoadOnMethodCall() {
 		$realObject = new \ArrayObject();
 		$closure = function() {};
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$proxy = $this->getMock('F3\FLOW3\Persistence\LazyLoadingProxy', array('_loadRealInstance'), array($parent, 'lazyLoadedProperty', $closure));
 		$proxy->expects($this->once())->method('_loadRealInstance')->will($this->returnValue($realObject));
 		$parent->lazyLoadedProperty = $proxy;
@@ -77,7 +92,7 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 		$realObject = new \stdClass();
 		$realObject->foo = 'bar';
 		$closure = function() {};
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$proxy = $this->getMock('F3\FLOW3\Persistence\LazyLoadingProxy', array('_loadRealInstance'), array($parent, 'lazyLoadedProperty', $closure));
 		$proxy->expects($this->once())->method('_loadRealInstance')->will($this->returnValue($realObject));
 		$parent->lazyLoadedProperty = $proxy;
@@ -92,7 +107,7 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	public function lazyLoadingProxyCallsLoadOnSet() {
 		$realObject = new \stdClass();
 		$closure = function() {};
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$proxy = $this->getMock('F3\FLOW3\Persistence\LazyLoadingProxy', array('_loadRealInstance'), array($parent, 'lazyLoadedProperty', $closure));
 		$proxy->expects($this->once())->method('_loadRealInstance')->will($this->returnValue($realObject));
 		$parent->lazyLoadedProperty = $proxy;
@@ -107,7 +122,7 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	public function lazyLoadingProxyCallsLoadOnIsset() {
 		$realObject = new \stdClass();
 		$closure = function() {};
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$proxy = $this->getMock('F3\FLOW3\Persistence\LazyLoadingProxy', array('_loadRealInstance'), array($parent, 'lazyLoadedProperty', $closure));
 		$proxy->expects($this->once())->method('_loadRealInstance')->will($this->returnValue($realObject));
 		$parent->lazyLoadedProperty = $proxy;
@@ -122,7 +137,7 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	public function lazyLoadingProxyCallsLoadOnUnset() {
 		$realObject = new \stdClass();
 		$closure = function() {};
-		$parent = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$proxy = $this->getMock('F3\FLOW3\Persistence\LazyLoadingProxy', array('_loadRealInstance'), array($parent, 'lazyLoadedProperty', $closure));
 		$proxy->expects($this->once())->method('_loadRealInstance')->will($this->returnValue($realObject));
 		$parent->lazyLoadedProperty = $proxy;
