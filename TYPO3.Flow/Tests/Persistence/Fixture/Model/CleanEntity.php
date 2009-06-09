@@ -115,6 +115,6 @@ class CleanEntity implements \F3\FLOW3\AOP\ProxyInterface {
 	 * Dummy method for mock creation
 	 * @return void
 	 */
-	public function FLOW3_Persistence_memorizeCleanState() {}
+	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 }
 ?>
