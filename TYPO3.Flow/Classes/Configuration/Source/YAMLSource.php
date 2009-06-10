@@ -75,12 +75,12 @@ class YAMLSource implements \F3\FLOW3\Configuration\Source\WritableSourceInterfa
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
 		}
 		$yaml = \F3\YAML\YAML::dump($configuration);
-		file_put_contents($pathAndFilename, $header . PHP_EOL . $yaml);
+		file_put_contents($pathAndFilename . '.yaml', $header . PHP_EOL . $yaml);
 	}
 
 	/**
 	 * Read the header part from the given file. That means, every line
-	 * until the first non comment or space is found at the beginning.
+	 * until the first non comment line is found.
 	 * 
 	 * @param string $pathAndFilename
 	 * @return string The header of the given YAML file
@@ -91,7 +91,7 @@ class YAMLSource implements \F3\FLOW3\Configuration\Source\WritableSourceInterfa
 		$line = '';
 		$fileHandle = fopen($pathAndFilename, 'r');
 		while ($line = fgets($fileHandle)) {
-			if (preg_match('/^#|\s*/', $line)) {
+			if (preg_match('/^#/', $line)) {
 				$header .= $line;
 			} else {
 				break;

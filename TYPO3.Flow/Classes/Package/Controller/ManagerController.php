@@ -120,7 +120,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 			return $this->helpAction();
 		} else {
 			$this->packageManager->activatePackage($packageKey);
-			return 'package "' . $packageKey . '" activated.' . PHP_EOL;
+			return 'Package "' . $packageKey . '" activated.' . PHP_EOL;
 		}
 	}
 
@@ -137,7 +137,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 			return $this->helpAction();
 		} else {
 			$this->packageManager->deactivatePackage($packageKey);
-			return 'package "' . $packageKey . '" deactivated.' . PHP_EOL;
+			return 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
 		}
 	}
 
@@ -151,7 +151,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function helpAction() {
 		return PHP_EOL .
 			'FLOW3 Package CLI Controller' . PHP_EOL .
-			'Usage: php index.php FLOW3 Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
+			'Usage: php Public/index.php FLOW3 Package Manager <command> --package-key=<PACKAGE>' . PHP_EOL.
 			PHP_EOL .
 			'<command>:' . PHP_EOL .
 			'  create     - create a new package' . PHP_EOL.

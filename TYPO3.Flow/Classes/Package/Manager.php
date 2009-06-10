@@ -50,6 +50,11 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\Configuration\Manager
+	 */
+	protected $configurationManager;
+
+	/**
 	 * Array of available packages, indexed by package key
 	 * @var array
 	 */
@@ -68,7 +73,8 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	protected $activePackages = array();
 
 	/**
-	 * Array of package keys that are protected and that must not be removed
+	 * Array of package keys that are protected and that must not be removed.
+	 * These packages will also be loaded even when not activated.
 	 * @var array
 	 */
 	protected $protectedPackages = array('FLOW3', 'PHP6', 'YAML');
@@ -98,6 +104,18 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
+	 * Injects the Configuration Manager
+	 *
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
 	 * Initializes the package manager
 	 *
 	 * @return void
@@ -106,7 +124,12 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 */
 	public function initialize() {
 		$this->scanAvailablePackages();
-		$this->activePackages = $this->packages;
+		$packageStatesConfiguration = $this->configurationManager->getPackageStatesConfiguration();
+		foreach ($this->packages as $packageKey => $package) {
+			if (in_array($packageKey, $this->protectedPackages) || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] == 'active')) {
+				$this->activePackages[$packageKey] = $package;
+			}
+		}
 	}
 
 	/**
@@ -131,7 +154,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 */
 	public function isPackageActive($packageKey) {
 		if (!is_string($packageKey)) throw new InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
-		return (key_exists($packageKey, $this->activePackages));
+		return (isset($this->activePackages[$packageKey]));
 	}
 
 	/**
@@ -305,14 +328,18 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Deactivates a package if it is in the list of active packages
 	 *
 	 * @param string $packageKey The package to deactivate
-	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageState If the specified package is not active
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function deactivatePackage($packageKey) {
-		if (isset($this->activePackages[$packageKey])) {
+		if ($this->isPackageActive($packageKey)) {
 			unset($this->activePackages[$packageKey]);
+			$packageStatesConfiguration = $this->configurationManager->getPackageStatesConfiguration();
+			$packageStatesConfiguration[$packageKey]['state'] = 'inactive';
+			$this->configurationManager->updatePackageStatesConfiguration($packageStatesConfiguration);
 		} else {
-			throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available.', 1166543253);
+			throw new \F3\FLOW3\Package\Exception\InvalidPackageState('Package "' . $packageKey . '" is not active.', 1166543253);
 		}
 	}
 
@@ -320,11 +347,20 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Activates a package
 	 *
 	 * @param string $packageKey The package to activate
+	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageState If the specified package is already active
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function activatePackage($packageKey) {
-		$package = $this->getPackage($packageKey);
-		$this->activePackages[$packageKey] = $package;
+		if (!$this->isPackageActive($packageKey)) {
+			$package = $this->getPackage($packageKey);
+			$this->activePackages[$packageKey] = $package;
+			$packageStatesConfiguration = $this->configurationManager->getPackageStatesConfiguration();
+			$packageStatesConfiguration[$packageKey]['state'] = 'active';
+			$this->configurationManager->updatePackageStatesConfiguration($packageStatesConfiguration);
+		} else {
+			throw new \F3\FLOW3\Package\Exception\InvalidPackageState('Package "' . $packageKey . '" is already active.', 1244620776); 
+		}
 	}
 
 	/**

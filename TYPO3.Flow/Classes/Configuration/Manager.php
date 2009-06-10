@@ -39,7 +39,8 @@ namespace F3\FLOW3\Configuration;
 class Manager {
 
 	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
-	const CONFIGURATION_TYPE_PACKAGES = 'Packages';
+	const CONFIGURATION_TYPE_PACKAGE = 'Package';
+	const CONFIGURATION_TYPE_PACKAGE_STATES = 'PackageStates';
 	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
 	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
 	const CONFIGURATION_TYPE_ROUTES = 'Routes';
@@ -80,6 +81,13 @@ class Manager {
 	 * @var array
 	 */
 	protected $configurationSources;
+
+	/**
+	 * A single writable configuration source
+	 *
+	 * @var \F3\FLOW3\Configuration\Source\WritableSourceInterface
+	 */
+	protected $writableConfigurationSource;
 
 	/**
 	 * Constructs the configuration manager
@@ -240,7 +248,7 @@ class Manager {
 			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
 			case self::CONFIGURATION_TYPE_CACHES :
 				return $this->configurations[$configurationType];
-			case self::CONFIGURATION_TYPE_PACKAGES :
+			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				if (!is_object($package)) throw new \InvalidArgumentException('No package specified.', 1233336279);
 				break;
@@ -252,15 +260,22 @@ class Manager {
 			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load($package->getConfigurationPath() . $configurationType));
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+			$globalConfiguration = $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType);
+			if ($configurationType == self::CONFIGURATION_TYPE_PACKAGE) {
+				$globalConfiguration = isset($globalConfiguration[$package->getPackageKey()]) ? $globalConfiguration[$package->getPackageKey()] : array();
+			}
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalConfiguration);
 		}
 		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+			$contextConfiguration = $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType);
+			if ($configurationType == self::CONFIGURATION_TYPE_PACKAGE) {
+				$contextConfiguration = isset($contextConfiguration[$package->getPackageKey()]) ? $contextConfiguration[$package->getPackageKey()] : array();
+			}
+			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $contextConfiguration);
 		}
 
 		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_PACKAGES :
-				return (isset($configuration[$package->getPackageKey()])) ? $configuration[$package->getPackageKey()] : array();
+			case self::CONFIGURATION_TYPE_PACKAGE :
 			case self::CONFIGURATION_TYPE_OBJECTS :
 				return $configuration;
 		}
@@ -358,6 +373,45 @@ class Manager {
 			}
 		}
 		return $mergedSubRoutesConfiguration;
+	}
+
+	/**
+	 * Get the package states configuration. This configuration is loaded
+	 * from the configuration directory and will be overriden by contexts.
+	 *
+	 * @return array The package states configuration
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function getPackageStatesConfiguration() {
+		$configuration = $this->writableConfigurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES);
+		return \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->writableConfigurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGE_STATES));
+	}
+
+	/**
+	 * Update the package states configuration
+	 *
+	 * @param array $configuration The package states configuration
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function updatePackageStatesConfiguration($configuration) {
+		$this->writableConfigurationSource->save(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES, $configuration);
+	}
+
+	/**
+	 * Set the writable configuration source. This source will be used
+	 * for package states configuration and writing back values for
+	 * package activation / deactivation from the package manager.
+	 *
+	 * @param \F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource The writable source
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function setWritableConfigurationSource(\F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource) {
+		$this->writableConfigurationSource = $writableConfigurationSource;
 	}
 }
 ?>

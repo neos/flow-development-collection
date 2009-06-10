@@ -201,6 +201,7 @@ F3\FLOW3\Package\ManagerInterface:
   properties:
     objectFactory: object: F3\FLOW3\Object\FactoryInterface
     packageMetaDataWriter: object: F3\FLOW3\Package\MetaData\WriterInterface
+    configurationManager: object: F3\FLOW3\Configuration\Manager
 
 F3\FLOW3\Package\Controller\ManagerController: []
 

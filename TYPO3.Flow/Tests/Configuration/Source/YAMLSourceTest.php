@@ -81,7 +81,7 @@ class YAMLTest extends \F3\Testing\BaseTestCase {
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
 		$yaml = 'configurationFileHasBeenLoaded: true' . PHP_EOL;
-		$this->assertContains($yaml, file_get_contents($pathAndFilename), 'Configuration was not written to the file.');
+		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file.');
 	}
 
 	/**
@@ -90,13 +90,15 @@ class YAMLTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
-		$comment = '# This comment should stay' . PHP_EOL;
+		$comment = '# This comment should stay' . PHP_EOL . 'Test: foo' . PHP_EOL;
 		file_put_contents($pathAndFilename . '.yaml', $comment);
 
 		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
-		$this->assertContains($comment, file_get_contents($pathAndFilename), 'Header comment was removed from file.');
+		$yaml = file_get_contents($pathAndFilename . '.yaml');
+		$this->assertContains('# This comment should stay', $yaml, 'Header comment was removed from file.');
+		$this->assertNotContains('Test: foo', $yaml);
 	}
 }
 ?>

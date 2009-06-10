@@ -215,11 +215,13 @@ final class FLOW3 {
 			// define FLOW3_SAPI
 		new \F3\FLOW3\Utility\Environment();
 
+		$yamlSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
 		$configurationSources = array(
 			new \F3\FLOW3\Configuration\Source\PHPSource(),
-			new \F3\FLOW3\Configuration\Source\YAMLSource()
+			$yamlSource
 		);
 		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context, $configurationSources);
+		$this->configurationManager->setWritableConfigurationSource($yamlSource);
 		$this->configurationManager->loadFLOW3Settings();
 		$this->settings = $this->configurationManager->getSettings('FLOW3');
 	}
@@ -308,7 +310,7 @@ final class FLOW3 {
 		$this->classLoader->setPackages($activePackages);
 
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGES, $package);
+			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $package);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 

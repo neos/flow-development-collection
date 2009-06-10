@@ -54,8 +54,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration'), array(), '', FALSE);
+
 		$this->packageManager = new \F3\FLOW3\Package\Manager();
 		$this->packageManager->injectObjectFactory($this->objectFactory);
+		$this->packageManager->injectConfigurationManager($mockConfigurationManager);
 		$this->packageManager->initialize();
 	}
 
@@ -177,13 +180,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageMetaDataWriter = $this->getMock('F3\FLOW3\Package\MetaData\WriterInterface');
 		$packageMetaDataWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->injectPackageMetaDataWriter($packageMetaDataWriter);
-		$packageManager->initialize();
+		$this->packageManager->injectPackageMetaDataWriter($packageMetaDataWriter);
+		
+		$this->packageManager->initialize();
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$package = $packageManager->createPackage($packageKey, NULL, $packagesPath);
+		$package = $this->packageManager->createPackage($packageKey, NULL, $packagesPath);
 
 		$packagePath = $packagesPath . $packageKey . '/';
 		$this->assertTrue(is_dir($packagePath), 'Path "' . $packagePath . '" should exist after createPackage');
@@ -191,7 +193,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertType('F3\FLOW3\Package\PackageInterface', $package);
 		$this->assertEquals($packageKey, $package->getPackageKey());
 
-		$this->assertTrue($packageManager->isPackageAvailable($packageKey));
+		$this->assertTrue($this->packageManager->isPackageAvailable($packageKey));
 	}
 
 	/**
@@ -204,15 +206,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
+		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		$metaData = $this->getMock('F3\FLOW3\Package\MetaData', array(), array('YetAnotherTestPackage'));
 
-		$packageManager->createPackage('YetAnotherTestPackage', $metaData, $packagesPath);
+		$this->packageManager->createPackage('YetAnotherTestPackage', $metaData, $packagesPath);
 	}
 
 	/**
@@ -228,15 +227,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
+		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
+		$this->packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
 
-		$packagePath = $packageManager->getPackagePath('YetAnotherTestPackage');
+		$packagePath = $this->packageManager->getPackagePath('YetAnotherTestPackage');
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES), "Classes directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
@@ -252,13 +248,10 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function createPackageThrowsExceptionForInvalidPackageKey() {
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		try {
-			$packageManager->createPackage('Invalid_Package_Key', NULL, $packagesPath);
+			$this->packageManager->createPackage('Invalid_Package_Key', NULL, $packagesPath);
 		} catch(Exception $exception) {
 			$this->assertEquals(1220722210, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
 		}
@@ -278,16 +271,13 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
+		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$packageManager->createPackage('TestPackage', NULL, $packagesPath);
+		$this->packageManager->createPackage('TestPackage', NULL, $packagesPath);
 
 		try {
-			$packageManager->createPackage('TestPackage', NULL, $packagesPath);
+			$this->packageManager->createPackage('TestPackage', NULL, $packagesPath);
 		} catch(Exception $exception) {
 			$this->assertEquals(1220722873, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
 			return;
@@ -328,37 +318,82 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function deacivatePackageRemovesPackageFromActivePackages() {
-		$this->markTestIncomplete();
+	public function deactivatePackageRemovesPackageFromActivePackagesAndUpdatesPackageStatesConfiguration() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->initialize();
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->once())
+			->method('getPackageStatesConfiguration')
+			->will($this->returnValue(array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar'))));
+		$configurationManager->expects($this->once())
+			->method('updatePackageStatesConfiguration')
+			->with(array('YetAnotherTestPackage' => array('state' => 'inactive', 'foo' => 'bar')));
 
-		$packageKey = 'YetAnotherTestPackage';
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
+		$packageManager->injectConfigurationManager($configurationManager);
+		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
+		$packageManager->_set('activePackages', array('YetAnotherTestPackage' => $mockPackage));
+		$packageManager->deactivatePackage('YetAnotherTestPackage');
 
-		$packageManager->createPackage($packageKey);
-		$packageManager->activatePackage($packageKey);
-		$packageManager->deactivatePackage($packageKey);
-
-		$this->assertFalse($packageManager->isPackageActive($packageKey));
+		$this->assertFalse($packageManager->isPackageActive('YetAnotherTestPackage'));
 	}
 
 	/**
 	 * @test
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function activatePackagesAddsPackageToActivePackages() {
-		$this->markTestIncomplete();
+	public function activatePackagesAddsPackageToActivePackagesAndUpdatesPackageStatesConfiguration() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->initialize();
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->once())
+			->method('getPackageStatesConfiguration')
+			->will($this->returnValue(array('YetAnotherTestPackage' => array('foo' => 'bar'))));
+		$configurationManager->expects($this->once())
+			->method('updatePackageStatesConfiguration')
+			->with(array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar')));
 
-		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey);
-		$packageManager->activatePackage($packageKey);
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
+		$packageManager->injectConfigurationManager($configurationManager);
+		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
+		$packageManager->_set('activePackages', array());
+		$packageManager->activatePackage('YetAnotherTestPackage');
 
-		$this->assertTrue($packageManager->isPackageActive($packageKey));
+		$this->assertTrue($packageManager->isPackageActive('YetAnotherTestPackage'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Package\Exception\InvalidPackageState
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function activatePackageThrowsExceptionAndDoesntUpdateConfigurationForAlreadyActivePackage() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
+
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->never())->method('updatePackageStatesConfiguration');
+
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
+		$packageManager->injectConfigurationManager($configurationManager);
+		$packageManager->_set('packages', array('YetAnotherTestPackage' => $mockPackage));
+		$packageManager->_set('activePackages', array('YetAnotherTestPackage' => $mockPackage));
+		$packageManager->activatePackage('YetAnotherTestPackage');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function activatePackageThrowsExceptionForUnavailablePackage() {
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
+		$packageManager->activatePackage('YetAnotherTestPackage');
 	}
 
 	/**
@@ -434,17 +469,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			->method('writePackageMetaData')
 			->will($this->returnValue('<package/>'));
 
-		$packageManager = new \F3\FLOW3\Package\Manager();
-		$packageManager->injectPackageMetaDataWriter($metaDataWriter);
-		$packageManager->injectObjectFactory($this->objectFactory);
-		$packageManager->initialize();
+		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		$packageKey = 'YetAnotherTestPackage';
-		$packageManager->createPackage($packageKey, NULL, $packagesPath);
-		$packagePath = $packageManager->getPackagePath($packageKey);
+		$this->packageManager->createPackage($packageKey, NULL, $packagesPath);
+		$packagePath = $this->packageManager->getPackagePath($packageKey);
 
-		$packageManager->deletePackage($packageKey);
+		$this->packageManager->deletePackage($packageKey);
 
 		$this->assertFalse(file_exists($packagePath), $packagePath, "Package directory was not deleted.");
 	}
@@ -454,6 +486,42 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function scanAvailablePackagesUsesObjectFactoryToCreateNewPackages() {
+		$this->markTestIncomplete('Has to be implemented.');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function initializeUsesPackageStatesConfigurationForActivePackages() {
+		$packageStatesConfiguration = array(
+			'FLOW3' => array(
+				'state' => 'active'
+			)
+		);
+
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->once())->method('getPackageStatesConfiguration')->will($this->returnValue($packageStatesConfiguration));
+
+		$mockFLOW3Package = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockFLOW3Package->expects($this->any())->method('getPackageKey')->will($this->returnValue('FLOW3'));
+		$mockTestPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
+		$mockTestPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('Test'));
+
+		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('scanAvailablePackages'));
+		$packageManager->_set('packages', array('FLOW3' => $mockFLOW3Package, 'Test' => $mockTestPackage));
+		$packageManager->injectConfigurationManager($configurationManager);
+		$packageManager->initialize();
+		
+		$activePackages = $packageManager->getActivePackages();
+		$this->assertEquals(array('FLOW3' => $mockFLOW3Package), $activePackages);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function protectedPackagesAreAlwaysActive() {
 		$this->markTestIncomplete('Has to be implemented.');
 	}
 }

@@ -244,5 +244,67 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
 		$manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SETTINGS, $mockPackage);
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getSpecialConfigurationForTypePackageReturnsConfigurationArrayUntouched() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load'));
+		$mockConfigurationSource->expects($this->any())->method('load')->will($this->returnValue(array('foo' => 'bar')));
+
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
+		$configuration = $manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $mockPackage);
+		$this->assertNotEquals(array(), $configuration);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getSpecialConfigurationForTypePackageUsesGlobalAndContextConfigurationIndexedWithPackageKey() {
+		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('TestPackage'));
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\SourceInterface', array('load'));
+		$mockConfigurationSource->expects($this->at(0))->method('load')->will($this->returnValue(array()));
+		$mockConfigurationSource->expects($this->at(1))->method('load')->will($this->returnValue(array('TestPackage' => array('foo' => 'bar'))));
+		$mockConfigurationSource->expects($this->at(2))->method('load')->will($this->returnValue(array('TestPackage' => array('bar' => 'baz'))));
+
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array($mockConfigurationSource));
+		$configuration = $manager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $mockPackage);
+		$this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $configuration);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function getPackageStatesConfigurationWillUseWritableSourceToLoadGlobalAndContextConfiguration() {
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\WritableSourceInterface');
+		$mockConfigurationSource->expects($this->at(0))->method('load')->with(FLOW3_PATH_CONFIGURATION . \F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE_STATES)->will($this->returnValue(array('foo' => 'bar')));
+		$mockConfigurationSource->expects($this->at(1))->method('load')->with(FLOW3_PATH_CONFIGURATION . 'Testing/' . \F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE_STATES)->will($this->returnValue(array('bar' => 'baz')));
+
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array());
+		$manager->setWritableConfigurationSource($mockConfigurationSource);
+		$configuration = $manager->getPackageStatesConfiguration();
+		$this->assertEquals(array('foo' => 'bar', 'bar' => 'baz'), $configuration);
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function updatePackageStatesWillUseWritableSourceToSaveGlobalConfiguration() {
+		$mockConfigurationSource = $this->getMock('F3\FLOW3\Configuration\Source\WritableSourceInterface');
+		$mockConfigurationSource->expects($this->once())
+			->method('save')
+			->with(FLOW3_PATH_CONFIGURATION . \F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE_STATES, array('foo' => 'bar'))
+			->will($this->returnValue(array('foo' => 'bar')));
+
+		$manager = new \F3\FLOW3\Configuration\Manager('Testing', array());
+		$manager->setWritableConfigurationSource($mockConfigurationSource);
+		$manager->updatePackageStatesConfiguration(array('foo' => 'bar'));
+	}
 }
 ?>
