@@ -52,7 +52,7 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
 	}
-	
+
 	/**
 	 * Default action (no arguments given)
 	 * Forwards to the helpAction.
@@ -139,6 +139,38 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 			$this->packageManager->deactivatePackage($packageKey);
 			return 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
 		}
+	}
+
+	/**
+	 * Action for listing active packages
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function listAvailableAction() {
+		$packages = $this->packageManager->getAvailablePackages();
+		$output = 'Available packages:' . PHP_EOL;
+		foreach ($packages as $package) {
+			$output .= ' ' . $package->getPackageKey() . PHP_EOL;
+		}
+		return $output . PHP_EOL;
+	}
+
+	/**
+	 * Action for listing active packages
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	public function listActiveAction() {
+		$packages = $this->packageManager->getActivePackages();
+		$output = 'Active packages:' . PHP_EOL;
+		foreach ($packages as $package) {
+			$output .= ' ' . $package->getPackageKey() . PHP_EOL;
+		}
+		return $output . PHP_EOL;
 	}
 
 	/**

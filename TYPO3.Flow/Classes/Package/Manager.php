@@ -189,7 +189,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return array Array of \F3\FLOW3\Package
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo Implement activation / deactivation of packages
 	 */
 	public function getActivePackages() {
 		return $this->activePackages;
@@ -359,7 +358,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$packageStatesConfiguration[$packageKey]['state'] = 'active';
 			$this->configurationManager->updatePackageStatesConfiguration($packageStatesConfiguration);
 		} else {
-			throw new \F3\FLOW3\Package\Exception\InvalidPackageState('Package "' . $packageKey . '" is already active.', 1244620776); 
+			throw new \F3\FLOW3\Package\Exception\InvalidPackageState('Package "' . $packageKey . '" is already active.', 1244620776);
 		}
 	}
 
