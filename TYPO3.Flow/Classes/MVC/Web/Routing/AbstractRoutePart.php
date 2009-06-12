@@ -75,7 +75,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Sets name of the Route Part.
-	 * 
+	 *
 	 * @param string $name
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -87,7 +87,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Returns name of the Route Part.
-	 * 
+	 *
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
@@ -98,7 +98,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Returns TRUE if a value is set for this Route Part, otherwise FALSE.
-	 * 
+	 *
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
@@ -109,7 +109,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Returns value of the Route Part. Before match() is called this returns NULL.
-	 * 
+	 *
 	 * @return mixed
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
@@ -120,7 +120,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Returns TRUE if a default value is set for this Route Part, otherwise FALSE.
-	 * 
+	 *
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
@@ -131,7 +131,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Sets default value of the Route Part.
-	 * 
+	 *
 	 * @param mixed $defaultValue
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -143,7 +143,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Gets default value of the Route Part.
-	 * 
+	 *
 	 * @return mixed $defaultValue
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @internal
@@ -155,7 +155,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Specifies whether this Route part is optional.
-	 * 
+	 *
 	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -167,7 +167,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * Getter for $this->isOptional.
-	 * 
+	 *
 	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see setOptional()
@@ -180,7 +180,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	/**
 	 * Defines options for this Route Part.
 	 * Options can be used to enrich a route part with parameters or settings like case sensivitity.
-	 * 
+	 *
 	 * @param array $options
 	 * @return void
 	 * @internal

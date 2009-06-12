@@ -69,7 +69,7 @@ class YAMLSource implements \F3\FLOW3\Configuration\Source\WritableSourceInterfa
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @internal
 	 */
-	public function save($pathAndFilename, $configuration) {
+	public function save($pathAndFilename, array $configuration) {
 		$header = '';
 		if (file_exists($pathAndFilename . '.yaml')) {
 			$header = $this->getHeaderFromFile($pathAndFilename . '.yaml');
@@ -81,7 +81,7 @@ class YAMLSource implements \F3\FLOW3\Configuration\Source\WritableSourceInterfa
 	/**
 	 * Read the header part from the given file. That means, every line
 	 * until the first non comment line is found.
-	 * 
+	 *
 	 * @param string $pathAndFilename
 	 * @return string The header of the given YAML file
 	 * @author Christopher Hlubek <hlubek@networkteam.com>

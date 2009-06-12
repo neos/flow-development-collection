@@ -39,13 +39,13 @@ namespace F3\FLOW3\Configuration\Source;
 interface WritableSourceInterface extends \F3\FLOW3\Configuration\Source\SourceInterface {
 
 	/**
-	 * Save the specified configuration container to the given file 
+	 * Save the specified configuration container to the given file
 	 *
 	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension
 	 * @param array $configuration The configuration array to save
 	 * @return void
 	 * @internal
 	 */
-	public function save($pathAndFilename, $configuration);
+	public function save($pathAndFilename, array $configuration);
 }
 ?>

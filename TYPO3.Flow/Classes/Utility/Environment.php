@@ -368,11 +368,11 @@ class Environment {
 
 	/**
 	 * Creates FLOW3's temporary directory - or at least asserts that it exists and is
-	 * writeable.
+	 * writable.
 	 *
 	 * @param string Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
-	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writeable
+	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
@@ -392,7 +392,7 @@ class Environment {
 		}
 
 		if (!is_writable($temporaryDirectory)) {
-			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writeable for the current user "' . $processUser['name'] . '". Please make this directory writeable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
+			throw new \F3\FLOW3\Utility\Exception('The temporary directory "' . $temporaryDirectory . '" could not be created or is not writable for the current user "' . $processUser['name'] . '". Please make this directory writable or define another temporary directory by setting the respective system environment variable (eg. TMPDIR) or defining it in the FLOW3 settings.', 1216287176);
 		}
 
 		return $temporaryDirectory;
