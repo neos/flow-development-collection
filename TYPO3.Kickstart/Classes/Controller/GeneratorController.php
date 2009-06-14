@@ -87,18 +87,48 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Generate a controller for a package
+	 * Generate a controller for a package. The package key can contain
+	 * a subpackage with a slash after the package key (e.g. "MyPackage/Admin"). 
 	 *
-	 * @param string $packageKey The package key of the package for the new controller
-	 * @param string $name The name for the new controller
+	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage
+	 * @param string $name The name for the new controller 
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateControllerAction($packageKey, $controllerName = 'Standard') {
+		list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
-		$generatedFiles = $this->generatorService->generateController($packageKey, $controllerName);
+		$generatedFiles = $this->generatorService->generateController($packageKey, $subpackageName, $controllerName);
+		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+	}
+
+	/**
+	 * Generate a model class for a package with a given set of fields.
+	 * The fields are specified as a variable list of arguments with
+	 * field name and type separated by a colon (e.g. "title:string size:int type:MyType").
+	 *
+	 * @param string $packageKey The package key of the package for the domain model
+	 * @param string $modelName The name of the new domain model class
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function generateModelAction($packageKey, $modelName) {
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+		}
+		$fieldsArguments = $this->request->getCommandLineArguments();
+		
+		$fieldDefinitions = array();
+		foreach ($fieldsArguments as $fieldArgument) {
+			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
+			
+			$fieldDefinitions[$fieldName] = array(
+				'type' => $fieldType
+			);
+		};
+		$generatedFiles = $this->generatorService->generateModel($packageKey, $modelName, $fieldDefinitions);
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
 	}
 }

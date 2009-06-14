@@ -64,33 +64,35 @@ class GeneratorService {
 	/**
 	 * Generate a controller with the given name for the given package
 	 *
-	 * @param $packageKey
-	 * @param $controllerName
-	 * @return string
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $subpackage An optional subpackage name
+	 * @param string $controllerName The name of the new controller
+	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateController($packageKey, $controllerName) {
+	public function generateController($packageKey, $subpackage = '', $controllerName) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
 		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
 
 		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Controller/ControllerTemplate.php.tmpl';
 
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['subpackage'] = $subpackage;
+		$contextVariables['isInSubpackage'] = ($subpackage != '');
 		$contextVariables['controllerClassName'] = $controllerClassName;
 		$contextVariables['controllerName'] = $controllerName;
-		$contextVariables['packageKey'] = $packageKey;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
-		$controllerFilename = $controllerClassName . '.php';
-
-		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Controller/';
-
+		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
+		$controllerFilename = $controllerClassName . '.php'; 
+		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
 
-		$this->generateView($packageKey, $controllerName, 'index');
+		$this->generateView($packageKey, $subpackage, $controllerName, 'index');
 
 		return $this->generatedFiles;
 	}
@@ -98,30 +100,66 @@ class GeneratorService {
 	/**
 	 * Generate a view with the given name for the given package and controller
 	 *
-	 * @param $packageKey
-	 * @param $controllerName
-	 * @param $viewName
-	 * @return string
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $subpackage An optional subpackage name
+	 * @param string $controllerName The name of the new controller
+	 * @param string $viewName The name of the view
+	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateView($packageKey, $controllerName, $viewName) {
+	public function generateView($packageKey, $subpackage = '', $controllerName, $viewName) {
 		$viewName = lcfirst($viewName);
 
 		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
 
 		$templatePathAndFilename = $resourcesPath . 'Private/Generator/View/viewTemplate.html.tmpl';
 
-		$contextVariables['controllerName'] = $controllerName;
 		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['subpackage'] = $subpackage;
+		$contextVariables['isInSubpackage'] = ($subpackage != '');
+		$contextVariables['controllerName'] = $controllerName;
 		$contextVariables['viewName'] = $viewName;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
+		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
 		$viewFilename = $viewName . '.html';
-
-		$viewPath = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/' . $controllerName . '/';
-
+		$viewPath = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/' . $subpackagePath . $controllerName . '/';
 		$targetPathAndFilename = $viewPath . $viewFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		return $this->generatedFiles;
+	}
+
+
+	/**
+	 * Generate a model for the package with the given model name and fields
+	 *
+	 * @param string $packageKey The package key of the controller's package
+	 * @param string $modelName The name of the new model
+	 * @param string $fieldDefinitions The field definitions
+	 * @return array An array of generated filenames
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function generateModel($packageKey, $modelName, $fieldDefinitions) {
+		$modelName = ucfirst($modelName);
+
+		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
+
+		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Model/EntityTemplate.php.tmpl';
+
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['modelName'] = $modelName;
+		// TODO add a better logic for getting the human name of a camel cased value
+		$contextVariables['humanModelName'] = lcfirst($modelName);
+		$contextVariables['fieldDefinitions'] = $fieldDefinitions;
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$modelFilename = $modelName . '.php';
+		$modelPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Model/';
+		$targetPathAndFilename = $modelPath . $modelFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
 
