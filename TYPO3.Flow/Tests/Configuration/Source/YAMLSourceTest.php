@@ -38,7 +38,7 @@ require_once('vfs/vfsStream.php');
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class YAMLTest extends \F3\Testing\BaseTestCase {
+class YAMLSourceTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * Sets up this test case
@@ -80,7 +80,7 @@ class YAMLTest extends \F3\Testing\BaseTestCase {
 		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
 		$configurationSource->save($pathAndFilename, array('configurationFileHasBeenLoaded' => TRUE));
 
-		$yaml = 'configurationFileHasBeenLoaded: true' . PHP_EOL;
+		$yaml = 'configurationFileHasBeenLoaded: true' . chr(10);
 		$this->assertContains($yaml, file_get_contents($pathAndFilename . '.yaml'), 'Configuration was not written to the file.');
 	}
 
@@ -90,7 +90,7 @@ class YAMLTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function saveWritesDoesNotOverwriteExistingHeaderCommentsIfFileExists() {
 		$pathAndFilename = \vfsStream::url('testDirectory') . '/YAMLConfiguration';
-		$comment = '# This comment should stay' . PHP_EOL . 'Test: foo' . PHP_EOL;
+		$comment = '# This comment should stay' . chr(10) . 'Test: foo' . chr(10);
 		file_put_contents($pathAndFilename . '.yaml', $comment);
 
 		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
