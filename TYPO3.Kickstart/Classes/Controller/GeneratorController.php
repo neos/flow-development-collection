@@ -64,16 +64,6 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
-	 * Error action - display the help message
-	 *
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function errorAction() {
-		$this->indexAction();
-	}
-
-	/**
 	 * Help action - displays a help message
 	 *
 	 * @return void
@@ -119,7 +109,7 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
 		$fieldsArguments = $this->request->getCommandLineArguments();
-		
+
 		$fieldDefinitions = array();
 		foreach ($fieldsArguments as $fieldArgument) {
 			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
@@ -129,6 +119,22 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 			);
 		};
 		$generatedFiles = $this->generatorService->generateModel($packageKey, $modelName, $fieldDefinitions);
+		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
+	}
+
+	/**
+	 * Generate a repository for a model given a package key and model name
+	 *
+	 * @param string $packageKey The package key
+	 * @param string $modelName The name of the domain model class
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function generateRepositoryAction($packageKey, $modelName) {
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
+		}
+		$generatedFiles = $this->generatorService->generateRepository($packageKey, $modelName);
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
 	}
 }

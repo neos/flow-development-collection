@@ -1,9 +1,9 @@
-{namespace k=F3\Kickstart\ViewHelpers}<?php
+<?php
 declare(ENCODING = 'utf-8');
-namespace {namespace};
+namespace F3\Kickstart\Utility;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "{packageKey}".               *
+ * This script belongs to the FLOW3 package "Kickstart".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU General Public License as published by the Free   *
@@ -23,48 +23,51 @@ namespace {namespace};
  *                                                                        */
 
 /**
- * @package {packageKey}
- * @subpackage Domain
+ * @package Kickstart
+ * @subpackage Utility
  * @version $Id: $
  */
+
+require(__DIR__ . '/../../Resources/Private/PHP/Sho_Inflect.php');
 
 /**
- * A {k:inflect.humanizeCamelCase("{modelName}")}
+ * Inflector utilities for the Kickstarter. This is a basic conversion from PHP
+ * class and field names to a human readable form.
  *
- * @package {packageKey}
- * @subpackage Domain
+ * @package Kickstart
+ * @subpackage Utility
  * @version $Id: $
- * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
- * @scope prototype
- * @entity
  */
-class {modelName} {
-<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
+class Inflector {
 	/**
-	 * @var {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * @param string $word The word to pluralize
+	 * @return string The pluralized word
+	 * @author Christopher Hlubek
 	 */
-	protected ${fieldName};
-</f:for>
-<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
-	/**
-	 * Get the {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 *
-	 * @return {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 */
-	public function get<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>() {
-		return $this->{fieldName};
+	public function pluralize($word) {
+		return \Sho_Inflect::pluralize($word);
 	}
 
 	/**
-	 * Sets this {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * Convert a model class name like "BlogAuthor" or a field name like
+	 * "blogAuthor" to a humanized version like "Blog author" for better readability.
 	 *
-	 * @param {fieldDefinition.type} ${fieldName} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 * @return void
+	 * @param string $camelCased The camel cased value
+	 * @return The humanized value
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(${fieldName}) {
-		$this->{fieldName} = ${fieldName};
+	public function humanizeCamelCase($camelCased, $lowercase = FALSE) {
+		$spacified = $this->spacify($camelCased);
+		$result = strtolower($spacified);
+		if (!$lowercase) {
+			$result = ucfirst($result);
+		}
+		return $result;
 	}
-</f:for>
+
+	protected function spacify($camelCased, $glue = ' ') {
+		return preg_replace('/([a-z0-9])([A-Z])/', '$1' . $glue . '$2', $camelCased);
+	}
 }
 ?>

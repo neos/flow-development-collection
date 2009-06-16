@@ -57,6 +57,12 @@ class GeneratorService {
 	protected $templateParser;
 
 	/**
+	 * @var \F3\Kickstart\Utility\Inflector
+	 * @inject
+	 */
+	protected $inflector;
+
+	/**
 	 * @var array
 	 */
 	protected $generatedFiles = array();
@@ -74,7 +80,6 @@ class GeneratorService {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
 		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-
 		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Controller/ControllerTemplate.php.tmpl';
 
 		$contextVariables['packageKey'] = $packageKey;
@@ -111,7 +116,6 @@ class GeneratorService {
 		$viewName = lcfirst($viewName);
 
 		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-
 		$templatePathAndFilename = $resourcesPath . 'Private/Generator/View/viewTemplate.html.tmpl';
 
 		$contextVariables['packageKey'] = $packageKey;
@@ -132,28 +136,27 @@ class GeneratorService {
 		return $this->generatedFiles;
 	}
 
-
 	/**
 	 * Generate a model for the package with the given model name and fields
 	 *
 	 * @param string $packageKey The package key of the controller's package
 	 * @param string $modelName The name of the new model
-	 * @param string $fieldDefinitions The field definitions
+	 * @param array $fieldDefinitions The field definitions
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateModel($packageKey, $modelName, $fieldDefinitions) {
+	public function generateModel($packageKey, $modelName, array $fieldDefinitions) {
 		$modelName = ucfirst($modelName);
+		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Model';
+		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
 		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-
 		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Model/EntityTemplate.php.tmpl';
 
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['modelName'] = $modelName;
-		// TODO add a better logic for getting the human name of a camel cased value
-		$contextVariables['humanModelName'] = lcfirst($modelName);
 		$contextVariables['fieldDefinitions'] = $fieldDefinitions;
+		$contextVariables['namespace'] = $namespace;
 
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
@@ -164,6 +167,60 @@ class GeneratorService {
 		$this->generateFile($targetPathAndFilename, $fileContent);
 
 		return $this->generatedFiles;
+	}
+
+	/**
+	 * Generate a repository for a model given a model name and package key
+	 *
+	 * @param string $packageKey The package key
+	 * @param string $modelName The name of the model
+	 * @return array An array of generated filenames
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function generateRepository($packageKey, $modelName) {
+		$modelName = ucfirst($modelName);
+		$repositoryClassName = $modelName . 'Repository';
+		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Repository';
+
+		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
+		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Repository/RepositoryTemplate.php.tmpl';
+
+		$contextVariables['packageKey'] = $packageKey;
+		$contextVariables['modelName'] = $modelName;
+		$contextVariables['repositoryClassName'] = $repositoryClassName;
+		$contextVariables['namespace'] = $namespace;
+
+		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
+
+		$repositoryFilename = $repositoryClassName . '.php';
+		$repositoryPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . 'Domain/Repository/';
+		$targetPathAndFilename = $repositoryPath . $repositoryFilename;
+
+		$this->generateFile($targetPathAndFilename, $fileContent);
+
+		return $this->generatedFiles;
+	}
+
+	/**
+	 * Normalize types and prefix types with namespaces
+	 *
+	 * @param array $fieldDefinitions The field definitions
+	 * @param string $namespace The namespace
+	 * @return array The normalized and type converted field definitions
+	 */
+	protected function normalizeFieldDefinitions(array $fieldDefinitions, $namespace = '') {
+		foreach ($fieldDefinitions as &$fieldDefinition) {
+			if ($fieldDefinition['type'] == 'bool') {
+				$fieldDefinition['type'] = 'boolean';
+			} else if (preg_match('/^[A-Z]/', $fieldDefinition['type'])) {
+				if (class_exists($fieldDefinition['type'])) {
+					$fieldDefinition['type'] = '\\' . $fieldDefinition['type'];
+				} else {
+					$fieldDefinition['type'] = '\\' . $namespace . '\\' . $fieldDefinition['type'];
+				}
+			}
+		}
+		return $fieldDefinitions;
 	}
 
 	/**

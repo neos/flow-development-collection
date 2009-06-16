@@ -29,7 +29,7 @@ namespace {namespace};
  */
 
 /**
- * A {k:inflect.humanizeCamelCase("{modelName}")}
+ * A repository for <k:inflect.pluralize>{modelName}</k:inflect.pluralize>
  *
  * @package {packageKey}
  * @subpackage Domain
@@ -39,32 +39,7 @@ namespace {namespace};
  * @scope prototype
  * @entity
  */
-class {modelName} {
-<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
-	/**
-	 * @var {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 */
-	protected ${fieldName};
-</f:for>
-<f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
-	/**
-	 * Get the {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 *
-	 * @return {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 */
-	public function get<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>() {
-		return $this->{fieldName};
-	}
+class {repositoryClassName} extends \F3\FLOW3\Persistence\Repository {
 
-	/**
-	 * Sets this {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 *
-	 * @param {fieldDefinition.type} ${fieldName} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
-	 * @return void
-	 */
-	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(${fieldName}) {
-		$this->{fieldName} = ${fieldName};
-	}
-</f:for>
 }
 ?>
