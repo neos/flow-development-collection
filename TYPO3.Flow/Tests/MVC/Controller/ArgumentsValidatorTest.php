@@ -36,6 +36,8 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
+use F3\FLOW3\Validation\Validator;
+
 class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
@@ -111,6 +113,10 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 	public function isPropertyValidChecksValidatorConjunctionDefinedInAnArgument() {
 		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
 
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockArgumentError = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentError', array('addErrors'), array('foo'));
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Controller\ArgumentError')->will($this->returnValue($mockArgumentError));
+
 		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 		$mockArgument->expects($this->any())->method('getName')->will($this->returnValue('foo'));
 		$mockArgument->expects($this->any())->method('getValidator')->will($this->returnValue($mockValidatorChain));
@@ -122,6 +128,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$arguments->addArgument($mockArgument);
 
 		$validator = new \F3\FLOW3\MVC\Controller\ArgumentsValidator();
+		$validator->injectObjectFactory($mockObjectFactory);
 
 		$mockValidatorChain->expects($this->at(0))->method('isValid')->with('fooValue')->will($this->returnValue(TRUE));
 		$mockValidatorChain->expects($this->at(1))->method('isValid')->with('fooValue')->will($this->returnValue(FALSE));
@@ -153,6 +160,49 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockValidatorChain->expects($this->never())->method('isValid');
 
 		$this->assertTrue($validator->isPropertyValid($arguments, 'foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function isPropertyValidCallsAddErrorsForArgumentIfConjunctionIsNotValid() {
+		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockValidatorChain->expects($this->once())->method('isValid')->will($this->returnValue(FALSE));
+		$mockValidatorChain->expects($this->once())->method('getErrors')->will($this->returnValue(array('error')));
+
+		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+		$mockArgument->expects($this->any())->method('getName')->will($this->returnValue('foo'));
+		$mockArgument->expects($this->any())->method('getValidator')->will($this->returnValue($mockValidatorChain));
+		$mockArgument->expects($this->any())->method('getDataType')->will($this->returnValue('FooDataType'));
+		$mockArgument->expects($this->any())->method('getValue')->will($this->returnValue('defaultValue'));
+		$mockArgument->expects($this->any())->method('isRequired')->will($this->returnValue(TRUE));
+
+		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\FactoryInterface'));
+		$arguments->addArgument($mockArgument);
+
+		$validator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array('addErrorsForArgument'));
+		$validator->expects($this->once())->method('addErrorsForArgument')->with(array('error'), 'foo');
+
+		$validator->isPropertyValid($arguments, 'foo');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function addErrorsForArgumentAddsErrorsToNewArgumentErrorIndexedByArgumentName() {
+		$mockArgumentError = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentError', array('addErrors'), array('foo'));
+		$mockArgumentError->expects($this->once())->method('addErrors')->with(array('error'));
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Controller\ArgumentError')->will($this->returnValue($mockArgumentError));
+		
+		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ArgumentsValidator'), array('dummy'));
+		$validator->injectObjectFactory($mockObjectFactory);
+		$validator->_call('addErrorsForArgument', array('error'), 'foo');
+
+		$errors = $validator->getErrors();
+		$this->assertEquals($mockArgumentError, $errors['foo']);
 	}
 }
 ?>

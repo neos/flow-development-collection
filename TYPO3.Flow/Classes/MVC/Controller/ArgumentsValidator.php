@@ -47,17 +47,19 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @param object $arguments The arguments object that should be validated
 	 * @return boolean TRUE if all arguments are valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isValid($arguments) {
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079561);
 		$this->errors = array();
 
+		$result = TRUE;
 		foreach ($arguments->getArgumentNames() as $argumentName) {
 			if ($this->isPropertyValid($arguments, $argumentName) === FALSE) {
-				return FALSE;
+				$result = FALSE;
 			}
 		}
-		return TRUE;
+		return $result;
 	}
 
 	/**
@@ -82,6 +84,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @param string $argumentName Name of the property (ie. name of the argument) to validate
 	 * @return boolean TRUE if the argument is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function isPropertyValid($arguments, $argumentName) {
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079562);
@@ -94,11 +97,24 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 		if ($argumentValue === $argument->getDefaultValue() && $argument->isRequired() === FALSE) return TRUE;
 
 		if ($validatorConjunction->isValid($argumentValue) === FALSE) {
-			$this->errors = $validatorConjunction->getErrors();
+			$this->addErrorsForArgument($validatorConjunction->getErrors(), $argumentName); 
 			return FALSE;
 		}
 		return TRUE;
 	}
 
+	/**
+	 * @param array $errors Array of \F3\FLOW3\Validation\Error
+	 * @param string $argumentName Name of the argument to add errors for
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	protected function addErrorsForArgument($errors, $argumentName) {
+		if (!isset($this->errors[$argumentName])) {
+			$this->errors[$argumentName] = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentError', $argumentName);
+		}
+		$this->errors[$argumentName]->addErrors($errors);
+	}
 }
 ?>
