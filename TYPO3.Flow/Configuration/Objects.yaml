@@ -259,6 +259,7 @@ F3\FLOW3\Security\ACL\PolicyService:
           1: value: FLOW3_Security_Policy
 
 F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface:
+  className: F3\FLOW3\Security\Cryptography\RSAWalletServicePHP
   properties:
     keystoreCache:
       object:

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Cryptography;
 /**
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Cryptography;
  *
  * @package FLOW3
  * @subpackage Security
- * @version $Id:$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
 final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface {
@@ -99,7 +99,7 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * Generates a new keypair and returns a UUID to refer to it
 	 *
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to decrypt passwords. (Decryption won't be allowed!)
-	 * @return integer An UUID that identifies the generated keypair
+	 * @return uuid An UUID that identifies the generated keypair
 	 * @internal
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE) {

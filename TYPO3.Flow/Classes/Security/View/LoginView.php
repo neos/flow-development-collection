@@ -76,8 +76,11 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 				<script type=\"text/javascript\">
 
 					function encryptLoginData() {
-						var username = document.loginForm.F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername.value;
-						var password = document.loginForm.F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword.value;
+						var username = document.loginForm.username.value;
+						var password = document.loginForm.password.value;
+
+						document.loginForm.username.value = '';
+						document.loginForm.password.value = '';
 
 						var encryptedUsername = encrypt(username, '###PUBLIC_KEY_USERNAME###');
 						var encryptedPassword = encrypt(password, '###PUBLIC_KEY_PASSWORD###');
@@ -102,8 +105,8 @@ class LoginView extends \F3\FLOW3\MVC\View\AbstractView {
 			<img src=\"Resources/Packages/FLOW3/Security/Media/f3_logo.gif\" id=\"logo\" />
 			<form action=\"flow3/login\" name=\"loginForm\" id=\"loginForm\" method=\"POST\" onsubmit=\"encryptLoginData();\">
 				<p>Welcome to the FLOW3 Framework! Please Login.</p>
-				<label for=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername\">Username:</label><input type=\"text\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername\" value=\"\" tabindex=\"1\" /><br />
-				<label for=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword\">Password:</label><input type=\"password\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword\" value=\"\" tabindex=\"2\" />
+				<label for=\"username\">Username:</label><input type=\"text\" name=\"username\" value=\"\" tabindex=\"1\" /><input type=\"hidden\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedUsername\" value=\"\" /><br />
+				<label for=\"password\">Password:</label><input type=\"password\" name=\"password\" value=\"\" tabindex=\"2\" /><input type=\"hidden\" name=\"F3_FLOW3_Security_Authentication_Token_RSAUsernamePassword_encryptedPassword\" value=\"\" />
 				<input type=\"submit\" value=\"Login\" class=\"submit\" />
 			</form>
 		</body>

@@ -187,15 +187,13 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @param array $providers The configured provider settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo resolve and set authentication entry point and user details service in the tokens
 	 * @internal
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providers) {
-		foreach ($providers as $provider) {
-			if (!isset($provider['type'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('You have to set an authentication provider type in the configuration!', 1237330316);
+		foreach ($providers as $provider => $providerConfiguration) {
 
-			$providerObjectName = $this->providerResolver->resolveProviderClass($provider['type']);
-			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $provider['type'] . '" could not be found!', 1237330453);
+			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$provider);
+			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $provider . '" could not be found!', 1237330453);
 
 			$providerInstance = $this->objectManager->getObject($providerObjectName);
 			$this->providers[] = $providerInstance;
@@ -205,9 +203,9 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 				$this->tokens[] = $tokenInstance;
 			}
 
-			if (isset($provider['requestPatterns']) && is_array($provider['requestPatterns'])) {
+			if (isset($providerConfiguration['requestPatterns']) && is_array($providerConfiguration['requestPatterns'])) {
 				$requestPatterns = array();
-				foreach($provider['requestPatterns'] as $patternType => $patternConfiguration) {
+				foreach($providerConfiguration['requestPatterns'] as $patternType => $patternConfiguration) {
 					$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($patternType));
 					$requestPattern->setPattern($patternConfiguration);
 					$requestPatterns[] = $requestPattern;
@@ -215,9 +213,12 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 				$tokenInstance->setRequestPatterns($requestPatterns);
 			}
 
-			if (isset($provider['entryPoint']) && is_array($provider['entryPoint']) && isset($provider['entryPoint']['type'])) {
-				$entryPoint = $this->objectManager->getObject($this->entryPointResolver->resolveEntryPointClass($provider['entryPoint']['type']));
-				if (isset($provider['entryPoint']['options']) && is_array($provider['entryPoint']['options'])) $entryPoint->setOptions($provider['entryPoint']['options']);
+			if (isset($providerConfiguration['entryPoint']) && is_array($providerConfiguration['entryPoint'])) {
+				reset($providerConfiguration['entryPoint']);
+				$entryPointObjectName = key($providerConfiguration['entryPoint']);
+
+				$entryPoint = $this->objectManager->getObject($this->entryPointResolver->resolveEntryPointClass($entryPointObjectName));
+				$entryPoint->setOptions($providerConfiguration['entryPoint'][$entryPointObjectName]);
 
 				$tokenInstance->setAuthenticationEntryPoint($entryPoint);
 			}

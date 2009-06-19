@@ -74,12 +74,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			array(
-				'type' => 'UsernamePassword',
-			),
-			array(
-				'type' => 'F3\TestAuthenticationProvider',
-			)
+			'UsernamePassword' => array(),
+			'F3\TestAuthenticationProvider' => array(),
 		);
 
 		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\ProviderManager'), array('authenticate'), array(), '', FALSE);
@@ -137,13 +133,12 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			array(
-				'type' => 'UsernamePassword',
+			'UsernamePassword' => array(
 				'requestPatterns' => array(
 					'URI' => 'typo3/.*',
 					'F3\TestRequestPattern' => 'test',
 				),
-			)
+			),
 		);
 
 		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\ProviderManager'), array('authenticate'), array(), '', FALSE);
@@ -192,11 +187,9 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			array(
-				'type' => 'UsernamePassword',
+			'UsernamePassword' => array(
 				'entryPoint' => array(
-					'type' => 'WebRedirect',
-					'options' => array(
+					'WebRedirect' => array(
 						'first' => 1,
 						'second' => 2,
 						'third' => 3,
@@ -361,7 +354,7 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist() {
 		$providerConfiguration = array(
 			array(
-				'type' => 'NotExistingProvider',
+				'NotExistingProvider' => array(),
 			)
 		);
 
@@ -371,23 +364,6 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\ProviderManager'), array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_set('providerResolver', $mockProviderResolver);
 
-		$mockProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @expectedException F3\FLOW3\Security\Exception\InvalidAuthenticationProvider
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function anExceptionIsThrownIfTheConfiguredProviderTypeIsMissing() {
-		$providerConfiguration = array(
-			array(
-				'typo' => 'NotExistingProvider',
-			)
-		);
-
-		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\ProviderManager'), array('authenticate'), array(), '', FALSE);
 		$mockProviderManager->_call('buildProvidersAndTokensFromConfiguration', $providerConfiguration);
 	}
 }

@@ -140,8 +140,7 @@ security:
     # Note: Authentication will be performed in the given order of the providers.
     # So make sure, that the primary authentication method is the first array entry.
     providers:
-      -
-        type: RSAUsernamePassword
+      RSAUsernamePassword:
         requestPatterns:
          controllerObjectName: F3\FLOW3\Security\.*
 
