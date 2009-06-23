@@ -494,6 +494,25 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function createObjectCallsinitializeProxyForAOPProxies() {
+		$className = uniqid('SomeClass');
+		eval('class ' . $className . ' {}');
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getClassName')->will($this->returnValue($className));
+		$mockProxy = $this->getMock('F3\FLOW3\AOP\ProxyInterface', array(), array(), '', FALSE);
+		$mockProxy->expects($this->once())->method('FLOW3_AOP_Proxy_initializeProxy');
+
+		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array('instantiateClass', 'injectArguments', 'injectProperties', 'callLifecycleInitializationMethod'), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->once())->method('instantiateClass')->will($this->returnValue($mockProxy));
+
+		$object = $mockObjectBuilder->createObject('F3\FLOW3\AOP\ProxyInterface', $mockObjectConfiguration);
+	}
+
+	/**
 	 * Checks if the object builder calls the lifecycle initialization method after injecting properties
 	 *
 	 * @test

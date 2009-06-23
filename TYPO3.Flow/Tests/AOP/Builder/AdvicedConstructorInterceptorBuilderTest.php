@@ -66,17 +66,23 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 	 * ' . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(PARAMETERSCODE2, \F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
-		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
-		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
-		$result = NULL;
+	public function __construct(PARAMETERSCODE) {
+		$this->originalConstructorArguments = array(ARGUMENTSARRAYCODE);
+	}
+
+	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
+		$result = NULL;
 		' . '
 		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
-			parent::__construct(PARAMETERSCODE1);
+			parent::__construct(SAVEDCONSTRUCTORPARAMETERSCODE);
 		} else {
-			$methodArguments = array(ARGUMENTSARRAYCODE	\'FLOW3_AOP_Proxy_objectManager\' => $FLOW3_AOP_Proxy_objectManager, \'FLOW3_AOP_Proxy_objectFactory\' => $FLOW3_AOP_Proxy_objectFactory
-			);
+			$methodArguments = $this->originalConstructorArguments;
 			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
 			ADVICESCODE
 			unset ($this->methodIsInAdviceMode[\'__construct\']);
@@ -86,11 +92,11 @@ class AdvicedConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase 
 	}
 ';
 
-		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('buildAdvicesCode', 'buildMethodParametersCode', 'buildMethodArgumentsArrayCode'), array(), '', FALSE);
-		$builder->expects($this->at(0))->method('buildMethodParametersCode')->with($className, '__construct', FALSE)->will($this->returnValue('PARAMETERSCODE1'));
-		$builder->expects($this->at(1))->method('buildMethodArgumentsArrayCode')->with($className, '__construct')->will($this->returnValue('ARGUMENTSARRAYCODE'));
+		$builder = $this->getMock('F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder', array('buildAdvicesCode', 'buildMethodParametersCode', 'buildMethodArgumentsArrayCode', 'buildSavedConstructorParametersCode'), array(), '', FALSE);
+		$builder->expects($this->once())->method('buildMethodArgumentsArrayCode')->with($className, '__construct')->will($this->returnValue('ARGUMENTSARRAYCODE'));
 		$builder->expects($this->once())->method('buildAdvicesCode')->with(array('groupedAdvicesDummy'), '__construct', 'Bar')->will($this->returnValue('ADVICESCODE'));
-		$builder->expects($this->at(3))->method('buildMethodParametersCode')->with($className, '__construct', TRUE)->will($this->returnValue('PARAMETERSCODE2'));
+		$builder->expects($this->once())->method('buildMethodParametersCode')->with($className, '__construct', TRUE)->will($this->returnValue('PARAMETERSCODE'));
+		$builder->expects($this->once())->method('buildSavedConstructorParametersCode')->with($className)->will($this->returnValue('SAVEDCONSTRUCTORPARAMETERSCODE'));
 
 		$builder->injectReflectionService($mockReflectionService);
 

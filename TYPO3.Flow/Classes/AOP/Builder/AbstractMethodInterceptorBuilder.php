@@ -160,6 +160,27 @@ abstract class AbstractMethodInterceptorBuilder {
 	}
 
 	/**
+	 * Generates the parameters code needed to call the constructor with the saved parameters.
+	 *
+	 * @param string $className Name of the class the method is declared in
+	 * @return string The generated paramters code
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function buildSavedConstructorParametersCode($className) {
+		if ($className === NULL) return '';
+		$parametersCode = '';
+		$methodParameters = $this->reflectionService->getMethodParameters($className, '__construct');
+		$methodParametersCount = count($methodParameters);
+		if ($methodParametersCount > 0) {
+			foreach ($methodParameters as $methodParameterName => $methodParameterInfo) {
+				$methodParametersCount--;
+				$parametersCode .= '$this->originalConstructorArguments[\'' . $methodParameterName . '\']' . ($methodParametersCount > 0 ? ', ' : '');
+			}
+		}
+		return $parametersCode;
+	}
+
+	/**
 	 * Builds the advice interception code, to be used in a method interceptor.
 	 *
 	 * @param array $groupedAdvices The advices grouped by advice type

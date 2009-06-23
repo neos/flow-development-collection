@@ -40,6 +40,13 @@ namespace F3\FLOW3\AOP;
 interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 
 	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy();
+
+	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point

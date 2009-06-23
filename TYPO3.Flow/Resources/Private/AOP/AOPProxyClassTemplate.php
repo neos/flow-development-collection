@@ -25,12 +25,20 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	protected $methodIsInAdviceMode = array();
 
 	/**
+	 * Holds the original constructor arguments.
+	 * @var array
+	 */
+	protected $originalConstructorArguments = array();
+
+	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @inject
 	 */
 	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @inject
 	 */
 	protected $objectManager;
 ###METHODS_INTERCEPTOR_CODE###

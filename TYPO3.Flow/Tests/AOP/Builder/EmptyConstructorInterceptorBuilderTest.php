@@ -46,7 +46,7 @@ class EmptyConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 		$className = uniqid('TestClass');
 		eval('
 			class ' . $className . ' {
-				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
+				public function __construct($arg1, $arg2) {}
 			}
 		');
 
@@ -65,18 +65,26 @@ class EmptyConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * Non-advised constructor interceptor.
 	 * ' . '
 	 */
-	public function __construct(PARAMETERSCODE1, \F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
-		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
-		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
+	public function __construct(PARAMETERSCODE) {
+		$this->originalConstructorArguments = array(PARAMETERSARRAYCODE);
+	}
+
+	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
-		parent::__construct(PARAMETERSCODE2);
+		parent::__construct(SAVEDCONSTRUCTORPARAMETERSCODE);
 	}
 ';
 
-		$builder = $this->getMock('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder', array('buildMethodParametersCode'), array(), '', FALSE);
+		$builder = $this->getMock('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder', array('buildMethodParametersCode', 'buildMethodArgumentsArrayCode', 'buildSavedConstructorParametersCode'), array(), '', FALSE);
 		$builder->injectReflectionService($mockReflectionService);
-		$builder->expects($this->at(0))->method('buildMethodParametersCode')->with($className, '__construct', TRUE)->will($this->returnValue('PARAMETERSCODE1'));
-		$builder->expects($this->at(1))->method('buildMethodParametersCode')->with($className, '__construct', FALSE)->will($this->returnValue('PARAMETERSCODE2'));
+		$builder->expects($this->once())->method('buildMethodParametersCode')->with($className, '__construct', TRUE)->will($this->returnValue('PARAMETERSCODE'));
+		$builder->expects($this->once())->method('buildMethodArgumentsArrayCode')->with($className, '__construct')->will($this->returnValue('PARAMETERSARRAYCODE'));
+		$builder->expects($this->once())->method('buildSavedConstructorParametersCode')->with($className)->will($this->returnValue('SAVEDCONSTRUCTORPARAMETERSCODE'));
 
 		$actualCode = $builder->build('__construct', $interceptedMethods, 'Bar');
 		$this->assertSame($expectedCode, $actualCode);

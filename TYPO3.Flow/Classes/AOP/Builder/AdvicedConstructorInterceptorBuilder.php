@@ -54,7 +54,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 
 		$declaringClassName = $interceptedMethods['__construct']['declaringClassName'];
 		if (method_exists($declaringClassName, '__construct')) {
-			$callParentCode = 'parent::__construct(' . $this->buildMethodParametersCode($declaringClassName, '__construct', FALSE) . ');';
+			$callParentCode = 'parent::__construct(' . $this->buildSavedConstructorParametersCode($declaringClassName) . ');';
 		} else {
 			$callParentCode = 'return;';
 		}
@@ -63,8 +63,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 		if (isset($this->methodIsInAdviceMode[\'__construct\'])) {
 			' . $callParentCode . '
 		} else {
-			$methodArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . '	\'FLOW3_AOP_Proxy_objectManager\' => $FLOW3_AOP_Proxy_objectManager, \'FLOW3_AOP_Proxy_objectFactory\' => $FLOW3_AOP_Proxy_objectFactory
-			);
+			$methodArguments = $this->originalConstructorArguments;
 			$this->methodIsInAdviceMode[\'__construct\'] = TRUE;
 			' . $this->buildAdvicesCode($interceptedMethods['__construct']['groupedAdvices'], '__construct', $targetClassName) . '
 			unset ($this->methodIsInAdviceMode[\'__construct\']);
@@ -72,22 +71,33 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 ';
 		$methodParametersDocumentation = '';
 		$methodParametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE, $methodParametersDocumentation);
+
 		$constructorCode = '
 	/**
 	 * Interceptor for the constructor __construct().
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
 	 */
-	public function __construct(' . $methodParametersCode . (strlen($methodParametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
-		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
-		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
-		$result = NULL;
+	public function __construct(' . $methodParametersCode .') {
+		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
+	}
+';
+
+		$initializeProxyCode = '
+	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
+		$result = NULL;
 		' . $interceptionCode . '
 		return $result;
 	}
 ';
-		return $constructorCode;
+
+		return $constructorCode . $initializeProxyCode;
 	}
 
 }

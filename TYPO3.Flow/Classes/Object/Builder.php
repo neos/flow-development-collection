@@ -168,6 +168,7 @@ class Builder {
 			}
 
 			$this->injectProperties($setterProperties, $object);
+			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) $object->FLOW3_AOP_Proxy_initializeProxy();
 			$this->callLifecycleInitializationMethod($object, $objectConfiguration);
 		} catch (\Exception $exception) {
 			unset ($this->objectsBeingBuilt[$objectName]);

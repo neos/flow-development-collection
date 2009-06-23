@@ -184,6 +184,30 @@ class AbstractMethodInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function buildSavedConstructorParametersCodeReturnsTheCorrectParametersCode() {
+		$className = uniqid('TestClass');
+		eval('
+			class ' . $className . ' {
+				public function __construct($arg1, array $arg2, \ArrayObject $arg3, $arg4= "__construct", $arg5 = TRUE) {}
+			}
+		');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$builder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder'), array('dummy'), array(), '', FALSE);
+		$builder->injectReflectionService($mockReflectionService);
+
+		$expectedCode = '$this->originalConstructorArguments[\'arg1\'], $this->originalConstructorArguments[\'arg2\'], $this->originalConstructorArguments[\'arg3\'], $this->originalConstructorArguments[\'arg4\'], $this->originalConstructorArguments[\'arg5\']';
+		$actualCode = $builder->_call('buildSavedConstructorParametersCode', $className);
+
+		$this->assertSame($expectedCode, $actualCode);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function buildAdvicesCodeRendersMethodInterceptionCodeForAfterThrowingAdvice() {

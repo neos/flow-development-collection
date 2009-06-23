@@ -59,7 +59,7 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 		$parametersDocumentation = '';
 		if (method_exists($declaringClassName, '__construct')) {
 			$parametersCode = $this->buildMethodParametersCode($declaringClassName, '__construct', TRUE, $parametersDocumentation);
-			$callParentCode = 'parent::__construct(' . $this->buildMethodParametersCode($declaringClassName, '__construct', FALSE) . ');';
+			$callParentCode = 'parent::__construct(' . $this->buildSavedConstructorParametersCode($declaringClassName) . ');';
 		}
 
 		$constructorCode = '
@@ -67,14 +67,24 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 	 * Non-advised constructor interceptor.
 	 * ' . $parametersDocumentation . '
 	 */
-	public function __construct(' . $parametersCode . (strlen($parametersCode) ? ', ' : '') . '\F3\FLOW3\Object\ManagerInterface $FLOW3_AOP_Proxy_objectManager, \F3\FLOW3\Object\FactoryInterface $FLOW3_AOP_Proxy_objectFactory) {
-		$this->objectManager = $FLOW3_AOP_Proxy_objectManager;
-		$this->objectFactory = $FLOW3_AOP_Proxy_objectFactory;
+	public function __construct(' . $parametersCode . ') {
+		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
+	}
+';
+
+		$initializeProxyCode = '
+	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 * @internal
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		' . $callParentCode . '
 	}
 ';
-		return $constructorCode;
+
+		return $constructorCode . $initializeProxyCode;
 	}
 }
 

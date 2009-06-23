@@ -47,6 +47,12 @@ class ReconstitutableClassWithSimpleProperties implements \F3\FLOW3\AOP\ProxyInt
 	}
 
 	/**
+	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
+	 * @return void
+	 */
+	public function FLOW3_AOP_Proxy_initializeProxy() {}
+
+	/**
 	 * Returns TRUE if the property exists..
 	 *
 	 * @param string $propertyName Name of the property
