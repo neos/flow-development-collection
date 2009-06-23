@@ -105,5 +105,6 @@ class ArraysTest extends \F3\Testing\BaseTestCase {
 		$array = array('Foo' => array('Bar' => array('Baz' => 'the value')));
 		$this->assertNULL(\F3\FLOW3\Utility\Arrays::getValueByPath($array, array('Foo', 'Bar', 'Baz', 'Bux')));
 	}
+
 }
 ?>

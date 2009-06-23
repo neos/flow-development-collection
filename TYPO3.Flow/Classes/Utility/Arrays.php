@@ -116,28 +116,6 @@ class Arrays {
 	}
 
 	/**
-	 * Randomizes the order of array values. The array should not be an associative array
-	 * as the key-value relations will be lost.
-	 *
-	 * @param array $array Array to reorder
-	 * @return array The array with randomly ordered values
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 */
-	static public function randomizeArrayOrder(array $array) {
-		$reorderedArray = array();
-		if (count($array) > 1) {
-			$keysInRandomOrder = array_rand($array, count($array));
-			foreach ($keysInRandomOrder as $key) {
-				$reorderedArray[] = $array[$key];
-			}
-		} else {
-			$reorderedArray = $array;
-		}
-		return $reorderedArray;
-	}
-
-	/**
 	 * Returns TRUE if the given array contains elements of varying types
 	 *
 	 * @param array $array
