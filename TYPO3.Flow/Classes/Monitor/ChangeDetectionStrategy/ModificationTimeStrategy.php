@@ -30,7 +30,7 @@ namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  */
-class ModificationTime implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface {
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend

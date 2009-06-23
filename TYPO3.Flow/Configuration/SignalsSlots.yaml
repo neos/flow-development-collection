@@ -10,3 +10,11 @@
 #F3\FLOW3\Monitor\FileMonitor:
 #  fileHasChanged:
 #    - [ F3\Package\Slot\Object\Name, slotMethodName ]
+
+F3\FLOW3\Monitor\FileMonitor:
+  fileHasChanged:
+    - [ F3\FLOW3\Core\LockManager, lockSite ]
+    
+F3\FLOW3\Core\Bootstrap:
+  finishedNormalRun:
+    - [ F3\FLOW3\Core\LockManager, unlockSite ]

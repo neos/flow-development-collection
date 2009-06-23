@@ -69,7 +69,7 @@ monitor:
   # production context.
   fileMonitor:
     enable: n
-    changeDetectionStrategy: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime
+    changeDetectionStrategy: F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy
 
 mvc:
 

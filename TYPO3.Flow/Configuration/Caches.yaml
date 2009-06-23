@@ -28,7 +28,7 @@ FLOW3_AOP_ProxyBuildInformation: []
 FLOW3_AOP_TargetClassInformation: []
 FLOW3_Cache_ClassFiles: []
 FLOW3_Cache_ResourceFiles: []
-FLOW3_Monitor_ChangeDetectionStrategy_ModificationTime: []
+FLOW3_Monitor_ChangeDetectionStrategy_ModificationTimeStrategy: []
 FLOW3_Reflection: []
 FLOW3_Resource_MetaData: []
 FLOW3_Resource_Status:

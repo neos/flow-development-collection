@@ -127,6 +127,15 @@ F3\FLOW3\Cache\Backend\TransientMemoryBackend:
 F3\FLOW3\Configuration\Manager: []
 
 #                                                                          #
+# Core                                                                     #
+#                                                                          #
+
+F3\FLOW3\Core\LockManager:
+  properties:
+    environment: object: F3\FLOW3\Utility\Environment
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
+
+#                                                                          #
 # Log                                                                      #
 #                                                                          #
 
@@ -154,7 +163,7 @@ F3\FLOW3\Log\SystemLoggerInterface:
 # Monitor                                                                  #
 #                                                                          #
 
-F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime:
+F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
   autowiring: off
   properties:
     cache:
@@ -162,7 +171,7 @@ F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime:
         factoryClassName: F3\FLOW3\Cache\Manager
         factoryMethodName: getCache
         arguments:
-          1: value: FLOW3_Monitor_ChangeDetectionStrategy_ModificationTime
+          1: value: FLOW3_Monitor_ChangeDetectionStrategy_ModificationTimeStrategy
 
 F3\FLOW3\Monitor\FileMonitor:
   scope: prototype
@@ -282,6 +291,7 @@ F3\FLOW3\Session\SessionInterface:
 F3\FLOW3\SignalSlot\Dispatcher:
   autowiring: off
   properties:
+    objectManager: object: F3\FLOW3\Object\ManagerInterface
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 
 #                                                                          #

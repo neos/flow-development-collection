@@ -2,9 +2,8 @@
 <package xmlns="http://typo3.org/ns/2008/flow3/package">
 	<key>FLOW3</key>
 	<title>FLOW3</title>
-	<description></description>
+	<description>FLOW3 is an enterprise PHP application framework making extensive use of software development paradrigms that had not been brought to PHP programming yet.</description>
 	<version>1.0.0-alpha2</version>
-	<state>Alpha</state>
 	<categories/>
 	<parties>
 		<person role="LeadDeveloper">
@@ -17,12 +16,12 @@
 	</parties>
 	<constraints>
 		<depends>
-				<system minVersion="5.3.0-beta1" type="PHP"/>
+				<system minVersion="5.3.0-RC2" type="PHP"/>
 				<system minVersion="1.2.0" type="PHPExtension">zlib</system>
 				<system type="PHPExtension">SPL</system>
 				<system minVersion="1.2.0" type="PHPExtension">json</system>
 				<system type="PHPExtension">session</system>
-				<package minVersion="1.0.0">PHP6</package>
+				<package>PHP6</package>
 				<package>YAML</package>
 				<package>Fluid</package>
 		</depends>

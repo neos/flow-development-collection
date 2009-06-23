@@ -123,16 +123,27 @@ class Dispatcher {
 	 * @param string $signalMethodName Method name of the signal
 	 * @param array $signalArguments arguments passed to the signal method
 	 * @return void
+	 * @throws \F3\FLOW3\SignalSlot\Exception\InvalidSlot if the slot is not valid
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function dispatch($signalClassName, $signalMethodName, array $signalArguments) {
 	if (!isset($this->slots[$signalClassName][$signalMethodName])) return;
 		$this->systemLogger->log(sprintf('Dispatching signal %s::%s ...', $signalClassName, $signalMethodName), LOG_DEBUG);
 		foreach ($this->slots[$signalClassName][$signalMethodName] as $slotInformation) {
-			$object = (isset($slotInformation['object'])) ? $slotInformation['object'] : $this->objectManager->getObject($slotInformation['class']);
+			if (isset($slotInformation['object'])) {
+				$object = $slotInformation['object'];
+			} else {
+				if (!$this->objectManager->isObjectRegistered($slotInformation['class'])) {
+					throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlot('The given class "' . $slotInformation['class'] . '" is not a registered object.', 1245673367);
+				}
+				$object = $this->objectManager->getObject($slotInformation['class']);
+			}
 			$slotArguments = $signalArguments;
 			if ($slotInformation['omitSignalInformation'] !== TRUE) array_unshift($slotArguments, $signalClassName . '::' . $signalMethodName);
 			$this->systemLogger->log(sprintf('  to slot %s::%s.', get_class($object), $slotInformation['method']), LOG_DEBUG);
+			if (!method_exists($object, $slotInformation['method'])) {
+				throw new \F3\FLOW3\SignalSlot\Exception\InvalidSlot('The slot method ' . get_class($object) . '->' . $slotInformation['method'] . '() does not exist.', 1245673368);
+			}
 			call_user_func_array(array($object, $slotInformation['method']), $slotArguments);
 		}
 	}

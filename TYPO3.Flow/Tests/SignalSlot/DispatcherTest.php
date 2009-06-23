@@ -120,6 +120,7 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$mockSlot = new $slotClassName();
 
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
 		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
@@ -128,6 +129,49 @@ class DispatcherTest extends \F3\Testing\BaseTestCase {
 		$dispatcher->injectObjectManager($mockObjectManager);
 		$dispatcher->injectSystemLogger($mockSystemLogger);
 		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'slot', TRUE);
+
+		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
+		$this->assertSame($mockSlot->arguments, array('bar', 'quux'));
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlot
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function dispatchThrowsAnExceptionIfTheSpecifiedClassOfASlotIsUnknown() {
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with('NonExistingClassName')->will($this->returnValue(FALSE));
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
+		$dispatcher->injectObjectManager($mockObjectManager);
+		$dispatcher->injectSystemLogger($mockSystemLogger);
+		$dispatcher->connect('Foo', 'emitBar', 'NonExistingClassName', 'slot', TRUE);
+		$dispatcher->dispatch('Foo', 'emitBar', array());
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\SignalSlot\Exception\InvalidSlot
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function dispatchThrowsAnExceptionIfTheSpecifiedSlotMethodDoesNotExist() {
+		$slotClassName = uniqid('Mock_');
+		eval ('class ' . $slotClassName . ' { function slot($foo, $baz) { $this->arguments = array($foo, $baz); } }');
+		$mockSlot = new $slotClassName();
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
+		$mockObjectManager->expects($this->once())->method('isObjectRegistered')->with($slotClassName)->will($this->returnValue(TRUE));
+		$mockObjectManager->expects($this->once())->method('getObject')->with($slotClassName)->will($this->returnValue($mockSlot));
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$dispatcher = new \F3\FLOW3\SignalSlot\Dispatcher();
+		$dispatcher->injectObjectManager($mockObjectManager);
+		$dispatcher->injectSystemLogger($mockSystemLogger);
+		$dispatcher->connect('Foo', 'emitBar', $slotClassName, 'unknownMethodName', TRUE);
 
 		$dispatcher->dispatch('Foo', 'emitBar', array('foo' => 'bar', 'baz' => 'quux'));
 		$this->assertSame($mockSlot->arguments, array('bar', 'quux'));

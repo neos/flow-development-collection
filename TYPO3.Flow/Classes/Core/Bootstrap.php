@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3;
+namespace F3\FLOW3\Core;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -24,24 +24,25 @@ namespace F3\FLOW3;
 
 /**
  * @package FLOW3
+ * @subpackage Core
  * @version $Id$
  */
 
-if (version_compare(phpversion(), \F3\FLOW3\FLOW3::MINIMUM_PHP_VERSION, '<')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3\FLOW3::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+if (version_compare(phpversion(), \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION, '<')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 }
-if (version_compare(PHP_VERSION, \F3\FLOW3\FLOW3::MAXIMUM_PHP_VERSION, '>')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3\FLOW3::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+if (version_compare(PHP_VERSION, \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION, '>')) {
+	die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 }
 
 /**
  * Utility_Files is needed before the autoloader is active
  */
-require(__DIR__ . '/Utility/Files.php');
-require(__DIR__ . '/Package/PackageInterface.php');
-require(__DIR__ . '/Package/Package.php');
+require(__DIR__ . '/../Utility/Files.php');
+require(__DIR__ . '/../Package/PackageInterface.php');
+require(__DIR__ . '/../Package/Package.php');
 
-define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(__DIR__ . '/../') . '/'));
+define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(__DIR__ . '/../../') . '/'));
 define('FLOW3_PATH_CONFIGURATION', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Configuration/') . '/'));
 define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Data/') . '/'));
 
@@ -49,10 +50,11 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
  * General purpose central core hyper FLOW3 class
  *
  * @package FLOW3
+ * @subpackage Core
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-final class FLOW3 {
+final class Bootstrap {
 
 	/**
 	 * Required PHP version
@@ -65,6 +67,12 @@ final class FLOW3 {
 	 * @var string
 	 */
 	protected $context;
+
+	/**
+	 * Flag telling if the site / application is currently locked, e.g. due to flushing the code caches
+	 * @var boolean
+	 */
+	protected $siteLocked = FALSE;
 
 	/**
 	 * @var \F3\FLOW3\Configuration\Manager
@@ -103,6 +111,11 @@ final class FLOW3 {
 	protected $reflectionService;
 
 	/**
+	 * @var \F3\FLOW3\SignalSlot\Dispatcher
+	 */
+	protected $signalSlotDispatcher;
+
+	/**
 	 * @var \F3\FLOW3\Error\ExceptionHandlerInterface
 	 */
 	protected $exceptionHandler;
@@ -139,7 +152,7 @@ final class FLOW3 {
 	 */
 	public function __construct($context = 'Production') {
 		$this->checkEnvironment();
-		$this->context = $context;
+		$this->context = (strlen($context) === 0) ? 'Production' : $context;
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
 
@@ -161,6 +174,10 @@ final class FLOW3 {
 		$this->initializeError();
 		$this->initializeObjectFramework();
 		$this->initializeSystemLogger();
+
+		$this->initializeLockManager();
+		if ($this->siteLocked === TRUE) return;
+
 		$this->initializePackages();
 
 		if ($this->packageManager->isPackageActive('FirePHP')) {
@@ -190,7 +207,7 @@ final class FLOW3 {
 	 */
 	public function initializeClassLoader() {
 		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
-			require(__DIR__ . '/Resource/ClassLoader.php');
+			require(__DIR__ . '/../Resource/ClassLoader.php');
 		}
 
 		$initialPackages = array(
@@ -229,7 +246,7 @@ final class FLOW3 {
 	/**
 	 * Initializes the Error component
 	 *
-	 * @return ovid
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 * @internal
@@ -295,6 +312,19 @@ final class FLOW3 {
 	}
 
 	/**
+	 * Initializes the Lock Manager
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 * @internal
+	 */
+	public function initializeLockManager() {
+		$lockManager = $this->objectManager->getObject('F3\FLOW3\Core\LockManager');
+		$this->siteLocked = $lockManager->isSiteLocked();
+	}
+
+	/**
 	 * Initializes the package system and loads the package configuration and settings
 	 * provided by the packages.
 	 *
@@ -329,7 +359,7 @@ final class FLOW3 {
 	 * @internal
 	 */
 	public function initializeSignalsSlots() {
-		$dispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
+		$this->signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
 
 		$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS);
 		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
@@ -341,7 +371,7 @@ final class FLOW3 {
 							if (is_array($slotConfiguration)) {
 								if (isset($slotConfiguration[0]) && isset($slotConfiguration[1])) {
 									$omitSignalInformation = (isset($slotConfiguration[2])) ? $slotConfiguration[2] : FALSE;
-									$dispatcher->connect($signalClassName, $signalMethodName, $slotConfiguration[0], $slotConfiguration[1], $omitSignalInformation);
+									$this->signalSlotDispatcher->connect($signalClassName, $signalMethodName, $slotConfiguration[0], $slotConfiguration[1], $omitSignalInformation);
 								}
 							}
 						}
@@ -416,8 +446,7 @@ final class FLOW3 {
 			}
 		};
 
-		$signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
-		$signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 
@@ -450,8 +479,7 @@ final class FLOW3 {
 			}
 		};
 
-		$signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
-		$signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 	}
@@ -613,18 +641,38 @@ final class FLOW3 {
 	 * @internal
 	 */
 	public function run() {
-		$requestHandlerResolver = $this->objectManager->getObject('F3\FLOW3\MVC\RequestHandlerResolver');
-		$requestHandler = $requestHandlerResolver->resolveRequestHandler();
-		$requestHandler->handleRequest();
+		if (!$this->siteLocked) {
+			$requestHandlerResolver = $this->objectManager->getObject('F3\FLOW3\MVC\RequestHandlerResolver');
+			$requestHandler = $requestHandlerResolver->resolveRequestHandler();
+			$requestHandler->handleRequest();
 
-		if ($this->settings['persistence']['enable'] === TRUE) {
-			$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
+			if ($this->settings['persistence']['enable'] === TRUE) {
+				$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
+			}
+			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
+
+			$this->emitFinishedNormalRun();
+			$this->systemLogger->log('Shutting down ...', LOG_INFO);
+
+			$this->objectManager->shutdown();
+			$this->reflectionService->shutdown();
+		} else {
+			header('HTTP/1.1 503 Service Temporarily Unavailable');
+			readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
+			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
 		}
-		$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
+	}
 
-		$this->reflectionService->shutdown();
-		$this->systemLogger->log(sprintf('Shutting down FLOW3 ...', $this->context), LOG_INFO);
-		$this->objectManager->shutdown();
+	/**
+	 * Signalizes that FLOW3 completed the shutdown process after a normal run.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @signal
+	 * @see run()
+	 */
+	protected function emitFinishedNormalRun() {
+		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, array());
 	}
 
 	/**

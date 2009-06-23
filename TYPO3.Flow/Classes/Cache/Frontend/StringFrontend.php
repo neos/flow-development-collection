@@ -40,8 +40,7 @@ namespace F3\FLOW3\Cache\Frontend;
 class StringFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 
 	/**
-	 * Saves the value of a PHP variable in the cache. Note that the variable
-	 * will be serialized if necessary.
+	 * Saves the value of a PHP variable in the cache.
 	 *
 	 * @param string $entryIdentifier An identifier used for this cache entry
 	 * @param string $string The variable to cache

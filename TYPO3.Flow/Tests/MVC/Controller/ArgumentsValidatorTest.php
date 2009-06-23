@@ -36,8 +36,6 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-use F3\FLOW3\Validation\Validator;
-
 class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
@@ -196,7 +194,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 		$mockArgumentError->expects($this->once())->method('addErrors')->with(array('error'));
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->any())->method('create')->with('F3\FLOW3\MVC\Controller\ArgumentError')->will($this->returnValue($mockArgumentError));
-		
+
 		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ArgumentsValidator'), array('dummy'));
 		$validator->injectObjectFactory($mockObjectFactory);
 		$validator->_call('addErrorsForArgument', array('error'), 'foo');

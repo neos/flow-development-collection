@@ -31,7 +31,7 @@ require_once('vfs/vfsStream.php');
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ModificationTimeTest extends \F3\Testing\BaseTestCase {
+class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @var \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime
@@ -52,7 +52,7 @@ class ModificationTimeTest extends \F3\Testing\BaseTestCase {
 
 		$this->cache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
 
-		$this->strategy = new \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTime();
+		$this->strategy = new \F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy();
 		$this->strategy->injectCache($this->cache);
 	}
 
