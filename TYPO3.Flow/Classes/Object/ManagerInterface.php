@@ -98,8 +98,8 @@ interface ManagerInterface {
 	/**
 	 * Registers the given class as an object
 	 *
-	 * @param string $objectName: The unique identifier of the object
-	 * @param string $className: The class name which provides the functionality for this object. Same as object name by default.
+	 * @param string $objectName The unique identifier of the object
+	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.
 	 * @return void
 	 */
 	public function registerObject($objectName, $className = NULL);
@@ -143,7 +143,7 @@ interface ManagerInterface {
 	 * framework, however there might be special situations in which the
 	 * case senstivie name is not available.
 	 *
-	 * @param string $caseInsensitiveObjectName: The object name in lower-, upper- or mixed case
+	 * @param string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
@@ -159,7 +159,7 @@ interface ManagerInterface {
 	/**
 	 * Returns the configuration object of a certain object
 	 *
-	 * @param string $objectName: Name of the object to fetch the configuration for
+	 * @param string $objectName Name of the object to fetch the configuration for
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
 	 * @internal
 	 */
@@ -173,7 +173,7 @@ interface ManagerInterface {
 	 *       configured. Trying to configure an unregistered object will
 	 *       result in an exception thrown.
 	 *
-	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
+	 * @param array $newObjectConfigurations Array of \F3\FLOW3\Object\Configuration\Configuration instances
 	 * @return void
 	 * @internal
 	 */
@@ -186,7 +186,7 @@ interface ManagerInterface {
 	 *       configured. Trying to configure an unregistered object will
 	 *       result in an exception thrown.
 	 *
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration The new object configuration
 	 * @return void
 	 * @internal
 	 */
@@ -197,8 +197,8 @@ interface ManagerInterface {
 	 * This is a convenience method which loads the configuration of the given
 	 * object, sets the class name and saves the configuration again.
 	 *
-	 * @param string $objectName: Name of the object to set the class name for
-	 * @param string $className: Name of the class to set
+	 * @param string $objectName Name of the object to set the class name for
+	 * @param string $className Name of the class to set
 	 * @return void
 	 * @internal
 	 */

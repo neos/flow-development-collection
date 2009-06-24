@@ -406,7 +406,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Returns an array of configuration objects for all registered objects.
 	 *
-	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
+	 * @return array Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
@@ -417,7 +417,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Returns the configuration object of a certain object
 	 *
-	 * @param string $objectName: Name of the object to fetch the configuration for
+	 * @param string $objectName Name of the object to fetch the configuration for
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered
@@ -432,7 +432,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * Sets the object configurations for all objects found in the
 	 * $newObjectConfigurations array.
 	 *
-	 * @param array $newObjectConfigurations: Array of $objectName => \F3\FLOW3\Object::configuration
+	 * @param array $newObjectConfigurations Array of \F3\FLOW3\Object\Configuration\Configuration instances
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
@@ -450,7 +450,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Sets the object configuration for a specific object.
 	 *
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration: The new object configuration
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration The new object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal

@@ -117,13 +117,13 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * Returns straight-value constructor arguments by creating appropriate
 	 * \F3\FLOW3\Object\Configuration\ConfigurationArgument objects.
 	 *
-	 * @param array $argumentValues: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @param array $argumentValues Array of argument values. Index must start at "0" for parameter "1" etc.
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
 	 * @internal
 	 */
-	static public function convertArgumentValuesToArgumentObjects(array $argumentValues) {
+	static protected function convertArgumentValuesToArgumentObjects(array $argumentValues) {
 		$argumentObjects = array();
 		foreach ($argumentValues as $index => $value) {
 			$argumentObjects[$index + 1] = new \F3\FLOW3\Object\Configuration\ConfigurationArgument($index + 1, $value, \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE);
