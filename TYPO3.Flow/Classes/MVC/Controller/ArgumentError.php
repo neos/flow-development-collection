@@ -29,7 +29,7 @@ namespace F3\FLOW3\MVC\Controller;
  */
 
 /**
- * This object holds validation errors for one property.
+ * This object holds validation errors for one argument.
  *
  * @package FLOW3
  * @subpackage MVC

@@ -39,6 +39,7 @@ namespace F3\FLOW3\Validation\Validator;
  * @scope prototype
  */
 class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompositeValidator {
+
 	/**
 	 * Checks if the given value is valid according to the validators of the conjunction.
 	 *

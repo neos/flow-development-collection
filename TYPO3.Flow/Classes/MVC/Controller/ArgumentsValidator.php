@@ -48,10 +48,13 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @return boolean TRUE if all arguments are valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isValid($arguments) {
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079561);
 		$this->errors = array();
+
+		$this->mapIdentityUUIDsToRealObjects($arguments);
 
 		$result = TRUE;
 		foreach ($arguments->getArgumentNames() as $argumentName) {
@@ -60,6 +63,29 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 			}
 		}
 		return $result;
+	}
+
+	/**
+	 * Checks if the current value of a controller argument is a UUID. If that is the case
+	 * and if the argument's data type is a class (i.e. it contains a backslash), this
+	 * function replaces the value by an identity array so Controller\Argument can fetch
+	 * the corresponding object in setValue().
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments to check and map
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	protected function mapIdentityUUIDsToRealObjects(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
+		foreach ($arguments as $argument) {
+			$currentValue = $argument->getValue();
+			$dataType = $argument->getDataType();
+			if (is_string($currentValue)
+				&& strpos($dataType, '\\') !== FALSE
+				&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $currentValue) === 1) {
+					$argument->setValue(array('__identity' => $currentValue));
+			}
+		}
 	}
 
 	/**
@@ -97,20 +123,23 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 		if ($argumentValue === $argument->getDefaultValue() && $argument->isRequired() === FALSE) return TRUE;
 
 		if ($validatorConjunction->isValid($argumentValue) === FALSE) {
-			$this->addErrorsForArgument($validatorConjunction->getErrors(), $argumentName); 
+			$this->addErrorsForArgument($validatorConjunction->getErrors(), $argumentName);
 			return FALSE;
 		}
 		return TRUE;
 	}
 
 	/**
+	 * Adds the given errors to $this->errors and creates an ArgumentError
+	 * instance if needed.
+	 *
 	 * @param array $errors Array of \F3\FLOW3\Validation\Error
 	 * @param string $argumentName Name of the argument to add errors for
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @internal
 	 */
-	protected function addErrorsForArgument($errors, $argumentName) {
+	protected function addErrorsForArgument(array $errors, $argumentName) {
 		if (!isset($this->errors[$argumentName])) {
 			$this->errors[$argumentName] = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ArgumentError', $argumentName);
 		}

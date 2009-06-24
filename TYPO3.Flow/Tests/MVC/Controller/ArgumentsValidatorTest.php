@@ -110,6 +110,7 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function isPropertyValidChecksValidatorConjunctionDefinedInAnArgument() {
 		$mockValidatorChain = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface');
+		$mockValidatorChain->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockArgumentError = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentError', array('addErrors'), array('foo'));
@@ -201,6 +202,45 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 
 		$errors = $validator->getErrors();
 		$this->assertEquals($mockArgumentError, $errors['foo']);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isValidCallsMapIdentityUUIDsToRealObjects() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+
+		$validator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array('mapIdentityUUIDsToRealObjects'), array(), '', FALSE);
+		$validator->expects($this->once())->method('mapIdentityUUIDsToRealObjects')->with($mockArguments);
+
+		$validator->isValid($mockArguments);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapIdentityUUIDsToRealObjectsDetectsUUIDsAndSetsArgumentValuesToRealObjects() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('foo'));
+		$mockArgumentFoo->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18a'));
+		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('F3\Virtual\Foo'));
+		$mockArgumentFoo->expects($this->once())->method('setValue')->with(array('__identity' => '33baefe1-95f0-4e13-ad14-28812bccb18a'));
+
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('bar'));
+		$mockArgumentBar->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18b'));
+		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('string'));
+		$mockArgumentBar->expects($this->never())->method('setValue');
+
+		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
+		$mockArguments->addArgument($mockArgumentFoo);
+		$mockArguments->addArgument($mockArgumentBar);
+
+		$validator = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ArgumentsValidator'), array('dummy'), array(), '', FALSE);
+		$validator->_call('mapIdentityUUIDsToRealObjects', $mockArguments);
 	}
 }
 ?>

@@ -298,23 +298,9 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function setNewFilterChainCreatesANewFilterChainObject() {
-		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Validation\Filter\Chain')->will($this->returnValue($this->getMock('F3\FLOW3\Validation\Filter\Chain')));
-
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
-		$argument->injectObjectFactory($this->mockObjectFactory);
-		$argument->setNewFilterChain(array());
-
-		$this->assertType('F3\FLOW3\Validation\Filter\Chain', $argument->getFilter(), 'The returned filter is not a chain as expected.');
-	}
-
-	/**
-	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function settingDefaultValueReallySetsDefaultValue() {
+	public function setDefaultValueReallySetsDefaultValue() {
 		$argument = new \F3\FLOW3\MVC\Controller\Argument('dummy', 'Text');
 		$argument->injectObjectFactory($this->mockObjectFactory);
 		$argument->setDefaultValue(42);
@@ -322,20 +308,5 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals(42, $argument->getValue(), 'The default value was not stored in the Argument.');
 	}
 
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNewFilterChainAddsThePassedFiltersToTheCreatedFilterChain() {
-		$this->markTestIncomplete('Implement this test with a new Filter Resolver');
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setNewFilterChainCanHandleShortFilterNames() {
-		$this->markTestIncomplete('Implement this test with a new Filter Resolver');
-	}
 }
 ?>

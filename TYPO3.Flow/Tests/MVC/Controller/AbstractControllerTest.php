@@ -243,8 +243,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 			will($this->returnValue(TRUE));
 		$mockPropertyMapper->expects($this->once())->method('getMappingResults')->will($this->returnValue($mockMappingResults));
 
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('mapIdentityUUIDsToRealObjects'), array(), '', FALSE);
-		$controller->expects($this->once())->method('mapIdentityUUIDsToRealObjects')->with($mockArguments);
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
 
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
@@ -254,31 +253,6 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 
 		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function mapIdentityUUIDsToRealObjectsDetectsUUIDsAndSetsArgumentValuesToRealObjects() {
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-
-		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('foo'));
-		$mockArgumentFoo->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18a'));
-		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('F3\Virtual\Foo'));
-		$mockArgumentFoo->expects($this->once())->method('setValue')->with(array('__identity' => '33baefe1-95f0-4e13-ad14-28812bccb18a'));
-
-		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array('getValue', 'getDataType', 'setValue'), array('bar'));
-		$mockArgumentBar->expects($this->once())->method('getValue')->will($this->returnValue('33baefe1-95f0-4e13-ad14-28812bccb18b'));
-		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('string'));
-		$mockArgumentBar->expects($this->never())->method('setValue');
-
-		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
-		$mockArguments->addArgument($mockArgumentFoo);
-		$mockArguments->addArgument($mockArgumentBar);
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_call('mapIdentityUUIDsToRealObjects', $mockArguments);
 	}
 
 	/**

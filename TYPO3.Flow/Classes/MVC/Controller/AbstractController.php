@@ -366,32 +366,8 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$validator = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\ArgumentsValidator');
 		$this->propertyMapper->mapAndValidate($allPropertyNames, $this->request->getArguments(), $this->arguments, $optionalPropertyNames, $validator);
-		$this->mapIdentityUUIDsToRealObjects($this->arguments);
 
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
-	}
-
-	/**
-	 * Checks if the current value of a controller argument is a UUID. If that is the case
-	 * and if the argument's data type is a class (i.e. it contains a backslash), this
-	 * function replaces the value by an identity array so Controller\Argument can fetch
-	 * the corresponding object in setValue() later.
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments to check and map
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	protected function mapIdentityUUIDsToRealObjects(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
-		foreach ($arguments as $argument) {
-			$currentValue = $argument->getValue();
-			$dataType = $argument->getDataType();
-			if (is_string($currentValue)
-				&& strpos($dataType, '\\') !== FALSE
-				&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $currentValue) === 1) {
-					$argument->setValue(array('__identity' => $currentValue));
-			}
-		}
 	}
 
 	/**

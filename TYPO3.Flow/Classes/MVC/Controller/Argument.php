@@ -386,24 +386,6 @@ class Argument {
 	}
 
 	/**
-	 * Create and set a filter chain
-	 *
-	 * @param array Object names of the filters
-	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
-	 */
-	public function setNewFilterChain(array $objectNames) {
-		$this->filter = $this->objectFactory->create('F3\FLOW3\Validation\Filter\Chain');
-		foreach ($objectNames as $objectName) {
-			if (!$this->objectManager->isObjectRegistered($objectName)) $objectName = 'F3\FLOW3\Validation\Filter\\' . $objectName;
-			$this->filter->addFilter($this->objectManager->getObject($objectName));
-		}
-
-		return $this;
-	}
-
-	/**
 	 * Returns the set filter
 	 *
 	 * @return \F3\FLOW3\Validation\FilterInterface The set filter, NULL if none was set
