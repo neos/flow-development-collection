@@ -399,13 +399,22 @@ class Argument {
 	/**
 	 * Sets the value of this argument.
 	 *
-	 * @param mixed $value: The value of this argument
+	 * Checks if the value is a UUID or an array but should be an object, i.e.
+	 * the argument's data type is a class (it contains a backslash). If that is
+	 * the case, this method tries to look up the corresponding object instead.
+	 *
+	 * @param mixed $value The value of this argument
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @internal
 	 */
 	public function setValue($value) {
+		if (is_string($value) && $this->dataTypeClassSchema !== NULL && preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $value) === 1) {
+			$value = array('__identity' => $value);
+		}
+
 		if (is_array($value) && $this->dataTypeClassSchema !== NULL) {
 			if (isset($value['__identity'])) {
 				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
@@ -426,6 +435,7 @@ class Argument {
 				}
 			}
 		}
+
 		$this->value = $value;
 		return $this;
 	}

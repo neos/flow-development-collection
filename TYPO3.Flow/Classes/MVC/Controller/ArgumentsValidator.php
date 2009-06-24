@@ -54,8 +54,6 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079561);
 		$this->errors = array();
 
-		$this->mapIdentityUUIDsToRealObjects($arguments);
-
 		$result = TRUE;
 		foreach ($arguments->getArgumentNames() as $argumentName) {
 			if ($this->isPropertyValid($arguments, $argumentName) === FALSE) {
@@ -63,29 +61,6 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 			}
 		}
 		return $result;
-	}
-
-	/**
-	 * Checks if the current value of a controller argument is a UUID. If that is the case
-	 * and if the argument's data type is a class (i.e. it contains a backslash), this
-	 * function replaces the value by an identity array so Controller\Argument can fetch
-	 * the corresponding object in setValue().
-	 *
-	 * @param \F3\FLOW3\MVC\Controller\Arguments $arguments The arguments to check and map
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	protected function mapIdentityUUIDsToRealObjects(\F3\FLOW3\MVC\Controller\Arguments $arguments) {
-		foreach ($arguments as $argument) {
-			$currentValue = $argument->getValue();
-			$dataType = $argument->getDataType();
-			if (is_string($currentValue)
-				&& strpos($dataType, '\\') !== FALSE
-				&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $currentValue) === 1) {
-					$argument->setValue(array('__identity' => $currentValue));
-			}
-		}
 	}
 
 	/**

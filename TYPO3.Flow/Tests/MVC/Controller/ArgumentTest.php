@@ -105,6 +105,23 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setValueTriesToConvertAnUUIDStringIntoTheRealObjectIfDataTypeIsAClassName() {
+		$object = new \stdClass();
+
+		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument->_set('dataTypeClassSchema', $mockClassSchema);
+		$argument->expects($this->once())->method('findObjectByIdentityUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
+		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
+
+		$this->assertSame($object, $argument->_get('value'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setValueTriesToConvertAnIdentityArrayContainingAUUIDIntoTheRealObject() {
