@@ -171,7 +171,7 @@ F3\FLOW3\Monitor\ChangeDetectionStrategy\ModificationTimeStrategy:
         factoryClassName: F3\FLOW3\Cache\Manager
         factoryMethodName: getCache
         arguments:
-          1: value: FLOW3_Monitor_ChangeDetectionStrategy_ModificationTimeStrategy
+          1: value: FLOW3_Monitor
 
 F3\FLOW3\Monitor\FileMonitor:
   scope: prototype
@@ -180,6 +180,12 @@ F3\FLOW3\Monitor\FileMonitor:
     changeDetectionStrategy: object: FLOW3.monitor.fileMonitor.changeDetectionStrategy
     signalSlotDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
+    cache:
+      object:
+        factoryClassName: F3\FLOW3\Cache\Manager
+        factoryMethodName: getCache
+        arguments:
+          1: value: FLOW3_Monitor
 
 #                                                                          #
 # MVC                                                                      #

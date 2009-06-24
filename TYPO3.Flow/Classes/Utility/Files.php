@@ -81,23 +81,28 @@ class Files {
 	 * Returns all filenames from the specified directory. Filters hidden files and
 	 * directories.
 	 *
-	 * @param string $path Path to the directory which shall be read.
-	 * @return array
+	 * @param string $path Path to the directory which shall be read
+	 * @param string $suffix If specified, only filenames with this extension are returned (eg. ".php" or "foo.bar")
+	 * @param array $filenames Internally used for the recursion - don't specify!
+	 * @return array Filenames including full path
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public static function readDirectoryRecursively($path, &$files = array()) {
+	public static function readDirectoryRecursively($path, $suffix = NULL, &$filenames = array()) {
 		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
 
 		$directoryIterator = new \DirectoryIterator($path);
+		$suffixLength = strlen($suffix);
+
 		foreach ($directoryIterator as $file) {
-			if ($file->isFile() && substr($file->getFilename(),0,1) != '.') {
-				$files[] = self::getUnixStylePath($file->getPathname());
+			$filename = $file->getFilename();
+			if ($file->isFile() && $filename{0} !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
+				$filenames[] = self::getUnixStylePath($file->getPathname());
 			}
-			if ($file->isDir() && substr($file->getFilename(),0,1) != '.') {
-				self::readDirectoryRecursively($file->getPathname(), $files);
+			if ($file->isDir() && $filename{0} !== '.') {
+				self::readDirectoryRecursively($file->getPathname(), $suffix, $filenames);
 			}
 		}
-		return $files;
+		return $filenames;
 	}
 
 	/**

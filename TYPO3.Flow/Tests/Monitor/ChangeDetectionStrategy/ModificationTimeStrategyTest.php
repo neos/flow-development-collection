@@ -64,7 +64,7 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 		$fileURL = \vfsStream::url('testDirectory') . '/test.txt';
 
 		$status = $this->strategy->getFileStatus($fileURL);
-		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
 
 	/**
@@ -79,7 +79,7 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 		clearstatcache();
 		$status = $this->strategy->getFileStatus($fileURL);
 
-		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
+		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED, $status);
 	}
 
 	/**
@@ -91,7 +91,7 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 		file_put_contents($fileURL, 'test data');
 
 		$status = $this->strategy->getFileStatus($fileURL);
-		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
+		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED, $status);
 	}
 
 	/**
@@ -106,7 +106,7 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 		unlink($fileURL);
 		$status = $this->strategy->getFileStatus($fileURL);
 
-		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
+		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED, $status);
 	}
 
 	/**
@@ -122,7 +122,7 @@ class ModificationTimeStrategyTest extends \F3\Testing\BaseTestCase {
 		clearstatcache();
 		$status = $this->strategy->getFileStatus($fileURL);
 
-		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
+		$this->assertSame(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CHANGED, $status);
 	}
 }
 ?>

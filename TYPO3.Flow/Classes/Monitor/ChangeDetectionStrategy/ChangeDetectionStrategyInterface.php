@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Monitor;
+namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
 
 /*                                                                        *
  * This script is part of the TYPO3 project - inspiring people to share!  *
@@ -44,14 +44,6 @@ interface ChangeDetectionStrategyInterface {
 	 * @return integer One of the STATUS_* constants
 	 */
 	public function getFileStatus($pathAndFilename);
-
-	/**
-	 * Checks if the specified directory has changed
-	 *
-	 * @param string $path
-	 * @return integer One of the STATUS_* constants
-	 */
-	public function getDirectoryStatus($path);
 
 }
 ?>

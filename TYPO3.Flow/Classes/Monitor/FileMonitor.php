@@ -38,7 +38,7 @@ class FileMonitor {
 	protected $identifier;
 
 	/**
-	 * @var F3\FLOW3\Monitor\ChangeDetectionStrategyInterface
+	 * @var F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface
 	 */
 	protected $changeDetectionStrategy;
 
@@ -53,6 +53,11 @@ class FileMonitor {
 	protected $systemLogger;
 
 	/**
+	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
+	 */
+	protected $cache;
+
+	/**
 	 * @var array
 	 */
 	protected $monitoredFiles = array();
@@ -61,6 +66,17 @@ class FileMonitor {
 	 * @var array
 	 */
 	protected $monitoredDirectories = array();
+
+	/**
+	 * @var array
+	 */
+	protected $directoriesAndFiles = array();
+
+	/**
+	 * If the directories changed and therefore need to be cached
+	 * @var boolean
+	 */
+	protected $directoriesChanged = FALSE;
 
 	/**
 	 * Constructs this file monitor
@@ -75,12 +91,12 @@ class FileMonitor {
 	/**
 	 * Injects the Change Detection Strategy
 	 *
-	 * @param F3\FLOW3\Monitor\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
+	 * @param F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	public function injectChangeDetectionStrategy(\F3\FLOW3\Monitor\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
+	public function injectChangeDetectionStrategy(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
 	}
 
@@ -110,6 +126,31 @@ class FileMonitor {
 	}
 
 	/**
+	 * Injects the FLOW3_Monitor cache
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
+		$this->cache = $cache;
+	}
+
+	/**
+	 * Initializes this monitor
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function initializeObject() {
+		if ($this->cache->has('directoriesAndFiles')) {
+			$this->directoriesAndFiles = $this->cache->get('directoriesAndFiles');
+		}
+	}
+
+	/**
 	 * Adds the specified file to the list of files to be monitored.
 	 * The file in question does not necessarily have to exist.
 	 *
@@ -126,6 +167,7 @@ class FileMonitor {
 
 	/**
 	 * Adds the specified directory to the list of directories to be monitored.
+	 * All files in these directories will be monitored too.
 	 *
 	 * @param string $path Absolute path of the directory to monitor
 	 * @return void
@@ -169,21 +211,49 @@ class FileMonitor {
 	public function detectChanges() {
 		$filesCounter = 0;
 		$directoriesCounter = 0;
-		foreach ($this->monitoredFiles as $pathAndFilename) {
+
+		$filesCounter = $this->detectChangedFiles($this->monitoredFiles);
+
+		foreach ($this->monitoredDirectories as $path) {
+			if (!isset($this->directoriesAndFiles[$path])) {
+				$this->directoriesAndFiles[$path] = \F3\FLOW3\Utility\Files::readDirectoryRecursively($path);
+				$this->directoriesChanged = TRUE;
+				$directoriesCounter ++;
+				$this->emitDirectoryHasChanged($this->identifier, $path, \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
+			}
+		}
+
+		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
+			$filesCounter += $this->detectChangedFiles($pathAndFilenames);
+			if (!is_dir($path)) {
+				unset($this->directoriesAndFiles[$path]);
+				$this->directoriesChanged = TRUE;
+				$directoriesCounter ++;
+				$this->emitDirectoryHasChanged($this->identifier, $path, \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+			}
+		}
+
+		if ($filesCounter > 0 || $directoriesCounter > 0) $this->systemLogger->log(sprintf('File Monitor detected %s changed files and %s changed directories.', $filesCounter, $directoriesCounter), LOG_INFO);
+	}
+
+	/**
+	 * Detects changes in the given list of files and emits signals if necessary.
+	 *
+	 * @param array $pathAndFilenames A list of full path and filenames of files to check
+	 * @return integer The number of detected changes
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	protected function detectChangedFiles(array $pathAndFilenames) {
+		$detectedChanges = 0;
+		foreach ($pathAndFilenames as $pathAndFilename) {
 			$status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
-			if ($status !== \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
-				$filesCounter ++;
+			if ($status !== \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
+				$detectedChanges ++;
 				$this->emitFileHasChanged($this->identifier, $pathAndFilename, $status);
 			}
 		}
-		foreach ($this->monitoredDirectories as $path) {
-			$status = $this->changeDetectionStrategy->getDirectoryStatus($path);
-			if ($status !== \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
-				$directoriesCounter ++;
-				$this->emitDirectoryHasChanged($this->identifier, $path, $status);
-			}
-		}
-		if ($filesCounter > 0 || $directoriesCounter > 0) $this->systemLogger->log(sprintf('File Monitor detected %s changed files and %s changed directories.', $filesCounter, $directoriesCounter), LOG_INFO);
+		return $detectedChanges;
 	}
 
 	/**
@@ -191,7 +261,7 @@ class FileMonitor {
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
 	 * @param string $pathAndFilename Path and name of the file
-	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_* constants
+	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
@@ -205,13 +275,26 @@ class FileMonitor {
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
 	 * @param string $path Path to the directory
-	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategyInterface::STATUS_* constants
+	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
 	 */
 	protected function emitDirectoryHasChanged($monitorIdentifier, $path, $status) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
+	}
+
+	/**
+	 * Caches the directories and their files
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	public function shutdownObject() {
+		if ($this->directoriesChanged === TRUE) {
+			$this->cache->set('directoriesAndFiles', $this->directoriesAndFiles);
+		}
 	}
 }
 ?>

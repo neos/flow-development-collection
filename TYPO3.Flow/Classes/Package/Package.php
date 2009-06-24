@@ -243,7 +243,7 @@ class Package implements PackageInterface {
 				}
 				$documentationsDirectoryIterator->next();
 			}
-		}	
+		}
 		return $documentations;
 	}
 

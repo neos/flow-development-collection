@@ -30,7 +30,7 @@ namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  */
-class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrategyInterface {
+class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface {
 
 	/**
 	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
@@ -106,18 +106,6 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 				return self::STATUS_UNCHANGED;
 			}
 		}
-	}
-
-	/**
-	 * Checks if the specified directory has changed
-	 *
-	 * @param string $path
-	 * @return integer One of the STATUS_* constants
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	public function getDirectoryStatus($path) {
-		return self::STATUS_UNCHANGED;
 	}
 
 	/**

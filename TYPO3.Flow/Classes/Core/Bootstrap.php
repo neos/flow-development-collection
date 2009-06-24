@@ -57,6 +57,11 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
 final class Bootstrap {
 
 	/**
+	 * @internal
+	 */
+	const REVISION = '$Revision$';
+
+	/**
 	 * Required PHP version
 	 */
 	const MINIMUM_PHP_VERSION = '5.3.0RC2';
@@ -396,6 +401,14 @@ final class Bootstrap {
 
 		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory');
 		$cacheFactory->setCacheManager($this->cacheManager);
+
+		$coreCache= $this->cacheManager->getCache('FLOW3_Core');
+		$cachedRevision = ($coreCache->has('revision')) ? $coreCache->get('revision') : NULL;
+		if ($cachedRevision !== self::REVISION) {
+			$this->systemLogger->log('The caches are based on an older revision of FLOW3, flushing all caches.', LOG_NOTICE);
+			$this->cacheManager->flushCaches();
+		}
+		$coreCache->set('revision', self::REVISION);
 	}
 
 	/**
@@ -426,8 +439,8 @@ final class Bootstrap {
 
 		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
 			$classesPath = $package->getClassesPath();
-			foreach($package->getClassFiles() as $className => $classFileName) {
-				$monitor->monitorFile($classesPath . $classFileName);
+			if (is_dir($classesPath)) {
+				$monitor->monitorDirectory($classesPath);
 			}
 		}
 
