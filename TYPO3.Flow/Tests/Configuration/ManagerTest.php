@@ -306,5 +306,30 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$manager->setWritableConfigurationSource($mockConfigurationSource);
 		$manager->updatePackageStatesConfiguration(array('foo' => 'bar'));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function mergeRoutesWithSubRoutesSkipsInactivePackages() {
+		$routesConfiguration= array(
+			array(
+				'name' => 'Welcome',
+				'uriPattern' => '<WelcomeSubroutes>',
+				'subRoutes' => array(
+					'WelcomeSubroutes' => array(
+						'package' => 'Welcome'
+					)
+				)
+			)
+		);
+		$subRoutesConfiguration= array();
+
+		$managerClassName = $this->buildAccessibleProxy('F3\FLOW3\Configuration\Manager');
+		$manager = new $managerClassName('Testing', array());
+		$manager->_callRef('mergeRoutesWithSubRoutes', $routesConfiguration, $subRoutesConfiguration);
+
+		$this->assertEquals(0, count($routesConfiguration));
+	}
 }
 ?>

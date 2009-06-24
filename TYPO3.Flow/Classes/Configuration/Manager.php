@@ -328,7 +328,7 @@ class Manager {
 			$mergedSubRoutesConfiguration = array($routeConfiguration);
 			foreach($routeConfiguration['subRoutes'] as $subRouteKey => $subRouteOptions) {
 				if (!isset($subRouteOptions['package']) || !isset($subRoutesConfiguration[$subRouteOptions['package']])) {
-					continue;
+					continue 2;
 				}
 				$packageSubRoutesConfiguration = $subRoutesConfiguration[$subRouteOptions['package']];
 				$mergedSubRoutesConfiguration = $this->buildSubrouteConfigurations($mergedSubRoutesConfiguration, $packageSubRoutesConfiguration, $subRouteKey);
