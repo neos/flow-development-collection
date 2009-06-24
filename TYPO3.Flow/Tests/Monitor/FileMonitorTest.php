@@ -81,7 +81,7 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
 		$mockMonitor = $this->getMock('F3\FLOW3\Monitor\FileMonitor', array('detectChangedFiles'), array('FLOW3_Test'), '', TRUE, TRUE);
-		$mockMonitor->expects($this->once())->method('detectChangedFiles')->with(array(__FILE__));
+		$mockMonitor->expects($this->once())->method('detectChangedFiles')->with(array(__FILE__))->will($this->returnValue(array()));
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
 		$mockMonitor->monitorFile(__FILE__);
@@ -93,12 +93,35 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function detectChangesEmitsFilesHaveChangedSignalIfFilesHaveChanged() {
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$monitoredFiles = array(__FILE__ . '1', __FILE__ . '2', __FILE__ . '3');
+
+		$expectedChangedFiles = array();
+		$expectedChangedFiles[__FILE__ . '1'] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
+		$expectedChangedFiles[__FILE__ . '3'] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitFilesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->expects($this->once())->method('detectChangedFiles')->with($monitoredFiles)->will($this->returnValue($expectedChangedFiles));
+		$mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('FLOW3_Test', $expectedChangedFiles);
+
+		$mockMonitor->injectSystemLogger($mockSystemLogger);
+		$mockMonitor->_set('monitoredFiles', $monitoredFiles);
+
+		$mockMonitor->detectChanges();
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function detectChangesDetectsChangesInFilesOfMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
-		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoryHasChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
-		$mockMonitor->expects($this->at(0))->method('detectChangedFiles')->with(array());
-		$mockMonitor->expects($this->at(1))->method('detectChangedFiles')->with(array(__FILE__));
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->expects($this->at(0))->method('detectChangedFiles')->with(array())->will($this->returnValue(array()));
+		$mockMonitor->expects($this->at(1))->method('detectChangedFiles')->with(array(__FILE__))->will($this->returnValue(array()));
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
 		$mockMonitor->_set('directoriesAndFiles', array(__DIR__ => array(__FILE__)));
@@ -114,8 +137,11 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalAndMemorizesDirectoryIfDirectoryHasNotBeenMonitoredPreviously() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
-		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoryHasChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
-		$mockMonitor->expects($this->once())->method('emitDirectoryHasChanged')->with('FLOW3_Test', __DIR__, \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
+		$expectedChangedDirectories = array(__DIR__ => \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
+		$mockMonitor->expects($this->once())->method('emitDirectoriesHaveChanged')->with('FLOW3_Test', $expectedChangedDirectories);
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
 		$mockMonitor->monitorDirectory(__DIR__);
@@ -134,8 +160,11 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalIfDirectoryHasBeenRemoved() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
-		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoryHasChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
-		$mockMonitor->expects($this->once())->method('emitDirectoryHasChanged')->with('FLOW3_Test', '/foo/bar', \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+		$expectedChangedDirectories = array('/foo/bar' => \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
+		$mockMonitor->expects($this->once())->method('emitDirectoriesHaveChanged')->with('FLOW3_Test', $expectedChangedDirectories);
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
 		$mockMonitor->_set('directoriesAndFiles', array('/foo/bar' => array()));
@@ -147,18 +176,16 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function detectChangedFilesFetchesTheStatusOfGivenFilesAndEmitsSignalsForEachChangedFile() {
+	public function detectChangedFilesFetchesTheStatusOfGivenFilesAndReturnsAListOfChangeFilesAndTheirStatus() {
 		$mockStrategy = $this->getMock('F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface');
 		$mockStrategy->expects($this->at(0))->method('getFileStatus')->with(__FILE__ . '1')->will($this->returnValue(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED));
 		$mockStrategy->expects($this->at(1))->method('getFileStatus')->with(__FILE__ . '2')->will($this->returnValue(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED));
 
-		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('emitFileHasChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
-		$mockMonitor->expects($this->once())->method('emitFileHasChanged')->with('FLOW3_Test', __FILE__ . '1', \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
-
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('dummy'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->injectChangeDetectionStrategy($mockStrategy);
 		$result = $mockMonitor->_call('detectChangedFiles', array(__FILE__ . '1', __FILE__ . '2'));
 
-		$this->assertSame(1, $result);
+		$this->assertSame(array(__FILE__ . '1' => \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED), $result);
 	}
 }
 ?>

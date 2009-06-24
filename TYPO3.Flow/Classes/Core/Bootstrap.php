@@ -408,8 +408,8 @@ final class Bootstrap {
 		if ($cachedRevision !== $currentRevision) {
 			$this->systemLogger->log('The caches are based on FLOW3 ' . $cachedRevision . ' not matching ' . $currentRevision . ', therefore flushing all caches.', LOG_NOTICE);
 			$this->cacheManager->flushCaches();
+			$coreCache->set('revision', $currentRevision);
 		}
-		$coreCache->set('revision', self::REVISION);
 	}
 
 	/**
@@ -447,26 +447,24 @@ final class Bootstrap {
 
 		$classFileCache = $this->cacheManager->getCache('FLOW3_Cache_ClassFiles');
 		$cacheManager = $this->cacheManager;
-		$atLeastOneClassFileChanged = FALSE;
-		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager, &$atLeastOneClassFileChanged) {
-			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
+		$cacheFlushingSlot = function() use ($classFileCache, $cacheManager) {
+			list($signalName, $monitorIdentifier, $changedFiles) = func_get_args();
 			if ($monitorIdentifier === 'FLOW3_ClassFiles') {
-				$matches = array();
-				if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
-					$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
-					$cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
-					$atLeastOneClassFileChanged = TRUE;
+				foreach ($changedFiles as $pathAndFilename => $status) {
+					$matches = array();
+					if (1 === preg_match('/.+\/(.+)\/Classes\/(.+)\.php/', $pathAndFilename, $matches)) {
+						$className = 'F3\\' . $matches[1] . '\\' . str_replace('/', '\\', $matches[2]);
+						$cacheManager->flushCachesByTag($classFileCache->getClassTag($className));
+					}
+				}
+				if (count($changedFiles) > 0) {
+					$cacheManager->flushCachesByTag($classFileCache->getClassTag());
 				}
 			}
 		};
 
 		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $cacheFlushingSlot);
-
 		$monitor->detectChanges();
-
-		if ($atLeastOneClassFileChanged) {
-			$this->cacheManager->flushCachesByTag($classFileCache->getClassTag());
-		}
 	}
 
 	/**
@@ -484,7 +482,7 @@ final class Bootstrap {
 
 		$cacheManager = $this->cacheManager;
 		$cacheFlushingSlot = function() use ($cacheManager) {
-			list($signalName, $monitorIdentifier, $pathAndFilename, $status) = func_get_args();
+			list($signalName, $monitorIdentifier, $changedFiles) = func_get_args();
 			if ($monitorIdentifier === 'FLOW3_RoutesConfigurationFiles') {
 				$findMatchResultsCache = $cacheManager->getCache('FLOW3_MVC_Web_Routing_FindMatchResults');
 				$findMatchResultsCache->flush();

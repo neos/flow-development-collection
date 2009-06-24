@@ -209,64 +209,66 @@ class FileMonitor {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function detectChanges() {
-		$filesCounter = 0;
-		$directoriesCounter = 0;
+		$changedFiles = array();
+		$changedDirectories = array();
 
-		$filesCounter = $this->detectChangedFiles($this->monitoredFiles);
+		$changedFiles = $this->detectChangedFiles($this->monitoredFiles);
 
 		foreach ($this->monitoredDirectories as $path) {
 			if (!isset($this->directoriesAndFiles[$path])) {
 				$this->directoriesAndFiles[$path] = \F3\FLOW3\Utility\Files::readDirectoryRecursively($path);
 				$this->directoriesChanged = TRUE;
-				$directoriesCounter ++;
-				$this->emitDirectoryHasChanged($this->identifier, $path, \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED);
+				$changedDirectories[$path] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_CREATED;
 			}
 		}
 
 		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
-			$filesCounter += $this->detectChangedFiles($pathAndFilenames);
+			$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
 			if (!is_dir($path)) {
 				unset($this->directoriesAndFiles[$path]);
 				$this->directoriesChanged = TRUE;
-				$directoriesCounter ++;
-				$this->emitDirectoryHasChanged($this->identifier, $path, \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+				$changedDirectories[$path] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
 			}
 		}
 
-		if ($filesCounter > 0 || $directoriesCounter > 0) $this->systemLogger->log(sprintf('File Monitor detected %s changed files and %s changed directories.', $filesCounter, $directoriesCounter), LOG_INFO);
+		if (count($changedFiles) > 0) {
+			$this->emitFilesHaveChanged($this->identifier, $changedFiles);
+		}
+		if (count($changedDirectories) > 0) {
+			$this->emitDirectoriesHaveChanged($this->identifier, $changedDirectories);
+		}
+		if (count($changedFiles) > 0 || count($changedDirectories) > 0) $this->systemLogger->log(sprintf('File Monitor detected %s changed files and %s changed directories.', count($changedFiles), count($changedDirectories)), LOG_INFO);
 	}
 
 	/**
 	 * Detects changes in the given list of files and emits signals if necessary.
 	 *
 	 * @param array $pathAndFilenames A list of full path and filenames of files to check
-	 * @return integer The number of detected changes
+	 * @return array An array of changed files (key = path and filenmae) and their status (value)
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
 	protected function detectChangedFiles(array $pathAndFilenames) {
-		$detectedChanges = 0;
+		$changedFiles = array();
 		foreach ($pathAndFilenames as $pathAndFilename) {
 			$status = $this->changeDetectionStrategy->getFileStatus($pathAndFilename);
 			if ($status !== \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_UNCHANGED) {
-				$detectedChanges ++;
-				$this->emitFileHasChanged($this->identifier, $pathAndFilename, $status);
+				$changedFiles[$pathAndFilename] = $status;
 			}
 		}
-		return $detectedChanges;
+		return $changedFiles;
 	}
 
 	/**
 	 * Signalizes that the specified file has changed
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
-	 * @param string $pathAndFilename Path and name of the file
-	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_* constants
+	 * @param array $changedFiles An array of changed files (key = path and filenmae) and their status (value)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
 	 */
-	protected function emitFileHasChanged($monitorIdentifier, $pathAndFilename, $status) {
+	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
@@ -274,13 +276,12 @@ class FileMonitor {
 	 * Signalizes that the specified directory has changed
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
-	 * @param string $path Path to the directory
-	 * @param integer $status Details of the change, one of the F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_* constants
+	 * @param array $changedFiles An array of changed directories (key = path) and their status (value)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
 	 */
-	protected function emitDirectoryHasChanged($monitorIdentifier, $path, $status) {
+	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
 	}
 
