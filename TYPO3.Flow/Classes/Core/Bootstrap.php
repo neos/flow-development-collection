@@ -404,8 +404,9 @@ final class Bootstrap {
 
 		$coreCache= $this->cacheManager->getCache('FLOW3_Core');
 		$cachedRevision = ($coreCache->has('revision')) ? $coreCache->get('revision') : NULL;
-		if ($cachedRevision !== self::REVISION) {
-			$this->systemLogger->log('The caches are based on an older revision of FLOW3, flushing all caches.', LOG_NOTICE);
+		$currentRevision = $this->packageManager->getPackage('FLOW3')->getPackageMetaData()->getVersion() . ' (r' . substr(self::REVISION, 11, -2) . ')';
+		if ($cachedRevision !== $currentRevision) {
+			$this->systemLogger->log('The caches are based on FLOW3 ' . $cachedRevision . ' not matching ' . $currentRevision . ', therefore flushing all caches.', LOG_NOTICE);
 			$this->cacheManager->flushCaches();
 		}
 		$coreCache->set('revision', self::REVISION);
@@ -459,7 +460,7 @@ final class Bootstrap {
 			}
 		};
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 
@@ -492,7 +493,7 @@ final class Bootstrap {
 			}
 		};
 
-		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFileHasChanged', $cacheFlushingSlot);
+		$this->signalSlotDispatcher->connect('F3\FLOW3\Monitor\FileMonitor', 'emitFilesHaveChanged', $cacheFlushingSlot);
 
 		$monitor->detectChanges();
 	}
