@@ -54,7 +54,24 @@ class AbstractExceptionHandlerTest extends \F3\Testing\BaseTestCase {
 		$exceptionHandler->handleException($exception);
 	}
 
+	/**
+	 * @test
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function handleExceptionUnlocksTheSiteIfItHasBeenLockedByThisRequest() {
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
+		$mockLockManager = $this->getMock('F3\FLOW3\Core\LockManager');
+		$mockLockManager->expects($this->once())->method('unlockSite');
+
+		$exceptionHandler = $this->getMock('F3\FLOW3\Error\AbstractExceptionHandler', array('dummy'), array(), '', FALSE);
+		$exceptionHandler->injectSystemLogger($mockSystemLogger);
+		$exceptionHandler->injectLockManager($mockLockManager);
+
+		$exception = new \Exception('The Message', 12345);
+		$exceptionHandler->handleException($exception);
+	}
 }
 
 ?>

@@ -44,9 +44,9 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	protected $systemLogger;
 
 	/**
-	 * @var string
+	 * @var \F3\FLOW3\Core\LockManager
 	 */
-	protected $backgracePathAndFilename;
+	protected $lockManager;
 
 	/**
 	 * Injects the system logger
@@ -61,13 +61,15 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 	}
 
 	/**
-	 * Sets the path and file name of a file used to dump the backtrace.
+	 * Injects the Lock Manager
 	 *
-	 * @param string $pathAndFilename
+	 * @param \F3\FLOW3\Core\LockManager $lockManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	public function setBacktracePathAndFilename($pathAndFilename) {
-		$this->backtracePathAndFilename = $pathAndFilename;
+	public function injectLockManager(\F3\FLOW3\Core\LockManager $lockManager) {
+		$this->lockManager = $lockManager;
 	}
 
 	/**
@@ -90,6 +92,10 @@ abstract class AbstractExceptionHandler implements ExceptionHandlerInterface {
 			$packageKey = (isset($explodedClassName[1])) ? $explodedClassName[1] : NULL;
 
 			$this->systemLogger->log($message, LOG_CRIT, array(), $packageKey, $className, $methodName);
+		}
+
+		if (is_object($this->lockManager)) {
+			$this->lockManager->unlockSite();
 		}
 	}
 

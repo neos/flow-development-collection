@@ -327,6 +327,7 @@ final class Bootstrap {
 	public function initializeLockManager() {
 		$lockManager = $this->objectManager->getObject('F3\FLOW3\Core\LockManager');
 		$this->siteLocked = $lockManager->isSiteLocked();
+		$this->exceptionHandler->injectLockManager($lockManager);
 	}
 
 	/**
