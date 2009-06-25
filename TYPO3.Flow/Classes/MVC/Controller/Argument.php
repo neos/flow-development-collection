@@ -207,7 +207,7 @@ class Argument {
 	 * @internal
 	 */
 	public function initializeObject() {
-		$this->setDataType($this->dataType);
+		$this->dataTypeClassSchema = $this->persistenceManager->getClassSchema($this->dataType);
 	}
 
 	/**
@@ -242,19 +242,6 @@ class Argument {
 	 */
 	public function getShortName() {
 		return $this->shortName;
-	}
-
-	/**
-	 * Sets the data type of this argument's value
-	 *
-	 * @param string $dataType The data type. Can be either a built-in type such as "Text" or "Integer" or a fully qualified object name
-	 * @return \F3\FLOW3\MVC\Controller\Argument $this
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setDataType($dataType) {
-		$this->dataType = $dataType;
-		$this->dataTypeClassSchema = $this->persistenceManager->getClassSchema($this->dataType);
-		return $this;
 	}
 
 	/**
