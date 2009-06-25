@@ -34,7 +34,7 @@ namespace F3\Kickstart\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */
-class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
+class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 
 	/**
 	 * @var \F3\FLOW3\Package\ManagerInterface
@@ -77,16 +77,35 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 	}
 
 	/**
+	 * Kickstart a package
+	 *
+	 * @param string $packageKey The package key
+	 * @return string
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function generatePackageAction($packageKey) {
+		if ($this->packageManager->isPackageAvailable($packageKey)) {
+			return 'Package "' . $packageKey . '" already exists.' . PHP_EOL;
+		}
+		$this->packageManager->createPackage($packageKey);
+		$this->packageManager->activatePackage($packageKey);
+		return $this->generateControllerAction($packageKey);
+	}
+
+	/**
 	 * Generate a controller for a package. The package key can contain
-	 * a subpackage with a slash after the package key (e.g. "MyPackage/Admin"). 
+	 * a subpackage with a slash after the package key (e.g. "MyPackage/Admin").
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage
-	 * @param string $name The name for the new controller 
+	 * @param string $name The name for the new controller
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function generateControllerAction($packageKey, $controllerName = 'Standard') {
-		list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
+		$subpackageName = '';
+		if (strpos('/', $packageKey) !== FALSE) {
+			list($packageKey, $subpackageName) = explode('/', $packageKey, 2);
+		}
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
@@ -113,7 +132,7 @@ class GeneratorController extends \F3\FLOW3\MVC\Controller\ActionController {
 		$fieldDefinitions = array();
 		foreach ($fieldsArguments as $fieldArgument) {
 			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
-			
+
 			$fieldDefinitions[$fieldName] = array(
 				'type' => $fieldType
 			);
