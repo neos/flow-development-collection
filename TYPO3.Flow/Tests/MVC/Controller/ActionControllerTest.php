@@ -454,7 +454,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function defaultErrorActionForwardsToReferrerIfSet() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Arguments', array(), array(), '', FALSE);
+		$arguments = array('foo' => 'bar');
 
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
 		$mockArgumentsMappingResults->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
@@ -472,9 +472,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockRequest->expects($this->any())->method('hasArgument')->with('__referrer')->will($this->returnValue(TRUE));
 		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('__referrer')->will($this->returnValue($referrer));
-		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($mockArguments));
+		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($arguments));
 
-		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', $mockArguments);
+		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', $arguments);
 
 		$mockController->_call('errorAction');
 	}
