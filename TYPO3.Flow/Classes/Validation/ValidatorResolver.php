@@ -128,34 +128,104 @@ class ValidatorResolver {
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		if (isset($methodTagsValues['validate'])) {
 			foreach ($methodTagsValues['validate'] as $validateValue) {
-				$matches = array();
-				preg_match('/^\$(?P<argumentName>[a-zA-Z0-9]+)\s+(?P<validators>.*)$/', $validateValue, $matches);
-				$argumentName = $matches['argumentName'];
-
-				preg_match_all('/(?P<validatorName>[a-zA-Z0-9]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $matches['validators'], $matches, PREG_SET_ORDER);
-				foreach ($matches as $match) {
-					$validatorName = $match['validatorName'];
-					$validatorOptions = array();
-					$rawValidatorOptions = isset($match['validatorOptions']) ? explode(',', $match['validatorOptions']) : array();
-					foreach ($rawValidatorOptions as $rawValidatorOption) {
-						if (strpos($rawValidatorOption, '=') !== FALSE) {
-							list($optionName, $optionValue) = explode('=', $rawValidatorOption);
-							$validatorOptions[trim($optionName)] = trim($optionValue);
-						}
-					}
-					$newValidator = $this->createValidator($validatorName, $validatorOptions);
+				$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
+				foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
+					$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
 					if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Could not resolve class name for  validator "' . $validatorName . '".', 1239853109);
 
-					if  (isset($validatorConjunctions[$argumentName])) {
-						$validatorConjunctions[$argumentName]->addValidator($newValidator);
+					if  (isset($validatorConjunctions[$parsedAnnotation['argumentName']])) {
+						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
 					} else {
-						$validatorConjunctions[$argumentName] = $this->createValidator('Conjunction');
-						$validatorConjunctions[$argumentName]->addValidator($newValidator);
+						$validatorConjunctions[$parsedAnnotation['argumentName']] = $this->createValidator('Conjunction');
+						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
 					}
 				}
 			}
 		}
 		return $validatorConjunctions;
+	}
+
+	/**
+	 * Parses the validator options given in @validate annotations.
+	 *
+	 * @return array
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	protected function parseValidatorAnnotation($validateValue) {
+		$parts = explode(' ', $validateValue, 2);
+		$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
+
+		$matches = array();
+		preg_match_all('/(?:^|,\s*)(?P<validatorName>[a-z0-9]+)\s*(?:\((?P<validatorOptions>.+)\))?/i', $parts[1], $matches, PREG_SET_ORDER);
+		foreach ($matches as $match) {
+			$validatorName = $match['validatorName'];
+			$validatorOptions = array();
+			if (isset($match['validatorOptions'])) {
+				if (strpos($match['validatorOptions'], '\'') === FALSE && strpos($match['validatorOptions'], '"') === FALSE) {
+					$validatorOptions = $this->parseSimpleValidatorOptions($match['validatorOptions']);
+				} else {
+					$validatorOptions = $this->parseComplexValidatorOptions($match['validatorOptions']);
+				}
+			}
+			$validatorConfiguration['validators'][] = array('validatorName' => $validatorName, 'validatorOptions' => $validatorOptions);
+		}
+
+		return $validatorConfiguration;
+	}
+
+	/**
+	 * Parses $rawValidatorOptions not containing quoted option values.
+	 * $rawValidatorOptions will be an empty string afterwards (pass by ref!).
+	 *
+	 * @param string &$rawValidatorOptions
+	 * @return array An array of optionName/optionValue pairs
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	protected function parseSimpleValidatorOptions(&$rawValidatorOptions) {
+		$validatorOptions = array();
+
+		$rawValidatorOptions = explode(',', $rawValidatorOptions);
+		foreach ($rawValidatorOptions as $rawValidatorOption) {
+			if (strpos($rawValidatorOption, '=') !== FALSE) {
+				list($optionName, $optionValue) = explode('=', $rawValidatorOption, 2);
+				$validatorOptions[trim($optionName)] = trim($optionValue);
+			}
+		}
+
+		$rawValidatorOptions = '';
+		return $validatorOptions;
+	}
+
+	/**
+	 * Parses $rawValidatorOptions containing quoted option values.
+	 *
+	 * @param string $rawValidatorOptions
+	 * @return array An array of optionName/optionValue pairs
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @internal
+	 */
+	protected function parseComplexValidatorOptions($rawValidatorOptions) {
+		$validatorOptions = array();
+
+		while (strlen($rawValidatorOptions) > 0) {
+			$parts = explode('=', $rawValidatorOptions, 2);
+			$optionName = trim($parts[0]);
+			$rawValidatorOptions = trim($parts[1]);
+
+			$matches = array();
+			preg_match('/(?:\'(.+)\'|"(.+)")(?:,|$)/', $rawValidatorOptions, $matches);
+			$validatorOptions[$optionName] = str_replace(array('\\\'', '\\"'), array('\'', '"'), (isset($matches[2]) ? $matches[2] : $matches[1]));
+
+			$rawValidatorOptions = ltrim(substr($rawValidatorOptions, strlen($matches[0])),', ');
+			if (strpos($rawValidatorOptions, '\'') === FALSE && strpos($rawValidatorOptions, '"') === FALSE) {
+				$validatorOptions = array_merge($validatorOptions, $this->parseSimpleValidatorOptions($rawValidatorOptions));
+			}
+		}
+
+		return $validatorOptions;
 	}
 
 	/**

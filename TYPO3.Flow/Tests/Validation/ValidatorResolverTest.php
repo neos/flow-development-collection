@@ -179,6 +179,52 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 * dataProvider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
+	public function validatorAnnotations() {
+		return array(
+			array('$var Bar', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Bar', 'validatorOptions' => array())))),
+			array('$var Bar, Foo', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Bar', 'validatorOptions' => array()),
+						array('validatorName' => 'Foo', 'validatorOptions' => array())
+						))),
+			array('$var Baz (Foo=Bar)', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => 'Bar'))))),
+			array('$var Buzz (Foo="B=a, r", Baz=1)', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Buzz', 'validatorOptions' => array('Foo' => 'B=a, r', 'Baz' => '1'))))),
+			array('$var Foo(Baz=1, Bar=Quux)', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Foo', 'validatorOptions' => array('Baz' => '1', 'Bar' => 'Quux'))))),
+			array('$var Pax, Foo(Baz = \'1\', Bar = Quux)', array('argumentName' => 'var', 'validators' => array(
+							array('validatorName' => 'Pax', 'validatorOptions' => array()),
+							array('validatorName' => 'Foo', 'validatorOptions' => array('Baz' => '1', 'Bar' => 'Quux'))
+						))),
+			array('$var Reg (P="[at]*(h|g)"), Quux', array('argumentName' => 'var', 'validators' => array(
+							array('validatorName' => 'Reg', 'validatorOptions' => array('P' => '[at]*(h|g)')),
+							array('validatorName' => 'Quux', 'validatorOptions' => array())
+						))),
+			array('$var Baz (Foo="B\"ar")', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => 'B"ar'))))),
+		);
+	}
+
+	/**
+	 *
+	 * @test
+	 * @dataProvider validatorAnnotations
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function parseValidatorAnnotationCanParseAnnotations($annotation, $expectedResult) {
+		$validatorResolverClassName = $this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver');
+		$validatorResolver = new $validatorResolverClassName($this->getMock('F3\FLOW3\Object\ManagerInterface'));
+		$result = $validatorResolver->_call('parseValidatorAnnotation', $annotation);
+
+		$this->assertEquals($result, $expectedResult);
+#		var_dump($result);
+	}
+
+	/**
+	 * dataProvider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
 	public function modelAndValidatorClassNames() {
 		return array(
 			array('\F3\Blog\Domain\Validator\BlogValidator', '\F3\Blog\Domain\Model\Blog'),
