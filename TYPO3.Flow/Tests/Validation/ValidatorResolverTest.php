@@ -136,7 +136,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			),
 			'validate' => array(
 				'$arg1 Foo(bar = baz), Bar',
-				'$arg2 Quux'
+				'$arg2 F3\TestPackage\Quux'
 			)
 		);
 
@@ -166,7 +166,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
-		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction2));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);
@@ -176,8 +176,9 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * dataProvider for buildBaseValidatorConjunctionAddsCustomValidatorToTheReturnedConjunction
+	 * dataProvider for parseValidatorAnnotationCanParseAnnotations
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function validatorAnnotations() {
 		return array(
@@ -203,6 +204,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 						))),
 			array('$var Baz (Foo="B\"ar")', array('argumentName' => 'var', 'validators' => array(
 						array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => 'B"ar'))))),
+			array('$var F3\TestPackage\Quux', array('argumentName' => 'var', 'validators' => array(
+						array('validatorName' => 'F3\TestPackage\Quux', 'validatorOptions' => array())))),
 		);
 	}
 
@@ -218,7 +221,6 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$result = $validatorResolver->_call('parseValidatorAnnotation', $annotation);
 
 		$this->assertEquals($result, $expectedResult);
-#		var_dump($result);
 	}
 
 	/**
@@ -258,6 +260,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function buildBaseValidatorConjunctionAddsValidatorsDefinedByAnnotationsInTheClassToTheReturnedConjunction() {
 		$mockObject = $this->getMock('stdClass');
@@ -274,7 +277,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			'bar' => array(
 				'var' => array('integer'),
 				'validate' => array(
-					'Quux'
+					'F3\TestPackage\Quux'
 				)
 			)
 		);
@@ -300,7 +303,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(5))->method('createValidator')->with('Quux')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(5))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $className);
 		$this->assertSame($mockConjunctionValidator, $result);
@@ -321,7 +324,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 			),
 			'validate' => array(
 				'$arg1 Foo(bar = baz), Bar',
-				'$arg2 Quux'
+				'$arg2 F3\TestPackage\Quux'
 			)
 		);
 
@@ -351,7 +354,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver->expects($this->at(0))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockFooValidator));
 		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction1));
 		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockBarValidator));
-		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Quux')->will($this->returnValue($mockQuuxValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockQuuxValidator));
 		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Conjunction')->will($this->returnValue($conjunction2));
 
 		$validatorResolver->injectReflectionService($mockReflectionService);

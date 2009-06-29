@@ -158,7 +158,7 @@ class ValidatorResolver {
 		$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
 
 		$matches = array();
-		preg_match_all('/(?:^|,\s*)(?P<validatorName>[a-z0-9]+)\s*(?:\((?P<validatorOptions>.+)\))?/i', $parts[1], $matches, PREG_SET_ORDER);
+		preg_match_all('/(?:^|,\s*)(?P<validatorName>[a-z0-9\\\\]+)\s*(?:\((?P<validatorOptions>.+)\))?/i', $parts[1], $matches, PREG_SET_ORDER);
 		foreach ($matches as $match) {
 			$validatorName = $match['validatorName'];
 			$validatorOptions = array();
@@ -262,7 +262,7 @@ class ValidatorResolver {
 
 				foreach ($classPropertyTagsValues['validate'] as $validateValue) {
 					$matches = array();
-					preg_match_all('/(?P<validatorName>[a-zA-Z0-9]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $validateValue, $matches, PREG_SET_ORDER);
+					preg_match_all('/(?P<validatorName>[a-zA-Z0-9\\\\]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $validateValue, $matches, PREG_SET_ORDER);
 					foreach ($matches as $match) {
 						$validatorName = $match['validatorName'];
 						$validatorOptions = array();
