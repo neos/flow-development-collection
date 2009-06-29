@@ -280,7 +280,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, $arguments = NULL, $delay = 0, $statusCode = 303) {
+	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
 
 		if ($packageKey !== NULL && strpos($packageKey, '\\') !== FALSE) {
