@@ -28,9 +28,7 @@ namespace F3\FLOW3\Core;
  * @version $Id$
  */
 
-/**
- * Utility_Files is needed before the autoloader is active
- */
+	// Those are needed before the autoloader is active
 require(__DIR__ . '/../Utility/Files.php');
 require(__DIR__ . '/../Package/PackageInterface.php');
 require(__DIR__ . '/../Package/Package.php');
