@@ -150,6 +150,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @internal
 	 */
 	protected function initializeActionMethodArguments() {
+		$this->arguments->removeAll();
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
@@ -310,10 +311,26 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * A special action which is called if the originally intended action could
 	 * not be called, for example if the arguments were not valid.
 	 *
+	 * The default implementation sets a flash message, request errors and forwards back
+	 * to the originating action. This is suitable for most actions dealing with form input.
+	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	protected function errorAction() {
+		$this->request->setErrors($this->argumentsMappingResults->getErrors());
+
+		$errorFlashMessage = $this->getErrorFlashMessage();
+		if ($errorFlashMessage !== FALSE) {
+			$this->pushFlashMessage($errorFlashMessage);
+		}
+
+		if ($this->request->hasArgument('__referrer')) {
+			$referrer = $this->request->getArgument('__referrer');
+			$this->forward($referrer['actionName'], $referrer['controllerName'], $referrer['packageKey'], $this->request->getArguments());
+		}
+
 		$message = 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '().' . PHP_EOL;
 		foreach ($this->argumentsMappingResults->getErrors() as $error) {
 			$message .= 'Error:   ' . $error->getMessage() . PHP_EOL;
@@ -322,6 +339,17 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			$message .= 'Warning: ' . $warning->getMessage() . PHP_EOL;
 		}
 		return $message;
+	}
+
+	/**
+	 * A template method for displaying custom error flash messages, or to
+	 * display no flash message at all on errors. Override this to customize
+	 * the flash message in your action controller.
+	 *
+	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 */
+	protected function getErrorFlashMessage() {
+		return 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '()';
 	}
 }
 ?>

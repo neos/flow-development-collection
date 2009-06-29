@@ -149,5 +149,18 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$request = new \F3\FLOW3\MVC\Web\Request();
 		$request->setMethod('sOmEtHing');
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function errorsCanBeSetAndRetrieved() {
+		$errors = array(new \stdClass());
+		
+		$request = new \F3\FLOW3\MVC\Web\Request();
+
+		$request->setErrors($errors);
+		$this->assertEquals($errors, $request->getErrors());
+	}
 }
 ?>

@@ -290,10 +290,10 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function initializeActionMethodArgumentsRegistersArgumentsFoundInTheSignatureOfTheCurrentActionMethod() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
+		$mockArguments->expects($this->at(3))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
@@ -342,9 +342,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'Text', TRUE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg1', 'Text', TRUE);
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
+		$mockArguments->expects($this->at(3))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
@@ -424,6 +424,86 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockController->_set('actionMethodName', 'fooAction');
 		$mockController->_set('arguments', $mockArguments);
 		$mockController->_call('initializeActionMethodValidators');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function defaultErrorActionSetsArgumentMappingResultsErrorsInRequest() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+
+		$mockError = $this->getMock('F3\Error\Error', array('getMessage'), array(), '', FALSE);
+		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
+		$mockArgumentsMappingResults->expects($this->atLeastOnce())->method('getErrors')->will($this->returnValue(array($mockError)));
+		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('pushFlashMessage'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('argumentsMappingResults', $mockArgumentsMappingResults);
+
+		$mockRequest->expects($this->once())->method('setErrors')->with(array($mockError));
+
+		$mockController->_call('errorAction');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function defaultErrorActionForwardsToReferrerIfSet() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Arguments', array(), array(), '', FALSE);
+
+		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
+		$mockArgumentsMappingResults->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
+		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('pushFlashMessage', 'forward'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('argumentsMappingResults', $mockArgumentsMappingResults);
+
+		$referrer = array(
+			'actionName' => 'foo',
+			'controllerName' => 'Bar',
+			'packageKey' => 'Baz'
+		);
+
+		$mockRequest->expects($this->any())->method('hasArgument')->with('__referrer')->will($this->returnValue(TRUE));
+		$mockRequest->expects($this->atLeastOnce())->method('getArgument')->with('__referrer')->will($this->returnValue($referrer));
+		$mockRequest->expects($this->any())->method('getArguments')->will($this->returnValue($mockArguments));
+
+		$mockController->expects($this->once())->method('forward')->with('foo', 'Bar', 'Baz', $mockArguments);
+
+		$mockController->_call('errorAction');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function defaultErrorActionCallsGetErrorFlashMessageAndPutsFlashMessage() {
+		$this->markTestIncomplete('To be implemented');
+	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function initializeActionMethodArgumentsResetsArgumentsBeforeAddingNewArguments() {
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('removeAll'), array(), '', FALSE);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('reflectionService', $mockReflectionService);
+		$mockController->_set('arguments', $mockArguments);
+
+		$mockArguments->expects($this->once())->method('removeAll');
+
+		$mockController->_call('initializeActionMethodArguments');
 	}
 }
 ?>

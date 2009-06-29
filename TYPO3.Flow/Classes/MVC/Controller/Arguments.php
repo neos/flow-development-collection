@@ -265,5 +265,19 @@ class Arguments extends \ArrayObject {
 		}
 		return '';
 	}
+
+	/**
+	 * Remove all arguments and resets this object
+	 *
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function removeAll() {
+		foreach ($this->argumentNames as $argumentName => $booleanValue) {
+			parent::offsetUnset($argumentName);
+		}
+		$this->argumentNames = array();
+	}
 }
 ?>

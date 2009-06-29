@@ -103,6 +103,11 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $dispatched = FALSE;
 
 	/**
+	 * @var array Errors that occured during this request
+	 */
+	protected $errors = array();
+
+	/**
 	 * Injects the object manager
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
@@ -369,6 +374,29 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function getFormat() {
 		return $this->format;
+	}
+
+	/**
+	 * Set errors that occured during the request (e.g. argument mapping errors)
+	 *
+	 * @param array $errors An array of \F3\FLOW3\Error\Error objects
+	 * @return void
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function setErrors(array $errors) {
+		$this->errors = $errors;
+	}
+
+	/**
+	 * Get errors that occured during the request (e.g. argument mapping errors)
+	 *
+	 * @return array The errors that occured during the request
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @internal
+	 */
+	public function getErrors() {
+		return $this->errors;
 	}
 }
 ?>

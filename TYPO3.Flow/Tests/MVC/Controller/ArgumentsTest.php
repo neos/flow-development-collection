@@ -219,5 +219,22 @@ class ArgumentsTest extends \F3\Testing\BaseTestCase {
 		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
 		$arguments->nonExistingMethod();
 	}
+
+	/**
+	 * @test
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 */
+	public function removeAllClearsAllArguments() {
+		$arguments = $this->objectManager->getObject('F3\FLOW3\MVC\Controller\Arguments');
+		$arguments->addNewArgument('foo');
+
+		$arguments->removeAll();
+
+		$this->assertFalse($arguments->hasArgument('foo'));
+
+		$arguments->addNewArgument('bar');
+
+		$this->assertTrue($arguments->hasArgument('bar'));
+	}
 }
 ?>
