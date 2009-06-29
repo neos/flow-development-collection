@@ -254,7 +254,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, $arguments = NULL) {
+	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, \F3\FLOW3\MVC\Controller\Arguments $arguments = NULL) {
 		$this->request->setDispatched(FALSE);
 		$this->request->setControllerActionName($actionName);
 		if ($controllerName !== NULL) $this->request->setControllerName($controllerName);
