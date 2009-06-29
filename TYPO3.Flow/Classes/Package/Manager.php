@@ -167,7 +167,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getPackage($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available.', 1166546734);
+		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available. Pleas note that package keys are case sensitive.', 1166546734);
 		return $this->packages[$packageKey];
 	}
 

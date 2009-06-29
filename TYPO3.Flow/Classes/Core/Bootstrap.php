@@ -28,13 +28,6 @@ namespace F3\FLOW3\Core;
  * @version $Id$
  */
 
-if (version_compare(phpversion(), \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION, '<')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
-}
-if (version_compare(PHP_VERSION, \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION, '>')) {
-	die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
-}
-
 /**
  * Utility_Files is needed before the autoloader is active
  */
@@ -65,7 +58,7 @@ final class Bootstrap {
 	 * Required PHP version
 	 */
 	const MINIMUM_PHP_VERSION = '5.3.0RC2';
-	const MAXIMUM_PHP_VERSION = '5.9.9';
+	const MAXIMUM_PHP_VERSION = '5.99.9';
 
 	/**
 	 * The application context
@@ -697,6 +690,12 @@ final class Bootstrap {
 	 * @internal
 	 */
 	protected function checkEnvironment() {
+		if (version_compare(phpversion(), \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION, '<')) {
+			die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+		}
+		if (version_compare(PHP_VERSION, \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION, '>')) {
+			die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
 			die('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
