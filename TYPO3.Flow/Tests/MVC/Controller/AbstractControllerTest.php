@@ -107,13 +107,16 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardThrowsAStopActionException() {
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockRequest->expects($this->once())->method('setDispatched')->with(FALSE);
 		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
 		$controller->_call('forward', 'foo');
 	}
@@ -122,10 +125,12 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function forwardSetsControllerAndArgumentsAtTheRequestObjectIfTheyAreSpecified() {
 		$arguments = array('foo' => 'bar');
 
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockRequest->expects($this->once())->method('setControllerActionName')->with('foo');
 		$mockRequest->expects($this->once())->method('setControllerName')->with('Bar');
@@ -133,8 +138,28 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest->expects($this->once())->method('setArguments')->with($arguments);
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
 		$controller->_set('request', $mockRequest);
 		$controller->_call('forward', 'foo', 'Bar', 'Baz', $arguments);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\MVC\Exception\StopAction
+	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function forwardResetsArguments() {
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('removeAll'), array(), '', FALSE);
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
+
+		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
+		$controller->_set('arguments', $mockArguments);
+		$controller->_set('request', $mockRequest);
+
+		$mockArguments->expects($this->once())->method('removeAll');
+
+		$controller->_call('forward', 'foo');
 	}
 
 	/**

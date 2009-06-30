@@ -291,9 +291,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('addNewArgument', 'removeAll'), array(), '', FALSE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
-		$mockArguments->expects($this->at(3))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
+		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('stringArgument', 'string', TRUE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
@@ -342,9 +342,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
-		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg1', 'Text', TRUE);
-		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
-		$mockArguments->expects($this->at(3))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
+		$mockArguments->expects($this->at(0))->method('addNewArgument')->with('arg1', 'Text', TRUE);
+		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
+		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
 
@@ -487,23 +487,5 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$this->markTestIncomplete('To be implemented');
 	}
 
-	/**
-	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function initializeActionMethodArgumentsResetsArgumentsBeforeAddingNewArguments() {
-		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array('removeAll'), array(), '', FALSE);
-
-		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
-		$mockReflectionService->expects($this->any())->method('getMethodParameters')->will($this->returnValue(array()));
-
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
-		$mockController->_set('reflectionService', $mockReflectionService);
-		$mockController->_set('arguments', $mockArguments);
-
-		$mockArguments->expects($this->once())->method('removeAll');
-
-		$mockController->_call('initializeActionMethodArguments');
-	}
 }
 ?>

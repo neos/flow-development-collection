@@ -150,7 +150,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @internal
 	 */
 	protected function initializeActionMethodArguments() {
-		$this->arguments->removeAll();
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = 'Text';
