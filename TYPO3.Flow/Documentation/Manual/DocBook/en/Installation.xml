@@ -133,9 +133,10 @@
     <title>Setup Eclipse PDT for PHP 5.3</title>
 
     <para>PHP 5.3 introduced the support of namespaces. This is a completly
-    new syntax in PHP which is not supported by most editors (yet). Even the
-    stable version of Eclipse PDT doesn't support namespaces syntax. So you
-    have to install some Release Candidate of PDT 2.1, if you don't want to
-    see all those red syntax-error-symbols in your php-files.</para>
+    new syntax in PHP which is not supported by most editors (yet). Eclipse
+    PDT supports them since version 2.1 (which has been released on the 26th
+    of June. Zend Studio 7.0 Beta supports namespaces as well. You should
+    install one of those versions, if you don't want to see all those red
+    syntax-error-symbols in your php-files.</para>
   </section>
 </chapter>
