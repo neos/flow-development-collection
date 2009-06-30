@@ -39,6 +39,12 @@ namespace F3\FLOW3\Validation;
 class ValidatorResolver {
 
 	/**
+	 * Match validator names and options
+	 * @var string
+	 */
+	const PATTERN_MATCH_VALIDATORS = '/(?:^|,\s*)(?P<validatorName>[a-z0-9\\\\]+)\s*(?:\((?P<validatorOptions>.+)\))?/i';
+
+	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
@@ -146,6 +152,54 @@ class ValidatorResolver {
 	}
 
 	/**
+	 * Builds a base validator conjunction for the given data type.
+	 *
+	 * The base validation rules are those which were declared directly in a class (typically
+	 * a model) through some @validate annotations.
+	 *
+	 * Additionally, if a custom validator was defined for the class in question, it will be added
+	 * to the end of the conjunction. A custom validator is found if it follows the naming convention
+	 * "[FullyqualifiedModelClassName]Validator".
+	 *
+	 * @param string $dataType The data type to build the validation conjunction for. Usually the fully qualified object name.
+	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @internal
+	 */
+	protected function buildBaseValidatorConjunction($dataType) {
+		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
+
+		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
+		$customValidatorObjectName = $this->resolveValidatorObjectName($possibleValidatorClassName);
+		if ($customValidatorObjectName !== FALSE) {
+			$validatorConjunction->addValidator($this->objectManager->getObject($customValidatorObjectName));
+		}
+
+		if (class_exists($dataType)) {
+			$validatorCount = 0;
+			$objectValidator = $this->createValidator('GenericObject');
+
+			foreach ($this->reflectionService->getClassPropertyNames($dataType) as $classPropertyName) {
+				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($dataType, $classPropertyName);
+				if (!isset($classPropertyTagsValues['validate'])) continue;
+
+				foreach ($classPropertyTagsValues['validate'] as $validateValue) {
+					$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
+					foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
+						$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
+						if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . $dataType . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorName . '".', 1241098027);
+						$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
+						$validatorCount ++;
+					}
+				}
+			}
+			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
+		}
+
+		return $validatorConjunction;
+	}
+
+	/**
 	 * Parses the validator options given in @validate annotations.
 	 *
 	 * @return array
@@ -154,11 +208,15 @@ class ValidatorResolver {
 	 * @internal
 	 */
 	protected function parseValidatorAnnotation($validateValue) {
-		$parts = explode(' ', $validateValue, 2);
-		$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
-
 		$matches = array();
-		preg_match_all('/(?:^|,\s*)(?P<validatorName>[a-z0-9\\\\]+)\s*(?:\((?P<validatorOptions>.+)\))?/i', $parts[1], $matches, PREG_SET_ORDER);
+		if ($validateValue[0] === '$') {
+			$parts = explode(' ', $validateValue, 2);
+			$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
+			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $parts[1], $matches, PREG_SET_ORDER);
+		} else {
+			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $validateValue, $matches, PREG_SET_ORDER);
+		}
+
 		foreach ($matches as $match) {
 			$validatorName = $match['validatorName'];
 			$validatorOptions = array();
@@ -226,64 +284,6 @@ class ValidatorResolver {
 		}
 
 		return $validatorOptions;
-	}
-
-	/**
-	 * Builds a base validator conjunction for the given data type.
-	 *
-	 * The base validation rules are those which were declared directly in a class (typically
-	 * a model) through some @validate annotations.
-	 *
-	 * Additionally, if a custom validator was defined for the class in question, it will be added
-	 * to the end of the conjunction. A custom validator is found if it follows the naming convention
-	 * "[FullyqualifiedModelClassName]Validator".
-	 *
-	 * @param string $dataType The data type to build the validation conjunction for. Usually the fully qualified object name.
-	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
-	 */
-	protected function buildBaseValidatorConjunction($dataType) {
-		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
-
-		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
-		$customValidatorObjectName = $this->resolveValidatorObjectName($possibleValidatorClassName);
-		if ($customValidatorObjectName !== FALSE) {
-			$validatorConjunction->addValidator($this->objectManager->getObject($customValidatorObjectName));
-		}
-
-		if (class_exists($dataType)) {
-			$validatorCount = 0;
-			$objectValidator = $this->createValidator('GenericObject');
-
-			foreach ($this->reflectionService->getClassPropertyNames($dataType) as $classPropertyName) {
-				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($dataType, $classPropertyName);
-				if (!isset($classPropertyTagsValues['validate'])) continue;
-
-				foreach ($classPropertyTagsValues['validate'] as $validateValue) {
-					$matches = array();
-					preg_match_all('/(?P<validatorName>[a-zA-Z0-9\\\\]+)(?:\((?P<validatorOptions>[^)]+)\))?/', $validateValue, $matches, PREG_SET_ORDER);
-					foreach ($matches as $match) {
-						$validatorName = $match['validatorName'];
-						$validatorOptions = array();
-						$rawValidatorOptions = isset($match['validatorOptions']) ? explode(',', $match['validatorOptions']) : array();
-						foreach ($rawValidatorOptions as $rawValidatorOption) {
-							if (strpos($rawValidatorOption, '=') !== FALSE) {
-								list($optionName, $optionValue) = explode('=', $rawValidatorOption);
-								$validatorOptions[trim($optionName)] = trim($optionValue);
-							}
-						}
-						$newValidator = $this->createValidator($validatorName, $validatorOptions);
-						if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . $dataType . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorName . '".', 1241098027);
-						$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
-						$validatorCount ++;
-					}
-				}
-			}
-			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
-		}
-
-		return $validatorConjunction;
 	}
 
 	/**
