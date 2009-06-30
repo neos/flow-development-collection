@@ -65,7 +65,6 @@ class XMLReaderTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('Yet another test package', $packageMetaData->getTitle());
 		$this->assertEquals('0.1.1', $packageMetaData->getVersion());
 		$this->assertEquals('A test package to test the creation of the Package.xml by the Package Manager', $packageMetaData->getDescription());
-		$this->assertEquals('Beta', $packageMetaData->getState());
 		$this->assertEquals(array('Testing', 'System'), $packageMetaData->getCategories());
 
 		$parties = $packageMetaData->getParties();

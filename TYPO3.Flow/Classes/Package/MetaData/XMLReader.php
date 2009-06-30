@@ -53,7 +53,6 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 			$meta->setVersion((string)$xml->version);
 			$meta->setTitle((string)$xml->title);
 			$meta->setDescription((string)$xml->description);
-			$meta->setState((string)$xml->state);
 
 			$this->readCategories($xml, $meta);
 

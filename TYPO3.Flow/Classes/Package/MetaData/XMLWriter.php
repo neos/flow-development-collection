@@ -66,7 +66,6 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 		$xml->writeElement('title', $meta->getTitle());
 		$xml->writeElement('description', $meta->getDescription());
 		$xml->writeElement('version', $meta->getVersion());
-		$xml->writeElement('state', $meta->getState());
 
 		if (count($meta->getCategories())) {
 			$xml->startElement('categories');

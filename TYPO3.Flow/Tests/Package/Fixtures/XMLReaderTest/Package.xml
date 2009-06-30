@@ -4,7 +4,6 @@
 	<title>Yet another test package</title>
 	<description>A test package to test the creation of the Package.xml by the Package Manager</description>
 	<version>0.1.1</version>
-	<state>Beta</state>
 	<categories>
 		<category>Testing</category>
 		<category>System</category>

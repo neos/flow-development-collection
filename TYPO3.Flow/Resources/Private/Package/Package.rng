@@ -18,16 +18,6 @@
       <element name="version">
         <text/>
       </element>
-      <element name="state">
-        <choice>
-          <value>Development</value>
-          <value>Alpha</value>
-          <value>Beta</value>
-          <value>ReleaseCandidate</value>
-          <value>Final</value>
-          <value>Obsolete</value>
-        </choice>
-      </element>
       <element name="categories">
         <zeroOrMore>
           <element name="category">

@@ -48,18 +48,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	const CONSTRAINT_SCOPE_PACKAGE = 'package';
 	const CONSTRAINT_SCOPE_SYSTEM = 'system';
 
-	const STATE_DEVELOPMENT = 'Development';
-	const STATE_ALPHA = 'Alpha';
-	const STATE_BETA = 'Beta';
-	const STATE_RELEASE_CANDIDATE = 'ReleaseCandidate';
-	const STATE_FINAL = 'Final';
-	const STATE_OBSOLETE = 'Obsolete';
-
-	/**
-	 * @var array
-	 */
-	protected static $STATES = array(self::STATE_DEVELOPMENT, self::STATE_ALPHA, self::STATE_BETA, self::STATE_RELEASE_CANDIDATE, self::STATE_FINAL, self::STATE_OBSOLETE);
-
 	/**
 	 * @var array
 	 */
@@ -88,12 +76,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 */
 	protected $description;
 
-	/*
-	 * Package state
-	 * @var string
-	 */
-	protected $state;
-
 	/**
 	 * Package categories as string
 	 * @var array
@@ -121,17 +103,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 */
 	public function getConstraintTypes() {
 		return self::$CONSTRAINT_TYPES;
-	}
-
-	/**
-	 * Return all possible package states
-	 *
-	 * @return array The package states
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
-	 */
-	public function getStates() {
-		return self::$STATES;
 	}
 
 	/**
@@ -212,29 +183,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	 */
 	public function setDescription($description) {
 		$this->description = $description;
-	}
-
-	/**
-	 * The package state can be one of:
-	 * Development, Alpha, Beta, ReleaseCandidate, Final or Obsolete
-	 *
-	 * @return string The package state
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
-	 */
-	public function getState() {
-		return $this->state;
-	}
-
-	/**
-	 * @param string $state: The package state to set (Alpha, Beta, ...)
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @todo Only accept valid states
-	 * @internal
-	 */
-	public function setState($state) {
-		$this->state = $state;
 	}
 
 	/**

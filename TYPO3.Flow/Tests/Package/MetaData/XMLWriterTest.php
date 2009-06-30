@@ -63,7 +63,6 @@ class XMLWriterTest extends \F3\Testing\BaseTestCase {
 		$meta->setTitle('Yet another test package');
 		$meta->setDescription('A test package to test the creation of the Package.xml by the Package Manager');
 		$meta->setVersion('0.1.1');
-		$meta->setState('Beta');
 		$meta->addCategory('Testing');
 		$meta->addCategory('System');
 		$meta->addParty(new \F3\FLOW3\Package\MetaData\Person('LeadDeveloper', 'Robert Lemke', 'robert@typo3.org', 'http://www.flow3.org', 'TYPO3 Association', 'robert'));

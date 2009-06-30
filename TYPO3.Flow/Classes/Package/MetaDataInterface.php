@@ -64,12 +64,6 @@ interface MetaDataInterface {
 	public function getDescription();
 
 	/**
-	 * @return string The package state
-	 * @internal
-	 */
-	public function getState();
-
-	/**
 	 * @return Array of string The package categories
 	 * @internal
 	 */
