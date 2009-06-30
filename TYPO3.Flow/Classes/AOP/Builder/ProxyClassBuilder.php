@@ -272,7 +272,8 @@ class ProxyClassBuilder {
 	 * interface contract.
 	 *
 	 * A constructor will be generated no matter if it existed in the target class or
-	 * an advice exists or not.
+	 * an advice exists or not. This is so we can intercept object instantiation in
+	 * any case. See buildProxyClass() and addConstructorToInterceptedMethods()
 	 *
 	 * @param array $interceptedMethods An array of method names which need to be intercepted
 	 * @param $targetClassName The target class the pointcut should match with

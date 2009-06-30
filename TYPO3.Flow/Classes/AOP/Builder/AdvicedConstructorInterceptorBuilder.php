@@ -81,15 +81,13 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	public function __construct(' . $methodParametersCode .') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
 	}
-';
 
-		$initializeProxyCode = '
 	/**
 	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
 	 * @return void
 	 * @internal
 	 */
-	public function FLOW3_AOP_Proxy_initializeProxy() {
+	public function FLOW3_AOP_Proxy_construct() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		$result = NULL;
 		' . $interceptionCode . '
@@ -97,7 +95,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	}
 ';
 
-		return $constructorCode . $initializeProxyCode;
+		return $constructorCode;
 	}
 
 }

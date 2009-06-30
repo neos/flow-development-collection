@@ -167,8 +167,12 @@ class Builder {
 				throw new \F3\FLOW3\Object\Exception\CannotBuildObject('A parse error ocurred while trying to build a new object of type ' . $className . ' (' . $errorMessage['message'] . ').', 1187164523);
 			}
 
+			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) {
+				$object->FLOW3_AOP_Proxy_setProperty('objectManager', $this->objectManager);
+				$object->FLOW3_AOP_Proxy_setProperty('objectFactory', $this->objectFactory);
+				$object->FLOW3_AOP_Proxy_construct();
+			}
 			$this->injectProperties($setterProperties, $object);
-			if ($object instanceof \F3\FLOW3\AOP\ProxyInterface) $object->FLOW3_AOP_Proxy_initializeProxy();
 			$this->callLifecycleInitializationMethod($object, $objectConfiguration);
 		} catch (\Exception $exception) {
 			unset ($this->objectsBeingBuilt[$objectName]);

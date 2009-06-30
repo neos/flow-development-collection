@@ -74,7 +74,7 @@ class EmptyConstructorInterceptorBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @return void
 	 * @internal
 	 */
-	public function FLOW3_AOP_Proxy_initializeProxy() {
+	public function FLOW3_AOP_Proxy_construct() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();
 		parent::__construct(SAVEDCONSTRUCTORPARAMETERSCODE);
 	}

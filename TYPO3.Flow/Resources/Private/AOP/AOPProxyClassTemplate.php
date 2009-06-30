@@ -63,7 +63,11 @@ class ###PROXY_CLASS_NAME### extends \###TARGET_CLASS_NAME### implements ###INTR
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		if (isset($this->methodIsInAdviceMode[$joinPoint->getMethodName()])) {
-			return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
+			if ($joinPoint->getMethodName() === '__construct') {
+				return call_user_func_array(array($this, 'FLOW3_AOP_Proxy_construct'), $joinPoint->getMethodArguments());
+			} else {
+				return call_user_func_array(array($this, $joinPoint->getMethodName()), $joinPoint->getMethodArguments());
+			}
 		}
 	}
 
