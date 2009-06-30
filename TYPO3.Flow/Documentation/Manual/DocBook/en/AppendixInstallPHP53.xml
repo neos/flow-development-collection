@@ -296,10 +296,9 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
         <title>Download and unzip PHP 5.3</title>
 
         <para>Download the windows binaries. You need the file
-        <filename>php-5.3-win32-ts-VC6-x86-latest.zip</filename> (PHP 5.3 -
-        Windows x86 VC6 (thread safe)) from the
-        "windows-binaries-download-page":
-        <uri>http://windows.php.net/snapshots/#php-5.3-win32-ts-VC6-x86</uri>.</para>
+        <filename>php-5.3.0-Win32-VC6-x86.zip</filename> (PHP 5.3 - Windows
+        VC6 x86 (thread safe)) from the "windows-binaries-download-page":
+        <uri>http://windows.php.net/download/#php-5.3-ts-VC6-x86</uri>.</para>
 
         <para>Add the folder <filename>C:\xampp\php\php5.3</filename>. Extract
         the content of the ZIP file into this new folder.</para>
