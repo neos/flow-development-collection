@@ -42,15 +42,17 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function lazyLoadingProxyReplacesItselfInParentOnLoad() {
+	public function lazyLoadingProxyReplacesItselfExactlyOnceInParentOnLoad() {
 		$realObject = new \stdClass();
 		$closure = function() use ($realObject) { return $realObject; };
-		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$parent->expects($this->once())->method('FLOW3_AOP_Proxy_setProperty')->with('lazyLoadedProperty', $realObject);
 		$proxy = new \F3\FLOW3\Persistence\LazyLoadingProxy($parent, 'lazyLoadedProperty', $closure);
+		$parent->expects($this->exactly(3))->method('FLOW3_AOP_Proxy_getProperty')->with('lazyLoadedProperty')->will($this->onConsecutiveCalls($proxy, $realObject, $realObject));
 		$parent->lazyLoadedProperty = $proxy;
 
 		$this->assertType('F3\FLOW3\Persistence\LazyLoadingProxy', $parent->lazyLoadedProperty);
+		$proxy->_loadRealInstance();
 		$proxy->_loadRealInstance();
 	}
 
@@ -61,9 +63,10 @@ class LazyLoadingProxyTest extends \F3\Testing\BaseTestCase {
 	public function lazyLoadingProxyCallsMemorizeCleanStateOnParentOnLoad() {
 		$realObject = new \stdClass();
 		$closure = function() use ($realObject) { return $realObject; };
-		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
+		$parent = $this->getMock(uniqid('Parent'), array('FLOW3_AOP_Proxy_getProperty', 'FLOW3_AOP_Proxy_setProperty', 'FLOW3_Persistence_memorizeCleanState'));
 		$parent->expects($this->once())->method('FLOW3_Persistence_memorizeCleanState')->with('lazyLoadedProperty');
 		$proxy = new \F3\FLOW3\Persistence\LazyLoadingProxy($parent, 'lazyLoadedProperty', $closure);
+		$parent->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('lazyLoadedProperty')->will($this->returnValue($proxy));
 		$parent->lazyLoadedProperty = $proxy;
 
 		$proxy->_loadRealInstance();

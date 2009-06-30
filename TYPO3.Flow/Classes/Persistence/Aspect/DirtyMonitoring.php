@@ -125,15 +125,19 @@ class DirtyMonitoring {
 		$isDirty = FALSE;
 
 		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
-			$cleanProperties = $proxy->FLOW3_Persistence_cleanProperties;
 			$uuidPropertyName = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
-			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) != $cleanProperties[$uuidPropertyName]) {
+			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
 
-			$propertyName = $joinPoint->getMethodArgument('propertyName');
-			if ($cleanProperties[$propertyName] !== $proxy->FLOW3_AOP_Proxy_getProperty($propertyName)) {
-				$isDirty = TRUE;
+			if (is_object($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')])) {
+				if ($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')] != $proxy->FLOW3_AOP_Proxy_getProperty($joinPoint->getMethodArgument('propertyName'))) {
+					$isDirty = TRUE;
+				}
+			} else {
+				if ($proxy->FLOW3_Persistence_cleanProperties[$joinPoint->getMethodArgument('propertyName')] !== $proxy->FLOW3_AOP_Proxy_getProperty($joinPoint->getMethodArgument('propertyName'))) {
+					$isDirty = TRUE;
+				}
 			}
 		}
 
@@ -152,20 +156,20 @@ class DirtyMonitoring {
 	 */
 	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
-		$propertyName = $joinPoint->getMethodArgument('propertyName');
 
-		if ($propertyName === NULL) {
-			$cleanProperties = array();
-			$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
-
-			foreach ($propertyNames as $propertyName) {
-				$cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
-			}
-			$proxy->FLOW3_Persistence_cleanProperties = $cleanProperties;
+		if ($joinPoint->getMethodArgument('propertyName') !== NULL) {
+			$propertyNames = array($joinPoint->getMethodArgument('propertyName'));
 		} else {
-			$proxy->FLOW3_Persistence_cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
 		}
 
+		foreach ($propertyNames as $propertyName) {
+			if (is_object($proxy->FLOW3_AOP_Proxy_getProperty($propertyName))) {
+				$proxy->FLOW3_Persistence_cleanProperties[$propertyName] = clone $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			} else {
+				$proxy->FLOW3_Persistence_cleanProperties[$propertyName] = $proxy->FLOW3_AOP_Proxy_getProperty($propertyName);
+			}
+		}
 	}
 
 	/**

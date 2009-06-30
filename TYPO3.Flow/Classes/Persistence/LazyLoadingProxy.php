@@ -84,10 +84,17 @@ class LazyLoadingProxy {
 	 * @internal
 	 */
 	public function _loadRealInstance() {
-		$realInstance = $this->F3_FLOW3_Persistence_LazyLoadingProxy_population->__invoke();
-		$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_AOP_Proxy_setProperty($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName, $realInstance);
-		$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_Persistence_memorizeCleanState($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName);
-		return $realInstance;
+			// this check safeguards against a proxy being activated multiple times
+			// usually that does not happen, but if the proxy is held from outside
+			// it's parent... the result would be weird.
+		if ($this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_AOP_Proxy_getProperty($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName) instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
+			$realInstance = $this->F3_FLOW3_Persistence_LazyLoadingProxy_population->__invoke();
+			$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_AOP_Proxy_setProperty($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName, $realInstance);
+			$this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_Persistence_memorizeCleanState($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName);
+			return $realInstance;
+		} else {
+			return $this->F3_FLOW3_Persistence_LazyLoadingProxy_parent->FLOW3_AOP_Proxy_getProperty($this->F3_FLOW3_Persistence_LazyLoadingProxy_propertyName);
+		}
 	}
 
 	/**
