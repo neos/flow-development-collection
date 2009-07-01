@@ -12,10 +12,10 @@
   <section>
     <title>Introduction</title>
 
-    <para>PHP 5.3 is not released at the time this is written, so you won't
-    find it in precompiled for most operating systems. Here we will describe
-    they way to install the most recent release candidate on three operating
-    systems: Debian Linux (Lenny/Etch), MacOS and Windows (XP).</para>
+    <para>PHP 5.3 has only recently been released, so you won't find it
+    precompiled for most operating systems. Here we will describe they way to
+    install it on three operating systems: Debian Linux (Lenny/Etch), MacOS
+    and Windows (XP).</para>
   </section>
 
   <section>
@@ -28,9 +28,9 @@
 
     <bridgehead>Package Sources for Debian Lenny:</bridgehead>
 
-    <para>Currently you can use the PHP 5.3 RC2 packages provided by
-    dotdeb.org to install PHP 5.3 on Debian Lenny. To do that you have to edit
-    your /etc/apt/sources.list and add these lines:</para>
+    <para>Currently you can use the PHP 5.3 packages provided by dotdeb.org to
+    install PHP 5.3 on Debian Lenny. To do that you have to edit your
+    /etc/apt/sources.list and add these lines:</para>
 
     <programlisting><code># PHP 5.3 packages by dotdeb
 deb http://php53.dotdeb.org stable all
@@ -206,9 +206,9 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
 
         <screenco>
           <areaspec>
-            <area coords="1" xml:id="mp.selfupdate"></area>
+            <area coords="1" xml:id="mp.selfupdate"/>
 
-            <area coords="2" xml:id="mp.install"></area>
+            <area coords="2" xml:id="mp.install"/>
           </areaspec>
 
           <screen><command>sudo port -d selfupdate</command>
@@ -226,6 +226,12 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
             </callout>
           </calloutlist>
         </screenco>
+
+        <note>
+          <para>MacPorts might update the regular PHP5 port to 5.3 anytime
+          soon. So you should check if the port <literal>php5</literal> is
+          already PHP 5.3.</para>
+        </note>
 
         <para>You can leave out the MySQL and PostgreSQL variants for the
         start, they are not strictly needed. The whole install can take a long

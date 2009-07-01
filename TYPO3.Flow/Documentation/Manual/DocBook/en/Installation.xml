@@ -9,11 +9,11 @@
   <title>Installation</title>
 
   <para>FLOW3 is based on the newest technologies of tomorrow like for example
-  namespaces. These technologies aren't available in the stable PHP 5.2
-  releases at the moment, but are implemented in PHP 5.3. It has no final
-  release until now, so operating system distributors do not provide PHP 5.3
-  packages. You can find instructions to install the newest release candidate
-  of PHP 5.3 for widely used operating systems in the appendixes.</para>
+  namespaces. These technologies aren't available in PHP 5.2, but are
+  implemented in PHP 5.3. It has had it's final release in June 2009, so most
+  operating system distributors do not provide PHP 5.3 packages yet. You can
+  find instructions to install PHP 5.3 for widely used operating systems in
+  the appendixes.</para>
 
   <section>
     <title>Requirements</title>
@@ -24,7 +24,7 @@
 
     <itemizedlist>
       <listitem>
-        <para>PHP 5.3 RC2 or newer (but not PHP 6)</para>
+        <para>PHP 5.3.0 (but not PHP 6)</para>
       </listitem>
 
       <listitem>
@@ -97,7 +97,7 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="WelcomeScreen.png"
-                         scalefit="1" width="100%"></imagedata>
+                         scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
         </screenshot>
@@ -135,7 +135,7 @@
     <para>PHP 5.3 introduced the support of namespaces. This is a completly
     new syntax in PHP which is not supported by most editors (yet). Eclipse
     PDT supports them since version 2.1 (which has been released on the 26th
-    of June. Zend Studio 7.0 Beta supports namespaces as well. You should
+    of June). Zend Studio 7.0 Beta supports namespaces as well. You should
     install one of those versions, if you don't want to see all those red
     syntax-error-symbols in your php-files.</para>
   </section>
