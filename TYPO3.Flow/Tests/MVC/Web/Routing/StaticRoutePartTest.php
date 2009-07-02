@@ -39,20 +39,6 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class StaticRoutePartTest extends \F3\Testing\BaseTestCase {
 
 	/*                                                                        *
-	 * Basic functionality (scope, getters, setters, ...)                     *
-	 *                                                                        */
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function staticRoutePartIsPrototype() {
-		$routePart1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
-		$routePart2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\StaticRoutePart');
-		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Static Route Part is not prototype!');
-	}
-
-	/*                                                                        *
 	 * URI matching                                                           *
 	 *                                                                        */
 

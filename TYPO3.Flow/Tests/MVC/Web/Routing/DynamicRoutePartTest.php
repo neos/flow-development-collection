@@ -39,20 +39,6 @@ namespace F3\FLOW3\MVC\Web\Routing;
 class DynamicRoutePartTest extends \F3\Testing\BaseTestCase {
 
 	/*                                                                        *
-	 * Basic functionality (scope, getters, setters, ...)                     *
-	 *                                                                        */
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
-	public function dynamicRoutePartIsPrototype() {
-		$routePart1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
-		$routePart2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\DynamicRoutePart');
-		$this->assertNotSame($routePart1, $routePart2, 'Obviously the Dynamic Route Part is not prototype!');
-	}
-
-	/*                                                                        *
 	 * URI matching                                                           *
 	 *                                                                        */
 

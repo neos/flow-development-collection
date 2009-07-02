@@ -48,16 +48,6 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function routeIsPrototype() {
-		$route1 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
-		$route2 = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\Route');
-		$this->assertNotSame($route1, $route2, 'Obviously route is not prototype!');
-	}
-
-	/**
-	 * @test
-	 * @author Bastian Waidelich <bastian@typo3.org>
-	 */
 	public function setNameCorrectlySetsRouteName() {
 		$route = new \F3\FLOW3\MVC\Web\Routing\Route($this->objectFactory, $this->objectManager);
 		$route->setName('SomeName');
