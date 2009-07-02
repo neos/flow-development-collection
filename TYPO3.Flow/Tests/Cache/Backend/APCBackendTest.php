@@ -50,7 +50,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setUp() {
-		if (!extension_loaded('apc')) {
+		if (!extension_loaded('apc') || ini_get('apc.enabled') == 0) {
 			$this->markTestSkipped('APC extension was not available');
 		}
 

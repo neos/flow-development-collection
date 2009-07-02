@@ -433,7 +433,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	public function defaultErrorActionSetsArgumentMappingResultsErrorsInRequest() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
 
-		$mockError = $this->getMock('F3\Error\Error', array('getMessage'), array(), '', FALSE);
+		$mockError = $this->getMock('F3\FLOW3\Error\Error', array('getMessage'), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
 		$mockArgumentsMappingResults->expects($this->atLeastOnce())->method('getErrors')->will($this->returnValue(array($mockError)));
 		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));

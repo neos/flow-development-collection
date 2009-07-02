@@ -156,7 +156,7 @@ class FrameworkTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function pointcutFilterCompositeCallBack() {
-		return $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), func_get_args());
+		return $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
 	}
 
 	/**
