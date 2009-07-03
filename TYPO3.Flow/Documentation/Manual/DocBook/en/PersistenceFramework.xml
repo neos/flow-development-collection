@@ -135,7 +135,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
   </section>
 
   <section>
-    <title>On the priciples of DDD</title>
+    <title>On the Principles of DDD</title>
 
     <para>From Evans, the rules we need to enforce include:</para>
 
@@ -181,7 +181,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
   </section>
 
   <section>
-    <title>Conventions for file and class names</title>
+    <title>Conventions for File and Class Names</title>
 
     <para>To allow FLOW3 to detect the object type a repository is responsible
     for certain conventions need to be followed:<itemizedlist>
@@ -238,7 +238,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
   </section>
 
   <section>
-    <title>Persistence-related annotations</title>
+    <title>Persistence-related Annotations</title>
 
     <para>The following table lists all annotations used by the persistence
     framework with their name, scope and meaning:<table>
@@ -345,7 +345,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
     understand problems and develop more efficient client code.</para>
 
     <section>
-      <title>Persisting a domain object</title>
+      <title>Persisting a Domain Object</title>
 
       <para>After an object has been added to a repository it will be seen
       when FLOW3 calls <methodname>persistAll()</methodname> at the end of a
@@ -377,7 +377,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
     </section>
 
     <section>
-      <title>Querying the storage backend</title>
+      <title>Querying the Storage Backend</title>
 
       <para>As we saw in the introductory example there is a query mechanism
       available that provides easy fetching of objects through the persistence
@@ -406,7 +406,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
     </section>
 
     <section>
-      <title>On lazy loading of properties</title>
+      <title>On Lazy Loading of Properties</title>
 
       <para>When a property is marked for lazy loading, it will be popluated
       by proxy object upon reconstitution of it's parent. When there is the
