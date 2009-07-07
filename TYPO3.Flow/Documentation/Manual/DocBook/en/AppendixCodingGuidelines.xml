@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix version="5.0" xml:id="flow3.appendix.codingguidelines"
-             xmlns="http://docbook.org/ns/docbook"
-             xmlns:xl="http://www.w3.org/1999/xlink"
-             xmlns:xi="http://www.w3.org/2001/XInclude"
-             xmlns:xhtml="http://www.w3.org/1999/xhtml"
-             xmlns:svg="http://www.w3.org/2000/svg"
-             xmlns:mathml="http://www.w3.org/1998/Math/MathML">
+          xmlns="http://docbook.org/ns/docbook"
+          xmlns:xl="http://www.w3.org/1999/xlink"
+          xmlns:xi="http://www.w3.org/2001/XInclude"
+          xmlns:xhtml="http://www.w3.org/1999/xhtml"
+          xmlns:svg="http://www.w3.org/2000/svg"
+          xmlns:ns="http://docbook.org/ns/docbook"
+          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>Coding Guidelines &amp; Best Practices</title>
 
   <para>Coding Standards are an important factor for achieving a high code
@@ -18,10 +19,10 @@
   difference between technically okay code or a well considered, mature
   solution.</para>
 
-  <para>These guidelines try to cover both, the technical standards as well
-  as giving incentives for a common development style. These guidelines must
-  be followed by everyone who creates code for the FLOW3 core. Because TYPO3
-  is based on FLOW3, it follows the same principles - therefore, whenever we
+  <para>These guidelines try to cover both, the technical standards as well as
+  giving incentives for a common development style. These guidelines must be
+  followed by everyone who creates code for the FLOW3 core. Because TYPO3 is
+  based on FLOW3, it follows the same principles - therefore, whenever we
   mention FLOW3 in the following sections, we equally refer to TYPO3. We hope
   that you feel encouraged to follow these guidelines as well when creating
   your own packages and FLOW3 based applications.</para>
@@ -31,14 +32,14 @@
 
     <subtitle>aka "beautiful code"</subtitle>
 
-    <para>The visual style of programming code is very important. In the
-    TYPO3 project we want many programmers to contribute, but in the same
-    style. This will help us to:</para>
+    <para>The visual style of programming code is very important. In the TYPO3
+    project we want many programmers to contribute, but in the same style.
+    This will help us to:</para>
 
     <itemizedlist>
       <listitem>
-        <para>Easily read/understand each others code and consequently
-        easily spot security problems or optimization opportunities</para>
+        <para>Easily read/understand each others code and consequently easily
+        spot security problems or optimization opportunities</para>
       </listitem>
 
       <listitem>
@@ -47,9 +48,9 @@
       </listitem>
     </itemizedlist>
 
-    <para>Some people may object to the visual guidelines since everyone
-    has his own habits. You will have to overcome that in the case of FLOW3;
-    the visual guidelines must be followed along with coding guidelines for
+    <para>Some people may object to the visual guidelines since everyone has
+    his own habits. You will have to overcome that in the case of FLOW3; the
+    visual guidelines must be followed along with coding guidelines for
     security. We want all contributions to the project to be as similar in
     style and as secure as possible.</para>
 
@@ -58,15 +59,15 @@
 
       <itemizedlist>
         <listitem>
-          <para>Almost every PHP file in FLOW3 contains exactly one class
-          and does not output anything if it is called directly. Therefore you
-          start your file with a <code>&lt;?php</code> tag and end it
-          with the closing <code>?&gt;</code>.</para>
+          <para>Almost every PHP file in FLOW3 contains exactly one class and
+          does not output anything if it is called directly. Therefore you
+          start your file with a <code>&lt;?php</code> tag and end it with the
+          closing <code>?&gt;</code>.</para>
         </listitem>
 
         <listitem>
-          <para>Every file must contain a header stating encoding,
-          namespace, copyright and licensing information</para>
+          <para>Every file must contain a header stating encoding, namespace,
+          copyright and licensing information</para>
 
           <para><orderedlist>
               <listitem>
@@ -75,18 +76,17 @@
               </listitem>
 
               <listitem>
-                <para>Because it is likely that more than one person will
-                work on a class in the long run, we recommend adding a
-                copyright statement like <quote>Copyright belongs to the
-                respective authors</quote> and add yourself to the list of
-                authors for the methods you implemented or changed
-                (significantly).</para>
+                <para>Because it is likely that more than one person will work
+                on a class in the long run, we recommend adding a copyright
+                statement like <quote>Copyright belongs to the respective
+                authors</quote> and add yourself to the list of authors for
+                the methods you implemented or changed (significantly).</para>
               </listitem>
 
               <listitem>
                 <para>The copyright header itself must not start with
-                <literal>/**</literal>, as this may confuse
-                documentation generators!</para>
+                <literal>/**</literal>, as this may confuse documentation
+                generators!</para>
               </listitem>
             </orderedlist></para>
 
@@ -126,8 +126,8 @@ namespace F3\Your\Stuff\Here;
         </listitem>
 
         <listitem>
-          <para>Lines end with a newline a.k.a <code>chr(10)</code> -
-          UNIX style</para>
+          <para>Lines end with a newline a.k.a <code>chr(10)</code> - UNIX
+          style</para>
         </listitem>
 
         <listitem>
@@ -144,8 +144,8 @@ namespace F3\Your\Stuff\Here;
     <section>
       <title>Indentation and line formatting</title>
 
-      <para>Indentation is done with tabs - and not spaces! The beginning
-      of a line is the only place where tabs are used, in all other places use
+      <para>Indentation is done with tabs - and not spaces! The beginning of a
+      line is the only place where tabs are used, in all other places use
       spaces. Always trim whitespace off the end of a line.</para>
 
       <para>Here's a code snippet which shows the correct usage of tabs and
@@ -176,15 +176,15 @@ public function getContextName() {
     <section>
       <title>Naming</title>
 
-      <para>Naming is a repeatedly undervalued factor in the art of
-      software development. Although everybody seems to agree on that nice
-      names are a nice thing to have, most developers choose cryptic
-      abbreviations in the end (to save some typing). Beware that we TYPO3
-      core developers are very passionate about naming (some people call it
-      fanatic, well ...). In our opinion spending 15 minutes (or more ...)
-      just to find a good name for a method is well spent time! There are
-      zillions of reasons for using proper names and in the end they all lead
-      to better readable, manageable, stable and secure code.</para>
+      <para>Naming is a repeatedly undervalued factor in the art of software
+      development. Although everybody seems to agree on that nice names are a
+      nice thing to have, most developers choose cryptic abbreviations in the
+      end (to save some typing). Beware that we TYPO3 core developers are very
+      passionate about naming (some people call it fanatic, well ...). In our
+      opinion spending 15 minutes (or more ...) just to find a good name for a
+      method is well spent time! There are zillions of reasons for using
+      proper names and in the end they all lead to better readable,
+      manageable, stable and secure code.</para>
 
       <para><itemizedlist>
           <listitem>
@@ -199,8 +199,8 @@ public function getContextName() {
           <listitem>
             <para>If acronyms or abbreviations are embedded in names, keep
             them in the case they usually are, i.e. keep
-            <acronym>URL</acronym> uppercase, also when used in a method
-            name like <methodname>getURLForLink()</methodname>,
+            <acronym>URL</acronym> uppercase, also when used in a method name
+            like <methodname>getURLForLink()</methodname>,
             <classname>ACMEManager</classname> etc.</para>
           </listitem>
         </itemizedlist></para>
@@ -209,8 +209,8 @@ public function getContextName() {
         <title>Package names</title>
 
         <para>All package names are written in
-        <package>UpperCamelCase</package>. In order to avoid problems
-        with different filesystems, only the characters a-z, A-Z and 0-9 are
+        <package>UpperCamelCase</package>. In order to avoid problems with
+        different filesystems, only the characters a-z, A-Z and 0-9 are
         allowed for package names – don't use special characters.</para>
       </section>
 
@@ -220,14 +220,13 @@ public function getContextName() {
         <para><itemizedlist>
             <listitem>
               <para>Only the characters a-z, A-Z and 0-9 are allowed for
-              namespace and class names – don't use special
-              characters.</para>
+              namespace and class names – don't use special characters.</para>
             </listitem>
 
             <listitem>
               <para>All namespace and class names are written in
-              <classname>UpperCamelCase</classname>, all uppercase names
-              are allowed only for well established abbreviations.</para>
+              <classname>UpperCamelCase</classname>, all uppercase names are
+              allowed only for well established abbreviations.</para>
             </listitem>
 
             <listitem>
@@ -294,8 +293,7 @@ public function getContextName() {
 
                 <entry>Interface</entry>
 
-                <entry>Not allowed, "Interface" is a reserved
-                keyword</entry>
+                <entry>Not allowed, "Interface" is a reserved keyword</entry>
               </row>
 
               <row>
@@ -303,8 +301,7 @@ public function getContextName() {
 
                 <entry>Default</entry>
 
-                <entry>Not allowed, "Default" is a reserved
-                keyword</entry>
+                <entry>Not allowed, "Default" is a reserved keyword</entry>
               </row>
             </tbody>
           </tgroup>
@@ -410,8 +407,8 @@ public function getContextName() {
 
                 <entry>Builder</entry>
 
-                <entry>Problem: There's a "ConfigurationBuilder" in the
-                same namespace, therefore better rename the Builder to
+                <entry>Problem: There's a "ConfigurationBuilder" in the same
+                namespace, therefore better rename the Builder to
                 ObjectBuilder</entry>
               </row>
 
@@ -466,9 +463,9 @@ public function getContextName() {
           global namespace inside namespaced code by using a leading
           backslash. When referencing a class name inside a string (e.g. given
           to the <methodname>create</methodname>-Method of the
-          <classname>ObjectFactory</classname>, in pointcut expressions
-          or in YAML files), never use a leading backslash. This follows the
-          native PHP notion of names in strings always being seen as fully
+          <classname>ObjectFactory</classname>, in pointcut expressions or in
+          YAML files), never use a leading backslash. This follows the native
+          PHP notion of names in strings always being seen as fully
           qualified.</para>
         </note>
       </section>
@@ -476,14 +473,13 @@ public function getContextName() {
       <section>
         <title>Interface names</title>
 
-        <para>Only the characters a-z, A-Z and 0-9 are allowed for
-        interface names – don't use special characters.</para>
+        <para>Only the characters a-z, A-Z and 0-9 are allowed for interface
+        names – don't use special characters.</para>
 
         <para>All interface names are written in
-        <classname>UpperCamelCase</classname>, all uppercase names are
-        allowed for well established abbreviations. Interface names must be
-        adjectives or nouns and have the Interface suffix. A few examples
-        follow:</para>
+        <classname>UpperCamelCase</classname>, all uppercase names are allowed
+        for well established abbreviations. Interface names must be adjectives
+        or nouns and have the Interface suffix. A few examples follow:</para>
 
         <example>
           <title>Correct naming of interfaces</title>
@@ -511,11 +507,11 @@ public function getContextName() {
       <section>
         <title>Exception names</title>
 
-        <para>Exception naming basically follows the rules for naming
-        classes. There are two possible types of exceptio Generic
-        exceptions and specific exceptions. Generic exceptions should be named
-        "Exception" preceeded by their namespace. Specific exceptions should
-        reside in their own sub-namespace and must not contain the word
+        <para>Exception naming basically follows the rules for naming classes.
+        There are two possible types of exceptio Generic exceptions and
+        specific exceptions. Generic exceptions should be named "Exception"
+        preceeded by their namespace. Specific exceptions should reside in
+        their own sub-namespace and must not contain the word
         <literal>Exception</literal>.</para>
 
         <example>
@@ -550,10 +546,10 @@ public function getContextName() {
         A-Z and 0-9 are allowed for method names – don't use special
         characters.</para>
 
-        <para>Make method names descriptive, but keep them concise at the
-        same time. Constructors must always be called
-        <function>__construct()</function>, never use the class name as
-        a method name.</para>
+        <para>Make method names descriptive, but keep them concise at the same
+        time. Constructors must always be called
+        <function>__construct()</function>, never use the class name as a
+        method name.</para>
 
         <para>A few examples:</para>
 
@@ -587,8 +583,8 @@ public function getContextName() {
       <section>
         <title>Variable names</title>
 
-        <para>Variable names are written in
-        <varname>lowerCamelCase</varname> and should be</para>
+        <para>Variable names are written in <varname>lowerCamelCase</varname>
+        and should be</para>
 
         <itemizedlist>
           <listitem>
@@ -601,9 +597,9 @@ public function getContextName() {
           </listitem>
         </itemizedlist>
 
-        <para>The following example shows two variables with the same
-        meaning but different naming. You'll surely agree the longer versions
-        are better (don't you ...?).</para>
+        <para>The following example shows two variables with the same meaning
+        but different naming. You'll surely agree the longer versions are
+        better (don't you ...?).</para>
 
         <example>
           <title>Correct naming of variables</title>
@@ -642,11 +638,10 @@ public function getContextName() {
         </example>
 
         <para>As a special exception you may use variable names like
-        <varname>$i</varname>, <varname>$j</varname> and
-        <varname>$k</varname> for numeric indexes in
-        <function>for</function> loops if it's clear what they mean on
-        the first sight. But even then you should want to avoid
-        them...</para>
+        <varname>$i</varname>, <varname>$j</varname> and <varname>$k</varname>
+        for numeric indexes in <function>for</function> loops if it's clear
+        what they mean on the first sight. But even then you should want to
+        avoid them...</para>
       </section>
 
       <section>
@@ -655,9 +650,8 @@ public function getContextName() {
         <para>All constant names are written in
         <constant>UPPERCASE</constant>. This includes
         <constant>TRUE</constant>, <constant>FALSE</constant> and
-        <constant>NULL</constant>. Words can be separated by underscores
-        - you can also use the underscore to group constants
-        thematically:</para>
+        <constant>NULL</constant>. Words can be separated by underscores - you
+        can also use the underscore to group constants thematically:</para>
 
         <example>
           <title>Correct naming of constants</title>
@@ -698,13 +692,12 @@ public function getContextName() {
           </listitem>
 
           <listitem>
-            <para>Class and interface files are named according to the
-            class or interface they represent</para>
+            <para>Class and interface files are named according to the class
+            or interface they represent</para>
           </listitem>
 
           <listitem>
-            <para>Each file must contain only one class or
-            interface</para>
+            <para>Each file must contain only one class or interface</para>
           </listitem>
 
           <listitem>
@@ -714,8 +707,8 @@ public function getContextName() {
           </listitem>
 
           <listitem>
-            <para>Files are placed in a directory structure representing
-            the namespace structure.</para>
+            <para>Files are placed in a directory structure representing the
+            namespace structure.</para>
           </listitem>
         </itemizedlist>
 
@@ -736,35 +729,32 @@ public function getContextName() {
                   <para><filename>Error/RuntimeException.php</filename></para>
 
                   <para>Contains the
-                  <classname>\F3\Error\RuntimeException</classname>
-                  being a part of the package
-                  <package>\F3\Error</package></para>
+                  <classname>\F3\Error\RuntimeException</classname> being a
+                  part of the package <package>\F3\Error</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>DataAccess/Manager.php</filename></para>
 
                   <para>Contains class
-                  <classname>\F3\DataAccess\Manager</classname> which is
-                  part of the package
-                  <package>\F3\DataAccess</package></para>
+                  <classname>\F3\DataAccess\Manager</classname> which is part
+                  of the package <package>\F3\DataAccess</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>FLOW3/Package/Manager.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\Manager</classname> which
-                  is part of the package
-                  <package>\F3\FLOW3</package></para>
+                  <classname>\F3\FLOW3\Package\Manager</classname> which is
+                  part of the package <package>\F3\FLOW3</package></para>
                 </listitem>
 
                 <listitem>
                   <para><filename>Package/ManagerTest.php</filename></para>
 
                   <para>Contains the class
-                  <classname>\F3\FLOW3\Package\ManagerTest</classname>
-                  which is a test case for PHPUnit.</para>
+                  <classname>\F3\FLOW3\Package\ManagerTest</classname> which
+                  is a test case for PHPUnit.</para>
                 </listitem>
               </itemizedlist></para>
           </example></para>
@@ -786,8 +776,8 @@ public function getContextName() {
           <programlisting language="php">$vision = 'Inspiring people to share';</programlisting>
         </example>
 
-        <para>If the string itself contains single quotes or apostrophes,
-        we use double quotes:</para>
+        <para>If the string itself contains single quotes or apostrophes, we
+        use double quotes:</para>
 
         <example>
           <title>String literals enclosed by double quotes</title>
@@ -859,19 +849,18 @@ class MyObject {
         <para><itemizedlist>
             <listitem>
               <para>There needs to be one space between the
-              <function>if</function> keyword and the opening brace "("
-              of the test expression</para>
+              <function>if</function> keyword and the opening brace "(" of the
+              test expression</para>
             </listitem>
 
             <listitem>
-              <para>After the closing brace ")" of the test expression
-              follows one space before the curly brace "{"</para>
+              <para>After the closing brace ")" of the test expression follows
+              one space before the curly brace "{"</para>
             </listitem>
 
             <listitem>
-              <para><function>else</function> and
-              <function>elseif</function> are on the same line as their
-              corresponding curly braces</para>
+              <para><function>else</function> and <function>elseif</function>
+              are on the same line as their corresponding curly braces</para>
             </listitem>
           </itemizedlist><example>
             <title>if statements</title>
@@ -903,11 +892,11 @@ if (weHaveALotOfCriteria() === TRUE
     <section>
       <title>Test-Driven Development</title>
 
-      <para>In a nutshell: before coding a feature or fixing a bug, write
-      an unit test.</para>
+      <para>In a nutshell: before coding a feature or fixing a bug, write an
+      unit test.</para>
 
-      <para>Whatever you do: before committing changes to the repository,
-      run all unit tests to make sure nothing is broken!</para>
+      <para>Whatever you do: before committing changes to the repository, run
+      all unit tests to make sure nothing is broken!</para>
     </section>
 
     <section>
@@ -926,10 +915,24 @@ if (weHaveALotOfCriteria() === TRUE
 
       <para>The syntax is as follows:<itemizedlist>
           <listitem>
-            <para>One line per "issue", prefixed with one or more of the
-            following codes enclosed in square brackets:<variablelist>
+            <para>One line per "issue". If the change breaks things on the
+            user side, start the line with<variablelist>
                 <varlistentry>
-                  <term><markup>FEATURE</markup></term>
+                  <term><markup>[!!!]</markup></term>
+
+                  <listitem>
+                    <para>A breaking change that needs human action when
+                    updating.</para>
+                  </listitem>
+                </varlistentry>
+              </variablelist></para>
+          </listitem>
+
+          <listitem>
+            <para> Then followed by one or more of the following
+            codes:<variablelist>
+                <varlistentry>
+                  <term><markup>[FEATURE]</markup></term>
 
                   <listitem>
                     <para>A feature change. Most likely it will be an added
@@ -940,7 +943,7 @@ if (weHaveALotOfCriteria() === TRUE
                 </varlistentry>
 
                 <varlistentry>
-                  <term><markup>FIX</markup></term>
+                  <term><markup>[BUGFIX]</markup></term>
 
                   <listitem>
                     <para>A fix for a bug. There should be a ticket
@@ -950,7 +953,7 @@ if (weHaveALotOfCriteria() === TRUE
                 </varlistentry>
 
                 <varlistentry>
-                  <term><markup>API</markup></term>
+                  <term><markup>[API]</markup></term>
 
                   <listitem>
                     <para>An API change, that is methods have been added or
@@ -962,47 +965,38 @@ if (weHaveALotOfCriteria() === TRUE
                 </varlistentry>
 
                 <varlistentry>
-                  <term><markup>CONFIGURATION</markup></term>
+                  <term><markup>[CONFIGURATION]</markup></term>
 
                   <listitem>
-                    <para>Some configuration change. That could be a
-                    changed default value, a new setting or the removal of
-                    some setting that used to exist.</para>
+                    <para>Some configuration change. That could be a changed
+                    default value, a new setting or the removal of some
+                    setting that used to exist.</para>
                   </listitem>
                 </varlistentry>
 
                 <varlistentry>
-                  <term><markup>TASK</markup></term>
+                  <term><markup>[TASK]</markup></term>
 
                   <listitem>
-                    <para>Anything not covered by the above categories,
-                    e.g. coding style cleanup. Usually only used if there's no
+                    <para>Anything not covered by the above categories, e.g.
+                    coding style cleanup. Usually only used if there's no
                     corresponding ticket.</para>
-                  </listitem>
-                </varlistentry>
-
-                <varlistentry>
-                  <term><markup>!!!</markup></term>
-
-                  <listitem>
-                    <para>A breaking change that needs human action when
-                    updating.</para>
                   </listitem>
                 </varlistentry>
               </variablelist></para>
           </listitem>
 
           <listitem>
-            <para><markup>FEATURE</markup>,
-            <markup>API</markup> and
-            <markup>CONFIGURATION</markup> are prefixed by one
-            of<variablelist>
+            <para><markup>FEATURE</markup>, <markup>BUGFIX</markup>,
+            <markup>API</markup> and <markup>CONFIGURATION</markup> are
+            prefixed by one of<variablelist>
                 <varlistentry>
                   <term><markup>+</markup></term>
 
                   <listitem>
                     <para>Something has been added: a new method,
-                    configuration setting or feature.</para>
+                    configuration setting or feature. For bug fixes it means
+                    the bug was positively fixed (fixes the ticket).</para>
                   </listitem>
                 </varlistentry>
 
@@ -1010,7 +1004,9 @@ if (weHaveALotOfCriteria() === TRUE
                   <term><markup>-</markup></term>
 
                   <listitem>
-                    <para>Something has been removed.</para>
+                    <para>Something has been removed. For bug fixes it means
+                    the big fix has been reverted (need to re-open the
+                    ticket).</para>
                   </listitem>
                 </varlistentry>
 
@@ -1018,7 +1014,9 @@ if (weHaveALotOfCriteria() === TRUE
                   <term><markup>~</markup></term>
 
                   <listitem>
-                    <para>Something has been changed.</para>
+                    <para>Something has been changed. For bug fixes it means
+                    some change related to the issue, possibly even after it
+                    was closed.</para>
                   </listitem>
                 </varlistentry>
               </variablelist></para>
@@ -1038,9 +1036,8 @@ if (weHaveALotOfCriteria() === TRUE
           </listitem>
 
           <listitem>
-            <para>If a corresponding ticket exists, mention it's ticket
-            number and use the following actions if
-            applicable:<variablelist>
+            <para>If a corresponding ticket exists, mention it's ticket number
+            and use the following actions if applicable:<variablelist>
                 <varlistentry>
                   <term><markup>fixes
                   #<replaceable>&lt;number&gt;</replaceable></markup></term>
@@ -1074,13 +1071,14 @@ if (weHaveALotOfCriteria() === TRUE
         </itemizedlist></para>
 
       <para>What follows are some examples showing the syntax in various
-      combinatio<example>
+      combinations.<example>
           <title>Some commit messages following the rules...</title>
 
           <literallayout>[!!!][-API] FLOW3 (Core): The Bootstrap's run() method has been removed. Please don't run FLOW3, write your own framework. Resolves #1, relates to #2.
-[+FEAT] FLOW3 (AOP): Added foobar interceptors to AOP. This allows for some awesome buzz when baz hits the foo. Resolves #3.
-[FIX] SomePackage (SomeSubpackage): Bar no longer breaks when Baz is used as input, fixes #4.
-[TASK] OtherPackage: Removed trailing whitespace in all source files.
+[+FEATURE] FLOW3 (AOP): Added foobar interceptors to AOP. This allows for some awesome buzz when baz hits the foo. Resolves #3.
+[+BUGFIX] SomePackage (SomeSubpackage): Bar no longer breaks when Baz is used as input, fixes #4.
+[~TASK] OtherPackage: Removed trailing whitespace in all source files.
+[+API][+FEATURE] FLOW3 (Core): Method initializeDrupal() has been added to the Bootstrap
 </literallayout>
         </example></para>
     </section>
@@ -1089,18 +1087,17 @@ if (weHaveALotOfCriteria() === TRUE
   <section>
     <title>Source Code Documentation</title>
 
-    <para>All code must be documented with inline comments. The syntax is
-    that known from the Java programming language (JavaDoc). This way code
+    <para>All code must be documented with inline comments. The syntax is that
+    known from the Java programming language (JavaDoc). This way code
     documentation can automatically be generated using <link
     xl:href="http://pear.php.net/package/PHP_UML">PHP_UML</link>.</para>
 
     <section>
       <title>Documentation Blocks</title>
 
-      <para>A file can contain different documentation blocks, relating to
-      the file itself, the class in the file and finally the members of the
-      class. A documentation block is always used for the entity it
-      precedes.</para>
+      <para>A file can contain different documentation blocks, relating to the
+      file itself, the class in the file and finally the members of the class.
+      A documentation block is always used for the entity it precedes.</para>
 
       <section>
         <title>File documentation</title>
@@ -1113,13 +1110,12 @@ if (weHaveALotOfCriteria() === TRUE
 
         <itemizedlist>
           <listitem>
-            <para>avoids warnings when rendering the
-            documentation</para>
+            <para>avoids warnings when rendering the documentation</para>
           </listitem>
 
           <listitem>
-            <para>makes sure that even code outside of classes is assigned
-            to the correct package and documented correctly</para>
+            <para>makes sure that even code outside of classes is assigned to
+            the correct package and documented correctly</para>
           </listitem>
         </itemizedlist>
 
@@ -1139,17 +1135,17 @@ if (weHaveALotOfCriteria() === TRUE
  */</programlisting>
         </example>
 
-        <para>The package and version tag are mandatory, the subpackage tag
-        is optional.</para>
+        <para>The package and version tag are mandatory, the subpackage tag is
+        optional.</para>
 
         <important>
           <title>$Id$, Subversion and keyword expansion</title>
 
-          <para>The $Id$ in the version tag will be expanded with
-          information about the file version by Subversion. This so-called
-          keyword expansion needs to be explicitly enabled, though! We
-          recommend to put this into your
-          <filename>~.subversion/config</filename> file:</para>
+          <para>The $Id$ in the version tag will be expanded with information
+          about the file version by Subversion. This so-called keyword
+          expansion needs to be explicitly enabled, though! We recommend to
+          put this into your <filename>~.subversion/config</filename>
+          file:</para>
 
           <example>
             <title>Suggested configuration for Subversion in
@@ -1243,15 +1239,15 @@ class SomeException extends \Exception {
  ...</programlisting>
         </example>
 
-        <para>Additional tags or annotations, such as @see or @aspect, can
-        be added as needed.</para>
+        <para>Additional tags or annotations, such as @see or @aspect, can be
+        added as needed.</para>
       </section>
 
       <section>
         <title>Documenting variables, constants, includes</title>
 
-        <para>Properties of a class should be documented as well. We use
-        the short version for documenting them:</para>
+        <para>Properties of a class should be documented as well. We use the
+        short version for documenting them:</para>
 
         <example>
           <title>Standard variable documentation block</title>
@@ -1267,10 +1263,10 @@ protected $title = 'Untitled';</programlisting>
       <section>
         <title>Method documentation</title>
 
-        <para>For a method, at least all parameters and the return value
-        must be documented. Please also add your name by using the @author
-        tag. The @access tag must not be used as it makes no sense (we're
-        using PHP &gt;= 5 for some reason, don't we?)</para>
+        <para>For a method, at least all parameters and the return value must
+        be documented. Please also add your name by using the @author tag. The
+        @access tag must not be used as it makes no sense (we're using PHP
+        &gt;= 5 for some reason, don't we?)</para>
 
         <example>
           <title>Standard method documentation block</title>
@@ -1300,8 +1296,8 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
     <section>
       <title>Documentation Tags</title>
 
-      <para>There are quite a few documentation tags that can be used. Here
-      is a list of tags that can and should be used within the TYPO3
+      <para>There are quite a few documentation tags that can be used. Here is
+      a list of tags that can and should be used within the TYPO3
       project:</para>
 
       <itemizedlist>
@@ -1381,16 +1377,15 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
         let them bubble up until a place where more general exceptions are
         catched. Consider the following example:</para>
 
-        <para>Some method tried to retrieve an object from the object
-        manager. However, instead of providing a string containing the object
-        name, the method passed an object (of course not on purpose -
-        something went wrong). The object manager now throws an
-        <classname>InvalidObjectName</classname> exception. In order to
-        catch this exception you can, of course, catch it specifically - or
-        only consider a more general <classname>Object</classname>
-        exception (or an even more general <classname>FLOW3</classname>
-        exception). This all works because we have the following
-        hierarchy:</para>
+        <para>Some method tried to retrieve an object from the object manager.
+        However, instead of providing a string containing the object name, the
+        method passed an object (of course not on purpose - something went
+        wrong). The object manager now throws an
+        <classname>InvalidObjectName</classname> exception. In order to catch
+        this exception you can, of course, catch it specifically - or only
+        consider a more general <classname>Object</classname> exception (or an
+        even more general <classname>FLOW3</classname> exception). This all
+        works because we have the following hierarchy:</para>
 
         <literallayout>+ \F3\FLOW3\Exception
   + \F3\FLOW3\Object\Exception
@@ -1399,15 +1394,14 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
         <section>
           <title>Throwing an exception</title>
 
-          <para>When throwing an exception, make sure to provide a clear
-          error message and an error code being the unix timestamp of when you
-          write the <function>throw</function> statement. That error
-          code must be unique, so watch out when doing copy and
-          paste!</para>
+          <para>When throwing an exception, make sure to provide a clear error
+          message and an error code being the unix timestamp of when you write
+          the <function>throw</function> statement. That error code must be
+          unique, so watch out when doing copy and paste!</para>
 
-          <para>For every exception there should be a page on the TYPO3
-          wiki, as exception messages link to that page, identified by the
-          error code (unix timestamp).</para>
+          <para>For every exception there should be a page on the TYPO3 wiki,
+          as exception messages link to that page, identified by the error
+          code (unix timestamp).</para>
         </section>
       </section>
 
@@ -1416,14 +1410,14 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
 
         <para>Some notes for a start:<itemizedlist>
             <listitem>
-              <para>Never use the object manager or factory in unit tests!
-              If they are needed, mock them.</para>
+              <para>Never use the object manager or factory in unit tests! If
+              they are needed, mock them.</para>
             </listitem>
 
             <listitem>
-              <para>Avoid tests for the scope of an object. Those tests
-              test the object factory, rather then the test target. Such a
-              test should be done by checking for the presence of an expected
+              <para>Avoid tests for the scope of an object. Those tests test
+              the object factory, rather then the test target. Such a test
+              should be done by checking for the presence of an expected
               @scope annotation – eventually we will find an elegant way for
               this.</para>
             </listitem>
@@ -1448,8 +1442,8 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
 
       <itemizedlist>
         <listitem>
-          <para>All code should be object oriented. This means there should
-          be no functions outside classes if not absolutely necessary. If you
+          <para>All code should be object oriented. This means there should be
+          no functions outside classes if not absolutely necessary. If you
           need a "container" for some helper methods, consider creating a
           static class.</para>
         </listitem>
@@ -1463,35 +1457,33 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
               </listitem>
 
               <listitem>
-                <para>Always declare the scope (public, protected, private)
-                of methods and member variables</para>
+                <para>Always declare the scope (public, protected, private) of
+                methods and member variables</para>
               </listitem>
 
               <listitem>
-                <para>Make use of iterators and exceptions, have a look at
-                the SPL (see <link
+                <para>Make use of iterators and exceptions, have a look at the
+                SPL (see <link
                 xl:href="http://www.php.net/manual/ref.spl.php">http://www.php.net/manual/ref.spl.php</link>
                 and <link
                 xl:href="http://www.php.net/~helly/php/ext/spl/">http://www.php.net/~helly/php/ext/spl/</link>)</para>
               </listitem>
 
               <listitem>
-                <para>Make use of type-hinting wherever possible (see
-                <link
+                <para>Make use of type-hinting wherever possible (see <link
                 xl:href="http://www.php.net/manual/language.oop5.typehinting.php">http://www.php.net/manual/language.oop5.typehinting.php</link>)</para>
               </listitem>
             </itemizedlist></para>
         </listitem>
 
         <listitem>
-          <para>Always use <code>&lt;?php</code> as opening tags
-          (never only <code>&lt;?</code>)</para>
+          <para>Always use <code>&lt;?php</code> as opening tags (never only
+          <code>&lt;?</code>)</para>
         </listitem>
 
         <listitem>
-          <para>Always use the closing tag <code>?&gt;</code> at the
-          end of a file, don't leave it out (this ain't no Zend Framework,
-          dude)</para>
+          <para>Always use the closing tag <code>?&gt;</code> at the end of a
+          file, don't leave it out (this ain't no Zend Framework, dude)</para>
         </listitem>
 
         <listitem>
@@ -1500,8 +1492,7 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
           must be <acronym>UTF-8</acronym></para>
 
           <example>
-            <title>Encoding and namespace statements for .php
-            files</title>
+            <title>Encoding and namespace statements for .php files</title>
 
             <programlisting language="php">&lt;?php
 declare(ENCODING = 'utf-8');
@@ -1512,8 +1503,8 @@ namespace F3\Your\Stuff\Here;
         </listitem>
 
         <listitem>
-          <para>Prefer strict comparisons whenever possible, to avoid
-          problems with truthy and falsy <sidebar>
+          <para>Prefer strict comparisons whenever possible, to avoid problems
+          with truthy and falsy <sidebar>
               <figure>
                 <title>Truthy and falsy are fuzzy...</title>
 
@@ -1523,8 +1514,8 @@ namespace F3\Your\Stuff\Here;
                   </imageobject>
                 </mediaobject>
               </figure>
-            </sidebar>values that might behave different than what you
-          expect. Here are some examples:<example>
+            </sidebar>values that might behave different than what you expect.
+          Here are some examples:<example>
               <title>Examples of good and bad comparisons</title>
 
               <para><programlisting language="php">if ($template)             // BAD
@@ -1585,22 +1576,21 @@ if ($foo !== $bar))        // GOOD</programlisting></para>
           <para>Avoid double-negation. Instead of
           <literal>exportSystemView(..., $noRecurse)</literal> use
           <literal>exportSystemView(..., $recurse)</literal>. It is more
-          logical to pass <constant>TRUE</constant> if you want
-          recursion instead of having to pass
-          <constant>FALSE</constant>. In general, parameters negating
-          things are a bad idea.</para>
+          logical to pass <constant>TRUE</constant> if you want recursion
+          instead of having to pass <constant>FALSE</constant>. In general,
+          parameters negating things are a bad idea.</para>
         </listitem>
       </itemizedlist>
 
       <section>
         <title>Comments</title>
 
-        <para>In general, comments are a good thing and we strive for
-        creating a well-documented source code. However, inline comments can
-        often be a sign for a bad code structure or method naming.<footnote>
-            <para>This is also referred to as a bad "smell" in the theory
-            of Refactoring. We highly recommend reading "Refactoring" by
-            Martin Fowler - if you didn't already.</para>
+        <para>In general, comments are a good thing and we strive for creating
+        a well-documented source code. However, inline comments can often be a
+        sign for a bad code structure or method naming.<footnote>
+            <para>This is also referred to as a bad "smell" in the theory of
+            Refactoring. We highly recommend reading "Refactoring" by Martin
+            Fowler - if you didn't already.</para>
           </footnote>As an example, consider the following code:<example>
             <title>Bad coding smell: Comments</title>
 
