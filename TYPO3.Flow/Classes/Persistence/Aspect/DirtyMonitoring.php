@@ -122,9 +122,9 @@ class DirtyMonitoring {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		$proxy = $joinPoint->getProxy();
-		$isDirty = FALSE;
 
 		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
+			$isDirty = FALSE;
 			$uuidPropertyName = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
 			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
@@ -139,6 +139,8 @@ class DirtyMonitoring {
 					$isDirty = TRUE;
 				}
 			}
+		} else {
+			$isDirty = TRUE;
 		}
 
 		return $isDirty;
