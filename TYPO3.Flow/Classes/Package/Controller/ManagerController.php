@@ -84,8 +84,8 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if ($this->packageManager->isPackageAvailable($packageKey)) {
 			return 'The package "' . $packageKey . '" already exists.' . PHP_EOL;
 		}
-		$this->packageManager->createPackage($packageKey);
-		return 'New package "' . $packageKey . '" created at "' . $this->packageManager->getPackagePath($packageKey) . '".' . PHP_EOL;
+		$package = $this->packageManager->createPackage($packageKey);
+		return 'New package "' . $packageKey . '" created at "' . $package->getPackagePath() . '".' . PHP_EOL;
 	}
 
 	/**

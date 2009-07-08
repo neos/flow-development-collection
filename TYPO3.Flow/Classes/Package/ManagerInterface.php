@@ -94,22 +94,6 @@ interface ManagerInterface {
 	public function getCaseSensitivePackageKey($unknownCasedPackageKey);
 
 	/**
-	 * Returns the absolute path to the root directory of a package.
-	 *
-	 * @param string $packageKey Name of the package to return the path of
-	 * @return string Absolute path to the package's root directory, with trailing directory separator
-	 */
-	public function getPackagePath($packageKey);
-
-	/**
-	 * Returns the absolute path to the "Classes" directory of a package.
-	 *
-	 * @param string $packageKey Name of the package to return the "Classes" path of
-	 * @return string Absolute path to the package's "Classes" directory, with trailing directory separator
-	 */
-	public function getPackageClassesPath($packageKey);
-
-	/**
 	 * Check the conformance of the given package key
 	 *
 	 * @param string $packageKey The package key to validate

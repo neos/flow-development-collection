@@ -83,9 +83,9 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getPackageMetaDataPathReturnsPathToMetaDirectory() {
+	public function getMetaPathReturnsPathToMetaDirectory() {
 		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
-		$packageMetaDataPath = $package->getPackageMetaDataPath();
+		$packageMetaDataPath = $package->getMetaPath();
 
 		$this->assertSame($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_METADATA, $packageMetaDataPath);
 	}
@@ -94,9 +94,9 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageDocumentationPathReturnsPathToDocumentationDirectory() {
+	public function getDocumentationPathReturnsPathToDocumentationDirectory() {
 		$package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
-		$packageDocumentationPath = $package->getPackageDocumentationPath();
+		$packageDocumentationPath = $package->getDocumentationPath();
 
 		$this->assertEquals($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION, $packageDocumentationPath);
 	}

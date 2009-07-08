@@ -57,7 +57,7 @@ class XMLWriterTest extends \F3\Testing\BaseTestCase {
 		$packageMetaDataPath = \vfsStream::url('testDirectory') . '/';
 
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
-		$mockPackage->expects($this->once())->method('getPackageMetaDataPath')->will($this->returnValue($packageMetaDataPath));
+		$mockPackage->expects($this->once())->method('getMetaPath')->will($this->returnValue($packageMetaDataPath));
 
 		$meta = new \F3\FLOW3\Package\MetaData('YetAnotherTestPackage');
 		$meta->setTitle('Yet another test package');

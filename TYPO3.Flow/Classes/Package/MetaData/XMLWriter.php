@@ -50,7 +50,7 @@ class XMLWriter implements \F3\FLOW3\Package\MetaData\WriterInterface {
 	 */
 	public function writePackageMetaData(\F3\FLOW3\Package\PackageInterface $package, \F3\FLOW3\Package\MetaDataInterface $meta) {
 		$xml = new \XMLWriter();
-		if ($xml->openURI($package->getPackageMetaDataPath() . 'Package.xml') === FALSE) return FALSE;
+		if ($xml->openURI($package->getMetaPath() . 'Package.xml') === FALSE) return FALSE;
 
 		$xml->setIndent(true);
 		$xml->setIndentString(chr(9));

@@ -208,34 +208,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	}
 
 	/**
-	 * Returns the absolute path to the root directory of a package. Only
-	 * works for package which have a proper meta.xml file - which they
-	 * should.
-	 *
-	 * @param string $packageKey: Name of the package to return the path of
-	 * @return string Absolute path to the package's root directory
-	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getPackagePath($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available.', 1166543253);
-		return $this->packages[$packageKey]->getPackagePath();
-	}
-
-	/**
-	 * Returns the absolute path to the "Classes" directory of a package.
-	 *
-	 * @param string $packageKey: Name of the package to return the "Classes" path of
-	 * @return string Absolute path to the package's "Classes" directory, with trailing directory separator
-	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getPackageClassesPath($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available.', 1167574237);
-		return $this->packages[$packageKey]->getClassesPath();
-	}
-
-	/**
 	 * Check the conformance of the given package key
 	 *
 	 * @param string $packageKey The package key to validate
@@ -376,7 +348,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 			$this->deactivatePackage($packageKey);
 		}
 
-		$packagePath = $this->getPackagePath($packageKey);
+		$packagePath = $this->getPackage($packageKey)->getPackagePath();
 		\F3\FLOW3\Utility\Files::removeDirectoryRecursively($packagePath);
 
 		unset($this->packages[$packageKey]);

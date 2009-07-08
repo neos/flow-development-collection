@@ -208,7 +208,7 @@ class Package implements PackageInterface {
 	 * @return string Full path to the package's meta data directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageMetaDataPath() {
+	public function getMetaPath() {
 		return $this->packagePath . self::DIRECTORY_METADATA;
 	}
 
@@ -218,7 +218,7 @@ class Package implements PackageInterface {
 	 * @return string Full path to the package's documentation directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function getPackageDocumentationPath() {
+	public function getDocumentationPath() {
 		return $this->packagePath . self::DIRECTORY_DOCUMENTATION;
 	}
 
@@ -230,7 +230,7 @@ class Package implements PackageInterface {
 	 */
 	public function getPackageDocumentations() {
 		$documentations = array();
-		$documentationPath = $this->getPackageDocumentationPath();
+		$documentationPath = $this->getDocumentationPath();
 		if (is_dir($documentationPath)) {
 			$documentationsDirectoryIterator = new \DirectoryIterator($documentationPath);
 			$documentationsDirectoryIterator->rewind();

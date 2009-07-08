@@ -50,7 +50,7 @@ class XMLReaderTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 
 		$mockPackage->expects($this->atLeastOnce())
-			->method('getPackageMetaDataPath')
+			->method('getMetaPath')
 			->will($this->returnValue(__DIR__ . '/../Fixtures/XMLReaderTest/'));
 
 		$mockPackage->expects($this->any())

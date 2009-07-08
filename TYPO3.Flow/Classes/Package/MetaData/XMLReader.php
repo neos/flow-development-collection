@@ -42,7 +42,7 @@ class XMLReader implements \F3\FLOW3\Package\MetaData\ReaderInterface {
 	 * @internal
 	 */
 	public function readPackageMetaData(\F3\FLOW3\Package\PackageInterface $package) {
-		$packageInfoPath = $package->getPackageMetaDataPath();
+		$packageInfoPath = $package->getMetaPath();
 
 		$meta = new \F3\FLOW3\Package\MetaData($package->getPackageKey());
 

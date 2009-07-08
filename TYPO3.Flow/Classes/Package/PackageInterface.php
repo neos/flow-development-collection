@@ -80,6 +80,6 @@ interface PackageInterface {
 	 *
 	 * @return string Path to this package's Package.xml file
 	 */
-	public function getPackageMetaDataPath();
+	public function getMetaPath();
 }
 ?>

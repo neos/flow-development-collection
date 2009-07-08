@@ -107,48 +107,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Checks the method getPackagePath()
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
-	 */
-	public function getPackagePathReturnsTheCorrectPathOfTheTestPackage() {
-		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
-		$mockPackage->expects($this->once())->method('getPackagePath')->will($this->returnValue('ThePackagePath'));
-
-		$packagesReflection = new \ReflectionProperty($this->packageManager, 'packages');
-		$packagesReflection->setAccessible(TRUE);
-		$packagesReflection->setValue($this->packageManager, array('TestPackage' => $mockPackage));
-
-		$actualPackagePath = $this->packageManager->getPackagePath('TestPackage');
-		$this->assertEquals('ThePackagePath', $actualPackagePath);
-
-		$this->packageManager->getPackagePath('PrettyUnlikelyThatThisPackageExists');
-	}
-
-	/**
-	 * Checks the method getPackageClassesPath()
-	 *
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
-	 */
-	public function getPackageClassesPathReturnsClassesPathOfTestPackage() {
-		$mockPackage = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
-		$mockPackage->expects($this->once())->method('getClassesPath')->will($this->returnValue('TheClassesPath'));
-
-		$packagesReflection = new \ReflectionProperty($this->packageManager, 'packages');
-		$packagesReflection->setAccessible(TRUE);
-		$packagesReflection->setValue($this->packageManager, array('TestPackage' => $mockPackage));
-
-		$actualPackageClassesPath = $this->packageManager->getPackageClassesPath('TestPackage');
-		$this->assertEquals('TheClassesPath', $actualPackageClassesPath, 'getPackageClassesPath() did not return the correct path for package "TestPackage".');
-
-		$this->packageManager->getPackageClassesPath('PrettyUnlikelyThatThisPackageExists');
-	}
-
-	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -181,7 +139,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageMetaDataWriter->expects($this->once())->method('writePackageMetaData')->will($this->returnValue(TRUE));
 
 		$this->packageManager->injectPackageMetaDataWriter($packageMetaDataWriter);
-		
+
 		$this->packageManager->initialize();
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
@@ -230,9 +188,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->packageManager->injectPackageMetaDataWriter($metaDataWriter);
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
-		$this->packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
+		$package = $this->packageManager->createPackage('YetAnotherTestPackage', NULL, $packagesPath);
 
-		$packagePath = $this->packageManager->getPackagePath('YetAnotherTestPackage');
+		$packagePath = $package->getPackagePath('YetAnotherTestPackage');
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CLASSES), "Classes directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
@@ -473,8 +431,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		$packageKey = 'YetAnotherTestPackage';
-		$this->packageManager->createPackage($packageKey, NULL, $packagesPath);
-		$packagePath = $this->packageManager->getPackagePath($packageKey);
+		$package = $this->packageManager->createPackage($packageKey, NULL, $packagesPath);
+		$packagePath = $package->getPackagePath($packageKey);
 
 		$this->packageManager->deletePackage($packageKey);
 
@@ -512,7 +470,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packageManager->_set('packages', array('FLOW3' => $mockFLOW3Package, 'Test' => $mockTestPackage));
 		$packageManager->injectConfigurationManager($configurationManager);
 		$packageManager->initialize();
-		
+
 		$activePackages = $packageManager->getActivePackages();
 		$this->assertEquals(array('FLOW3' => $mockFLOW3Package), $activePackages);
 	}
