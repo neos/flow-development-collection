@@ -49,7 +49,7 @@ class AbstractExceptionHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 		$mockSystemLogger->expects($this->once())->method('log')->with('Uncaught exception #12345. The Message.', LOG_CRIT);
 
-		$exceptionHandler = $this->getMock('F3\FLOW3\Error\AbstractExceptionHandler', array('dummy'), array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('F3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
 		$exceptionHandler->handleException($exception);
 	}
@@ -65,7 +65,7 @@ class AbstractExceptionHandlerTest extends \F3\Testing\BaseTestCase {
 		$mockLockManager = $this->getMock('F3\FLOW3\Core\LockManager');
 		$mockLockManager->expects($this->once())->method('unlockSite');
 
-		$exceptionHandler = $this->getMock('F3\FLOW3\Error\AbstractExceptionHandler', array('dummy'), array(), '', FALSE);
+		$exceptionHandler = $this->getMockForAbstractClass('F3\FLOW3\Error\AbstractExceptionHandler', array(), '', FALSE);
 		$exceptionHandler->injectSystemLogger($mockSystemLogger);
 		$exceptionHandler->injectLockManager($mockLockManager);
 

@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authorization\Voter;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Authorization\Voter;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class ACLTest extends \F3\Testing\BaseTestCase {
@@ -110,11 +110,11 @@ class ACLTest extends \F3\Testing\BaseTestCase {
 
 		$getPrivilegesCallback = function() use (&$mockAccessDenyPrivilege, &$role1ClassName) {
 			$args = func_get_args();
-
-			$fullClassName = 'F3\FLOW3\Security\ACL\\' . $role1ClassName;
-
-			if ($args[0] instanceof $fullClassName) return array($mockAccessDenyPrivilege);
-			else return array();
+			if ($args[0] instanceof $role1ClassName) {
+				return array($mockAccessDenyPrivilege);
+			} else {
+				return array();
+			}
 		};
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\ACL\PolicyService');
@@ -150,11 +150,11 @@ class ACLTest extends \F3\Testing\BaseTestCase {
 
 		$getPrivilegesCallback = function() use (&$mockAccessGrantPrivilege, &$role1ClassName) {
 			$args = func_get_args();
-
-			$fullClassName = 'F3\FLOW3\Security\ACL\\' . $role1ClassName;
-
-			if ($args[0] instanceof $fullClassName) return array($mockAccessGrantPrivilege);
-			else return array();
+			if ($args[0] instanceof $role1ClassName) {
+				return array($mockAccessGrantPrivilege);
+			} else {
+				return array();
+			}
 		};
 
 		$mockPolicyService = $this->getMock('F3\FLOW3\Security\ACL\PolicyService');

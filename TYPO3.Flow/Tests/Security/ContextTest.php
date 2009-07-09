@@ -181,8 +181,8 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 		$securityContext->_set('tokens', array($token1, $token2, $token3, $token4, $token5, $token6));
 		$securityContext->setRequest($request);
 
-		$this->assertEquals(array($token1), $securityContext->getAuthenticationTokensOfType('F3\FLOW3\Security\Authentication\\' . $authenticationToken1ClassName));
-		$this->assertEquals(array(), $securityContext->getAuthenticationTokensOfType('F3\FLOW3\Security\Authentication\\' . $authenticationToken3ClassName));
+		$this->assertEquals(array($token1), $securityContext->getAuthenticationTokensOfType($authenticationToken1ClassName));
+		$this->assertEquals(array(), $securityContext->getAuthenticationTokensOfType($authenticationToken3ClassName));
 	}
 
 	/**

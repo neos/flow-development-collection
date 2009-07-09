@@ -149,9 +149,7 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function tokenFromAnAuthenticationManagerIsReplacedIfThereIsOneOfTheSameTypeInTheSession() {
 		$token1ClassName = uniqid('token1');
-		$token1CloneClassName = 'F3\FLOW3\Security\Authentication\\' . $token1ClassName;
 		$token2ClassName = uniqid('token2');
-		$token2CloneClassName = 'F3\FLOW3\Security\Authentication\\' . $token2ClassName;
 		$token3ClassName = uniqid('token3');
 
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
@@ -160,9 +158,9 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token1ClassName);
-		$token1Clone = new $token1CloneClassName();
+		$token1Clone = new $token1ClassName();
 		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token2ClassName);
-		$token2Clone = new $token2CloneClassName();
+		$token2Clone = new $token2ClassName();
 		$token3 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), $token3ClassName);
 
 		$tokensFromTheManager = array($token1, $token2, $token3);
