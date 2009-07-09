@@ -262,8 +262,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('isPropertyTaggedWith')->will($this->returnValue(FALSE));
 		$mockReflectionService->expects($this->at(0))->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('property1', 'property2', 'property3')));
-		$mockReflectionService->expects($this->at(2))->method('getClassPropertyNames')->will($this->returnValue(array()));
-		$mockReflectionService->expects($this->at(5))->method('getClassPropertyNames')->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
 
 		$mockSingletonObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
 		$mockSingletonObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('singleton'));
@@ -358,6 +357,95 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$sessionRegistry->_call('storeObjectAsPropertyArray', $className, $someObject);
 
 		$this->assertEquals($expectedPropertyArray, $sessionRegistry->_get('objectsAsArray'), 'The object was not stored correctly as property array.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function storeObjectAsPropertyArrayStoresOnlyTheUUIDOfEntityObjectsIfTheyAreNotMarkedAsNew() {
+		$sessionClassName = uniqid('dummyClass');
+		eval('class ' . $sessionClassName . ' {
+			public $entityProperty;
+		}');
+
+		$entityObject = $this->getMock('F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface', array('FLOW3_Persistence_isNew', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_Persistence_isDirty', 'FLOW3_Persistence_memorizeCleanState'));
+		$entityClassName = get_class($entityObject);
+		$entityObject->expects($this->once())->method('FLOW3_Persistence_isNew')->will($this->returnValue(FALSE));
+		$entityObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('someUUID'));
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
+		$mockReflectionService->expects($this->at(2))->method('isClassTaggedWith')->with($entityClassName, 'entity')->will($this->returnValue(TRUE));
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry->injectReflectionService($mockReflectionService);
+
+		$expectedArray = array(
+			'className' => $sessionClassName,
+			'properties' => array(
+				'entityProperty' => array(
+					'type' => 'persistenceObject',
+					'value' => array(
+						'className' => $entityClassName,
+						'UUID' => 'someUUID',
+					)
+				)
+			)
+		);
+
+		$sessionObject = new $sessionClassName();
+		$sessionObject->entityProperty = $entityObject;
+
+		$sessionRegistry->_call('storeObjectAsPropertyArray', 'myObjectName', $sessionObject);
+
+		$objectsAsArray = $sessionRegistry->_get('objectsAsArray');
+		$this->assertEquals($expectedArray, $objectsAsArray['myObjectName']);
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function storeObjectAsPropertyArrayStoresOnlyTheUUIDOfPersistenceValueobjectsIfTheyAreNotMarkedAsNew() {
+		$sessionClassName = uniqid('dummyClass');
+		eval('class ' . $sessionClassName . ' {
+			public $entityProperty;
+		}');
+
+		$entityObject = $this->getMock('F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface', array('FLOW3_Persistence_isNew', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_Persistence_isDirty', 'FLOW3_Persistence_memorizeCleanState'));
+		$entityClassName = get_class($entityObject);
+		$entityObject->expects($this->once())->method('FLOW3_Persistence_isNew')->will($this->returnValue(FALSE));
+		$entityObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('someUUID'));
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
+		$mockReflectionService->expects($this->at(2))->method('isClassTaggedWith')->with($entityClassName, 'entity')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->at(3))->method('isClassTaggedWith')->with($entityClassName, 'valueobject')->will($this->returnValue(TRUE));
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry->injectReflectionService($mockReflectionService);
+
+		$expectedArray = array(
+			'className' => $sessionClassName,
+			'properties' => array(
+				'entityProperty' => array(
+					'type' => 'persistenceObject',
+					'value' => array(
+						'className' => $entityClassName,
+						'UUID' => 'someUUID',
+					)
+				)
+			)
+		);
+
+		$sessionObject = new $sessionClassName();
+		$sessionObject->entityProperty = $entityObject;
+
+		$sessionRegistry->_call('storeObjectAsPropertyArray', 'myObjectName', $sessionObject);
+
+		$objectsAsArray = $sessionRegistry->_get('objectsAsArray');
+		$this->assertEquals($expectedArray, $objectsAsArray['myObjectName']);
 	}
 
 	/**
@@ -775,11 +863,13 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 			private $arrayProperty;
 			private $objectProperty;
 			private $splObjectStorageProperty;
+			private $persistenceObjectProperty;
 
 			public function getSimpleProperty() { return $this->simpleProperty; }
 			public function getArrayProperty() { return $this->arrayProperty; }
 			public function getObjectProperty() { return $this->objectProperty; }
 			public function getSplObjectStorageProperty() { return $this->splObjectStorageProperty; }
+			public function getPersistenceObjectProperty() { return $this->persistenceObjectProperty; }
 		}');
 
 		$objectData = array(
@@ -800,6 +890,13 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 				'splObjectStorageProperty' => array (
 					'type' => 'SplObjectStorage',
 					'value' => 'splObjectStoragePropertyValue',
+				),
+				'persistenceObjectProperty' => array (
+					'type' => 'persistenceObject',
+					'value' => array(
+						'className' => 'persistenceObjectClassName',
+						'UUID' => 'persistenceObjectUUID',
+					)
 				)
 			)
 		);
@@ -810,13 +907,14 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('getObjectConfiguration')->will($this->returnValue($mockObjectConfiguration));
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('createEmptyObject', 'reconstituteArrayProperty', 'reconstituteObjectProperty', 'reconstituteSplObjectStorageProperty'), array(), '', FALSE);
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('createEmptyObject', 'reconstituteArray', 'reconstituteSplObjectStorage', 'reconstitutePersistenceObject'), array(), '', FALSE);
 		$sessionRegistry->injectObjectBuilder($mockObjectBuilder);
 		$sessionRegistry->injectObjectManager($mockObjectManager);
 		$sessionRegistry->expects($this->at(0))->method('createEmptyObject')->with($className)->will($this->returnValue(new $className()));
 		$sessionRegistry->expects($this->at(2))->method('createEmptyObject')->with('emptyClass')->will($this->returnValue($emptyObject));
-		$sessionRegistry->expects($this->once())->method('reconstituteArrayProperty')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
-		$sessionRegistry->expects($this->once())->method('reconstituteSplObjectStorageProperty')->with('splObjectStoragePropertyValue')->will($this->returnValue('splObjectStoragePropertyValue'));
+		$sessionRegistry->expects($this->once())->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
+		$sessionRegistry->expects($this->once())->method('reconstituteSplObjectStorage')->with('splObjectStoragePropertyValue')->will($this->returnValue('splObjectStoragePropertyValue'));
+		$sessionRegistry->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'persistenceObjectUUID')->will($this->returnValue('persistenceObjectPropertyValue'));
 
 		$objectsAsArray = array(
 			'emptyClass' => array(
@@ -832,6 +930,7 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('arrayPropertyValue', $object->getArrayProperty(), 'Array property was not set as expected.');
 		$this->assertEquals($emptyObject, $object->getObjectProperty(), 'Object property was not set as expected.');
 		$this->assertEquals('splObjectStoragePropertyValue', $object->getSplObjectStorageProperty(), 'SplObjectStorage property was not set as expected.');
+		$this->assertEquals('persistenceObjectPropertyValue', $object->getPersistenceObjectProperty(), 'Persistence object property was not set as expected.');
 	}
 
 	/**
@@ -978,6 +1077,44 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function reconstituteArrayWorksWithPersistenceObjectsInTheArray() {
+		$objectsAsArray = array(
+			'some object' => array(
+				'className' => 'some object',
+				'properties' => 'properties',
+			)
+		);
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('reconstitutePersistenceObject'), array(), '', FALSE);
+		$sessionRegistry->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'someUUID')->will($this->returnValue('reconstituted object'));
+		$sessionRegistry->_set('objectsAsArray', $objectsAsArray);
+
+		$dataArray = array(
+			'key1' => array(
+				'type' => 'simple',
+				'value' => 1,
+			),
+			'key2' => array(
+				'type' => 'persistenceObject',
+				'value' => array(
+					'className' => 'persistenceObjectClassName',
+					'UUID' => 'someUUID',
+				)
+			)
+		);
+
+		$expectedArrayProperty = array(
+			'key1' => 1,
+			'key2' => 'reconstituted object',
+		);
+
+		$this->assertEquals($expectedArrayProperty, $sessionRegistry->_call('reconstituteArray', $dataArray), 'The array was not reconstituted correctly.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function reconstituteSplObjectStorageWorks() {
 		$mockObject1 = $this->getMock(uniqid('dummyClass1'), array(), array(), '', FALSE);
 		$mockObject2 = $this->getMock(uniqid('dummyClass2'), array(), array(), '', FALSE);
@@ -1002,7 +1139,24 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expectedResult, $sessionRegistry->_call('reconstituteSplObjectStorage', $dataArray), 'The SplObjectStorage was not reconstituted correctly.');
 	}
 
-	//set properties for aop proxies
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function reconstitutePersistenceObjectRetrievesTheObjectCorrectlyFromThePersistenceFramework() {
+		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface', array());
+		$mockQuery->expects($this->once())->method('withUUID')->with('someUUID')->will($this->returnValue('UUIDQuery'));
+		$mockQuery->expects($this->once())->method('matching')->with('UUIDQuery')->will($this->returnValue($mockQuery));
+		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('theObject')));
+
+		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
+		$mockQueryFactory->expects($this->once())->method('create')->with('someClassName')->will($this->returnValue($mockQuery));
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry->injectQueryFactory($mockQueryFactory);
+
+		$this->assertEquals('theObject', $sessionRegistry->_call('reconstitutePersistenceObject', 'someClassName', 'someUUID'));
+	}
 }
 
 ?>

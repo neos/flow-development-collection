@@ -76,6 +76,12 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	protected $session;
 
 	/**
+	 * The query factory
+	 * @var F3\FLOW3\Persistence\QueryFactoryInterface
+	 */
+	protected $queryFactory;
+
+	/**
 	 * TRUE if the registry is initialized
 	 * @var boolean
 	 */
@@ -112,6 +118,17 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Injects the query factory
+	 *
+	 * @param F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory The query factory
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
+		$this->queryFactory = $queryFactory;
 	}
 
 	/**
@@ -228,7 +245,9 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 				$propertyValue = $propertyReflection->getValue($object);
 			}
 
-			if (is_object($propertyValue) && get_class($propertyValue) === 'SplObjectStorage') {
+			if (is_object($propertyValue)) $propertyClassName = get_class($propertyValue);
+
+			if (is_object($propertyValue) && $propertyClassName === 'SplObjectStorage') {
 				$propertyArray[$propertyName]['type'] = 'SplObjectStorage';
 				$propertyArray[$propertyName]['value'] = array();
 
@@ -238,8 +257,18 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 					$this->storeObjectAsPropertyArray($objectHash, $storedObject);
 				}
 
+			} else if (is_object($propertyValue)
+						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
+						&& $propertyValue->FLOW3_Persistence_isNew() === FALSE
+						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
+							|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
+
+				$propertyArray[$propertyName]['type'] = 'persistenceObject';
+				$propertyArray[$propertyName]['value']['className'] = $propertyClassName;
+				$propertyArray[$propertyName]['value']['UUID'] = $propertyValue->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
+
 			} else if (is_object($propertyValue)) {
-				$propertyObjectName = $this->objectManager->getObjectNameByClassName(get_class($propertyValue));
+				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);
 				$objectConfiguration = $this->objectManager->getObjectConfiguration($propertyObjectName);
 				if ($objectConfiguration->getScope() === 'singleton') continue;
 
@@ -343,13 +372,16 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 					$propertyValue = $propertyData['value'];
 					break;
 				case 'array':
-					$propertyValue = $this->reconstituteArrayProperty($propertyData['value']);
+					$propertyValue = $this->reconstituteArray($propertyData['value']);
 					break;
 				case 'object':
 					$propertyValue = $this->reconstituteObject($this->objectsAsArray[$propertyData['value']]);
 					break;
 				case 'SplObjectStorage':
-					$propertyValue = $this->reconstituteSplObjectStorageProperty($propertyData['value']);
+					$propertyValue = $this->reconstituteSplObjectStorage($propertyData['value']);
+					break;
+				case 'persistenceObject':
+					$propertyValue = $this->reconstitutePersistenceObject($propertyData['value']['className'], $propertyData['value']['UUID']);
 					break;
 			}
 
@@ -390,6 +422,9 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 				case 'SplObjectStorage':
 					$value = $this->reconstituteSplObjectStorage($this->objectsAsArray[$entryData['value']]['className'], $this->objectsAsArray[$entryData['value']]);
 					break;
+				case 'persistenceObject':
+					$value = $this->reconstitutePersistenceObject($entryData['value']['className'], $entryData['value']['UUID']);
+					break;
 			}
 
 			$result[$key] = $value;
@@ -413,6 +448,21 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 		}
 
 		return $result;
+	}
+
+	/**
+	 * Reconstitutes a persistence object (entity or valueobject) identified by the given UUID.
+	 *
+	 * @param string $className The class name of the object to retrieve
+	 * @param string $UUID The UUID of the object
+	 * @return object The reconstituted persistence object, NULL if none was found
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	protected function reconstitutePersistenceObject($className, $UUID) {
+		$query = $this->queryFactory->create($className);
+		$objects = $query->matching($query->withUUID($UUID))->execute();
+		if (count($objects) === 1) return current($objects);
+		return NULL;
 	}
 }
 
