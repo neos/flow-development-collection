@@ -50,9 +50,14 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Object\RegistryInterface
+	 * @var \F3\FLOW3\Object\TransientRegistry
 	 */
 	protected $singletonObjectsRegistry;
+
+	/**
+	 * @var \F3\FLOW3\Object\SessionRegistry
+	 */
+	protected $sessionObjectsRegistry;
 
 	/**
 	 * @var \F3\FLOW3\Object\Builder
@@ -71,6 +76,12 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	protected $registeredObjects = array();
 
 	/**
+	 * An array of all registered classes. The class name is the key, the object name the value.
+	 * @var array
+	 */
+	protected $registeredClasses = array();
+
+	/**
 	 * An array of all registered object configurations
 	 * @var array
 	 */
@@ -84,13 +95,25 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Injects the singleton objects registry
 	 *
-	 * @param \F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry The singleton objects registry
+	 * @param \F3\FLOW3\Object\TransientRegistry $singletonObjectsRegistry The singleton objects registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @internal
 	 */
-	public function injectSingletonObjectsRegistry(\F3\FLOW3\Object\RegistryInterface $singletonObjectsRegistry) {
+	public function injectSingletonObjectsRegistry(\F3\FLOW3\Object\TransientRegistry $singletonObjectsRegistry) {
 		$this->singletonObjectsRegistry = $singletonObjectsRegistry;
+	}
+
+	/**
+	 * Injects the session objects registry
+	 *
+	 * @param \F3\FLOW3\Object\SessionRegistry $sessionObjectsRegistry The session objects registry
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @internal
+	 */
+	public function injectSessionObjectsRegistry(\F3\FLOW3\Object\SessionRegistry $sessionObjectsRegistry) {
+		$this->sessionObjectsRegistry = $sessionObjectsRegistry;
 	}
 
 	/**
@@ -126,6 +149,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 		$this->reflectionService = $reflectionService;
 		if (!isset($this->registeredObjects['F3\FLOW3\Reflection\Service'])) {
 			$this->registeredObjects['F3\FLOW3\Reflection\Service'] = 'f3\flow3\reflection\service';
+			$this->registeredClasses['F3\FLOW3\Reflection\Service'] = 'F3\FLOW3\Reflection\Service';
 			$this->objectConfigurations['F3\FLOW3\Reflection\Service'] = new \F3\FLOW3\Object\Configuration\Configuration('F3\FLOW3\Reflection\Service');
 		}
 		$this->singletonObjectsRegistry->putObject('F3\FLOW3\Reflection\Service', $this->reflectionService);
@@ -301,6 +325,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 			$this->objectConfigurations[$objectName]->setScope($scope);
 		}
 		$this->registeredObjects[$objectName] = strtolower($objectName);
+		$this->registeredClasses[$className] = $objectName;
 	}
 
 	/**
@@ -319,6 +344,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 				$scope = trim(implode('', $this->reflectionService->getClassTagValues($className, 'scope')));
 				$objectConfiguration->setScope($scope);
 			}
+			$this->registeredClasses[$className] = $objectName;
 		}
 		$this->registeredObjects[$objectName] = strtolower($objectName);
 		$this->objectConfigurations[$objectName] = $objectConfiguration;
@@ -327,7 +353,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Unregisters the specified object
 	 *
-	 * @param string $objectName: The explicit object name
+	 * @param string $objectName The explicit object name
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if the specified object has not been registered before
@@ -337,6 +363,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 		if ($this->singletonObjectsRegistry->objectExists($objectName)) {
 			$this->singletonObjectsRegistry->removeObject($objectName);
 		}
+		unset($this->registeredClasses[$this->objectConfigurations[$objectName]->getClassName()]);
 		unset($this->registeredObjects[$objectName]);
 		unset($this->objectConfigurations[$objectName]);
 	}
@@ -345,7 +372,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * Returns TRUE if an object with the given name has already
 	 * been registered.
 	 *
-	 * @param  string $objectName: Name of the object
+	 * @param  string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if $objectName is not a valid string
@@ -389,6 +416,18 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName) {
 		if (!is_string($caseInsensitiveObjectName)) throw new \InvalidArgumentException('The object name must be of type string, ' . gettype($caseInsensitiveObjectName) . ' given.', 1186655552);
 		return array_search(strtolower($caseInsensitiveObjectName), $this->registeredObjects);
+	}
+
+	/**
+	 * Returns the object name corresponding to a given class name.
+	 *
+	 * @param string $className The class name
+	 * @return string The object name corresponding to the given class name
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getObjectNameByClassName($className) {
+		if (!isset($this->registeredClasses[$className])) throw new \F3\FLOW3\Object\Exception\UnknownClass('The given class "' . $className . '" is not registered.', 1247133805);
+		return $this->registeredClasses[$className];
 	}
 
 	/**
@@ -457,7 +496,14 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 */
 	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration) {
 		$objectName = $newObjectConfiguration->getObjectName();
-		$this->objectConfigurations[$newObjectConfiguration->getObjectName()] = clone $newObjectConfiguration;
+
+		if (isset($this->objectConfigurations[$objectName])) {
+			$oldClassName = $this->objectConfigurations[$objectName]->getClassName();
+			unset($this->registeredClasses[$oldClassName]);
+		}
+
+		$this->registeredClasses[$newObjectConfiguration->getClassName()] = $objectName;
+		$this->objectConfigurations[$objectName] = clone $newObjectConfiguration;
 		$this->registeredObjects[$objectName] = strtolower($objectName);
 	}
 

@@ -569,11 +569,15 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @internal
 	 */
 	public function initializeSession() {
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->start();
+
+		$sessionObjectsRegistry = new \F3\FLOW3\Object\SessionRegistry($session);
+		$this->objectManager->injectSessionObjectsRegistry($sessionObjectsRegistry);
 	}
 
 	/**
@@ -592,7 +596,6 @@ final class Bootstrap {
 			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface');
 			$persistenceManager->initialize();
 		}
-
 	}
 
 	/**

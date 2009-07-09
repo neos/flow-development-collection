@@ -106,7 +106,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->getObject('ThisObjectNameHasCertainlyNotBeenRegistered');
@@ -124,7 +124,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($mockObjectFactory);
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('F3\Foo\Bar\Fixture\Object');
@@ -150,7 +150,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
 		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className)->will($this->returnValue($expectedObject));
 
-		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockSingletonObjectsRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));
 		$mockSingletonObjectsRegistry->expects($this->at(1))->method('putObject');
 		$mockSingletonObjectsRegistry->expects($this->at(2))->method('putObject')->with($className, $expectedObject);
@@ -182,7 +182,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
 		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className)->will($this->returnValue($expectedObject));
 
-		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockSingletonObjectsRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
@@ -210,7 +210,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getObjectPassesAdditionalArgumentsToTheObjectBuilder() {
+	public function getObjectPassesAdditionalArgumentsToTheObjectBuilderWhenItCreatesANewSingletonObject() {
 		$someObject = new \ArrayObject();
 		$arguments = array(
 			1 => new \F3\FLOW3\Object\Configuration\ConfigurationArgument(1, 'arg1', \F3\FLOW3\Object\Configuration\ConfigurationArgument::ARGUMENT_TYPES_STRAIGHTVALUE),
@@ -226,7 +226,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder');
 		$mockObjectBuilder->expects($this->once())->method('createObject')->with($className, $objectConfiguration, $arguments)->will($this->returnValue(new $className));
 
-		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockSingletonObjectsRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(FALSE));
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
@@ -248,7 +248,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $className . ' {}');
 		$expectedObject = new $className;
 
-		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockSingletonObjectsRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(TRUE));
 		$mockSingletonObjectsRegistry->expects($this->once())->method('getObject')->with($className)->will($this->returnValue($expectedObject));
 
@@ -266,6 +266,38 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getObjectCreatesANewInstanceOfSessionObjectsAndStoresItInTheSessionRegistryIfAnInstanceDoesntExistYet() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function ifGetObjectCreatesANewInstanceOfSessionObjectsItAddsThemToListOfShutdownObjectsIfNecessary() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getObjectPassesAdditionalArgumentsToTheObjectBuilderWhenItCreatesANewSessionObject() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getObjectReturnsSessionObjectsFromTheSessionRegistryIfAnInstanceAlreadyExists() {
+		$this->markTestIncomplete();
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function registerObjectRegistersTheGivenObjectNameForFurtherUsage() {
@@ -275,12 +307,32 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$this->assertEquals($objectManager->isObjectRegistered($mockClassName), FALSE, 'isObjectRegistered() did not return FALSE although object is not yet registered.');
 		$objectManager->registerObject($mockClassName);
 		$this->assertTrue($objectManager->isObjectRegistered($mockClassName), 'isObjectRegistered() did not return TRUE although object has been registered.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function registerObjectRegistersTheClassNameOfTheGivenObjectNameForFurtherUsage() {
+		$mockObject = $this->getMock('stdclass');
+		$mockClassName = get_class($mockObject);
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->registerObject('someObjectName', $mockClassName);
+
+		$registeredClasses = $objectManager->_get('registeredClasses');
+		$this->assertTrue($registeredClasses[$mockClassName] === 'someObjectName');
 	}
 
 	/**
@@ -294,7 +346,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject($mockClassName);
@@ -313,7 +365,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject('F3\Foo:Bar\MockObjectName', $mockClassName);
@@ -351,7 +403,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($mockReflectionService);
 
 		$objectManager->registerObject($className1);
@@ -374,7 +426,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 
-		$mockRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockRegistry->expects($this->at(0))->method('putObject')->with('F3\FLOW3\Reflection\Service', $mockReflectionService);
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
@@ -406,7 +458,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($mockReflectionService);
 
 		$objectManager->registerObjectType($interfaceName);
@@ -448,7 +500,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($mockReflectionService);
 
 		$objectManager->registerObjectType($interfaceName);
@@ -456,6 +508,34 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $objectConfiguration->getScope());
 	}
 
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function registerObjectTypeRegistersTheClassNameIfTheReflectionServiceReturnedOne() {
+		$interfaceName = uniqid('SomeInterface');
+		eval('interface ' . $interfaceName . ' {}');
+
+		$className = uniqid('SomeClass');
+		eval('class ' . $className . ' implements ' . $interfaceName . ' {}');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService
+			->expects($this->once())
+			->method('getDefaultImplementationClassNameForInterface')
+			->with($interfaceName)
+			->will($this->returnValue($className));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($mockReflectionService);
+
+		$objectManager->registerObjectType($interfaceName);
+
+		$registeredClasses = $objectManager->_get('registeredClasses');
+		$this->assertEquals($interfaceName, $registeredClasses[$className]);
+	}
 
 	/**
 	 * @test
@@ -467,7 +547,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject($className);
@@ -484,7 +564,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$className = 'SomeClass' . uniqid();
 		eval('class ' . $className . ' {}');
 
-		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\RegistryInterface');
+		$mockSingletonObjectsRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
 		$mockSingletonObjectsRegistry->expects($this->once())->method('objectExists')->with($className)->will($this->returnValue(TRUE));
 		$mockSingletonObjectsRegistry->expects($this->once())->method('removeObject')->with($className);
 
@@ -499,6 +579,33 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function unregisterObjectRemovesTheClassFromTheRegisteredClassesArray() {
+		$mockSingletonRegistry = $this->getMock('F3\FLOW3\Object\TransientRegistry');
+		$mockSingletonRegistry->expects($this->once())->method('objectExists')->will($this->returnValue(FALSE));
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->once())->method('getClassName')->will($this->returnValue('someClassName'));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($mockSingletonRegistry);
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->expects($this->once())->method('isObjectRegistered')->with('someObjectName')->will($this->returnValue(TRUE));
+		$objectManager->_set('registeredObjects', array('someObjectName' => 'someClassName'));
+		$objectManager->_set('registeredClasses', array('someClassName' => 'someObjectName'));
+		$objectManager->_set('objectConfigurations', array('someObjectName' => $mockObjectConfiguration));
+
+		$objectManager->unregisterObject('someObjectName');
+
+		$registeredClasses = $objectManager->_get('registeredClasses');
+		$this->assertFalse(isset($registeredClasses['someClassName']));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getCaseSensitiveObjectNameReturnsTheMixedCaseObjectNameOfObjectsSpecifiedInArbitraryCase() {
@@ -508,11 +615,40 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject($className);
 		$this->assertSame($className, $objectManager->getCaseSensitiveObjectName(strtolower($className)));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getObjectNameByClassNameReturnsTheCorrectObjectNameForAGivenClassName() {
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->_set('registeredClasses', array('someClassName' => 'someObjectName'));
+
+		$this->assertEquals('someObjectName', $objectManager->getObjectNameByClassName('someClassName'));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException F3\FLOW3\Object\Exception\UnknownClass
+	 */
+	public function getObjectNameByClassNameThrowsAnExceptionIfTheGivenClassIsNotRegistered() {
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->getObjectNameByClassName('someClassName');
 	}
 
 	/**
@@ -572,6 +708,54 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setObjectConfigurationUpdatesTheRegisteredClassesArrayCorrectlyIfTheClassNameChangedInTheNewObjectConfiguration() {
+		$oldObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$oldObjectConfiguration->expects($this->any())->method('getClassName')->will($this->returnValue('someOldClassName'));
+		$oldObjectConfiguration->expects($this->any())->method('getObjectName')->will($this->returnValue('someObjectName'));
+
+		$newObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$newObjectConfiguration->expects($this->any())->method('getClassName')->will($this->returnValue('someNewClassName'));
+		$newObjectConfiguration->expects($this->any())->method('getObjectName')->will($this->returnValue('someObjectName'));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->_set('objectConfigurations', array('someObjectName' => $oldObjectConfiguration));
+		$objectManager->_set('registeredClasses', array('someOldClassName' => 'someObjectName'));
+
+		$objectManager->setObjectConfiguration($newObjectConfiguration);
+
+		$registeredClasses = $objectManager->_get('registeredClasses');
+		$this->assertEquals('someObjectName', $registeredClasses['someNewClassName']);
+		$this->assertFalse(isset($registeredClasses['someOldClassName']));
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setObjectConfigurationAddsANewObjectCorrectlyToTheRegisteredClassesArray() {
+		$newObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$newObjectConfiguration->expects($this->any())->method('getClassName')->will($this->returnValue('someNewClassName'));
+		$newObjectConfiguration->expects($this->any())->method('getObjectName')->will($this->returnValue('someObjectName'));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$objectManager->setObjectConfiguration($newObjectConfiguration);
+
+		$registeredClasses = $objectManager->_get('registeredClasses');
+		$this->assertEquals('someObjectName', $registeredClasses['someNewClassName']);
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfigurationReturnsACloneOfTheOriginalConfigurationObject() {
@@ -597,7 +781,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject($className1);
@@ -618,7 +802,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerObject($className1);
@@ -644,7 +828,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$objectManager->registerShutdownObject($mockObject, 'prepareLastWill');
@@ -680,7 +864,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager = new \F3\FLOW3\Object\Manager();
 		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
 		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\RegistryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
 		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
 
 		$shutdownObjectsReflection = new \ReflectionProperty($objectManager, 'shutdownObjects');
@@ -688,6 +872,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$shutdownObjectsReflection->setValue($objectManager, $shutdownObjects);
 
 		$objectManager->shutdown();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectReflectionServiceRegistersTheObjectAndClassnameCorrectly() {
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$this->assertEquals($objectManager->_get('registeredObjects'), array('F3\FLOW3\Reflection\Service' => 'f3\flow3\reflection\service'));
+		$this->assertEquals($objectManager->_get('registeredClasses'), array('F3\FLOW3\Reflection\Service' => 'F3\FLOW3\Reflection\Service'));
 	}
 
 }

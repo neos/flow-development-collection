@@ -30,7 +30,7 @@ require_once(__DIR__ . '/../Fixtures/DummyClass.php');
  */
 
 /**
- * Testcase for the default object manager
+ * Testcase for the transient object registry
  *
  * @package FLOW3
  * @version $Id$

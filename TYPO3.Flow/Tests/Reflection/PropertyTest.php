@@ -107,5 +107,29 @@ class PropertyTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals('modified', $this->publicProperty, 'ReflectionProperty->setValue() did not successfully set the value of a public property.');
 	}
 
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getValueEvenReturnsValueOfAPrivateProperty() {
+		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+		$this->assertEquals('123', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the value of a private property.');
+
+		$this->privateProperty = '456';
+		$this->assertEquals('456', $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return "456".');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getValueReturnsValueOfAPrivatePropertyEvenIfItIsAnObject() {
+		$reflectionProperty = new \F3\FLOW3\Reflection\PropertyReflection(__CLASS__, 'privateProperty');
+		$this->protectedProperty = new \ArrayObject(array('1', '2', '3'));
+		$this->assertEquals($this->privateProperty, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the object of our private property.');
+
+		$this->privateProperty = $this;
+		$this->assertSame($this, $reflectionProperty->getValue($this), 'ReflectionProperty->getValue($this) did not return the reference to $this.');
+	}
 }
 ?>
