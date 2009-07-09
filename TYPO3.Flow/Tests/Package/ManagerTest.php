@@ -356,30 +356,20 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\Package\Exception\UnknownPackage
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsNotAvailable() {
-		try {
-			$this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
-		} catch (Exception $exception) {
-			$this->assertEquals(1166543253, $exception->getCode(), 'deletePackage() threw an exception.');
-			return;
-		}
-		$this->fail('deletePackage() did not throw an exception while asking to remove a non existent package.');
+		$this->packageManager->deletePackage('PrettyUnlikelyThatThisPackageExists');
 	}
 
 	/**
 	 * @test
+	 * @expectedException \F3\FLOW3\Package\Exception\ProtectedPackageKey
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 */
 	public function removePackageThrowsErrorIfPackageIsProtected() {
-		try {
-			$this->packageManager->deletePackage('PHP6');
-		} catch (Exception $exception) {
-			$this->assertEquals(1220722120, $exception->getCode(), 'deletePackage() threw an exception.');
-			return;
-		}
-		$this->fail('deletePackage() did not throw an exception while asking to remove a protected package.');
+		$this->packageManager->deletePackage('PHP6');
 	}
 
 	/**
