@@ -54,7 +54,7 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @internal
 	 */
 	public function getObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new \RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
+		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
 		return $this->objects[$objectName];
 	}
 
@@ -68,7 +68,7 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @internal
 	 */
 	public function putObject($objectName, $object) {
-		if (!is_string($objectName) || strlen($objectName) === 0) throw new \RuntimeException('No valid object name specified.', 1167919564);
+		if (!is_string($objectName) || strlen($objectName) === 0) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('No valid object name specified.', 1167919564);
 		if (!is_object($object)) throw new \RuntimeException('$object must be of type Object', 1167917199);
 		$this->objects[$objectName] = $object;
 	}
@@ -82,7 +82,7 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @internal
 	 */
 	public function removeObject($objectName) {
-		if (!$this->objectExists($objectName)) throw new \RuntimeException('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
+		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
 		unset ($this->objects[$objectName]);
 	}
 

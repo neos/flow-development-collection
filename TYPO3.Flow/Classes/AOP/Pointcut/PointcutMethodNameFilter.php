@@ -67,7 +67,7 @@ class PointcutMethodNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterI
 	 */
 	public function __construct($methodNameFilterExpression, $methodVisibility = NULL) {
 		$this->methodNameFilterExpression = $methodNameFilterExpression;
-		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \RuntimeException('Invalid method visibility modifier.', 1172494794);
+		if (preg_match(self::PATTERN_MATCHVISIBILITYMODIFIER, $methodVisibility) !== 1) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Invalid method visibility modifier.', 1172494794);
 		$this->methodVisibility = $methodVisibility;
 	}
 

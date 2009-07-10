@@ -96,7 +96,7 @@ class DocCommentParser {
 	 * @internal
 	 */
 	public function getTagValues($tagName) {
-		if (!$this->isTaggedWith($tagName)) throw new \RuntimeException('Tag "' . $tagName . '" does not exist.', 1169128255);
+		if (!$this->isTaggedWith($tagName)) throw new \F3\FLOW3\Reflection\Exception('Tag "' . $tagName . '" does not exist.', 1169128255);
 		return $this->tags[$tagName];
 	}
 

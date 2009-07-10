@@ -576,16 +576,8 @@ final class Bootstrap {
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->start();
 
-		$sessionObjectsRegistry = new \F3\FLOW3\Object\SessionRegistry();
-		$sessionObjectsRegistry->injectSession($session);
-		$sessionObjectsRegistry->injectObjectManager($this->objectManager);
-		$sessionObjectsRegistry->injectObjectBuilder($this->objectManager->getObject('F3\FLOW3\Object\Builder'));
-		$sessionObjectsRegistry->injectQueryFactory($this->objectManager->getObject('F3\FLOW3\Persistence\QueryFactoryInterface'));
-		$sessionObjectsRegistry->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
+		$sessionObjectsRegistry = $this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry');
 		$sessionObjectsRegistry->initialize();
-
-		$this->objectManager->registerObject('F3\FLOW3\Object\SessionRegistry', 'F3\FLOW3\Object\SessionRegistry', $sessionObjectsRegistry);
-		
 		$this->objectManager->injectSessionObjectsRegistry($sessionObjectsRegistry);
 	}
 

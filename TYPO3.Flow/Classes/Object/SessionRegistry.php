@@ -101,7 +101,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	/**
 	 * Injects the object manager
 	 *
-	 *@@param F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -112,7 +112,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	/**
 	 * Injects the object builder
 	 *
-	 *@@param F3\FLOW3\Object\Builder $objectBuilder The object builder
+	 * @param F3\FLOW3\Object\Builder $objectBuilder The object builder
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -123,7 +123,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	/**
 	 * Injects the reflection service
 	 *
-	 *@@param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

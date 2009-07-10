@@ -289,7 +289,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 				}
 				break;
 			case 'session' :
-				if ($this->sessionObjectsRegistry === NULL) throw new \RuntimeException('The session objects registry has not been injected correctly into the object manager.', 1247211113);
+				if ($this->sessionObjectsRegistry === NULL) throw new \F3\FLOW3\Object\Exception('The session objects registry has not been injected correctly into the object manager.', 1247211113);
 
 				if ($this->sessionObjectsRegistry->objectExists($objectName)) {
 					$object = $this->sessionObjectsRegistry->getObject($objectName);

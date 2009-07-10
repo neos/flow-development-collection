@@ -375,7 +375,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @expectedException RuntimeException
+	 * @expectedException F3\FLOW3\Object\Exception
 	 */
 	public function getObjectThrowsAnExceptionIfTheSessionRegistryIsNotInPlace() {
 		$objectName = 'mySessionObject';

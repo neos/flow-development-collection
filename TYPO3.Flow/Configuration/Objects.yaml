@@ -290,6 +290,13 @@ F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface:
 F3\FLOW3\Session\SessionInterface:
   className: F3\FLOW3\Session\PHPSession
 
+F3\FLOW3\Object\SessionRegistry:
+  properties:
+    objectManager: object: F3\FLOW3\Object\ManagerInterface
+    objectBuilder: object: F3\FLOW3\Object\Builder
+    queryFactory: object: F3\FLOW3\Persistence\QueryFactoryInterface
+    reflectionService: object: F3\FLOW3\Reflection\Service
+
 #                                                                          #
 # SignalSlot                                                               #
 #                                                                          #
