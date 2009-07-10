@@ -576,7 +576,16 @@ final class Bootstrap {
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
 		$session->start();
 
-		$sessionObjectsRegistry = new \F3\FLOW3\Object\SessionRegistry($session);
+		$sessionObjectsRegistry = new \F3\FLOW3\Object\SessionRegistry();
+		$sessionObjectsRegistry->injectSession($session);
+		$sessionObjectsRegistry->injectObjectManager($this->objectManager);
+		$sessionObjectsRegistry->injectObjectBuilder($this->objectManager->getObject('F3\FLOW3\Object\Builder'));
+		$sessionObjectsRegistry->injectQueryFactory($this->objectManager->getObject('F3\FLOW3\Persistence\QueryFactoryInterface'));
+		$sessionObjectsRegistry->injectReflectionService($this->objectManager->getObject('F3\FLOW3\Reflection\Service'));
+		$sessionObjectsRegistry->initialize();
+
+		$this->objectManager->registerObject('F3\FLOW3\Object\SessionRegistry', 'F3\FLOW3\Object\SessionRegistry', $sessionObjectsRegistry);
+		
 		$this->objectManager->injectSessionObjectsRegistry($sessionObjectsRegistry);
 	}
 
@@ -656,13 +665,15 @@ final class Bootstrap {
 			if ($this->settings['persistence']['enable'] === TRUE) {
 				$this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface')->persistAll();
 			}
-			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 
 			$this->emitFinishedNormalRun();
 			$this->systemLogger->log('Shutting down ...', LOG_INFO);
 
 			$this->objectManager->shutdown();
 			$this->reflectionService->shutdown();
+
+			$this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry')->shutdownObject();
+			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
 			readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');

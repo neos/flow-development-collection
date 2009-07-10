@@ -88,6 +88,17 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	protected $isInitialized = FALSE;
 
 	/**
+	 * Injects the session
+	 *
+	 * @param F3\FLOW3\Session\SessionInterface $session The session implementation
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
+		$this->session = $session;
+	}
+	
+	/**
 	 * Injects the object manager
 	 *
 	 *@@param F3\FLOW3\Object\Manager $objectManager The object manager
@@ -132,17 +143,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	}
 
 	/**
-	 * Constructor
-	 *
-	 * @param F3\FLOW3\Session\SessionInterface $session The session implementation
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct(\F3\FLOW3\Session\SessionInterface $session) {
-		$this->session = $session;
-	}
-
-	/**
 	 * Returns an object from the registry. If an instance of the required
 	 * object does not exist, an exception is thrown.
 	 *
@@ -152,11 +152,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @internal
 	 */
 	public function getObject($objectName) {
-		if (!$this->isInitialized) {
-			$this->initialize();
-			$this->isInitialized = TRUE;
-		}
-
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('Object "' . $objectName . '" does not exist in the session object registry.', 1246574394);
 
 		return $this->objects[$objectName];
@@ -333,12 +328,14 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function initialize() {
+	public function initialize() {
 		$this->objectsAsArray = $this->session->getData('F3_FLOW3_Object_SessionRegistry');
 
-		foreach ($this->objectsAsArray as $objectName => $objectData) {
-			if (!$this->objectManager->isObjectRegistered($objectName)) continue;
-			$this->objects[$objectName] = $this->reconstituteObject($objectData);
+		if (is_array($this->objectsAsArray)) {
+			foreach ($this->objectsAsArray as $objectName => $objectData) {
+				if (!$this->objectManager->isObjectRegistered($objectName)) continue;
+				$this->objects[$objectName] = $this->reconstituteObject($objectData);
+			}
 		}
 	}
 
@@ -391,8 +388,10 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 		}
 
 		$objectName = $this->objectManager->getObjectNameByClassName($objectData['className']);
-		$this->objectBuilder->reinjectDependencies($object, $this->objectManager->getObjectConfiguration($objectName));
-
+		$objectConfigruation = $this->objectManager->getObjectConfiguration($objectName);
+		$this->objectBuilder->reinjectDependencies($object, $objectConfigruation);
+		$this->objectManager->registerShutdownObject($object, $objectConfigruation->getLifecycleShutdownMethodName());
+		
 		return $object;
 	}
 

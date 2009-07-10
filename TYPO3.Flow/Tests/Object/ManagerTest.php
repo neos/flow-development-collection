@@ -269,7 +269,27 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getObjectCreatesANewInstanceOfSessionObjectsAndStoresItInTheSessionRegistryIfAnInstanceDoesntExistYet() {
-		$this->markTestIncomplete();
+		$objectName = 'mySessionObject';
+		$object = $this->getMock('mySessionObject');
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->once())->method('getScope')->will($this->returnValue('session'));
+
+		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->once())->method('createObject')->with($objectName, $mockObjectConfiguration, array('overridingArguments'))->will($this->returnValue($object));
+
+		$mockSessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array(), array(), '', FALSE);
+		$mockSessionRegistry->expects($this->once())->method('objectExists')->with($objectName)->will($this->returnValue(FALSE));
+		$mockSessionRegistry->expects($this->once())->method('putObject')->with($objectName, $object);
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered', 'getOverridingArguments', 'registerShutdownObject'), array(), '', FALSE);
+		$objectManager->expects($this->once())->method('getOverridingArguments')->will($this->returnValue(array('overridingArguments')));
+		$objectManager->expects($this->once())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$objectManager->injectObjectBuilder($mockObjectBuilder);
+		$objectManager->injectSessionObjectsRegistry($mockSessionRegistry);
+		$objectManager->_set('objectConfigurations', array($objectName => $mockObjectConfiguration));
+
+		$this->assertEquals($object, $objectManager->getObject($objectName), 'The session object was not returned as expected.');
 	}
 
 	/**
@@ -277,7 +297,29 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function ifGetObjectCreatesANewInstanceOfSessionObjectsItAddsThemToListOfShutdownObjectsIfNecessary() {
-		$this->markTestIncomplete();
+		$objectName = 'mySessionObject';
+		$object = $this->getMock('mySessionObject');
+		$shutdownMethodName = 'shutdownMySessionObject';
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('session'));
+		$mockObjectConfiguration->expects($this->any())->method('getLifecycleShutdownMethodName')->will($this->returnValue($shutdownMethodName));
+
+		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->any())->method('createObject')->will($this->returnValue($object));
+
+		$mockSessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array(), array(), '', FALSE);
+		$mockSessionRegistry->expects($this->any())->method('objectExists')->with($objectName)->will($this->returnValue(FALSE));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered', 'getOverridingArguments', 'registerShutdownObject'), array(), '', FALSE);
+		$objectManager->expects($this->any())->method('getOverridingArguments')->will($this->returnValue(array('overridingArguments')));
+		$objectManager->expects($this->any())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$objectManager->expects($this->once())->method('registerShutdownObject')->with($object, $shutdownMethodName);
+		$objectManager->injectObjectBuilder($mockObjectBuilder);
+		$objectManager->injectSessionObjectsRegistry($mockSessionRegistry);
+		$objectManager->_set('objectConfigurations', array($objectName => $mockObjectConfiguration));
+
+		$objectManager->getObject($objectName);
 	}
 
 	/**
@@ -285,7 +327,26 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getObjectPassesAdditionalArgumentsToTheObjectBuilderWhenItCreatesANewSessionObject() {
-		$this->markTestIncomplete();
+		$objectName = 'mySessionObject';
+		$object = $this->getMock('mySessionObject');
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('session'));
+
+		$mockObjectBuilder = $this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE);
+		$mockObjectBuilder->expects($this->any())->method('createObject')->with($objectName, $mockObjectConfiguration, array('overridingArguments'))->will($this->returnValue($object));
+
+		$mockSessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array(), array(), '', FALSE);
+		$mockSessionRegistry->expects($this->any())->method('objectExists')->with($objectName)->will($this->returnValue(FALSE));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered', 'getOverridingArguments', 'registerShutdownObject'), array(), '', FALSE);
+		$objectManager->expects($this->any())->method('getOverridingArguments')->with(array('additionalArguement1', 'additionalArguement2', 'additionalArguement3'))->will($this->returnValue(array('overridingArguments')));
+		$objectManager->expects($this->any())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$objectManager->injectObjectBuilder($mockObjectBuilder);
+		$objectManager->injectSessionObjectsRegistry($mockSessionRegistry);
+		$objectManager->_set('objectConfigurations', array($objectName => $mockObjectConfiguration));
+
+		$objectManager->getObject($objectName, 'additionalArguement1', 'additionalArguement2', 'additionalArguement3');
 	}
 
 	/**
@@ -293,7 +354,41 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getObjectReturnsSessionObjectsFromTheSessionRegistryIfAnInstanceAlreadyExists() {
-		$this->markTestIncomplete();
+		$objectName = 'mySessionObject';
+		$object = $this->getMock('mySessionObject');
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('session'));
+
+		$mockSessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array(), array(), '', FALSE);
+		$mockSessionRegistry->expects($this->any())->method('objectExists')->with($objectName)->will($this->returnValue(TRUE));
+		$mockSessionRegistry->expects($this->once())->method('getObject')->with($objectName)->will($this->returnValue($object));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered', 'getOverridingArguments', 'registerShutdownObject'), array(), '', FALSE);
+		$objectManager->expects($this->any())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$objectManager->injectSessionObjectsRegistry($mockSessionRegistry);
+		$objectManager->_set('objectConfigurations', array($objectName => $mockObjectConfiguration));
+
+		$this->assertEquals($object, $objectManager->getObject($objectName), 'The object was not returned as expected from the session registry.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @expectedException RuntimeException
+	 */
+	public function getObjectThrowsAnExceptionIfTheSessionRegistryIsNotInPlace() {
+		$objectName = 'mySessionObject';
+		$object = $this->getMock('mySessionObject');
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getScope')->will($this->returnValue('session'));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('isObjectRegistered', 'getOverridingArguments', 'registerShutdownObject'), array(), '', FALSE);
+		$objectManager->expects($this->any())->method('isObjectRegistered')->with($objectName)->will($this->returnValue(TRUE));
+		$objectManager->_set('objectConfigurations', array($objectName => $mockObjectConfiguration));
+
+		$objectManager->getObject($objectName);
 	}
 
 	/**

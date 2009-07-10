@@ -288,6 +288,19 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
 				}
 				break;
+			case 'session' :
+				if ($this->sessionObjectsRegistry === NULL) throw new \RuntimeException('The session objects registry has not been injected correctly into the object manager.', 1247211113);
+
+				if ($this->sessionObjectsRegistry->objectExists($objectName)) {
+					$object = $this->sessionObjectsRegistry->getObject($objectName);
+				} else {
+					$arguments = array_slice(func_get_args(), 1);
+					$overridingArguments = $this->getOverridingArguments($arguments);
+					$object = $this->objectBuilder->createObject($objectName, $this->objectConfigurations[$objectName], $overridingArguments);
+					$this->sessionObjectsRegistry->putObject($objectName, $object);
+					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
+				}
+				break;
 			default :
 				throw new \F3\FLOW3\Object\Exception('Support for scope "' . $this->objectConfigurations[$objectName]->getScope() . '" has not been implemented (yet)', 1167484148);
 		}

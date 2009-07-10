@@ -625,7 +625,8 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE);
 		$mockSession->expects($this->once())->method('putData')->with('F3_FLOW3_Object_SessionRegistry', array(1,2,3,4,5,6));
 
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('storeObjectAsPropertyArray'), array($mockSession), '');
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('storeObjectAsPropertyArray'), array(), '');
+		$sessionRegistry->injectSession($mockSession);
 		$sessionRegistry->_set('objects', array($className1 => $mockObject1, $className2 => $mockObject2));
 		$sessionRegistry->_set('objectsAsArray', array(1,2,3,4,5,6));
 		$sessionRegistry->expects($this->at(0))->method('storeObjectAsPropertyArray')->with($className1, $mockObject1);
@@ -688,27 +689,6 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 
 		$sessionRegistry = $this->getMock('F3\FLOW3\Object\SessionRegistry', array('objectExists', 'initialize'), array(), '', FALSE);
 		$sessionRegistry->expects($this->once())->method('objectExists')->with($objectName)->will($this->returnValue(FALSE));
-
-		$sessionRegistry->getObject($objectName);
-	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getObjectInitializesTheSessionRegistryOnlyOnceIfItHasNotBeenInitializedAlready() {
-		$objectName = uniqid('DummyClass');
-		$object = new \stdClass();
-
-		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('objectExists', 'initialize'), array(), '', FALSE);
-		$sessionRegistry->expects($this->any())->method('objectExists')->will($this->returnValue(TRUE));
-		$sessionRegistry->_set('isInitialized', FALSE);
-		$sessionRegistry->_set('objects', array($objectName => $object));
-
-		$sessionRegistry->expects($this->once())->method('initialize');
-
-		$sessionRegistry->getObject($objectName);
-		$this->assertTrue($sessionRegistry->_get('isInitialized'));
 
 		$sessionRegistry->getObject($objectName);
 	}
@@ -955,6 +935,31 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$sessionRegistry->expects($this->once())->method('createEmptyObject')->with($className)->will($this->returnValue($object));
 		$sessionRegistry->injectObjectBuilder($mockObjectBuilder);
 		$sessionRegistry->injectObjectManager($mockObjectManager);
+		$sessionRegistry->_call('reconstituteObject', array('className' => $className, 'properties' => array()));
+	}
+	
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function reconstituteObjectRegistersShutdownObjects() {
+		$className = uniqid('someClass');
+		eval('class ' . $className . ' {}');
+		$object = new $className();
+
+		$mockObjectConfiguration = $this->getMock('F3\FLOW3\Object\Configuration\Configuration', array(), array(), '', FALSE);
+		$mockObjectConfiguration->expects($this->any())->method('getLifecycleShutdownMethodName')->will($this->returnValue('shutdownMethodName'));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
+		$mockObjectManager->expects($this->once())->method('getObjectNameByClassName')->with($className)->will($this->returnValue('objectName'));
+		$mockObjectManager->expects($this->once())->method('getObjectConfiguration')->with('objectName')->will($this->returnValue($mockObjectConfiguration));
+		$mockObjectManager->expects($this->once())->method('registerShutdownObject')->with($object, 'shutdownMethodName');
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('createEmptyObject'), array(), '', FALSE);
+		$sessionRegistry->expects($this->once())->method('createEmptyObject')->with($className)->will($this->returnValue($object));
+		$sessionRegistry->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder', array(), array(), '', FALSE));
+		$sessionRegistry->injectObjectManager($mockObjectManager);
+
 		$sessionRegistry->_call('reconstituteObject', array('className' => $className, 'properties' => array()));
 	}
 
