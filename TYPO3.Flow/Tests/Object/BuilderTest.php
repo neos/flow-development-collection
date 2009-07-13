@@ -77,7 +77,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 		$this->mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$this->mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$this->mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$this->mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
+		$this->mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array()));
 
 		$this->objectBuilder = new \F3\FLOW3\Object\Builder();
 		$this->objectBuilder->injectObjectManager($this->mockObjectManager);
@@ -722,8 +722,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with($className, 'injectFirstDependency')->will($this->returnValue(array()));
-		$mockReflectionService->expects($this->once())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('secondDependency')));
-		$mockReflectionService->expects($this->once())->method('isPropertyTaggedWith')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->once())->method('getPropertyNamesByTag')->with($className, 'inject')->will($this->returnValue(array('secondDependency')));
 		$mockReflectionService->expects($this->once())->method('getPropertyTagValues')->with($className, 'secondDependency', 'var')->will($this->returnValue(array('F3\Coffee\Bar')));
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
@@ -744,8 +743,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->once())->method('getMethodParameters')->with($className, 'injectFirstDependency')->will($this->returnValue($methodParameters));
-		$mockReflectionService->expects($this->once())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('firstDependency')));
-		$mockReflectionService->expects($this->once())->method('isPropertyTaggedWith')->will($this->returnValue(TRUE));
+		$mockReflectionService->expects($this->once())->method('getPropertyNamesByTag')->with($className, 'inject')->will($this->returnValue(array('firstDependency')));
 
 		$mockObjectBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Builder'), array('dummy'), array(), '', FALSE);
 		$mockObjectBuilder->injectReflectionService($mockReflectionService);
@@ -812,7 +810,7 @@ class BuilderTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function reinjectDependenciesTriesToDependencyInjectPropertiesWhichAreNotPersistable() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array('firstProperty', 'secondProperty', 'publicProperty', 'injectedDependency')));
+		$mockReflectionService->expects($this->any())->method('getPropertyNamesByTag')->will($this->returnValue(array()));
 
 		$objectBuilder = new \F3\FLOW3\Object\Builder();
 		$objectBuilder->injectObjectManager($this->mockObjectManager);

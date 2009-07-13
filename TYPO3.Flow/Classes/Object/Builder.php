@@ -331,8 +331,9 @@ class Builder {
 				}
 			}
 		}
-		foreach ($this->reflectionService->getClassPropertyNames($className) as $propertyName) {
-			if ($this->reflectionService->isPropertyTaggedWith($className, $propertyName, 'inject') && !array_key_exists($propertyName, $setterProperties)) {
+
+		foreach ($this->reflectionService->getPropertyNamesByTag($className, 'inject') as $propertyName) {
+			if (!array_key_exists($propertyName, $setterProperties)) {
 				$objectName = trim(implode('', $this->reflectionService->getPropertyTagValues($className, $propertyName, 'var')), ' \\');
 				$setterProperties[$propertyName] =  new \F3\FLOW3\Object\Configuration\ConfigurationProperty($propertyName, $objectName, \F3\FLOW3\Object\Configuration\ConfigurationProperty::PROPERTY_TYPES_OBJECT);
 			}
