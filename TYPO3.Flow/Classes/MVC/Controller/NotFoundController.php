@@ -55,6 +55,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\View\NotFoundView $notFoundView
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function injectNotFoundView(\F3\FLOW3\MVC\View\NotFoundView $notFoundView) {
 		$this->notFoundView = $notFoundView;
@@ -68,6 +69,7 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);

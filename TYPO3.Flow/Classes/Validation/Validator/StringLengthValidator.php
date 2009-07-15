@@ -51,6 +51,7 @@ class StringLengthValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * @throws F3\FLOW3\Validation\Exception\InvalidSubject
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

@@ -85,7 +85,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param \F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter A package meta data writer instance to write package metadata
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function injectPackageMetaDataWriter(\F3\FLOW3\Package\MetaData\WriterInterface $packageMetaDataWriter) {
 		$this->packageMetaDataWriter = $packageMetaDataWriter;
@@ -97,7 +96,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -109,7 +107,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -120,7 +117,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initialize() {
 		$this->scanAvailablePackages();
@@ -139,6 +135,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey: The key of the package to check
 	 * @return boolean TRUE if the package is available, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isPackageAvailable($packageKey) {
 		if (!is_string($packageKey)) throw new \InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
@@ -151,6 +148,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey: The key of the package to check
 	 * @return boolean TRUE if package is active, otherwise FALSE
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @api
 	 */
 	public function isPackageActive($packageKey) {
 		if (!is_string($packageKey)) throw new InvalidArgumentException('The package key must be of type string, ' . gettype($packageKey) . ' given.', 1200402593);
@@ -165,6 +163,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @return \F3\FLOW3\Package The requested package object
 	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPackage($packageKey) {
 		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available. Pleas note that package keys are case sensitive.', 1166546734);
@@ -177,6 +176,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return array Array of \F3\FLOW3\Package
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getAvailablePackages() {
 		return $this->packages;
@@ -189,6 +189,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return array Array of \F3\FLOW3\Package
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getActivePackages() {
 		return $this->activePackages;
@@ -201,6 +202,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $lowerCasedPackageKey The package key to convert
 	 * @return mixed The upper camel cased package key or FALSE if no such package exists
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCaseSensitivePackageKey($unknownCasedPackageKey) {
 		$lowerCasedPackageKey = strtolower($unknownCasedPackageKey);
@@ -213,6 +215,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey The package key to validate
 	 * @return boolean If the package key is valid, returns TRUE otherwise FALSE
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function isPackageKeyValid($packageKey) {
 		return preg_match(\F3\FLOW3\Package\Package::PATTERN_MATCH_PACKAGEKEY, $packageKey) === 1;
@@ -225,7 +228,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey The package key to check for protection
 	 * @return boolean If the package key is protected
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function isPackageKeyProtected($packageKey) {
 		return in_array($packageKey, $this->protectedPackages);
@@ -239,6 +241,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packagesPath If specified, the package will be created in this path, otherwise getLocalPackagesPath() is used
 	 * @return \F3\FLOW3\Package\Package The newly created package
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = NULL, $packagesPath = '') {
 		if (!$this->isPackageKeyValid($packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('The package key "' . $packageKey . '" is invalid', 1220722210);
@@ -286,6 +289,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return string The path of the local packages
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getLocalPackagesPath() {
 		if (realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') !== FALSE) {
@@ -302,6 +306,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageState If the specified package is not active
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function deactivatePackage($packageKey) {
 		if ($this->isPackageActive($packageKey)) {
@@ -321,6 +326,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageState If the specified package is already active
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function activatePackage($packageKey) {
 		if (!$this->isPackageActive($packageKey)) {
@@ -340,6 +346,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @param string $packageKey package to remove
 	 * @throws \F3\FLOW3\Package\Exception\UnknownPackage if the specified package is not known
 	 * @author Thomas Hempel <thomas@typo3.org>
+	 * @api
 	 */
 	public function deletePackage($packageKey) {
 		if ($this->isPackageKeyProtected($packageKey)) throw new \F3\FLOW3\Package\Exception\ProtectedPackageKey('The package "' . $packageKey . '" is protected and can not be removed.', 1220722120);
@@ -362,7 +369,6 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function scanAvailablePackages() {
 		$availablePackages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));

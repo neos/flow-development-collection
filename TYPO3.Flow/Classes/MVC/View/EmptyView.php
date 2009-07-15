@@ -44,7 +44,6 @@ final class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @return string An empty string
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function render() {
 		return '';
@@ -60,7 +59,6 @@ final class EmptyView extends \F3\FLOW3\MVC\View\AbstractView {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __call($methodName, array $arguments) {
 	}

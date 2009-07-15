@@ -43,7 +43,6 @@ interface PackageInterface {
 	 * Returns the package meta object of this package.
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
-	 * @internal
 	 */
 	public function getPackageMetaData();
 
@@ -51,6 +50,7 @@ interface PackageInterface {
 	 * Returns the array of filenames of the class files
 	 *
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
+	 * @api
 	 */
 	public function getClassFiles();
 
@@ -58,6 +58,7 @@ interface PackageInterface {
 	 * Returns the package key of this package.
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getPackageKey();
 
@@ -65,6 +66,7 @@ interface PackageInterface {
 	 * Returns the full path to this package's main directory
 	 *
 	 * @return string Path to this package's main directory
+	 * @api
 	 */
 	public function getPackagePath();
 
@@ -72,6 +74,7 @@ interface PackageInterface {
 	 * Returns the full path to this package's Classes directory
 	 *
 	 * @return string Path to this package's Classes directory
+	 * @api
 	 */
 	public function getClassesPath();
 
@@ -79,6 +82,7 @@ interface PackageInterface {
 	 * Returns the full path to this package's Package.xml file
 	 *
 	 * @return string Path to this package's Package.xml file
+	 * @api
 	 */
 	public function getMetaPath();
 }

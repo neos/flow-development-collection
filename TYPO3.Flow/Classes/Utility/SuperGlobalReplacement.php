@@ -58,7 +58,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  string				$accessHintMessage: A little hint how to access this super global alternatively
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($replacedSuperGlobalName, $accessHintMessage) {
 		$this->replacedSuperGlobalName = $replacedSuperGlobalName;
@@ -70,7 +69,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function count() {
 		$this->throwException();
@@ -82,7 +80,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  mixed				$offset: The offset to check
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetExists($offset) {
 		$this->throwException();
@@ -94,7 +91,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  string				$offset:
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetGet($offset) {
 		$this->throwException();
@@ -106,7 +102,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  string				$propertyName: Name of the property to get
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __get($propertyName) {
 		$this->throwException();
@@ -119,7 +114,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  mixed				$value: Value to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __set($propertyName, $value) {
 		$this->throwException();
@@ -132,7 +126,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  array				$arguments: An array of arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __call($methodName, $arguments) {
 		$this->throwException();
@@ -144,7 +137,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  string				$propertyName: Name of the property to check
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __isset($propertyName) {
 		$this->throwException();
@@ -156,7 +148,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 * @param  string				$propertyName: Name of the property to unset
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __unset($propertyName) {
 		$this->throwException();
@@ -167,7 +158,6 @@ class SuperGlobalReplacement extends \ArrayObject {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function throwException() {
 		$debugBacktrace = debug_backtrace();

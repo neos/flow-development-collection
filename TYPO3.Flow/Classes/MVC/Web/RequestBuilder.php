@@ -64,7 +64,6 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -76,7 +75,6 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\Utility\Environment $environment The environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -88,7 +86,6 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager A reference to the configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->configurationManager = $configurationManager;
@@ -100,7 +97,6 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router A router which routes the web request to a controller and action
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
@@ -112,7 +108,6 @@ class RequestBuilder {
 	 * @return \F3\FLOW3\MVC\Web\Request The web request as an object
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function build() {
 		$request = $this->objectFactory->create('F3\FLOW3\MVC\Web\Request');
@@ -137,7 +132,6 @@ class RequestBuilder {
 	 * @param \F3\FLOW3\MVC\Web\Request $request The web request which will contain the arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function setArgumentsFromRawRequestData(\F3\FLOW3\MVC\Web\Request $request) {
 		foreach ($request->getRequestURI()->getArguments() as $argumentName => $argumentValue) {

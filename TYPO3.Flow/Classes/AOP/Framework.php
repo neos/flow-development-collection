@@ -120,7 +120,6 @@ class Framework {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager An instance of the object manager
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory An instance of the object factory
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectManager = $objectManager;
@@ -133,7 +132,6 @@ class Framework {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -145,7 +143,6 @@ class Framework {
 	 * @param \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPointcutExpressionParser(\F3\FLOW3\AOP\Pointcut\PointcutExpressionParser $pointcutExpressionParser) {
 		$this->pointcutExpressionParser = $pointcutExpressionParser;
@@ -157,7 +154,6 @@ class Framework {
 	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectProxyClassCodesCache(\F3\FLOW3\Cache\Frontend\StringFrontend $proxyClassCodesCache) {
 		$this->proxyClassCodesCache = $proxyClassCodesCache;
@@ -169,7 +165,6 @@ class Framework {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectTargetClassInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $targetClassInformationCache) {
 		$this->targetClassInformationCache = $targetClassInformationCache;
@@ -181,7 +176,6 @@ class Framework {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectProxyBuildInformationCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $proxyBuildInformationCache) {
 		$this->proxyBuildInformationCache = $proxyBuildInformationCache;
@@ -193,7 +187,6 @@ class Framework {
 	 * @param \F3\FLOW3\Configuration\Manager $configurationManager The configuration manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
 		$this->settings = $configurationManager->getSettings('FLOW3');
@@ -205,7 +198,6 @@ class Framework {
 	 * @param \F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectProxyClassBuilder(\F3\FLOW3\AOP\Builder\ProxyClassBuilder $proxyClassBuilder) {
 		$this->proxyClassBuilder = $proxyClassBuilder;
@@ -217,7 +209,6 @@ class Framework {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -236,7 +227,6 @@ class Framework {
 	 * @param array &$objectConfigurations
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initialize(array &$objectConfigurations) {
 		if ($this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has already been initialized!', 1169550994);
@@ -318,7 +308,6 @@ class Framework {
 	 *
 	 * @return boolean If the AOP framework has been initialized
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function isInitialized() {
 		return $this->isInitialized;
@@ -332,7 +321,6 @@ class Framework {
 	 * @param string $pointcutMethodName Method name of the pointcut
 	 * @return mixed The \F3\FLOW3\AOP\Pointcut\Pointcut or FALSE if none was found
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function findPointcut($aspectClassName, $pointcutMethodName) {
 		if (!$this->isInitialized) throw new \F3\FLOW3\AOP\Exception('The AOP framework has not yet been initialized!', 1207216396);
@@ -351,7 +339,6 @@ class Framework {
 	 *
 	 * @return array An array of target class names and their proxy counterpart.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getTargetAndProxyClassNames() {
 		return $this->targetAndProxyClassNames;
@@ -364,7 +351,6 @@ class Framework {
 	 * @param string $targetClassName Name of the target class
 	 * @return mixed An array of method names and their advices as array of \F3\FLOW3\AOP\Advice\AdviceInterface
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getAdvicedMethodsInformationByTargetClass($targetClassName) {
 		throw new \F3\FLOW3\AOP\Exception('This method is currently not supported.');
@@ -378,7 +364,6 @@ class Framework {
 	 * @param array $objectConfigurations The object configurations to consider
 	 * @return array Class names mentioned in the "className" property of each object configuration
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function getAllImplementationClassesFromObjectConfigurations(array $objectConfigurations) {
 		$implementationClasses = array();
@@ -395,7 +380,6 @@ class Framework {
 	 * @param array $classNames Names of the classes to check
 	 * @return array Names of classes which can be proxied
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function getProxyableClasses(array $classNames) {
 		$proxyableClasses = array();
@@ -420,7 +404,6 @@ class Framework {
 	 * @param array $classNames: Classes to check for aspect tags.
 	 * @return array An array of \F3\FLOW3\AOP\AspectContainer for all aspects which were found.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildAspectContainers($classNames) {
 		$aspectContainers = array();
@@ -441,7 +424,6 @@ class Framework {
 	 * @param  string $aspectClassName Name of the class which forms the aspect, contains advices etc.
 	 * @return mixed The aspect container containing one or more advisors or FALSE if no container could be built
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildAspectContainer($aspectClassName) {
 		if (!$this->reflectionService->isClassReflected($aspectClassName)) return FALSE;
@@ -529,7 +511,6 @@ class Framework {
 	 * @param string $context The application context to build proxy classes for.
 	 * @return array $proxyBuildResults An array which contains at least the proxy class name and the generated code, indexed by the target class names
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildProxyClasses(array $classNames, array $aspectContainers, $context) {
 		$proxyBuildResults = array();

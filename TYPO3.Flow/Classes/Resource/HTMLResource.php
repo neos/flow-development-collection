@@ -45,7 +45,6 @@ class HTMLResource extends \F3\FLOW3\Resource\TextResource {
 	 * @param array $metadata
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setMetadata(array $metadata) {
 		$this->URI = $metadata['URI'];
@@ -60,7 +59,6 @@ class HTMLResource extends \F3\FLOW3\Resource\TextResource {
 	 *
 	 * @return string|binary Resource content (HTML)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getContent() {
 		return file_get_contents($this->path . '/' . $this->name);

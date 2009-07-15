@@ -56,6 +56,7 @@ class MappingResults {
 	 * @param \F3\FLOW3\Error\Error $error The occured error
 	 * @param string $propertyName The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function addError(\F3\FLOW3\Error\Error $error, $propertyName) {
 		$this->errors[$propertyName] = $error;
@@ -66,6 +67,7 @@ class MappingResults {
 	 *
 	 * @return array Array of \F3\FLOW3\Error\Error objects indexed by property names
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getErrors() {
 		return $this->errors;
@@ -77,6 +79,7 @@ class MappingResults {
 	 * @param string $propertyName The property name
 	 * @return \F3\FLOW3\Error\Error The error that occured for the property or NULL if no error occured
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getErrorForProperty($propertyName) {
 		if (isset($this->errors[$propertyName])) {
@@ -91,6 +94,7 @@ class MappingResults {
 	 *
 	 * @return boolean True if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function hasErrors() {
 		return (count($this->errors) > 0);
@@ -103,6 +107,7 @@ class MappingResults {
 	 * @param \F3\FLOW3\Error\Warning $warning The occured warning
 	 * @param string $propertyName The name of the property which caused the error
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function addWarning(\F3\FLOW3\Error\Warning $warning, $propertyName) {
 		$this->warnings[$propertyName] = $warning;
@@ -113,6 +118,7 @@ class MappingResults {
 	 *
 	 * @return array Array of \F3\FLOW3\Error\Warning objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getWarnings() {
 		return $this->warnings;
@@ -123,6 +129,7 @@ class MappingResults {
 	 *
 	 * @return boolean TRUE if a warning occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function hasWarnings() {
 		return (count($this->warnings) > 0);

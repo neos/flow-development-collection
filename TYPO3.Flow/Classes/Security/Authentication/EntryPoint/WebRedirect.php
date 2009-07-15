@@ -52,7 +52,6 @@ class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterfa
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function canForward(\F3\FLOW3\MVC\RequestInterface $request) {
 		return ($request instanceof \F3\FLOW3\MVC\Web\Request);
@@ -64,7 +63,6 @@ class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterfa
 	 * @param array $options An array of configuration options
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function setOptions(array $options) {
 		$this->options = $options;
@@ -76,7 +74,6 @@ class WebRedirect implements \F3\FLOW3\Security\Authentication\EntryPointInterfa
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
-	 * @internal
 	 */
 	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		if (!$this->canForward($request)) throw new \F3\FLOW3\Security\Exception\RequestTypeNotSupported('Unsupported request type for authentication entry point given.', 1237282462);

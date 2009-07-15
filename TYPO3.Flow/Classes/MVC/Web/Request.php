@@ -71,7 +71,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -84,6 +83,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidRequestMethod if the request method is not supported
+	 * @api
 	 */
 	public function setMethod($method) {
 		if ($method === '' || (strtoupper($method) !== $method)) throw new \F3\FLOW3\MVC\Exception\InvalidRequestMethod('The request method "' . $method . '" is not supported.', 1217778382);
@@ -95,6 +95,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return string Name of the request method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMethod() {
 		return $this->method;
@@ -106,6 +107,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Property\DataType\URI $requestURI URI of this web request
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setRequestURI(\F3\FLOW3\Property\DataType\URI $requestURI) {
 		$this->requestURI = clone $requestURI;
@@ -117,6 +119,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return \F3\FLOW3\Property\DataType\URI URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRequestURI() {
 		return $this->requestURI;
@@ -127,6 +130,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function getRequestPath() {
 		return $this->requestURI->getPath();
@@ -138,6 +142,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Property\DataType\URI $baseURI New base URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setBaseURI(\F3\FLOW3\Property\DataType\URI $baseURI) {
 		$this->baseURI = clone $baseURI;
@@ -148,6 +153,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return \F3\FLOW3\Property\DataType\URI Base URI of this web request
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getBaseURI() {
 		return $this->baseURI;
@@ -159,7 +165,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param \F3\FLOW3\Property\DataType\URI $requestURI URI of this web request
 	 * @return \F3\FLOW3\Property\DataType\URI The detected base URI
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function detectBaseURI(\F3\FLOW3\Property\DataType\URI $requestURI) {
 		$baseURI = clone $requestURI;

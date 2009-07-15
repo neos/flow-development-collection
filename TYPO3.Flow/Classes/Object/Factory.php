@@ -62,7 +62,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -74,7 +73,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @param \F3\FLOW3\Object\Builder $objectBuilder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
@@ -99,6 +97,7 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 * @throws \F3\FLOW3\Object\Exception\WrongScope if the specified object is not configured as Prototype
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function create($objectName) {
 		if ($objectName{0} === '\\') throw new \InvalidArgumentException('The object name must not start with a backslash, "' . $objectName . '" given.', 1243272770);
@@ -121,7 +120,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()
-	 * @internal
 	 */
 	static protected function convertArgumentValuesToArgumentObjects(array $argumentValues) {
 		$argumentObjects = array();
@@ -136,7 +134,6 @@ class Factory implements \F3\FLOW3\Object\FactoryInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __clone() {
 		$this->objectBuilder = clone $this->objectBuilder;

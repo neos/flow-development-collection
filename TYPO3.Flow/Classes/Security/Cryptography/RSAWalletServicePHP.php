@@ -61,7 +61,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -73,7 +72,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param array $settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['security']['cryptography']['RSAWalletServicePHP']['openSSLConfiguration'])
@@ -89,7 +87,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $keystoreCache
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectKeystoreCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $keystoreCache) {
 		$this->keystoreCache = $keystoreCache;
@@ -100,7 +97,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 *
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to decrypt passwords. (Decryption won't be allowed!)
 	 * @return uuid An UUID that identifies the generated keypair
-	 * @internal
 	 */
 	public function generateNewKeypair($usedForPasswords = FALSE) {
 
@@ -123,7 +119,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @return \F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey The public key
 	 * @throws \F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getPublicKey($uuid) {
 		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438860);
@@ -140,7 +135,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param UUID $uuid The UUID to identify to correct public key
 	 * @return string The ciphertext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function encryptWithPublicKey($plaintext, $uuid) {
 		$cipher = '';
@@ -160,7 +154,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid keypair
 	 * @throws F3\FLOW3\Security\Exception\DecryptionNotAllowed If the given UUID identifies a keypair for encrypted passwords
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function decrypt($cipher, $uuid) {
 		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1231438861);
@@ -183,7 +176,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @return boolean TRUE if the password is correct
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid keypair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function checkRSAEncryptedPassword($encryptedPassword, $passwordHash, $salt, $uuid) {
 		if ($uuid === NULL || !$this->keystoreCache->has($uuid)) throw new \F3\FLOW3\Security\Exception\InvalidKeyPairID('Invalid keypair UUID given', 1233655216);
@@ -202,7 +194,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @return void
 	 * @throws F3\FLOW3\Security\Exception\InvalidKeyPairID If the given UUID identifies no valid key pair
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function destroyKeypair($uuid) {
 
@@ -219,7 +210,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param resource $keyResource The key Resource
 	 * @return string The private key string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	private function getPrivateKeyString($keyResource) {
 		openssl_pkey_export($keyResource, $privateKeyString, NULL, $this->openSSLConfiguration);
@@ -232,7 +222,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param resource $keyResource The key Resource
 	 * @return string The public key string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	private function getPublicKeyString($keyResource) {
 		$keyDetails = openssl_pkey_get_details($keyResource);
@@ -246,7 +235,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param resource $keyResource The key Resource
 	 * @return string The HEX public modulus string
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	private function getModulus($keyResource) {
 		$keyDetails = openssl_pkey_get_details($keyResource);
@@ -260,7 +248,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param \F3\FLOW3\Security\Cryptography\OpenSSLRSAKey $privateKey The private key
 	 * @return string The decrypted plaintext
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	private function decryptWithPrivateKey($cipher, \F3\FLOW3\Security\Cryptography\OpenSSLRSAKey $privateKey) {
 		$decrypted = '';
@@ -278,7 +265,6 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 	 * @param boolean $usedForPasswords TRUE if this keypair should be used to decrypt passwords. (Decryption won't be allowed!)
 	 * @return UUID The UUID used for storing
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	private function storeKeyPair($publicKey, $privateKey, $usedForPasswords) {
 		$keyPairUUID = str_replace('-', '_', \F3\FLOW3\Utility\Algorithms::generateUUID());

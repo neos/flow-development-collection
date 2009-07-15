@@ -43,7 +43,6 @@ interface SessionInterface {
 	 * Starts the session, if is has not been already started
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function start();
 
@@ -52,7 +51,6 @@ interface SessionInterface {
 	 *
 	 * @return string The current session ID
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @internal
 	 */
 	public function getID();
 
@@ -62,7 +60,6 @@ interface SessionInterface {
 	 * @param string $key An identifier for the content stored in the session.
 	 * @return array The contents associated with the given key
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @internal
 	 */
 	public function getData($key);
 
@@ -71,7 +68,6 @@ interface SessionInterface {
 	 *
 	 * @param string $key
 	 * @return boolean
-	 * @internal
 	 */
 	public function hasKey($key);
 
@@ -82,7 +78,6 @@ interface SessionInterface {
 	 * @param string $key The key under which the data should be stored
 	 * @return void
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @internal
 	 */
 	public function putData($key, $data);
 
@@ -91,7 +86,6 @@ interface SessionInterface {
 	 *
 	 * @return void
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @internal
 	 */
 	public function close();
 
@@ -100,7 +94,6 @@ interface SessionInterface {
 	 *
 	 * @return void
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
-	 * @internal
 	 */
 	public function destroy();
 

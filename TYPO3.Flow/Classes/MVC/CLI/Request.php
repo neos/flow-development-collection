@@ -51,7 +51,6 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 * @param array $arguments
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setCommandLineArguments(array $arguments) {
 		$this->commandLineArguments = $arguments;
@@ -62,6 +61,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getCommandLineArguments() {
 		return $this->commandLineArguments;

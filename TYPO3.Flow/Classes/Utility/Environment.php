@@ -88,7 +88,6 @@ class Environment {
 	 * This constructor defines FLOW3_SAPITYPE
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct() {
 		$this->SAPIName = PHP_SAPI;
@@ -104,7 +103,6 @@ class Environment {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		if (!($_SERVER instanceof \F3\FLOW3\Utility\SuperGlobalReplacement)) {
@@ -124,6 +122,7 @@ class Environment {
 	 * @param string $temporaryDirectoryBase Base path of the temporary directory, with trailing slash
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setTemporaryDirectoryBase($temporaryDirectoryBase) {
 		if (!is_string($temporaryDirectoryBase)) throw new \InvalidArgumentException('String expected.', 1228743683);
@@ -136,6 +135,7 @@ class Environment {
 	 *
 	 * @return string The HTTP Host as found in _SERVER[HTTP_HOST]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHTTPHost() {
 		return isset($this->SERVER['HTTP_HOST']) ? $this->SERVER['HTTP_HOST'] : NULL;
@@ -146,6 +146,7 @@ class Environment {
 	 *
 	 * @return string The HTTP referer as found in _SERVER[HTTP_REFERER]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHTTPReferer() {
 		return isset($this->SERVER['HTTP_REFERER']) ? $this->SERVER['HTTP_REFERER'] : NULL;
@@ -156,6 +157,7 @@ class Environment {
 	 *
 	 * @return string The HTTP user agent as found in _SERVER[HTTP_USER_AGENT]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHTTPUserAgent() {
 		return isset($this->SERVER['HTTP_USER_AGENT']) ? $this->SERVER['HTTP_USER_AGENT'] : NULL;
@@ -166,6 +168,7 @@ class Environment {
 	 *
 	 * @return string The HTTP accept language as found in _SERVER[HTTP_ACCEPT_LANGUAGE]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHTTPAcceptLanguage() {
 		return isset($this->SERVER['HTTP_ACCEPT_LANGUAGE']) ? $this->SERVER['HTTP_ACCEPT_LANGUAGE'] : NULL;
@@ -176,6 +179,7 @@ class Environment {
 	 *
 	 * @return string The remote address as found in _SERVER[REMOTE_ADDR]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRemoteAddress() {
 		return isset($this->SERVER['REMOTE_ADDR']) ? $this->SERVER['REMOTE_ADDR'] : NULL;
@@ -186,6 +190,7 @@ class Environment {
 	 *
 	 * @return string The remote host as found in _SERVER[REMOTE_HOST]
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRemoteHost() {
 		return isset($this->SERVER['REMOTE_HOST']) ? $this->SERVER['REMOTE_HOST'] : NULL;
@@ -197,6 +202,7 @@ class Environment {
 	 * @return string The used protol, either http or https
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRequestProtocol() {
 		$protocol = 'http';
@@ -215,6 +221,7 @@ class Environment {
 	 * @return \F3\FLOW3\Property\DataType\URI The request URI consisting of protocol, path and query, eg. http://typo3.org/xyz/index.php/arg1/arg2/arg3/?arg1,arg2,arg3&p1=parameter1&p2[key]=value
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRequestURI() {
 		if (isset($this->SERVER['PATH_INFO'])) {
@@ -232,6 +239,7 @@ class Environment {
 	 *
 	 * @return string The full path and file name of the PHP script
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getScriptPathAndFilename() {
 		return \F3\FLOW3\Utility\Files::getUnixStylePath($this->SERVER['SCRIPT_FILENAME']);
@@ -243,6 +251,7 @@ class Environment {
 	 *
 	 * @return string Relative path and name of the PHP script as accessed through the web
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getScriptRequestPathAndName() {
 		if (isset($this->SERVER['SCRIPT_NAME'])) return $this->SERVER['SCRIPT_NAME'];
@@ -254,6 +263,7 @@ class Environment {
 	 *
 	 * @return string The request method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRequestMethod() {
 		return (isset($this->SERVER['REQUEST_METHOD'])) ? $this->SERVER['REQUEST_METHOD'] : NULL;
@@ -264,6 +274,7 @@ class Environment {
 	 *
 	 * @return integer The number of command line arguments passed to the main script.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCommandLineArgumentCount() {
 		return isset($this->SERVER['argc']) ? $this->SERVER['argc'] : 0;
@@ -275,6 +286,7 @@ class Environment {
 	 *
 	 * @return array The command line arguments (including program name), if any
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCommandLineArguments() {
 		return isset($this->SERVER['argv']) ? $this->SERVER['argv'] : array();
@@ -289,6 +301,7 @@ class Environment {
 	 * @return string A lower case string identifying the SAPI used
 	 * @see php_sapi_name()/PHP_SAPI, getNormalizedSAPIName()
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSAPIName() {
 		return $this->SAPIName;
@@ -307,6 +320,7 @@ class Environment {
 	 *
 	 * @return string The kind of API used
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSAPIType() {
 		switch($this->SAPIName) {
@@ -322,6 +336,7 @@ class Environment {
 	 *
 	 * @return array Unfiltered, raw, insecure, tainted GET arguments
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getRawGETArguments() {
 		return $this->GET;
@@ -332,6 +347,7 @@ class Environment {
 	 *
 	 * @return array Unfiltered, raw, insecure, tainted POST arguments
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRawPOSTArguments() {
 		return $this->POST;
@@ -343,6 +359,7 @@ class Environment {
 	 *
 	 * @return array Unfiltered, raw, insecure, tainted SERVER environment
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getRawServerEnvironment() {
 		return $this->SERVER;
@@ -353,6 +370,7 @@ class Environment {
 	 *
 	 * @return string Path to PHP's temporary directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPathToTemporaryDirectory() {
 		if ($this->temporaryDirectory !== NULL) return $this->temporaryDirectory;
@@ -374,7 +392,6 @@ class Environment {
 	 * @return string The full path to the temporary directory
 	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);

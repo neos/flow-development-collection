@@ -44,7 +44,6 @@ interface WritableSourceInterface extends \F3\FLOW3\Configuration\Source\SourceI
 	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension
 	 * @param array $configuration The configuration array to save
 	 * @return void
-	 * @internal
 	 */
 	public function save($pathAndFilename, array $configuration);
 }

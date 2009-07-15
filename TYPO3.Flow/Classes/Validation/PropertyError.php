@@ -64,6 +64,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 *
 	 * @param string $propertyName The property name
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function __construct($propertyName) {
 		$this->propertyName = $propertyName;
@@ -76,6 +77,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 * @param array $errors Array of \F3\FLOW3\Validation\Error for the property
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function addErrors($errors) {
 		$this->errors = array_merge($this->errors, $errors);
@@ -86,6 +88,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 *
 	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occured for the property
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getErrors() {
 		return $this->errors;
@@ -95,6 +98,7 @@ class PropertyError extends \F3\FLOW3\Validation\Error {
 	 * Get the property name
 	 * @return string The property name for this error
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getPropertyName() {
 		return $this->propertyName;

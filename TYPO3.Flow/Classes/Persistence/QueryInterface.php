@@ -55,6 +55,7 @@ interface QueryInterface {
 	 * Executes the query against the backend and returns the result
 	 *
 	 * @return array The query result, an array of objects
+	 * @api
 	 */
 	public function execute();
 
@@ -67,6 +68,7 @@ interface QueryInterface {
 	 *
 	 * @param array $orderings The property names to order by
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setOrderings(array $orderings);
 
@@ -76,6 +78,7 @@ interface QueryInterface {
 	 *
 	 * @param integer $limit
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setLimit($limit);
 
@@ -85,6 +88,7 @@ interface QueryInterface {
 	 *
 	 * @param integer $offset
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function setOffset($offset);
 
@@ -94,6 +98,7 @@ interface QueryInterface {
 	 *
 	 * @param object $constraint Some constraint, depending on the backend
 	 * @return \F3\FLOW3\Persistence\QueryInterface
+	 * @api
 	 */
 	public function matching($constraint);
 
@@ -103,6 +108,7 @@ interface QueryInterface {
 	 * @param object $constraint1 First constraint
 	 * @param object $constraint2 Second constraint
 	 * @return object
+	 * @api
 	 */
 	public function logicalAnd($constraint1, $constraint2);
 
@@ -112,6 +118,7 @@ interface QueryInterface {
 	 * @param object $constraint1 First constraint
 	 * @param object $constraint2 Second constraint
 	 * @return object
+	 * @api
 	 */
 	public function logicalOr($constraint1, $constraint2);
 
@@ -120,6 +127,7 @@ interface QueryInterface {
 	 *
 	 * @param object $constraint Constraint to negate
 	 * @return object
+	 * @api
 	 */
 	public function logicalNot($constraint);
 
@@ -128,6 +136,7 @@ interface QueryInterface {
 	 *
 	 * @param string $uuid An identifier to match against
 	 * @return object
+	 * @api
 	 */
 	public function withUUID($uuid);
 
@@ -138,6 +147,7 @@ interface QueryInterface {
 	 * @param mixed $operand The value to compare with
 	 * @param boolean $caseSensitive Whether the equality test should be done case-sensitive
 	 * @return object
+	 * @api
 	 */
 	public function equals($propertyName, $operand, $caseSensitive = TRUE);
 
@@ -147,6 +157,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @api
 	 */
 	public function like($propertyName, $operand);
 
@@ -156,6 +167,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @api
 	 */
 	public function lessThan($propertyName, $operand);
 
@@ -165,6 +177,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @api
 	 */
 	public function lessThanOrEqual($propertyName, $operand);
 
@@ -174,6 +187,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @api
 	 */
 	public function greaterThan($propertyName, $operand);
 
@@ -183,6 +197,7 @@ interface QueryInterface {
 	 * @param string $propertyName The name of the property to compare against
 	 * @param mixed $operand The value to compare with
 	 * @return object
+	 * @api
 	 */
 	public function greaterThanOrEqual($propertyName, $operand);
 

@@ -58,6 +58,7 @@ interface FrontendInterface {
 	 * Returns this cache's identifier
 	 *
 	 * @return string The identifier for this cache
+	 * @api
 	 */
 	public function getIdentifier();
 
@@ -65,6 +66,7 @@ interface FrontendInterface {
 	 * Returns the backend used by this cache
 	 *
 	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
+	 * @api
 	 */
 	public function getBackend();
 
@@ -76,6 +78,7 @@ interface FrontendInterface {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
+	 * @api
 	 */
 	public function set($entryIdentifier, $data, $tags = array(), $lifetime = NULL);
 
@@ -84,6 +87,7 @@ interface FrontendInterface {
 	 *
 	 * @param string $entryIdentifier Something which identifies the cache entry - depends on concrete cache
 	 * @return mixed
+	 * @api
 	 */
 	public function get($entryIdentifier);
 
@@ -92,6 +96,7 @@ interface FrontendInterface {
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
+	 * @api
 	 */
 	public function getByTag($tag);
 
@@ -100,6 +105,7 @@ interface FrontendInterface {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @api
 	 */
 	public function has($entryIdentifier);
 
@@ -108,7 +114,6 @@ interface FrontendInterface {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
-	 * @internal
 	 */
 	public function remove($entryIdentifier);
 
@@ -124,6 +129,7 @@ interface FrontendInterface {
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
+	 * @api
 	 */
 	public function flushByTag($tag);
 
@@ -131,6 +137,7 @@ interface FrontendInterface {
 	 * Does garbage collection
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function collectGarbage();
 
@@ -139,6 +146,7 @@ interface FrontendInterface {
 	 *
 	 * @param string An identifier to be checked for validity
 	 * @return boolean
+	 * @api
 	 */
 	public function isValidEntryIdentifier($identifier);
 
@@ -147,6 +155,7 @@ interface FrontendInterface {
 	 *
 	 * @param string A tag to be checked for validity
 	 * @return boolean
+	 * @api
 	 */
 	public function isValidTag($tag);
 

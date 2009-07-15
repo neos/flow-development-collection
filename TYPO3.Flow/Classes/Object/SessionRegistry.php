@@ -93,6 +93,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param F3\FLOW3\Session\SessionInterface $session The session implementation
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
 		$this->session = $session;
@@ -104,6 +105,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param F3\FLOW3\Object\Manager $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\Manager $objectManager) {
 		$this->objectManager = $objectManager;
@@ -115,6 +117,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param F3\FLOW3\Object\Builder $objectBuilder The object builder
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function injectObjectBuilder(\F3\FLOW3\Object\Builder $objectBuilder) {
 		$this->objectBuilder = $objectBuilder;
@@ -126,6 +129,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -137,6 +141,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory The query factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -149,7 +154,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $objectName Name of the object to return an object of
 	 * @return object The object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getObject($objectName) {
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('Object "' . $objectName . '" does not exist in the session object registry.', 1246574394);
@@ -164,7 +168,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param object $object The object to store in the registry
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function putObject($objectName, $object) {
 		if (!is_string($objectName) || strlen($objectName) === 0) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('No valid object name specified.', 1246543470);
@@ -179,7 +182,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string objectName Name of the object to remove the object for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function removeObject($objectName) {
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('Object "' . $objectName . '" does not exist in the session object registry.', 1246572692);
@@ -192,7 +194,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $objectName Name of the object to check for an object
 	 * @return boolean TRUE if an object exists, otherwise FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function objectExists($objectName) {
 		return isset($this->objects[$objectName]);
@@ -203,7 +204,6 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function shutdownObject() {
 		foreach($this->objects as $objectName => $object) {
@@ -220,6 +220,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param object $object The object to store in the registry
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function storeObjectAsPropertyArray($objectName, $object) {
 		if (isset($this->objectsAsArray[$objectName])) return;
@@ -296,6 +297,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param array $arrayProperty The source array property
 	 * @return array The array property to store
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function buildStorageArrayForArrayProperty(array $arrayProperty) {
 		$storableArray = array();
@@ -327,6 +329,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function initialize() {
 		$this->objectsAsArray = $this->session->getData('F3_FLOW3_Object_SessionRegistry');
@@ -345,6 +348,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $className The class of which the object should be created
 	 * @return object The created object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function createEmptyObject($className) {
 		if (!class_exists($className)) throw new \F3\FLOW3\Object\Exception\UnknownClass('Could not reconstitute object from the session, becaus class "' . $className . '" does not exist.', 1246717390);
@@ -359,6 +363,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param array $objectData The object data array
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function reconstituteObject($objectData) {
 		$object = $this->createEmptyObject($objectData['className']);
@@ -401,6 +406,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param array $dataArray The data array to reconstitute from
 	 * @return array The reconstituted array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function reconstituteArray($dataArray) {
 		$result = array();
@@ -438,6 +444,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param array $dataArray The data array to reconstitute from
 	 * @return SplObjectStorage The reconstituted SplObjectStorage
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function reconstituteSplObjectStorage($dataArray) {
 		$result = new \SplObjectStorage();
@@ -456,6 +463,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $UUID The UUID of the object
 	 * @return object The reconstituted persistence object, NULL if none was found
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function reconstitutePersistenceObject($className, $UUID) {
 		$query = $this->queryFactory->create($className);

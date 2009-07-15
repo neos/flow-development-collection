@@ -58,6 +58,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 * Constructs the validator conjunction
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct() {
 		$this->validators = new \SPLObjectStorage();
@@ -69,6 +70,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 * @param array $options Not used
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setOptions(array $options) {
 	}
@@ -78,6 +80,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 *
 	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getErrors() {
 		return $this->errors;
@@ -89,6 +92,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator that should be added
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		$this->validators->attach($validator);
@@ -99,6 +103,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 *
 	 * @param \F3\FLOW3\Validation\ValidatorInterface $validator The validator to remove
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function removeValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		if (!$this->validators->contains($validator)) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Cannot remove validator because its not in the conjunction.', 1207020177);
@@ -110,6 +115,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	 *
 	 * @return integer The number of validators
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function count() {
 		return count($this->validators);

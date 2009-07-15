@@ -43,6 +43,7 @@ interface QueryFactoryInterface {
 	 *
 	 * @param string $className
 	 * @return \F3\FLOW\Persistence\QueryInterface
+	 * @api
 	 */
 	public function create($className);
 

@@ -42,6 +42,7 @@ interface ChangeDetectionStrategyInterface {
 	 *
 	 * @param string $pathAndFilename
 	 * @return integer One of the STATUS_* constants
+	 * @api
 	 */
 	public function getFileStatus($pathAndFilename);
 

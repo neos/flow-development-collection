@@ -65,7 +65,6 @@ class Documentation {
 	 * @param string $documentationName Name of the documentation
 	 * @param string $documentationPath Absolute path to the documentation directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function __construct($package, $documentationName, $documentationPath) {
 		$this->package = $package;
@@ -79,7 +78,6 @@ class Documentation {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -90,6 +88,7 @@ class Documentation {
 	 *
 	 * @return \F3\FLOW3\Package\PackageInterface The package of this documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getPackage() {
 		return $this->package;
@@ -100,6 +99,7 @@ class Documentation {
 	 *
 	 * @return string The name of this documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getDocumentationName() {
 		return $this->documentationName;
@@ -110,6 +110,7 @@ class Documentation {
 	 *
 	 * @return string Path to the directory of this documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getDocumentationPath() {
 		return $this->documentationPath;
@@ -120,6 +121,7 @@ class Documentation {
 	 *
 	 * @return array Array of \F3\FLOW3\Package\DocumentationFormat
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getDocumentationFormats() {
 		$documentationFormats = array();

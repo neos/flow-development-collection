@@ -51,7 +51,6 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $objectName Name of the object to return an object of
 	 * @return object The object
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getObject($objectName) {
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" does not exist in the object registry.', 1167917198);
@@ -65,7 +64,6 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param object $object The object to store in the registry
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function putObject($objectName, $object) {
 		if (!is_string($objectName) || strlen($objectName) === 0) throw new \F3\FLOW3\Object\Exception\InvalidObjectName('No valid object name specified.', 1167919564);
@@ -79,7 +77,6 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string objectName Name of the object to remove the object for
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function removeObject($objectName) {
 		if (!$this->objectExists($objectName)) throw new \F3\FLOW3\Object\Exception\UnknownObject('Object "' . $objectName . '" does not exist in the object registry.', 1167917200);
@@ -92,7 +89,6 @@ class TransientRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 * @param string $objectName Name of the object to check for an object
 	 * @return boolean TRUE if an object exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function objectExists($objectName) {
 		return isset($this->objects[$objectName]);

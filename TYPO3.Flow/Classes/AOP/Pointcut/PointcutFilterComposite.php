@@ -57,7 +57,6 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		$matches = TRUE;
@@ -88,7 +87,6 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $classFilter A configured class filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function addFilter($operator, \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter) {
 		$this->filters[] = array($operator, $filter);

@@ -43,6 +43,7 @@ interface ViewInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
+	 * @api
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext);
 
@@ -53,6 +54,7 @@ interface ViewInterface {
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
 	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 * @api
 	 */
 	public function assign($key, $value);
 
@@ -60,6 +62,7 @@ interface ViewInterface {
 	 * Renders the view
 	 *
 	 * @return string The rendered view
+	 * @api
 	 */
 	public function render();
 }

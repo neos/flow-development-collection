@@ -46,7 +46,6 @@ interface EntryPointInterface {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if authentication is possible
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function canForward(\F3\FLOW3\MVC\RequestInterface $request);
 
@@ -56,7 +55,6 @@ interface EntryPointInterface {
 	 * @param array $options An array of configuration options
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function setOptions(array $options);
 
@@ -66,7 +64,6 @@ interface EntryPointInterface {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The current response
 	 * @return void
-	 * @internal
 	 */
 	public function startAuthentication(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response);
 }

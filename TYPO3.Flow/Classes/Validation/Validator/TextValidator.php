@@ -48,6 +48,7 @@ class TextValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Jochen Rau <jochen.rau@typoplanet.de>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

@@ -94,7 +94,6 @@ class Manager {
 	 *
 	 * @param string $context The application context to fetch configuration for.
 	 * @param array $configurationSources An array of configuration sources
-	 * @internal
 	 */
 	public function __construct($context, array $configurationSources) {
 		$this->context = $context;
@@ -106,7 +105,6 @@ class Manager {
 	 *
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
 	 * @return void
-	 * @internal
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -118,6 +116,7 @@ class Manager {
 	 * @param string $packageKey Key of the package to return the settings for
 	 * @return array The settings of the specified package
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSettings($packageKey) {
 		if (isset($this->settings[$packageKey])) {
@@ -138,7 +137,6 @@ class Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function loadFLOW3Settings() {
 		$settings = array();
@@ -165,7 +163,6 @@ class Manager {
 	 * @return void
 	 * @see getSettings()
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function loadGlobalSettings(array $packages) {
 		$settings = array();
@@ -198,7 +195,6 @@ class Manager {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function loadSpecialConfiguration($configurationType, array $packages) {
 		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
@@ -240,7 +236,6 @@ class Manager {
 	 * @return array The configuration
 	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getSpecialConfiguration($configurationType, \F3\FLOW3\Package\Package $package = NULL) {
 		switch ($configurationType) {
@@ -291,7 +286,6 @@ class Manager {
 	 * @param array &$settings The settings to post process. The results are stored directly in the given array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function postProcessSettings(array &$settings) {
 		foreach ($settings as $key => $setting) {
@@ -316,7 +310,6 @@ class Manager {
 	 * @param array $subRoutesConfiguration
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	protected function mergeRoutesWithSubRoutes(array &$routesConfiguration, array $subRoutesConfiguration) {
 		$mergedRoutesConfiguration = array();
@@ -346,7 +339,6 @@ class Manager {
 	 * @param string $subRouteKey the key of the sub route: <subRouteKey>
 	 * @return array the merged route configuration
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	protected function buildSubrouteConfigurations(array $routesConfiguration, array $subRoutesConfiguration, $subRouteKey) {
 		$mergedSubRoutesConfiguration = array();
@@ -381,7 +373,6 @@ class Manager {
 	 *
 	 * @return array The package states configuration
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getPackageStatesConfiguration() {
 		$configuration = $this->writableConfigurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES);
@@ -394,7 +385,6 @@ class Manager {
 	 * @param array $configuration The package states configuration
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function updatePackageStatesConfiguration($configuration) {
 		$this->writableConfigurationSource->save(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES, $configuration);
@@ -408,7 +398,6 @@ class Manager {
 	 * @param \F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource The writable source
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function setWritableConfigurationSource(\F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource) {
 		$this->writableConfigurationSource = $writableConfigurationSource;

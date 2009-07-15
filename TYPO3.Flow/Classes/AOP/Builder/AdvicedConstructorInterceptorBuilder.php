@@ -47,7 +47,6 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	 * @param array
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName !== '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' can only build constructor interceptor code.', 1231789021);
@@ -77,6 +76,7 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	 * Interceptor for the constructor __construct().
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
+	 * @api
 	 */
 	public function __construct(' . $methodParametersCode .') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
@@ -85,7 +85,6 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	/**
 	 * Initializes the proxy and calls the (parent) constructor with the orginial given arguments.
 	 * @return void
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_construct() {
 		$this->FLOW3_AOP_Proxy_declareMethodsAndAdvices();

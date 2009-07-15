@@ -50,7 +50,6 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	 * @param \F3\FLOW3\Security\ACL\PolicyService $policyService The policy service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Security\ACL\PolicyService $policyService) {
 		$this->policyService = $policyService;
@@ -63,7 +62,6 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
-	 * @internal
 	 */
 	public function vote(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;

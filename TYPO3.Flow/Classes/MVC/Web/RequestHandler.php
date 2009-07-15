@@ -67,7 +67,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 * @param \F3\FLOW3\MVC\Web\RequestBuilder $requestBuilder The request builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(
 			\F3\FLOW3\Object\FactoryInterface $objectFactory,
@@ -85,7 +84,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function handleRequest() {
 		$request = $this->requestBuilder->build();
@@ -99,7 +97,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 *
 	 * @return boolean If the request is a web request, TRUE otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function canHandleRequest() {
 		return ($this->utilityEnvironment->getRequestMethod() !== NULL);
@@ -111,7 +108,6 @@ class RequestHandler implements \F3\FLOW3\MVC\RequestHandlerInterface {
 	 *
 	 * @return integer The priority of the request handler.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getPriority() {
 		return 100;

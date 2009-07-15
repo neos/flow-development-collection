@@ -49,7 +49,6 @@ class Dispatcher {
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -62,7 +61,6 @@ class Dispatcher {
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function dispatch(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$dispatchLoopCount = 0;

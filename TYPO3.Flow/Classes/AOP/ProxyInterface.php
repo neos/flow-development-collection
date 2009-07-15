@@ -44,7 +44,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 * orginial given arguments.
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_construct();
 
@@ -53,7 +52,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 *
 	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
 	 * @return mixed Result of the target (ie. original) method
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
@@ -61,7 +59,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 * Returns the name of the class this proxy extends.
 	 *
 	 * @return string Name of the target class
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
 
@@ -70,7 +67,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return boolean TRUE if the property exists
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_hasProperty($propertyName);
 
@@ -80,7 +76,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return mixed Value of the property
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_getProperty($propertyName);
 
@@ -90,7 +85,6 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	 * @param string $propertyName Name of the property
 	 * @param mixed $propertyValue Value to set
 	 * @return void
-	 * @internal
 	 */
 	public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue);}
 

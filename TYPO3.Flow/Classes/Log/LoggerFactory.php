@@ -50,7 +50,6 @@ class LoggerFactory {
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -65,6 +64,7 @@ class LoggerFactory {
 	 * @param array $backendOptions (optional) Array of backend options. If more than one backend is specified, this is an array of array.
 	 * @return \F3\FLOW3\Log\LoggerInterface The created logger frontend
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
 		$logger = $this->objectFactory->create($loggerObjectName);

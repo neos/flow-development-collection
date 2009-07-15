@@ -51,7 +51,6 @@ class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfac
 	 * @param string $identifier The string identifier of this role
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct($identifier) {
 		$this->identifier = $identifier;
@@ -62,7 +61,6 @@ class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfac
 	 *
 	 * @return string The string representation of the GrantedAuthority
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getAuthority() {
 		return $this->identifier;
@@ -73,7 +71,6 @@ class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfac
 	 *
 	 * @return string the string representation of this role
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __toString() {
 		return $this->identifier;

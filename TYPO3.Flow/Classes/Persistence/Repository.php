@@ -66,6 +66,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * Constructs a new Repository
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function __construct() {
 		$this->addedObjects = new \SplObjectStorage();
@@ -78,6 +79,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -89,6 +91,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -101,6 +104,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function add($object) {
 		$this->addedObjects->attach($object);
@@ -118,6 +122,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove($object) {
 		if ($this->addedObjects->contains($object)) {
@@ -133,6 +138,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function replace($existingObject, $newObject) {
 		$backend = $this->persistenceManager->getBackend();
@@ -164,6 +170,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return \SplObjectStorage the objects
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getAddedObjects() {
 		return $this->addedObjects;
@@ -175,6 +182,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return \SplObjectStorage the objects
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getRemovedObjects() {
 		return $this->removedObjects;
@@ -186,6 +194,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @return array An array of objects, empty if no objects found
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function findAll() {
 		return $this->createQuery()->execute();
@@ -197,6 +206,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param string $uuid The identifier of the object to find
 	 * @return object The matching object if found, otherwise NULL
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function findByUUID($uuid) {
 		$query = $this->createQuery();
@@ -210,6 +220,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @return \F3\FLOW3\Persistence\QueryInterface
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function createQuery() {
 		$type = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
@@ -227,6 +238,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param array $arguments The arguments
 	 * @return mixed The result of the find method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 6) === 'findBy' && strlen($methodName) > 7) {
@@ -257,7 +269,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return string Class name of the repository. If it is proxied, it's still the (target) class name.
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function FLOW3_AOP_Proxy_getProxyTargetClassName() {
 		return get_class($this);

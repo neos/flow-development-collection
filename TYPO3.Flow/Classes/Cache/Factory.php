@@ -67,7 +67,6 @@ class Factory {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectManager = $objectManager;
@@ -82,7 +81,6 @@ class Factory {
 	 * @param \F3\FLOW3\Cache\Manager $cacheManager The cache manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setCacheManager(\F3\FLOW3\Cache\Manager $cacheManager) {
 		$this->cacheManager = $cacheManager;
@@ -98,6 +96,7 @@ class Factory {
 	 * @param array $backendOptions (optional) Array of backend options
 	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The created cache frontend
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function create($cacheIdentifier, $cacheObjectName, $backendObjectName, array $backendOptions = array()) {
 		$context = $this->objectManager->getContext();

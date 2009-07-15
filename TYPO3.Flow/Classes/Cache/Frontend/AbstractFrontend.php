@@ -56,7 +56,6 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @param \F3\FLOW3\Cache\Backend\BackendInterface $backend Backend to be used for this cache
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if the identifier doesn't match PATTERN_ENTRYIDENTIFIER
-	 * @internal
 	 */
 	public function __construct($identifier, \F3\FLOW3\Cache\Backend\BackendInterface $backend) {
 		if (!preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier)) throw new \InvalidArgumentException('"' . $identifier . '" is not a valid cache identifier.', 1203584729);
@@ -70,6 +69,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 *
 	 * @return string The identifier for this cache
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getIdentifier() {
 		return $this->identifier;
@@ -80,6 +80,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 *
 	 * @return \F3\FLOW3\Cache\Backend\BackendInterface The backend used by this cache
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getBackend() {
 		return $this->backend;
@@ -92,6 +93,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function has($entryIdentifier) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058486);
@@ -106,6 +108,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove($entryIdentifier) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058495);
@@ -118,6 +121,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flush() {
 		$this->backend->flush();
@@ -130,6 +134,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function flushByTag($tag) {
 		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233057359);
@@ -142,6 +147,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function collectGarbage() {
 		$this->backend->collectGarbage();
@@ -157,6 +163,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @param string $className The class name
 	 * @return string Class Tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassTag($className = '') {
 		return ($className === '') ? self::TAG_CLASS : self::TAG_CLASS . str_replace('\\', '_', $className);
@@ -168,6 +175,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @param string An identifier to be checked for validity
 	 * @return boolean
 	 * @author Christian Jul Jensen <julle@typo3.org>
+	 * @api
 	 */
 	public function isValidEntryIdentifier($identifier) {
 		return preg_match(self::PATTERN_ENTRYIDENTIFIER, $identifier) === 1;
@@ -179,6 +187,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	 * @param string An identifier to be checked for validity
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isValidTag($tag) {
 		return preg_match(self::PATTERN_TAG, $tag) === 1;

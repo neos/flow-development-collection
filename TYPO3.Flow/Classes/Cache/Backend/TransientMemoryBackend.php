@@ -59,6 +59,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1238244992);
@@ -75,6 +76,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function get($entryIdentifier) {
 		return (isset($this->entries[$entryIdentifier])) ? $this->entries[$entryIdentifier] : FALSE;
@@ -86,6 +88,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function has($entryIdentifier) {
 		return isset($this->entries[$entryIdentifier]);
@@ -97,6 +100,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if the entry could be removed or FALSE if no entry was found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function remove($entryIdentifier) {
 		if (isset($this->entries[$entryIdentifier]))  {
@@ -119,6 +123,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
 		if (isset($this->tagsAndEntries[$tag])) {
@@ -133,6 +138,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flush() {
 		$this->entries = array();
@@ -145,6 +151,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag the entries must have
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
@@ -158,6 +165,7 @@ class TransientMemoryBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function collectGarbage() {
 	}

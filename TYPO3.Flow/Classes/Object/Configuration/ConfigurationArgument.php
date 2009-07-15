@@ -68,7 +68,6 @@ class ConfigurationArgument {
 	 * @param integer $type Type of the argument - one of the argument_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		$this->set($index, $value, $type);
@@ -82,7 +81,6 @@ class ConfigurationArgument {
 	 * @param integer $type Type of the argument - one of the ARGUMENT_TYPE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function set($index, $value, $type = self::ARGUMENT_TYPES_STRAIGHTVALUE) {
 		if (!is_integer($index)) throw new \InvalidArgumentException('$index must be of type integer', 1168003692);
@@ -97,7 +95,6 @@ class ConfigurationArgument {
 	 *
 	 * @return string Index of the argument
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getIndex() {
 		return $this->index;
@@ -108,7 +105,6 @@ class ConfigurationArgument {
 	 *
 	 * @return mixed Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getValue() {
 		return $this->value;
@@ -119,7 +115,6 @@ class ConfigurationArgument {
 	 *
 	 * @return integer Type of the argument - one of the ARGUMENT_TYPES_* constants
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getType() {
 		return $this->type;

@@ -55,6 +55,7 @@ class URIBuilder {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
@@ -66,6 +67,7 @@ class URIBuilder {
 	 * @param \F3\FLOW3\MVC\Web\Routing\RouterInterface $router
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function injectRouter(\F3\FLOW3\MVC\Web\Routing\RouterInterface $router) {
 		$this->router = $router;
@@ -82,6 +84,7 @@ class URIBuilder {
 	 * @param string $section Anchor to be appended to the resulting URI
 	 * @return string the resolved URI
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function URIFor($actionName = NULL, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $section = '') {
 		$routeValues = $arguments;

@@ -46,6 +46,7 @@ interface DynamicRoutePartInterface extends \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @param string $splitString
 	 * @return void
+	 * @api
 	 */
 	public function setSplitString($splitString);
 }

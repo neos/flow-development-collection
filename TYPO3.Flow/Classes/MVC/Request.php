@@ -113,7 +113,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -125,7 +124,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the package manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
@@ -137,7 +135,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param array $settings The FLOW3 settings
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -148,6 +145,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @param boolean $flag If this request has been dispatched
 	 * @return void
+	 * @api
 	 */
 	public function setDispatched($flag) {
 		$this->dispatched = $flag ? TRUE : FALSE;
@@ -162,6 +160,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return boolean TRUE if this request has been disptached successfully
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isDispatched() {
 		return $this->dispatched;
@@ -175,6 +174,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function getControllerObjectName() {
 		$packageKey = $this->controllerPackageKey;
@@ -199,7 +199,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidPackageKey if the package key is not valid
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setControllerPackageKey($packageKey) {
 		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
@@ -212,6 +211,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return string The package key
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getControllerPackageKey() {
 		return $this->controllerPackageKey;
@@ -223,7 +223,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $subpackageKey The subpackage key.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setControllerSubpackageKey($subpackageKey) {
 		$this->controllerSubpackageKey = $subpackageKey;
@@ -234,6 +233,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return string The subpackage key
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function getControllerSubpackageKey() {
 		return $this->controllerSubpackageKey;
@@ -246,7 +246,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $controllerName Name of the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setControllerName($controllerName) {
 		if (!is_string($controllerName)) throw new \F3\FLOW3\MVC\Exception\InvalidControllerName('The controller name must be a valid string, ' . gettype($controllerName) . ' given.', 1187176358);
@@ -260,6 +259,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return string Object name of the controller
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getControllerName() {
 		return $this->controllerName;
@@ -274,7 +274,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionName if the action name is not valid
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setControllerActionName($actionName) {
 		if (!is_string($actionName)) throw new \F3\FLOW3\MVC\Exception\InvalidActionName('The action name must be a valid string, ' . gettype($actionName) . ' given (' . $actionName . ').', 1187176358);
@@ -287,6 +286,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return string Action name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getControllerActionName() {
 		return $this->controllerActionName;
@@ -299,7 +299,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param mixed $value The new value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setArgument($argumentName, $value) {
 		if (!is_string($argumentName) || \F3\PHP6\Functions::strlen($argumentName) === 0) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentName('Invalid argument name.', 1210858767);
@@ -313,7 +312,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setArguments(array $arguments) {
 		$this->arguments = $arguments;
@@ -326,6 +324,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @return string Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if such an argument does not exist
+	 * @api
 	 */
 	public function getArgument($argumentName) {
 		if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('An argument "' . $argumentName . '" does not exist for this request.', 1176558158);
@@ -338,6 +337,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument is set, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function hasArgument($argumentName) {
 		return isset($this->arguments[$argumentName]);
@@ -348,6 +348,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return array Array of arguments and their values (which may be arguments and values as well)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getArguments() {
 		return $this->arguments;
@@ -359,7 +360,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setFormat($format) {
 		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);
@@ -371,6 +371,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return string The desired format, something like "html", "xml", "png", "json" or the like.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getFormat() {
 		return $this->format;
@@ -382,7 +383,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * @param array $errors An array of \F3\FLOW3\Error\Error objects
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function setErrors(array $errors) {
 		$this->errors = $errors;
@@ -393,7 +393,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * @return array The errors that occured during the request
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getErrors() {
 		return $this->errors;

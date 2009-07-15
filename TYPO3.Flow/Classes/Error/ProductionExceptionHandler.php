@@ -42,7 +42,6 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 * Constructs this exception handler - registers itself as the default exception handler.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct() {
 		@set_exception_handler(array($this, 'handleException'));
@@ -54,7 +53,6 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 * @param \Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function handleException(\Exception $exception) {
 		parent::handleException($exception);
@@ -73,7 +71,6 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 *
 	 * @param \Exception $exception The exception
 	 * @return void
-	 * @internal
 	 */
 	public function echoExceptionWeb(\Exception $exception) {
 		if (!headers_sent()) {
@@ -178,7 +175,6 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 *
 	 * @param \Exception $exception The exception
 	 * @return void
-	 * @internal
 	 */
 	public function echoExceptionCLI(\Exception $exception) {
 		exit(1);

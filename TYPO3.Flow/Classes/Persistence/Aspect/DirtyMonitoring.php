@@ -49,14 +49,12 @@ class DirtyMonitoring {
 	/**
 	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function isEntityOrValueObject() {}
 
 	/**
 	 * @pointcut F3\FLOW3\Persistence\Aspect\DirtyMonitoring->isEntityOrValueObject && !within(F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface)
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function needsDirtyCheckingAspect() {}
 
@@ -71,7 +69,6 @@ class DirtyMonitoring {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -84,7 +81,6 @@ class DirtyMonitoring {
 	 * @return void
 	 * @afterreturning classTaggedWith(entity) && method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
@@ -99,7 +95,6 @@ class DirtyMonitoring {
 	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isNew())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function isNew(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -116,7 +111,6 @@ class DirtyMonitoring {
 	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isDirty())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function isDirty(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
@@ -154,7 +148,6 @@ class DirtyMonitoring {
 	 * @return void
 	 * @before F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_memorizeCleanState())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function memorizeCleanState(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
@@ -184,7 +177,6 @@ class DirtyMonitoring {
 	 * @return void
 	 * @afterreturning method(.*->__clone())
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		unset($joinPoint->getProxy()->FLOW3_Persistence_cleanProperties);

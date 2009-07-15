@@ -64,7 +64,6 @@ class Dispatcher {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -76,7 +75,6 @@ class Dispatcher {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -93,6 +91,7 @@ class Dispatcher {
 	 * @param boolean $omitSignalInformation If set to TRUE, the first argument passed to the slot will be the first argument of the signal instead of some information about the signal.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function connect($signalClassName, $signalMethodName, $slotClassNameOrObject, $slotMethodName = '', $omitSignalInformation = FALSE) {
 		$class = NULL;
@@ -125,6 +124,7 @@ class Dispatcher {
 	 * @return void
 	 * @throws \F3\FLOW3\SignalSlot\Exception\InvalidSlot if the slot is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function dispatch($signalClassName, $signalMethodName, array $signalArguments) {
 	if (!isset($this->slots[$signalClassName][$signalMethodName])) return;
@@ -155,6 +155,7 @@ class Dispatcher {
 	 * @param string $signalMethodName Method name of the signal
 	 * @return array An array of arrays with slot information
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getSlots($signalClassName, $signalMethodName) {
 		return (isset($this->slots[$signalClassName][$signalMethodName])) ? $this->slots[$signalClassName][$signalMethodName] : array();

@@ -42,7 +42,7 @@ namespace F3\FLOW3\Cache\Backend;
  *   and used when removing the identifier
  * - tagIndex
  *   Value is a List of all tags (array)
-
+ *
  * Each key is prepended with a prefix. By default prefix consists from two parts
  * separated by underscore character and ends in yet another underscore character:
  * - "FLOW3"
@@ -93,7 +93,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -105,7 +104,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -116,7 +114,6 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
@@ -138,6 +135,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
@@ -162,6 +160,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function get($entryIdentifier) {
 		$success = FALSE;
@@ -175,6 +174,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function has($entryIdentifier) {
 		$success = FALSE;
@@ -191,6 +191,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function remove($entryIdentifier) {
 		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
@@ -205,6 +206,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
 		$success = FALSE;
@@ -236,6 +238,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1232986971);
@@ -248,6 +251,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag the entries must have
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
@@ -368,6 +372,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Does nothing, as APC does GC itself
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function collectGarbage() {
 		$this->systemLogger->log(sprintf('Cache %s: garbage collection is done by APC', $this->cache->getIdentifier()), LOG_INFO);

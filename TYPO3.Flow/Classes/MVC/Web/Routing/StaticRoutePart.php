@@ -44,7 +44,6 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 *
 	 * @return string $defaultValue
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getDefaultValue() {
 		return $this->name;
@@ -59,7 +58,6 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add configurable case sensitivity
-	 * @internal
 	 */
 	public function match(&$requestPath) {
 		if ($this->name === NULL || $this->name === '') {
@@ -85,7 +83,6 @@ class StaticRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo add configurable case sensitivity
-	 * @internal
 	 */
 	public function resolve(array &$routeValues) {
 		if ($this->name === NULL || $this->name === '') {

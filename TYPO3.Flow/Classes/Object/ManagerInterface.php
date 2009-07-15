@@ -43,7 +43,6 @@ interface ManagerInterface {
 	 * which are configured for it.
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function shutdown();
 
@@ -60,7 +59,6 @@ interface ManagerInterface {
 	 *
 	 * @param string $context: Name of the context
 	 * @return void
-	 * @internal
 	 */
 	public function setContext($context);
 
@@ -68,6 +66,7 @@ interface ManagerInterface {
 	 * Returns the name of the currently set context.
 	 *
 	 * @return string Name of the current context
+	 * @api
 	 */
 	public function getContext();
 
@@ -76,7 +75,6 @@ interface ManagerInterface {
 	 * Returns a reference to the object factory used by the object manager.
 	 *
 	 * @return \F3\FLOW3\Object\FactoryInterface
-	 * @internal
 	 */
 	public function getObjectFactory();
 
@@ -92,6 +90,7 @@ interface ManagerInterface {
 	 * @param string $objectName The name of the object to return an instance of
 	 * @return object The object instance
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
+	 * @api
 	 */
 	public function getObject($objectName);
 
@@ -101,6 +100,7 @@ interface ManagerInterface {
 	 * @param string $objectName The unique identifier of the object
 	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.
 	 * @return void
+	 * @api
 	 */
 	public function registerObject($objectName, $className = NULL);
 
@@ -109,6 +109,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $objectName: The explicit object name
 	 * @return void
+	 * @api
 	 */
 	public function unregisterObject($objectName);
 
@@ -118,6 +119,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $objectName: Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
+	 * @api
 	 */
 	public function isObjectRegistered($objectName);
 
@@ -131,6 +133,7 @@ interface ManagerInterface {
 	 * @param object $object The object to register
 	 * @param string $shutdownMethodName Name of the shutdown method to call
 	 * @return void
+	 * @api
 	 */
 	public function registerShutdownObject($object, $shutdownMethodName);
 
@@ -145,6 +148,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
+	 * @api
 	 */
 	public function getCaseSensitiveObjectName($caseInsensitiveObjectName);
 
@@ -152,7 +156,6 @@ interface ManagerInterface {
 	 * Returns an array of configuration objects for all registered objects.
 	 *
 	 * @return arrray Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
-	 * @internal
 	 */
 	public function getObjectConfigurations();
 
@@ -161,7 +164,6 @@ interface ManagerInterface {
 	 *
 	 * @param string $objectName Name of the object to fetch the configuration for
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration
-	 * @internal
 	 */
 	public function getObjectConfiguration($objectName);
 
@@ -175,7 +177,6 @@ interface ManagerInterface {
 	 *
 	 * @param array $newObjectConfigurations Array of \F3\FLOW3\Object\Configuration\Configuration instances
 	 * @return void
-	 * @internal
 	 */
 	public function setObjectConfigurations(array $newObjectConfigurations);
 
@@ -188,7 +189,6 @@ interface ManagerInterface {
 	 *
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration The new object configuration
 	 * @return void
-	 * @internal
 	 */
 	public function setObjectConfiguration(\F3\FLOW3\Object\Configuration\Configuration $newObjectConfiguration);
 
@@ -200,7 +200,6 @@ interface ManagerInterface {
 	 * @param string $objectName Name of the object to set the class name for
 	 * @param string $className Name of the class to set
 	 * @return void
-	 * @internal
 	 */
 	public function setObjectClassName($objectName, $className);
 }

@@ -135,6 +135,7 @@ class EmailAddressValidator extends \F3\FLOW3\Validation\Validator\AbstractValid
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

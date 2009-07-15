@@ -45,6 +45,7 @@ interface RequestInterface {
 	 *
 	 * @param boolean $flag If this request has been dispatched
 	 * @return void
+	 * @api
 	 */
 	public function setDispatched($flag);
 
@@ -56,6 +57,7 @@ interface RequestInterface {
 	 * addressed yet.
 	 *
 	 * @return boolean TRUE if this request has been disptached successfully
+	 * @api
 	 */
 	public function isDispatched();
 
@@ -65,6 +67,7 @@ interface RequestInterface {
 	 *
 	 * @return string The controller's Object Name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
+	 * @api
 	 */
 	public function getControllerObjectName();
 
@@ -74,6 +77,7 @@ interface RequestInterface {
 	 * @param string $packageKey The package key.
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidPackageKey if the package key is not valid
+	 * @api
 	 */
 	public function setControllerPackageKey($packageKey);
 
@@ -81,6 +85,7 @@ interface RequestInterface {
 	 * Returns the package key of the specified controller.
 	 *
 	 * @return string The package key
+	 * @api
 	 */
 	public function getControllerPackageKey();
 
@@ -89,6 +94,7 @@ interface RequestInterface {
 	 *
 	 * @param string $subpackageKey The subpackage key.
 	 * @return void
+	 * @api
 	 */
 	public function setControllerSubpackageKey($subpackageKey);
 
@@ -96,6 +102,7 @@ interface RequestInterface {
 	 * Returns the subpackage key of the specified controller.
 	 *
 	 * @return string The subpackage key
+	 * @api
 	 */
 	public function getControllerSubpackageKey();
 
@@ -105,6 +112,7 @@ interface RequestInterface {
 	 *
 	 * @param string $controllerName Name of the controller
 	 * @return void
+	 * @api
 	 */
 	public function setControllerName($controllerName);
 
@@ -113,6 +121,7 @@ interface RequestInterface {
 	 * was set already (if not, the name of the default controller is returned)
 	 *
 	 * @return string Object name of the controller
+	 * @api
 	 */
 	public function getControllerName();
 
@@ -124,6 +133,7 @@ interface RequestInterface {
 	 * @param string $actionName: Name of the action to execute by the controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionName if the action name is not valid
+	 * @api
 	 */
 	public function setControllerActionName($actionName);
 
@@ -132,6 +142,7 @@ interface RequestInterface {
 	 *
 	 * @return string Action name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getControllerActionName();
 
@@ -141,6 +152,7 @@ interface RequestInterface {
 	 * @param string $argumentName Name of the argument to set
 	 * @param mixed $value The new value
 	 * @return void
+	 * @api
 	 */
 	public function setArgument($argumentName, $value);
 
@@ -150,6 +162,7 @@ interface RequestInterface {
 	 *
 	 * @param array $arguments An array of argument names and their values
 	 * @return void
+	 * @api
 	 */
 	public function setArguments(array $arguments);
 
@@ -159,6 +172,7 @@ interface RequestInterface {
 	 * @param string $argumentName Name of the argument
 	 * @return string Value of the argument
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchArgument if such an argument does not exist
+	 * @api
 	 */
 	public function getArgument($argumentName);
 
@@ -167,6 +181,7 @@ interface RequestInterface {
 	 *
 	 * @param string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument is set, otherwise FALSE
+	 * @api
 	 */
 	public function hasArgument($argumentName);
 
@@ -174,6 +189,7 @@ interface RequestInterface {
 	 * Returns an array of arguments and their values
 	 *
 	 * @return array Array of arguments and their values (which may be arguments and values as well)
+	 * @api
 	 */
 	public function getArguments();
 
@@ -182,6 +198,7 @@ interface RequestInterface {
 	 *
 	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like.
 	 * @return void
+	 * @api
 	 */
 	public function setFormat($format);
 
@@ -189,6 +206,7 @@ interface RequestInterface {
 	 * Returns the requested representation format
 	 *
 	 * @return string The desired format, something like "html", "xml", "png", "json" or the like.
+	 * @api
 	 */
 	public function getFormat();
 
@@ -197,6 +215,7 @@ interface RequestInterface {
 	 *
 	 * @param array $errors An array of F3\FLOW3\Error\Error objects
 	 * @return void
+	 * @api
 	 */
 	public function setErrors(array $errors);
 
@@ -204,6 +223,7 @@ interface RequestInterface {
 	 * Get the request errors that occured during the request
 	 *
 	 * @return array An array of F3\FLOW3\Error\Error objects
+	 * @api
 	 */
 	public function getErrors();
 

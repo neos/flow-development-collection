@@ -54,7 +54,6 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -65,7 +64,6 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('filesAndModificationTimes')) {
@@ -79,7 +77,6 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	 * @param string $pathAndFilename
 	 * @return integer One of the STATUS_* constants
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getFileStatus($pathAndFilename) {
 		if (isset($this->filesAndModificationTimes[$pathAndFilename])) {
@@ -113,7 +110,6 @@ class ModificationTimeStrategy implements \F3\FLOW3\Monitor\ChangeDetectionStrat
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function shutdownObject() {
 		if ($this->modificationTimesChanged === TRUE) {

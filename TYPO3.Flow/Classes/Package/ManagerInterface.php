@@ -45,7 +45,6 @@ interface ManagerInterface {
 	 *   - building the package registry
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function initialize();
 
@@ -55,6 +54,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $packageKey: The key of the package to check
 	 * @return boolean TRUE if the package is available, otherwise FALSE
+	 * @api
 	 */
 	public function isPackageAvailable($packageKey);
 
@@ -64,6 +64,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $packageKey
 	 * @return array Array of \F3\FLOW3\Package\PackageInterface
+	 * @api
 	 */
 	public function getPackage($packageKey);
 
@@ -72,6 +73,7 @@ interface ManagerInterface {
 	 * A package is available, if the package directory contains valid meta information.
 	 *
 	 * @return array Array of \F3\FLOW3\Package\PackageInterface
+	 * @api
 	 */
 	public function getAvailablePackages();
 
@@ -81,6 +83,7 @@ interface ManagerInterface {
 	 * manager settings.
 	 *
 	 * @return array Array of \F3\FLOW3\Package\PackageInterface
+	 * @api
 	 */
 	public function getActivePackages();
 
@@ -90,6 +93,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $lowerCasedPackageKey The package key to convert
 	 * @return mixed The upper camel cased package key or FALSE if no such package exists
+	 * @api
 	 */
 	public function getCaseSensitivePackageKey($unknownCasedPackageKey);
 
@@ -97,6 +101,7 @@ interface ManagerInterface {
 	 * Check the conformance of the given package key
 	 *
 	 * @param string $packageKey The package key to validate
+	 * @api
 	 */
 	public function isPackageKeyValid($packageKey);
 
@@ -106,6 +111,7 @@ interface ManagerInterface {
 	 * @param string $packageKey The package key to use for the new package
 	 * @param \F3\FLOW3\Package\MetaData $packageMetaData Package metadata
 	 * @return \F3\FLOW3\Package\Package The newly created package
+	 * @api
 	 */
 	public function createPackage($packageKey, \F3\FLOW3\Package\MetaData $packageMetaData = null);
 
@@ -114,6 +120,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $packageKey The package to deactivate
 	 * @return void
+	 * @api
 	 */
 	public function deactivatePackage($packageKey);
 
@@ -122,6 +129,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $packageKey The package to activate
 	 * @return void
+	 * @api
 	 */
 	public function activatePackage($packageKey);
 
@@ -130,6 +138,7 @@ interface ManagerInterface {
 	 *
 	 * @param string $packageKey package to delete
 	 * @return void
+	 * @api
 	 */
 	public function deletePackage($packageKey);
 

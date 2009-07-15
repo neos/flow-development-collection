@@ -44,7 +44,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * Constructs this exception handler - registers itself as the default exception handler.
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct() {
 		@set_exception_handler(array($this, 'handleException'));
@@ -56,7 +55,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @param \Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function handleException(\Exception $exception) {
 		parent::handleException($exception);
@@ -76,7 +74,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @param  \Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function echoExceptionWeb(\Exception $exception) {
 		if (!headers_sent()) {
@@ -142,7 +139,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @param \Exception $exception: The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function echoExceptionCLI(\Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
@@ -161,7 +157,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @param array $trace: The trace
 	 * @return string Backtrace information
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function getBacktraceCode(array $trace) {
 		$backtraceCode = '';
@@ -208,7 +203,6 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @param integer $lineNumber: Line number defining the center of the code snippet
 	 * @return string The code snippet
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function getCodeSnippet($filePathAndName, $lineNumber) {
 		$codeSnippet = '<br />';

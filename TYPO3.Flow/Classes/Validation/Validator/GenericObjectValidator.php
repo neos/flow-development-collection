@@ -52,6 +52,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		if (!is_object($value)) {
@@ -74,6 +75,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param object $object The object to be checked
 	 * @return boolean TRUE if the given value is an object
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function canValidate($object) {
 		return is_object($object);
@@ -88,6 +90,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param string $propertyName Name of the property to validate
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isPropertyValid($object, $propertyName) {
 		if (!is_object($object)) throw new \InvalidArgumentException('Object expected, ' . gettype($object) . ' given.', 1241099149);
@@ -108,7 +111,6 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param string $propertyName Name of the property to add errors
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	protected function addErrorsForProperty($errors, $propertyName) {
 		if (!isset($this->errors[$propertyName])) {
@@ -124,6 +126,7 @@ class GenericObjectValidator extends \F3\FLOW3\Validation\Validator\AbstractObje
 	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The property validator
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addPropertyValidator($propertyName, \F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		if (!isset($this->propertyValidators[$propertyName])) {

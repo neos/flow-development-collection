@@ -95,7 +95,6 @@ class ClassSchema {
 	 *
 	 * @param string $className Name of the class this schema is referring to
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($className) {
 		$this->className = $className;
@@ -106,7 +105,6 @@ class ClassSchema {
 	 *
 	 * @return string The class name
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getClassName() {
 		return $this->className;
@@ -121,7 +119,6 @@ class ClassSchema {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function addProperty($name, $type, $lazy = FALSE) {
 		$matches = array();
@@ -141,7 +138,6 @@ class ClassSchema {
 	 *
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getProperties() {
 		return $this->properties;
@@ -153,7 +149,6 @@ class ClassSchema {
 	 * @param integer The model type, one of the MODELTYPE_* constants.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setModelType($modelType) {
 		if ($modelType < self::MODELTYPE_ENTITY || $modelType > self::MODELTYPE_VALUEOBJECT) throw new \InvalidArgumentException('"' . $modelType . '" is an invalid model type.', 1212519195);
@@ -165,7 +160,6 @@ class ClassSchema {
 	 *
 	 * @return integer The model type, one of the MODELTYPE_* constants.
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getModelType() {
 		return $this->modelType;
@@ -178,7 +172,6 @@ class ClassSchema {
 	 * @param boolean $isRoot TRUE if it is the root of an aggregate
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setAggregateRoot($isRoot) {
 		$this->aggregateRoot = $isRoot;
@@ -190,7 +183,6 @@ class ClassSchema {
 	 *
 	 * @return boolean TRUE if it is managed
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function isAggregateRoot() {
 		return $this->aggregateRoot;
@@ -202,7 +194,6 @@ class ClassSchema {
 	 * @param string $propertyName Name of the property
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function hasProperty($propertyName) {
 		return array_key_exists($propertyName, $this->properties);
@@ -214,7 +205,6 @@ class ClassSchema {
 	 * @param string $propertyName
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setUUIDPropertyName($propertyName) {
 		if (!array_key_exists($propertyName, $this->properties)) {
@@ -229,7 +219,6 @@ class ClassSchema {
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getUUIDPropertyName() {
 		return $this->uuidPropertyName;
@@ -243,7 +232,6 @@ class ClassSchema {
 	 * @param string $propertyName
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function markAsIdentityProperty($propertyName) {
 		if (!array_key_exists($propertyName, $this->properties)) {
@@ -262,7 +250,6 @@ class ClassSchema {
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see markAsIdentityProperty()
-	 * @internal
 	 */
 	public function getIdentityProperties() {
 		return $this->identityProperties;

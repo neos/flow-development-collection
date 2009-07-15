@@ -55,7 +55,6 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @param string $classFilterExpression A regular expression which defines which class names should match
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($classFilterExpression) {
 		$this->classFilterExpression = str_replace('\\', '\\\\', $classFilterExpression);
@@ -67,7 +66,6 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -83,7 +81,6 @@ class PointcutClassNameFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * @return boolean TRUE if the class matches, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo Collect information why class was ignored for debugging in a future AOP browser
-	 * @internal
 	 */
 	public function matches($className, $methodName, $methodDeclaringClassName, $pointcutQueryIdentifier) {
 		if ($this->reflectionService->isClassFinal($className) || $this->reflectionService->isMethodFinal($className, '__construct')) return FALSE;

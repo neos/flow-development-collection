@@ -58,6 +58,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A object factory implementation
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -69,6 +70,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @param array $options Options for the validator
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setOptions(array $options) {
 		$this->options = $options;
@@ -79,6 +81,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 *
 	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getErrors() {
 		return $this->errors;
@@ -91,6 +94,7 @@ abstract class AbstractValidator implements \F3\FLOW3\Validation\Validator\Valid
 	 * @param integer $code The error code (a unix timestamp)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function addError($message, $code) {
 		$this->errors[] = $this->objectFactory->create('F3\FLOW3\Validation\Error', $message, $code);

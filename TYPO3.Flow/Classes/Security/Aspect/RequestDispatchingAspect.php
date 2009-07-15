@@ -55,7 +55,6 @@ class RequestDispatchingAspect {
 	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
 	 * @param \F3\FLOW3\Security\Authorization\FirewallInterface $firewall
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall) {
 		$this->securityContextHolder = $securityContextHolder;
@@ -69,7 +68,6 @@ class RequestDispatchingAspect {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function initializeSecurity(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
@@ -85,7 +83,6 @@ class RequestDispatchingAspect {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function blockIllegalRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
@@ -101,7 +98,6 @@ class RequestDispatchingAspect {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function forwardAuthenticationRequiredExceptionsToAnAuthenticationEntryPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$exception = $joinPoint->getException();

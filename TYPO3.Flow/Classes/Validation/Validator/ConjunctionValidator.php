@@ -48,6 +48,7 @@ class ConjunctionValidator extends \F3\FLOW3\Validation\Validator\AbstractCompos
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$result = TRUE;

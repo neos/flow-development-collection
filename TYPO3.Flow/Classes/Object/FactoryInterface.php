@@ -47,6 +47,7 @@ interface FactoryInterface {
 	 * @throws \InvalidArgumentException if $objectName is not a string
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject if an object with the given name does not exist
 	 * @throws \F3\FLOW3\Object\Exception\WrongScope if the specified object is not configured as Prototype
+	 * @api
 	 */
 	public function create($objectName);
 

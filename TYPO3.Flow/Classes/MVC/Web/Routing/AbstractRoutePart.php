@@ -79,7 +79,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 * @param string $name
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setName($partName) {
 		$this->name = $partName;
@@ -90,7 +89,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getName() {
 		return $this->name;
@@ -101,7 +99,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function hasValue() {
 		return isset($this->value);
@@ -112,7 +109,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @return mixed
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getValue() {
 		return $this->value;
@@ -123,7 +119,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @return boolean
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function hasDefaultValue() {
 		return isset($this->defaultValue);
@@ -135,7 +130,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 * @param mixed $defaultValue
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setDefaultValue($defaultValue) {
 		$this->defaultValue = $defaultValue;
@@ -146,7 +140,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @return mixed $defaultValue
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getDefaultValue() {
 		return $this->defaultValue;
@@ -159,7 +152,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 * @param boolean $isOptional TRUE: this Route part is optional. FALSE: this Route part is required.
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setOptional($isOptional) {
 		$this->isOptional = $isOptional;
@@ -171,7 +163,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 * @return boolean TRUE if this Route part is optional, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see setOptional()
-	 * @internal
 	 */
 	public function isOptional() {
 		return $this->isOptional;
@@ -183,7 +174,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	 *
 	 * @param array $options
 	 * @return void
-	 * @internal
 	 */
 	public function setOptions(array $options) {
 		$this->options = $options;
@@ -191,7 +181,6 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 
 	/**
 	 * @return array options of this Route Part.
-	 * @internal
 	 */
 	public function getOptions() {
 		return $this->options;

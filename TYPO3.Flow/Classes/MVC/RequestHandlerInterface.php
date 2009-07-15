@@ -43,6 +43,7 @@ interface RequestHandlerInterface {
 	 * Handles a raw request and sends the respsonse.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function handleRequest();
 
@@ -50,6 +51,7 @@ interface RequestHandlerInterface {
 	 * Checks if the request handler can handle the current request.
 	 *
 	 * @return boolean TRUE if it can handle the request, otherwise FALSE
+	 * @api
 	 */
 	public function canHandleRequest();
 
@@ -62,6 +64,7 @@ interface RequestHandlerInterface {
 	 * thrown.
 	 *
 	 * @return integer The priority of the request handler
+	 * @api
 	 */
 	public function getPriority();
 }

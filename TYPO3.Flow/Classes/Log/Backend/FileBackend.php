@@ -67,6 +67,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @param string $logFileURL URL pointing to the log file
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setLogFileURL($logFileURL) {
 		$this->logFileURL = $logFileURL;
@@ -81,6 +82,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @param boolean $flag TRUE if parent directories should be created
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setCreateParentDirectories($flag) {
 		$this->createParentDirectories = ($flag === TRUE);
@@ -92,6 +94,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function open() {
 		$this->severityLabels = array(
@@ -138,6 +141,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
@@ -156,6 +160,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * closing the log file or disconnecting from a database.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function close() {
 		fclose($this->fileHandle);
@@ -170,7 +175,6 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @return string text output
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	protected function getFormattedVarDump($var, $spaces=4) {
 		if ($spaces > 100) {

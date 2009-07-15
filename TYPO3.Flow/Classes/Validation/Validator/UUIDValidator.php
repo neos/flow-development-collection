@@ -47,6 +47,7 @@ class UUIDValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

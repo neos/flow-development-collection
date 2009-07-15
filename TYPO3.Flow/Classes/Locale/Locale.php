@@ -99,7 +99,6 @@ class Locale {
 	 * @param string $localeIdentifier A valid locale identifier according to UTS#35
 	 * @throws F3_FLOW3_Locale_Exception_InvalidLocaleIdentifier if the locale identifier is not valid
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($localeIdentifier) {
 		if (!is_string($localeIdentifier)) throw new \InvalidArgumentException('A locale identifier must be of type string, ' . gettype($localeIdentifier) . ' given.', 1221216120);
@@ -115,7 +114,6 @@ class Locale {
 	 *
 	 * @return string The language identifier
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getLanguage() {
 		return $this->language;
@@ -126,7 +124,6 @@ class Locale {
 	 *
 	 * @return string The script identifier
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getScript() {
 		return $this->script;
@@ -137,7 +134,6 @@ class Locale {
 	 *
 	 * @return string The region identifier
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getRegion() {
 		return $this->region;

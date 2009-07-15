@@ -50,7 +50,6 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder The security context holder
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectSecurityContextHolder(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
 		$this->securityContextHolder = $securityContextHolder;
@@ -62,7 +61,6 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectAuthenticationManager(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager) {
 		$this->authenticationManager = $authenticationManager;
@@ -73,7 +71,6 @@ class LoginController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * @return string The rendered login page
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function indexAction() {
 		$authenticationTokens = $this->securityContextHolder->getContext()->getAuthenticationTokensOfType('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword');

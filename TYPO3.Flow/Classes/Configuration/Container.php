@@ -62,7 +62,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @param array $fromArray If specified, the configuration container will be intially built from the given array structure and values
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($fromArray = NULL) {
 		if (is_array($fromArray)) {
@@ -76,7 +75,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param array $fromArray Array structure (and values) which are supposed to be converted into container properties and sub containers
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setFromArray(array $fromArray) {
 		foreach ($fromArray as $key => $value) {
@@ -94,7 +92,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return array This container converted to an array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getAsArray() {
 		$optionsArray = array();
@@ -109,7 +106,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function lock() {
 		$this->locked = TRUE;
@@ -125,7 +121,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return boolean TRUE if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function isLocked() {
 		return $this->locked;
@@ -137,7 +132,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param \F3\FLOW3\Configuration\Container $otherConfiguration The other configuration container
 	 * @return \F3\FLOW3\Configuration\Container This container
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function mergeWith(\F3\FLOW3\Configuration\Container $otherConfiguration) {
 		foreach ($otherConfiguration as $optionName => $newOptionValue) {
@@ -157,7 +151,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return integer Option count
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function count() {
 		return $this->iteratorCount;
@@ -168,7 +161,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed The current option's value
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function current() {
 		return current($this->options);
@@ -179,7 +171,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return string The current configuration option's key
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function key() {
 		return key($this->options);
@@ -190,7 +181,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return mixed Value of the next configuration option
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function next() {
 		$this->iteratorIndex ++;
@@ -202,7 +192,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function rewind() {
 		$this->iteratorIndex = 0;
@@ -214,7 +203,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 *
 	 * @return boolean If the current index is valid
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function valid() {
 		return $this->iteratorIndex < $this->iteratorCount;
@@ -226,7 +214,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $optionName
 	 * @return boolean TRUE if the offset exists otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetExists($optionName) {
 		return array_key_exists($optionName, $this->options);
@@ -238,7 +225,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $optionName Name of the option to retrieve
 	 * @return mixed The value
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetGet($optionName) {
 		return $this->__get($optionName);
@@ -251,7 +237,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $optionValue New value for the option
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetSet($optionName, $optionValue) {
 		$this->__set($optionName, $optionValue);
@@ -263,7 +248,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param mixed $optionName Name of the option to unset
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function offsetUnset($optionName) {
 		$this->__unset($optionName);
@@ -276,7 +260,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param string $optionName Name of the configuration option to retrieve
 	 * @return mixed The option value
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __get($optionName) {
 		if (!array_key_exists($optionName, $this->options)) {
@@ -294,7 +277,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @return void
 	 * @throws \F3\FLOW3\Configuration\Exception\ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __set($optionName, $optionValue) {
 		if ($this->locked && !array_key_exists($optionName, $this->options)) throw new \F3\FLOW3\Configuration\Exception\ContainerIsLocked('You tried to create a new configuration option "' . $optionName . '" but the configuration container is already locked. Maybe a spelling mistake?', 1206023011);
@@ -308,7 +290,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @param string $optionName Name of the configuration option to check
 	 * @return boolean TRUE if the option is set, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __isset($optionName) {
 		return array_key_exists($optionName, $this->options);
@@ -321,7 +302,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @return void
 	 * @throws \F3\FLOW3\Configuration\Exception\ContainerIsLocked if the container is locked
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __unset($optionName) {
 		if ($this->locked) throw new \F3\FLOW3\Configuration\Exception\ContainerIsLocked('You tried to unset the configuration option "' . $optionName . '" but the configuration container is locked.', 1206023012);
@@ -337,7 +317,6 @@ class Container implements \Countable, \Iterator, \ArrayAccess {
 	 * @return \F3\FLOW3\Configuration\Container This configuration container object
 	 * @throws \F3\FLOW3\Configuration\Exception if $methodName does not start with "set" or number of arguments are empty
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function __call($methodName, array $arguments) {
 		if (substr($methodName, 0, 3) != 'set') {

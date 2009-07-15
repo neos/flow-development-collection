@@ -42,7 +42,6 @@ interface ResourceInterface {
 	 * Returns the type of source the resource originates
 	 *
 	 * @return string Type, e.g. file, http, ftp, ...
-	 * @internal
 	 */
 	public function getDataSourceType();
 
@@ -50,7 +49,6 @@ interface ResourceInterface {
 	 * The URI representing the resource
 	 *
 	 * @return \F3\FLOW3\Property\DataType\URI
-	 * @internal
 	 */
 	public function getURI();
 
@@ -58,7 +56,6 @@ interface ResourceInterface {
 	 * Returns the name the resource was obtained from
 	 *
 	 * @return string
-	 * @internal
 	 */
 	public function getName();
 
@@ -66,7 +63,6 @@ interface ResourceInterface {
 	 * Returns the path the resource was obtained from
 	 *
 	 * @return string
-	 * @internal
 	 */
 	public function getPath();
 
@@ -74,7 +70,6 @@ interface ResourceInterface {
 	 * Returns the path the resource was obtained from including file name
 	 *
 	 * @return string
-	 * @internal
 	 */
 	public function getPathAndFileName();
 
@@ -82,7 +77,6 @@ interface ResourceInterface {
 	 * Returns the media type of the resource
 	 *
 	 * @return string
-	 * @internal
 	 */
 	public function getMediaType();
 
@@ -90,7 +84,6 @@ interface ResourceInterface {
 	 * Returns the MIME type of the resource
 	 *
 	 * @return string
-	 * @internal
 	 */
 	public function getMIMEType();
 
@@ -99,7 +92,6 @@ interface ResourceInterface {
 	 * Returns the content represented by the resource object
 	 *
 	 * @return string|binary
-	 * @internal
 	 */
 	public function getContent();
 }

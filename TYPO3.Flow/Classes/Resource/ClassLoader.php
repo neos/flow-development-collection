@@ -58,7 +58,6 @@ class ClassLoader {
 	 * @param string $className Name of the class/interface to load
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function loadClass($className) {
 		if (isset($this->specialClassNamesAndPaths[$className])) {
@@ -80,7 +79,6 @@ class ClassLoader {
 	 * @param array $packages An array of \F3\FLOW3\Package\Package objects
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setPackages(array $packages) {
 		$this->packages = $packages;
@@ -95,7 +93,6 @@ class ClassLoader {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see \F3\FLOW3\Resource\Manager
-	 * @internal
 	 */
 	public function setSpecialClassNameAndPath($className, $path) {
 		$this->specialClassNamesAndPaths[$className] = $path;

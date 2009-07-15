@@ -124,7 +124,6 @@ class Route {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
@@ -137,7 +136,6 @@ class Route {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <rober@typo3.org>
-	 * @internal
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -149,7 +147,6 @@ class Route {
 	 * @param string $name The Route name
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setName($name) {
 		$this->name = $name;
@@ -160,7 +157,6 @@ class Route {
 	 *
 	 * @return string Route name.
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getName() {
 		return $this->name;
@@ -173,7 +169,6 @@ class Route {
 	 * @param array $defaults
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setDefaults(array $defaults) {
 		$this->defaults = $defaults;
@@ -184,7 +179,6 @@ class Route {
 	 *
 	 * @return array Route defaults
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getDefaults() {
 		return $this->defaults;
@@ -196,7 +190,6 @@ class Route {
 	 * @param string $uriPattern
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setUriPattern($uriPattern) {
 		if (!is_string($uriPattern)) throw new \InvalidArgumentException('URI Pattern must be of type string, ' . gettype($uriPattern) . ' given.', 1223499724);
@@ -209,7 +202,6 @@ class Route {
 	 *
 	 * @return string the URI pattern
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getUriPattern() {
 		return $this->uriPattern;
@@ -229,7 +221,6 @@ class Route {
 	 * @param array $routePartsConfiguration Route Parts configuration options
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function setRoutePartsConfiguration(array $routePartsConfiguration) {
 		$this->routePartsConfiguration = $routePartsConfiguration;
@@ -239,7 +230,6 @@ class Route {
 	 *
 	 * @return array $routePartsConfiguration
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getRoutePartsConfiguration() {
 		return $this->routePartsConfiguration;
@@ -251,7 +241,6 @@ class Route {
 	 * @return array An array of Route Parts and their values for further handling by the Router
 	 * @see \F3\FLOW3\MVC\Web\Routing\Router
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getMatchResults() {
 		return $this->matchResults;
@@ -262,7 +251,6 @@ class Route {
 	 *
 	 * @return string A string containing the corresponding uri (excluding protocol and host)
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getMatchingURI() {
 		return $this->matchingURI;
@@ -278,7 +266,6 @@ class Route {
 	 * @return boolean TRUE if this Route corresponds to the given $requestPath, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getMatchResults()
-	 * @internal
 	 */
 	public function matches($requestPath) {
 		$this->matchResults = NULL;
@@ -340,7 +327,6 @@ class Route {
 	 * @return boolean TRUE if this Route corresponds to the given $routeValues, otherwise FALSE
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getMatchingURI()
-	 * @internal
 	 */
 	public function resolves(array $routeValues) {
 		$this->matchingURI = NULL;
@@ -412,7 +398,6 @@ class Route {
 	 *
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function parse() {
 		if ($this->isParsed || $this->uriPattern === NULL || $this->uriPattern === '') {

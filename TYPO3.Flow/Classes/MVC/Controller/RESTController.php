@@ -59,6 +59,7 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @param \F3\FLOW3\MVC\Web\Response $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$this->arguments->addNewArgument('id', 'UUID', FALSE);
@@ -71,7 +72,6 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function resolveActionMethodName() {
 		if ($this->request->getControllerActionName() === 'index') {

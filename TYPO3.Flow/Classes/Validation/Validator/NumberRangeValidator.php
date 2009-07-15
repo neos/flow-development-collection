@@ -49,6 +49,7 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 	 * @return boolean TRUE if the value is within the range, otherwise FALSE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

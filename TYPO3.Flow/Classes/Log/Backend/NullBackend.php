@@ -44,6 +44,7 @@ class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function open() {}
 
@@ -58,6 +59,7 @@ class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function append($message, $severity = 1, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {}
 
@@ -66,6 +68,7 @@ class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function close() {}
 

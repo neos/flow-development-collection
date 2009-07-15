@@ -53,6 +53,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param string $splitString
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	public function setSplitString($splitString) {
 		$this->splitString = $splitString;
@@ -90,6 +91,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param string $requestPath The request path to be matched
 	 * @return string value to match, or an empty string if $requestPath is empty or split string was not found
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function findValueToMatch($requestPath) {
 		if (!isset($requestPath) || $requestPath === '' || $requestPath[0] === '/') {
@@ -116,6 +118,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param string $value value to match
 	 * @return boolean TRUE if value could be matched successfully, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function matchValue($value) {
 		if ($value === NULL || $value === '') {
@@ -133,6 +136,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param string $valueToMatch The matching value
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function removeMatchingPortionFromRequestPath(&$requestPath, $valueToMatch) {
 		if ($valueToMatch !== NULL && $valueToMatch !== '') {
@@ -168,6 +172,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
 	 * @return string value to resolve.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function findValueToResolve(array $routeValues) {
 		if (!isset($routeValues[$this->name])) {
@@ -184,6 +189,7 @@ class DynamicRoutePart extends \F3\FLOW3\MVC\Web\Routing\AbstractRoutePart imple
 	 * @param string $value value to resolve
 	 * @return boolean TRUE if value could be resolved successfully, otherwise FALSE.
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function resolveValue($value) {
 		if ($value === NULL || is_object($value)) {

@@ -45,7 +45,6 @@ interface RouterInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\Web\Request $request
 	 * @return boolean
-	 * @internal
 	 */
 	public function route(\F3\FLOW3\MVC\Web\Request $request);
 
@@ -55,7 +54,6 @@ interface RouterInterface {
 	 *
 	 * @param array $routeValues
 	 * @return string URI
-	 * @internal
 	 */
 	public function resolve(array $routeValues);
 }

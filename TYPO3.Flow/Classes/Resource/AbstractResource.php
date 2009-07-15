@@ -70,7 +70,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 * @param \F3\FLOW3\Property\DataType\URI $URI
 	 * @return boolean TRUE or FALSE depending on import success
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function importFromURI(\F3\FLOW3\Property\DataType\URI $URI) {
 		return FALSE;
@@ -81,7 +80,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string Type, e.g. file, http, ftp, ...
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getDataSourceType() {
 		return $this->URI->getScheme();
@@ -92,7 +90,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return \F3\FLOW3\Property\DataType\URI
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getURI() {
 		return $this->URI;
@@ -103,7 +100,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getName() {
 		return $this->name;
@@ -114,7 +110,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getPath() {
 		return $this->path;
@@ -125,7 +120,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function getPathAndFileName() {
 		return \F3\FLOW3\Utility\Files::concatenatePaths(array($this->path, $this->name));
@@ -136,7 +130,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getMediaType() {
 		return $this->mediaType;
@@ -147,7 +140,6 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getMIMEType() {
 		return $this->mimeType;

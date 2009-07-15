@@ -39,4 +39,5 @@ namespace F3\FLOW3\Log;
  */
 interface SystemLoggerInterface extends \F3\FLOW3\Log\LoggerInterface {
 }
+
 ?>

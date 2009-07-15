@@ -50,6 +50,7 @@ class RegularExpressionValidator extends \F3\FLOW3\Validation\Validator\Abstract
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isValid($value) {
 		$this->errors = array();

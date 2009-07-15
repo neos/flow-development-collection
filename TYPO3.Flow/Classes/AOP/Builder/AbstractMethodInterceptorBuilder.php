@@ -50,7 +50,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -77,7 +76,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $methodParametersDocumentation Passed by reference, will contain the DocComment for the given method
 	 * @return string A comma speparated list of parameters
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function buildMethodParametersCode($className, $methodName, $addTypeAndDefaultValue, &$methodParametersDocumentation = '') {
 		$methodParametersCode = '';
@@ -143,7 +141,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $methodName Name of the method to create arguments array code for
 	 * @return string The generated code to be used in an "array()" definition
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildMethodArgumentsArrayCode($className, $methodName) {
 		if ($className === NULL || $methodName === NULL) return '';
@@ -165,6 +162,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $className Name of the class the method is declared in
 	 * @return string The generated paramters code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	protected function buildSavedConstructorParametersCode($className) {
 		if ($className === NULL) return '';
@@ -188,7 +186,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $targetClassName Name of the target class
 	 * @return string PHP code to be used in the method interceptor
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildAdvicesCode(array $groupedAdvices, $methodName, $targetClassName) {
 		$advicesCode = '';

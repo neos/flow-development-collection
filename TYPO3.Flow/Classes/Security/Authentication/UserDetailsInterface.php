@@ -44,7 +44,6 @@ interface UserDetailsInterface {
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\UserDetailsInterface $userDetails The UserDetails object that should be compared with $this.
 	 * @return boolean TRUE if the two UserDetails are equal.
-	 * @internal
 	 */
 	public function compare(\F3\FLOW3\Security\Authentication\UserDetailsInterface $userDetails);
 
@@ -52,7 +51,6 @@ interface UserDetailsInterface {
 	 * Returns the string representation of this user
 	 *
 	 * @return string The string representation of this user.
-	 * @internal
 	 */
 	public function getName();
 
@@ -60,7 +58,6 @@ interface UserDetailsInterface {
 	 * Returns an array of \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfaces (e.g. Roles), the user currently has.
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfaces (e.g. Roles), the user currently has.
-	 * @internal
 	 */
 	public function getAuthorities();
 }

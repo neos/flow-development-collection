@@ -43,6 +43,7 @@ final class StandardView extends \F3\FLOW3\MVC\View\AbstractView {
 	 * @return string The rendered view
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
+	 * @api
 	 */
 	public function render() {
 		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);

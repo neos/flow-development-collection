@@ -49,7 +49,6 @@ class ProviderResolver {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -63,7 +62,6 @@ class ProviderResolver {
 	 * @throws \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function resolveProviderClass($providerName) {
 		$resolvedObjectName = $this->objectManager->getCaseSensitiveObjectName($providerName);

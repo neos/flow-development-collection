@@ -90,6 +90,7 @@ class FileMonitor {
 	 *
 	 * @param string $identifier Name of this specific file monitor - will be used in the signals emitted by this monitor.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($identifier) {
 		$this->identifier = $identifier;
@@ -101,7 +102,6 @@ class FileMonitor {
 	 * @param F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy The strategy to use for detecting changes
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectChangeDetectionStrategy(\F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface $changeDetectionStrategy) {
 		$this->changeDetectionStrategy = $changeDetectionStrategy;
@@ -114,7 +114,6 @@ class FileMonitor {
 	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher The Signal Slot Dispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSignalSlotDispatcher(\F3\FLOW3\SignalSlot\Dispatcher $signalSlotDispatcher) {
 		$this->signalSlotDispatcher = $signalSlotDispatcher;
@@ -126,7 +125,6 @@ class FileMonitor {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -138,7 +136,6 @@ class FileMonitor {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -149,7 +146,6 @@ class FileMonitor {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		if ($this->cache->has('directoriesAndFiles')) {
@@ -164,6 +160,7 @@ class FileMonitor {
 	 * @param string $pathAndFilename Absolute path and filename of the file to monitor
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function monitorFile($pathAndFilename) {
 		if (!is_string($pathAndFilename)) throw new \InvalidArgumentException('String expected, ' . gettype($pathAndFilename), ' given.', 1231171809);
@@ -179,6 +176,7 @@ class FileMonitor {
 	 * @param string $path Absolute path of the directory to monitor
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function monitorDirectory($path) {
 		if (!is_string($path)) throw new \InvalidArgumentException('String expected, ' . gettype($path), ' given.', 1231171810);
@@ -193,6 +191,7 @@ class FileMonitor {
 	 *
 	 * @return array A list of paths and file names of monitored files
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMonitoredFiles() {
 		return $this->monitoredFiles;
@@ -203,6 +202,7 @@ class FileMonitor {
 	 *
 	 * @return array A list of paths of monitored directories
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMonitoredDirectories() {
 		return $this->monitoredDirectories;
@@ -214,6 +214,7 @@ class FileMonitor {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function detectChanges() {
 		$changedFiles = array();
@@ -253,7 +254,6 @@ class FileMonitor {
 	 * @param array $pathAndFilenames A list of full path and filenames of files to check
 	 * @return array An array of changed files (key = path and filenmae) and their status (value)
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function detectChangedFiles(array $pathAndFilenames) {
 		$changedFiles = array();
@@ -274,6 +274,7 @@ class FileMonitor {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
+	 * @api
 	 */
 	protected function emitFilesHaveChanged($monitorIdentifier, array $changedFiles) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
@@ -287,6 +288,7 @@ class FileMonitor {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
+	 * @api
 	 */
 	protected function emitDirectoriesHaveChanged($monitorIdentifier, array $changedDirectories) {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, func_get_args());
@@ -297,7 +299,6 @@ class FileMonitor {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function shutdownObject() {
 		if ($this->directoriesChanged === TRUE) {

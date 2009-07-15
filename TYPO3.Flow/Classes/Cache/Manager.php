@@ -84,7 +84,6 @@ class Manager {
 	 * @param array $cacheConfigurations The cache configurations to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setCacheConfigurations(array $cacheConfigurations) {
 		foreach ($cacheConfigurations as $identifier => $configuration) {
@@ -99,7 +98,6 @@ class Manager {
 	 * @param \F3\FLOW3\Cache\Factory $cacheFactory The cache factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectCacheFactory(\F3\FLOW3\Cache\Factory $cacheFactory) {
 		$this->cacheFactory = $cacheFactory;
@@ -112,7 +110,6 @@ class Manager {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -123,7 +120,6 @@ class Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initialize() {
 		foreach ($this->cacheConfigurations as $identifier => $configuration) {
@@ -143,6 +139,7 @@ class Manager {
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception\DuplicateIdentifier if a cache with the given identifier has already been registered.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function registerCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		$identifier = $cache->getIdentifier();
@@ -157,6 +154,7 @@ class Manager {
 	 * @return \F3\FLOW3\Cache\Frontend\FrontendInterface The specified cache frontend
 	 * @throws \F3\FLOW3\Cache\Exception\NoSuchCache
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCache($identifier) {
 		if (!isset($this->caches[$identifier])) throw new \F3\FLOW3\Cache\Exception\NoSuchCache('A cache with identifier "' . $identifier . '" does not exist.', 1203699034);
@@ -169,6 +167,7 @@ class Manager {
 	 * @param string $identifier The identifier of the cache
 	 * @return boolean TRUE if a cache with the given identifier exists, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function hasCache($identifier) {
 		return isset($this->caches[$identifier]);
@@ -179,6 +178,7 @@ class Manager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flushCaches() {
 		$this->systemLogger->log('Flushing all registered caches.', LOG_NOTICE);
@@ -194,6 +194,7 @@ class Manager {
 	 * @param string $tag Tag to search for
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flushCachesByTag($tag) {
 		$this->systemLogger->log(sprintf('Flushing caches by tag "%s".', $tag), LOG_NOTICE);

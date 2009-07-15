@@ -71,7 +71,6 @@ class ConfigurationProperty {
 	 * @param  integer $type Type of the property - one of the PROPERTY_TYPE_* constants
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		$this->set($name, $value, $type, $objectConfiguration);
@@ -86,7 +85,6 @@ class ConfigurationProperty {
 	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration If $type is OBJECT, a custom object configuration may be specified
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function set($name, $value, $type = self::PROPERTY_TYPES_STRAIGHTVALUE, $objectConfiguration = NULL) {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string', 1168003690);
@@ -103,7 +101,6 @@ class ConfigurationProperty {
 	 *
 	 * @return string Name of the property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getName() {
 		return $this->name;
@@ -114,7 +111,6 @@ class ConfigurationProperty {
 	 *
 	 * @return mixed Value of the property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getValue() {
 		return $this->value;
@@ -125,7 +121,6 @@ class ConfigurationProperty {
 	 *
 	 * @return integer Type of the property
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getType() {
 		return $this->type;
@@ -136,7 +131,6 @@ class ConfigurationProperty {
 	 *
 	 * @return \F3\FLOW3\Object\Configuration\Configuration The object configuration or NULL
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getObjectConfiguration() {
 		return $this->objectConfiguration;

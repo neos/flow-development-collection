@@ -55,6 +55,7 @@ class Warning {
 	 * @param string $message: An english error message which is used if no other error message can be resolved
 	 * @param integer $code: A unique error code
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($message, $code) {
 		$this->message = $message;
@@ -65,6 +66,7 @@ class Warning {
 	 * Returns the error message
 	 * @return string The error message
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getMessage() {
 		return $this->message;
@@ -74,6 +76,7 @@ class Warning {
 	 * Returns the error code
 	 * @return string The error code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getCode() {
 		return $this->code;

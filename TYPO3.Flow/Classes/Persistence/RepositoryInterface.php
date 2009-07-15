@@ -44,6 +44,7 @@ interface RepositoryInterface {
 	 *
 	 * @param object $object The object to add
 	 * @return void
+	 * @api
 	 */
 	public function add($object);
 
@@ -52,6 +53,7 @@ interface RepositoryInterface {
 	 *
 	 * @param object $object The object to remove
 	 * @return void
+	 * @api
 	 */
 	public function remove($object);
 
@@ -60,6 +62,7 @@ interface RepositoryInterface {
 	 * the storage layer.
 	 *
 	 * @return array An array of objects
+	 * @api
 	 */
 	public function getAddedObjects();
 
@@ -68,6 +71,7 @@ interface RepositoryInterface {
 	 * had been persisted to the storage layer before.
 	 *
 	 * @return array
+	 * @api
 	 */
 	public function getRemovedObjects();
 
@@ -75,6 +79,7 @@ interface RepositoryInterface {
 	 * Returns all objects of this repository.
 	 *
 	 * @return array An array of objects, empty if no objects found
+	 * @api
 	 */
 	public function findAll();
 
@@ -83,6 +88,7 @@ interface RepositoryInterface {
 	 *
 	 * @param string $uuid The identifier of the object to find
 	 * @return object The matching object if found, otherwise NULL
+	 * @api
 	 */
 	public function findByUUID($uuid);
 

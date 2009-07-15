@@ -43,7 +43,6 @@ class AccessGrant implements \F3\FLOW3\Security\Authorization\InterceptorInterfa
 	 *
 	 * @return boolean Always returns TRUE
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function invoke() {
 		return TRUE;

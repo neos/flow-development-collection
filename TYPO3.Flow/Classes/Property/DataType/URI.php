@@ -99,6 +99,7 @@ class URI {
 	 * @param string String representation of the URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($URIString) {
 		if (!is_string($URIString)) throw new \InvalidArgumentException('The URI must be a valid string.', 1176550571);
@@ -123,6 +124,7 @@ class URI {
 	 *
 	 * @return string URI scheme / protocol
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getScheme() {
 		return $this->scheme;
@@ -134,6 +136,7 @@ class URI {
 	 * @param  string $scheme The scheme. Allowed values are "http" and "https"
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setScheme($scheme) {
 		if (preg_match(self::PATTERN_MATCH_SCHEME, $scheme) === 1) {
@@ -148,6 +151,7 @@ class URI {
 	 *
 	 * @return string User name of the login
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getUsername() {
 		return $this->username;
@@ -159,6 +163,7 @@ class URI {
 	 * @param string $username User name of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setUsername($username) {
 		if (preg_match(self::PATTERN_MATCH_USERNAME, $username) === 1) {
@@ -173,6 +178,7 @@ class URI {
 	 *
 	 * @return string Password of the login
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPassword() {
 		return $this->password;
@@ -184,6 +190,7 @@ class URI {
 	 * @param string $password Password of the login
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setPassword($password) {
 		if (preg_match(self::PATTERN_MATCH_PASSWORD, $password) === 1) {
@@ -198,6 +205,7 @@ class URI {
 	 *
 	 * @return string The hostname(s)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHost() {
 		return $this->host;
@@ -209,6 +217,7 @@ class URI {
 	 * @param string $host The hostname(s)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setHost($host) {
 		if (preg_match(self::PATTERN_MATCH_HOST, $host) === 1) {
@@ -223,6 +232,7 @@ class URI {
 	 *
 	 * @return integer Port
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPort() {
 		return $this->port;
@@ -234,6 +244,7 @@ class URI {
 	 * @param string $port The port number
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setPort($port) {
 		if (preg_match(self::PATTERN_MATCH_PORT, $port) === 1) {
@@ -248,6 +259,7 @@ class URI {
 	 *
 	 * @return string URI path
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPath() {
 		return $this->path;
@@ -259,6 +271,7 @@ class URI {
 	 * @param string $path The path
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setPath($path) {
 		if (preg_match(self::PATTERN_MATCH_PATH, $path) === 1) {
@@ -273,6 +286,7 @@ class URI {
 	 *
 	 * @return string The query part
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getQuery() {
 		return $this->query;
@@ -283,6 +297,7 @@ class URI {
 	 *
 	 * @param string $query The query string.
 	 * @return void
+	 * @api
 	 */
 	public function setQuery($query) {
 		$this->query = $query;
@@ -294,6 +309,7 @@ class URI {
 	 *
 	 * @return array Associative array of arguments and values of the URI's query part
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getArguments() {
 		return $this->arguments;
@@ -304,6 +320,7 @@ class URI {
 	 *
 	 * @return string The fragment
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getFragment() {
 		return $this->fragment;
@@ -315,6 +332,7 @@ class URI {
 	 * @param string $fragment The fragment (aka "anchor")
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setFragment($fragment) {
 		if (preg_match(self::PATTERN_MATCH_FRAGMENT, $fragment) === 1) {
@@ -329,6 +347,7 @@ class URI {
 	 *
 	 * @return string This URI as a string
 	 * @author Robert Lemke	<robert@typo3.org>
+	 * @api
 	 */
 	public function __toString() {
 		$URIString = '';

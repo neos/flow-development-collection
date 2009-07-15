@@ -120,6 +120,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 * @return void
 	 * @throws \InvalidArgumentException if the specified status code is not valid
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setStatus($code, $message = NULL) {
 		if (!is_int($code)) throw new \InvalidArgumentException('The HTTP status code must be of type integer, ' . gettype($code) . ' given.', 1220526013);
@@ -134,6 +135,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 *
 	 * @return string The status code and status message, eg. "404 Not Found"
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getStatus() {
 		return $this->statusCode . ' ' . $this->statusMessage;
@@ -147,6 +149,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 * @param boolean $replaceExistingHeader If a header with the same name should be replaced. Default is TRUE.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setHeader($name, $value, $replaceExistingHeader = TRUE) {
 		if (strtoupper(substr($name, 0, 4)) === 'HTTP') throw new \InvalidArgumentException('The HTTP status header must be set via setStatus().', 1220541963);
@@ -162,6 +165,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 *
 	 * @return string The HTTP headers
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getHeaders() {
 		$preparedHeaders = array();
@@ -183,6 +187,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function sendHeaders() {
 		if (headers_sent() === TRUE) return;
@@ -196,6 +201,7 @@ class Response extends \F3\FLOW3\MVC\Response {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function send() {
 		$this->sendHeaders();

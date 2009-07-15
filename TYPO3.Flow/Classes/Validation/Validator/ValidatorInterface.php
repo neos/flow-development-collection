@@ -50,6 +50,7 @@ interface ValidatorInterface {
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
+	 * @api
 	 */
 	public function isValid($value);
 
@@ -58,6 +59,7 @@ interface ValidatorInterface {
 	 *
 	 * @param array $validationOptions The validation options
 	 * @return void
+	 * @api
 	 */
 	public function setOptions(array $validationOptions);
 
@@ -65,6 +67,7 @@ interface ValidatorInterface {
 	 * Returns an array of errors which occurred during the last isValid() call.
 	 *
 	 * @return array An array of \F3\FLOW3\Validation\Error objects or an empty array if no errors occurred.
+	 * @api
 	 */
 	public function getErrors();
 }

@@ -46,7 +46,6 @@ interface ContextHolderInterface {
 	 *
 	 * @param \F3\FLOW3\Security\ContextInterface $securityContext The current security context
 	 * @return void
-	 * @internal
 	 */
 	public function setContext(\F3\FLOW3\Security\Context $securityContext);
 
@@ -55,7 +54,6 @@ interface ContextHolderInterface {
 	 *
 	 * @return \F3\FLOW3\Security\ContextInterface The current security context
 	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available
-	 * @internal
 	 */
 	public function getContext();
 
@@ -66,7 +64,6 @@ interface ContextHolderInterface {
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
-	 * @internal
 	 */
 	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request);
 
@@ -74,7 +71,6 @@ interface ContextHolderInterface {
 	 * Clears the current security context.
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function clearContext();
 }

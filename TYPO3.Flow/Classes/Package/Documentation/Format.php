@@ -59,7 +59,6 @@ class Format {
 	 * @param string $formatName Name of the documentation format
 	 * @param string $formatPath Absolute path to the documentation format
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function __construct($formatName, $formatPath) {
 		$this->formatName = $formatName;
@@ -72,7 +71,6 @@ class Format {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -83,6 +81,7 @@ class Format {
 	 *
 	 * @return string The name of this documentation format
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getFormatName() {
 		return $this->formatName;
@@ -93,6 +92,7 @@ class Format {
 	 *
 	 * @return string Path to the directory of this documentation format
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getFormatPath() {
 		return $this->formatPath;
@@ -103,6 +103,7 @@ class Format {
 	 *
 	 * @return array Array of string language codes
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getAvailableLanguages() {
 		$languages = array();

@@ -45,7 +45,6 @@ class PHPSource implements \F3\FLOW3\Configuration\Source\SourceInterface {
 	 * @param string $pathAndFilename Full path and file name of the file to load, excluding the file extension (ie. ".php")
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function load($pathAndFilename) {
 		$c = new \F3\FLOW3\Configuration\Container();

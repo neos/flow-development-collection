@@ -55,7 +55,6 @@ class RouterCachingAspect {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function injectFindMatchResultsCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->findMatchResultsCache = $cache;
@@ -67,7 +66,6 @@ class RouterCachingAspect {
 	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $cache
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function injectResolveCache(\F3\FLOW3\Cache\Frontend\StringFrontend $cache) {
 		$this->resolveCache = $cache;
@@ -80,7 +78,6 @@ class RouterCachingAspect {
 	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return array Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	public function cacheMatchingCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$requestPath = $joinPoint->getMethodArgument('requestPath');
@@ -105,7 +102,6 @@ class RouterCachingAspect {
 	 * @return string Result of the target method
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function cacheResolveCall(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$routeValues = $joinPoint->getMethodArgument('routeValues');

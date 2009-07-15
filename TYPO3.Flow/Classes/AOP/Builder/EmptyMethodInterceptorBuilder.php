@@ -48,7 +48,6 @@ class EmptyMethodInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractMethod
 	 * @param array
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function build($methodName, array $interceptedMethods, $targetClassName) {
 		if ($methodName === '__construct') throw new \F3\FLOW3\AOP\Exception('The ' . __CLASS__ . ' cannot build constructor interceptor code.', 1173112554);

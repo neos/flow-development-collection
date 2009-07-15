@@ -62,7 +62,6 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 * @param  \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($aspectObjectName, $adviceMethodName, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->aspectObjectName = $aspectObjectName;
@@ -76,7 +75,6 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$adviceObject = $this->objectManager->getObject($this->aspectObjectName);
@@ -89,7 +87,6 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 *
 	 * @return stringThe object name of the aspect
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getAspectObjectName() {
 		return $this->aspectObjectName;
@@ -100,7 +97,6 @@ class AfterThrowingAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	 *
 	 * @return string The name of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getAdviceMethodName() {
 		return $this->adviceMethodName;

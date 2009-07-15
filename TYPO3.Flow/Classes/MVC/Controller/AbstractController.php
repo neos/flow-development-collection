@@ -66,7 +66,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * @var \F3\FLOW3\Validation\ValidatorResolver
-	 * @internal
 	 */
 	protected $validatorResolver;
 
@@ -104,7 +103,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * @var \F3\FLOW3\Session\SessionInterface
-	 * @internal
 	 */
 	protected $session;
 
@@ -113,7 +111,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the Object Factory
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->arguments = $objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
@@ -126,7 +123,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param array $settings Settings container of the current package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		$this->settings = $settings;
@@ -138,7 +134,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -150,7 +145,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper The property mapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
@@ -162,7 +156,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
@@ -174,7 +167,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\Session\SessionInterface $session
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
 		$this->session = $session;
@@ -190,6 +182,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		foreach ($this->supportedRequestTypes as $supportedRequestType) {
@@ -206,6 +199,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType if the controller doesn't support the current request type
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
@@ -227,7 +221,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return \F3\FLOW3\MVC\Controller\ControllerContext ControllerContext to be passed to the view
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	protected function buildControllerContext() {
 		$controllerContext = $this->objectFactory->create('F3\FLOW3\MVC\Controller\ControllerContext');
@@ -253,6 +246,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function forward($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL) {
 		$this->arguments->removeAll();
@@ -280,6 +274,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function redirect($actionName, $controllerName = NULL, $packageKey = NULL, array $arguments = NULL, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1238101344);
@@ -304,6 +299,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function redirectToURI($uri, $delay = 0, $statusCode = 303) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('redirect() only supports web requests.', 1220539734);
@@ -327,6 +323,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @throws \F3\FLOW3\MVC\Exception\UnsupportedRequestType If the request is not a web request
 	 * @throws \F3\FLOW3\MVC\Exception\StopAction
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function throwStatus($statusCode, $statusMessage = NULL, $content = NULL) {
 		if (!$this->request instanceof \F3\FLOW3\MVC\Web\Request) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType('throwStatus() only supports web requests.', 1220539739);
@@ -343,7 +340,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function initializeControllerArgumentsBaseValidators() {
 		foreach ($this->arguments as $argument) {
@@ -357,7 +353,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function mapRequestArgumentsToControllerArguments() {
 		$optionalPropertyNames = array();
@@ -379,6 +374,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * @param mixed $message anything serializable, should be "stringy"
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function pushFlashMessage($message) {
 		if (!is_string($message)) throw new \InvalidArgumentException('The flash message must be string, ' . gettype($message) . ' given.', 1243258395);
@@ -393,6 +389,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return array an array with flash messages or NULL if none available
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function popFlashMessages() {
 		$queuedFlashMessages = $this->getFlashMessagesFromSession();
@@ -406,7 +403,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 *
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function getFlashMessagesFromSession() {
 		$flashMessages = $this->session->getData('FLOW3_AbstractController_flashMessages');

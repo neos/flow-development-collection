@@ -46,7 +46,6 @@ interface AdviceInterface {
 	 *
 	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method
 	 * @return Optionally the result of the advice method
-	 * @internal
 	 */
 	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
 
@@ -54,7 +53,6 @@ interface AdviceInterface {
 	 * Returns the aspect's object name which has been passed to the constructor
 	 *
 	 * @return string The object name of the aspect
-	 * @internal
 	 */
 	public function getAspectObjectName();
 
@@ -62,7 +60,6 @@ interface AdviceInterface {
 	 * Returns the advice's method name which has been passed to the constructor
 	 *
 	 * @return string The name of the advice method
-	 * @internal
 	 */
 	public function getAdviceMethodName();
 }

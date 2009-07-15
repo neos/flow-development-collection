@@ -59,6 +59,7 @@ interface LoggerInterface {
 	 *
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
+	 * @api
 	 */
 	public function addBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
 
@@ -69,6 +70,7 @@ interface LoggerInterface {
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend The backend to remove
 	 * @return void
 	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
+	 * @api
 	 */
 	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend);
 
@@ -82,6 +84,7 @@ interface LoggerInterface {
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
+	 * @api
 	 */
 	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 

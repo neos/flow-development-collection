@@ -67,7 +67,6 @@ class LockManager {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -79,7 +78,6 @@ class LockManager {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -90,7 +88,6 @@ class LockManager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		$this->lockPathAndFilename = $this->environment->getPathToTemporaryDirectory() . 'FLOW3.lock';
@@ -108,6 +105,7 @@ class LockManager {
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isSiteLocked() {
 		return $this->siteLocked;
@@ -118,6 +116,7 @@ class LockManager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function lockSite() {
 		$this->systemLogger->log('Locking site. Lock file: ' . $this->lockPathAndFilename, LOG_NOTICE);
@@ -130,6 +129,7 @@ class LockManager {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function unlockSite() {
 		if ($this->siteLocked === TRUE) {

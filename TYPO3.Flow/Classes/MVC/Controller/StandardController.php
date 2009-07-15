@@ -62,7 +62,6 @@ class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);

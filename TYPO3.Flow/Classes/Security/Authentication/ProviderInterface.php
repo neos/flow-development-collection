@@ -47,7 +47,6 @@ interface ProviderInterface {
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token);
 
@@ -55,7 +54,6 @@ interface ProviderInterface {
 	 * Returns the classnames of the tokens this provider is responsible for.
 	 *
 	 * @return array The classname of the token this provider is responsible for
-	 * @internal
 	 */
 	public function getTokenClassNames();
 
@@ -64,7 +62,6 @@ interface ProviderInterface {
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
-	 * @internal
 	 */
 	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken);
 }

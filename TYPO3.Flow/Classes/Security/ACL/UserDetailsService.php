@@ -43,7 +43,6 @@ class UserDetailsService implements \F3\FLOW3\Security\Authentication\UserDetail
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The authentication token to get the user details for
 	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface The user details for the given token
-	 * @internal
 	 */
 	public function loadUserDetails(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		//Uses the credentials in the token to figure out which user should be loaded

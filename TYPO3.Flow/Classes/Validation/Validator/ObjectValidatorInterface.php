@@ -44,6 +44,7 @@ interface ObjectValidatorInterface extends \F3\FLOW3\Validation\Validator\Valida
 	 *
 	 * @param object $object The object to be checked
 	 * @return boolean TRUE if this validator can validate instances of the given object or FALSE if it can't
+	 * @api
 	 */
 	public function canValidate($object);
 
@@ -56,6 +57,7 @@ interface ObjectValidatorInterface extends \F3\FLOW3\Validation\Validator\Valida
 	 * @param string $propertyName Name of the property to validate
 	 * @return boolean TRUE if the property value is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isPropertyValid($object, $propertyName);
 }

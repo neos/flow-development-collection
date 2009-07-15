@@ -67,7 +67,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Utility\Environment $environment
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
@@ -79,7 +78,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -89,7 +87,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Initializes the default cache directory
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function initializeObject() {
 		if ($this->cacheDirectory === '') {
@@ -108,6 +105,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist, is not writable or could not be created.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setCacheDirectory($cacheDirectory) {
 		if ($cacheDirectory{strlen($cacheDirectory)-1} !== '/') {
@@ -131,6 +129,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return string Full path of the cache directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getCacheDirectory() {
 		return $this->cacheDirectory;
@@ -146,6 +145,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1204111375);
@@ -191,6 +191,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function get($entryIdentifier) {
 		$pathAndFilename = $this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier;
@@ -203,6 +204,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier
 	 * @return boolean TRUE if such an entry exists, FALSE if not
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function has($entryIdentifier) {
 		return !$this->isCacheFileExpired($this->renderCacheEntryPath($entryIdentifier) . $entryIdentifier);
@@ -215,6 +217,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function remove($entryIdentifier) {
 		$this->systemLogger->log(sprintf('Cache %s: removing entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
@@ -237,6 +240,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function findIdentifiersByTag($tag) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -261,6 +265,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -281,6 +286,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $tag The tag the entries must have
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function flushByTag($tag) {
 		$identifiers = $this->findIdentifiersByTag($tag);
@@ -299,6 +305,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $cacheFilename
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function isCacheFileExpired($cacheFilename) {
 		$timestamp = (file_exists($cacheFilename)) ? file_get_contents($cacheFilename, NULL, NULL, 0, self::EXPIRYTIME_LENGTH) : 1;
@@ -310,6 +317,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function collectGarbage() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1222686150);
@@ -331,7 +339,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param string $identifier Identifier for the cache entry
 	 * @return string Absolute path leading to the directory containing the cache entry
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function renderCacheEntryPath($identifier) {
 		$identifierHash = sha1($identifier);
@@ -347,7 +354,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
-	 * @internal
 	 */
 	protected function findCacheFilesByIdentifier($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
@@ -366,7 +372,6 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @return array The file names (including path)
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
-	 * @internal
 	 */
 	protected function findTagFilesByEntry($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);

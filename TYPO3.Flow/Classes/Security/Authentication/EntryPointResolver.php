@@ -50,7 +50,6 @@ class EntryPointResolver {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -63,7 +62,6 @@ class EntryPointResolver {
 	 * @return string The class name of the entry point, NULL if no class was found.
 	 * @throws \F3\FLOW3\Security\Exception\NoEntryPointFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function resolveEntryPointClass($name) {
 		$resolvedClassName = '';

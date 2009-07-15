@@ -182,7 +182,6 @@ class Service {
 	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $cache Cache for the reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $cache) {
 		$this->cache = $cache;
@@ -194,7 +193,6 @@ class Service {
 	 * @param array $settings Settings of the FLOW3 package
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSettings(array $settings) {
 		if (isset($settings['reflection']['detectClassChanges'])) {
@@ -208,7 +206,6 @@ class Service {
 	 * @param \F3\FLOW3\Log\SystemLoggerInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
@@ -220,7 +217,6 @@ class Service {
 	 *
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function isInitialized() {
 		return $this->initialized;
@@ -232,7 +228,6 @@ class Service {
 	 * @param array $classNamesToReflect Names of available classes to consider in this reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initialize(array $classNamesToReflect) {
 		if ($this->initialized) throw new \F3\FLOW3\Reflection\Exception('The Reflection Service can only be initialized once.', 1232044696);
@@ -251,7 +246,6 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function shutdown() {
 		if ($this->cachedClassNames !== $this->reflectedClassNames) {
@@ -266,6 +260,7 @@ class Service {
 	 * @param string $className Name of the class
 	 * @return boolean If the class is reflected by this service
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isClassReflected($className) {
 		return isset($this->reflectedClassNames[$className]);
@@ -276,6 +271,7 @@ class Service {
 	 *
 	 * @return array Class names
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getAllClassNames() {
 		return array_keys($this->reflectedClassNames);
@@ -289,6 +285,7 @@ class Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return mixed Either the class name of the default implementation for the object type or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667823);
@@ -312,6 +309,7 @@ class Service {
 	 * @return array An array of class names of the default implementation for the object type
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownInterface if the given interface does not exist
+	 * @api
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667824);
@@ -325,6 +323,7 @@ class Service {
 	 * @param string $className Name of the class
 	 * @return array An array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getInterfaceNamesImplementedByClass($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -342,6 +341,7 @@ class Service {
 	 * @param string $tag Tag to search for
 	 * @return array An array of class names tagged by the tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassNamesByTag($tag) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667825);
@@ -354,6 +354,7 @@ class Service {
 	 * @param string $className The class name to reflect
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassTagsValues($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -367,6 +368,7 @@ class Service {
 	 * @param string $tag The tag to return values of
 	 * @return array An array of values or an empty array of the class is not tagged with the tag or the tag has no values
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassTagValues($className, $tag) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -381,6 +383,7 @@ class Service {
 	 * @param string $tag Tag to check for
 	 * @return boolean TRUE if the class is tagged with $tag, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isClassTaggedWith($className, $tag) {
 		if ($this->initialized === FALSE) return FALSE;
@@ -396,6 +399,7 @@ class Service {
 	 * @param string $interfaceName interface to check for
 	 * @return boolean TRUE if the class implements $interfaceName, otherwise FALSE
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isClassImplementationOf($className, $interfaceName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -409,6 +413,7 @@ class Service {
 	 * @param string $className Name of the class to analyze
 	 * @return boolean TRUE if the class is abstract, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isClassAbstract($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -421,6 +426,7 @@ class Service {
 	 * @param string $className Name of the class to analyze
 	 * @return boolean TRUE if the class is final, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isClassFinal($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -434,6 +440,7 @@ class Service {
 	 * @param string $methodName Name of the method to analyze
 	 * @return boolean TRUE if the method is final, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isMethodFinal($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -447,6 +454,7 @@ class Service {
 	 * @param string $methodName Name of the method to analyze
 	 * @return boolean TRUE if the method is static, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isMethodStatic($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -460,6 +468,7 @@ class Service {
 	 * @param string $methodName Name of the method to analyze
 	 * @return boolean TRUE if the method is public, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isMethodPublic($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -473,6 +482,7 @@ class Service {
 	 * @param string $methodName Name of the method to analyze
 	 * @return boolean TRUE if the method is protected, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isMethodProtected($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -486,6 +496,7 @@ class Service {
 	 * @param string $methodName Name of the method to analyze
 	 * @return boolean TRUE if the method is private, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isMethodPrivate($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -498,6 +509,7 @@ class Service {
 	 * @param string $className Name of the class to return the method names of
 	 * @return array An array of method names or an empty array if none exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassMethodNames($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -511,6 +523,7 @@ class Service {
 	 * @param string $className Name of the class to return the constructor name of
 	 * @return mixed Name of the constructor method or NULL if it has no constructor
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassConstructorName($className) {
 		if ($this->initialized === TRUE) {
@@ -529,6 +542,7 @@ class Service {
 	 * @param string $className Name of the class to return the property names of
 	 * @return array An array of property names or an empty array if none exist
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassPropertyNames($className) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -542,6 +556,7 @@ class Service {
 	 * @param string $methodName Name of the method to return the tags and values of
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMethodTagsValues($className, $methodName) {
 		if ($this->initialized === TRUE && !isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -557,6 +572,7 @@ class Service {
 	 * @param string $methodName Name of the method to return parameter information of
 	 * @return array An array of parameter names and additional information or an empty array of no parameters were found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMethodParameters($className, $methodName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -581,6 +597,7 @@ class Service {
 	 * @param string $tag Tag to search for
 	 * @return array An array of property names tagged by the tag
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPropertyNamesByTag($className, $tag) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -599,6 +616,7 @@ class Service {
 	 * @param string $propertyName Name of the property to return the tags and values of
 	 * @return array An array of tags and their values or an empty array of no tags were found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPropertyTagsValues($className, $propertyName) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -614,6 +632,7 @@ class Service {
 	 * @param string $tag Tag to return the values of
 	 * @return array An array of values or an empty array if the tag was not found
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPropertyTagValues($className, $propertyName, $tag) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -630,6 +649,7 @@ class Service {
 	 * @param string $tag Tag to check for
 	 * @return boolean TRUE if the class property is tagged with $tag, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function isPropertyTaggedWith($className, $propertyName, $tag) {
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
@@ -646,7 +666,6 @@ class Service {
 	 * @param array $classNamesToReflect Names of all classes which should be known by this service. Class names = values of the array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function reflectEmergedClasses(array $classNamesToReflect) {
 		$classNamesToReflect = array_unique($classNamesToReflect);
@@ -666,7 +685,6 @@ class Service {
 	 * @param string $className Full qualified name of the class to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function reflectClass($className) {
 		$this->log('Reflecting class "' . $className . '" (' . ($this->initialized ? '' : 'not ') . 'initialized)', LOG_DEBUG);
@@ -732,7 +750,6 @@ class Service {
 	 * @return array Parameter information array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @internal
 	 */
 	protected function convertParameterReflectionToArray(\ReflectionParameter $parameter, \ReflectionMethod $method = NULL) {
 		$parameterInformation = array(
@@ -771,7 +788,6 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function forgetChangedClasses() {
 		foreach (array_keys($this->reflectedClassNames) as $className) {
@@ -787,7 +803,6 @@ class Service {
 	 * @param string $className Name of the class to forget
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function forgetClass($className) {
 		foreach ($this->interfaceImplementations as $interfaceName => $interfaceImplementations) {
@@ -826,7 +841,6 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function loadFromCache() {
 		if ($this->cache->has('ReflectionData')) {
@@ -843,7 +857,6 @@ class Service {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function saveToCache() {
 		if (!is_object($this->cache)) throw new \F3\FLOW3\Reflection\Exception('A cache must be injected before initializing the Reflection Service.', 1232044697);
@@ -886,7 +899,6 @@ class Service {
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function log($message, $severity = 6, $additionalData = NULL) {
 		if (is_object($this->systemLogger)) $this->systemLogger->log($message, $severity, $additionalData);

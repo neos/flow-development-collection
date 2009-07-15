@@ -36,7 +36,6 @@ namespace F3\FLOW3\Object;
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @internal
  */
 interface RegistryInterface {
 
@@ -46,7 +45,6 @@ interface RegistryInterface {
 	 *
 	 * @param string $objectName Name of the object to return an object of
 	 * @return object The object
-	 * @internal
 	 */
 	public function getObject($objectName);
 
@@ -56,7 +54,6 @@ interface RegistryInterface {
 	 * @param string $objectName Name of the object the object is made for
 	 * @param object $object The object to store in the registry
 	 * @return void
-	 * @internal
 	 */
 	public function putObject($objectName, $object);
 
@@ -65,7 +62,6 @@ interface RegistryInterface {
 	 *
 	 * @param string $objectName Name of the object to remove the object for
 	 * @return void
-	 * @internal
 	 */
 	public function removeObject($objectName);
 
@@ -74,7 +70,6 @@ interface RegistryInterface {
 	 *
 	 * @param string $objectName Name of the object to check for an object
 	 * @return boolean TRUE if an object exists, otherwise FALSE
-	 * @internal
 	 */
 	public function objectExists($objectName);
 }

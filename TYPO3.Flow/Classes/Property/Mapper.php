@@ -77,7 +77,6 @@ class Mapper {
 	 * @param \F3\FLOW3\Object\FactoryInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -89,7 +88,6 @@ class Mapper {
 	 * @param \F3\FLOW3\Validation\ValidatorResolver $validatorResolver
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
@@ -113,6 +111,7 @@ class Mapper {
 	 * @see map()
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
 		$backupProperties = array();
@@ -138,7 +137,6 @@ class Mapper {
 	 * @param array Array of \F3\FLOW3\Validation\PropertyError
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @return void
-	 * @internal
 	 */
 	protected function addErrorsFromObjectValidator($errors) {
 		foreach ($errors as $error) {
@@ -163,6 +161,7 @@ class Mapper {
 	 * @return boolean TRUE if the properties could be mapped, otherwise FALSE
 	 * @see mapAndValidate()
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
 		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
@@ -197,6 +196,7 @@ class Mapper {
 	 *
 	 * @return \F3\FLOW3\Propert\MappingResults The mapping results (or NULL if no mapping has been carried out yet)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getMappingResults() {
 		return $this->mappingResults;

@@ -60,7 +60,6 @@ class Privilege {
 	 * @param boolean $isGrant The isGrant flag of the privilege
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct($identifier, $isGrant = FALSE) {
 		$this->identifier = $identifier;
@@ -72,7 +71,6 @@ class Privilege {
 	 *
 	 * @return string The string representation of this privilege
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getPrivilegeType() {
 		return $this->identifier;
@@ -83,7 +81,6 @@ class Privilege {
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function setGrant() {
 		$this->isGrant = TRUE;
@@ -94,7 +91,6 @@ class Privilege {
 	 *
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function setDeny() {
 		$this->isGrant = FALSE;
@@ -105,7 +101,6 @@ class Privilege {
 	 *
 	 * @return boolean TRUE if this privilege object grants the privilege it represents
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function isGrant() {
 		return $this->isGrant;
@@ -116,7 +111,6 @@ class Privilege {
 	 *
 	 * @return boolean TRUE if this privilege object denies the privilege it represents
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function isDeny() {
 		return !$this->isGrant;
@@ -127,7 +121,6 @@ class Privilege {
 	 *
 	 * @return string The string representation of this privilege
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __toString() {
 		return $this->identifier;

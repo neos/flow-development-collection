@@ -78,7 +78,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the Object Manager
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\FactoryInterface $objectFactory, \F3\FLOW3\Package\ManagerInterface $packageManager, \F3\FLOW3\Resource\Manager $resourceManager, \F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectFactory = $objectFactory;
@@ -92,7 +91,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		$this->initializeView();
@@ -104,7 +102,6 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @param \F3\FLOW3\MVC\Controller\ControllerContext $controllerContext
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function setControllerContext(\F3\FLOW3\MVC\Controller\ControllerContext $controllerContext) {
 		$this->controllerContext = $controllerContext;
@@ -117,6 +114,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
 	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 * @api
 	 */
 	public function assign($key, $value) {
 		$this->viewData[$key] = $value;
@@ -128,6 +126,7 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * Override this method for initializing your concrete view implementation.
 	 *
 	 * @return void
+	 * @api
 	 */
 	protected function initializeView() {
 	}

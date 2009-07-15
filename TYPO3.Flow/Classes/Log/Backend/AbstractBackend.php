@@ -43,6 +43,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface
 	 *
 	 * @param mixed $options Configuration options - depends on the actual backend
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($options = array()) {
 		if (is_array($options) || $options instanceof ArrayAccess) {

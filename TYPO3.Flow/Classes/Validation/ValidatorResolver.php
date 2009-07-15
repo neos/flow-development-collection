@@ -64,7 +64,6 @@ class ValidatorResolver {
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface A reference to the compomenent manager
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -76,7 +75,6 @@ class ValidatorResolver {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -92,7 +90,6 @@ class ValidatorResolver {
 	 * @return F3\FLOW3\Validation\Validator\ValidatorResolver Validator Resolver or NULL if none found.
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function createValidator($validatorName, array $validatorOptions = array()) {
 		$validatorClassName = $this->resolveValidatorObjectName($validatorName);
@@ -111,7 +108,6 @@ class ValidatorResolver {
 	 * @param string $dataType The data type to search a validator for. Usually the fully qualified object name
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org
-	 * @internal>
 	 */
 	public function getBaseValidatorConjunction($dataType) {
 		if (!isset($this->baseValidatorConjunctions[$dataType])) {
@@ -126,7 +122,6 @@ class ValidatorResolver {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
@@ -164,7 +159,6 @@ class ValidatorResolver {
 	 * @param string $dataType The data type to build the validation conjunction for. Usually the fully qualified object name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function buildBaseValidatorConjunction($dataType) {
 		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
@@ -205,7 +199,6 @@ class ValidatorResolver {
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function parseValidatorAnnotation($validateValue) {
 		$matches = array();
@@ -240,7 +233,6 @@ class ValidatorResolver {
 	 * @param string &$rawValidatorOptions
 	 * @return array An array of optionName/optionValue pairs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function parseSimpleValidatorOptions(&$rawValidatorOptions) {
 		$validatorOptions = array();
@@ -263,7 +255,6 @@ class ValidatorResolver {
 	 * @param string $rawValidatorOptions
 	 * @return array An array of optionName/optionValue pairs
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function parseComplexValidatorOptions($rawValidatorOptions) {
 		$validatorOptions = array();
@@ -293,7 +284,6 @@ class ValidatorResolver {
 	 * @param string $validatorName Either the fully qualified class name of the validator or the short name of a built-in validator
 	 * @return string Name of the validator object or FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function resolveValidatorObjectName($validatorName) {
 		if ($this->objectManager->isObjectRegistered($validatorName)) return $validatorName;
@@ -311,7 +301,6 @@ class ValidatorResolver {
 	 * @return string unified data type
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
-	 * @internal
 	 */
 	protected function unifyDataType($type) {
 		switch ($type) {

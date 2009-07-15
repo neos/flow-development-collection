@@ -72,7 +72,6 @@ class Manager {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function __construct(\F3\FLOW3\Resource\ClassLoader $classLoader, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->classLoader = $classLoader;
@@ -85,7 +84,6 @@ class Manager {
 	 * @param \F3\FLOW3\Resource\Publisher $resourcePublisher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectResourcePublisher(\F3\FLOW3\Resource\Publisher $resourcePublisher) {
 		$this->resourcePublisher = $resourcePublisher;
@@ -101,7 +99,6 @@ class Manager {
 	 * @throws \InvalidArgumentException if $className is not a valid string
 	 * @throws \F3\FLOW3\Resource\Exception\FileDoesNotExist if the specified file does not exist
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function registerClassFile($className, $classFilePathAndName) {
 		if (!is_string($className)) throw new \InvalidArgumentException('Class name must be a valid string.', 1187009929);
@@ -115,7 +112,6 @@ class Manager {
 	 * @param \F3\FLOW3\Property\DataType\URI|string $URI
 	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function getResource($URI) {
 		$URIString = (string)$URI;
@@ -140,7 +136,6 @@ class Manager {
 	 * @param array $metadata
 	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function instantiateResource(array $metadata) {
 		switch ($metadata['mimeType']) {

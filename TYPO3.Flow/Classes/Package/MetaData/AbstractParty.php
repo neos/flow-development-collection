@@ -68,7 +68,6 @@ abstract class AbstractParty {
 	 * @param string $email
 	 * @param string $website
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function __construct($role, $name, $email = NULL, $website = NULL) {
 		$this->role = $role;
@@ -80,7 +79,6 @@ abstract class AbstractParty {
 	/**
 	 * @return string The role of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getRole() {
 		return $this->role;
@@ -89,7 +87,6 @@ abstract class AbstractParty {
 	/**
 	 * @return string The name of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getName() {
 		return $this->name;
@@ -98,7 +95,6 @@ abstract class AbstractParty {
 	/**
 	 * @return string The email of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getEmail() {
 		return $this->email;
@@ -107,7 +103,6 @@ abstract class AbstractParty {
 	/**
 	 * @return string The website of the party
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function getWebsite() {
 		return $this->website;

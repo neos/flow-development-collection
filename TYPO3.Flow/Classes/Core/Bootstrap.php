@@ -47,9 +47,6 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
  */
 final class Bootstrap {
 
-	/**
-	 * @internal
-	 */
 	const REVISION = '$Revision$';
 
 	/**
@@ -144,7 +141,7 @@ final class Bootstrap {
 	 * @param string $context The application context
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
+	 * @api
 	 */
 	public function __construct($context = 'Production') {
 		$this->checkEnvironment();
@@ -162,7 +159,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see run()
 	 * @throws \F3\FLOW3\Exception if the framework has already been initialized.
-	 * @internal
+	 * @api
 	 */
 	public function initialize() {
 		$this->initializeClassLoader();
@@ -199,7 +196,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeClassLoader() {
 		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
@@ -222,7 +218,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeConfiguration() {
 			// define FLOW3_SAPI
@@ -245,7 +240,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeError() {
 		$errorHandler = new $this->settings['error']['errorHandler']['className'];
@@ -259,7 +253,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeObjectFramework() {
 		$this->objectFactory = new \F3\FLOW3\Object\Factory();
@@ -299,7 +292,6 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeSystemLogger() {
 		$this->systemLogger = $this->objectManager->getObject('F3\FLOW3\Log\SystemLoggerInterface');
@@ -313,7 +305,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeLockManager() {
 		$lockManager = $this->objectManager->getObject('F3\FLOW3\Core\LockManager');
@@ -328,7 +319,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializePackages() {
 		$this->packageManager = $this->objectManager->getObject('F3\FLOW3\Package\ManagerInterface');
@@ -353,7 +343,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see intialize()
-	 * @internal
 	 */
 	public function initializeSignalsSlots() {
 		$this->signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
@@ -384,7 +373,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeCache() {
 		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
@@ -410,7 +398,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeFileMonitor() {
 		if ($this->settings['monitor']['fileMonitor']['enable'] === TRUE) {
@@ -425,7 +412,6 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function monitorClassFiles() {
 		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_ClassFiles');
@@ -465,7 +451,6 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function monitorRoutesConfigurationFiles() {
 		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_RoutesConfigurationFiles');
@@ -494,7 +479,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeReflection() {
 		$this->reflectionService = $this->objectManager->getObject('F3\FLOW3\Reflection\Service');
@@ -516,7 +500,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeObjects() {
 		$objectConfigurations = NULL;
@@ -541,7 +524,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeAOP() {
 		if ($this->settings['aop']['enable'] === TRUE) {
@@ -558,7 +540,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see intialize()
-	 * @internal
 	 */
 	public function initializeLocale() {
 		$this->objectManager->getObject('F3\FLOW3\Locale\Service', $this->settings)->initialize();
@@ -570,7 +551,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function initializeSession() {
 		$session = $this->objectManager->getObject('F3\FLOW3\Session\SessionInterface');
@@ -587,7 +567,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializePersistence() {
 		if ($this->settings['persistence']['enable'] === TRUE) {
@@ -606,7 +585,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	protected function detectAlteredResources() {
 	}
@@ -617,7 +595,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
-	 * @internal
 	 */
 	public function initializeResources() {
 		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
@@ -646,7 +623,7 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
+	 * @api
 	 */
 	public function run() {
 		if (!$this->siteLocked) {
@@ -680,6 +657,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal
 	 * @see run()
+	 * @api
 	 */
 	protected function emitFinishedNormalRun() {
 		$this->signalSlotDispatcher->dispatch(__CLASS__, __FUNCTION__, array());
@@ -690,8 +668,7 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
-	 * @internal
+	 * todo RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
 	protected function checkEnvironment() {
 		if (version_compare(phpversion(), \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION, '<')) {
@@ -730,7 +707,6 @@ final class Bootstrap {
 	 * @param array $packages The packages whose classes should be registered
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function registerAndConfigureAllPackageObjects(array $packages) {
 		$objectTypes = array();
@@ -790,7 +766,6 @@ final class Bootstrap {
 	 * @param string $className The class name to check. May be a regular expression.
 	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function classNameIsBlacklisted($className) {
 		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
@@ -809,7 +784,6 @@ final class Bootstrap {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
-	 * @internal
 	 */
 	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\Package $package, array $packageConfiguration) {
 		if (isset($packageConfiguration['resourceManager'])) {
@@ -835,4 +809,5 @@ final class Bootstrap {
 		}
 	}
 }
+
 ?>

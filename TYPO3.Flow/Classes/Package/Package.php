@@ -89,7 +89,6 @@ class Package implements PackageInterface {
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackageKey if an invalid package key was passed
 	 * @throws \F3\FLOW3\Package\Exception\InvalidPackagePath if an invalid package path was passed
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct($packageKey, $packagePath) {
 		if (!preg_match(self::PATTERN_MATCH_PACKAGEKEY, $packageKey)) throw new \F3\FLOW3\Package\Exception\InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217959510);
@@ -106,7 +105,6 @@ class Package implements PackageInterface {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -118,7 +116,6 @@ class Package implements PackageInterface {
 	 * @param \F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectMetaDataReader(\F3\FLOW3\Package\MetaData\ReaderInterface $metaDataReader) {
 		$this->metaDataReader = $metaDataReader;
@@ -129,7 +126,6 @@ class Package implements PackageInterface {
 	 *
 	 * @return \F3\FLOW3\Package\MetaData
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getPackageMetaData() {
 		if ($this->packageMetaData === NULL) {
@@ -143,7 +139,6 @@ class Package implements PackageInterface {
 	 *
 	 * @return array An array of class names (key) and their filename, including the relative path to the package's directory
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function getClassFiles() {
 		if (!is_array($this->classFiles)) {
@@ -157,6 +152,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPackageKey() {
 		return $this->packageKey;
@@ -167,6 +163,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Path to this package's main directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getPackagePath() {
 		return $this->packagePath;
@@ -177,6 +174,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Path to this package's Classes directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getClassesPath() {
 		return $this->packagePath . self::DIRECTORY_CLASSES;
@@ -187,6 +185,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Path to this package's Resources directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getResourcesPath() {
 		return $this->packagePath . self::DIRECTORY_RESOURCES;
@@ -197,6 +196,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Path to this package's Configuration directory
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getConfigurationPath() {
 		return $this->packagePath . self::DIRECTORY_CONFIGURATION;
@@ -207,6 +207,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Full path to the package's meta data directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getMetaPath() {
 		return $this->packagePath . self::DIRECTORY_METADATA;
@@ -217,6 +218,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return string Full path to the package's documentation directory
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getDocumentationPath() {
 		return $this->packagePath . self::DIRECTORY_DOCUMENTATION;
@@ -227,6 +229,7 @@ class Package implements PackageInterface {
 	 *
 	 * @return array Array of \F3\FLOW3\Package\Documentation
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function getPackageDocumentations() {
 		$documentations = array();
@@ -255,7 +258,6 @@ class Package implements PackageInterface {
 	 * @return array
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Package\Exception if recursion into directories was too deep or another error occurred
-	 * @internal
 	 */
 	protected function buildArrayOfClassFiles($subDirectory='', $recursionLevel=0) {
 		$classFiles = array();

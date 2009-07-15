@@ -50,6 +50,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function set($entryIdentifier, $variable, $tags = array(), $lifetime = NULL) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058264);
@@ -67,6 +68,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @return mixed The value
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function get($entryIdentifier) {
 		if (!$this->isValidEntryIdentifier($entryIdentifier)) throw new \InvalidArgumentException('"' . $entryIdentifier . '" is not a valid cache entry identifier.', 1233058294);
@@ -80,6 +82,7 @@ class VariableFrontend extends \F3\FLOW3\Cache\Frontend\AbstractFrontend {
 	 * @param string $tag The tag to search for
 	 * @return array An array with the content of all matching entries. An empty array if no entries matched
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getByTag($tag) {
 		if (!$this->isValidTag($tag)) throw new \InvalidArgumentException('"' . $tag . '" is not a valid tag for a cache entry.', 1233058312);

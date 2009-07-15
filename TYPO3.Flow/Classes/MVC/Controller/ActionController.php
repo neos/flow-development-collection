@@ -40,7 +40,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 	/**
 	 * @var \F3\FLOW3\Reflection\Service
-	 * @internal
 	 */
 	protected $reflectionService;
 
@@ -85,7 +84,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
@@ -97,6 +95,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The current request
 	 * @return boolean TRUE if this request type is supported, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function canProcessRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		return parent::canProcessRequest($request);
@@ -109,6 +108,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		if (!$this->canProcessRequest($request)) throw new \F3\FLOW3\MVC\Exception\UnsupportedRequestType(get_class($this) . ' does not support requests of type "' . get_class($request) . '". Supported types are: ' . implode(' ', $this->supportedRequestTypes) , 1187701131);
@@ -147,7 +147,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initializeArguments()
-	 * @internal
 	 */
 	protected function initializeActionMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
@@ -170,7 +169,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function initializeActionMethodValidators() {
 		$validatorConjunctions = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
@@ -186,6 +184,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return string The action method name
 	 * @throws \F3\FLOW3\MVC\Exception\NoSuchAction if the action specified in the request object does not exist (and if there's no default action either).
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function resolveActionMethodName() {
 		$actionMethodName = $this->request->getControllerActionName() . 'Action';
@@ -209,7 +208,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param string $actionMethodName Name of the action method to call
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function callActionMethod() {
 		$argumentsAreValid = TRUE;
@@ -238,6 +236,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	protected function resolveView() {
 		$view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
@@ -259,6 +258,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return mixed The fully qualified view object name or FALSE if no matching view could be found.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
 	 */
 	protected function resolveViewObjectName() {
 		$possibleViewName = $this->viewObjectNamePattern;
@@ -290,6 +290,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @param \F3\FLOW3\MVC\View\ViewInterface $view The view to be initialized
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function initializeView(\F3\FLOW3\MVC\View\ViewInterface $view) {
 	}
@@ -302,6 +303,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	protected function initializeAction() {
 	}
@@ -316,6 +318,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	protected function errorAction() {
 		$this->request->setErrors($this->argumentsMappingResults->getErrors());
@@ -346,6 +349,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * the flash message in your action controller.
 	 *
 	 * @return string|boolean The flash message or FALSE if no flash message should be set
+	 * @api
 	 */
 	protected function getErrorFlashMessage() {
 		return 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '()';

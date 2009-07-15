@@ -50,7 +50,6 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderI
 	 * @param \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService The RSAWalletService
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function injectRSAWalletService(\F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService) {
 		$this->RSAWalletService = $RSAWalletService;
@@ -62,7 +61,6 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderI
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
 		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) return TRUE;
@@ -74,7 +72,6 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderI
 	 *
 	 * @return array The classname of the token this provider is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getTokenClassNames() {
 		return array('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword');
@@ -86,7 +83,6 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderI
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
 		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);

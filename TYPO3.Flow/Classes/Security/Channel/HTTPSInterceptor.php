@@ -52,7 +52,6 @@ class HTTPSInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorIn
 	 * @param \F3\FLOW3\Log\LoggerInterface $logger A logger to log security relevant actions
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function __construct(
 					\F3\FLOW3\Security\Context $securityContext,
@@ -67,7 +66,6 @@ class HTTPSInterceptor implements \F3\FLOW3\Security\Authorization\InterceptorIn
 	 *
 	 * @return boolean TRUE if the security checks was passed
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function invoke() {
 

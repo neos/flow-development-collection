@@ -49,6 +49,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function isValid($arguments) {
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079561);
@@ -69,6 +70,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @param object $object The object to be checked
 	 * @return boolean TRUE if this validator can validate instances of the given object or FALSE if it can't
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function canValidate($object) {
 		return ($object instanceof \F3\FLOW3\MVC\Controller\Arguments);
@@ -86,6 +88,7 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @return boolean TRUE if the argument is valid, FALSE if an error occured
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @api
 	 */
 	public function isPropertyValid($arguments, $argumentName) {
 		if (!$arguments instanceof \F3\FLOW3\MVC\Controller\Arguments) throw new \InvalidArgumentException('Expected \F3\FLOW3\MVC\Controller\Arguments, ' . gettype($arguments) . ' given.', 1241079562);
@@ -112,7 +115,6 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 	 * @param string $argumentName Name of the argument to add errors for
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 * @internal
 	 */
 	protected function addErrorsForArgument(array $errors, $argumentName) {
 		if (!isset($this->errors[$argumentName])) {

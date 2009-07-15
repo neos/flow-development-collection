@@ -44,6 +44,7 @@ interface BackendInterface {
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\FrontendInterface $cache The frontend for this backend
 	 * @return void
+	 * @api
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache);
 
@@ -58,6 +59,7 @@ interface BackendInterface {
 	 * @throws \F3\FLOW3\Cache\Exception if no cache frontend has been set.
 	 * @throws \InvalidArgumentException if the identifier is not valid
 	 * @throws \F3\FLOW3\Cache\Exception\InvalidData if $data is not a string
+	 * @api
 	 */
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL);
 
@@ -66,6 +68,7 @@ interface BackendInterface {
 	 *
 	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
+	 * @api
 	 */
 	public function get($entryIdentifier);
 
@@ -74,6 +77,7 @@ interface BackendInterface {
 	 *
 	 * @param string $entryIdentifier An identifier specifying the cache entry
 	 * @return boolean TRUE if such an entry exists, FALSE if not
+	 * @api
 	 */
 	public function has($entryIdentifier);
 
@@ -84,6 +88,7 @@ interface BackendInterface {
 	 *
 	 * @param string $entryIdentifier Specifies the cache entry to remove
 	 * @return boolean TRUE if (at least) an entry could be removed or FALSE if no entry was found
+	 * @api
 	 */
 	public function remove($entryIdentifier);
 
@@ -91,6 +96,7 @@ interface BackendInterface {
 	 * Removes all cache entries of this cache.
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function flush();
 
@@ -99,6 +105,7 @@ interface BackendInterface {
 	 *
 	 * @param string $tag The tag the entries must have
 	 * @return void
+	 * @api
 	 */
 	public function flushByTag($tag);
 
@@ -108,6 +115,7 @@ interface BackendInterface {
 	 *
 	 * @param string $tag The tag to search for
 	 * @return array An array with identifiers of all matching entries. An empty array if no entries matched
+	 * @api
 	 */
 	public function findIdentifiersByTag($tag);
 
@@ -115,6 +123,7 @@ interface BackendInterface {
 	 * Does garbage collection
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function collectGarbage();
 

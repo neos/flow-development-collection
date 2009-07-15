@@ -42,7 +42,6 @@ interface DirtyMonitoringInterface {
 	 * If the monitored object has ever been persisted
 	 *
 	 * @return boolean TRUE if the object is new, otherwise FALSE
-	 * @internal
 	 */
 	public function FLOW3_Persistence_isNew();
 
@@ -52,7 +51,6 @@ interface DirtyMonitoringInterface {
 	 *
 	 * @param string $propertyName Name of the property to check
 	 * @return boolean TRUE if the given property has been modified
-	 * @internal
 	 */
 	public function FLOW3_Persistence_isDirty($propertyName);
 
@@ -62,7 +60,6 @@ interface DirtyMonitoringInterface {
 	 *
 	 * @param string $propertyName Name of the property to mark clean, if NULL all will be marked clean
 	 * @return void
-	 * @internal
 	 */
 	public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL);
 
@@ -71,7 +68,6 @@ interface DirtyMonitoringInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __clone();
 }

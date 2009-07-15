@@ -48,7 +48,6 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * Constructs the logger
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function __construct() {
 		$this->backends = new \SplObjectStorage();
@@ -60,6 +59,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * @param \F3\FLOW3\Log\Backend\BackendInterface $backend A backend implementation
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function addBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
 		$this->backends->attach($backend);
@@ -74,6 +74,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\Log\Exception\NoSuchBackend if the given backend is unknown to this logger
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function removeBackend(\F3\FLOW3\Log\Backend\BackendInterface $backend) {
 		if (!$this->backends->contains($backend)) throw new \F3\FLOW3\Log\Exception\NoSuchBackend('Backend is unknown to this logger.', 1229430381);
@@ -92,6 +93,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * @param string $methodName Name of the method triggering the log (determined automatically if not specified)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($packageKey === NULL) {
@@ -111,7 +113,6 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function shutdownObject() {
 		foreach ($this->backends as $backend) {

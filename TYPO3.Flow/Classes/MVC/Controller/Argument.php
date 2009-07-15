@@ -131,6 +131,7 @@ class Argument {
 	 * @param string $dataType The data type of this argument
 	 * @throws \InvalidArgumentException if $name is not a string or empty
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __construct($name, $dataType = 'Text') {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
@@ -145,7 +146,6 @@ class Argument {
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectManager(\F3\FLOW3\Object\ManagerInterface $objectManager) {
 		$this->objectManager = $objectManager;
@@ -157,7 +157,6 @@ class Argument {
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
@@ -169,7 +168,6 @@ class Argument {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -181,7 +179,6 @@ class Argument {
 	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -193,7 +190,6 @@ class Argument {
 	 * @param \F3\FLOW3\Property\Mapper $propertyMapper
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function injectPropertyMapper(\F3\FLOW3\Property\Mapper $propertyMapper) {
 		$this->propertyMapper = $propertyMapper;
@@ -204,7 +200,6 @@ class Argument {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	public function initializeObject() {
 		$this->dataTypeClassSchema = $this->persistenceManager->getClassSchema($this->dataType);
@@ -215,6 +210,7 @@ class Argument {
 	 *
 	 * @return string This argument's name
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getName() {
 		return $this->name;
@@ -227,6 +223,7 @@ class Argument {
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \InvalidArgumentException if $shortName is not a character
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setShortName($shortName) {
 		if ($shortName !== NULL && (!is_string($shortName) || strlen($shortName) !== 1)) throw new \InvalidArgumentException('$shortName must be a single character or NULL', 1195824959);
@@ -239,6 +236,7 @@ class Argument {
 	 *
 	 * @return string This argument's short name
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getShortName() {
 		return $this->shortName;
@@ -249,6 +247,7 @@ class Argument {
 	 *
 	 * @return string The data type
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getDataType() {
 		return $this->dataType;
@@ -260,6 +259,7 @@ class Argument {
 	 * @param boolean $required TRUE if this argument should be required
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function setRequired($required) {
 		$this->isRequired = (boolean)$required;
@@ -271,6 +271,7 @@ class Argument {
 	 *
 	 * @return boolean TRUE if this argument is required
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function isRequired() {
 		return $this->isRequired;
@@ -283,6 +284,7 @@ class Argument {
 	 * @param string $message A short help message
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setShortHelpMessage($message) {
 		if (!is_string($message)) throw new \InvalidArgumentException('The help message must be of type string, ' . gettype($message) . 'given.', 1187958170);
@@ -295,6 +297,7 @@ class Argument {
 	 *
 	 * @return string The short help message
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getShortHelpMessage() {
 		return $this->shortHelpMessage;
@@ -306,6 +309,7 @@ class Argument {
 	 * @param mixed $defaultValue Default value
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
 	 */
 	public function setDefaultValue($defaultValue) {
 		$this->defaultValue = $defaultValue;
@@ -316,6 +320,7 @@ class Argument {
 	 *
 	 * @return mixed The default value
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getDefaultValue() {
 		return $this->defaultValue;
@@ -327,6 +332,7 @@ class Argument {
 	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The actual validator object
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function setValidator(\F3\FLOW3\Validation\Validator\ValidatorInterface $validator) {
 		$this->validator = $validator;
@@ -339,6 +345,7 @@ class Argument {
 	 * @param array Object names of the validators
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function setNewValidatorConjunction(array $objectNames) {
 		$this->validator = $this->objectFactory->create('F3\FLOW3\Validation\Validator\ConjunctionValidator');
@@ -354,6 +361,7 @@ class Argument {
 	 *
 	 * @return \F3\FLOW3\Validation\Validator\ValidatorInterface The set validator, NULL if none was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 * @api
 	 */
 	public function getValidator() {
 		return $this->validator;
@@ -365,7 +373,6 @@ class Argument {
 	 * @param mixed $filter Object name of a filter or the actual filter object
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function setFilter($filter) {
 		$this->filter = ($filter instanceof \F3\FLOW3\Validation\Filter\FilterInterface) ? $filter : $this->objectManager->getObject($filter);
@@ -377,7 +384,6 @@ class Argument {
 	 *
 	 * @return \F3\FLOW3\Validation\FilterInterface The set filter, NULL if none was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @internal
 	 */
 	public function getFilter() {
 		return $this->filter;
@@ -395,7 +401,6 @@ class Argument {
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	public function setValue($value) {
 		if (is_string($value) && $this->dataTypeClassSchema !== NULL && preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $value) === 1) {
@@ -432,6 +437,7 @@ class Argument {
 	 *
 	 * @return object The value of this argument - if none was set, the default value is returned
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function getValue() {
 		return ($this->value === NULL) ? $this->defaultValue : $this->value;
@@ -442,6 +448,7 @@ class Argument {
 	 *
 	 * @return string
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
 	 */
 	public function __toString() {
 		return (string)$this->value;
@@ -454,7 +461,6 @@ class Argument {
 	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @internal
 	 */
 	protected function findObjectByIdentityProperties(array $identityProperties) {
 		$query = $this->queryFactory->create($this->dataType);
@@ -488,7 +494,6 @@ class Argument {
 	 * @param string $uuid The object's uuid
 	 * @return mixed Either the object matching the uuid or, if none or more than one object was found, FALSE
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @internal
 	 */
 	protected function findObjectByIdentityUUID($uuid) {
 		$query = $this->queryFactory->create($this->dataType);

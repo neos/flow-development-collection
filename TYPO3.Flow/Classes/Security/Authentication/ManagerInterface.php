@@ -46,7 +46,6 @@ interface ManagerInterface {
 	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
-	 * @internal
 	 */
 	public function getTokens();
 
@@ -55,7 +54,6 @@ interface ManagerInterface {
 	 *
 	 * @param \F3\FLOW3\Security\Context $securityContext The security context of the current request
 	 * @return void
-	 * @internal
 	 */
 	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext);
 
@@ -64,7 +62,6 @@ interface ManagerInterface {
 	 * (Have a look at the \F3\FLOW3\Security\Authentication\TokenManager for an implementation example)
 	 *
 	 * @return void
-	 * @internal
 	 */
 	public function authenticate();
 }
