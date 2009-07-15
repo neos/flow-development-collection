@@ -65,7 +65,6 @@ class EmptyConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\AbstractM
 	/**
 	 * Non-advised constructor interceptor.
 	 * ' . $parametersDocumentation . '
-	 * @api
 	 */
 	public function __construct(' . $parametersCode . ') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');

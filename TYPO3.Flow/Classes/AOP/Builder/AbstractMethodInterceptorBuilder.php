@@ -162,7 +162,6 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * @param string $className Name of the class the method is declared in
 	 * @return string The generated paramters code
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @api
 	 */
 	protected function buildSavedConstructorParametersCode($className) {
 		if ($className === NULL) return '';

@@ -76,7 +76,6 @@ class AdvicedConstructorInterceptorBuilder extends \F3\FLOW3\AOP\Builder\Abstrac
 	 * Interceptor for the constructor __construct().
 	 * ' . $methodParametersDocumentation . '
 	 * @return mixed Result of the advice chain or the original method
-	 * @api
 	 */
 	public function __construct(' . $methodParametersCode .') {
 		$this->originalConstructorArguments = array(' . $this->buildMethodArgumentsArrayCode($declaringClassName, '__construct') . ');
