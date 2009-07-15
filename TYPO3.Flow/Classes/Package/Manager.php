@@ -254,7 +254,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 		if ($packagesPath === '') {
 			$packagesPath = $this->getLocalPackagesPath();
 		}
-		if ($packagesPath === '') throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('The path "Packages/Local" does not exist.', 1243932738);
+		if ($packagesPath === '') throw new \F3\FLOW3\Package\Exception\InvalidPackagePath('The path "Packages/Application" does not exist.', 1243932738);
 
 		$packagePath = $packagesPath . $packageKey . '/';
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath);
@@ -292,8 +292,8 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function getLocalPackagesPath() {
-		if (realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') !== FALSE) {
-			return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Local/') . '/');
+		if (realpath(FLOW3_PATH_PUBLIC . '../Packages/Application/') !== FALSE) {
+			return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Application/') . '/');
 		} else {
 			return '';
 		}
