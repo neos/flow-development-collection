@@ -239,7 +239,7 @@ class GeneratorService {
 
 		file_put_contents($targetPathAndFilename, $fileContent);
 
-		$flow3BasePath = realpath(FLOW3_PATH_PUBLIC . '../');
+		$flow3BasePath = realpath(FLOW3_PATH_WEB . '../');
 		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen($flow3BasePath) + 1);
 
 		$this->generatedFiles[] = '+ ' . $relativeTargetPathAndFilename;
