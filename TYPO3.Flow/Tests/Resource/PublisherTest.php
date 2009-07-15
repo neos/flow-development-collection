@@ -82,7 +82,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => FLOW3_PATH_PUBLIC . $this->publicResourcePath . 'Packages/FLOW3',
+			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
@@ -100,7 +100,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
-			'path' => FLOW3_PATH_PUBLIC . $this->publicResourcePath . 'Packages/FLOW3',
+			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',
 			'name' => 'TestTemplate.html',
 			'mimeType' => 'text/html',
 			'mediaType' => 'text',
@@ -124,8 +124,8 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function tearDown() {
-		if (is_dir(FLOW3_PATH_PUBLIC . $this->publicResourcePath)) {
-			\F3\FLOW3\Utility\Files::removeDirectoryRecursively(FLOW3_PATH_PUBLIC . $this->publicResourcePath);
+		if (is_dir(FLOW3_PATH_WEB . $this->publicResourcePath)) {
+			\F3\FLOW3\Utility\Files::removeDirectoryRecursively(FLOW3_PATH_WEB . $this->publicResourcePath);
 		}
 	}
 

@@ -292,8 +292,8 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function getLocalPackagesPath() {
-		if (realpath(FLOW3_PATH_PUBLIC . '../Packages/Application/') !== FALSE) {
-			return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/Application/') . '/');
+		if (realpath(FLOW3_PATH_WEB . '../Packages/Application/') !== FALSE) {
+			return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Packages/Application/') . '/');
 		} else {
 			return '';
 		}
@@ -373,7 +373,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	protected function scanAvailablePackages() {
 		$availablePackages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
 
-		$localPackagesParentPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PUBLIC . '../Packages/'));
+		$localPackagesParentPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Packages/'));
 		$globalPackagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../'));
 
 		$pathsToScan = array($globalPackagesPath);

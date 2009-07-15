@@ -397,7 +397,7 @@ class Environment {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
 		if (substr($temporaryDirectoryBase, -1, 1) != '/') $temporaryDirectoryBase .= '/';
 
-		$pathHash = md5(FLOW3_PATH_PUBLIC . $this->getSAPIName());
+		$pathHash = md5(FLOW3_PATH_WEB . $this->getSAPIName());
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
 		$temporaryDirectory = $temporaryDirectoryBase . $pathHash . '/' . $processUser['name'] . '/';
 

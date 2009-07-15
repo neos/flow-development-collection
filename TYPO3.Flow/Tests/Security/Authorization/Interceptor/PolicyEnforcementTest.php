@@ -25,7 +25,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 /**
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  */
 
 /**
@@ -33,7 +33,7 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  *
  * @package FLOW3
  * @subpackage Tests
- * @version $Id:$
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 class PolicyEnforcementTest extends \F3\Testing\BaseTestCase {

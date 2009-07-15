@@ -1,6 +1,5 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,20 +22,22 @@ namespace F3\FLOW3\Security\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
- * A "CircularResourceDefinitionDetected" Exception
+ * Bootstrap for the FLOW3 Framework
  *
  * @package FLOW3
- * @subpackage Security
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @author Robert Lemke <robert@typo3.org>
+ * @author Karsten Dambekalns <karsten@typo3.org>
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */
-class CircularResourceDefinitionDetected extends \F3\FLOW3\Security\Exception {
-}
+
+version_compare(phpversion(), '5.3.0RC2', '>') or die('Because FLOW3 uses namespaces, it requires at least PHP 5.3.0, you have ' . phpversion() . ' (Error #1246258365)' . PHP_EOL);
+require(__DIR__ . '/../Classes/Core/Bootstrap.php');
+
+	// Need to take this detour because PHP < 5.3.0 would die with a parse error, not displaying our message above
+$className = '\F3\FLOW3\Core\Bootstrap';
+$flow3 = new $className(getenv('FLOW3_CONTEXT'));
+$flow3->initialize();
+$flow3->run();
 
 ?>

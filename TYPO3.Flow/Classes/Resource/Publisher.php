@@ -84,7 +84,7 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeMirrorDirectory($path) {
-		$this->publicResourcePath = FLOW3_PATH_PUBLIC . $path;
+		$this->publicResourcePath = FLOW3_PATH_WEB . $path;
 		if (!is_writable($this->publicResourcePath)) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->publicResourcePath);
 		}
