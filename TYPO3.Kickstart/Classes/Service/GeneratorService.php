@@ -23,16 +23,8 @@ namespace F3\Kickstart\Service;
  *                                                                        */
 
 /**
- * @package Kickstart
- * @subpackage Service
- * @version $Id$
- */
-
-/**
  * Service for the Kickstart generator
  *
- * @package Kickstart
- * @subpackage Service
  * @version $Id$
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

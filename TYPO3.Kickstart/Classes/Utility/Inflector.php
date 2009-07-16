@@ -22,20 +22,12 @@ namespace F3\Kickstart\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package Kickstart
- * @subpackage Utility
- * @version $Id: $
- */
-
 require(__DIR__ . '/../../Resources/Private/PHP/Sho_Inflect.php');
 
 /**
  * Inflector utilities for the Kickstarter. This is a basic conversion from PHP
  * class and field names to a human readable form.
  *
- * @package Kickstart
- * @subpackage Utility
  * @version $Id: $
  * @license http://www.gnu.org/licenses/gpl.html GNU General Public License, version 3 or later
  */

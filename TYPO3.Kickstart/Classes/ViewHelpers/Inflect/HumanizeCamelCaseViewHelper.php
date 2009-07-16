@@ -23,12 +23,6 @@ namespace F3\Kickstart\ViewHelpers\Inflect;
  *                                                                        */
 
 /**
- * @package Kickstart
- * @subpackage ViewHelpers
- * @version $Id: $
- */
-
-/**
  * Humanize a camel cased value
  *
  * = Examples =
@@ -40,8 +34,6 @@ namespace F3\Kickstart\ViewHelpers\Inflect;
  * Output:
  * Camel cased model name
  *
- * @package Kickstart
- * @subpackage ViewHelpers
  * @version $Id: $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

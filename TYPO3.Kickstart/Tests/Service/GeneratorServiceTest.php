@@ -23,16 +23,8 @@ namespace F3\Kickstart\Service;
  *                                                                        */
 
 /**
- * @package Kickstart
- * @subpackage Service
- * @version $Id: $
- */
-
-/**
  * Testcase for the generator service
  *
- * @package Kickstart
- * @subpackage Service
  * @version $Id: $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
