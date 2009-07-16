@@ -23,18 +23,10 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
- */
-
-/**
  * Validator to chain many validators in a disjunction (logical or). So only one
  * validator has to be valid, to make the whole disjunction valid. Errors are
  * only returned if all validators failed.
  *
- * @package FLOW3
- * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

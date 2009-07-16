@@ -23,18 +23,10 @@ namespace F3\FLOW3\AOP\Pointcut;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * This composite allows to check for match against a row pointcut filters
  * by only one method call. All registered filters will be invoked and if one filter
  * doesn't match, the overall result is "no".
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\FLOW3\AOP\Pointcut\PointcutExpressionParser, \F3\FLOW3\AOP\Pointcut\PointcutClassNameFilter, \F3\FLOW3\AOP\Pointcut\PointcutMethodFilter

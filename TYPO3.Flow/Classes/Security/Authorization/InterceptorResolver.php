@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authorization;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The security interceptor resolver. It resolves the class name of a security interceptor based on names.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

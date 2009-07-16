@@ -23,18 +23,10 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id$
- */
-
-/**
  * The Object Object Builder takes care of the whole building (instantiation) process of an
  * object. It resolves dependencies, instantiates other objects if necessary, instantiates
  * the specified object, injects constructor and setter arguments and calls lifecycle methods.
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

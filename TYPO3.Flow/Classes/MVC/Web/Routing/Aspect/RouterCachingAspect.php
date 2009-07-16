@@ -23,16 +23,8 @@ namespace F3\FLOW3\MVC\Web\Routing\Aspect;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * Caching of findMatchResults() and resolve() calls on the web Router.
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect

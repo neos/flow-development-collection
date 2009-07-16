@@ -23,18 +23,10 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id$
- */
-
-/**
  * This class is used to manipulate the PHP source code of certain registered
  * objects. Specifically the "new" operator is replaced by a call to the
  * getObject() method of the object manager.
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *

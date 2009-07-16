@@ -23,16 +23,8 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * A composite of controller arguments
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

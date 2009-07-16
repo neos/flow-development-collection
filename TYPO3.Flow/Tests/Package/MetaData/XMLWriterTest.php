@@ -22,19 +22,11 @@ namespace F3\FLOW3\Package\MetaData;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Package
- * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
- */
-
 require_once('vfs/vfsStream.php');
 
 /**
  * Testcase for the XML MetaData writer
  *
- * @package FLOW3
- * @subpackage Package
  * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

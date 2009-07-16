@@ -16,16 +16,8 @@ namespace F3\FLOW3\Monitor\ChangeDetectionStrategy;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Monitor
- * @version $Id$
- */
-
-/**
  * Contract for a change detection strategy
  *
- * @package FLOW3
- * @subpackage Monitor
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>

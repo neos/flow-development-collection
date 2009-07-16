@@ -23,16 +23,8 @@ namespace F3\FLOW3\MVC\Web;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * Builds a web request object from the raw HTTP information
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

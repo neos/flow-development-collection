@@ -23,12 +23,6 @@ namespace F3\FLOW3\Utility;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Utility
- * @version $Id$
- */
-
-/**
  * Abstraction methods which return system environment variables regardless
  * of server OS, CGI/MODULE version etc. Basically they are the _SERVER
  * variables in most cases.
@@ -39,8 +33,6 @@ namespace F3\FLOW3\Utility;
  * WARNING: Don't try to subclass this class except for use in unit tests. The
  * superglobal replacement will lead to unexpected behavior (on your side).
  *
- * @package FLOW3
- * @subpackage Utility
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -22,20 +22,12 @@ namespace F3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once('Fixture/DummyInterface1.php');
 require_once('Fixture/DummyInterface2.php');
 
 /**
  * Testcase for Reflection Class
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

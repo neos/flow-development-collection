@@ -23,16 +23,8 @@ namespace F3\FLOW3\Tests\AOP\Fixture;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * An interface which can be used for testing of the introduction feature
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Controller;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * An action controller for authenticating via an username and password form
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

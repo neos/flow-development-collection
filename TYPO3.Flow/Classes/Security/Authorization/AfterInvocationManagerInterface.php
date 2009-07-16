@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authorization;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * Contract for an after invocation manager. It is used to check return values of a method against security rules.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

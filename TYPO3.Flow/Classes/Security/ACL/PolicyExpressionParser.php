@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\ACL;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * A specialized pointcut expression parser tailored to policy expressions
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

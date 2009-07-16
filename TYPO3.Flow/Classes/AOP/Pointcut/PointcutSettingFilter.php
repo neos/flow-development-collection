@@ -23,16 +23,8 @@ namespace F3\FLOW3\AOP\Pointcut;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * A settings filter which fires on configuration setting set to TRUE or equal to the given condition.
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

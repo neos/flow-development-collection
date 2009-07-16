@@ -24,7 +24,6 @@ declare(ENCODING = 'utf-8');
 /**
  * Bootstrap for the FLOW3 Framework
  *
- * @package FLOW3
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @author Karsten Dambekalns <karsten@typo3.org>

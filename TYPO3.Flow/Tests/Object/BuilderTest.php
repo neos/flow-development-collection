@@ -32,16 +32,8 @@ require_once(__DIR__ . '/Fixture/ClassWithInjectSettingsMethod.php');
 require_once(__DIR__ . '/Fixture/ClassWithSetterAndPropertyInjection.php');
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * Testcase for the Object Object Builder
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

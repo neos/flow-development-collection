@@ -23,16 +23,12 @@ namespace F3\FLOW3\Error;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Error
  */
 
 /**
  * An object representation of a generic error. Subclass this to create
  * more specific errors if necessary.
  *
- * @package FLOW3
- * @subpackage Error
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

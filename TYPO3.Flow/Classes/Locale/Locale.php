@@ -23,12 +23,6 @@ namespace F3\FLOW3\Locale;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Locale
- * @version $Id$
- */
-
-/**
  * Represents a locale
  *
  * Objects of this kind conveniently represent locales usually described by
@@ -39,8 +33,6 @@ namespace F3\FLOW3\Locale;
  * Using this class asserts the validity of the used locale and provides you
  * with some useful methods for getting more information about it.
  *
- * @package FLOW3
- * @subpackage Locale
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see http://www.unicode.org/reports/tr35/

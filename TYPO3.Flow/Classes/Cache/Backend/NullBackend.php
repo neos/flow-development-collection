@@ -22,19 +22,11 @@ namespace F3\FLOW3\Cache\Backend;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Cache
- * @version $Id$
- */
-
 // @codeCoverageIgnoreStart
 
 /**
  * A caching backend which forgets everything immediately
  *
- * @package FLOW3
- * @subpackage Cache
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

@@ -24,7 +24,6 @@ namespace F3\FLOW3\Object;
 require_once(__DIR__ . '/../Fixtures/DummyClass.php');
 
 /**
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -32,7 +31,6 @@ require_once(__DIR__ . '/../Fixtures/DummyClass.php');
 /**
  * Testcase for the transient object registry
  *
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

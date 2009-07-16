@@ -23,16 +23,8 @@ namespace F3\FLOW3\Package\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
  * An "Invalid Package Key" exception
  *
- * @package FLOW3
- * @subpackage Package
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

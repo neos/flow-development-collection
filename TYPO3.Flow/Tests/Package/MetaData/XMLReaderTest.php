@@ -23,16 +23,8 @@ namespace F3\FLOW3\Package\MetaData;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
- */
-
-/**
  * Testcase for the XML MetaData reader
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id:F3\FLOW3\Package\Test.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

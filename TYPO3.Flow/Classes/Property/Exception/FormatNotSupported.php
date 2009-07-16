@@ -23,16 +23,8 @@ namespace F3\FLOW3\Property\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Property
- * @version $Id$
- */
-
-/**
  * An "Format not supported" Exception
  *
- * @package FLOW3
- * @subpackage Property
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

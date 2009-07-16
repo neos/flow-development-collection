@@ -23,16 +23,8 @@ namespace F3\FLOW3\AOP\Pointcut;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * The contract for an AOP Pointcut Filter class
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

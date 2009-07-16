@@ -23,16 +23,8 @@ namespace F3\FLOW3\Object\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id$
- */
-
-/**
  * "Invalid class" Exception
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

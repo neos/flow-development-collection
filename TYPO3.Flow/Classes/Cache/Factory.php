@@ -23,18 +23,10 @@ namespace F3\FLOW3\Cache;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Cache
- * @version $Id$
- */
-
-/**
  * This cache factory takes care of instantiating a cache frontend and injecting
  * a certain cache backend. After creation of the new cache, the cache object
  * is registered at the cache manager.
  *
- * @package FLOW3
- * @subpackage Cache
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

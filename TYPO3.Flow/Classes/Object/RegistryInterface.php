@@ -23,16 +23,8 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id$
- */
-
-/**
  * Object Object Cache Interface
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

@@ -23,16 +23,8 @@ namespace F3\FLOW3\AOP\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * A "Circular PointcutReference" Exception
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

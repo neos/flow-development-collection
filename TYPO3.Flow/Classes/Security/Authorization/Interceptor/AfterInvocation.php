@@ -23,12 +23,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * This is the second main security interceptor, which enforces the current security policy for return values and is usually applied over AOP:
  *
  * 1. We call the AfterInvocationManager with the method's return value as paramter
@@ -36,8 +30,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * 3. If a PermissionDeniedException was thrown we look for any an authentication entry point in the active tokens to redirect to authentication
  * 4. Then the value is returned to the caller
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

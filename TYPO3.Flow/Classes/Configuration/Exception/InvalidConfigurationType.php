@@ -23,16 +23,8 @@ namespace F3\FLOW3\Configuration\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Configuration
- * @version $Id$
- */
-
-/**
  * An Invalid Configuration Type Exception
  *
- * @package FLOW3
- * @subpackage Configuration
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

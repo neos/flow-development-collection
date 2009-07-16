@@ -23,12 +23,6 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Persistence
- * @version $Id$
- */
-
-/**
  * A persistence query interface.
  *
  * The main point when implementing this is to make sure that methods with a
@@ -38,8 +32,6 @@ namespace F3\FLOW3\Persistence;
  * This allows for code like
  * $query->matching($query->equals('foo', 'bar'))->setLimit(10)->execute();
  *
- * @package FLOW3
- * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

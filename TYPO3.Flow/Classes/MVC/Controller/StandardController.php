@@ -23,17 +23,9 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * A Special Case of a Controller: If no controller has been specified in the
  * request, this controller is chosen.
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

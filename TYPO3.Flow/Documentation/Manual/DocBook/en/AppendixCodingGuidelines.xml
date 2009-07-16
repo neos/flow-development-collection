@@ -929,7 +929,7 @@ if (weHaveALotOfCriteria() === TRUE
           </listitem>
 
           <listitem>
-            <para> Then followed by one or more of the following
+            <para>Then followed by one or more of the following
             codes:<variablelist>
                 <varlistentry>
                   <term><markup>[FEATURE]</markup></term>
@@ -987,9 +987,8 @@ if (weHaveALotOfCriteria() === TRUE
           </listitem>
 
           <listitem>
-            <para><markup>FEATURE</markup>, <markup>BUGFIX</markup>,
-            <markup>API</markup> and <markup>CONFIGURATION</markup> are
-            prefixed by one of<variablelist>
+            <para>The codes are prefixed by one of the following
+            modifiers:<variablelist>
                 <varlistentry>
                   <term><markup>+</markup></term>
 
@@ -1087,56 +1086,86 @@ if (weHaveALotOfCriteria() === TRUE
   <section>
     <title>Source Code Documentation</title>
 
-    <para>All code must be documented with inline comments. The syntax is that
-    known from the Java programming language (JavaDoc). This way code
-    documentation can automatically be generated using <link
+    <para>All code must be documented with inline comments. The syntax is
+    similar to that known from the Java programming language (JavaDoc). This
+    way code documentation can automatically be generated using <link
     xl:href="http://pear.php.net/package/PHP_UML">PHP_UML</link>.</para>
 
     <section>
       <title>Documentation Blocks</title>
 
-      <para>A file can contain different documentation blocks, relating to the
-      file itself, the class in the file and finally the members of the class.
-      A documentation block is always used for the entity it precedes.</para>
+      <para>A file contains different documentation blocks, relating to the
+      class in the file and the members of the class. A documentation block is
+      always used for the entity it precedes.</para>
 
       <section>
-        <title>File documentation</title>
+        <title>Class documentation</title>
 
-        <para>The first documentation block in the file is essential for
-        defining the package the file and it's contents belong to. Although it
-        would not be strictly needed to have the file level documentation
-        block (because each file contains only one class in FLOW3), we still
-        use it because it</para>
-
-        <itemizedlist>
-          <listitem>
-            <para>avoids warnings when rendering the documentation</para>
-          </listitem>
-
-          <listitem>
-            <para>makes sure that even code outside of classes is assigned to
-            the correct package and documented correctly</para>
-          </listitem>
-        </itemizedlist>
-
-        <para>That means that each file must contain a documentation block
-        like shown below, right below the header stating the license and
-        before any
-        <methodname>require</methodname>/<methodname>include</methodname>
-        calls:</para>
+        <para>Classes have their own documentation block describing the
+        classes purpose, assigning a package and subpackage. Very often the
+        code within a class is expanded and modified by a number of authors.
+        We therefore recommend to add the names of the developers to the
+        method documentation. An exception should be the documentation for
+        interfaces where you list all authors in the interface documentation.
+        Exceptions itself never have an author annotation.</para>
 
         <example>
-          <title>Standard file level documentation block</title>
+          <title>Standard class documentation block</title>
 
           <programlisting language="php">/**
- * @package [packagename]
- * @subpackage [subpackage name if necessary]
+ * First sentence is short description. Then you can write more, just as you like
+ *
+ * Here may follow some detailed description about what the class is for.
+ *
+ * Paragraphs are seperated by a empty line.
+ *
  * @version $Id$
- */</programlisting>
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
+ */
+class SomeClass {
+ ...
+}</programlisting>
         </example>
 
-        <para>The package and version tag are mandatory, the subpackage tag is
-        optional.</para>
+        <example>
+          <title>Standard interface documentation block</title>
+
+          <programlisting language="php">/**
+ * First sentence is short description. Then you can write more, just as you like
+ *
+ * Here may follow some detailed description about what the interface is for.
+ *
+ * Paragraphs are seperated by a empty line.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
+ * @author Your Name &lt;your@email.here&gt;
+ */
+interface SomeInterface {
+ ...
+}</programlisting>
+        </example>
+
+        <example>
+          <title>Standard exception documentation block</title>
+
+          <programlisting language="php">/**
+ * First sentence is short description. Then you can write more, just as you like
+ *
+ * Here may follow some detailed description about what the interface is for.
+ *
+ * Paragraphs are seperated by a empty line.
+ *
+ * @version $Id$
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
+      License, version 3 or later
+ */
+class SomeException extends \Exception {
+ ...
+}</programlisting>
+        </example>
 
         <important>
           <title>$Id$, Subversion and keyword expansion</title>
@@ -1165,79 +1194,6 @@ enable-auto-props = yes
           and makes Subversion ignore some standard backup and metadata
           filenames.</para>
         </important>
-      </section>
-
-      <section>
-        <title>Class documentation</title>
-
-        <para>Classes have their own documentation block describing the
-        classes purpose, assigning a package and subpackage. Very often the
-        code within a class is expanded and modified by a number of authors.
-        We therefore recommend to add the names of the developers to the
-        method documentation. An exception should be the documentation for
-        interfaces where you list all authors in the interface documentation.
-        Exceptions itself never have an author annotation.</para>
-
-        <example>
-          <title>Standard class documentation block</title>
-
-          <programlisting language="php">/**
- * First sentence is short description. Then you can write more, just as you like
- *
- * Here may follow some detailed description about what the class is for.
- *
- * Paragraphs are seperated by a empty line.
- *
- * @package [packagename]
- * @subpackage [subpackage name if necessary]
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
-      License, version 3 or later
- */
-class SomeClass {
- ...</programlisting>
-        </example>
-
-        <example>
-          <title>Standard interface documentation block</title>
-
-          <programlisting language="php">/**
- * First sentence is short description. Then you can write more, just as you like
- *
- * Here may follow some detailed description about what the interface is for.
- *
- * Paragraphs are seperated by a empty line.
- *
- * @package [packagename]
- * @subpackage [subpackage name if necessary]
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
-      License, version 3 or later
- * @author Your Name &lt;your@email.here&gt;
- */
-interface SomeInterface {
- ...</programlisting>
-        </example>
-
-        <example>
-          <title>Standard exception documentation block</title>
-
-          <programlisting language="php">/**
- * First sentence is short description. Then you can write more, just as you like
- *
- * Here may follow some detailed description about what the interface is for.
- *
- * Paragraphs are seperated by a empty line.
- *
- * @package [packagename]
- * @subpackage [subpackage name if necessary]
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public ↩
-      License, version 3 or later
- */
-class SomeException extends \Exception {
- ...</programlisting>
-        </example>
 
         <para>Additional tags or annotations, such as @see or @aspect, can be
         added as needed.</para>
@@ -1276,31 +1232,37 @@ protected $title = 'Untitled';</programlisting>
  *
  * Paragraphs are seperated by a empty line.
  *
- * @param \F3\FLOW3\Log\LoggerInterface $logger A logger
+ * @param \F3\Blog\Domain\Model\Post $post A post
  * @param string $someString This parameter should contain some string
  * @return void
  * @author Your Name &lt;your@email.here&gt;
  */
-public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) {
- ...</programlisting>
+public function addStringToPost(\F3\Blog\Domain\Model\Post $post, $someString) {
+ ...
+}</programlisting>
         </example>
 
-        <para>A special note about the @param tags: The parameter type and
-        name are seperated by one space, not aligned. Do not put a colon after
-        the parameter name. Always document the return type, even if it is
-        void - that way it is clearly visible it hasn't just been
-        forgotten.</para>
+        <para>A special note about the <markup>@param</markup> tags: The
+        parameter type and name are seperated by one space, not aligned. Do
+        not put a colon after the parameter name. Always document the return
+        type, even if it is void - that way it is clearly visible it hasn't
+        just been forgotten (only constructors never have a
+        <markup>@return</markup> annotation!).</para>
       </section>
     </section>
 
     <section>
-      <title>Documentation Tags</title>
+      <title>Documentation Annotations</title>
 
-      <para>There are quite a few documentation tags that can be used. Here is
-      a list of tags that can and should be used within the TYPO3
+      <para>There are quite a few documentation annotations that can be used.
+      Here is a list of tags that can and should be used within the TYPO3
       project:</para>
 
       <itemizedlist>
+        <listitem>
+          <para>@api</para>
+        </listitem>
+
         <listitem>
           <para>@author</para>
         </listitem>
@@ -1310,15 +1272,7 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
         </listitem>
 
         <listitem>
-          <para>@internal</para>
-        </listitem>
-
-        <listitem>
           <para>@license</para>
-        </listitem>
-
-        <listitem>
-          <para>@package</para>
         </listitem>
 
         <listitem>
@@ -1338,15 +1292,15 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
         </listitem>
 
         <listitem>
-          <para>@subpackage</para>
-        </listitem>
-
-        <listitem>
           <para>@todo</para>
         </listitem>
 
         <listitem>
           <para>@var</para>
+        </listitem>
+
+        <listitem>
+          <para>@version</para>
         </listitem>
       </itemizedlist>
 
@@ -1357,6 +1311,32 @@ public function __construct(\F3\FLOW3\Log\LoggerInterface $logger, $someString) 
         framework as well as for giving instructions to the Persistence
         framework.</para>
       </note>
+    </section>
+
+    <section>
+      <title>Defining the Public API</title>
+
+      <para>Not all methods with a public visibility are neccessarily part of
+      the intended public API of a project. For FLOW3, only the methods
+      explicitly defined as part of the public API will be kept stable and are
+      intended for use by developers using FLOW3. Also the API documentation
+      we produce will only cover the public API.</para>
+
+      <para>To mark a method (or class) as part of the public API, include an
+      <markup>@api</markup> annotation for it in the docblock.<example>
+          <title>Defining the public API</title>
+
+          <programlisting language="php">/**
+ * This method is part of the public API.
+ *
+ * @return void
+ * @author Your Name &lt;your@email.here&gt;
+ * @api
+ */
+public function fooBar() {
+ ...
+}</programlisting>
+        </example></para>
     </section>
   </section>
 

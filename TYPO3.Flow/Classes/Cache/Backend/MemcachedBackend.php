@@ -23,12 +23,6 @@ namespace F3\FLOW3\Cache\Backend;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Cache
- * @version $Id$
- */
-
-/**
  * A caching backend which stores cache entries by using Memcached.
  *
  * This backend uses the following types of Memcache keys:
@@ -53,8 +47,6 @@ namespace F3\FLOW3\Cache\Backend;
  * Note: When using the Memcached backend to store values of more than ~1 MB, the
  * data will be split into chunks to make them fit into the memcached limits.
  *
- * @package FLOW3
- * @subpackage Cache
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

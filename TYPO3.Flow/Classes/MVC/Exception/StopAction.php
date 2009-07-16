@@ -23,12 +23,6 @@ namespace F3\FLOW3\MVC\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * This exception is thrown by a controller to stop the execution of the current
  * action and return the control to the dispatcher. The dispatcher catches this
  * exception and - depending on the "dispatched" status of the request - either
@@ -36,8 +30,6 @@ namespace F3\FLOW3\MVC\Exception;
  *
  * See the Action Controller's forward() and redirectToURI() methods for more information.
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

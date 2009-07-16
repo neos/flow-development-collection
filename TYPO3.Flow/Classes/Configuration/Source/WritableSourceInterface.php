@@ -23,15 +23,11 @@ namespace F3\FLOW3\Configuration\Source;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Configuration
  */
 
 /**
  * Contract for a writable configuration source
  *
- * @package FLOW3
- * @subpackage Configuration
  * @version $Id: SourceInterface.php 2293 2009-05-20 18:14:45Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Christopher Hlubek <hlubek@networkteam.com>

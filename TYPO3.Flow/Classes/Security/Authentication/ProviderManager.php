@@ -23,17 +23,9 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The default authentication manager, which uses different \F3\FLOW3\Security\Authentication\Providers
  * to authenticate the tokens stored in the security context.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

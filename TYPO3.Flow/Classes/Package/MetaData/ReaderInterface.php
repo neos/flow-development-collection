@@ -23,16 +23,8 @@ namespace F3\FLOW3\Package\MetaData;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
- */
-
-/**
  * An interface for a package metadata reader
  *
- * @package FLOW3
- * @subpackage Package
  * @version $Id:F3\FLOW3\Package\.php 203 2007-03-30 13:17:37Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Christopher Hlubek <hlubek@networkteam.com>

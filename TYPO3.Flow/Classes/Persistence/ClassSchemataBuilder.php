@@ -23,17 +23,9 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Persistence
- * @version $Id$
- */
-
-/**
  * The Class Schemata Builder is used by the Persistence Manager to build class
  * schemata for all classes tagged as ValueObject or Entity.
  *
- * @package FLOW3
- * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,12 +23,6 @@ namespace F3\FLOW3\Cache\Backend;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Cache
- * @version $Id$
- */
-
-/**
  * A caching backend which stores cache entries by using APC.
  *
  * This backend uses the following types of keys:
@@ -50,8 +44,6 @@ namespace F3\FLOW3\Cache\Backend;
  * This prefix makes sure that keys from the different installations do not
  * conflict.
  *
- * @package FLOW3
- * @subpackage Cache
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

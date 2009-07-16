@@ -23,19 +23,11 @@ namespace F3\FLOW3\Session;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Session
- * @version $Id$
- */
-
-/**
  * Implementation of a transient session.
  *
  * This session behaves like any other session except that it only stores the
  * data during one request.
  *
- * @package FLOW3
- * @subpackage Session
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

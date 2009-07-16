@@ -23,16 +23,8 @@ namespace F3\FLOW3\Monitor;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Monitor
- * @version $Id$
- */
-
-/**
  * A monitor which detects changes in directories or files
  *
- * @package FLOW3
- * @subpackage Monitor
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

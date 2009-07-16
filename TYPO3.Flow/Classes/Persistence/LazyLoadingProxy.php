@@ -23,17 +23,9 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Persistence
- * @version $Id$
- */
-
-/**
  * A proxy that can replace any object and replaces itself in it's parent on
  * first access (call, get, set, isset, unset).
  *
- * @package FLOW3
- * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

@@ -23,17 +23,9 @@ namespace F3\FLOW3\Utility;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Utility
- * @version $Id$
- */
-
-/**
  * This class can be used as a replacement for superglobals such as $_SERVER etc.
  * to give the caller a hint to use a different way for accessing the information.
  *
- * @package FLOW3
- * @subpackage Utility
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *

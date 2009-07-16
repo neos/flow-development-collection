@@ -23,18 +23,10 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * Contract for an authentication manager.
  * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context
  * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

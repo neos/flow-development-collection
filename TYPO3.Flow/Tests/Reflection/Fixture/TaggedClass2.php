@@ -23,16 +23,8 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Reflection
- * @version $Id$
- */
-
-/**
  * Fixture for the reflection service tests
  *
- * @package FLOW3
- * @subpackage Reflection
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @sometag2

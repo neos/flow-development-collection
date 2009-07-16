@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\ACL;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The ACL UserDetailsService. It mainly calculates the current roles for the set request patterns from the given authentication token.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

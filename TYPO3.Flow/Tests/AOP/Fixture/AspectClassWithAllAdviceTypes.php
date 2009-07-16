@@ -23,16 +23,8 @@ namespace F3\FLOW3\Tests\AOP\Fixture;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * An aspect class which contains all supported types of advice, a pointcut and an introduction
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @aspect

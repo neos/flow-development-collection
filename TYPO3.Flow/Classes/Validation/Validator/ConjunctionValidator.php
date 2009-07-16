@@ -23,17 +23,9 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
- */
-
-/**
  * Validator to chain many validators in a conjunction (logical and). So every
  * validator has to be valid, to make the whole conjunction valid.
  *
- * @package FLOW3
- * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

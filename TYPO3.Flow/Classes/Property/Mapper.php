@@ -23,12 +23,6 @@ namespace F3\FLOW3\Property;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Property
- * @version $Id$
- */
-
-/**
  * The Property Mapper maps properties from a source onto a given target object, often a
  * (domain-) model. Which properties are required and how they should be filtered can
  * be customized.
@@ -48,8 +42,6 @@ namespace F3\FLOW3\Property;
  *
  * Now the target object equals the source object.
  *
- * @package FLOW3
- * @subpackage Property
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

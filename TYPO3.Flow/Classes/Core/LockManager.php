@@ -23,17 +23,9 @@ namespace F3\FLOW3\Core;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Core
- * @version $Id$
- */
-
-/**
  * The Lock Manager controls the master lock of the whole site which is mainly
  * used to regenerate code caches in peace.
  *
- * @package FLOW3
- * @subpackage Core
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -322,7 +322,6 @@
 /**
  * An aspect implementing security for Foo
  *
- * @package MySecurityPackage
  * @author  John Doe &lt;john@typo3.org&gt;
  * @aspect
  */
@@ -632,7 +631,6 @@ class FooSecurityAspect {
 /**
  * Fixture class for testing poincut definitions
  *
- * @package TestPackage
  * @aspect
  */
 class PointcutTestingAspect {
@@ -874,7 +872,6 @@ class PointcutTestingAspect {
 /**
  * A logging aspect
  *
- * @package MyPackage
  * @aspect
  */
 class LoggingAspect {
@@ -931,7 +928,6 @@ class LoggingAspect {
 /**
  * A lastname rejection aspect
  *
- * @package MyPackage
  * @aspect
  */
 class LastNameRejectionAspect {
@@ -1009,7 +1005,6 @@ class LastNameRejectionAspect {
 /**
  * An aspect for demonstrating introductions
  *
- * @package MyPackage
  * @aspect
  */
 class IntroductionAspect {

@@ -23,7 +23,6 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -31,7 +30,6 @@ namespace F3\FLOW3\MVC\Controller;
 /**
  * Testcase for the MVC Action Controller
  *
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,16 +23,8 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
- */
-
-/**
  * Contract for a validator
  *
- * @package FLOW3
- * @subpackage Validation
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

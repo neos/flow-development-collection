@@ -22,20 +22,12 @@ namespace F3\FLOW3\AOP;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once ('Fixture/AspectClassWithAllAdviceTypes.php');
 require_once ('Fixture/InterfaceForIntroduction.php');
 
 /**
  * Testcase for the AOP Framework class
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,8 +23,6 @@ namespace F3\FLOW3\Reflection;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Reflection
  * @version $Id$
  */
 /**
@@ -35,8 +33,6 @@ namespace F3\FLOW3\Reflection;
  * - if public property exists, return/set the value of it.
  * - else, throw exception
  *
- * @package
- * @subpackage
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

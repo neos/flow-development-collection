@@ -22,19 +22,11 @@ namespace F3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
 require_once (FLOW3_PATH_FLOW3 . 'Tests/AOP/Fixture/MethodsTaggedWithSomething.php');
 
 /**
  * Testcase for the Pointcut Method-Tagged-With Filter
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

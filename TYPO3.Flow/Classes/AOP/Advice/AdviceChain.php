@@ -23,17 +23,9 @@ namespace F3\FLOW3\AOP\Advice;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * The advice chain holds a number of subsequent advices that
  * match a given join point and calls the advices in the right order.
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

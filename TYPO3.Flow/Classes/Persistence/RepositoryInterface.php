@@ -23,16 +23,8 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Persistence
- * @version $Id$
- */
-
-/**
  * Contract for a repository
  *
- * @package FLOW3
- * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>

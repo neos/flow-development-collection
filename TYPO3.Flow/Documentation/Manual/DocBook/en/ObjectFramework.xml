@@ -66,9 +66,9 @@
         <title>Supported scopes</title>
 
         <tgroup cols="2">
-          <colspec colwidth="1*" />
+          <colspec colwidth="1*"/>
 
-          <colspec colwidth="3*" />
+          <colspec colwidth="3*"/>
 
           <thead>
             <row>
@@ -1065,11 +1065,6 @@ declare(ENCODING = 'utf-8');
  * (this package doesn't really exist, and even if so, the configuration  *
  * would probably be different)                                           *
  *                                                                        */
-
-/**
- * @package MyPackage
- * @version $Id: Objects.php 123 2009-01-01 12:00:00Z robert $
- */
 
 $c['F3\MyPackage\Foo']-&gt;arguments-&gt;array(
 	1 =&gt; array('object' =&gt; 'F3\MyPackage\Baz'),

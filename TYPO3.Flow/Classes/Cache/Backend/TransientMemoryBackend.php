@@ -23,16 +23,8 @@ namespace F3\FLOW3\Cache\Backend;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Cache
- * @version $Id$
- */
-
-/**
  * A caching backend which stores cache entries during one script run.
  *
- * @package FLOW3
- * @subpackage Cache
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

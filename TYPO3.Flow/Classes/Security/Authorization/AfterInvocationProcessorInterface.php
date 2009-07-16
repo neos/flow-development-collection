@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authorization;
  *                                                                        */
 
 /**
- * @package
- * @subpackage
- * @version $Id$
- */
-
-/**
  * Contract for an after invocation processor.
  *
- * @package
- * @subpackage
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

@@ -23,17 +23,9 @@ namespace F3\FLOW3\Security\Authorization;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * A RequestFilter is configured to match specific \F3\FLOW3\MVC\RequestInterfaces and call
  * a \F3\FLOW3\Security\Authorization\InterceptorInterface if needed.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

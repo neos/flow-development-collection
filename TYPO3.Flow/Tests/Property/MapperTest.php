@@ -22,19 +22,11 @@ namespace F3\FLOW3\Property;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once (__DIR__ . '/../Fixtures/ClassWithSetters.php');
 
 /**
  * Testcase for the Property Mapper
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

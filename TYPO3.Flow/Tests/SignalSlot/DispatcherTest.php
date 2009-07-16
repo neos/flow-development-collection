@@ -22,18 +22,10 @@ namespace F3\FLOW3\SignalSlot;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage SignalSlot
- * @version $Id$
- */
-
 
 /**
  * Testcase for the Signal Dispatcher Class
  *
- * @package FLOW3
- * @subpackage SignalSlot
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

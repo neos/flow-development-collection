@@ -23,18 +23,10 @@ namespace F3\FLOW3\Security\ACL;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The representation of a privilege, that a role has for a given resource. E.g. READ or WRITE.
  * A privilege can be explicitly granted or denied. In the policy file this is expressed by appending
  * _DENY or _GRANT to the privilege's identifier.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

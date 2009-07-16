@@ -22,12 +22,6 @@ namespace F3\FLOW3\Persistence;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once('Fixture/Model/Entity2.php');
 require_once('Fixture/Model/Entity3.php');
 require_once('Fixture/Model/DirtyEntity.php');
@@ -36,8 +30,6 @@ require_once('Fixture/Model/CleanEntity.php');
 /**
  * Testcase for the Persistence Manager
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

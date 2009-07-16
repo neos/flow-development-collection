@@ -23,18 +23,10 @@ namespace F3\FLOW3\AOP\Pointcut;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * The pointcut expression parser parses the definition of the place and circumstances
  * where advices can be inserted later on. The input of the parse() function is a string
  * from a pointcut- or advice annotation and returns a pointcut filter composite.
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @see \F3\FLOW3\AOP\Pointcut, \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite

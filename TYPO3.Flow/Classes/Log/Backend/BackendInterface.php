@@ -23,16 +23,8 @@ namespace F3\FLOW3\Log\Backend;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Log
- * @version $Id$
- */
-
-/**
  * Contract for a logger backend interface
  *
- * @package FLOW3
- * @subpackage Log
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

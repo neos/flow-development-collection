@@ -23,12 +23,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * This security interceptor invokes the authentication of the authentication tokens in the security context.
  * It is usally used by the firewall to define secured request that need proper authentication.
  *
@@ -36,8 +30,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  * If context->authenticateAllTokens() returns TRUE all tokens have be authenticated, otherwise there has to be at least one
  * authenticated token to have a valid authentication.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

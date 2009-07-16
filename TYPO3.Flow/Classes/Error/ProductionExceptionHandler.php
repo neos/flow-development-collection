@@ -23,16 +23,8 @@ namespace F3\FLOW3\Error;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Error
- * @version $Id$
- */
-
-/**
  * A quite exception handler which catches but ignores any exception.
  *
- * @package FLOW3
- * @subpackage Error
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

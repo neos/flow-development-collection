@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authentication\Token;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * An authentication token used for RSA encrypted username and password authentication.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  * @scope prototype

@@ -23,16 +23,8 @@ namespace F3\FLOW3\Fixture\Validation;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * A dummy class with setters for testing data mapping
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

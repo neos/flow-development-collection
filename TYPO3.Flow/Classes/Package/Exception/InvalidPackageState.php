@@ -23,16 +23,8 @@ namespace F3\FLOW3\Package\Exception;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id: InvalidPackageKey.php 1811 2009-01-28 12:04:49Z robert $
- */
-
-/**
  * An "Invalid Package State" exception
  *
- * @package FLOW3
- * @subpackage Package
  * @version $Id: InvalidPackageKey.php 1811 2009-01-28 12:04:49Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

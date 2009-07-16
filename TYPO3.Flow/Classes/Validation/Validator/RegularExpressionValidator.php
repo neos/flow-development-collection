@@ -23,18 +23,10 @@ namespace F3\FLOW3\Validation\Validator;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Validation
- * @version $Id$
- */
-
-/**
  * Validator based on regular expressions
  *
  * The regular expression is specified in the options by using the array key "regularExpression"
  *
- * @package FLOW3
- * @subpackage Validation
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

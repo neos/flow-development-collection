@@ -23,20 +23,12 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * This is the main security interceptor, which enforces the current security policy and is usually called by the central security aspect:
  *
  * 1. If authentication has not been performed (flag is set in the security context) the configured authentication manager is called to authenticate its tokens
  * 2. If a AuthenticationRequired exception has been thrown we look for an authentication entry point in the active tokens to redirect to authentication
  * 3. Then the configured AccessDecisionManager is called to authorize the request/action
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

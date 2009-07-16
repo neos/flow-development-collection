@@ -23,16 +23,8 @@ namespace F3\FLOW3\MVC;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * The interface for a request handler
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @author Robert Lemke <robert@typo3.org>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

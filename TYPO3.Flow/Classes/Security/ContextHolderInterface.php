@@ -23,17 +23,9 @@ namespace F3\FLOW3\Security;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The security ContextHolder ist a container to hold all security related information.
  * Depending on the implementation (strategy) of the ContextHolder the context may be stored or not.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

@@ -23,16 +23,8 @@ namespace F3\FLOW3\Locale;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Locale
- * @version $Id:F3_FLOW3_Object_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
- */
-
-/**
  * Testcase for the Locale class
  *
- * @package FLOW3
- * @subpackage Locale
  * @version $Id:F3_FLOW3_Object_ConfigurationTest.php 201 2007-03-30 11:18:30Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

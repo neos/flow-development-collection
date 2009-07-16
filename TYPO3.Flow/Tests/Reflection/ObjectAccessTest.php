@@ -22,19 +22,11 @@ namespace F3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Reflection
- * @version $Id$
- */
-
 require_once('Fixture/DummyClassWithGettersAndSetters.php');
 
 /**
  * Testcase for Object Access
  *
- * @package FLOW3
- * @subpackage Reflection
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

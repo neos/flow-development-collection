@@ -23,17 +23,9 @@ namespace F3\FLOW3\Resource;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Resource
- * @version $Id$
- */
-
-/**
  * Class Loader implementation which loads .php files found in the classes
  * directory of an object.
  *
- * @package FLOW3
- * @subpackage Resource
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

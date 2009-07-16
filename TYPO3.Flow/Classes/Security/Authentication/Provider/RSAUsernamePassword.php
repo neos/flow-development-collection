@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * An authentication provider that authenticates \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword tokens.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

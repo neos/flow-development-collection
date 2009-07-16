@@ -23,16 +23,8 @@ namespace F3\FLOW3\MVC\Web\Routing;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage MVC
- * @version $Id$
- */
-
-/**
  * Implementation of a standard route
  *
- * @package FLOW3
- * @subpackage MVC
  * @version $Id$
  * @copyright Copyright belongs to the respective authors
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

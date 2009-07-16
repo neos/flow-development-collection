@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authentication\EntryPoint;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * Testcase for web redirect authentication entry point
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

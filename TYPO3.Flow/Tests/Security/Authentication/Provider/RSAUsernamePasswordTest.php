@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
-/**
  * Testcase for RSA username/password authentication provider
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

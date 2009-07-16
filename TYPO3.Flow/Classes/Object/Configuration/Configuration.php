@@ -23,8 +23,6 @@ namespace F3\FLOW3\Object\Configuration;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -32,8 +30,6 @@ namespace F3\FLOW3\Object\Configuration;
 /**
  * FLOW3 Object Configuration
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

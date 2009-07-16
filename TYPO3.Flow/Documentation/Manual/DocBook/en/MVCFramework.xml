@@ -525,9 +525,6 @@ public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW
 
           <programlisting>/**
  * My web-specific controller
- *
- * @package Demo
- * @subpackage Controller
  */
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 

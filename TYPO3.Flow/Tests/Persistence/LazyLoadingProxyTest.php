@@ -23,16 +23,8 @@ namespace F3\FLOW3\Persistence;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Persistence
- * @version $Id$
- */
-
-/**
  * Unit tests for the LazyLoadingProxy
  *
- * @package FLOW3
- * @subpackage Persistence
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
  */

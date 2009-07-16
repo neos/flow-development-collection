@@ -23,19 +23,11 @@ namespace F3\FLOW3\AOP\Pointcut;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage AOP
- * @version $Id$
- */
-
-/**
  * The pointcut defines the set of join points (ie. "situations") in which certain
  * code associated with the pointcut (ie. advices) should be executed. This set of
  * join points is defined by a poincut expression which is matched against class
  * and method signatures.
  *
- * @package FLOW3
- * @subpackage AOP
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype

@@ -208,11 +208,6 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 /**
- * @package TYPO3CR
- * @version $Id: Objects.php 1234 2009-01-10 12:00:00Z johndoe $
- */
-
-/**
  * The storage backend to use for TYPO3CR.
  *
  * @var F3_TYPO3CR_Storage_BackendInterface
@@ -388,7 +383,6 @@ declare(ENCODING="utf-8");
  *                                                                        */
 
 /**
- * @package Smarty
  * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
  */
 

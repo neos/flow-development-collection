@@ -22,19 +22,11 @@ namespace F3\FLOW3\MVC\Web\Routing;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Tests
- * @version $Id$
- */
-
 require_once(__DIR__ . '/../../Fixture/Web/Routing/MockRoutePartHandler.php');
 
 /**
  * Testcase for the MVC Web Routing Route Class
  *
- * @package FLOW3
- * @subpackage Tests
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

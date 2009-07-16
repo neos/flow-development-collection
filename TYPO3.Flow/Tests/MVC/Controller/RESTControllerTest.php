@@ -22,7 +22,6 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
@@ -32,7 +31,6 @@ require_once(__DIR__ . '/../Fixture/Controller/MockRESTController.php');
 /**
  * Testcase for the MVC REST Controller
  *
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

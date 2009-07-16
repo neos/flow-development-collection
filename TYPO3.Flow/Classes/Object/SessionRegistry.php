@@ -23,17 +23,9 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id: TransientRegistry.php 2293 2009-05-20 18:14:45Z robert $
- */
-
-/**
  * A session Object Object Cache which provides a session-based
  * registry of objects.
  *
- * @package FLOW3
- * @subpackage Object
  * @version $Id: TransientRegistry.php 2293 2009-05-20 18:14:45Z robert $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

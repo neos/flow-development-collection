@@ -23,16 +23,8 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Package
- * @version $Id$
- */
-
-/**
  * Interface for TYPO3 Package MetaData information
  *
- * @package FLOW3
- * @subpackage Package
  * @version $Id$
  * @author Christopher Hlubek <hlubek@networkteam.com>
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later

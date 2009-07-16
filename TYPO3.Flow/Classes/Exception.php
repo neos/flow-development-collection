@@ -23,14 +23,8 @@ namespace F3\FLOW3;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @version $Id$
- */
-
-/**
  * A generic FLOW3 Exception
  *
- * @package FLOW3
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

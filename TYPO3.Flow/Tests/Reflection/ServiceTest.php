@@ -22,12 +22,6 @@ namespace F3\FLOW3\Reflection;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Reflection
- * @version $Id$
- */
-
 require_once('Fixture/DummyInterface1.php');
 require_once('Fixture/DummyInterface2.php');
 require_once('Fixture/DummyInterface3.php');
@@ -47,8 +41,6 @@ require_once('Fixture/DummyClassWithProperties.php');
 /**
  * Testcase for the Reflection Service
  *
- * @package FLOW3
- * @subpackage Reflection
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

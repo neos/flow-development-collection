@@ -73,7 +73,6 @@ public function addPost(\F3\Blog\Domain\Post $post) {
         <para><programlisting language="php">/**
  * A Blog object
  *
- * @package Blog
  * @entity
  */
 class Blog {
@@ -111,8 +110,6 @@ class Blog {
 
         <programlisting language="php">/**
  * A BlogRepository
- *
- * @package Blog
  */
 class BlogRepository extends \F3\FLOW3\Persistence\Repository {
 

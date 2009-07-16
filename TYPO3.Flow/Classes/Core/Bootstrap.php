@@ -22,12 +22,6 @@ namespace F3\FLOW3\Core;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @package FLOW3
- * @subpackage Core
- * @version $Id$
- */
-
 	// Those are needed before the autoloader is active
 require(__DIR__ . '/../Utility/Files.php');
 require(__DIR__ . '/../Package/PackageInterface.php');
@@ -41,8 +35,6 @@ define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLO
 /**
  * General purpose central core hyper FLOW3 class
  *
- * @package FLOW3
- * @subpackage Core
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

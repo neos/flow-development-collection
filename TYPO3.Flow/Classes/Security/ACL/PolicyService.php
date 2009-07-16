@@ -23,17 +23,9 @@ namespace F3\FLOW3\Security\ACL;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * The policy service reads the policy configuration. The security adivce asks this service which methods have to be intercepted by a security interceptor.
  * The access decision voters get the roles and privileges configured (in the security policy) for a specific method invocation from this service.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */

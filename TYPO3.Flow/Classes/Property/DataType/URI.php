@@ -23,16 +23,8 @@ namespace F3\FLOW3\Property\DataType;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Property
- * @version $Id$
- */
-
-/**
  * Represents a Unique Resource Identifier according to STD 66 / RFC 3986
  *
- * @package FLOW3
- * @subpackage Property
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  *

@@ -23,16 +23,8 @@ namespace F3\FLOW3\Security;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Security
- * @version $Id$
- */
-
-/**
  * Contract for a request pattern.
  *
- * @package FLOW3
- * @subpackage Security
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Andreas Förthner <andreas.foerthner@netlogix.de>
