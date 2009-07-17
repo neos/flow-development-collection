@@ -133,7 +133,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	public function replace($existingObject, $newObject) {
 		$backend = $this->persistenceManager->getBackend();
 		$session = $this->persistenceManager->getSession();
-		$uuid = $backend->getUUIDByObject($existingObject);
+		$uuid = $backend->getIdentifierByObject($existingObject);
 		if ($uuid !== NULL) {
 			$backend->replaceObject($existingObject, $newObject);
 			$session->unregisterReconstitutedObject($existingObject);

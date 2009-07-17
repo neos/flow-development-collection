@@ -65,10 +65,14 @@ interface BackendInterface {
 	 * Returns the (internal) identifier for the object, if it is known to the
 	 * backend. Otherwise NULL is returned.
 	 *
+	 * Note: this returns an identifier even if the object has not been
+	 * persisted, in case of AOP-managed entities. Use isNewObject() if you need
+	 * to distinguish those cases.
+	 *
 	 * @param object $object
 	 * @return string The identifier for the object if it is known, or NULL
 	 */
-	public function getUUIDByObject($object);
+	public function getIdentifierByObject($object);
 
 	/**
 	 * Checks if the given object has ever been persisted.

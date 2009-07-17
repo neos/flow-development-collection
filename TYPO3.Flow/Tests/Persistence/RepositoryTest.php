@@ -186,7 +186,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$newObject = new \stdClass;
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 		$mockPersistenceBackend->expects($this->once())->method('replaceObject')->with($existingObject, $newObject);
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
@@ -220,7 +220,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$removedObjects->attach($existingObject);
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
 		$mockPersistenceSession->expects($this->once())->method('unregisterReconstitutedObject')->with($existingObject);
@@ -256,7 +256,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$addedObjects->attach($existingObject);
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getUUIDByObject')->with($existingObject)->will($this->returnValue(NULL));
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($existingObject)->will($this->returnValue(NULL));
 
 		$mockPersistenceSession = $this->getMock('F3\FLOW3\Persistence\Session', array(), array(), '', FALSE);
 

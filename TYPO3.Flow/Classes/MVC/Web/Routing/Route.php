@@ -373,7 +373,7 @@ class Route {
 		if (count($routeValues) > 0) {
 			foreach ($routeValues as $key => $routeValue) {
 				if (is_object($routeValue)) {
-					$uuid = $this->persistenceManager->getBackend()->getUUIDByObject($routeValue);
+					$uuid = $this->persistenceManager->getBackend()->getIdentifierByObject($routeValue);
 					if ($uuid === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Route value ' . $this->name . ' is an object but does is unknown to the persistence manager.', 1242417960);
 					$routeValues[$key] = $uuid;
 				}
