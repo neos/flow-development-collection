@@ -71,7 +71,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
@@ -83,7 +82,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
@@ -162,7 +160,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return \SplObjectStorage the objects
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
 	 */
 	public function getAddedObjects() {
 		return $this->addedObjects;
@@ -174,7 +171,6 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 *
 	 * @return \SplObjectStorage the objects
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
 	 */
 	public function getRemovedObjects() {
 		return $this->removedObjects;

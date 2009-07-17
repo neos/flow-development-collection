@@ -54,7 +54,6 @@ interface RepositoryInterface {
 	 * the storage layer.
 	 *
 	 * @return array An array of objects
-	 * @api
 	 */
 	public function getAddedObjects();
 
@@ -63,7 +62,6 @@ interface RepositoryInterface {
 	 * had been persisted to the storage layer before.
 	 *
 	 * @return array
-	 * @api
 	 */
 	public function getRemovedObjects();
 
