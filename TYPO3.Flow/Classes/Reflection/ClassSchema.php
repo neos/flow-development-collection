@@ -39,7 +39,7 @@ class ClassSchema {
 	/**
 	 * Specifies the allowed property types.
 	 */
-	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|SplObjectStorage|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^\\\\?(?P<type>integer|int|float|boolean|string|DateTime|F3\\\\[a-zA-Z0-9\\\\]+|array|ArrayObject|SplObjectStorage)(?:<(?P<elementType>[a-zA-Z0-9\\\\]+)>)?/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -115,9 +115,16 @@ class ClassSchema {
 	public function addProperty($name, $type, $lazy = FALSE) {
 		$matches = array();
 		if (preg_match(self::ALLOWED_TYPES_PATTERN, $type, $matches)) {
-			$type = ($matches[1] === 'int') ? 'integer' : $matches[1];
+			$type = ($matches['type'] === 'int') ? 'integer' : $matches['type'];
+			$elementType = isset($matches['elementType']) ? $matches['elementType'] : NULL;
+
+			if ($elementType !== NULL && !in_array($type, array('array', 'ArrayObject', 'SplObjectStorage'))) {
+				throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyType('Property  of type "' . $type . '" must not have an element type hint (' . $elementType . ').', 1248103053);
+			}
+
 			$this->properties[$name] = array(
 				'type' => $type,
+				'elementType' => $elementType,
 				'lazy' => $lazy
 			);
 		} else {

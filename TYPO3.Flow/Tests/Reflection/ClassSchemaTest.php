@@ -53,8 +53,8 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getPropertiesReturnsAddedProperties() {
 		$expectedProperties = array(
-			'a' => array('type' => 'string', 'lazy' => FALSE),
-			'b' => array('type' => 'F3\FLOW3\SomeObject', 'lazy' => TRUE)
+			'a' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE),
+			'b' => array('type' => 'F3\FLOW3\SomeObject', 'elementType' => NULL, 'lazy' => TRUE)
 		);
 
 		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
@@ -99,6 +99,76 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 		$classSchema->markAsIdentityProperty('a');
 
 		$this->assertSame(array('a' => 'string'), $classSchema->getIdentityProperties());
+	}
+
+	/**
+	 * data provider for addPropertyAcceptsValidPropertyTypes
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function validPropertyTypes() {
+		return array(
+			array('integer'),
+			array('int'),
+			array('float'),
+			array('boolean'),
+			array('string'),
+			array('DateTime'),
+			array('array'),
+			array('ArrayObject'),
+			array('SplObjectStorage'),
+			array('F3\FLOW3\Foo'),
+			array('\F3\FLOW3\Bar'),
+			array('array<string>'),
+			array('array<F3\FLOW3\Baz>')
+		);
+	}
+
+	/**
+	 * @dataProvider validPropertyTypes()
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addPropertyAcceptsValidPropertyTypes($propertyType) {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', $propertyType);
+	}
+
+	/**
+	 * data provider for addPropertyRejectsInvalidPropertyTypes
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function invalidPropertyTypes() {
+		return array(
+			array('stdClass'),
+			array('\SomeObject'),
+			array('string<string>'),
+			array('int<F3\FLOW3\Baz>')
+		);
+	}
+	/**
+	 * @dataProvider invalidPropertyTypes()
+	 * @test
+	 * @expectedException \F3\FLOW3\Reflection\Exception\InvalidPropertyType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addPropertyRejectsInvalidPropertyTypes($propertyType) {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', $propertyType);
+	}
+
+	/**
+	 * Collections are arrays, ArrayObject and SplObjectStorage
+	 *
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addPropertyStoresElementTypesForCollectionProperties() {
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
+		$classSchema->addProperty('a', 'array<\F3\FLOW3\Foo>');
+
+		$properties = $classSchema->getProperties();
+		$this->assertEquals('array', $properties['a']['type']);
+		$this->assertEquals('\F3\FLOW3\Foo', $properties['a']['elementType']);
 	}
 
 }

@@ -559,25 +559,6 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue($reflectedClassNames[$className] >= $startTime && $reflectedClassNames[$className] <= $endTime);
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
@@ -611,13 +592,13 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 		);
 
 		$expectedProperties = array(
-			'someBoolean' => array('type' => 'boolean', 'lazy' => FALSE),
-			'someString' => array('type' => 'string', 'lazy' => FALSE),
-			'someInteger' => array('type' => 'integer', 'lazy' => FALSE),
-			'someFloat' => array('type' => 'float', 'lazy' => FALSE),
-			'someDate' => array('type' => 'DateTime', 'lazy' => FALSE),
-			'someSplObjectStorage' => array('type' => 'SplObjectStorage', 'lazy' => TRUE),
-			'someIdentifier' => array('type' => 'string', 'lazy' => FALSE)
+			'someBoolean' => array('type' => 'boolean', 'elementType' => NULL, 'lazy' => FALSE),
+			'someString' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE),
+			'someInteger' => array('type' => 'integer', 'elementType' => NULL, 'lazy' => FALSE),
+			'someFloat' => array('type' => 'float', 'elementType' => NULL, 'lazy' => FALSE),
+			'someDate' => array('type' => 'DateTime', 'elementType' => NULL, 'lazy' => FALSE),
+			'someSplObjectStorage' => array('type' => 'SplObjectStorage', 'elementType' => NULL, 'lazy' => TRUE),
+			'someIdentifier' => array('type' => 'string', 'elementType' => NULL, 'lazy' => FALSE)
 		);
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
