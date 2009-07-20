@@ -167,6 +167,13 @@ class Service {
 	protected $ignoredTags = array('package', 'subpackage', 'license', 'copyright', 'author', 'version', 'const');
 
 	/**
+	 * Schemata of all classes which need to be persisted
+	 *
+	 * @var array<\F3\FLOW3\Reflection\ClassSchema>
+	 */
+	protected $classSchemata = array();
+
+	/**
 	 * Sets the cache
 	 *
 	 * The cache must be set before initializing the Reflection Service
@@ -231,6 +238,8 @@ class Service {
 		$this->reflectEmergedClasses($classNamesToReflect);
 
 		$this->initialized = TRUE;
+
+		$this->buildClassSchemata();
 	}
 
 	/**
@@ -651,6 +660,28 @@ class Service {
 	}
 
 	/**
+	 * Returns the available class schemata.
+	 *
+	 * @return array<\F3\FLOW3\Reflection\ClassSchema>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getClassSchemata() {
+		return $this->classSchemata;
+	}
+
+	/**
+	 * Returns the class schema for the given class
+	 *
+	 * @param mixed $classNameOrObject The class name or an object
+	 * @return \F3\FLOW3\Reflection\ClassSchema
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getClassSchema($classNameOrObject) {
+		$className = is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject;
+		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
+	}
+
+	/**
 	 * Checks if the given class names match those which already have been
 	 * reflected. If the given array contains class names not yet known to
 	 * this service, these classes will be reflected.
@@ -733,6 +764,45 @@ class Service {
 			}
 		}
 		ksort($this->reflectedClassNames);
+	}
+
+	/**
+	 * Builds class schemata from classes annotated as entities or value objects
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function buildClassSchemata() {
+		$this->classSchemata = array();
+
+		$classNames = array_merge($this->getClassNamesByTag('entity'), $this->getClassNamesByTag('valueobject'));
+		foreach ($classNames as $className) {
+			$classSchema = new \F3\FLOW3\Reflection\ClassSchema($className);
+			if ($this->isClassTaggedWith($className, 'entity')) {
+				$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
+
+				$possibleRepositoryClassName = str_replace('\\Model\\', '\\Repository\\', $className) . 'Repository';
+				if ($this->isClassReflected($possibleRepositoryClassName)) {
+					$classSchema->setAggregateRoot(TRUE);
+				}
+			} elseif ($this->isClassTaggedWith($className, 'valueobject')) {
+				$classSchema->setModelType(\F3\FLOW3\Reflection\ClassSchema::MODELTYPE_VALUEOBJECT);
+			}
+
+			foreach ($this->getClassPropertyNames($className) as $propertyName) {
+				if (!$this->isPropertyTaggedWith($className, $propertyName, 'transient') && $this->isPropertyTaggedWith($className, $propertyName, 'var')) {
+					$classSchema->addProperty($propertyName, implode(' ', $this->getPropertyTagValues($className, $propertyName, 'var')), $this->isPropertyTaggedWith($className, $propertyName, 'lazy'));
+				}
+				if ($this->isPropertyTaggedWith($className, $propertyName, 'uuid')) {
+					$classSchema->setUUIDPropertyName($propertyName);
+				}
+				if ($this->isPropertyTaggedWith($className, $propertyName, 'identity')) {
+					$classSchema->markAsIdentityProperty($propertyName);
+				}
+			}
+			$this->classSchemata[$className] = $classSchema;
+		}
 	}
 
 	/**

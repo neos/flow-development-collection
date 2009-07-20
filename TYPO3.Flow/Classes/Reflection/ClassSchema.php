@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -39,7 +39,7 @@ class ClassSchema {
 	/**
 	 * Specifies the allowed property types.
 	 */
-	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|DateTime|SplObjectStorage|F3\\\\[a-zA-Z0-9\\\\]+)/';
+	const ALLOWED_TYPES_PATTERN = '/^\\\\?(integer|int|float|boolean|string|array|SplObjectStorage|DateTime|F3\\\\[a-zA-Z0-9\\\\]+)/';
 
 	/**
 	 * Name of the class this schema is referring to
@@ -121,7 +121,7 @@ class ClassSchema {
 				'lazy' => $lazy
 			);
 		} else {
-			throw new \F3\FLOW3\Persistence\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
+			throw new \F3\FLOW3\Reflection\Exception\InvalidPropertyType('Invalid property type encountered: ' . $type, 1220387528);
 		}
 	}
 

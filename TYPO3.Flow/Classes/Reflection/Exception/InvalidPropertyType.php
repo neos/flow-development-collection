@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Exception;
+namespace F3\FLOW3\Reflection\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,12 +23,12 @@ namespace F3\FLOW3\Persistence\Exception;
  *                                                                        */
 
 /**
- * An "Invalid Class" exception
+ * An "Invalid Property Type" exception
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class InvalidClass extends \F3\FLOW3\Persistence\Exception {
+class InvalidPropertyType extends \F3\FLOW3\Reflection\Exception {
 }
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence;
+namespace F3\FLOW3\Reflection;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -38,7 +38,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function hasPropertyReturnsTrueOnlyForExistingProperties() {
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'integer');
 
@@ -57,7 +57,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 			'b' => array('type' => 'F3\FLOW3\SomeObject', 'lazy' => TRUE)
 		);
 
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'F3\FLOW3\SomeObject', TRUE);
 
@@ -70,7 +70,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsUnknownProperties() {
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 
 		$classSchema->markAsIdentityProperty('unknownProperty');
 	}
@@ -81,7 +81,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function markAsIdentityPropertyRejectsLazyLoadedProperties() {
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('lazyProperty', 'F3\FLOW3\SomeObject', TRUE);
 
 		$classSchema->markAsIdentityProperty('lazyProperty');
@@ -92,7 +92,7 @@ class ClassSchemaTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getIdentityPropertiesReturnsNamesAndTypes() {
-		$classSchema = new \F3\FLOW3\Persistence\ClassSchema('SomeClass');
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('SomeClass');
 		$classSchema->addProperty('a', 'string');
 		$classSchema->addProperty('b', 'integer');
 

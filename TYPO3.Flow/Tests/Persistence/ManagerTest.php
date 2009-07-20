@@ -39,17 +39,14 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeRecognizesEntityAndValueObjects() {
+	public function initializeInitializesBackendWithClassSchemata() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
-		$mockReflectionService->expects($this->any())->method('getClassNamesByTag')->will($this->onConsecutiveCalls(array('EntityClass'), array('ValueClass')));
-		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
-			// with() here holds the important assertion
-		$mockClassSchemataBuilder->expects($this->once())->method('build')->with(array('EntityClass', 'ValueClass'))->will($this->returnValue(array()));
+		$mockReflectionService->expects($this->any())->method('getClassSchemata')->will($this->returnValue(array('Foo' => 'Bar')));
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockBackend->expects($this->once())->method('initialize')->with(array('Foo' => 'Bar'));
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 
 		$manager->initialize();
 	}
@@ -61,13 +58,11 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function persistAllCanBeCalledIfNoRepositoryClassesAreFound() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
-		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 		$session = new \F3\FLOW3\Persistence\Session();
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 		$manager->injectSession($session);
 
 		$manager->persistAll();
@@ -121,7 +116,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->any())->method('getAllImplementationClassNamesForInterface')->will($this->returnValue(array()));
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->will($this->returnValue(array()));
-		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 		$objectStorage = new \SplObjectStorage();
 		$objectStorage->attach($dirtyEntity);
@@ -130,7 +124,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 		$manager->injectSession($session);
 
 		$manager->persistAll();
@@ -149,7 +142,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
 		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Persistence\RepositoryInterface')->will($this->returnValue(array('F3\FLOW3\Persistence\Repository')));
-		$mockClassSchemataBuilder = $this->getMock('F3\FLOW3\Persistence\ClassSchemataBuilder', array(), array(), '', FALSE);
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\Persistence\Repository')->will($this->returnValue($repository));
 		$session = new \F3\FLOW3\Persistence\Session();
@@ -164,7 +156,6 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$manager = new \F3\FLOW3\Persistence\Manager($mockBackend);
 		$manager->injectReflectionService($mockReflectionService);
-		$manager->injectClassSchemataBuilder($mockClassSchemataBuilder);
 		$manager->injectSession($session);
 		$manager->injectObjectManager($mockObjectManager);
 

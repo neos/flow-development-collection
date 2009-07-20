@@ -42,9 +42,9 @@ class Argument {
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
-	protected $persistenceManager;
+	protected $reflectionService;
 
 	/**
 	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
@@ -82,7 +82,7 @@ class Argument {
 
 	/**
 	 * If the data type is an object, the class schema of the data type class is resolved
-	 * @var \F3\FLOW3\Persistence\ClassSchema
+	 * @var \F3\FLOW3\Reflection\ClassSchema
 	 */
 	protected $dataTypeClassSchema;
 
@@ -155,14 +155,14 @@ class Argument {
 	}
 
 	/**
-	 * Injects the Persistence Manager
+	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface
+	 * @param \F3\FLOW3\Reflection\Service
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -194,7 +194,7 @@ class Argument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeObject() {
-		$this->dataTypeClassSchema = $this->persistenceManager->getClassSchema($this->dataType);
+		$this->dataTypeClassSchema = $this->reflectionService->getClassSchema($this->dataType);
 	}
 
 	/**

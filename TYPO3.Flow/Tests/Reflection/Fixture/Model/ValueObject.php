@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
+namespace F3\FLOW3\Tests\Reflection\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,13 +23,13 @@ namespace F3\FLOW3\Tests\Persistence\Fixture\Model;
  *                                                                        */
 
 /**
- * A model fixture which is used for testing the class schema builder
+ * A model fixture which is used for testing the class schema building
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @valueobject
  */
-class ValueObject1 {
+class ValueObject {
 
 	/**
 	 * Some string
@@ -39,5 +39,7 @@ class ValueObject1 {
 	protected $aString;
 
 	protected $propertyWithoutAnnotation;
+
 }
+
 ?>

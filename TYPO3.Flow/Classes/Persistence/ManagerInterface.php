@@ -52,14 +52,6 @@ interface ManagerInterface {
 	public function getBackend();
 
 	/**
-	 * Returns the class schema for the given class
-	 *
-	 * @param string $className
-	 * @return \F3\FLOW3\Persistence\ClassSchema
-	 */
-	public function getClassSchema($className);
-
-	/**
 	 * Commits new objects and changes to objects in the current persistence
 	 * session into the backend
 	 *

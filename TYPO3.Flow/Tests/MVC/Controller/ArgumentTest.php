@@ -102,7 +102,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function setValueTriesToConvertAnUUIDStringIntoTheRealObjectIfDataTypeIsAClassName() {
 		$object = new \stdClass();
 
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
 
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
@@ -119,7 +119,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function setValueTriesToConvertAnIdentityArrayContainingAUUIDIntoTheRealObject() {
 		$object = new \stdClass();
 
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
 
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
@@ -136,7 +136,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	public function setValueTriesToConvertAnIdentityArrayContainingIdentifiersIntoTheRealObject() {
 		$this->markTestIncomplete('Not yet fully implemented.');
 
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
 
 		$mockQuery = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Query', array(), array(), '', FALSE);
 		# TODO Insert more expectations here
@@ -164,7 +164,7 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue('the object'));
 
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array() ,'', FALSE);
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
 
 		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array('map'), array(), '', FALSE);
 		$mockPropertyMapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, 'the object')->will($this->returnValue(TRUE));

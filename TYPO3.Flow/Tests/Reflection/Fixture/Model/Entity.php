@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Persistence\Exception;
+namespace F3\FLOW3\Tests\Reflection\Fixture\Model;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,12 +23,82 @@ namespace F3\FLOW3\Persistence\Exception;
  *                                                                        */
 
 /**
- * An "Invalid Property Type" exception
+ * A model fixture which is used for testing the class schema building
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @entity
  */
-class InvalidPropertyType extends \F3\FLOW3\Persistence\Exception {
+class Entity {
+
+	/**
+	 * An identifier property
+	 *
+	 * @var string
+	 * @uuid
+	 */
+	protected $someIdentifier;
+
+	/**
+	 * Just a normal string
+	 *
+	 * @var string
+	 * @identity
+	 */
+	protected $someString;
+
+	/**
+	 * @var integer
+	 */
+	protected $someInteger;
+
+	/**
+	 * @var float
+	 */
+	protected $someFloat;
+
+	/**
+	 * @var \DateTime
+	 * @identity
+	 */
+	protected $someDate;
+
+	/**
+	 * @var \SplObjectStorage
+	 * @lazy
+	 */
+	protected $someSplObjectStorage;
+
+	/**
+	 * A transient string
+	 *
+	 * @var string
+	 * @transient
+	 */
+	protected $someTransientString;
+
+	/**
+	 * @var boolean
+	 */
+	protected $someBoolean;
+
+	/**
+	 * Just an empty constructor
+	 *
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __construct() {
+	}
+
+	/**
+	 * Just a dummy method
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function someDummyMethod() {
+	}
+
 }
 
 ?>

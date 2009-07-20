@@ -35,12 +35,12 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function memorizeCleanStateWithoutArgumentHandlesAllProperties() {
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array('SomeClass'));
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
 		$mockClassSchema->expects($this->any())->method('getProperties')->will($this->returnValue(array('foo' => 1, 'bar' => 1)));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
 		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
-		$aspect->injectPersistenceManager($mockPersistenceManager);
+		$aspect->injectReflectionService($mockReflectionService);
 
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->at(0))->method('FLOW3_AOP_Proxy_getProperty')->with('foo');
@@ -94,11 +94,11 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyDetectsChangesInLiterals() {
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array('SomeClass'));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
 		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
-		$aspect->injectPersistenceManager($mockPersistenceManager);
+		$aspect->injectReflectionService($mockReflectionService);
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
 		$object->expects($this->any())->method('FLOW3_AOP_Proxy_getProperty')->with('foo')->will($this->returnValue('bar'));
 		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
@@ -119,11 +119,11 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isDirtyDetectsChangesInObjects() {
-		$mockClassSchema = $this->getMock('F3\FLOW3\Persistence\ClassSchema', array(), array('SomeClass'));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
+		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array('SomeClass'));
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->any())->method('getClassSchema')->will($this->returnValue($mockClassSchema));
 		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
-		$aspect->injectPersistenceManager($mockPersistenceManager);
+		$aspect->injectReflectionService($mockReflectionService);
 		$value = new \stdClass();
 		$valueClone = clone $value;
 		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');

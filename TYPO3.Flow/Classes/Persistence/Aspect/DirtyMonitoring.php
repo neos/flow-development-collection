@@ -32,11 +32,11 @@ namespace F3\FLOW3\Persistence\Aspect;
 class DirtyMonitoring {
 
 	/**
-	 * The persistence manager
+	 * The reflection service
 	 *
-	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 * @var \F3\FLOW3\Reflection\Service
 	 */
-	protected $persistenceManager;
+	protected $reflectionService;
 
 	/**
 	 * @pointcut classTaggedWith(entity) || classTaggedWith(valueobject)
@@ -56,14 +56,14 @@ class DirtyMonitoring {
 	public $dirtyMonitoringInterface;
 
 	/**
-	 * Injects the persistence manager
+	 * Injects the reflection service
 	 *
-	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
-		$this->persistenceManager = $persistenceManager;
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
@@ -111,7 +111,7 @@ class DirtyMonitoring {
 
 		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
 			$isDirty = FALSE;
-			$uuidPropertyName = $this->persistenceManager->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
+			$uuidPropertyName = $this->reflectionService->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
 			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
@@ -147,7 +147,7 @@ class DirtyMonitoring {
 		if ($joinPoint->getMethodArgument('propertyName') !== NULL) {
 			$propertyNames = array($joinPoint->getMethodArgument('propertyName'));
 		} else {
-			$propertyNames = array_keys($this->persistenceManager->getClassSchema($joinPoint->getClassName())->getProperties());
+			$propertyNames = array_keys($this->reflectionService->getClassSchema($joinPoint->getClassName())->getProperties());
 		}
 
 		foreach ($propertyNames as $propertyName) {

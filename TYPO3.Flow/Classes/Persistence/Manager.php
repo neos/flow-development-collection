@@ -38,13 +38,6 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	protected $reflectionService;
 
 	/**
-	 * The class schema builder
-	 *
-	 * @var \F3\FLOW3\Persistence\ClassSchemataBuilder
-	 */
-	protected $classSchemataBuilder;
-
-	/**
 	 * @var \F3\FLOW3\Persistence\BackendInterface
 	 */
 	protected $backend;
@@ -58,13 +51,6 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
-
-	/**
-	 * Schemata of all classes which need to be persisted
-	 *
-	 * @var array of \F3\FLOW3\Persistence\ClassSchema
-	 */
-	protected $classSchemata = array();
 
 	/**
 	 * Constructor
@@ -85,17 +71,6 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
 		$this->reflectionService = $reflectionService;
-	}
-
-	/**
-	 * Injects the class schemata builder
-	 *
-	 * @param \F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder The class schemata builder
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function injectClassSchemataBuilder(\F3\FLOW3\Persistence\ClassSchemataBuilder $classSchemataBuilder) {
-		$this->classSchemataBuilder = $classSchemataBuilder;
 	}
 
 	/**
@@ -128,10 +103,7 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function initialize() {
 		if (!$this->backend instanceof \F3\FLOW3\Persistence\BackendInterface) throw new \F3\FLOW3\Persistence\Exception\MissingBackend('A persistence backend must be set prior to initializing the persistence manager.', 1215508456);
-		$classNames = array_merge($this->reflectionService->getClassNamesByTag('entity'), $this->reflectionService->getClassNamesByTag('valueobject'));
-
-		$this->classSchemata = $this->classSchemataBuilder->build($classNames);
-		$this->backend->initialize($this->classSchemata);
+		$this->backend->initialize($this->reflectionService->getClassSchemata());
 	}
 
 	/**
@@ -153,18 +125,6 @@ class Manager implements \F3\FLOW3\Persistence\ManagerInterface {
 	 */
 	public function getBackend() {
 		return $this->backend;
-	}
-
-	/**
-	 * Returns the class schema for the given class
-	 *
-	 * @param mixed $classNameOrObject The class name or an object
-	 * @return \F3\FLOW3\Persistence\ClassSchema
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getClassSchema($classNameOrObject) {
-		$className = is_object($classNameOrObject) ? get_class($classNameOrObject) : $classNameOrObject;
-		return isset($this->classSchemata[$className]) ? $this->classSchemata[$className] : NULL;
 	}
 
 	/**

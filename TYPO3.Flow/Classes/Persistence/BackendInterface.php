@@ -33,10 +33,9 @@ interface BackendInterface {
 	/**
 	 * Initializes the backend
 	 *
-	 * @param array $classSchemata the class schemata the backend will be handling
 	 * @return void
 	 */
-	public function initialize(array $classSchemata);
+	public function initialize();
 
 	/**
 	 * Sets the aggregate root objects
