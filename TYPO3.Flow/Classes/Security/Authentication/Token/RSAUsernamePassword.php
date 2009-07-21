@@ -33,12 +33,12 @@ namespace F3\FLOW3\Security\Authentication\Token;
 class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @var F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
-	 * @var \F3\FLOW3\Utility\Environment
+	 * @var F3\FLOW3\Utility\Environment
 	 */
 	protected $environment;
 
@@ -51,6 +51,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * The username/password credentials
 	 * @var array
+	 * @transient
 	 */
 	protected $credentials = array('encryptedUsername' => '', 'encryptedPassword' => '');
 
@@ -61,13 +62,13 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 
 	/**
 	 * The authentication entry point
-	 * @var \F3\FLOW3\Security\Authentication\EntryPointInterface
+	 * @var F3\FLOW3\Security\Authentication\EntryPointInterface
 	 */
 	protected $entryPoint = NULL;
 
 	/**
 	 * The RSAWalletService
-	 * @var \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface
+	 * @var F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface
 	 */
 	protected $RSAWalletService;
 
@@ -86,7 +87,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -97,7 +98,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Injects the environment
 	 *
-	 * @param \F3\FLOW3\Utility\Environment $environment The current environment object
+	 * @param F3\FLOW3\Utility\Environment $environment The current environment object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -108,7 +109,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Inject the RSAWAlletService
 	 *
-	 * @param \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService The RSAWalletService
+	 * @param F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService The RSAWalletService
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -129,7 +130,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Sets the authentication entry point
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
+	 * @param F3\FLOW3\Security\Authentication\EntryPointInterface $entryPoint The authentication entry point
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -140,7 +141,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Returns the configured authentication entry point, NULL if none is available
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
+	 * @return F3\FLOW3\Security\Authentication\EntryPointInterface The configured authentication entry point, NULL if none is available
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getAuthenticationEntryPoint() {
@@ -150,7 +151,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Returns TRUE if \F3\FLOW3\Security\RequestPattern were set
 	 *
-	 * @return boolean True if a \F3\FLOW3\Security\RequestPatternInterface was set
+	 * @return boolean True if a F3\FLOW3\Security\RequestPatternInterface was set
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function hasRequestPatterns() {
@@ -161,7 +162,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Sets request patterns
 	 *
-	 * @param array $requestPatterns Array of \F3\FLOW3\Security\RequestPattern to be set
+	 * @param array $requestPatterns Array of F3\FLOW3\Security\RequestPattern to be set
 	 * @return void
 	 * @see hasRequestPattern()
 	 */
@@ -170,7 +171,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	}
 
 	/**
-	 * Returns an array of set \F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
+	 * Returns an array of set F3\FLOW3\Security\RequestPatternInterface, NULL if none was set
 	 *
 	 * @return array Array of set request patterns
 	 * @see hasRequestPattern()
@@ -210,9 +211,9 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	}
 
 	/**
-	 * Might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
+	 * Might ask a F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface A user details object
+	 * @return F3\FLOW3\Security\Authentication\UserDetailsInterface A user details object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method
 	 */
@@ -224,7 +225,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	 * Returns the currently valid granted authorities. It might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
 	 * Note: You have to check isAuthenticated() before you call this method
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthority objects
+	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthority objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @todo implement this method, otherwise everbody will be an administrator ;-)
 	 */
@@ -233,7 +234,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	}
 
 		/**
-	 * Sets the authentication status. Usually called by the responsible \F3\FLOW3\Security\Authentication\ManagerInterface
+	 * Sets the authentication status. Usually called by the responsible F3\FLOW3\Security\Authentication\ManagerInterface
 	 *
 	 * @param integer $authenticationStatus One of NO_CREDENTIALS_GIVEN, WRONG_CREDENTIALS, AUTHENTICATION_SUCCESSFUL, AUTHENTICATION_NEEDED
 	 * @return void
@@ -258,7 +259,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Generates and returns the public key to perform password encryption on the client
 	 *
-	 * @return \F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey
+	 * @return F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function generatePublicKeyForPassword() {
@@ -283,7 +284,7 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 	/**
 	 * Generates and returns the public key to perform username encryption on the client
 	 *
-	 * @return \F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey
+	 * @return F3\FLOW3\Security\Cryptography\OpenSSLRSAPublicKey
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function generatePublicKeyForUsername() {
@@ -319,16 +320,6 @@ class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInte
 
 		$this->passwordKeypairUUID = NULL;
 		$this->usernameKeypairUUID = NULL;
-	}
-
-	/**
-	 * Prepare this object for serialization
-	 *
-	 * @return array Names of the instance variables to serialize
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __sleep() {
-		return array('authenticationStatus', 'requestPatterns', 'entryPoint', 'passwordKeypairUUID', 'usernameKeypairUUID');
 	}
 }
 

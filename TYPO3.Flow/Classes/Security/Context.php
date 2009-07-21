@@ -41,12 +41,14 @@ class Context {
 	/**
 	 * Array of tokens currently active
 	 * @var array
+	 * @transient
 	 */
 	protected $activeTokens = array();
 
 	/**
 	 * Array of tokens currently inactive
 	 * @var array
+	 * @transient
 	 */
 	protected $inactiveTokens = array();
 
@@ -58,12 +60,14 @@ class Context {
 
 	/**
 	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @transient
 	 */
 	protected $request;
 
 	/**
 	 * TRUE if separateActiveAndInactiveTokens has been called
 	 * @var boolean
+	 * @transient
 	 */
 	protected $separateTokensPerformed = FALSE;
 
@@ -194,14 +198,13 @@ class Context {
 	}
 
 	/**
-	 * Prepare this object for serialization
+	 * Shut the object down
 	 *
-	 * @return array Names of the instance variables to serialize
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __sleep() {
+	public function shutdownObject() {
 		$this->tokens = array_merge($this->inactiveTokens, $this->activeTokens);
-		return (array('tokens', 'authenticateAllTokens'));
 	}
 }
 

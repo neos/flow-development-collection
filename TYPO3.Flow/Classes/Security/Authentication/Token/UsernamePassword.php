@@ -51,6 +51,7 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	/**
 	 * The username/password credentials
 	 * @var array
+	 * @transient
 	 */
 	protected $credentials = array('username' => '', 'password' => '');
 
@@ -224,16 +225,6 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 */
 	public function getAuthenticationStatus() {
 		return $this->authenticationStatus;
-	}
-
-	/**
-	 * Prepare this object for serialization
-	 *
-	 * @return array Names of the instance variables to serialize
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __sleep() {
-		return (array('authenticationStatus', 'requestPatterns', 'entryPoint'));
 	}
 }
 

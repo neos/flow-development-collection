@@ -48,46 +48,12 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function securityContextIsStoredInTheSessionCorrectly() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-
-		$mockSession->expects($this->once())->method('putData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'), $this->equalTo($mockContext));
-
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
-		$securityContextHolder->setContext($mockContext);
-	}
-
-	/**
-	 * @test
-	 * @category unit
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function securityContextIsRestoredFromTheSessionCorrectly() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
-
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue($mockContext));
-
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
-		$this->assertEquals($mockContext, $securityContextHolder->getContext());
-	}
-
-	/**
-	 * @test
-	 * @category unit
 	 * @expectedException \F3\FLOW3\Security\Exception\NoContextAvailable
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getContextThrowsAnExceptionIfThereIsNoContextInTheSession() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue(NULL));
-
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+	public function getContextThrowsAnExceptionIfThereIsNoContextFound() {
+		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession();
 		$securityContextHolder->getContext();
 	}
 
@@ -97,19 +63,19 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function currentRequestIsSetInTheSecurityContext() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$mockContext->expects($this->once())->method('setRequest')->with($mockRequest);
-		$mockSession->expects($this->any())->method('getData')->will($this->returnValue($mockContext));
+
 		$mockAuthenticationManager->expects($this->any())->method('getTokens')->will($this->returnValue(array()));
 
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
 		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContextHolder->_set('context', $mockContext);
 
 		$securityContextHolder->initializeContext($mockRequest);
 	}
@@ -120,13 +86,12 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function securityContextCallsTheAuthenticationManagerToSetItsTokens() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
 
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession();
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
 		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
@@ -144,7 +109,6 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$token2ClassName = uniqid('token2');
 		$token3ClassName = uniqid('token3');
 
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
@@ -160,14 +124,14 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mergedTokens = array($token1Clone, $token2Clone, $token3);
 
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue($tokensFromTheManager));
-		$mockSession->expects($this->once())->method('getData')->with($this->equalTo('F3\FLOW3\Security\ContextHolderSession'))->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue($tokensFromTheSession));
 		$mockContext->expects($this->once())->method('setAuthenticationTokens')->with($this->identicalTo($mergedTokens));
 
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
 		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContextHolder->_set('context', $mockContext);
 
 		$securityContextHolder->initializeContext($mockRequest);
 	}
@@ -178,7 +142,6 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function initializeContextCallsUpdateCredentialsOnAllTokens() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
@@ -190,14 +153,14 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 		$mockToken1->expects($this->once())->method('updateCredentials');
 		$mockToken2->expects($this->once())->method('updateCredentials');
 		$mockToken3->expects($this->once())->method('updateCredentials');
-		$mockSession->expects($this->once())->method('getData')->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array($mockToken1, $mockToken2, $mockToken3)));
 
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
 		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContextHolder->_set('context', $mockContext);
 
 		$securityContextHolder->initializeContext($mockRequest);
 	}
@@ -208,20 +171,19 @@ class ContextHolderSessionTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function theSecurityContextHolderSetsAReferenceToTheSecurityContextInTheAuthenticationManager() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface');
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 
-		$mockSession->expects($this->once())->method('getData')->will($this->returnValue($mockContext));
 		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('getTokens')->will($this->returnValue(array()));
 		$mockAuthenticationManager->expects($this->once())->method('setSecurityContext')->with($mockContext);
 
-		$securityContextHolder = new \F3\FLOW3\Security\ContextHolderSession($mockSession);
+		$securityContextHolder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ContextHolderSession'), array('dummy'));
 		$securityContextHolder->injectObjectManager($this->mockObjectManager);
 		$securityContextHolder->injectObjectFactory($this->objectFactory);
 		$securityContextHolder->injectAuthenticationManager($mockAuthenticationManager);
+		$securityContextHolder->_set('context', $mockContext);
 
 		$securityContextHolder->initializeContext($mockRequest);
 	}

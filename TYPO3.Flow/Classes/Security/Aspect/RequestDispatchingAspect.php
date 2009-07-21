@@ -32,20 +32,20 @@ namespace F3\FLOW3\Security\Aspect;
 class RequestDispatchingAspect {
 
 	/**
-	 * @var \F3\FLOW3\Security\ContextHolderInterface A reference to the security contextholder
+	 * @var F3\FLOW3\Security\ContextHolderInterface A reference to the security contextholder
 	 */
 	protected $securityContextHolder;
 
 	/**
-	 * @var \F3\FLOW3\Security\Auhtorization\FirewallInterface A reference to the firewall
+	 * @var F3\FLOW3\Security\Auhtorization\FirewallInterface A reference to the firewall
 	 */
 	protected $firewall;
 
 	/**
 	 * Constructor
 	 *
-	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
-	 * @param \F3\FLOW3\Security\Authorization\FirewallInterface $firewall
+	 * @param F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
+	 * @param F3\FLOW3\Security\Authorization\FirewallInterface $firewall
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall) {
@@ -57,7 +57,7 @@ class RequestDispatchingAspect {
 	 * Advices the dispatch method to initialize the security framework.
 	 *
 	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -72,7 +72,7 @@ class RequestDispatchingAspect {
 	 * any controller.
 	 *
 	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return mixed Result of the advice chain
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -87,7 +87,7 @@ class RequestDispatchingAspect {
 	 * if available.
 	 *
 	 * @afterthrowing method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

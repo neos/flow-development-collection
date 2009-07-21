@@ -27,43 +27,35 @@ namespace F3\FLOW3\Security;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope session
  */
 class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface {
 
 	/**
-	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * The current security context
+	 * @var F3\FLOW3\Security\Context
+	 */
+	protected $context;
+
+	/**
+	 * @var F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @var F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Security\Authentication\ManagerInterface
+	 * @var F3\FLOW3\Security\Authentication\ManagerInterface
 	 */
 	protected $authenticationManager = NULL;
 
 	/**
-	 * @var \F3\FLOW3\Session\SessionInterface The user session
-	 */
-	protected $session = NULL;
-
-	/**
-	 * Constructor.
-	 *
-	 * @param \F3\FLOW3\Session\SessionInterface $session An readily initialized session
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function __construct(\F3\FLOW3\Session\SessionInterface $session) {
-		$this->session = $session;
-	}
-
-	/**
 	 * Inject the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
+	 * @param F3\FLOW3\Object\FactoryInterface $objectFactory The object factory
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -74,7 +66,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Inject the object manager
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
+	 * @param F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -85,7 +77,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
+	 * @param F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -94,29 +86,27 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	}
 
 	/**
-	 * Stores the current security context to the session.
+	 * Sets the given security context.
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
+	 * @param F3\FLOW3\Security\Context $securityContext The current security context
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setContext(\F3\FLOW3\Security\Context $securityContext) {
-		$this->session->putData('F3\FLOW3\Security\ContextHolderSession', $securityContext);
+		$this->context = $securityContext;
 	}
 
 	/**
 	 * Returns the current \F3\FLOW3\Security\Context.
 	 *
-	 * @return \F3\FLOW3\Security\Context The current security context
-	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
+	 * @return F3\FLOW3\Security\Context The current security context
+	 * @throws F3\FLOW3\Security\Exception\NoContextAvailable if no context is available (i.e. initializeContext() has not been called)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getContext() {
-		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
-
-		if ($context instanceof \F3\FLOW3\Security\Context) {
-			return $context;
+		if ($this->context instanceof \F3\FLOW3\Security\Context) {
+			return $this->context;
 		} else {
 			throw new \F3\FLOW3\Security\Exception\NoContextAvailable('No context found in session, did you call initializeContext()?', 1225800610);
 		}
@@ -125,27 +115,26 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Initializes the security context for the given request. It is loaded from the session.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
+	 * @param F3\FLOW3\MVC\RequestInterface $request The request the context should be initialized for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request) {
-		$context = $this->session->getData('F3\FLOW3\Security\ContextHolderSession');
-		if (!($context instanceof \F3\FLOW3\Security\Context)) {
-			$context =  $this->objectFactory->create('F3\FLOW3\Security\Context');
+		if (!($this->context instanceof \F3\FLOW3\Security\Context)) {
+			echo 'created new security context';
+			$this->context = $this->objectFactory->create('F3\FLOW3\Security\Context');
 		}
-		$context->setRequest($request);
+		$this->context->setRequest($request);
 
-		$this->authenticationManager->setSecurityContext($context);
+		$this->authenticationManager->setSecurityContext($this->context);
 		$managerTokens = $this->filterInactiveTokens($this->authenticationManager->getTokens(), $request);
-		$sessionTokens = $context->getAuthenticationTokens();
+		$sessionTokens = $this->context->getAuthenticationTokens();
+
 		$mergedTokens = $this->mergeTokens($managerTokens, $sessionTokens);
 
 		$this->updateTokens($mergedTokens);
-		$context->setAuthenticationTokens($mergedTokens);
-
-		$this->setContext($context);
+		$this->context->setAuthenticationTokens($mergedTokens);
 	}
 
 	/**
@@ -155,7 +144,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function clearContext() {
-		$this->setContext(NULL);
+		$this->context = NULL;
 	}
 
 	/**
@@ -197,7 +186,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * Filters all tokens that don't match for the given request.
 	 *
 	 * @param array $tokens The token array to be filtered
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param F3\FLOW3\MVC\RequestInterface $request The request object
 	 * @return array The filtered token array
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -234,24 +223,8 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {
-			$this->manuallyInjectDependenciesIntoUsernamePasswordToken($token);
 			$token->updateCredentials();
 		}
-	}
-
-	/**
-	 * Manual dependency injection into UsernamePassword tokens until we have working session scope.
-	 * Note: This is definitely a dirty hack
-	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token we should inject some objects
-	 * @return void
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	protected function manuallyInjectDependenciesIntoUsernamePasswordToken(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
-		$objectConfiguration = $this->objectManager->getObjectConfiguration(get_class($token));
-		$objectBuilder = $this->objectManager->getObject('F3\FLOW3\Object\Builder');
-
-		$objectBuilder->reinjectDependencies($token, $objectConfiguration);
 	}
 }
 
