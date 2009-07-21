@@ -122,7 +122,6 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 */
 	public function initializeContext(\F3\FLOW3\MVC\RequestInterface $request) {
 		if (!($this->context instanceof \F3\FLOW3\Security\Context)) {
-			echo 'created new security context';
 			$this->context = $this->objectFactory->create('F3\FLOW3\Security\Context');
 		}
 		$this->context->setRequest($request);

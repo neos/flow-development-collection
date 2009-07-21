@@ -137,7 +137,8 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 */
 	public function initialize() {
 		if ($this->session->hasKey('F3_FLOW3_Object_SessionRegistry') === TRUE) {
-			$this->objects = $this->objectSerializer->deserializeObjectsArray($this->session->getData('F3_FLOW3_Object_SessionRegistry'));
+			$objectsAsArray = $this->session->getData('F3_FLOW3_Object_SessionRegistry');
+			if (is_array($objectsAsArray)) $this->objects = $this->objectSerializer->deserializeObjectsArray($objectsAsArray);
 		}
 	}
 

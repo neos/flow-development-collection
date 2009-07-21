@@ -209,5 +209,24 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals(array('many', 'deserialized', 'objects'), $sessionRegistry->_get('objects'), 'The object have not been deserialized correctly.');
 
 	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function initializeChecksIfTheSessionDataIsAnArray() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE);
+		$mockSession->expects($this->once())->method('getData')->with('F3_FLOW3_Object_SessionRegistry')->will($this->returnValue(NULL));
+		$mockSession->expects($this->once())->method('hasKey')->with('F3_FLOW3_Object_SessionRegistry')->will($this->returnValue(TRUE));
+
+		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
+		$mockObjectSerializer->expects($this->never())->method('deserializeObjectsArray');
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('dummy'), array(), '', FALSE);
+		$sessionRegistry->injectSession($mockSession);
+		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
+
+		$sessionRegistry->initialize();
+	}
 }
 ?>
