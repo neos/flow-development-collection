@@ -210,12 +210,16 @@ F3\FLOW3\MVC\Web\Routing\Aspect\RouterCachingAspect:
 # Object                                                                   #
 #                                                                          #
 
-F3\FLOW3\Object\SessionRegistry:
+F3\FLOW3\Object\ObjectSerializer:
   properties:
     objectManager: object: F3\FLOW3\Object\ManagerInterface
     objectBuilder: object: F3\FLOW3\Object\Builder
     queryFactory: object: F3\FLOW3\Persistence\QueryFactoryInterface
     reflectionService: object: F3\FLOW3\Reflection\Service
+
+F3\FLOW3\Object\SessionRegistry:
+  properties:
+    objectSerializer: object: F3\FLOW3\Object\ObjectSerializer
 
 #                                                                          #
 # Package                                                                  #

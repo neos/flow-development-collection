@@ -634,7 +634,7 @@ final class Bootstrap {
 			$this->objectManager->shutdown();
 			$this->reflectionService->shutdown();
 
-			$this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry')->shutdownObject();
+			$this->objectManager->getObject('F3\FLOW3\Object\SessionRegistry')->writeDataToSession();
 			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
