@@ -23,7 +23,7 @@ error:
   
     # Defines the global, last-resort exception handler.
     # The specified class must implement \F3\FLOW3\Error\ExceptionHandlerInterface
-    className: F3\FLOW3\Error\DebugExceptionHandler
+    className: F3\FLOW3\Error\ProductionExceptionHandler
 
   errorHandler:
   
