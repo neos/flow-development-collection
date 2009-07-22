@@ -163,10 +163,11 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 						if (is_object($argument)) {
 							$arguments .= '<span style="color:#FF8700;"><em>' . get_class($argument) . '</em></span>';
 						} elseif (is_string($argument)) {
-							$preparedArgument = (strlen($argument) < 80) ? $argument : substr($argument, 0, 40) . '…' . substr($argument, -40);
+							$preparedArgument = (strlen($argument) < 100) ? $argument : substr($argument, 0, 50) . '…' . substr($argument, -50);
 							$preparedArgument = htmlspecialchars($preparedArgument);
+							$preparedArgument = str_replace("…", '<span style="color:white;">…</span>', $preparedArgument);
 							$preparedArgument = str_replace("\n", '<span style="color:white;">⏎</span>', $preparedArgument);
-							$arguments .= '"<span style="color:#FF8700;">' . $preparedArgument . '</span>"';
+							$arguments .= '"<span style="color:#FF8700;" title="' . htmlspecialchars($argument) . '">' . $preparedArgument . '</span>"';
 						} elseif (is_numeric($argument)) {
 							$arguments .= '<span style="color:#FF8700;">' . (string)$argument . '</span>';
 						} else {
