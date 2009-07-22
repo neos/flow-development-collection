@@ -37,7 +37,9 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function configuredProvidersAndTokensAreBuiltCorrectly() {
 		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$mockToken1->expects($this->once())->method('setAuthenticationProviderName')->with('MyProvider');
 		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$mockToken2->expects($this->once())->method('setAuthenticationProviderName')->with('AnotherProvider');
 
 		$mockProvider1 = $this->getMock('F3\FLOW3\Security\Authentication\ProviderInterface', array(), array(), '', FALSE);
 		$mockProvider1->expects($this->any())->method('getTokenClassNames')->will($this->returnValue(array('token1')));
@@ -54,8 +56,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$getObjectCallback = function() use (&$mockProvider1, &$mockProvider2, &$mockToken1, &$mockToken2) {
 			$args = func_get_args();
 
-			if ($args[0] === 'provider1') return $mockProvider1;
-			elseif ($args[0] === 'provider2') return $mockProvider2;
+			if ($args[0] === 'provider1' && $args[1] == 'MyProvider' && $args[2] == array('provider1options')) return $mockProvider1;
+			elseif ($args[0] === 'provider2' && $args[1] == 'AnotherProvider' && $args[2] == array('provider2options')) return $mockProvider2;
 			elseif ($args[0] === 'token1') return $mockToken1;
 			elseif ($args[0] === 'token2') return $mockToken2;
 		};
@@ -66,8 +68,14 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			'UsernamePassword' => array(),
-			'F3\TestAuthenticationProvider' => array(),
+			'MyProvider' => array(
+				'providerClass' => 'UsernamePassword',
+				'options' => array('provider1options')
+			),
+			'AnotherProvider' => array(
+				'providerClass' => 'F3\TestAuthenticationProvider',
+				'options' => array('provider2options')
+			),
 		);
 
 		$mockProviderManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authentication\ProviderManager'), array('authenticate'), array(), '', FALSE);
@@ -125,7 +133,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			'UsernamePassword' => array(
+			'MyProvider' => array(
+				'providerClass' => 'UsernamePassword',
 				'requestPatterns' => array(
 					'URI' => 'typo3/.*',
 					'F3\TestRequestPattern' => 'test',
@@ -179,7 +188,8 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->any())->method('getObject')->will($this->returnCallback($getObjectCallback));
 
 		$providerConfiguration = array(
-			'UsernamePassword' => array(
+			'MyProvider' => array(
+				'providerClass' => 'UsernamePassword',
 				'entryPoint' => array(
 					'WebRedirect' => array(
 						'first' => 1,
@@ -345,9 +355,9 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function anExceptionIsThrownIfTheConfiguredProviderDoesNotExist() {
 		$providerConfiguration = array(
-			array(
-				'NotExistingProvider' => array(),
-			)
+			'NotExistingProvider' => array(
+				'providerClass' => 'NotExistingProviderClass'
+			),
 		);
 
 		$mockProviderResolver = $this->getMock('F3\FLOW3\Security\Authentication\ProviderResolver', array(), array(), '', FALSE);

@@ -34,6 +34,15 @@ namespace F3\FLOW3\Security\Authentication;
 interface ProviderInterface {
 
 	/**
+	 * Constructor
+	 *
+	 * @param string $name The name of this authentication provider
+	 * @param array $options Additional configuration options
+	 * @return void
+	 */
+	public function __construct($name, array $options);
+
+	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
 	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated

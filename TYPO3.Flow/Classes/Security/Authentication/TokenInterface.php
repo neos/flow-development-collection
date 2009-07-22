@@ -38,6 +38,21 @@ interface TokenInterface {
 		AUTHENTICATION_NEEDED = 4;
 
 	/**
+	 * Returns the name of the authentication provider responsible for this token
+	 *
+	 * @return string The authentication provider name
+	 */
+	public function getAuthenticationProviderName();
+
+	/**
+	 * Sets the name of the authentication provider responsible for this token
+	 *
+	 * @param string $authenticationProviderName The authentication provider name
+	 * @return void
+	 */
+	public function setAuthenticationProviderName($authenticationProviderName);
+
+	/**
 	 * Returns TRUE if this token is currently authenticated
 	 *
 	 * @return boolean TRUE if this this token is currently authenticated
@@ -95,6 +110,21 @@ interface TokenInterface {
 	public function updateCredentials();
 
 	/**
+	 * Returns the account if one is authenticated, NULL otherwise.
+	 *
+	 * @return F3\Party\Domain\Model\Account An account object
+	 */
+	public function getAccount();
+
+	/**
+	 * Set the (authenticated) account
+	 *
+	 * @param F3\Party\Domain\Model\Account $account An account object
+	 * @return void
+	 */
+	public function setAccount(\F3\Party\Domain\Model\Account $account);
+
+	/**
 	 * Returns the credentials of this token.
 	 *
 	 * @return object $credentials The needed credentials to authenticate this token
@@ -102,15 +132,7 @@ interface TokenInterface {
 	public function getCredentials();
 
 	/**
-	 * Might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
-	 *
-	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface A user details object
-	 */
-	public function getUserDetails();
-
-	/**
-	 * Returns the currently valid granted authorities. It might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
-	 * Note: You have to check isAuthenticated() before you call this method
+	 * Returns the currently valid granted authorities.
 	 *
 	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthority objects
 	 */

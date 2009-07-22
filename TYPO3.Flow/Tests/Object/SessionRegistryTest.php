@@ -93,8 +93,8 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$objects = array($className1 => $mockObject1, $className2 => $mockObject2);
 
 		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
-		$mockObjectSerializer->expects($this->at(0))->method('serializeObjectAsPropertyArray')->with($className1, $mockObject1)->will($this->returnValue(array('serialized object1')));
-		$mockObjectSerializer->expects($this->at(1))->method('serializeObjectAsPropertyArray')->with($className2, $mockObject2)->will($this->returnValue(array('serialized object2')));
+		$mockObjectSerializer->expects($this->at(1))->method('serializeObjectAsPropertyArray')->with($className1, $mockObject1)->will($this->returnValue(array('serialized object1')));
+		$mockObjectSerializer->expects($this->at(2))->method('serializeObjectAsPropertyArray')->with($className2, $mockObject2)->will($this->returnValue(array('serialized object2')));
 
 		$serializedObjectsArray = array('serialized object1', 'serialized object2');
 
@@ -106,6 +106,24 @@ class SessionRegistryTest extends \F3\Testing\BaseTestCase {
 		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
 		$sessionRegistry->_set('objects', $objects);
 
+		$sessionRegistry->writeDataToSession();
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function writeDataToSessionClearsTheObjectSerializersState() {
+		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE);
+
+		$mockObjectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array(), array(), '', FALSE);
+		$mockObjectSerializer->expects($this->once())->method('clearState');
+
+		$sessionRegistry = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\SessionRegistry'), array('storeObjectAsPropertyArray'), array(), '');
+		$sessionRegistry->injectSession($mockSession);
+		$sessionRegistry->injectObjectSerializer($mockObjectSerializer);
+
+		$sessionRegistry->_set('objects', array());
 		$sessionRegistry->writeDataToSession();
 	}
 

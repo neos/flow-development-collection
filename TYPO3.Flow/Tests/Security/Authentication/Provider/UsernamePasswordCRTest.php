@@ -23,12 +23,12 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  *                                                                        */
 
 /**
- * Testcase for username/password authentication provider
+ * Testcase for username/password authentication provider. The account are stored in the CR.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
+class UsernamePasswordCRTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
@@ -36,7 +36,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNamesReturnsTheCorrectClassNames() {
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR('myProvider', array());
 		$this->assertEquals(array('F3\FLOW3\Security\Authentication\Token\UsernamePassword'), $usernamePasswordProvider->getTokenClassNames());
 	}
 
@@ -46,12 +46,21 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticatingAnUsernamePasswordTokenWorks() {
+		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+
+		$mockAccountRepository = $this->getMock('F3\Party\Domain\Repository\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
+
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
 		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+		$mockToken->expects($this->once())->method('setAccount')->with($mockAccount);
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
-		$usernamePasswordProvider->authenticate($mockToken);
+		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR('myProvider', array());
+		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
+
+		$usernamePasswordCRProvider->authenticate($mockToken);
 	}
 
 	/**
@@ -60,12 +69,20 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticationFailsWithWrongCredentialsInAnUsernamePasswordToken() {
+		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount->expects($this->once())->method('getCredentialsSource')->will($this->returnValue('8bf0abbb93000e2e47f0e0a80721e834,80f117a78cff75f3f73793fd02aa9086'));
+
+		$mockAccountRepository = $this->getMock('F3\Party\Domain\Repository\AccountRepository', array(), array(), '', FALSE);
+		$mockAccountRepository->expects($this->once())->method('findByAccountIdentifierAndAuthenticationProviderName')->with('admin', 'myProvider')->will($this->returnValue($mockAccount));
+
 		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
-		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'flow3', 'password' => 'wrongpassword')));
+		$mockToken->expects($this->once())->method('getCredentials')->will($this->returnValue(array('username' => 'admin', 'password' => 'wrong password')));
 		$mockToken->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
-		$usernamePasswordProvider->authenticate($mockToken);
+		$usernamePasswordCRProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR('myProvider', array());
+		$usernamePasswordCRProvider->injectAccountRepository($mockAccountRepository);
+
+		$usernamePasswordCRProvider->authenticate($mockToken);
 	}
 
 	/**
@@ -77,7 +94,7 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function authenticatingAnUnsupportedTokenThrowsAnException() {
 		$someNiceToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR('myProvider', array());
 
 		$usernamePasswordProvider->authenticate($someNiceToken);
 	}
@@ -87,14 +104,16 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function canAuthenticateReturnsTrueOnlyForTheUsernamePasswordToken() {
-		$mockUserNamePasswordToken = $this->getMock('F3\FLOW3\Security\Authentication\Token\UsernamePassword', array(), array(), '', FALSE);
-		$mockToken = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+	public function canAuthenticateReturnsTrueOnlyForAnTokenThatHasTheCorrectProviderNameSet() {
+		$mockToken1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$mockToken1->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('myProvider'));
+		$mockToken2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface');
+		$mockToken2->expects($this->once())->method('getAuthenticationProviderName')->will($this->returnValue('someOtherProvider'));
 
-		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePassword();
+		$usernamePasswordProvider = new \F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR('myProvider', array());
 
-		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockUserNamePasswordToken));
-		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken));
+		$this->assertTrue($usernamePasswordProvider->canAuthenticate($mockToken1));
+		$this->assertFalse($usernamePasswordProvider->canAuthenticate($mockToken2));
 	}
 }
 ?>

@@ -150,6 +150,7 @@ class SessionRegistry implements \F3\FLOW3\Object\RegistryInterface {
 	 */
 	public function writeDataToSession() {
 		$objectsAsArray = array();
+		$this->objectSerializer->clearState();
 
 		foreach($this->objects as $objectName => $object) {
 			$objectsAsArray = array_merge($objectsAsArray, $this->objectSerializer->serializeObjectAsPropertyArray($objectName, $object));

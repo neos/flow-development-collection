@@ -176,16 +176,22 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	protected function buildProvidersAndTokensFromConfiguration(array $providers) {
-		foreach ($providers as $provider => $providerConfiguration) {
+		foreach ($providers as $providerName => $providerConfiguration) {
 
-			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$provider);
-			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $provider . '" could not be found!', 1237330453);
+			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
 
-			$providerInstance = $this->objectManager->getObject($providerObjectName);
+			$providerObjectName = $this->providerResolver->resolveProviderClass((string)$providerConfiguration['providerClass']);
+			if ($providerObjectName === NULL) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1237330453);
+
+			$providerOptions = array();
+			if (isset($providerConfiguration['options']) && is_array($providerConfiguration['options'])) $providerOptions = $providerConfiguration['options'];
+
+			$providerInstance = $this->objectManager->getObject($providerObjectName, $providerName, $providerOptions);
 			$this->providers[] = $providerInstance;
 
 			foreach ($providerInstance->getTokenClassNames() as $tokenClassName) {
 				$tokenInstance = $this->objectManager->getObject($tokenClassName);
+				$tokenInstance->setAuthenticationProviderName($providerName);
 				$this->tokens[] = $tokenInstance;
 			}
 

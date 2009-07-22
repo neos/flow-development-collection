@@ -61,6 +61,12 @@ class ObjectSerializer {
 	protected $reflectionService;
 
 	/**
+	 * The persistence manager
+	 * @var F3\FLOW3\Persistence\ManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * The query factory
 	 * @var F3\FLOW3\Persistence\QueryFactoryInterface
 	 */
@@ -100,6 +106,17 @@ class ObjectSerializer {
 	}
 
 	/**
+	 * Inject the persistence manager
+	 *
+	 * @param F3\FLOW3\Persistence\ManagerInterface $persistenceManager The persistence manager
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
 	 * Injects the query factory
 	 *
 	 * @param F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory The query factory
@@ -108,6 +125,16 @@ class ObjectSerializer {
 	 */
 	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
 		$this->queryFactory = $queryFactory;
+	}
+
+	/**
+	 *
+	 *
+	 * @return
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function clearState() {
+		unset($this->objectsAsArray);
 	}
 
 	/**
@@ -137,6 +164,7 @@ class ObjectSerializer {
 				$propertyValue = $propertyReflection->getValue($object);
 			}
 
+			$propertyClassName = '';
 			if (is_object($propertyValue)) $propertyClassName = get_class($propertyValue);
 
 			if (is_object($propertyValue) && $propertyClassName === 'SplObjectStorage') {
@@ -150,14 +178,15 @@ class ObjectSerializer {
 				}
 
 			} else if (is_object($propertyValue)
+						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
 						&& $propertyValue instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
-						&& $propertyValue->FLOW3_Persistence_isNew() === FALSE
+						&& $this->persistenceManager->getBackend()->isNewObject($propertyValue) === FALSE
 						&& ($this->reflectionService->isClassTaggedWith($propertyClassName, 'entity')
 							|| $this->reflectionService->isClassTaggedWith($propertyClassName, 'valueobject'))) {
 
 				$propertyArray[$propertyName]['type'] = 'persistenceObject';
-				$propertyArray[$propertyName]['value']['className'] = $propertyClassName;
-				$propertyArray[$propertyName]['value']['UUID'] = $propertyValue->FLOW3_AOP_Proxy_getProperty('FLOW3_Persistence_Entity_UUID');
+				$propertyArray[$propertyName]['value']['className'] = $propertyValue->FLOW3_AOP_Proxy_getProxyTargetClassName();
+				$propertyArray[$propertyName]['value']['UUID'] = $this->persistenceManager->getBackend()->getIdentifierByObject($propertyValue);
 
 			} else if (is_object($propertyValue)) {
 				$propertyObjectName = $this->objectManager->getObjectNameByClassName($propertyClassName);

@@ -28,7 +28,6 @@ namespace F3\FLOW3\Security\Authentication\Token;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
- * @todo here we also need a user details service and an authentication entry point
  */
 class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterface {
 
@@ -43,6 +42,11 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	protected $environment;
 
 	/**
+	 * @var string
+	 */
+	protected $authenticationProviderName;
+
+	/**
 	 * Current authentication status of this token
 	 * @var integer
 	 */
@@ -54,6 +58,11 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 * @transient
 	 */
 	protected $credentials = array('username' => '', 'password' => '');
+
+	/**
+	 * @var F3\Party\Domain\Model\Account
+	 */
+	protected $account;
 
 	/**
 	 * @var array The set request patterns
@@ -86,6 +95,27 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	 */
 	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
 		$this->environment = $environment;
+	}
+
+	/**
+	 * Returns the name of the authentication provider responsible for this token
+	 *
+	 * @return string The authentication provider name
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getAuthenticationProviderName() {
+		return $this->authenticationProviderName;
+	}
+
+	/**
+	 * Sets the name of the authentication provider responsible for this token
+	 *
+	 * @param string $authenticationProviderName The authentication provider name
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function setAuthenticationProviderName($authenticationProviderName) {
+		$this->authenticationProviderName = $authenticationProviderName;
 	}
 
 	/**
@@ -182,26 +212,36 @@ class UsernamePassword implements \F3\FLOW3\Security\Authentication\TokenInterfa
 	}
 
 	/**
-	 * Might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
+	 * Returns the account if one is authenticated, NULL otherwise.
 	 *
-	 * @return \F3\FLOW3\Security\Authentication\UserDetailsInterface A user details object
+	 * @return F3\Party\Domain\Model\Account An account object
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo implement this method
 	 */
-	public function getUserDetails() {
-
+	public function getAccount() {
+		return $this->account;
 	}
 
 	/**
-	 * Returns the currently valid granted authorities. It might ask a \F3\FLOW3\Security\Authentication\UserDetailsServiceInterface.
-	 * Note: You have to check isAuthenticated() before you call this method
+	 * Set the (authenticated) account
 	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\GrantedAuthority objects
+	 * @param F3\Party\Domain\Model\Account $account An account object
+	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo implement this method, otherwise everbody will be an administrator ;-)
+	 */
+	public function setAccount(\F3\Party\Domain\Model\Account $account) {
+		$this->account = $account;
+	}
+
+	/**
+	 * Returns the currently valid granted authorities.
+	 *
+	 * @return array Array of F3\FLOW3\Security\Authentication\GrantedAuthority objects
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getGrantedAuthorities() {
-		return array($this->objectFactory->create('F3\FLOW3\Security\ACL\Role', 'ADMINISTRATOR'));
+		if ($this->account !== NULL && $this->isAuthenticated()) return $this->account->getRoles();
+
+		return array();
 	}
 
 	/**

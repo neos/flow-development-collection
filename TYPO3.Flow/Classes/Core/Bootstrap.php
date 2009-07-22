@@ -177,8 +177,8 @@ final class Bootstrap {
 		$this->initializeReflection();
 		$this->initializeObjects();
 		$this->initializeAOP();
-		$this->initializeSession();
 		$this->initializePersistence();
+		$this->initializeSession();
 		$this->initializeResources();
 		$this->initializeLocale();
 	}

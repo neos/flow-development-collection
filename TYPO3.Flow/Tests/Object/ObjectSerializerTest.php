@@ -308,10 +308,28 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			public $entityProperty;
 		}');
 
-		$entityObject = $this->getMock('F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface', array('FLOW3_Persistence_isNew', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_Persistence_isDirty', 'FLOW3_Persistence_memorizeCleanState'));
-		$entityClassName = get_class($entityObject);
-		$entityObject->expects($this->once())->method('FLOW3_Persistence_isNew')->will($this->returnValue(FALSE));
-		$entityObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('someUUID'));
+		$entityClassName = uniqid('entityClass');
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
+			public function FLOW3_Persistence_isNew() {}
+			public function FLOW3_Persistence_isDirty($propertyName) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
+			public function __clone() {}
+		}');
+
+		$entityObject = new $entityClassName();
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface', array(), array(), '', FALSE);
+		$mockPersistenceBackend->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
+		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
@@ -319,6 +337,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$objectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);
+		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
 		$expectedArray = array(
 			'className' => $sessionClassName,
@@ -350,10 +369,28 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			public $entityProperty;
 		}');
 
-		$entityObject = $this->getMock('F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface', array('FLOW3_Persistence_isNew', 'FLOW3_AOP_Proxy_getProperty', 'FLOW3_Persistence_isDirty', 'FLOW3_Persistence_memorizeCleanState'));
-		$entityClassName = get_class($entityObject);
-		$entityObject->expects($this->once())->method('FLOW3_Persistence_isNew')->will($this->returnValue(FALSE));
-		$entityObject->expects($this->once())->method('FLOW3_AOP_Proxy_getProperty')->with('FLOW3_Persistence_Entity_UUID')->will($this->returnValue('someUUID'));
+		$entityClassName = uniqid('entityClass');
+		eval('class ' . $entityClassName . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface, \F3\FLOW3\AOP\ProxyInterface {
+			public function FLOW3_AOP_Proxy_construct() {}
+			public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() { return get_class($this); }
+			public function FLOW3_AOP_Proxy_hasProperty($propertyName) {}
+			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
+			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
+			public function FLOW3_Persistence_isNew() {}
+			public function FLOW3_Persistence_isDirty($propertyName) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
+			public function __clone() {}
+		}');
+
+		$entityObject = new $entityClassName();
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface', array(), array(), '', FALSE);
+		$mockPersistenceBackend->expects($this->once())->method('isNewObject')->with($entityObject)->will($this->returnValue(FALSE));
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($entityObject)->will($this->returnValue('someUUID'));
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface', array(), array(), '', FALSE);
+		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
 		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($sessionClassName)->will($this->returnValue(array('entityProperty')));
@@ -362,6 +399,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$objectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array('dummy'), array(), '', FALSE);
 		$objectSerializer->injectReflectionService($mockReflectionService);
+		$objectSerializer->injectPersistenceManager($mockPersistenceManager);
 
 		$expectedArray = array(
 			'className' => $sessionClassName,
@@ -393,14 +431,14 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			'another' => 'bla',
 			'and another' => 'blub'
 		);
-		
+
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\Manager', array(), array(), '', FALSE);
 		$mockObjectManager->expects($this->any())->method('isObjectRegistered')->will($this->returnValue(FALSE));
-		
+
 		$objectSerializerClassName = $this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer');
 		$objectSerializer = new $objectSerializerClassName($this->getMock('F3\FLOW3\Session\SessionInterface', array(), array(), '', FALSE));
 		$objectSerializer->injectObjectManager($mockObjectManager);
-		
+
 		$objectSerializer->deserializeObjectsArray($someDataArray);
 		$this->assertEquals($someDataArray, $objectSerializer->_get('objectsAsArray'), 'The data array has not been set as expected.');
 	}

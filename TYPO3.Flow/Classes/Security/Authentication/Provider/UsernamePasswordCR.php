@@ -23,80 +23,94 @@ namespace F3\FLOW3\Security\Authentication\Provider;
  *                                                                        */
 
 /**
- * An authentication provider that authenticates \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword tokens.
+ * An authentication provider that authenticates
+ * F3\FLOW3\Security\Authentication\Token\UsernamePassword tokens.
+ * The accounts are stored in the CR.
  *
  * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser Public License, version 3 or later
+ * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class RSAUsernamePassword implements \F3\FLOW3\Security\Authentication\ProviderInterface {
+class UsernamePasswordCR implements \F3\FLOW3\Security\Authentication\ProviderInterface {
 
 	/**
-	 * The RSAWalletService
-	 * @var \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface
+	 * @var F3\Party\Domain\Repository\AccountRepository
 	 */
-	protected $RSAWalletService;
+	protected $accountRepository;
 
 	/**
-	 * Inject the RSAWAlletService, used to decrypt the username
+	 * @var string
+	 */
+	protected $name;
+
+	/**
+	 * Injects the account repository
 	 *
-	 * @param \F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService The RSAWalletService
+	 * @param F3\Party\Domain\Repository\AccountRepository $accountRepository The account repository
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function injectRSAWalletService(\F3\FLOW3\Security\Cryptography\RSAWalletServiceInterface $RSAWalletService) {
-		$this->RSAWalletService = $RSAWalletService;
+	public function injectAccountRepository(\F3\Party\Domain\Repository\AccountRepository $accountRepository) {
+		$this->accountRepository = $accountRepository;
+	}
+
+	/**
+	 * Constructor
+	 *
+	 * @param string $name The name of this authentication provider
+	 * @param array $options Additional configuration options
+	 * @return void
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function __construct($name, array $options) {
+		$this->name = $name;
 	}
 
 	/**
 	 * Returns TRUE if the given token can be authenticated by this provider
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
+	 * @param F3\FLOW3\Security\Authentication\TokenInterface $token The token that should be authenticated
 	 * @return boolean TRUE if the given token class can be authenticated by this provider
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function canAuthenticate(\F3\FLOW3\Security\Authentication\TokenInterface $token) {
-		if ($token instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword) return TRUE;
+		if ($token->getAuthenticationProviderName() === $this->name) return TRUE;
 		return FALSE;
 	}
 
 	/**
 	 * Returns the classnames of the tokens this provider is responsible for.
 	 *
-	 * @return array The classname of the token this provider is responsible for
+	 * @return string The classname of the token this provider is responsible for
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getTokenClassNames() {
-		return array('F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword');
+		return array('F3\FLOW3\Security\Authentication\Token\UsernamePassword');
 	}
 
 	/**
 	 * Sets isAuthenticated to TRUE for all tokens.
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
+	 * @param F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken The token to be authenticated
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function authenticate(\F3\FLOW3\Security\Authentication\TokenInterface $authenticationToken) {
-		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
+		if (!($authenticationToken instanceof \F3\FLOW3\Security\Authentication\Token\UsernamePassword)) throw new \F3\FLOW3\Security\Exception\UnsupportedAuthenticationToken('This provider cannot authenticate the given token.', 1217339840);
 
+		$account = NULL;
 		$credentials = $authenticationToken->getCredentials();
 
-		if ($credentials['encryptedUsername'] !== '' && $credentials['encryptedPassword'] !== '') {
+		if (is_array($credentials) && isset($credentials['username'])) $account = $this->accountRepository->findByAccountIdentifierAndAuthenticationProviderName($credentials['username'], $this->name);
 
-			$passwordKeypairUUID = $authenticationToken->getPasswordKeypairUUID();
-			$usernameKeypairUUID = $authenticationToken->getUsernameKeypairUUID();
+		if (is_object($account)) {
+			list($passwordHash, $salt) = explode(',', $account->getCredentialsSource());
 
-			if ($usernameKeypairUUID !== NULL && $passwordKeypairUUID !== NULL) {
-
-				$username = $this->RSAWalletService->decrypt(base64_decode($credentials['encryptedUsername']), $usernameKeypairUUID);
-
-				if ($username === 'admin' && $this->RSAWalletService->checkRSAEncryptedPassword(base64_decode($credentials['encryptedPassword']), 'af1e8a52451786a6b3bf78838e03a0a2', 'a709157e66e0197cafa0c2ba99f6e252', $passwordKeypairUUID)) {
-					$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
-				} else {
-					$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
-				}
-
-				$authenticationToken->invalidateCurrentKeypairs();
+			if (md5(md5($credentials['password']) . $salt) === $passwordHash) {
+				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+				$authenticationToken->setAccount($account);
+			} else {
+				$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
 			}
 		} elseif ($authenticationToken->getAuthenticationStatus() !== \F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL) {
 			$authenticationToken->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);

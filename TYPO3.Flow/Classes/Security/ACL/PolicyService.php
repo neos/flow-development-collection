@@ -196,8 +196,10 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 		$methodIdentifier = $joinPoint->getClassName() . '->' . $joinPoint->getMethodName();
 		if (!isset($this->acls[$methodIdentifier])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given joinpoint was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1222100851);
 
-		$privileges = array();
-		foreach ($this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType) as $privilegeIdentifier => $isGrant) {
+		$privileges = $this->parsePrivileges($methodIdentifier, (string)$role, $privilegeType);
+		if (!is_array($privileges)) return array();
+
+		foreach ($privileges as $privilegeIdentifier => $isGrant) {
 			$privileges[] = $this->objectFactory->create('F3\FLOW3\Security\ACL\Privilege', $privilegeIdentifier, $isGrant);
 		}
 
@@ -215,6 +217,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	protected function parsePrivileges($methodIdentifier, $role, $privilegeType) {
 		$privileges = array();
+
+		if (!isset($this->acls[$methodIdentifier][(string)$role])) return NULL;
 
 		foreach ($this->acls[$methodIdentifier][(string)$role] as $privilegeString) {
 			preg_match('/^(.+)_(GRANT|DENY)$/', $privilegeString, $matches);

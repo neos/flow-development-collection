@@ -72,13 +72,13 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function isAuthenticatedReturnsTheCorrectValueForAGivenStatus() {
-		$token1 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token1 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token1->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
-		$token2 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token2 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token2->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_NEEDED);
-		$token3 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token3 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token3->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::WRONG_CREDENTIALS);
-		$token4 = new \F3\FLOW3\Security\Authentication\Token\RSAUsernamePassword();
+		$token4 = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token4->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
 
 		$this->assertFalse($token1->isAuthenticated());
@@ -121,6 +121,53 @@ class UsernamePasswordTest extends \F3\Testing\BaseTestCase {
 	public function setAuthenticationStatusThrowsAnExceptionForAnInvalidStatus() {
 		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
 		$token->setAuthenticationStatus(-1);
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getGrantedAuthoritiesReturnsTheRolesOfTheAuthenticatedAccount() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+
+		$roles = array('role1', 'role2');
+
+		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount->expects($this->once())->method('getRoles')->will($this->returnValue($roles));
+
+		$token->setAccount($mockAccount);
+
+		$this->assertEquals($roles, $token->getGrantedAuthorities(), 'The wrong roles were returned');
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getGrantedAuthoritiesReturnsAnEmptyArrayIfTheTokenIsNotAuthenticated() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+
+		$mockAccount = $this->getMock('F3\Party\Domain\Model\Account', array(), array(), '', FALSE);
+		$mockAccount->expects($this->never())->method('getRoles');
+
+		$token->setAccount($mockAccount);
+
+		$this->assertEquals(array(), $token->getGrantedAuthorities(), 'Roles have been returned, although the token was not authenticated.');
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getGrantedAuthoritiesReturnsAnEmptyArrayIfNoAccountHasBeenSet() {
+		$token = new \F3\FLOW3\Security\Authentication\Token\UsernamePassword();
+		$token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::AUTHENTICATION_SUCCESSFUL);
+
+		$this->assertEquals(array(), $token->getGrantedAuthorities(), 'Roles have been returned, although no account has been set.');
 	}
 }
 ?>

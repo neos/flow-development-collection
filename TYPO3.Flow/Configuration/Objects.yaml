@@ -215,6 +215,7 @@ F3\FLOW3\Object\ObjectSerializer:
     objectManager: object: F3\FLOW3\Object\ManagerInterface
     objectBuilder: object: F3\FLOW3\Object\Builder
     queryFactory: object: F3\FLOW3\Persistence\QueryFactoryInterface
+    persistenceManager: object: F3\FLOW3\Persistence\ManagerInterface
     reflectionService: object: F3\FLOW3\Reflection\Service
 
 F3\FLOW3\Object\SessionRegistry:
