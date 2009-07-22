@@ -21,11 +21,6 @@ namespace F3\FLOW3\MVC\Controller;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-/**
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- */
-
 require_once(__DIR__ . '/../Fixture/Controller/MockRESTController.php');
 
 /**

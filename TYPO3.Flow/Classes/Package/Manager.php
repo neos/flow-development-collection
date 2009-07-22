@@ -23,11 +23,6 @@ namespace F3\FLOW3\Package;
  *                                                                        */
 
 /**
- * @version $Id$
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- */
-
-/**
  * The default TYPO3 Package Manager
  *
  * @version $Id$

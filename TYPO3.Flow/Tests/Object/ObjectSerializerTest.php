@@ -23,12 +23,6 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @version $Id: TransientRegistryTest.php 1838 2009-02-02 13:03:59Z robert $
- * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- */
-
-/**
  * Testcase for the object serializer
  *
  * @package FLOW3

@@ -23,14 +23,10 @@ namespace F3\FLOW3\Object;
  *                                                                        */
 
 /**
- * @package FLOW3
- * @subpackage Object
- * @version $Id: TransientRegistry.php 2293 2009-05-20 18:14:45Z robert $
- */
-
-/**
- * The object serializer. This serializer traverses an object tree and transforms it into and array.
- * Dependant objects are only included if they are not singleton and the property is not annotated transient.
+ * The object serializer. This serializer traverses an object tree and transforms
+ * it into an array.
+ * Dependant objects are only included if they are not singleton and the property
+ * is not annotated transient.
  * Afterwards it can reconstitute the objects from the array.
  *
  * @package FLOW3
