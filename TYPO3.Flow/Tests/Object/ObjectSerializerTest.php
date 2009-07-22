@@ -113,6 +113,45 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
+	public function serializeObjectAsPropertyArraySerializesArrayObjectPropertiesCorrectly() {
+		$className = uniqid('DummyClass');
+		eval('class ' . $className . ' {
+			private $arrayObjectProperty;
+
+			public function __construct() {
+				$this->arrayObjectProperty = new \ArrayObject(array(1,2,3));
+			}
+		}');
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('getClassPropertyNames')->with($className)->will($this->returnValue(array('arrayObjectProperty')));
+
+		$objectSerializer = $this->getMock('F3\FLOW3\Object\ObjectSerializer', array('buildStorageArrayForArrayProperty'), array(), '', FALSE);
+		$objectSerializer->injectReflectionService($mockReflectionService);
+
+		$objectSerializer->expects($this->once())->method('buildStorageArrayForArrayProperty')->with(array(1,2,3))->will($this->returnValue('storable array'));
+
+		$someObject = new $className();
+
+		$expectedPropertyArray = array(
+			$className => array(
+				'className' => $className,
+				'properties' => array(
+					'arrayObjectProperty' => array(
+						'type' => 'ArrayObject',
+						'value' => 'storable array',
+					)
+				)
+			)
+		);
+
+		$this->assertEquals($expectedPropertyArray, $objectSerializer->serializeObjectAsPropertyArray($className, $someObject), 'The ArrayObject property was not serialized correctly.');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
 	public function serializeObjectAsPropertyArraySerializesObjectPropertiesCorrectly() {
 		$className1 = uniqid('DummyClass1');
 		$className2 = uniqid('DummyClass2');
@@ -711,12 +750,14 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		eval('class ' . $className . ' {
 			private $simpleProperty;
 			private $arrayProperty;
+			private $arrayObjectProperty;
 			private $objectProperty;
 			private $splObjectStorageProperty;
 			private $persistenceObjectProperty;
 
 			public function getSimpleProperty() { return $this->simpleProperty; }
 			public function getArrayProperty() { return $this->arrayProperty; }
+			public function getArrayObjectProperty() { return $this->arrayObjectProperty; }
 			public function getObjectProperty() { return $this->objectProperty; }
 			public function getSplObjectStorageProperty() { return $this->splObjectStorageProperty; }
 			public function getPersistenceObjectProperty() { return $this->persistenceObjectProperty; }
@@ -732,6 +773,10 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 				'arrayProperty' => array (
 					'type' => 'array',
 					'value' => 'arrayPropertyValue',
+				),
+				'arrayObjectProperty' => array (
+					'type' => 'ArrayObject',
+					'value' => 'arrayObjectPropertyValue',
 				),
 				'objectProperty' => array (
 					'type' => 'object',
@@ -761,8 +806,9 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$objectSerializer->injectObjectBuilder($mockObjectBuilder);
 		$objectSerializer->injectObjectManager($mockObjectManager);
 		$objectSerializer->expects($this->at(0))->method('createEmptyObject')->with($className)->will($this->returnValue(new $className()));
-		$objectSerializer->expects($this->at(2))->method('createEmptyObject')->with('emptyClass')->will($this->returnValue($emptyObject));
-		$objectSerializer->expects($this->once())->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
+		$objectSerializer->expects($this->at(3))->method('createEmptyObject')->with('emptyClass')->will($this->returnValue($emptyObject));
+		$objectSerializer->expects($this->at(1))->method('reconstituteArray')->with('arrayPropertyValue')->will($this->returnValue('arrayPropertyValue'));
+		$objectSerializer->expects($this->at(2))->method('reconstituteArray')->with('arrayObjectPropertyValue')->will($this->returnValue(array('arrayObjectPropertyValue')));
 		$objectSerializer->expects($this->once())->method('reconstituteSplObjectStorage')->with('splObjectStoragePropertyValue')->will($this->returnValue('splObjectStoragePropertyValue'));
 		$objectSerializer->expects($this->once())->method('reconstitutePersistenceObject')->with('persistenceObjectClassName', 'persistenceObjectUUID')->will($this->returnValue('persistenceObjectPropertyValue'));
 
@@ -778,6 +824,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals('simplePropertyValue', $object->getSimpleProperty(), 'Simple property was not set as expected.');
 		$this->assertEquals('arrayPropertyValue', $object->getArrayProperty(), 'Array property was not set as expected.');
+		$this->assertEquals(new \ArrayObject(array('arrayObjectPropertyValue')), $object->getArrayObjectProperty(), 'ArrayObject property was not set as expected.');
 		$this->assertEquals($emptyObject, $object->getObjectProperty(), 'Object property was not set as expected.');
 		$this->assertEquals('splObjectStoragePropertyValue', $object->getSplObjectStorageProperty(), 'SplObjectStorage property was not set as expected.');
 		$this->assertEquals('persistenceObjectPropertyValue', $object->getPersistenceObjectProperty(), 'Persistence object property was not set as expected.');

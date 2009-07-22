@@ -176,6 +176,9 @@ class ObjectSerializer {
 					$propertyArray[$propertyName]['value'][] = $objectHash;
 					$this->serializeObjectAsPropertyArray($objectHash, $storedObject);
 				}
+			} else if (is_object($propertyValue) && $propertyValue instanceof \ArrayObject) {
+				$propertyArray[$propertyName]['type'] = 'ArrayObject';
+				$propertyArray[$propertyName]['value'] = $this->buildStorageArrayForArrayProperty($propertyValue->getArrayCopy());
 
 			} else if (is_object($propertyValue)
 						&& $propertyValue instanceof \F3\FLOW3\AOP\ProxyInterface
@@ -300,6 +303,9 @@ class ObjectSerializer {
 					break;
 				case 'array':
 					$propertyValue = $this->reconstituteArray($propertyData['value']);
+					break;
+				case 'ArrayObject':
+					$propertyValue = new \ArrayObject($this->reconstituteArray($propertyData['value']));
 					break;
 				case 'object':
 					$propertyValue = $this->reconstituteObject($this->objectsAsArray[$propertyData['value']]);
