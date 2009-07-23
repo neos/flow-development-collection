@@ -82,7 +82,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$entity2->someReference = $entity31;
 		$entity2->someReferenceArray = array($entity32, $entity33);
 
-		$repository = new \F3\FLOW3\Persistence\Repository;
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($entity2));
 		$repository->add($entity2);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
@@ -137,7 +138,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$entity1 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 		$entity3 = new \F3\FLOW3\Tests\Persistence\Fixture\Model\CleanEntity();
 
-		$repository = new \F3\FLOW3\Persistence\Repository;
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($entity1));
 		$repository->remove($entity1);
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
