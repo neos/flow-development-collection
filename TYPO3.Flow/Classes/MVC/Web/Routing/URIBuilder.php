@@ -43,7 +43,7 @@ class URIBuilder {
 
 	/**
 	 * Sets the current request
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -74,11 +74,13 @@ class URIBuilder {
 	 * @param string $packageKey Name of the target package. If not set, current package is used
 	 * @param string $subpackageKey Name of the target subpackage. If not set, current subpackage is used
 	 * @param string $section Anchor to be appended to the resulting URI
+	 * @param string $format The requested format, e.g. ".html"
+	 * @param boolean $absolute If set, the URI is prepended with the base URI
 	 * @return string the resolved URI
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function URIFor($actionName = NULL, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $section = '') {
+	public function URIFor($actionName = NULL, $arguments = array(), $controllerName = NULL, $packageKey = NULL, $subpackageKey = NULL, $section = '', $format = '', $absolute = FALSE) {
 		$routeValues = $arguments;
 		if ($actionName !== NULL) {
 			$routeValues['@action'] = $actionName;
@@ -97,7 +99,10 @@ class URIBuilder {
 		if (strlen($subpackageKey) > 0) {
 			$routeValues['@subpackage'] = $subpackageKey;
 		}
-		$uri = $this->router->resolve($routeValues);
+		if (strlen($format) > 0) {
+			$routeValues['@format'] = $format;
+		}
+		$uri = ($absolute === TRUE ? $this->request->getBaseURI() : '') . $this->router->resolve($routeValues);
 		if ($section !== '') {
 			$uri .= '#' . $section;
 		}

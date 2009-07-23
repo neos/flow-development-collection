@@ -31,8 +31,6 @@ namespace F3\FLOW3\MVC;
  */
 class Request implements \F3\FLOW3\MVC\RequestInterface {
 
-	const PATTERN_MATCH_FORMAT = '/^[a-z0-9]{1,5}$/';
-
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
@@ -349,12 +347,11 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	/**
 	 * Sets the requested representation format
 	 *
-	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like.
+	 * @param string $format The desired format, something like "html", "xml", "png", "json" or the like. Can even be something like "rss.xml".
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setFormat($format) {
-		if (!preg_match(self::PATTERN_MATCH_FORMAT, $format)) throw new \F3\FLOW3\MVC\Exception\InvalidFormat('An invalid request format (' . $format . ') was given.', 1218015038);
 		$this->format = $format;
 	}
 

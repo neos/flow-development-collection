@@ -202,16 +202,6 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidFormat
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function invalidFormatsAreRejected() {
-		$request = new \F3\FLOW3\MVC\Request();
-		$request->setFormat('.xml');
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function aFlagCanBeSetIfTheRequestNeedsToBeDispatchedAgain() {
