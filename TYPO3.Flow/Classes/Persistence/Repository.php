@@ -55,6 +55,11 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	protected $persistenceManager;
 
 	/**
+	 * @var string
+	 */
+	protected $objectType;
+
+	/**
 	 * Constructs a new Repository
 	 *
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -63,6 +68,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	public function __construct() {
 		$this->addedObjects = new \SplObjectStorage();
 		$this->removedObjects = new \SplObjectStorage();
+		$this->objectType = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
 	}
 
 	/**
@@ -97,6 +103,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function add($object) {
+		if (!($object instanceof $this->objectType)) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to add() was not of the type (' . $this->objectType . ') this repository manages.', 1248363335);
+		}
+
 		$this->addedObjects->attach($object);
 		$this->removedObjects->detach($object);
 	}
@@ -115,6 +125,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function remove($object) {
+		if (!($object instanceof $this->objectType)) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to remove() was not of the type (' . $this->objectType . ') this repository manages.', 1248363426);
+		}
+
 		if ($this->addedObjects->contains($object)) {
 			$this->addedObjects->detach($object);
 		} else {
@@ -131,6 +145,13 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function replace($existingObject, $newObject) {
+		if (!($existingObject instanceof $this->objectType)) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The existing object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363434);
+		}
+		if (!($newObject instanceof $this->objectType)) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The new object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363439);
+		}
+
 		$backend = $this->persistenceManager->getBackend();
 		$session = $this->persistenceManager->getSession();
 		$uuid = $backend->getIdentifierByObject($existingObject);
@@ -211,8 +232,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @api
 	 */
 	public function createQuery() {
-		$type = str_replace(array('\\Repository\\', 'Repository'), array('\\Model\\', ''), $this->FLOW3_AOP_Proxy_getProxyTargetClassName());
-		return $this->queryFactory->create($type);
+		return $this->queryFactory->create($this->objectType);
 	}
 
 	/**

@@ -45,7 +45,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function addActuallyAddsAnObjectToTheInternalObjectsArray() {
 		$someObject = new \stdClass();
-		$repository = new \F3\FLOW3\Persistence\Repository();
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($someObject));
 		$repository->add($someObject);
 
 		$this->assertTrue($repository->getAddedObjects()->contains($someObject));
@@ -60,7 +61,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object2 = new \stdClass();
 		$object3 = new \stdClass();
 
-		$repository = new \F3\FLOW3\Persistence\Repository();
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($object1));
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);
@@ -81,7 +83,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$object2 = new \ArrayObject(array('val' => '2'));
 		$object3 = new \ArrayObject(array('val' => '3'));
 
-		$repository = new \F3\FLOW3\Persistence\Repository();
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($object1));
 		$repository->add($object1);
 		$repository->add($object2);
 		$repository->add($object3);
@@ -105,7 +108,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function removeRetainsObjectForObjectsNotInCurrentSession() {
 		$object = new \ArrayObject(array('val' => '1'));
-		$repository = new \F3\FLOW3\Persistence\Repository();
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($object));
 		$repository->remove($object);
 
 		$this->assertTrue($repository->getRemovedObjects()->contains($object));
@@ -127,12 +131,31 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 * @dataProvider modelAndRepositoryClassNames
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function createQueryCallsQueryFactoryWithExpectedClassName($repositoryClassName, $modelClassName) {
-		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
-		$mockQueryFactory->expects($this->once())->method('create')->with($modelClassName);
+	public function constructSetsObjectTypeFromClassName($repositoryClassName, $modelClassName) {
+		$mockClassName = 'MockRepository' . uniqid();
+		eval('class ' . $mockClassName . ' extends \F3\FLOW3\Persistence\Repository {
+			protected function FLOW3_AOP_Proxy_getProxyTargetClassName() {
+				return \'' . $repositoryClassName . '\';
+			}
+			public function _getObjectType() {
+				return $this->objectType;
+			}
+		}');
 
-		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('FLOW3_AOP_Proxy_getProxyTargetClassName'));
-		$repository->expects($this->once())->method('FLOW3_AOP_Proxy_getProxyTargetClassName')->will($this->returnValue($repositoryClassName));
+		$repository = new $mockClassName();
+		$this->assertEquals($modelClassName, $repository->_getObjectType());
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function createQueryCallsQueryFactoryWithExpectedClassName() {
+		$mockQueryFactory = $this->getMock('F3\FLOW3\Persistence\QueryFactoryInterface');
+		$mockQueryFactory->expects($this->once())->method('create')->with('ExpectedType');
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'ExpectedType');
 		$repository->injectQueryFactory($mockQueryFactory);
 
 		$repository->createQuery();
@@ -198,6 +221,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($newObject));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->replace($existingObject, $newObject);
 	}
@@ -231,6 +255,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceManager->expects($this->once())->method('getSession')->will($this->returnValue($mockPersistenceSession));
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($newObject));
 		$repository->injectPersistenceManager($mockPersistenceManager);
 		$repository->_set('removedObjects', $removedObjects);
 		$repository->replace($existingObject, $newObject);
@@ -266,6 +291,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
 		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->_set('objectType', get_class($newObject));
 		$repository->_set('addedObjects', $addedObjects);
 		$repository->replace($existingObject, $newObject);
 
@@ -313,6 +339,42 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	public function magicCallMethodTriggersAnErrorIfUnknownMethodsAreCalled() {
 		$repository = $this->getMock('F3\FLOW3\Persistence\Repository', array('dummy'));
 		$repository->__call('foo', array());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function addChecksObjectType() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'ExpectedObjectType');
+
+		$repository->add(new \stdClass());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function removeChecksObjectType() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'ExpectedObjectType');
+
+		$repository->remove(new \stdClass());
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function replaceChecksObjectType() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'ExpectedObjectType');
+
+		$repository->replace(new \stdClass(), new \stdClass());
 	}
 }
 
