@@ -221,7 +221,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function modelAndValidatorClassNames() {
 		return array(
-			array('\F3\Blog\Domain\Validator\BlogValidator', '\F3\Blog\Domain\Model\Blog'),
+			array('\FLOW8\Blog\Domain\Validator\BlogValidator', '\FLOW8\Blog\Domain\Model\Blog'),
 			array('﻿\Domain\Validator\Content\PageValidator', '﻿\Domain\Model\Content\Page')
 		);
 	}
@@ -242,7 +242,7 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\FLOW3\Validation\Validator\ConjunctionValidator')->will($this->returnValue($mockConjunctionValidator));
 		$mockObjectManager->expects($this->at(1))->method('getObject')->with($validatorClassName)->will($this->returnValue($mockValidator));
 
-		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName'), array($mockObjectManager));
+		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
 		$validatorResolver->expects($this->once())->method('resolveValidatorObjectName')->with($validatorClassName)->will($this->returnValue($validatorClassName));
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $modelClassName);

@@ -173,7 +173,9 @@ class ValidatorResolver {
 					$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
 					foreach ($parsedAnnotation['validators'] as $validatorConfiguration) {
 						$newValidator = $this->createValidator($validatorConfiguration['validatorName'], $validatorConfiguration['validatorOptions']);
-						if ($newValidator === NULL) throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . $dataType . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorName . '".', 1241098027);
+						if ($newValidator === NULL) {
+							throw new \F3\FLOW3\Validation\Exception\NoSuchValidator('Invalid validate annotation in ' . $dataType . '::' . $classPropertyName . ': Could not resolve class name for  validator "' . $validatorConfiguration['validatorName'] . '".', 1241098027);
+						}
 						$objectValidator->addPropertyValidator($classPropertyName, $newValidator);
 						$validatorCount ++;
 					}
