@@ -37,6 +37,16 @@ class Dispatcher {
 	protected $objectManager;
 
 	/**
+	 * @var \F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
+	 * @var array
+	 */
+	protected $settings = array();
+
+	/**
 	 * Constructs the global dispatcher
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
@@ -47,24 +57,79 @@ class Dispatcher {
 	}
 
 	/**
+	 * Injects the package manager
+	 *
+	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the package manager
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
+	 * Injects the FLOW3 settings
+	 *
+	 * @param array $settings The FLOW3 settings
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
 	 * Dispatches a request to a controller and initializes the security framework.
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to dispatch
 	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, to be modified by the controller
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function dispatch(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		$dispatchLoopCount = 0;
 		while (!$request->isDispatched()) {
 			if ($dispatchLoopCount++ > 99) throw new \F3\FLOW3\MVC\Exception\InfiniteLoop('Could not ultimately dispatch the request after '  . $dispatchLoopCount . ' iterations.', 1217839467);
-			$controller = $this->objectManager->getObject($request->getControllerObjectName());
-			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
+			$controller = $this->resolveController($request);
 			try {
 				$controller->processRequest($request, $response);
 			} catch (\F3\FLOW3\MVC\Exception\StopAction $ignoredException) {
 			}
 		}
 	}
+
+	/**
+	 * Finds and instanciates a controller that matches the current request.
+	 * If no controller can be found, an instance of NotFoundControllerInterface is returned.
+	 *
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request to dispatch
+	 * @return \F3\FLOW3\MVC\Controller\ControllerInterface
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function resolveController(\F3\FLOW3\MVC\RequestInterface $request) {
+		$exception = NULL;
+		$packageKey = $request->getControllerPackageKey();
+		if (!$this->packageManager->isPackageAvailable($packageKey)) {
+			$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidPackage($request, 'package "' . $packageKey . '" does not exist');
+		} elseif (!$this->packageManager->isPackageActive($packageKey)) {
+			$exception = new \F3\FLOW3\MVC\Controller\Exception\InactivePackage($request, 'package "' . $packageKey . '" is not active');
+		} else {
+			$controllerObjectName = $request->getControllerObjectName();
+			if ($controllerObjectName === '') {
+				$exception = new \F3\FLOW3\MVC\Controller\Exception\InvalidController($request, 'no controller could be resolved which would match your request');
+			}
+		}
+		if ($exception !== NULL) {
+			$controller = $this->objectManager->getObject($this->settings['mvc']['notFoundController']);
+			if (!$controller instanceof \F3\FLOW3\MVC\Controller\NotFoundControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidController('The NotFoundController must implement "\F3\FLOW3\MVC\Controller\NotFoundControllerInterface", ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1246714416);
+			$controller->setException($exception);
+		} else {
+			$controller = $this->objectManager->getObject($controllerObjectName);
+			if (!$controller instanceof \F3\FLOW3\MVC\Controller\ControllerInterface) throw new \F3\FLOW3\MVC\Exception\InvalidController('Invalid controller "' . $request->getControllerObjectName() . '". The controller must be a valid request handling controller, ' . (is_object($controller) ? get_class($controller) : gettype($controller)) . ' given.', 1202921619);
+		}
+		return $controller;
+	}
+
 }
 ?>

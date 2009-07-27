@@ -42,11 +42,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	protected $packageManager;
 
 	/**
-	 * @var array
-	 */
-	protected $settings = array();
-
-	/**
 	 * Pattern after which the controller object name is built
 	 *
 	 * @var string
@@ -109,7 +104,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	}
 
 	/**
-	 * Injects the package
+	 * Injects the package manager
 	 *
 	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager A reference to the package manager
 	 * @return void
@@ -117,17 +112,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
 		$this->packageManager = $packageManager;
-	}
-
-	/**
-	 * Injects the FLOW3 settings
-	 *
-	 * @param array $settings The FLOW3 settings
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function injectSettings(array $settings) {
-		$this->settings = $settings;
 	}
 
 	/**
@@ -161,7 +145,6 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 * controller name
 	 *
 	 * @return string The controller's Object Name
-	 * @throws \F3\FLOW3\MVC\Exception\NoSuchController if the controller does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
@@ -169,7 +152,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	public function getControllerObjectName() {
 		$packageKey = $this->controllerPackageKey;
 		if ($this->controllerSubpackageKey !== NULL && $this->controllerSubpackageKey !== '') {
-			$packageKey.= '\\' . $this->controllerSubpackageKey;
+			$packageKey .= '\\' . $this->controllerSubpackageKey;
 		}
 		$possibleObjectName = $this->controllerObjectNamePattern;
 		$possibleObjectName = str_replace('@package', $packageKey, $possibleObjectName);
@@ -177,9 +160,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 		$lowercaseObjectName = strtolower($possibleObjectName);
 
 		$objectName = $this->objectManager->getCaseSensitiveObjectName($lowercaseObjectName);
-		if ($objectName === FALSE) $objectName = $this->settings['mvc']['notFoundController'];
-
-		return $objectName;
+		return ($objectName !== FALSE) ? $objectName : '';
 	}
 
 	/**
@@ -192,8 +173,11 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 */
 	public function setControllerPackageKey($packageKey) {
 		$upperCamelCasedPackageKey = $this->packageManager->getCaseSensitivePackageKey($packageKey);
-		if ($upperCamelCasedPackageKey === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidPackageKey('"' . $packageKey . '" is not a valid package key.', 1217961104);
-		$this->controllerPackageKey = $upperCamelCasedPackageKey;
+		if ($upperCamelCasedPackageKey !== FALSE) {
+			$this->controllerPackageKey = $upperCamelCasedPackageKey;
+		} else {
+			$this->controllerPackageKey = $packageKey;
+		}
 	}
 
 	/**

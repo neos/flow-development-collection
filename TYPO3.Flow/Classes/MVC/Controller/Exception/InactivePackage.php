@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\MVC\View;
+namespace F3\FLOW3\MVC\Controller\Exception;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,32 +23,14 @@ namespace F3\FLOW3\MVC\View;
  *                                                                        */
 
 /**
- * The not found view - a special case.
+ * An Inactive Package Exception
  *
+ * @package FLOW3
+ * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
-
-	/**
-	 * Renders the not found view
-	 *
-	 * @return string The rendered view
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
-	 * @api
-	 */
-	public function render() {
-		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
-
-		$template = $this->resourceManager->getResource('file://FLOW3/Public/MVC/NotFoundView_Template.html')->getContent();
-
-		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
-			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseURI(), $template);
-		}
-		$template = str_replace('###ERROR_MESSAGE###', $this->viewData['errorMessage'], $template);
-		return $template;
-	}
+class InactivePackage extends \F3\FLOW3\MVC\Controller\Exception {
 }
 
 ?>

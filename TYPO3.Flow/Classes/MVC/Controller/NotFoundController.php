@@ -29,7 +29,7 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController implements \F3\FLOW3\MVC\Controller\NotFoundControllerInterface {
 
 	/**
 	 * @var array
@@ -42,6 +42,11 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	protected $notFoundView;
 
 	/**
+	 * @var \F3\FLOW3\MVC\Controller\Exception
+	 */
+	protected $exception;
+
+	/**
 	 * Injects the NotFoundView.
 	 *
 	 * @param \F3\FLOW3\MVC\View\NotFoundView $notFoundView
@@ -51,6 +56,17 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	public function injectNotFoundView(\F3\FLOW3\MVC\View\NotFoundView $notFoundView) {
 		$this->notFoundView = $notFoundView;
+	}
+
+	/**
+	 * Sets the controller exception
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\Exception $exception
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setException(\F3\FLOW3\MVC\Controller\Exception $exception) {
+		$this->exception = $exception;
 	}
 
 	/**
@@ -66,6 +82,9 @@ class NotFoundController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
 		parent::processRequest($request, $response);
 		$this->notFoundView->setControllerContext($this->buildControllerContext());
+		if ($this->exception !== NULL) {
+			$this->notFoundView->assign('errorMessage', $this->exception->getMessage());
+		}
 		switch (get_class($request)) {
 			case 'F3\FLOW3\MVC\Web\Request' :
 				$response->setStatus(404);

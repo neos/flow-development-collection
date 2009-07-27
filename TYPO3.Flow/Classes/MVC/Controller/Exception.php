@@ -23,55 +23,47 @@ namespace F3\FLOW3\MVC\Controller;
  *                                                                        */
 
 /**
- * A Special Case of a Controller: If no controller has been specified in the
- * request, this controller is chosen.
+ * A generic Controller exception
  *
+ * @package FLOW3
+ * @subpackage MVC
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class StandardController extends \F3\FLOW3\MVC\Controller\AbstractController {
+class Exception extends \F3\FLOW3\Exception {
 
 	/**
-	 * @var \F3\FLOW3\MVC\View\StandardView
+	 * @var \F3\FLOW3\MVC\RequestInterface
 	 */
-	protected $standardView;
+	protected $request;
 
 	/**
-	 * Injects the StandardView.
+	 * Constructor.
+	 * Overwrites parent constructor to be able to inject current request object.
 	 *
-	 * @param \F3\FLOW3\MVC\View\StandardView $standardView
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
+	 * @param string $message
+	 * @param $code
+	 * @param \Exception $previousException
+	 *
+	 * @see \Exception
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function injectStandardView(\F3\FLOW3\MVC\View\StandardView $standardView) {
-		$this->standardView = $standardView;
+	public function __construct(\F3\FLOW3\MVC\RequestInterface $request, $message = '', $code = 0, \Exception $previousException = NULL) {
+		$this->request = $request;
+		parent::__construct($message, $code, $previousException);
 	}
 
 	/**
-	 * Processes a generic request and fills the response with the default view
+	 * Returns the request object that exception belongs to.
 	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @return \F3\FLOW3\MVC\RequestInterface
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		parent::processRequest($request, $response);
-		$this->standardView->setControllerContext($this->buildControllerContext());
-		switch (get_class($request)) {
-			case 'F3\FLOW3\MVC\Web\Request' :
-				$response->setContent($this->standardView->render());
-				break;
-			default :
-				$response->setContent(
-					"\nWelcome to FLOW3!\n\n" .
-					"This is the default view of the FLOW3 MVC object. You see this message because no \n" .
-					"other view is available. Please refer to the Developer's Guide for more information \n" .
-					"how to create and configure one.\n\n" .
-					"Have fun! The FLOW3 Development Team\n"
-				);
-		}
+	protected function getRequest() {
+		return $this->request;
 	}
+	
 }
 
 ?>

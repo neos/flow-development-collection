@@ -80,8 +80,9 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function ifTheResolvedControllerDoesNotExistTheNotFoundControllerDefinedInTheFLOW3SettingsIsUsedInstead() {
+	public function getControllerObjectNameReturnsAnEmptyStringIfTheResolvedControllerDoesNotExist() {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getCaseSensitiveObjectName')
 			->with($this->equalTo('f3\testpackage\controller\foocontroller'))
@@ -95,11 +96,10 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 		$request = new \F3\FLOW3\MVC\Request();
 		$request->injectObjectManager($mockObjectManager);
 		$request->injectPackageManager($mockPackageManager);
-		$request->injectSettings(array('mvc' => array('notFoundController' => 'F3\TestPackage\TheCustomNotFoundController')));
 		$request->setControllerPackageKey('testpackage');
 		$request->setControllerName('foo');
 
-		$this->assertEquals('F3\TestPackage\TheCustomNotFoundController', $request->getControllerObjectName());
+		$this->assertEquals('', $request->getControllerObjectName());
 	}
 
 	/**
@@ -166,8 +166,8 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidPackageKey
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function invalidPackageKeysAreRejected() {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
