@@ -106,10 +106,27 @@ abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 	 * @param string $key Key of variable
 	 * @param object $value Value of object
 	 * @return \F3\FLOW3\MVC\View\ViewInterface an instance of $this, to enable chaining.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	public function assign($key, $value) {
 		$this->viewData[$key] = $value;
+		return $this;
+	}
+
+	/**
+	 * Add multiple variables to $this->viewData.
+	 *
+	 * @param array $values array in the format array(key1 => value1, key2 => value2).
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @api
+	 */
+	public function assignMultiple(array $values) {
+		foreach($values as $key => $value) {
+			$this->assign($key, $value);
+		}
 	}
 
 	/**

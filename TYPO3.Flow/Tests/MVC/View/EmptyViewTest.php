@@ -23,44 +23,39 @@ namespace F3\FLOW3\MVC\View;
  *                                                                        */
 
 /**
- * The not found view - a special case.
+ * Testcase for the MVC EmptyView
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
+class EmptyViewTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Renders the not found view
-	 *
-	 * @return string The rendered view
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @throws \F3\FLOW3\MVC\Exception if no request has been set
-	 * @api
-	 */
-	public function render() {
-		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
-
-		$template = file_get_contents($this->getTemplatePathAndFilename());
-
-		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
-			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseURI(), $template);
-		}
-
-		$errorMessage = isset($this->viewData['errorMessage']) ? $this->viewData['errorMessage'] : '';
-		$template = str_replace('###ERROR_MESSAGE###', $errorMessage, $template);
-		return $template;
-	}
-
-	/**
-	 * Retrieves path and filename of the not-found-template
-	 *
-	 * @return string path and filename of the not-found-template
+	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	protected function getTemplatePathAndFilename() {
-		return FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/NotFoundView_Template.html';
+	public function renderReturnsEmptyString() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+
+		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$this->assertEquals('', $view->render());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function callingNonExistingMethodsWontThrowAnException() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+
+		$view = new \F3\FLOW3\MVC\View\EmptyView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view->nonExistingMethod();
 	}
 }
-
 ?>
