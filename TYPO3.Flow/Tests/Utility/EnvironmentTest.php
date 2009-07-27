@@ -136,5 +136,52 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$this->assertNotNull($environment->getSAPIName());
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getMaximumPathLengthReturnsCorrectValue() {
+		$environment = new \F3\FLOW3\Utility\Environment();
+		$expectedValue = PHP_MAXPATHLEN;
+		if ((integer)$expectedValue <= 0) {
+			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a bug report.');
+		}
+		$this->assertEquals($expectedValue, $environment->getMaximumPathLength());
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function createTemporaryDirectoryLogsToSystemLogIfTemporaryDirectoryBaseIsLongComparedToMaximumPathLength() {
+		$veryLongPath = 'some/very/long/path/';
+
+		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
+		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(248));
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($veryLongPath) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
+		$environment->injectSystemLogger($mockSystemLogger);
+
+		$environment->_call('createTemporaryDirectory', $veryLongPath);
+	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function createTemporaryDirectoryDoesNotLogToSystemLogIfTemporaryDirectoryBaseIsNotLongComparedToMaximumPathLength() {
+		$veryLongPath = 'some/short/path/';
+
+		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
+		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(500));
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$mockSystemLogger->expects($this->never())->method('log');
+		$environment->injectSystemLogger($mockSystemLogger);
+
+		$environment->_call('createTemporaryDirectory', $veryLongPath);
+	}
 }
 ?>

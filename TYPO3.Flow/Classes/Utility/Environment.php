@@ -77,6 +77,11 @@ class Environment {
 	protected $temporaryDirectory = NULL;
 
 	/**
+	 * @var \F3\FLOW3\Log\SystemLoggerInterface
+	 */
+	protected $systemLogger;
+
+	/**
 	 * This constructor defines FLOW3_SAPITYPE
 	 *
 	 * @author Robert Lemke <robert@typo3.org>
@@ -86,6 +91,17 @@ class Environment {
 		if (!defined('FLOW3_SAPITYPE')) {
 			define('FLOW3_SAPITYPE', $this->getSAPIType());
 		}
+	}
+
+	/**
+	 * Injects the system logger
+	 *
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
+	 * @return void
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
+		$this->systemLogger = $systemLogger;
 	}
 
 	/**
@@ -384,10 +400,16 @@ class Environment {
 	 * @return string The full path to the temporary directory
 	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function createTemporaryDirectory($temporaryDirectoryBase) {
 		$temporaryDirectoryBase = \F3\FLOW3\Utility\Files::getUnixStylePath($temporaryDirectoryBase);
-		if (substr($temporaryDirectoryBase, -1, 1) != '/') $temporaryDirectoryBase .= '/';
+		if (substr($temporaryDirectoryBase, -1, 1) !== '/') $temporaryDirectoryBase .= '/';
+
+		$maximumPathLength = $this->getMaximumPathLength();
+		if (strlen($temporaryDirectoryBase) > ($maximumPathLength - 230)) {
+			$this->systemLogger->log('The path to your temporary directory is ' . strlen($temporaryDirectoryBase) . ' characters long. The maximum path length of your system is only ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
+		}
 
 		$pathHash = md5(FLOW3_PATH_WEB . $this->getSAPIName());
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
@@ -405,6 +427,16 @@ class Environment {
 		}
 
 		return $temporaryDirectory;
+	}
+
+	/**
+	 * Retrieves the maximum path lenght that is valid in the current environment.
+	 *
+	 * @return integer The maximum available path length
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function getMaximumPathLength() {
+		return PHP_MAXPATHLEN;
 	}
 }
 ?>

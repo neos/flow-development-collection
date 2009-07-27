@@ -324,3 +324,4 @@ F3\FLOW3\Utility\Environment:
   autowiring: off
   properties:
     temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface

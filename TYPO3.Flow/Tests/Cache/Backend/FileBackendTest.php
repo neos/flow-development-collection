@@ -36,17 +36,24 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	protected $backend;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * Sets up this testcase
 	 *
 	 * @return void
 	 */
 	public function setUp() {
-		$environment = new \F3\FLOW3\Utility\Environment();
-		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
+		$this->environment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$this->environment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue(FLOW3_PATH_DATA . 'Temporary/'));
+		$this->environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(PHP_MAXPATHLEN));
+
 		$this->backend = new \F3\FLOW3\Cache\Backend\FileBackend('Testing');
-		$this->backend->injectEnvironment($environment);
+		$this->backend->injectEnvironment($this->environment);
 		$this->backend->injectSystemLogger($mockSystemLogger);
 		$this->backend->initializeObject();
 	}
@@ -78,12 +85,10 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function getCacheDirectoryReturnsThePreviouslySetDirectory() {
-		$environment = new \F3\FLOW3\Utility\Environment();
-		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
-
-		$directory = $environment->getPathToTemporaryDirectory();
+		$directory = FLOW3_PATH_DATA . 'Temporary/';
 		$this->backend->setCacheDirectory($directory);
 		$this->assertEquals($directory, $this->backend->getCacheDirectory(), 'getDirectory() did not return the expected value.');
 	}
@@ -161,7 +166,6 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileTest';
-		$entryIdentifierHash = sha1($entryIdentifier);
 
 		$this->backend->setCache($cache);
 		$tagsDirectory = $this->backend->getCacheDirectory() . 'Testing/Tags/';
@@ -176,6 +180,49 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$filename = $tagsDirectory . 'UnitTestTag%tag2/' . $cacheIdentifier . \F3\FLOW3\Cache\Backend\FileBackend::SEPARATOR . $entryIdentifier;
 		$this->assertTrue(file_exists($filename), 'File "' . $filename . '" does not exist.');
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Cache\Exception
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength() {
+		$cacheIdentifier = 'UnitTestCache';
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
+		$this->backend->setCache($cache);
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue(FLOW3_PATH_DATA . 'Temporary/'));
+		$mockEnvironment->expects($this->atLeastOnce())->method('getMaximumPathLength')->will($this->returnValue(3));
+		$this->backend->injectEnvironment($mockEnvironment);
+
+		$data = 'some data' . microtime();
+		$entryIdentifier = 'BackendFileTest';
+
+		$this->backend->set($entryIdentifier, $data);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Cache\Exception
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function setTagThrowsExceptionIfTagPathLengthExceedsMaximumPathLength() {
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Cache\Backend\FileBackend'), array('dummy'), array('Testing'));
+
+		$cacheIdentifier = 'UnitTestCache';
+		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
+		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
+		$backend->setCache($cache);
+
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
+		$mockEnvironment->expects($this->atLeastOnce())->method('getMaximumPathLength')->will($this->returnValue(3));
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->_set('cacheDirectory', FLOW3_PATH_DATA . 'Temporary/');
+
+		$backend->_call('setTag', 'someIdentifier', 'someTag');
 	}
 
 	/**

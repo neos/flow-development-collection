@@ -135,7 +135,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @param array $tags Tags to associate with this cache entry
 	 * @param integer $lifetime Lifetime of this cache entry in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited lifetime.
 	 * @return void
-	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist or is not writable, or if no cache frontend has been set.
+	 * @throws \F3\FLOW3\Cache\Exception if the directory does not exist or is not writable or exceeds the maximum allowed path length, or if no cache frontend has been set.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -157,23 +157,45 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		$this->remove($entryIdentifier);
 
 		$data = $expirytime->format(self::EXPIRYTIME_FORMAT) . $data;
-		$temporaryFilename = uniqid() . '.temp';
-		$result = file_put_contents($cacheEntryPath . $temporaryFilename, $data);
-		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $temporaryFilename . '" could not be written.', 1204026251);
+		$cacheEntryPathAndFilename = $cacheEntryPath . uniqid() . '.temp';
+		$maximumPathLength = $this->environment->getMaximumPathLength();
+		if (strlen($cacheEntryPathAndFilename) > $maximumPathLength) {
+			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $cacheEntryPathAndFilename . '" is ' . strlen($cacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+		}
+		$result = file_put_contents($cacheEntryPathAndFilename, $data);
+		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1204026251);
 		for ($i=0; $i<5; $i++) {
-			$result = rename($cacheEntryPath . $temporaryFilename, $cacheEntryPath . $entryIdentifier);
+			$result = rename($cacheEntryPathAndFilename, $cacheEntryPath . $entryIdentifier);
 			if ($result === TRUE) break;
 		}
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The cache file "' . $entryIdentifier . '" could not be written.', 1222361632);
 
 		foreach ($tags as $tag) {
-			$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
-			if (!is_writable($tagPath)) {
-				mkdir($tagPath);
-				if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
-			}
-			touch($tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier);
+			$this->setTag($entryIdentifier, $tag);
 		}
+	}
+
+	/**
+	 * Creates a tag that is associated with the given cache identifier
+	 *
+	 * @param string $entryIdentifier An identifier for this specific cache entry
+	 * @param string Tag to associate with this cache entry
+	 * @return void
+	 * @throws \F3\FLOW3\Cache\Exception if the tag path is not writable or exceeds the maximum allowed path length
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	protected function setTag($entryIdentifier, $tag) {
+		$maximumPathLength = $this->environment->getMaximumPathLength();
+		$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
+		if (!is_writable($tagPath)) {
+			mkdir($tagPath);
+			if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
+		}
+		$tagPathAndFilename = $tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
+		if (strlen($tagPathAndFilename) > $maximumPathLength) {
+			throw new \F3\FLOW3\Cache\Exception('The length of the tag path "' . $tagPathAndFilename . '" is ' . strlen($tagPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+		}
+		touch($tagPathAndFilename);
 	}
 
 	/**

@@ -51,7 +51,7 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	public function monitorFileRegistersAFileForMonitoring() {
 		$monitor = new \F3\FLOW3\Monitor\FileMonitor('FLOW3_Test');
 		$monitor->monitorFile(__FILE__);
-		$this->assertSame(array(__FILE__), $monitor->getMonitoredFiles());
+		$this->assertSame(array($this->unixStylePathAndFilename), $monitor->getMonitoredFiles());
 	}
 
 	/**
