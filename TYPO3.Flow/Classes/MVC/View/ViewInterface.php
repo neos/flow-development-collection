@@ -51,6 +51,15 @@ interface ViewInterface {
 	public function assign($key, $value);
 
 	/**
+	 * Add multiple variables to the view data collection
+	 *
+	 * @param array $values array in the format array(key1 => value1, key2 => value2).
+	 * @return void
+	 * @api
+	 */
+	public function assignMultiple(array $values);
+
+	/**
 	 * Renders the view
 	 *
 	 * @return string The rendered view
