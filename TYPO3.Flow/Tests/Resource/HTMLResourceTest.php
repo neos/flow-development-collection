@@ -37,14 +37,14 @@ class HTMLResourceTest extends \F3\Testing\BaseTestCase {
 	public function canReturnContent() {
 		$HTMLResource = new \F3\FLOW3\Resource\HTMLResource();
 		$HTMLResource->setMetadata(array(
-			'URI' => 'file://FLOW3/Public/TestTemplate.html',
-			'path' => FLOW3_PATH_FLOW3 . 'Resources/Public',
+			'URI' => 'file://dummy/TestTemplate.html',
+			'path' => __DIR__ . '/Fixtures',
 			'name' => 'TestTemplate.html',
 			'mediaType' => 'text',
 			'mimeType' => 'text/html',
 		));
 
-		$this->assertEquals($HTMLResource->getContent(), file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Public/TestTemplate.html'));
+		$this->assertEquals($HTMLResource->getContent(), file_get_contents(__DIR__ . '/Fixtures/TestTemplate.html'));
 	}
 }
 

@@ -41,7 +41,7 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 	public function render() {
 		if (!is_object($this->controllerContext->getRequest())) throw new \F3\FLOW3\MVC\Exception('Can\'t render view without request object.', 1192450280);
 
-		$template = $this->resourceManager->getResource('file://FLOW3/Public/MVC/NotFoundView_Template.html')->getContent();
+		$template = file_get_contents(FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/NotFoundView_Template.html');
 
 		if ($this->controllerContext->getRequest() instanceof \F3\FLOW3\MVC\Web\Request) {
 			$template = str_replace('###BASEURI###', $this->controllerContext->getRequest()->getBaseURI(), $template);
