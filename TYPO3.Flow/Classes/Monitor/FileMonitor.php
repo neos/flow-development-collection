@@ -156,6 +156,7 @@ class FileMonitor {
 	 */
 	public function monitorFile($pathAndFilename) {
 		if (!is_string($pathAndFilename)) throw new \InvalidArgumentException('String expected, ' . gettype($pathAndFilename), ' given.', 1231171809);
+		$pathAndFilename = \F3\FLOW3\Utility\Files::getUnixStylePath($pathAndFilename);
 		if (array_search($pathAndFilename, $this->monitoredFiles) === FALSE) {
 			$this->monitoredFiles[] = $pathAndFilename;
 		}
@@ -172,7 +173,7 @@ class FileMonitor {
 	 */
 	public function monitorDirectory($path) {
 		if (!is_string($path)) throw new \InvalidArgumentException('String expected, ' . gettype($path), ' given.', 1231171810);
-		$path = rtrim($path, '/');
+		$path = rtrim(\F3\FLOW3\Utility\Files::getUnixStylePath($path), '/');
 		if (array_search($path, $this->monitoredDirectories) === FALSE) {
 			$this->monitoredDirectories[] = $path;
 		}
