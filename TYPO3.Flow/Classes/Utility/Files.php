@@ -87,10 +87,10 @@ class Files {
 
 		foreach ($directoryIterator as $file) {
 			$filename = $file->getFilename();
-			if ($file->isFile() && $filename{0} !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
+			if ($file->isFile() && $filename[0] !== '.' && ($suffix === NULL || substr($filename, -$suffixLength) === $suffix)) {
 				$filenames[] = self::getUnixStylePath($file->getPathname());
 			}
-			if ($file->isDir() && $filename{0} !== '.') {
+			if ($file->isDir() && $filename[0] !== '.') {
 				self::readDirectoryRecursively($file->getPathname(), $suffix, $filenames);
 			}
 		}

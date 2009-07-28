@@ -71,11 +71,44 @@ interface PackageInterface {
 	public function getClassesPath();
 
 	/**
+	 * Returns the full path to this package's Resources directory
+	 *
+	 * @return string Path to this package's Resources directory
+	 * @api
+	 */
+	public function getResourcesPath();
+
+	/**
+	 * Returns the full path to this package's Configuration directory
+	 *
+	 * @return string Path to this package's Configuration directory
+	 * @api
+	 */
+	public function getConfigurationPath();
+
+	/**
 	 * Returns the full path to this package's Package.xml file
 	 *
 	 * @return string Path to this package's Package.xml file
 	 * @api
 	 */
 	public function getMetaPath();
+
+	/**
+	 * Returns the full path to the package's documentation directory
+	 *
+	 * @return string Full path to the package's documentation directory
+	 * @api
+	 */
+	public function getDocumentationPath();
+
+	/**
+	 * Returns the available documentations for this package
+	 *
+	 * @return array Array of \F3\FLOW3\Package\Documentation
+	 * @api
+	 */
+	public function getPackageDocumentations();
+
 }
 ?>
