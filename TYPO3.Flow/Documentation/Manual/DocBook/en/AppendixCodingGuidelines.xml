@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appendix version="5.0" xml:id="flow3.appendix.codingguidelines"
+<appendix version="5.0" xml:id="flow3.codingguidelines"
           xmlns="http://docbook.org/ns/docbook"
           xmlns:xl="http://www.w3.org/1999/xlink"
           xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -27,7 +27,7 @@
   that you feel encouraged to follow these guidelines as well when creating
   your own packages and FLOW3 based applications.</para>
 
-  <section>
+  <section xml:id="flow3.codingguidelines.formattingandlayout">
     <title>Code Formatting and Layout</title>
 
     <subtitle>aka "beautiful code"</subtitle>
@@ -768,53 +768,36 @@ public function getContextName() {
         <title>Strings</title>
 
         <para>In general, we use single quotes to enclose literal
-        strings:</para>
+        strings:<example>
+            <title>String literals</title>
 
-        <example>
-          <title>String literals</title>
+            <programlisting language="php">$vision = 'Inspiring people to share';</programlisting>
+          </example></para>
 
-          <programlisting language="php">$vision = 'Inspiring people to share';</programlisting>
-        </example>
+        <para>If you'd like to insert values from variables, concatenate
+        strings:<example>
+            <title>Variable substitution</title>
 
-        <para>If the string itself contains single quotes or apostrophes, we
-        use double quotes:</para>
-
-        <example>
-          <title>String literals enclosed by double quotes</title>
-
-          <programlisting language="php">$message = "'Kasper' is the name of the friendly ghost.";</programlisting>
-        </example>
-
-        <para>If you'd like to insert values from variables, we prefer to
-        concatenate strings:</para>
-
-        <example>
-          <title>Variable substitution</title>
-
-          <programlisting language="php">$message = 'Hey ' . $name . ', you look ' . $look . ' today!';</programlisting>
-        </example>
+            <programlisting language="php">$message = 'Hey ' . $name . ', you look ' . $look . ' today!';</programlisting>
+          </example></para>
 
         <para>A space must be inserted before and after the dot for better
-        readability:</para>
+        readability:<example>
+            <title>Concatenated strings</title>
 
-        <example>
-          <title>Concatenated strings</title>
-
-          <programlisting language="php">$vision = 'Inspiring people ' . 'to share.';</programlisting>
-        </example>
+            <programlisting language="php">$vision = 'Inspiring people ' . 'to share.';</programlisting>
+          </example></para>
 
         <para>You may break a string into multiple lines if you use the dot
         operator. You'll have to indent each following line to mark them as
-        part of the value assignment:</para>
+        part of the value assignment:<example>
+            <title>Multi-line strings</title>
 
-        <example>
-          <title>Multi-line strings</title>
-
-          <programlisting language="php">$vision = 'Inspiring' .
+            <programlisting language="php">$vision = 'Inspiring' .
    'people ' .
    'to ' .
    'share';</programlisting>
-        </example>
+          </example></para>
       </section>
 
       <section>
@@ -886,7 +869,7 @@ if (weHaveALotOfCriteria() === TRUE
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.codingguidelines.developmentprocess">
     <title>Development Process</title>
 
     <section>
@@ -1083,7 +1066,7 @@ if (weHaveALotOfCriteria() === TRUE
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.codingguidelines.sourcecodedocumentation">
     <title>Source Code Documentation</title>
 
     <para>All code must be documented with inline comments. The syntax is
@@ -1340,7 +1323,7 @@ public function fooBar() {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.codingguidelines.bestpractices">
     <title>Best Practices</title>
 
     <section>

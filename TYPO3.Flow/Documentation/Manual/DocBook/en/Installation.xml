@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.installation"
+<chapter version="5.0" xml:id="flow3.installation"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
@@ -15,7 +15,7 @@
   find instructions to install PHP 5.3 for widely used operating systems in
   the appendixes.</para>
 
-  <section>
+  <section xml:id="flow3.installation.requirements">
     <title>Requirements</title>
 
     <para>The following minimum requirements are operating system independent.
@@ -47,12 +47,12 @@
     <para>(Other webservers (f.e. IIS) could work, but have not been tested
     until now)</para>
 
-    <para>We have written <link linkend="appendix.install.php53">installation
+    <para>We have written <link linkend="flow3.installingphp53">installation
     instructions for PHP 5.3</link> that might be helpful for you.</para>
   </section>
 
-  <section>
-    <title>Installion of FLOW3</title>
+  <section xml:id="flow3.installation.installationofflow3">
+    <title>Installation of FLOW3</title>
 
     <para>These steps require the server requirements to be set up.
     Instruction on how to do that can be found in the appendixes.</para>
@@ -129,7 +129,7 @@
     </note>
   </section>
 
-  <section>
+  <section xml:id="flow3.installation.pdtforphp53">
     <title>Setup Eclipse PDT for PHP 5.3</title>
 
     <para>PHP 5.3 introduced the support of namespaces. This is a completly

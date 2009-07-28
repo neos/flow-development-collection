@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.flow3bootstrap"
+<chapter version="5.0" xml:id="flow3.flow3bootstrap"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
@@ -13,7 +13,7 @@
       points for the later documentation.</para>
     </note></para>
 
-  <section>
+  <section xml:id="flow3.flow3bootstrap.applicationcontext">
     <title>Application Context</title>
 
     <para>The FLOW3 Framework can be launched in different application
@@ -38,7 +38,7 @@
     your virtual hosts configuration.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.flow3bootstrap.bootsequence">
     <title>Boot Sequence</title>
 
     <para>At the time of this writing, the sequence in which the various

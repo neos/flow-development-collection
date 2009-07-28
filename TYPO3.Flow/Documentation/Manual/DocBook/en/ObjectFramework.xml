@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.objectframework"
+<chapter version="5.0" xml:id="flow3.objectframework"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:xl="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -22,7 +22,7 @@
     article</link> on the topic.</para>
   </tip>
 
-  <section>
+  <section xml:id="flow3.objectframework.creatingobjects">
     <title>Creating Objects</title>
 
     <para>In simple, self-contained applications, creating objects is as
@@ -458,7 +458,7 @@ Destructing object ...</screen>
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.objectframework.objectregistration">
     <title>Object Registration and API</title>
 
     <section>
@@ -518,7 +518,7 @@ Destructing object ...</screen>
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.objectframework.objectdependencies">
     <title>Object dependencies</title>
 
     <para>The intention to base an application on a combination of packages
@@ -964,7 +964,7 @@ class Foo {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.objectframework.configuringobjects">
     <title>Configuring objects</title>
 
     <para>The behavior of objects significantly depends on their

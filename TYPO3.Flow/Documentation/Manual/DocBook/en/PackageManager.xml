@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.packagemanager"
+<chapter version="5.0" xml:id="flow3.packagemanager"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:ns6="http://www.w3.org/1999/xlink"
          xmlns:ns5="http://www.w3.org/2000/svg"
@@ -22,7 +22,7 @@
     still in the planning phase.</para>
   </note>
 
-  <section>
+  <section xml:id="flow3.packagemanager.packagelocations">
     <title>Package Locations</title>
 
     <section>
@@ -151,7 +151,7 @@
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.packagedirectorylayout">
     <title>Package Directory Layout</title>
 
     <para>The FLOW3 package directory structure follows a certain convention
@@ -349,7 +349,7 @@
     encouraged to read (and follow) them.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.packagekeys">
     <title>Package Keys</title>
 
     <para>Package keys are used to uniquely identify packages and provide them
@@ -362,7 +362,7 @@
     clever to register a package key for it.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.installingpackages">
     <title>Importing and Installing Packages</title>
 
     <para>At this time the features for import and installation of packages
@@ -373,7 +373,7 @@
     directory of your package.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.packagemanager">
     <title>Package Manager</title>
 
     <para>The Package Manager is in charge of downloading, installing,
@@ -388,7 +388,7 @@
     </note>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.creatingapackage">
     <title>Creating a New Package</title>
 
     <para>Just create the package folder and subdirectories manually and copy
@@ -396,7 +396,7 @@
     packages. Apart from that no further steps are necessary.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.packagemanager.packagemetainformation">
     <title>Package Meta Information</title>
 
     <para>All packages need to provide some meta information to the package
@@ -425,7 +425,6 @@
    &lt;title&gt;Test Package&lt;/title&gt;
    &lt;description&gt;Test to demonstrate the features of Package.xml&lt;/description&gt;
    &lt;version&gt;0.0.1&lt;/version&gt;
-   &lt;state&gt;Alpha&lt;/state&gt;
    &lt;categories&gt;
       &lt;category&gt;System&lt;/category&gt;
       &lt;category&gt;Testing&lt;/category&gt;

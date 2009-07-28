@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<appendix version="5.0" xml:id="appendix.install.php53"
+<appendix version="5.0" xml:id="flow3.installingphp53"
           xmlns="http://docbook.org/ns/docbook"
           xmlns:xlink="http://www.w3.org/1999/xlink"
           xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -7,9 +7,9 @@
           xmlns:m="http://www.w3.org/1998/Math/MathML"
           xmlns:html="http://www.w3.org/1999/xhtml"
           xmlns:db="http://docbook.org/ns/docbook">
-  <title>Install PHP 5.3</title>
+  <title>Installing PHP 5.3</title>
 
-  <section>
+  <section xml:id="flow3.installingphp53.introduction">
     <title>Introduction</title>
 
     <para>PHP 5.3 has only recently been released, so you won't find it
@@ -18,7 +18,7 @@
     and Windows (XP).</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.installingphp53.debian">
     <title>Installation on Debian Linux</title>
 
     <para>At the moment there are no official packages for PHP5.3 available.
@@ -185,7 +185,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
     debian system, so FLOW3 can be installed.</para>
   </section>
 
-  <section>
+  <section xml:id="flow3.installingphp53.mac">
     <title>Installation on MacOS</title>
 
     <para>This part explains how to install PHP 5.3 using MacPorts. For this
@@ -271,7 +271,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
     </procedure>
   </section>
 
-  <section>
+  <section xml:id="flow3.installingphp53.windows">
     <title>Installation on Windows (based on XAMPP)</title>
 
     <section>

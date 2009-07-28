@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.mvcframework"
+<chapter version="5.0" xml:id="flow3.mvcframework"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
@@ -8,7 +8,7 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>MVC Framework</title>
 
-  <section>
+  <section xml:id="flow3.mvcframework.introduction">
     <title>Introduction</title>
 
     <section>
@@ -277,7 +277,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.requestresponse">
     <title>Request and Response</title>
 
     <para>No matter if a FLOW3 application runs in a web context or is
@@ -420,7 +420,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.controller">
     <title>Controller</title>
 
     <para>The main responsibility of a controller is to process a request and
@@ -669,7 +669,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.view">
     <title>View</title>
 
     <para/>
@@ -697,19 +697,19 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.helpers">
     <title>Helpers</title>
 
     <para/>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.model">
     <title>Model</title>
 
     <para/>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.routing">
     <title>Routing</title>
 
     <para>As explained in the beginning of this chapter, in FLOW3 the
@@ -1054,7 +1054,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.mvcframework.clirequests">
     <title>CLI request handling</title>
 
     <para>FLOW3's CLI request handling offers a comfortable and flexible way

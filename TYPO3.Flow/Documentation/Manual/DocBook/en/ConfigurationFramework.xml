@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.configurationframework"
+<chapter version="5.0" xml:id="flow3.configurationframework"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:ns52="http://www.w3.org/1998/Math/MathML"
          xmlns:ns5="http://www.w3.org/1999/xlink"
@@ -15,7 +15,7 @@
   tasks like reading configuration, configuration cascading, and (later) also
   writing configuration.</para>
 
-  <section>
+  <section xml:id="flow3.configurationframework.configurationfiles">
     <title>Configuration Files</title>
 
     <para>FLOW3 distinguishes between different types of configuration. The
@@ -140,7 +140,7 @@
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.configurationframework.definingconfiguration">
     <title>Defining Configuration</title>
 
     <section>
@@ -394,7 +394,7 @@ $c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = �
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.configurationframework.accessingconfiguration">
     <title>Accessing Configuration</title>
 
     <para>There are certain situations in which FLOW3 will automatically

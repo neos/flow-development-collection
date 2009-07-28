@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<chapter version="5.0" xml:id="flow3.chapter.aopframework"
+<chapter version="5.0" xml:id="flow3.aopframework"
          xmlns="http://docbook.org/ns/docbook"
          xmlns:xl="http://www.w3.org/1999/xlink"
          xmlns:xi="http://www.w3.org/2001/XInclude"
@@ -9,7 +9,7 @@
          xmlns:mathml="http://www.w3.org/1998/Math/MathML">
   <title>AOP Framework</title>
 
-  <section>
+  <section xml:id="flow3.aopframework.introduction">
     <title>Introduction</title>
 
     <para>Aspect-Oriented Programming (AOP) is a programming paradigm which
@@ -305,7 +305,7 @@
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.aspects">
     <title>Aspects</title>
 
     <para>Aspects are abstract containers which accommodate pointcut-,
@@ -345,7 +345,7 @@ class FooSecurityAspect {
     </note>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.pointcuts">
     <title>Pointcuts</title>
 
     <para>If we want to add security to foo, we need a method which carries
@@ -681,7 +681,7 @@ class PointcutTestingAspect {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.declaringadvice">
     <title>Declaring advice</title>
 
     <para>With the aspect and pointcuts in place we are now ready to declare
@@ -810,7 +810,7 @@ class PointcutTestingAspect {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.implementingadvice">
     <title>Implementing advice</title>
 
     <para>The final step after declaring aspects, pointcuts and advices is to
@@ -963,7 +963,7 @@ class LastNameRejectionAspect {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.introductions">
     <title>Introductions</title>
 
     <para>Introductions (also known as <firstterm>Inter-type
@@ -1038,7 +1038,7 @@ class IntroductionAspect {
     </section>
   </section>
 
-  <section>
+  <section xml:id="flow3.aopframework.implementationdetails">
     <title>Implementation details</title>
 
     <section>
