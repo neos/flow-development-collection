@@ -54,6 +54,14 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected $systemLogger;
 
 	/**
+	 * Maximum allowed file path length in the current environment.
+	 * Will be set in initializeObject()
+	 *
+	 * @var integer
+	 */
+	protected $maximumPathLength = NULL;
+
+	/**
 	 * Injects the environment utility
 	 *
 	 * @param \F3\FLOW3\Utility\Environment $environment
@@ -87,6 +95,9 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 				$this->setCacheDirectory($cacheDirectory);
 			} catch(\F3\FLOW3\Cache\Exception $exception) {
 			}
+		}
+		if ($this->maximumPathLength === NULL) {
+			$this->maximumPathLength = $this->environment->getMaximumPathLength();
 		}
 	}
 
@@ -158,9 +169,8 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 
 		$data = $expirytime->format(self::EXPIRYTIME_FORMAT) . $data;
 		$cacheEntryPathAndFilename = $cacheEntryPath . uniqid() . '.temp';
-		$maximumPathLength = $this->environment->getMaximumPathLength();
-		if (strlen($cacheEntryPathAndFilename) > $maximumPathLength) {
-			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $cacheEntryPathAndFilename . '" is ' . strlen($cacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+		if (strlen($cacheEntryPathAndFilename) > $this->maximumPathLength) {
+			throw new \F3\FLOW3\Cache\Exception('The length of the temporary cache file path "' . $cacheEntryPathAndFilename . '" is ' . strlen($cacheEntryPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
 		$result = file_put_contents($cacheEntryPathAndFilename, $data);
 		if ($result === FALSE) throw new \F3\FLOW3\Cache\Exception('The temporary cache file "' . $cacheEntryPathAndFilename . '" could not be written.', 1204026251);
@@ -185,15 +195,14 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setTag($entryIdentifier, $tag) {
-		$maximumPathLength = $this->environment->getMaximumPathLength();
 		$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
 		if (!is_writable($tagPath)) {
 			mkdir($tagPath);
 			if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
 		}
 		$tagPathAndFilename = $tagPath . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
-		if (strlen($tagPathAndFilename) > $maximumPathLength) {
-			throw new \F3\FLOW3\Cache\Exception('The length of the tag path "' . $tagPathAndFilename . '" is ' . strlen($tagPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
+		if (strlen($tagPathAndFilename) > $this->maximumPathLength) {
+			throw new \F3\FLOW3\Cache\Exception('The length of the tag path "' . $tagPathAndFilename . '" is ' . strlen($tagPathAndFilename) . ' characters long and exceeds the maximum path length of ' . $this->maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path. ', 1248710426);
 		}
 		touch($tagPathAndFilename);
 	}

@@ -188,20 +188,26 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function setThrowsExceptionIfCachePathLengthExceedsMaximumPathLength() {
+		$backend = new \F3\FLOW3\Cache\Backend\FileBackend('Testing');
+
 		$cacheIdentifier = 'UnitTestCache';
 		$cache = $this->getMock('F3\FLOW3\Cache\Frontend\AbstractFrontend', array('getIdentifier', 'set', 'get', 'getByTag', 'has', 'remove'), array(), '', FALSE);
 		$cache->expects($this->atLeastOnce())->method('getIdentifier')->will($this->returnValue($cacheIdentifier));
-		$this->backend->setCache($cache);
+		$backend->setCache($cache);
+
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$backend->injectSystemLogger($mockSystemLogger);
 
 		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment');
 		$mockEnvironment->expects($this->any())->method('getPathToTemporaryDirectory')->will($this->returnValue(FLOW3_PATH_DATA . 'Temporary/'));
 		$mockEnvironment->expects($this->atLeastOnce())->method('getMaximumPathLength')->will($this->returnValue(3));
-		$this->backend->injectEnvironment($mockEnvironment);
+		$backend->injectEnvironment($mockEnvironment);
+		$backend->initializeObject();
 
 		$data = 'some data' . microtime();
 		$entryIdentifier = 'BackendFileTest';
 
-		$this->backend->set($entryIdentifier, $data);
+		$backend->set($entryIdentifier, $data);
 	}
 
 	/**
@@ -221,6 +227,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$mockEnvironment->expects($this->atLeastOnce())->method('getMaximumPathLength')->will($this->returnValue(3));
 		$backend->injectEnvironment($mockEnvironment);
 		$backend->_set('cacheDirectory', FLOW3_PATH_DATA . 'Temporary/');
+		$backend->initializeObject();
 
 		$backend->_call('setTag', 'someIdentifier', 'someTag');
 	}
