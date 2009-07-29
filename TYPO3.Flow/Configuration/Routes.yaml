@@ -5,24 +5,24 @@
 # $Id$
 
 ##
-# Default route to the FLOW3 Login Controller
+# Default route to the FLOW3 Authentication Controller
 
 --
-  name: 'Login with action'
-  uriPattern: 'flow3/login/{@action}'
+  name: 'Authenticate with action'
+  uriPattern: 'flow3/authenticate/{@action}'
   defaults:
     @package:    'FLOW3'
-    @subpackage: 'Security'
-    @controller: 'Login'
+    @subpackage: 'Security\Authentication'
+    @controller: 'Authentication'
 
 --
-  name: 'Login'
-  uriPattern: 'flow3/login'
+  name: 'Authenticate'
+  uriPattern: 'flow3/authenticate'
   defaults:
     @package:    'FLOW3'
-    @subpackage: 'Security'
-    @controller: 'Login'
-    @action:     'index'
+    @subpackage: 'Security\Authentication'
+    @controller: 'Authentication'
+    @action:     'authenticate'
     
 
 ##

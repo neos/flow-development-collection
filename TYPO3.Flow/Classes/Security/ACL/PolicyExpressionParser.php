@@ -55,7 +55,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	 * @throws \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function parse($pointcutExpression, $trace = array()) {
+	public function parse($pointcutExpression, &$trace = array()) {
 		if (!is_string($pointcutExpression) || strlen($pointcutExpression) === 0) throw new \F3\FLOW3\AOP\Exception\InvalidPointcutExpression('Pointcut expression must be a valid string, ' . gettype($pointcutExpression) . ' given.', 1168874738);
 
 		$pointcutFilterComposite = $this->objectFactory->create('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite');
@@ -73,7 +73,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 			if (strpos($expression, '(') === FALSE) {
 				if (in_array($expression, $trace)) throw new \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected('A circular reference was detected in the security policy resources definition. Look near: ' . $expression, 1222028842);
 				$trace[] = $expression;
-				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, $trace);
+				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, &$trace);
 			}
 		}
 

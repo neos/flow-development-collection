@@ -39,7 +39,17 @@ interface AccessDecisionManagerInterface {
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 */
-	public function decide(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+	public function decideOnJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
+
+	/**
+	 * Decides if access should be granted on the given resource in the current security context
+	 *
+	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param string $resource The resource to decide on
+	 * @return void
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 */
+	public function decideOnResource($resource);
 }
 
 ?>

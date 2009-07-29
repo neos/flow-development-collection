@@ -39,7 +39,7 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\ACL\PolicyService $policyService The policy service
+	 * @param F3\FLOW3\Security\ACL\PolicyService $policyService The policy service
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -48,18 +48,41 @@ class ACL implements \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterfa
 	}
 
 	/**
-	 * This is the default ACL voter, it votes for the ACCESS privilege
+	 * This is the default ACL voter, it votes for the ACCESS privilege for the given join point
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
+	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to vote for
 	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
-	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 */
-	public function vote(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function voteForJoinPoint(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$accessGrants = 0;
 		$accessDenies = 0;
 		foreach ($securityContext->getGrantedAuthorities() as $grantedAuthority) {
-			$privileges = $this->policyService->getPrivileges($grantedAuthority, $joinPoint, 'ACCESS');
+			$privileges = $this->policyService->getPrivilegesForJoinPoint($grantedAuthority, $joinPoint, 'ACCESS');
+			if (!isset($privileges[0])) continue;
+
+			if ($privileges[0]->isGrant()) $accessGrants++;
+			else $accessDenies++;
+		}
+
+		if ($accessDenies > 0) return self::VOTE_DENY;
+		if ($accessGrants > 0) return self::VOTE_GRANT;
+
+		return self::VOTE_ABSTAIN;
+	}
+
+	/**
+	 * This is the default ACL voter, it votes for the ACCESS privilege for the given resource
+	 *
+	 * @param F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param string $resource The resource to vote for
+	 * @return integer One of: VOTE_GRANT, VOTE_ABSTAIN, VOTE_DENY
+	 */
+	public function voteForResource(\F3\FLOW3\Security\Context $securityContext, $resource) {
+		$accessGrants = 0;
+		$accessDenies = 0;
+		foreach ($securityContext->getGrantedAuthorities() as $grantedAuthority) {
+			$privileges = $this->policyService->getPrivilegesForResource($grantedAuthority, $resource);
 			if (!isset($privileges[0])) continue;
 
 			if ($privileges[0]->isGrant()) $accessGrants++;

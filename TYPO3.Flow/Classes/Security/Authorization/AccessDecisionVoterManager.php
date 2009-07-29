@@ -43,6 +43,12 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	protected $objectManager;
 
 	/**
+	 * The current security context
+	 * @var F3\FLOW3\Security\Context
+	 */
+	protected $securityContext;
+
+	/**
 	 * Array of \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects
 	 * @var array
 	 */
@@ -61,9 +67,10 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {
+	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder) {
 		$this->objectManager = $objectManager;
 		$this->objectFactory = $this->objectManager->getObjectFactory();
+		$this->securityContext = $securityContextHolder->getContext();
 	}
 
 	/**
@@ -98,13 +105,49 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
 	 */
-	public function decide(\F3\FLOW3\Security\Context $securityContext, \F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function decideOnJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$denyVotes = 0;
 		$grantVotes = 0;
 		$abstainVotes = 0;
 
 		foreach ($this->accessDecisionVoters as $voter) {
-			$vote = $voter->vote($securityContext, $joinPoint);
+			$vote = $voter->voteForJoinPoint($this->securityContext, $joinPoint);
+			switch ($vote) {
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
+					$denyVotes++;
+					break;
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT:
+					$grantVotes++;
+					break;
+				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN:
+					$abstainVotes++;
+					break;
+			}
+		}
+
+		if ($denyVotes === 0 && $grantVotes > 0) return;
+		if ($denyVotes === 0 && $grantVotes === 0 && $abstainVotes > 0 && $this->allowAccessIfAllAbstain === TRUE) return;
+
+		throw new \F3\FLOW3\Security\Exception\AccessDenied('Access denied.', 1222268609);
+	}
+
+	/**
+	 * Decides if access should be granted on the given resource in the current security context.
+	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
+	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
+	 *
+	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
+	 * @param string $resource The resource to decide on
+	 * @return void
+	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
+	 */
+	public function decideOnResource($resource) {
+		$denyVotes = 0;
+		$grantVotes = 0;
+		$abstainVotes = 0;
+
+		foreach ($this->accessDecisionVoters as $voter) {
+			$vote = $voter->voteForResource($this->securityContext, $resource);
 			switch ($vote) {
 				case \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY:
 					$denyVotes++;

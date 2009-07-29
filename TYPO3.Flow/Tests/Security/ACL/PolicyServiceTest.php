@@ -119,7 +119,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 * @category unit
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getPrivilegesReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
+	public function getPrivilegesForJoinPointReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
 		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
@@ -128,7 +128,60 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService->expects($this->once())->method('parsePrivileges')->will($this->returnValue(NULL));
 		$policyService->_set('acls', array('className->methodName' => array()));
 
-		$policyService->getPrivileges($this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE), $mockJoinPoint);
+		$this->assertEquals(array(), $policyService->getPrivilegesForJoinPoint($this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE), $mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegesForJoinPointReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
+		$mockJoinPoint->expects($this->once())->method('getClassName')->will($this->returnValue('className'));
+		$mockJoinPoint->expects($this->once())->method('getMethodName')->will($this->returnValue('methodName'));
+
+		$mockRole = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE);
+		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
+
+		$privilegesArray = array('privilege1', 'privilege2', 'privilege3');
+
+		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService'), array('parsePrivileges'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parsePrivileges')->with('className->methodName', 'role1')->will($this->returnValue($privilegesArray));
+		$policyService->_set('acls', array('className->methodName' => array()));
+
+		$this->assertEquals($privilegesArray, $policyService->getPrivilegesForJoinPoint($mockRole, $mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegesForResourceReturnsAnEmptyArrayIfNoPrivilegesCouldBeFound() {
+		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService'), array('parsePrivileges'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parsePrivileges')->will($this->returnValue(NULL));
+		$policyService->_set('acls', array('someResource' => array()));
+
+		$this->assertEquals(array(), $policyService->getPrivilegesForResource($this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE), 'someResource'));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegesForResourceReturnsThePrivilegesArrayThatHasBeenParsedForTheGivenJoinPointAndRole() {
+		$mockRole = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE);
+		$mockRole->expects($this->once())->method('__toString')->will($this->returnValue('role1'));
+
+		$privilegesArray = array('privilege1', 'privilege2', 'privilege3');
+
+		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService'), array('parsePrivileges'), array(), '', FALSE);
+		$policyService->expects($this->once())->method('parsePrivileges')->with('someResource', 'role1')->will($this->returnValue($privilegesArray));
+		$policyService->_set('acls', array('someResource' => array()));
+
+		$this->assertEquals($privilegesArray, $policyService->getPrivilegesForResource($mockRole, 'someResource'));
 	}
 
 	/**
@@ -138,10 +191,33 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function parsePrivilegesReturnsNullIfNoPolicyEntryCouldBeFound() {
 		$policyService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService'), array('parsePrivileges'), array(), '', FALSE);
-		$policyService->_set('acls', array('className->methodName' => array()));
+		$policyService->_set('acls', array('className->methodName' => array(), 'someResource' => array()));
 
 		$this->assertNull($policyService->_call('parsePrivileges', 'className->methodName', 'someRole', ''));
-		$this->assertNull($policyService->_call('parsePrivileges', 'className->AnotherMethodName', 'someRole', ''));
+		$this->assertNull($policyService->_call('parsePrivileges', 'someResource', 'someOtherRole', ''));
+	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function parsePrivilegesReturnsTheCorrectPrivilegesArray() {
+		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService');
+		$policyService = new $policyServiceClassName();
+		$policyService->injectObjectFactory($this->objectFactory);
+
+		$policyService->_set('acls', array('className->methodName' => array('parentRole2' => array('ACCESS_GRANT'), 'myRole' => array('ACCESS_DENY'), 'parentRole1' => array('CUSTOMPRIVILEGE_GRANT'))));
+		$policyService->_set('roles', array('myRole' => array('parentRole1', 'parentRole2'), 'parentRole1' => array(), 'parentRole2' => array()));
+
+		$expectedPrivileges = array(
+			new \F3\FLOW3\Security\ACL\Privilege('ACCESS', TRUE),
+			new \F3\FLOW3\Security\ACL\Privilege('CUSTOMPRIVILEGE', TRUE),
+			new \F3\FLOW3\Security\ACL\Privilege('ACCESS', FALSE),
+		);
+
+		$this->assertEquals($expectedPrivileges, $policyService->_call('parsePrivileges', 'className->methodName', 'myRole', ''));
+
 	}
 }
 ?>

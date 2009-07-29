@@ -84,6 +84,39 @@ class PolicyExpressionParserTest extends \F3\Testing\BaseTestCase {
 
 		$parser->parse('theIntegrativeResource');
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function parseStoresTheCorrectResourceTreeTraceInTheTraceParameter() {
+		$resourcesTree = array(
+			'theOneAndOnlyResource' => 'method(F3\TestPackage\BasicClass->setSomeProperty())',
+			'theOtherLonelyResource' => 'theOneAndOnlyResource',
+			'theIntegrativeResource' => 'theOtherLonelyResource',
+
+		);
+
+		$mockPointcutFilterComposite = $this->getMock('F3\FLOW3\AOP\Pointcut\PointcutFilterComposite', array(), array(), '', FALSE);
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->any())->method('create')->will($this->returnValue($mockPointcutFilterComposite));
+
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+
+		$parser =new \F3\FLOW3\Security\ACL\PolicyExpressionParser();
+		$parser->injectObjectFactory($mockObjectFactory);
+		$parser->injectObjectManager($mockObjectManager);
+		$parser->setResourcesTree($resourcesTree);
+
+		$trace = array();
+		$parser->parse('theIntegrativeResource', $trace);
+
+		$expectedTrace = array('theIntegrativeResource', 'theOtherLonelyResource', 'theOneAndOnlyResource');
+
+		$this->assertEquals($expectedTrace, $trace, 'The trace has not been set as expected.');
+	}
 }
 
 

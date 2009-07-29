@@ -35,21 +35,22 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decideThrowsAnExceptionIfOneVoterReturnsADenyVote() {
+	public function decideOnJoinPointThrowsAnExceptionIfOneVoterReturnsADenyVote() {
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter1->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
+		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
 		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter2->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter3->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY));
+		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY));
 
 		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('securityContext', $mockContext);
 
-		$voterManager->decide($mockContext, $mockJoinPoint);
+		$voterManager->decideOnJoinPoint($mockJoinPoint);
 	}
 
 	/**
@@ -57,65 +58,156 @@ class AccessDecisionVoterManagerTest extends \F3\Testing\BaseTestCase {
 	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decideThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
+	public function decideOnJoinPointThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter1->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter2->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter3->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
 		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', FALSE);
+		$voterManager->_set('securityContext', $mockContext);
 
-		$voterManager->decide($mockContext, $mockJoinPoint);
+		$voterManager->decideOnJoinPoint($mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decideGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
+	public function decideOnJoinPointGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter1->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter2->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter3->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
 		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
 		$voterManager->_set('allowAccessIfAllAbstain', TRUE);
+		$voterManager->_set('securityContext', $mockContext);
 
-		$voterManager->decide($mockContext, $mockJoinPoint);
+		$voterManager->decideOnJoinPoint($mockJoinPoint);
 	}
 
 	/**
 	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function decideGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
+	public function decideOnJoinPointGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
 		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface', array(), array(), '', FALSE);
 
 		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter1->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter1->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter2->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
+		$voter2->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
 		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
-		$voter3->expects($this->any())->method('vote')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3->expects($this->any())->method('voteForJoinPoint')->with($mockContext, $mockJoinPoint)->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
 
 		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
 		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('securityContext', $mockContext);
 
-		$voterManager->decide($mockContext, $mockJoinPoint);
+		$voterManager->decideOnJoinPoint($mockJoinPoint);
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideOnResourceThrowsAnExceptionIfOneVoterReturnsADenyVote() {
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter1->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
+		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter2->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_DENY));
+
+		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('securityContext', $mockContext);
+
+		$voterManager->decideOnResource('myResource');
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Security\Exception\AccessDenied
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideOnResourceThrowsAnExceptionIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsFalse() {
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter1->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter2->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+
+		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('allowAccessIfAllAbstain', FALSE);
+		$voterManager->_set('securityContext', $mockContext);
+
+		$voterManager->decideOnResource('myResource');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideOnResourceGrantsAccessIfAllVotersAbstainAndAllowAccessIfAllVotersAbstainIsTrue() {
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter1->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter2->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+
+		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('allowAccessIfAllAbstain', TRUE);
+		$voterManager->_set('securityContext', $mockContext);
+
+		$voterManager->decideOnResource('myResource');
+	}
+
+	/**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function decideOnResourceGrantsAccessIfThereIsNoDenyVoteAndOneGrantVote() {
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+
+		$voter1 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter1->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+		$voter2 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter2->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_GRANT));
+		$voter3 = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', array(), array(), '', FALSE);
+		$voter3->expects($this->any())->method('voteForResource')->with($mockContext, 'myResource')->will($this->returnValue(\F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface::VOTE_ABSTAIN));
+
+		$voterManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Security\Authorization\AccessDecisionVoterManager'), array('dummy'), array(), '', FALSE);
+		$voterManager->_set('accessDecisionVoters', array($voter1, $voter2, $voter3));
+		$voterManager->_set('securityContext', $mockContext);
+
+		$voterManager->decideOnResource('myResource');
 	}
 }
 ?>

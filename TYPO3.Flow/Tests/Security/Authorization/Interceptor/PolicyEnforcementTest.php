@@ -36,17 +36,13 @@ class PolicyEnforcementTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAuthenticationManager() {
-		$contextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
-		$context = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$contextHolder->expects($this->once())->method('getContext')->will($this->returnValue($context));
-		$context->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array()));
 		$authenticationManager->expects($this->once())->method('authenticate');
 
-		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($contextHolder, $authenticationManager, $accessDecisionManager);
+		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}
@@ -58,17 +54,13 @@ class PolicyEnforcementTest extends \F3\Testing\BaseTestCase {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function invokeCallsTheAccessDecisionManagerToDecideOnTheCurrentJoinPoint() {
-		$contextHolder = $this->getMock('F3\FLOW3\Security\ContextHolderInterface');
-		$context = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
 		$authenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
 		$accessDecisionManager = $this->getMock('F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface');
 		$joinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
 
-		$contextHolder->expects($this->once())->method('getContext')->will($this->returnValue($context));
-		$context->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array()));
-		$accessDecisionManager->expects($this->once())->method('decide')->with($context, $joinPoint);
+		$accessDecisionManager->expects($this->once())->method('decideOnJoinPoint')->with($joinPoint);
 
-		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($contextHolder, $authenticationManager, $accessDecisionManager);
+		$interceptor = new \F3\FLOW3\Security\Authorization\Interceptor\PolicyEnforcement($authenticationManager, $accessDecisionManager);
 		$interceptor->setJoinPoint($joinPoint);
 		$interceptor->invoke();
 	}

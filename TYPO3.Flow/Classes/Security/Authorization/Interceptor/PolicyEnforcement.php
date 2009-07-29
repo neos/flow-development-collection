@@ -35,12 +35,6 @@ namespace F3\FLOW3\Security\Authorization\Interceptor;
 class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorInterface {
 
 	/**
-	 * The current security context
-	 * @var \F3\FLOW3\Security\Context
-	 */
-	protected $securityContext;
-
-	/**
 	 * The authentication manager
 	 * @var \F3\FLOW3\Secuirty\Authentication\ManagerInterface
 	 */
@@ -68,11 +62,10 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(
-					\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder,
 					\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager,
 					\F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager
 					) {
-		$this->securityContext = $securityContextHolder->getContext();
+
 		$this->authenticationManager = $authenticationManager;
 		$this->accessDecisionManager = $accessDecisionManager;
 	}
@@ -99,7 +92,7 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 
 		$this->authenticationManager->authenticate();
 
-		$this->accessDecisionManager->decide($this->securityContext, $this->joinPoint);
+		$this->accessDecisionManager->decideOnJoinPoint($this->joinPoint);
 	}
 }
 
