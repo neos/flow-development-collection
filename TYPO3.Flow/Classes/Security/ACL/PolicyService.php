@@ -146,7 +146,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			foreach ($this->settings['security']['policy']['acls'] as $role => $acl) {
 				foreach ($acl as $resource => $privilege) {
 					$resourceTrace = array();
-					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource, &$resourceTrace);
+					$this->filters[$role][$resource] = $this->policyExpressionParser->parse($resource, $resourceTrace);
 
 					foreach ($resourceTrace as $currentResource) {
 						$this->acls[$currentResource][$role][] = $privilege;

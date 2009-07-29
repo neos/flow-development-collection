@@ -73,7 +73,7 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 			if (strpos($expression, '(') === FALSE) {
 				if (in_array($expression, $trace)) throw new \F3\FLOW3\Security\Exception\CircularResourceDefinitionDetected('A circular reference was detected in the security policy resources definition. Look near: ' . $expression, 1222028842);
 				$trace[] = $expression;
-				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, &$trace);
+				$this->parseDesignatorPointcut($operator, $expression, $pointcutFilterComposite, $trace);
 			}
 		}
 
