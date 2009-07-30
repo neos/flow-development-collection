@@ -91,7 +91,7 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 * a subpackage with a slash after the package key (e.g. "MyPackage/Admin").
 	 *
 	 * @param string $packageKey The package key of the package for the new controller with an optional subpackage
-	 * @param string $name The name for the new controller
+	 * @param string $controllerName The name for the new controller. This may also be a comma separated list of controller names.
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -103,7 +103,11 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 		if (!$this->packageManager->isPackageAvailable($packageKey)) {
 			return 'Package "' . $packageKey . '" is not available.' . PHP_EOL;
 		}
-		$generatedFiles = $this->generatorService->generateController($packageKey, $subpackageName, $controllerName);
+		$generatedFiles = array();
+		$controllerNames = \F3\FLOW3\Utility\Arrays::trimExplode(',', $controllerName);
+		foreach ($controllerNames as $currentControllerName) {
+			$generatedFiles += $this->generatorService->generateController($packageKey, $subpackageName, $currentControllerName);
+		}
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;
 	}
 
