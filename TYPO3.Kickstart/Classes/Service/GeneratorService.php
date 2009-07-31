@@ -83,7 +83,7 @@ class GeneratorService {
 		$fileContent = $this->renderTemplate($templatePathAndFilename, $contextVariables);
 
 		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
-		$controllerFilename = $controllerClassName . '.php'; 
+		$controllerFilename = $controllerClassName . '.php';
 		$controllerPath = $this->packageManager->getPackage($packageKey)->getClassesPath() . $subpackagePath . 'Controller/';
 		$targetPathAndFilename = $controllerPath . $controllerFilename;
 
@@ -228,12 +228,8 @@ class GeneratorService {
 		if (!is_dir(dirname($targetPathAndFilename))) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
-
 		file_put_contents($targetPathAndFilename, $fileContent);
-
-		$flow3BasePath = realpath(FLOW3_PATH_WEB . '../');
-		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen($flow3BasePath) + 1);
-
+		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW3_PATH_ROOT) + 1);
 		$this->generatedFiles[] = '+ ' . $relativeTargetPathAndFilename;
 	}
 
