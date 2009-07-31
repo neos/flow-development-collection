@@ -157,7 +157,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function getPackage($packageKey) {
-		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available. Pleas note that package keys are case sensitive.', 1166546734);
+		if (!$this->isPackageAvailable($packageKey)) throw new \F3\FLOW3\Package\Exception\UnknownPackage('Package "' . $packageKey . '" is not available. Please note that package keys are case sensitive.', 1166546734);
 		return $this->packages[$packageKey];
 	}
 
@@ -283,11 +283,8 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @api
 	 */
 	public function getLocalPackagesPath() {
-		if (realpath(FLOW3_PATH_WEB . '../Packages/Application/') !== FALSE) {
-			return \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Packages/Application/') . '/');
-		} else {
-			return '';
-		}
+		$path = realpath(FLOW3_PATH_PACKAGES . 'Application/');
+		return ($path !== FALSE) ? \F3\FLOW3\Utility\Files::getUnixStylePath($path) . '/' : '';
 	}
 
 	/**
@@ -362,35 +359,19 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function scanAvailablePackages() {
-		$availablePackages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
+		$this->packages = array('FLOW3' => $this->objectFactory->create('F3\FLOW3\Package\Package', 'FLOW3', FLOW3_PATH_FLOW3));
+		foreach (new \DirectoryIterator(FLOW3_PATH_PACKAGES) as $parentFileInfo) {
+			$parentFilename = $parentFileInfo->getFilename();
+			if ($parentFilename[0] === '.' || !$parentFileInfo->isDir()) continue;
 
-		$localPackagesParentPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Packages/'));
-		$globalPackagesPath = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_FLOW3 . '../'));
-
-		$pathsToScan = array($globalPackagesPath);
-		$localPackagesParentDirectoryIterator = new \DirectoryIterator($localPackagesParentPath);
-		while ($localPackagesParentDirectoryIterator->valid()) {
-			$filename = $localPackagesParentDirectoryIterator->getFilename();
-			$path = \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($localPackagesParentDirectoryIterator->getPathName()));
-
-			if ($filename[0] != '.' && $path !== $globalPackagesPath) {
-				$pathsToScan[] = $path;
-			}
-			$localPackagesParentDirectoryIterator->next();
-		}
-		foreach ($pathsToScan as $packagesPath) {
-			$packagesDirectoryIterator = new \DirectoryIterator($packagesPath);
-			while ($packagesDirectoryIterator->valid()) {
-				$filename = $packagesDirectoryIterator->getFilename();
-				if ($filename[0] != '.' && $filename != 'FLOW3') {
-					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($packagesDirectoryIterator->getPathName()) . '/';
-					$availablePackages[$filename] = $this->objectFactory->create('F3\FLOW3\Package\Package', $filename, $packagePath);
+			foreach (new \DirectoryIterator($parentFileInfo->getPathname()) as $childFileInfo) {
+				$childFilename = $childFileInfo->getFilename();
+				if ($childFilename[0] !== '.' && $childFilename !== 'FLOW3') {
+					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($childFileInfo->getPathName()) . '/';
+					$this->packages[$childFilename] = $this->objectFactory->create('F3\FLOW3\Package\Package', $childFilename, $packagePath);
 				}
-				$packagesDirectoryIterator->next();
 			}
 		}
-
-		$this->packages = $availablePackages;
 		foreach (array_keys($this->packages) as $upperCamelCasedPackageKey) {
 			$this->packageKeys[strtolower($upperCamelCasedPackageKey)] = $upperCamelCasedPackageKey;
 		}

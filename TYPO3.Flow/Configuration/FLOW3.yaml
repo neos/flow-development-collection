@@ -17,6 +17,12 @@ aop:
   # disable the AOP framework.
   enable: y
 
+core:
+
+  # FLOW3's application context
+  # This setting is automatically set by the configuration manager and can't be set manually.
+  context: ''
+
 error:
 
   exceptionHandler:
@@ -97,7 +103,7 @@ resource:
   # Settings for the resource caching mechanism
   cache:
 
-    # The path for the public resources mirror, relative to the Public/ directory
+    # The path for the public resources mirror, relative to the Web/ directory
     publicPath: Resources/
     
     # The strategy to use when caching files for public resources. Specify either

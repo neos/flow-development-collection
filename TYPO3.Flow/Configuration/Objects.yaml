@@ -325,3 +325,4 @@ F3\FLOW3\Utility\Environment:
   properties:
     temporaryDirectoryBase: setting: FLOW3.utility.environment.temporaryDirectoryBase
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
+    context: setting: FLOW3.core.context

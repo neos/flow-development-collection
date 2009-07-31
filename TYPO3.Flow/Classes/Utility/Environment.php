@@ -42,6 +42,11 @@ class Environment {
 	const SAPI_TYPE_CLI = 'CLI';
 
 	/**
+	 * @var string
+	 */
+	protected $context = '';
+
+	/**
 	 * A local copy of the _SERVER super global
 	 * @var array
 	 */
@@ -102,6 +107,17 @@ class Environment {
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface $systemLogger) {
 		$this->systemLogger = $systemLogger;
+	}
+
+	/**
+	 * Sets the FLOW3 context
+	 *
+	 * @param string $context The FLOW3 context
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setContext($context) {
+		$this->context = $context;
 	}
 
 	/**
@@ -411,9 +427,9 @@ class Environment {
 			$this->systemLogger->log('The path to your temporary directory is ' . strlen($temporaryDirectoryBase) . ' characters long. The maximum path length of your system is only ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
 		}
 
-		$pathHash = md5(FLOW3_PATH_WEB . $this->getSAPIName());
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
-		$temporaryDirectory = $temporaryDirectoryBase . $pathHash . '/' . $processUser['name'] . '/';
+		$pathHash = substr(md5(FLOW3_PATH_WEB . $this->getSAPIName() . $processUser['name'] . $this->context), 0, 12);
+		$temporaryDirectory = $temporaryDirectoryBase . $pathHash . '/';
 
 		if (!is_dir($temporaryDirectory)) {
 			try {

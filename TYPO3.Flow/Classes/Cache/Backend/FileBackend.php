@@ -120,7 +120,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!is_dir($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The directory "' . $cacheDirectory . '" does not exist.', 1203965199);
 		if (!is_writable($cacheDirectory)) throw new \F3\FLOW3\Cache\Exception('The directory "' . $cacheDirectory . '" is not writable.', 1203965200);
 
-		$tagsDirectory = $cacheDirectory . $this->context . '/Tags/';
+		$tagsDirectory = $cacheDirectory . 'Tags/';
 		if (!is_writable($tagsDirectory)) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($tagsDirectory);
 		}
@@ -195,7 +195,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	protected function setTag($entryIdentifier, $tag) {
-		$tagPath = $this->cacheDirectory . $this->context . '/Tags/' . $tag . '/';
+		$tagPath = $this->cacheDirectory . 'Tags/' . $tag . '/';
 		if (!is_writable($tagPath)) {
 			mkdir($tagPath);
 			if (!is_writable($tagPath)) throw new \F3\FLOW3\Cache\Exception('The tag directory "' . $tagPath . '" could not be created.', 1238242144);
@@ -268,7 +268,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function findIdentifiersByTag($tag) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$path = $this->cacheDirectory . $this->context . '/Tags/';
+		$path = $this->cacheDirectory . 'Tags/';
 		$pattern = $path . $tag . '/' . $this->cache->getIdentifier() . self::SEPARATOR . '*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return array();
@@ -293,7 +293,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function flush() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$path = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/';
+		$path = $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/';
 		$pattern = $path . '*/*/*';
 		$filesFound = glob($pattern);
 		if ($filesFound === FALSE || count($filesFound) === 0) return;
@@ -345,7 +345,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function collectGarbage() {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1222686150);
 
-		$pattern = $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/*/*/*';
+		$pattern = $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/*/*/*';
 		$filesFound = glob($pattern);
 		foreach ($filesFound as $cacheFilename) {
 			if ($this->isCacheFileExpired($cacheFilename)) {
@@ -365,7 +365,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 */
 	protected function renderCacheEntryPath($identifier) {
 		$identifierHash = sha1($identifier);
-		return $this->cacheDirectory . $this->context . '/Data/' . $this->cache->getIdentifier() . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
+		return $this->cacheDirectory . 'Data/' . $this->cache->getIdentifier() . '/' . $identifierHash[0] . '/' . $identifierHash[1] . '/';
 	}
 
 	/**
@@ -399,7 +399,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	protected function findTagFilesByEntry($entryIdentifier) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('Yet no cache frontend has been set via setCache().', 1204111376);
 
-		$path = $this->cacheDirectory . $this->context . '/Tags/';
+		$path = $this->cacheDirectory . 'Tags/';
 		$pattern = $path . '*/' . $this->cache->getIdentifier() . self::SEPARATOR . $entryIdentifier;
 		return glob($pattern);
 	}

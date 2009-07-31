@@ -27,10 +27,33 @@ require(__DIR__ . '/../Utility/Files.php');
 require(__DIR__ . '/../Package/PackageInterface.php');
 require(__DIR__ . '/../Package/Package.php');
 
-define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath((PHP_SAPI !== 'cli') ? dirname($_SERVER['SCRIPT_FILENAME']) : __DIR__ . '/../../../../../Web')) . '/');
-define('FLOW3_PATH_FLOW3', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(__DIR__ . '/../../') . '/'));
-define('FLOW3_PATH_CONFIGURATION', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Configuration/') . '/'));
-define('FLOW3_PATH_DATA', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Data/') . '/'));
+define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
+if (getenv('FLOW3_ROOTPATH') !== FALSE) {
+	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath(getenv('FLOW3_ROOTPATH'))))) . '/';
+	$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
+	if ($testPath !== FLOW3_PATH_FLOW3) {
+		die('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
+	}
+	define('FLOW3_PATH_ROOT', $rootPath);
+	unset($rootPath);
+	unset($testPath);
+}
+
+if (PHP_SAPI === 'cli') {
+	if (!defined('FLOW3_PATH_ROOT')) {
+		die('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
+	}
+	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_ROOT . 'Web')) . '/');
+} else {
+	if (!defined('FLOW3_PATH_ROOT')) {
+		define('FLOW3_PATH_ROOT', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
+	}
+	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
+}
+
+define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
+define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
+define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
 
 /**
  * General purpose central core hyper FLOW3 class
@@ -664,11 +687,11 @@ final class Bootstrap {
 	 * todo RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
 	protected function checkEnvironment() {
-		if (version_compare(phpversion(), \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION, '<')) {
-			die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
+			die('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 		}
-		if (version_compare(PHP_VERSION, \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION, '>')) {
-			die('FLOW3 requires PHP version ' . \F3\FLOW3\Core\Bootstrap::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
+			die('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
 			die('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');

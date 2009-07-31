@@ -142,6 +142,7 @@ class Manager {
 		}
 		$this->postProcessSettings($settings);
 		$this->settings['FLOW3'] = $settings;
+		$this->settings['FLOW3']['core']['context'] = $this->context;
 	}
 
 	/**

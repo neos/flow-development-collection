@@ -125,7 +125,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pathAndFilename = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
+		$pathAndFilename = $cacheDirectory . 'Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
 		$this->assertTrue(file_exists($pathAndFilename), 'File does not exist.');
 		$retrievedData = file_get_contents($pathAndFilename, NULL, NULL, \F3\FLOW3\Cache\Backend\FileBackend::EXPIRYTIME_LENGTH);
 		$this->assertEquals($data, $retrievedData, 'The original and the retrieved data don\'t match.');
@@ -149,7 +149,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data2, array(), 200);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pathAndFilename = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
+		$pathAndFilename = $cacheDirectory . 'Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
 		$this->assertTrue(file_exists($pathAndFilename), 'File does not exist.');
 		$retrievedData = file_get_contents($pathAndFilename, NULL, NULL, \F3\FLOW3\Cache\Backend\FileBackend::EXPIRYTIME_LENGTH);
 		$this->assertEquals($data2, $retrievedData);
@@ -168,7 +168,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$entryIdentifier = 'BackendFileTest';
 
 		$this->backend->setCache($cache);
-		$tagsDirectory = $this->backend->getCacheDirectory() . 'Testing/Tags/';
+		$tagsDirectory = $this->backend->getCacheDirectory() . 'Tags/';
 
 		$this->backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 
@@ -289,7 +289,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$cacheDirectory = $this->backend->getCacheDirectory();
 		$this->backend->setCache($cache);
 
-		$pathAndFilename = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
+		$pathAndFilename = $cacheDirectory . 'Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
 
 		$this->backend->set($entryIdentifier, $data);
 		$this->assertTrue(file_exists($pathAndFilename), 'The cache entry does not exist.');
@@ -315,7 +315,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$cacheDirectory = $this->backend->getCacheDirectory();
 		$this->backend->setCache($cache);
 
-		$pathAndFilename = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
+		$pathAndFilename = $cacheDirectory . 'Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
 
 		$this->backend->set($entryIdentifier, $data, array(), 1);
 		$this->assertTrue(file_exists($pathAndFilename), 'The cache entry does not exist.');
@@ -342,7 +342,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$cacheDirectory = $this->backend->getCacheDirectory();
 		$this->backend->setCache($cache);
 
-		$pattern = $cacheDirectory . 'Testing/Data/UnitTestCache/*/*/' . $entryIdentifier . '?';
+		$pattern = $cacheDirectory . 'Data/UnitTestCache/*/*/' . $entryIdentifier . '?';
 
 		$this->backend->set($entryIdentifier . 'A', $data, array(), 1);
 		$this->backend->set($entryIdentifier . 'B', $data, array(), 1);
@@ -371,7 +371,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$this->backend->setCache($cache);
 
-		$tagsDirectory = $this->backend->getCacheDirectory() . 'Testing/Tags/';
+		$tagsDirectory = $this->backend->getCacheDirectory() . 'Tags/';
 
 		$this->backend->set($entryIdentifier, $data, array('UnitTestTag%tag1', 'UnitTestTag%tag2'));
 		$this->backend->remove($entryIdentifier);
@@ -543,7 +543,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->backend->set($entryIdentifier, $data, array(), 0);
 
 		$cacheDirectory = $this->backend->getCacheDirectory();
-		$pathAndFilename = $cacheDirectory . 'Testing/Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
+		$pathAndFilename = $cacheDirectory . 'Data/UnitTestCache/' . $entryIdentifierHash[0] . '/' . $entryIdentifierHash[1] . '/' . $entryIdentifier;
 		$this->assertTrue(file_exists($pathAndFilename), 'File not found.');
 
 		$retrievedData = file_get_contents($pathAndFilename, NULL, NULL, \F3\FLOW3\Cache\Backend\FileBackend::EXPIRYTIME_LENGTH);
@@ -556,10 +556,10 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function tearDown() {
 		if (is_object($this->backend)) {
-			$directory = $this->backend->getCacheDirectory() . 'Testing/Data/UnitTestCache';
+			$directory = $this->backend->getCacheDirectory() . 'Data/UnitTestCache';
 			if (is_dir($directory)) \F3\FLOW3\Utility\Files::removeDirectoryRecursively($directory);
 
-			$pattern = $this->backend->getCacheDirectory() . 'Testing/Tags/UnitTestTag%*/*';
+			$pattern = $this->backend->getCacheDirectory() . 'Tags/UnitTestTag%*/*';
 			$filesFound = glob($pattern);
 			if ($filesFound === FALSE || count($filesFound) == 0) return;
 
@@ -567,7 +567,7 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 				unlink($filename);
 			}
 
-			$pattern = $this->backend->getCacheDirectory() . 'Testing/Tags/UnitTestTag%*';
+			$pattern = $this->backend->getCacheDirectory() . 'Tags/UnitTestTag%*';
 			$directoriesFound = glob($pattern);
 			if ($directoriesFound === FALSE || count($directoriesFound) == 0) return;
 

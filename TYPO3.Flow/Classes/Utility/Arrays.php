@@ -55,11 +55,11 @@ class Arrays {
 	 *
 	 * @param string $delimiter Delimiter string to explode with
 	 * @param string $string The string to explode
-	 * @param boolean $onlyNonEmptyValues If set, all empty values (='') will NOT be set in output
+	 * @param boolean $onlyNonEmptyValues If disabled, even empty values (='') will be set in output
 	 * @return array Exploded values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */
-	static public function trimExplode($delimiter, $string, $onlyNonEmptyValues = FALSE) {
+	static public function trimExplode($delimiter, $string, $onlyNonEmptyValues = TRUE) {
 		$chunksArr = explode($delimiter, $string);
 		$newChunksArr = array();
 		foreach ($chunksArr as $value) {

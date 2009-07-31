@@ -117,7 +117,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	public function getLocalPackagesPathReturnsPathToLocalPackagesDirectory() {
 		$this->markTestSkipped('needs proper rework using vfs');
 		$packagesPath = $this->packageManager->getLocalPackagesPath();
-		$this->assertEquals(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_WEB . '../Packages/Local/') . '/'), $packagesPath);
+		$this->assertEquals(\F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_PACKAGES . '../Packages/Application/') . '/'), $packagesPath);
 	}
 
 	/**
