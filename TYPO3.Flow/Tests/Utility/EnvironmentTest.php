@@ -22,6 +22,8 @@ namespace F3\FLOW3\Utility;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once('vfs/vfsStream.php');
+
 /**
  * Testcase for the Utility Environment class
  *
@@ -145,7 +147,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$expectedValue = PHP_MAXPATHLEN;
 		if ((integer)$expectedValue <= 0) {
-			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a bug report.');
+			$this->fail('The PHP Constant PHP_MAXPATHLEN is not available on your system! Please file a PHP bug report.');
 		}
 		$this->assertEquals($expectedValue, $environment->getMaximumPathLength());
 	}
@@ -155,24 +157,28 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function createTemporaryDirectoryLogsToSystemLogIfTemporaryDirectoryBaseIsLongComparedToMaximumPathLength() {
-		$veryLongPath = 'some/very/long/path/';
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('t1'));
+		$path = \vfsStream::url('t1') . '/some/temporary/path/';
 
 		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
 		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(248));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($veryLongPath) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
+		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($path) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
 		$environment->injectSystemLogger($mockSystemLogger);
 
-		$environment->_call('createTemporaryDirectory', $veryLongPath);
+		$environment->_call('createTemporaryDirectory', $path);
 	}
 
 	/**
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function createTemporaryDirectoryDoesNotLogToSystemLogIfTemporaryDirectoryBaseIsNotLongComparedToMaximumPathLength() {
-		$veryLongPath = 'some/short/path/';
+	public function createTemporaryDirectoryDoesNotLogToSystemLogIfTemporaryDirectoryBaseIsShortComparedToMaximumPathLength() {
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('t2'));
+		$path = \vfsStream::url('t2') . '/some/temporary/path/';
 
 		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('getMaximumPathLength'), array(), '', FALSE);
 		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(500));
@@ -181,7 +187,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$mockSystemLogger->expects($this->never())->method('log');
 		$environment->injectSystemLogger($mockSystemLogger);
 
-		$environment->_call('createTemporaryDirectory', $veryLongPath);
+		$environment->_call('createTemporaryDirectory', $path);
 	}
 }
 ?>
