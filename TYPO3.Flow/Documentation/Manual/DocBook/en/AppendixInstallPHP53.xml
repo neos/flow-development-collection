@@ -32,9 +32,9 @@
     install PHP 5.3 on Debian Lenny. To do that you have to edit your
     /etc/apt/sources.list and add these lines:</para>
 
-    <programlisting><code># PHP 5.3 packages by dotdeb
+    <screen><code># PHP 5.3 packages by dotdeb
 deb http://php53.dotdeb.org stable all
-deb-src http://php53.dotdeb.org stable all</code></programlisting>
+deb-src http://php53.dotdeb.org stable all</code></screen>
 
     <bridgehead>Package Sources for Debian Etch:</bridgehead>
 
@@ -45,9 +45,9 @@ deb-src http://php53.dotdeb.org stable all</code></programlisting>
     <para>Open <filename>/etc/apt/sources.list</filename> in your favourite
     editor and add the following lines to the file:</para>
 
-    <para><programlisting># PHP 5.3 packages backported by netlogix
+    <para><screen># PHP 5.3 packages backported by netlogix
 deb ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php
-deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></para>
+deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
 
     <bridgehead>Installing the packages:</bridgehead>
 
@@ -104,7 +104,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
         The vhost configuration files reside in
         <filename>/etc/apache2/sites-available/</filename>:</para>
 
-        <programlisting>&lt;Directory /var/www/&gt;
+        <screen>&lt;Directory /var/www/&gt;
     Options Indexes FollowSymLinks MultiViews
     AllowOverride All      # Make sure to set this directive correctly
     Order allow,deny
@@ -112,7 +112,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
     # This directive allows us to have apache2's default start page
     # in /apache2-default/, but still have / go to the right place
     RedirectMatch ^/$ /apache2-default/
-&lt;/Directory&gt;</programlisting>
+&lt;/Directory&gt;</screen>
 
         <para><note>
             <para>For a comfortable and secure environment the document root
@@ -357,13 +357,13 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
             following line. A good place is below
             <literal>ServerRoot</literal>:</para>
 
-            <para><programlisting>PidFile logs-php5.3/httpd.pid</programlisting></para>
+            <para><screen>PidFile logs-php5.3/httpd.pid</screen></para>
           </listitem>
 
           <listitem>
             <para>Activate the module mod_rewrite by uncommenting the line
             (this might not be needed anymore in newer versions of
-            XAMPP):<programlisting>LoadModule rewrite_module modules/mod_rewrite.so</programlisting></para>
+            XAMPP):<screen>LoadModule rewrite_module modules/mod_rewrite.so</screen></para>
           </listitem>
         </itemizedlist>
 
@@ -385,7 +385,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</programlisting></
           </listitem>
 
           <listitem>
-            <para>Add the following lines:<programlisting>#php5.3.0rc2 settings:
+            <para>Add the following lines:<screen>#php5.3.0rc2 settings:
 #Preload the PHP interpreter dll so that apache can find it, even if it's not in the path
 LoadFile "C:/xampp/php/php5.3/php5ts.dll"
 
@@ -393,7 +393,7 @@ LoadFile "C:/xampp/php/php5.3/php5ts.dll"
 LoadModule php5_module "C:/xampp/php/php5.3/php5apache2_2.dll"
 
 #Specify the directory that the php.ini is stored in
-PHPIniDir "C:/xampp/php/php5.3"</programlisting></para>
+PHPIniDir "C:/xampp/php/php5.3"</screen></para>
           </listitem>
         </itemizedlist>
 
@@ -402,7 +402,7 @@ PHPIniDir "C:/xampp/php/php5.3"</programlisting></para>
         <para>Configure the VirtualHosts. Make them reference to the
         <filename>Public</filename> folder of your FLOW3 installation.</para>
 
-        <programlisting>NameVirtualHost *:81
+        <screen>NameVirtualHost *:81
 
 &lt;VirtualHost *:81&gt;
     DocumentRoot "C:/xampp/htdocs/" 
@@ -412,7 +412,7 @@ PHPIniDir "C:/xampp/php/php5.3"</programlisting></para>
 &lt;VirtualHost *:81&gt;
     DocumentRoot "C:/xampp/htdocs/flow3/Public/" 
     ServerName flow3.local
-&lt;/VirtualHost&gt;</programlisting>
+&lt;/VirtualHost&gt;</screen>
 
         <note>
           <para>For other virtual hosts than "localhost" you'll need an
@@ -434,14 +434,14 @@ PHPIniDir "C:/xampp/php/php5.3"</programlisting></para>
           <listitem>
             <para>Activate some extensions FLOW3 needs:</para>
 
-            <programlisting>extension=php_mbstring.dll
-extension=php_pdo_sqlite.dll</programlisting>
+            <screen>extension=php_mbstring.dll
+extension=php_pdo_sqlite.dll</screen>
           </listitem>
 
           <listitem>
             <para>Set the folder, where the extensions are stored:</para>
 
-            <programlisting>extension_dir = 'C:\xampp\php\php5.3\ext\'</programlisting>
+            <screen>extension_dir = 'C:\xampp\php\php5.3\ext\'</screen>
 
             <caution>
               <para>You might need to use single quotes here as PHP 5.3
@@ -454,7 +454,7 @@ extension=php_pdo_sqlite.dll</programlisting>
             <para>FLOW3 will ask you to deactivate magic quotes, so just do
             it:</para>
 
-            <programlisting>magic_quotes_gpc = Off</programlisting>
+            <screen>magic_quotes_gpc = Off</screen>
           </listitem>
         </itemizedlist>
       </section>
@@ -471,7 +471,7 @@ extension=php_pdo_sqlite.dll</programlisting>
 
         <para>Start the apache telling him the new configuration file:</para>
 
-        <programlisting>apache -f .\conf-php5.3\httpd.conf</programlisting>
+        <para><command>apache -f .\conf-php5.3\httpd.conf</command></para>
 
         <para>Don't close the prompt.</para>
 
@@ -479,7 +479,7 @@ extension=php_pdo_sqlite.dll</programlisting>
         <keycombo action="simul">
             <keycap>Ctrl</keycap>
 
-            <keycap>v</keycap>
+            <keycap>C</keycap>
           </keycombo> in the prompt.</para>
       </section>
 
@@ -491,12 +491,13 @@ extension=php_pdo_sqlite.dll</programlisting>
 
         <para>Install the service:</para>
 
-        <programlisting>apache -k install -n Apache2.2-php5.3 -f .\conf-php5.3\httpd.conf</programlisting>
+        <para><command>apache -k install -n Apache2.2-php5.3 -f
+        .\conf-php5.3\httpd.conf</command></para>
 
         <para>Now you can start the service using the service-administration
         in the Windows control panel or in the prompt:</para>
 
-        <programlisting>net start Apache2.2-php5.3</programlisting>
+        <para><command>net start Apache2.2-php5.3</command></para>
       </section>
 
       <section>

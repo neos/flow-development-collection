@@ -1137,7 +1137,7 @@ interface SomeInterface {
           <programlisting language="php">/**
  * First sentence is short description. Then you can write more, just as you like
  *
- * Here may follow some detailed description about what the interface is for.
+ * Here may follow some detailed description about what the exception is for.
  *
  * Paragraphs are seperated by a empty line.
  *
@@ -1467,18 +1467,8 @@ namespace F3\Your\Stuff\Here;
 
         <listitem>
           <para>Prefer strict comparisons whenever possible, to avoid problems
-          with truthy and falsy <sidebar>
-              <figure>
-                <title>Truthy and falsy are fuzzy...</title>
-
-                <mediaobject>
-                  <imageobject>
-                    <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
-                  </imageobject>
-                </mediaobject>
-              </figure>
-            </sidebar>values that might behave different than what you expect.
-          Here are some examples:<example>
+          with truthy and falsy values that might behave different than what
+          you expect. Here are some examples:<example>
               <title>Examples of good and bad comparisons</title>
 
               <para><programlisting language="php">if ($template)             // BAD
@@ -1493,7 +1483,15 @@ if ($foo == $bar)          // BAD, avoid truthy comparisons
 if ($foo != $bar)          // BAD, avoid falsy comparisons
 if ($foo === $bar))        // GOOD
 if ($foo !== $bar))        // GOOD</programlisting></para>
-            </example></para>
+            </example><figure floatstyle="">
+              <title>Truthy and falsy are fuzzy...</title>
+
+              <mediaobject>
+                <imageobject>
+                  <imagedata fileref="AppendixCodingGuidelines_TrueFalse.jpg"/>
+                </imageobject>
+              </mediaobject>
+            </figure></para>
         </listitem>
 
         <listitem>

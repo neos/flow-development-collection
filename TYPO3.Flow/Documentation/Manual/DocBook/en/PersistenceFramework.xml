@@ -430,7 +430,7 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       <example>
         <title>Explictly activating a LazyLoadingProxy</title>
 
-        <programlisting>if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
+        <programlisting language="php">if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
   $this-&gt;lazyProperty-&gt;_loadRealInstance();
 }</programlisting>
       </example>

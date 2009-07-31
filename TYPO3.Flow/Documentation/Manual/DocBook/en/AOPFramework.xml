@@ -367,21 +367,22 @@ class FooSecurityAspect {
     <example>
       <title>Declaration of a named pointcut</title>
 
-      <programlisting language="php">   /**
-	 * A pointcut which matches all methods whose name starts with "delete".
-	 *
-	 * <co xml:id="co.pointcutdeclaration.1"/>@pointcut method(.*-&gt;delete.*())
-	 * @author John Doe &lt;john@typo3.org&gt;
-	 */
-	public function <co xml:id="co.pointcutdeclaration.2"/>deleteMethods() {}</programlisting>
+      <programlisting language="php">/**
+ * A pointcut which matches all methods whose name starts with "delete".
+ *
+ * @pointcut method(.*-&gt;delete.*())<co xml:id="co.pointcutdeclaration.1"/>
+ * @author John Doe &lt;john@typo3.org&gt;
+ */
+public function <co xml:id="co.pointcutdeclaration.2"/>deleteMethods() {}</programlisting>
 
       <calloutlist>
         <callout arearefs="co.pointcutdeclaration.1">
-          <para>Declaration of the pointcut expression</para>
+          <para>Declaration of the pointcut expression through
+          annotation</para>
         </callout>
 
         <callout arearefs="co.pointcutdeclaration.2">
-          <para>Name of the pointcut</para>
+          <para>Name of the pointcut is the function name</para>
         </callout>
       </calloutlist>
     </example>
@@ -708,15 +709,15 @@ class PointcutTestingAspect {
       <para><example>
           <title>Declaration of a before advice</title>
 
-          <para><programlisting language="php">	/**
-	 * Before advice which is invoked before any method call within the News 
-	 * package
-	 *
-	 * @before class(F3\News\.*-&gt;.*())
-	 */
-	public function myBeforeAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+          <para><programlisting language="php">/**
+ * Before advice which is invoked before any method call within the News 
+ * package
+ *
+ * @before class(F3\News\.*-&gt;.*())
+ */
+public function myBeforeAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
     $joinPoint) {
-	}</programlisting></para>
+}</programlisting></para>
         </example></para>
     </section>
 
@@ -731,15 +732,15 @@ class PointcutTestingAspect {
       <example>
         <title>Declaration of an after returning advice</title>
 
-        <para><programlisting language="php">	/**
-	 * After returning advice
-	 *
-	 * @afterreturning method(public F3\News\FeedAgregator-&gt;[import|update].*()) ⏎
+        <para><programlisting language="php">/**
+ * After returning advice
+ *
+ * @afterreturning method(public F3\News\FeedAgregator-&gt;[import|update].*()) ⏎
       || F3\MyPackage\MyAspect-&gt;someOtherPointcut
-	 */
-	public function myAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+ */
+public function myAfterReturningAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
     $joinPoint) {
-	}</programlisting></para>
+}</programlisting></para>
       </example>
     </section>
 
@@ -753,14 +754,14 @@ class PointcutTestingAspect {
       <example>
         <title>Declaration of an after throwing advice</title>
 
-        <para><programlisting language="php">	/**
-	 * After throwing advice
-	 *
-	 * @afterthrowing within(F3\News\ImportantLayer)
-	 */
-	public function myAfterThrowingAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
+        <para><programlisting language="php">/**
+ * After throwing advice
+ *
+ * @afterthrowing within(F3\News\ImportantLayer)
+ */
+public function myAfterThrowingAdvice(\F3\FLOW3\AOP\JoinPointInterface ⏎
     $joinPoint) {
-	}</programlisting></para>
+}</programlisting></para>
       </example>
     </section>
 
@@ -775,13 +776,13 @@ class PointcutTestingAspect {
       <example>
         <title>Declaration of an after advice</title>
 
-        <para><programlisting language="php">	/**
-	 * After advice
-	 *
-	 * @after F3\MyPackage\MyAspect-&gt;justAPointcut
-	 */
-	public function myAfterAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-	}</programlisting></para>
+        <para><programlisting language="php">/**
+ * After advice
+ *
+ * @after F3\MyPackage\MyAspect-&gt;justAPointcut
+ */
+public function myAfterAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+}</programlisting></para>
       </example>
     </section>
 
@@ -799,13 +800,13 @@ class PointcutTestingAspect {
       <example>
         <title>Declaration of an around advice</title>
 
-        <para><programlisting language="php">   /**
-	 * Around advice
-	 *
-	 * @around F3\MyPackage\MyAspect-&gt;justAPointcut
-	 */
-	public function myAroundAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-	}</programlisting></para>
+        <para><programlisting language="php">/**
+ * Around advice
+ *
+ * @around F3\MyPackage\MyAspect-&gt;justAPointcut
+ */
+public function myAroundAdvice(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+}</programlisting></para>
       </example>
     </section>
   </section>
@@ -878,6 +879,7 @@ class LoggingAspect {
 
 	/**
 	 * @var \F3\FLOW3\Log\LoggerInterface A logger implementation
+	 */
 	protected $logger;
 
 	/**
@@ -888,7 +890,7 @@ class LoggingAspect {
 	 * @return void
 	 */
 	public function injectSystemLogger(\F3\FLOW3\Log\SystemLoggerInterface ⏎
-    $systemLogger) {
+	    $systemLogger) {
 		$this-&gt;logger = $systemLogger;
 	}
 
@@ -901,7 +903,7 @@ class LoggingAspect {
 	 */
 	public function logMethodExecution(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$logMessage = 'The method ' . $joinPoint-&gt;getMethodName() . ' in class ' . ⏎
-    $joinPoint-&gt;getClassName() . ' has been called.';
+		    $joinPoint-&gt;getClassName() . ' has been called.';
 		$this-&gt;logger-&gt;log($logMessage);
 	}
 }</programlisting>

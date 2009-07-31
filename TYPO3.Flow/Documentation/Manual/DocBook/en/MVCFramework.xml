@@ -113,7 +113,7 @@
       <example>
         <title>Hello World! controller</title>
 
-        <programlisting language="PHP">namespace F3\Demo\Controller;
+        <programlisting language="php">namespace F3\Demo\Controller;
 
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function indexAction() {
@@ -428,7 +428,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
     <interfacename>\F3\FLOW3\MVC\Controller\ControllerInterface</interfacename>
     therefore only contains two methods:</para>
 
-    <programlisting>/**
+    <programlisting language="php">/**
  * Checks if the current request type is supported by the controller.
  *
  * @param \F3\FLOW3\MVC\RequestInterface $request The current request
@@ -523,7 +523,7 @@ public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW
         <example>
           <title>Defining the supported request types</title>
 
-          <programlisting>/**
+          <programlisting language="php">/**
  * My web-specific controller
  */
 class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
@@ -562,7 +562,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
         <example>
           <title>Declaring arguments in an action method</title>
 
-          <programlisting>/**
+          <programlisting language="php">/**
  * An example action method
  *
  * @param string $emailAddress Some email address
@@ -605,7 +605,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
         <example>
           <title>Additional validation rules in an action method</title>
 
-          <programlisting>/**
+          <programlisting language="php">/**
  * An example action method
  *
  * @param string $emailAddress Some email address
@@ -759,7 +759,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       <para>But let's start with an easy example:<example>
           <title>Simple route - Routes.yaml</title>
 
-          <programlisting>--
+          <programlisting language="yaml">--
   name: 'Homepage'
   uriPattern: ''
   defaults:
@@ -811,7 +811,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
               <title>Simple route with static route parts -
               Configuration/Routes.yaml</title>
 
-              <para><programlisting>--
+              <para><programlisting language="yaml">--
   name: 'Static demo route'
   uriPattern: 'my/demo'
   defaults:
@@ -831,7 +831,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
               <title>Simple route with static and dynamic route parts -
               Configuration/Routes.yaml</title>
 
-              <para><programlisting>--
+              <para><programlisting language="yaml">--
   name: 'Dynamic demo route'
   uriPattern: 'my/demo/{@action}'
   defaults:
@@ -856,7 +856,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
           arguments:<example>
               <title>dynamic parameters - Configuration/Routes.yaml</title>
 
-              <programlisting>--
+              <programlisting language="yaml">--
   name: 'Dynamic demo route'
   uriPattern: 'clients/{sortOrder}.{@format}'
   defaults:
@@ -889,7 +889,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
           the blog example:<example>
               <title>BlogRoutePartHandler.php</title>
 
-              <programlisting language="PHP">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
+              <programlisting language="php">class BlogRoutePartHandler extends \F3\FLOW3\MVC\Web\Routing\DynamicRoutePart {
 
 	/**
 	 * While matching, converts the blog title into an identifer array
@@ -921,7 +921,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
               <title>Route with route part handlers -
               Configuration/Routes.yaml</title>
 
-              <programlisting>--
+              <programlisting language="yaml">--
   name: 'Blog route'
   uriPattern: 'blogs/{blog}/{@action}'
   defaults:
@@ -947,7 +947,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
             <title>Route with optional route parts -
             Configuration/Routes.yaml</title>
 
-            <para><programlisting>--
+            <para><programlisting language="yaml">--
   name: 'Dynamic demo route'
   uriPattern: 'my/demo(/{@action}.html)'
   defaults:
@@ -981,7 +981,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       file inside your demo package:<example>
           <title>Demo Subroutes - Demo/Configuration/Routes.yaml</title>
 
-          <programlisting>--
+          <programlisting language="yaml">--
   name: 'Customer routes'
   uriPattern: '/clients/{@action}'
   defaults:
@@ -1004,7 +1004,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       <para>And in your global <filename>Routes.yaml</filename>:<example>
           <title>Referencing subroutes - Configuration/Routes.yaml</title>
 
-          <programlisting>--
+          <programlisting language="yaml">--
   name: 'Demo subroutes'
   uriPattern: 'demo&lt;DemoSubroutes&gt;(.{@format})'
   defaults:
@@ -1023,7 +1023,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       route with its subroutes:<example>
           <title>Composite routes</title>
 
-          <programlisting>--
+          <programlisting language="yaml">--
   name: 'Demo subroutes :: Customer routes'
   uriPattern: 'demo/clients/{@action}(.{@format})'
   defaults:
@@ -1135,18 +1135,15 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
 
       <para>Calling the TYPO3CR setup:</para>
 
-      <para><code>php index.php typo3cr admin setup setup
-      --dsn=sqlite:/tmp/typo3cr.db --indexlocation=/tmp/lucene/</code></para>
+      <screen><code>php index.php typo3cr admin setup setup --dsn=sqlite:/tmp/typo3cr.db --indexlocation=/tmp/lucene/</code></screen>
 
       <para>Running FLOW3 unit tests:</para>
 
-      <para><code>php index.php testing cli run --package-key=FLOW3
-      --output-directory=./</code></para>
+      <screen><code>php index.php testing cli run --package-key=FLOW3 --output-directory=./</code></screen>
 
       <para>Rendering the FLOW3 documentation to HTML:</para>
 
-      <para><code>php index.php doctools manual render -f html -o
-      flow3-manual/ FLOW3</code></para>
+      <screen><code>php index.php doctools manual render -f html -o flow3-manual/ FLOW3</code></screen>
     </example>
   </section>
 </chapter>

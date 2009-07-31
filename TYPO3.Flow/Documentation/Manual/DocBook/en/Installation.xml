@@ -111,7 +111,8 @@
       to install more than one instance of FLOW3). Do that by adding the
       following lines to the file
       <filename>Configuration/FLOW3.yaml</filename> in your FLOW3-Distribution
-      (the indenting must be done with two spaces):<programlisting>utility:
+      (the indenting must be done with two spaces):<programlisting
+      language="yaml">utility:
   environment:
     temporaryDirectoryBase: C:/t/x/</programlisting></para>
     </tip>
