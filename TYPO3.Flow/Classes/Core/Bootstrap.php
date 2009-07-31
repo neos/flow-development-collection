@@ -28,8 +28,8 @@ require(__DIR__ . '/../Package/PackageInterface.php');
 require(__DIR__ . '/../Package/Package.php');
 
 define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
-if (getenv('FLOW3_ROOTPATH') !== FALSE) {
-	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath(getenv('FLOW3_ROOTPATH'))))) . '/';
+if (isset($_SERVER['FLOW3_ROOTPATH'])) {
+	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
 	$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
 	if ($testPath !== FLOW3_PATH_FLOW3) {
 		die('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
@@ -43,7 +43,10 @@ if (PHP_SAPI === 'cli') {
 	if (!defined('FLOW3_PATH_ROOT')) {
 		die('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
 	}
-	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(FLOW3_PATH_ROOT . 'Web')) . '/');
+	if (!isset($_SERVER['FLOW3_WEBPATH']) || !is_dir($_SERVER['FLOW3_WEBPATH'])) {
+		die('FLOW3: No web path defined in environment variable FLOW3_WEBPATH or directory does not exist (Error #1249046843)' . PHP_EOL);
+	}
+	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
 } else {
 	if (!defined('FLOW3_PATH_ROOT')) {
 		define('FLOW3_PATH_ROOT', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
