@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter version="5.0" xml:id="flow3.introduction"
+         xmlns="http://docbook.org/ns/docbook"
+         xmlns:xi="http://www.w3.org/2001/XInclude"
+         xmlns:ns6="http://www.w3.org/1999/xlink"
+         xmlns:ns5="http://www.w3.org/2000/svg"
+         xmlns:ns4="http://www.w3.org/1999/xhtml"
+         xmlns:ns3="http://www.w3.org/1998/Math/MathML"
+         xmlns:ns="http://docbook.org/ns/docbook">
+  <title>Security Framework</title>
+
+  <note>
+    <para>This chapter is work in progress.</para>
+  </note>
+
+  <para>All tasks related to security of a FLOW3 application are handled
+  centrally by the security framework. Besides other functionality, this
+  includes especially features like authentication, authorization, channel
+  security and a powerful ACL component.</para>
+
+  <section>
+    <title>Initialization</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Authentication</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Authorization</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Access Control Lists (ACL)</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Channel Security</title>
+
+    <para></para>
+  </section>
+
+  <section>
+    <title>Cryptography</title>
+
+    <para></para>
+  </section>
+</chapter>
