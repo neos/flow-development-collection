@@ -129,5 +129,35 @@ class FilesTest extends \F3\Testing\BaseTestCase {
 	public function concatenatePathsWorksForEmptyPathArrayElements() {
 		$this->assertEquals('foo/bar', \F3\FLOW3\Utility\Files::concatenatePaths(array('foo', '', 'bar')));
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUnixStylePathWorksForPathWithDriveLetterAndBackwardSlashes() {
+		$path = 'c:\\foo\\bar\\test\\';
+		$this->assertEquals('c:/foo/bar/test/', \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+	}
+
+	/**
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function pathsWithProtocol() {
+		return array(
+			array('file:///foo\\bar', 'file:///foo/bar'),
+			array('vfs:///foo\\bar', 'vfs:///foo/bar'),
+			array('phar:///foo\\bar', 'phar:///foo/bar')
+		);
+	}
+
+	/**
+	 * @test
+	 * @dataProvider pathsWithProtocol
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getUnixStylePathWorksForPathWithProtocol($path, $expected) {
+		$this->assertEquals($expected, \F3\FLOW3\Utility\Files::getUnixStylePath($path));
+	}
+
 }
 ?>

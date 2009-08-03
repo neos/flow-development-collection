@@ -39,7 +39,11 @@ class Files {
 	 * @author Malte Jansen <typo3@maltejansen.de>
 	 */
 	public static function getUnixStylePath($path) {
-		return str_replace(':/', '://', str_replace('//', '/', str_replace('\\', '/', $path)));
+		if (strpos($path, ':') === FALSE) {
+			return str_replace('//', '/', str_replace('\\', '/', $path));
+		} else {
+			return preg_replace('/^([a-z]{2,}):\//', '$1://', str_replace('//', '/', str_replace('\\', '/', $path)));
+		}
 	}
 
 	/**
