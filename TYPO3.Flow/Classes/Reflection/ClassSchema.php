@@ -133,6 +133,17 @@ class ClassSchema {
 	}
 
 	/**
+	 * Returns the given property defined in this schema. Check with
+	 * hasProperty($propertyName) before!
+	 *
+	 * @return array
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getProperty($propertyName) {
+		return $this->properties[$propertyName];
+	}
+
+	/**
 	 * Returns all properties defined in this schema
 	 *
 	 * @return array

@@ -64,6 +64,16 @@ class Mapper {
 	protected $validatorResolver;
 
 	/**
+	 * @var \F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
+
+	/**
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
+	 */
+	protected $persistenceManager;
+
+	/**
 	 * Injects the object factory
 	 *
 	 * @param \F3\FLOW3\Object\FactoryInterface
@@ -83,6 +93,28 @@ class Mapper {
 	 */
 	public function injectValidatorResolver(\F3\FLOW3\Validation\ValidatorResolver $validatorResolver) {
 		$this->validatorResolver = $validatorResolver;
+	}
+
+	/**
+	 * Injects the Reflection Service
+	 *
+	 * @param \F3\FLOW3\Reflection\Service
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
+	}
+
+	/**
+	 * Injects the persistence manager
+	 *
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -159,6 +191,16 @@ class Mapper {
 		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 
+		if (is_object($target)) {
+			if ($target instanceof \F3\FLOW3\AOP\ProxyInterface) {
+				$targetClassSchema = $this->reflectionService->getClassSchema($target->FLOW3_AOP_Proxy_getProxyTargetClassName());
+			} else {
+				$targetClassSchema = $this->reflectionService->getClassSchema(get_class($target));
+			}
+		} else {
+			$targetClassSchema = NULL;
+		}
+
 		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
 		$propertyValues = array();
 
@@ -171,6 +213,36 @@ class Mapper {
 		}
 		foreach ($propertyNames as $propertyName) {
 			if (isset($propertyValues[$propertyName])) {
+
+					// source is array with (seemingly) uuid strings and we have a target classschema knowing the property
+				if (is_array($propertyValues[$propertyName])
+						&& is_string(current($propertyValues[$propertyName]))
+						&& $targetClassSchema !== NULL
+						&& $targetClassSchema->hasProperty($propertyName)
+						&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', current($propertyValues[$propertyName])) === 1) {
+
+					$propertyMetaData = $targetClassSchema->getProperty($propertyName);
+						// the target is array-like and the elementType is a class
+					if (in_array($propertyMetaData['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && strpos($propertyMetaData['elementType'], '\\') !== FALSE) {
+						foreach ($propertyValues[$propertyName] as $k => $v) {
+								// convert to object and override original value
+							$existingObject = $this->persistenceManager->getBackend()->getObjectByIdentifier($v);
+							if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Querying the repository for the specified object of type ' . $$propertyMetaData['elementType'] . ' was not successful.', 1249379517);
+							$propertyValues[$propertyName][$k] = $existingObject;
+						}
+					}
+						// make sure we hand out what is expected
+					if ($propertyMetaData['type'] === 'ArrayObject') {
+						$propertyValues[$propertyName] = new \ArrayObject($propertyValues[$propertyName]);
+					} elseif ($propertyMetaData['type']=== 'SplObjectStorage') {
+						$objects = $propertyValues[$propertyName];
+						$propertyValues[$propertyName] = new \SplObjectStorage();
+						foreach ($objects as $object) {
+							$propertyValues[$propertyName]->attach($object);
+						}
+					}
+				}
+
 				if (is_array($target)) {
 					$target[$propertyName] = $source[$propertyName];
 				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValues[$propertyName]) === FALSE) {

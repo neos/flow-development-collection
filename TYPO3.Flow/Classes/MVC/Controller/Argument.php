@@ -385,8 +385,8 @@ class Argument {
 	 * Sets the value of this argument.
 	 *
 	 * Checks if the value is a UUID or an array but should be an object, i.e.
-	 * the argument's data type is a class (it contains a backslash). If that is
-	 * the case, this method tries to look up the corresponding object instead.
+	 * the argument's data type class schema is set. If that is the case, this
+	 * method tries to look up the corresponding object instead.
 	 *
 	 * @param mixed $value The value of this argument
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
