@@ -385,7 +385,7 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
           </listitem>
 
           <listitem>
-            <para>Add the following lines:<screen>#php5.3.0rc2 settings:
+            <para>Add the following lines:<screen>#php5.3 settings:
 #Preload the PHP interpreter dll so that apache can find it, even if it's not in the path
 LoadFile "C:/xampp/php/php5.3/php5ts.dll"
 
@@ -400,7 +400,9 @@ PHPIniDir "C:/xampp/php/php5.3"</screen></para>
         <bridgehead><filename>extra\httpd-vhosts.conf</filename></bridgehead>
 
         <para>Configure the VirtualHosts. Make them reference to the
-        <filename>Public</filename> folder of your FLOW3 installation.</para>
+        <filename>Public</filename> folder of your FLOW3 installation. You
+        might want to add an additional VirtualHost for the Development
+        Context of FLOW3 already.</para>
 
         <screen>NameVirtualHost *:81
 
@@ -412,13 +414,19 @@ PHPIniDir "C:/xampp/php/php5.3"</screen></para>
 &lt;VirtualHost *:81&gt;
     DocumentRoot "C:/xampp/htdocs/flow3/Public/" 
     ServerName flow3.local
+&lt;/VirtualHost&gt;
+
+&lt;VirtualHost *:81&gt;
+    DocumentRoot "C:/xampp/htdocs/flow3/Public/" 
+    ServerName dev.flow3.local
+    SetEnv FLOW3_CONTEXT Development
 &lt;/VirtualHost&gt;</screen>
 
         <note>
           <para>For other virtual hosts than "localhost" you'll need an
           additional entry in your hosts-file. Open the file
           <filename>C:\windows\system32\drivers\etc\hosts</filename> and add
-          the line <code>127.0.0.1 flow3.local</code>.</para>
+          the line <code>127.0.0.1 flow3.local dev.flow3.local</code>.</para>
         </note>
       </section>
 
@@ -426,8 +434,8 @@ PHPIniDir "C:/xampp/php/php5.3"</screen></para>
         <title>PHP Configuration</title>
 
         <para>Copy the file
-        <filename>C:\xampp\php\php5.3\php.ini-dist</filename> in the same
-        folder and rename it to <filename>php.ini</filename>. Change the
+        <filename>C:\xampp\php\php5.3\php.ini-development</filename> in the
+        same folder and rename it to <filename>php.ini</filename>. Change the
         following things:</para>
 
         <itemizedlist>
