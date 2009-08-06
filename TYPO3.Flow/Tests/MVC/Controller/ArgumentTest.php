@@ -307,6 +307,22 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function validationCanBeDisabledAndEnabledAgain() {
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+
+		$this->assertFalse($argument->isValidationDisabled());
+
+		$argument->disableValidation();
+		$this->assertTrue($argument->isValidationDisabled());
+
+		$argument->enableValidation();
+		$this->assertFalse($argument->isValidationDisabled());
+	}
+
+	/**
+	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setDefaultValueReallySetsDefaultValue() {

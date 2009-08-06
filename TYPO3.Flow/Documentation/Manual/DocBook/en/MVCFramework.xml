@@ -56,7 +56,7 @@
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="MVCFramework_ModelViewController.png"
-                       scalefit="1" width="100%"/>
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -301,7 +301,7 @@ class StandardController extends \F3\FLOW3\MVC\Controller\ActionController {
           <imageobject>
             <imagedata contentdepth="100%"
                        fileref="MVCFramework_RequestResponseWorkflow.png"
-                       scalefit="1" width="100%"/>
+                       scalefit="1" width="100%"></imagedata>
           </imageobject>
         </mediaobject>
       </figure>
@@ -621,6 +621,23 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
 }
 </programlisting>
         </example>
+
+        <para>In a few situations it is necessary to disable validation for a
+        single argument, for example if an object needs to passed between
+        actions while it is beeing edited and therefore is knowingly in an
+        incomplete state. In these cases validation can be swtiched off
+        through the <literal>@dontvalidate</literal> annotation:</para>
+
+        <programlisting language="php">/**
+ * An example edit action method
+ *
+ * @param F3\Foo\Model\Customer $customer A customer object
+ * @return void
+ * @dontvalidate $customer
+ */
+public function editAction(\F3\Foo\Model\Customer $customer) {
+   
+}</programlisting>
       </section>
 
       <section>
@@ -628,7 +645,7 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
 
         <para>$this-&gt;indexActionMethodName</para>
 
-        <para/>
+        <para></para>
       </section>
     </section>
 
@@ -638,19 +655,19 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       <section>
         <title>Abstract Controller</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
         <title>Request Handling Controller</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
         <title>Standard Controller</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
@@ -672,12 +689,12 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
   <section xml:id="flow3.mvcframework.view">
     <title>View</title>
 
-    <para/>
+    <para></para>
 
     <section>
       <title>Template View</title>
 
-      <para/>
+      <para></para>
     </section>
 
     <section>
@@ -686,13 +703,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
       <section>
         <title>Standard View</title>
 
-        <para/>
+        <para></para>
       </section>
 
       <section>
         <title>Empty View</title>
 
-        <para/>
+        <para></para>
       </section>
     </section>
   </section>
@@ -700,13 +717,13 @@ public function exampleAction($emailAddress, $streetName, \F3\Foo\Model\Customer
   <section xml:id="flow3.mvcframework.helpers">
     <title>Helpers</title>
 
-    <para/>
+    <para></para>
   </section>
 
   <section xml:id="flow3.mvcframework.model">
     <title>Model</title>
 
-    <para/>
+    <para></para>
   </section>
 
   <section xml:id="flow3.mvcframework.routing">

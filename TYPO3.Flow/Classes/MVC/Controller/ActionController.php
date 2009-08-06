@@ -166,7 +166,32 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$validatorConjunctions = $this->validatorResolver->buildMethodArgumentsValidatorConjunctions(get_class($this), $this->actionMethodName);
 		foreach ($validatorConjunctions as $argumentName => $validatorConjunction) {
 			if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found custom validation rule for non existing argument "' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1239853108);
-			$this->arguments[$argumentName]->setValidator($validatorConjunction);
+			$argument = $this->arguments[$argumentName];
+			$existingValidator = $argument->getValidator();
+			if ($existingValidator !== NULL) {
+				$validatorConjunction->addValidator($existingValidator);
+			}
+			$argument->setValidator($validatorConjunction);
+		}
+
+		$this->evaluateDontValidateAnnotations();
+	}
+
+	/**
+	 * Parses @dontvalidate annotations of an action method an disables validation for
+	 * the specified arguments.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function evaluateDontValidateAnnotations() {
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
+		if (isset($methodTagsValues['dontvalidate'])) {
+			foreach ($methodTagsValues['dontvalidate'] as $dontValidateValue) {
+				$argumentName = substr($dontValidateValue, 1);
+				if (!isset($this->arguments[$argumentName])) throw new \F3\FLOW3\MVC\Exception\NoSuchArgument('Found @dontvalidate annotation for non existing argument "$' . $argumentName . '" in ' . get_class($this) . '->' . $this->actionMethodName . '().', 1249484908);
+				$this->arguments[$argumentName]->disableValidation();
+			}
 		}
 	}
 

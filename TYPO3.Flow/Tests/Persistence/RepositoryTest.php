@@ -301,6 +301,42 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function replaceChecksObjectType() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'ExpectedObjectType');
+
+		$repository->replace(new \stdClass(), new \stdClass());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function updateReplacesAnObjectWithTheSameUUIDByTheGivenObject() {
+		$existingObject = new \stdClass;
+		$modifiedObject = new \stdClass;
+
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
+		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
+
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('replace'));
+		$repository->expects($this->once())->method('replace')->with($existingObject, $modifiedObject);
+
+		$repository->_set('objectType', get_class($modifiedObject));
+		$repository->injectPersistenceManager($mockPersistenceManager);
+		$repository->update($modifiedObject);
+	}
+
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function magicCallMethodAcceptsFindBySomethingCallsAndExecutesAQueryWithThatCriteria() {
@@ -363,18 +399,6 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->_set('objectType', 'ExpectedObjectType');
 
 		$repository->remove(new \stdClass());
-	}
-
-	/**
-	 * @test
-	 * @expectedException F3\FLOW3\Persistence\Exception\IllegalObjectType
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function replaceChecksObjectType() {
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
-		$repository->_set('objectType', 'ExpectedObjectType');
-
-		$repository->replace(new \stdClass(), new \stdClass());
 	}
 }
 

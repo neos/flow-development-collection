@@ -111,6 +111,12 @@ class Argument {
 	protected $validator = NULL;
 
 	/**
+	 * If validation for this argument is temporarily disabled
+	 * @var boolean
+	 */
+	protected $validationDisabled = FALSE;
+
+	/**
 	 * A filter for this argument
 	 * @var \F3\FLOW3\Validation\FilterInterface
 	 */
@@ -357,6 +363,43 @@ class Argument {
 	 */
 	public function getValidator() {
 		return $this->validator;
+	}
+
+	/**
+	 * Returns TRUE if validation is temporarily disabled for this argument and
+	 * FALSE if it's enabled.
+	 *
+	 * Note that this is flag is only informational and does not have any real impact
+	 * on other validation methods of this argument.
+	 *
+	 * @return boolean If validation is disabled
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function isValidationDisabled() {
+		return $this->validationDisabled;
+	}
+
+	/**
+	 * Enables validation for this argument.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function enableValidation() {
+		$this->validationDisabled = FALSE;
+	}
+
+	/**
+	 * Disables validation for this argument.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function disableValidation() {
+		$this->validationDisabled = TRUE;
 	}
 
 	/**

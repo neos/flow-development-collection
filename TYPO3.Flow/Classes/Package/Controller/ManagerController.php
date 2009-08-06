@@ -111,10 +111,14 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function activateAction($packageKey) {
 		if ($packageKey === '') {
 			return $this->helpAction();
-		} else {
-			$this->packageManager->activatePackage($packageKey);
-			return 'Package "' . $packageKey . '" activated.' . PHP_EOL;
 		}
+
+		if ($this->packageManager->isPackageActive($packageKey)) {
+			return 'Package "' . $packageKey . '" is already active.' . PHP_EOL;
+		}
+
+		$this->packageManager->activatePackage($packageKey);
+		return 'Package "' . $packageKey . '" activated.' . PHP_EOL;
 	}
 
 	/**
@@ -127,10 +131,14 @@ class ManagerController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function deactivateAction($packageKey) {
 		if ($packageKey === '') {
 			return $this->helpAction();
-		} else {
-			$this->packageManager->deactivatePackage($packageKey);
-			return 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
 		}
+
+		if (!$this->packageManager->isPackageActive($packageKey)) {
+			return 'Package "' . $packageKey . '" was not active.' . PHP_EOL;
+		}
+
+		$this->packageManager->deactivatePackage($packageKey);
+		return 'Package "' . $packageKey . '" deactivated.' . PHP_EOL;
 	}
 
 	/**

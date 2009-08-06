@@ -173,6 +173,28 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Replaces an existing object with the same identifier by the given object
+	 *
+	 * @param object $modifiedObject The modified object
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @api
+	 */
+	public function update($modifiedObject) {
+		if (!($modifiedObject instanceof $this->objectType)) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
+		}
+
+		$backend = $this->persistenceManager->getBackend();
+		$uuid = $backend->getIdentifierByObject($modifiedObject);
+		if ($uuid !== NULL) {
+			$existingObject = $backend->getObjectByIdentifier($uuid);
+			$this->replace($existingObject, $modifiedObject);
+		} else {
+			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
+		}
+	}
+
+	/**
 	 * Returns all addedObjects that have been added to this repository with add().
 	 *
 	 * This is a service method for the persistence manager to get all addedObjects

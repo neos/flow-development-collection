@@ -290,12 +290,12 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$validatorResolver = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Validation\ValidatorResolver'), array('resolveValidatorObjectName', 'createValidator'), array($mockObjectManager));
 		$validatorResolver->injectReflectionService($mockReflectionService);
 
-		$validatorResolver->expects($this->at(0))->method('resolveValidatorObjectName')->with($className . 'Validator')->will($this->returnValue(FALSE));
-		$validatorResolver->expects($this->at(1))->method('createValidator')->with('GenericObject')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(4))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
-		$validatorResolver->expects($this->at(5))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(0))->method('createValidator')->with('GenericObject')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(1))->method('createValidator')->with('Foo', array('bar' => 'baz'))->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(2))->method('createValidator')->with('Bar')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(3))->method('createValidator')->with('Baz')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(4))->method('createValidator')->with('F3\TestPackage\Quux')->will($this->returnValue($mockObjectValidator));
+		$validatorResolver->expects($this->at(5))->method('resolveValidatorObjectName')->with($className . 'Validator')->will($this->returnValue(FALSE));
 
 		$result = $validatorResolver->_call('buildBaseValidatorConjunction', $className);
 		$this->assertSame($mockConjunctionValidator, $result);

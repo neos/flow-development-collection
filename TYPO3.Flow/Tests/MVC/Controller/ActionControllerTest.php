@@ -288,7 +288,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('integerArgument', 'integer', TRUE);
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('objectArgument', 'F3\Foo\Bar', TRUE);
 
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
 		$methodParameters = array(
 			'stringArgument' => array(
@@ -339,7 +339,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockArguments->expects($this->at(1))->method('addNewArgument')->with('arg2', 'array', FALSE, array(21));
 		$mockArguments->expects($this->at(2))->method('addNewArgument')->with('arg3', 'Text', FALSE, 42);
 
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
 		$methodParameters = array(
 			'arg1' => array(
@@ -390,7 +390,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initializeActionMethodValidatorsDetectsValidateAnnotationsAndRegistersNewValidatorsForEachArgument() {
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction'), array(), '', FALSE);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
 
 		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
 		$chain2 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
@@ -404,14 +404,79 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
 
 		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
-		$mockArgument->expects($this->at(0))->method('setValidator')->with($chain1);
+		$mockArgument->expects($this->at(0))->method('getValidator')->will($this->returnValue(NULL));
 		$mockArgument->expects($this->at(1))->method('setValidator')->with($chain1);
+		$mockArgument->expects($this->at(2))->method('getValidator')->will($this->returnValue(NULL));
+		$mockArgument->expects($this->at(3))->method('setValidator')->with($chain1);
 
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArguments->expects($this->at(0))->method('offsetExists')->with('arg1')->will($this->returnValue(TRUE));
 		$mockArguments->expects($this->at(1))->method('offsetGet')->with('arg1')->will($this->returnValue($mockArgument));
 		$mockArguments->expects($this->at(2))->method('offsetExists')->with('arg2')->will($this->returnValue(TRUE));
 		$mockArguments->expects($this->at(3))->method('offsetGet')->with('arg2')->will($this->returnValue($mockArgument));
+
+		$mockController->injectValidatorResolver($mockValidatorResolver);
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_call('initializeActionMethodValidators');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeActionMethodValidatorsAddsExistingRulesToConjunctionValidatorDefinedByAnnotations() {
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('evaluateDontValidateAnnotations');
+
+		$mockExistingValidator = $this->getMock('F3\FLOW3\Validation\Validator\ValidatorInterface', array(), array(), '', FALSE);
+
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$chain1->expects($this->once())->method('addValidator')->with($mockExistingValidator);
+		$validatorChains = array(
+			'arg1' => $chain1,
+		);
+
+		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
+
+		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+		$mockArgument->expects($this->at(0))->method('getValidator')->will($this->returnValue($mockExistingValidator));
+		$mockArgument->expects($this->at(1))->method('setValidator')->with($chain1);
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments->expects($this->at(0))->method('offsetExists')->with('arg1')->will($this->returnValue(TRUE));
+		$mockArguments->expects($this->at(1))->method('offsetGet')->with('arg1')->will($this->returnValue($mockArgument));
+
+		$mockController->injectValidatorResolver($mockValidatorResolver);
+		$mockController->_set('actionMethodName', 'fooAction');
+		$mockController->_set('arguments', $mockArguments);
+		$mockController->_call('initializeActionMethodValidators');
+			}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeActionMethodValidatorsCallsEvaluateDontValidateAnnotations() {
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('fooAction', 'evaluateDontValidateAnnotations'), array(), '', FALSE);
+		$mockController->expects($this->once())->method('evaluateDontValidateAnnotations');
+
+		$chain1 = $this->getMock('F3\FLOW3\Validation\Validator\ConjunctionValidator', array(), array(), '', FALSE);
+		$validatorChains = array(
+			'arg1' => $chain1,
+		);
+
+		$mockValidatorResolver = $this->getMock('F3\FLOW3\Validation\ValidatorResolver', array(), array(), '', FALSE);
+		$mockValidatorResolver->expects($this->once())->method('buildMethodArgumentsValidatorConjunctions')->with(get_class($mockController), 'fooAction')->will($this->returnValue($validatorChains));
+
+		$mockArgument = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
+		$mockArgument->expects($this->at(0))->method('getValidator')->will($this->returnValue(NULL));
+		$mockArgument->expects($this->at(1))->method('setValidator')->with($chain1);
+
+		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
+		$mockArguments->expects($this->at(0))->method('offsetExists')->with('arg1')->will($this->returnValue(TRUE));
+		$mockArguments->expects($this->at(1))->method('offsetGet')->with('arg1')->will($this->returnValue($mockArgument));
 
 		$mockController->injectValidatorResolver($mockValidatorResolver);
 		$mockController->_set('actionMethodName', 'fooAction');

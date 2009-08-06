@@ -155,12 +155,6 @@ class ValidatorResolver {
 	protected function buildBaseValidatorConjunction($dataType) {
 		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
-		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
-		$customValidatorObjectName = $this->resolveValidatorObjectName($possibleValidatorClassName);
-		if ($customValidatorObjectName !== FALSE) {
-			$validatorConjunction->addValidator($this->objectManager->getObject($customValidatorObjectName));
-		}
-
 		if (class_exists($dataType)) {
 			$validatorCount = 0;
 			$objectValidator = $this->createValidator('GenericObject');
@@ -182,6 +176,12 @@ class ValidatorResolver {
 				}
 			}
 			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
+		}
+
+		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
+		$customValidatorObjectName = $this->resolveValidatorObjectName($possibleValidatorClassName);
+		if ($customValidatorObjectName !== FALSE) {
+			$validatorConjunction->addValidator($this->objectManager->getObject($customValidatorObjectName));
 		}
 
 		return $validatorConjunction;
