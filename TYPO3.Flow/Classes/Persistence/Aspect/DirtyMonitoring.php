@@ -96,6 +96,22 @@ class DirtyMonitoring {
 	}
 
 	/**
+	 * Around advice, implements the FLOW3_Persistence_isClone() method introduced above
+	 *
+	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @return boolean if the object is a clone
+	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isClone())
+	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function isClone(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$joinPoint->getAdviceChain()->proceed($joinPoint);
+
+		$proxy = $joinPoint->getProxy();
+		return property_exists($proxy, 'FLOW3_Persistence_clone');
+	}
+
+	/**
 	 * Around advice, implements the FLOW3_Persistence_isDirty() method introduced above
 	 *
 	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
@@ -171,7 +187,9 @@ class DirtyMonitoring {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
-		unset($joinPoint->getProxy()->FLOW3_Persistence_cleanProperties);
+		$proxy = $joinPoint->getProxy();
+		unset($proxy->FLOW3_Persistence_cleanProperties);
+		$proxy->FLOW3_Persistence_clone = TRUE;
 	}
 }
 ?>

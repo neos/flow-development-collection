@@ -161,6 +161,28 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function cloneObjectMarksTheObjectAsCloned() {
+		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
+
+		$object = new \stdClass();
+		$object->FLOW3_Persistence_cleanProperties = array('foo');
+
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+
+		$this->assertFalse($aspect->isClone($mockJoinPoint));
+		$aspect->cloneObject($mockJoinPoint);
+		$this->assertTrue($aspect->isClone($mockJoinPoint));
+	}
+
+	/**
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function newObjectsAreDirty() {

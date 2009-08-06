@@ -66,7 +66,7 @@ define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
  */
 final class Bootstrap {
 
-	const REVISION = '$Revision$';
+	const REVISION = '$Revision: 2956$';
 
 	/**
 	 * Required PHP version

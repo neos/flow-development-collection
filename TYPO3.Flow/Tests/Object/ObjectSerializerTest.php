@@ -356,6 +356,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 			public function FLOW3_Persistence_isNew() {}
+			public function FLOW3_Persistence_isClone() {}
 			public function FLOW3_Persistence_isDirty($propertyName) {}
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function __clone() {}
@@ -417,6 +418,7 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 			public function FLOW3_AOP_Proxy_getProperty($propertyName) {}
 			public function FLOW3_AOP_Proxy_setProperty($propertyName, $propertyValue) {}
 			public function FLOW3_Persistence_isNew() {}
+			public function FLOW3_Persistence_isClone() {}
 			public function FLOW3_Persistence_isDirty($propertyName) {}
 			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
 			public function __clone() {}

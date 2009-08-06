@@ -38,6 +38,13 @@ interface DirtyMonitoringInterface {
 	public function FLOW3_Persistence_isNew();
 
 	/**
+	 * If the monitored object is a clone of another object
+	 *
+	 * @return boolean TRUE if the object is a clone, otherwise FALSE
+	 */
+	public function FLOW3_Persistence_isClone();
+
+	/**
 	 * If the specified property of the reconstituted object has been modified
 	 * since it woke up.
 	 *
