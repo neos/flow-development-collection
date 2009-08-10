@@ -120,6 +120,10 @@ F3\FLOW3\Cache\Backend\TransientMemoryBackend:
   autowiring: off
   scope: prototype
 
+F3\FLOW3\Cache\Controller\ManagerController:
+  properties:
+    cacheManager: object: F3\FLOW3\Cache\Manager
+
 #                                                                          #
 # Configuration                                                            #
 #                                                                          #
