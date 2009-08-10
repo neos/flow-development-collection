@@ -229,8 +229,8 @@ class GeneratorService {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFilename));
 		}
 		file_put_contents($targetPathAndFilename, $fileContent);
-		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW3_PATH_ROOT) + 1);
-		$this->generatedFiles[] = '+ ' . $relativeTargetPathAndFilename;
+		$relativeTargetPathAndFilename = substr($targetPathAndFilename, strlen(FLOW3_PATH_ROOT) - 1);
+		$this->generatedFiles[] = '+ ...' . $relativeTargetPathAndFilename;
 	}
 
 	/**
