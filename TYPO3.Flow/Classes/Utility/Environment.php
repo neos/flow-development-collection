@@ -250,6 +250,8 @@ class Environment {
 	public function getRequestURI() {
 		if (isset($this->SERVER['PATH_INFO'])) {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['PATH_INFO'] . (strlen($this->SERVER['QUERY_STRING']) ? '?' . $this->SERVER['QUERY_STRING'] : '');
+		} else if (isset($this->SERVER['REQUEST_URI'])) {
+			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . $this->SERVER['REQUEST_URI'];
 		} else {
 			$requestURIString = $this->getRequestProtocol() . '://' . $this->getHTTPHost() . '/';
 		}
