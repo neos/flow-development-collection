@@ -104,6 +104,6 @@ abstract class AbstractConstraint {
 	 * @return string The constraint scope (package, system)
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public abstract function getConstraintScope();
+	abstract public function getConstraintScope();
 }
 ?>

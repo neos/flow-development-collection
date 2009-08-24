@@ -112,6 +112,6 @@ abstract class AbstractParty {
 	 * @return string The type of the party (person, company)
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public abstract function getPartyType();
+	abstract public function getPartyType();
 }
 ?>

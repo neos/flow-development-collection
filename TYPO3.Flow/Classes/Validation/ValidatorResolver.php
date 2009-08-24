@@ -142,7 +142,7 @@ class ValidatorResolver {
 	 * Builds a base validator conjunction for the given data type.
 	 *
 	 * The base validation rules are those which were declared directly in a class (typically
-	 * a model) through some @validate annotations.
+	 * a model) through some @validate annotations on properties.
 	 *
 	 * Additionally, if a custom validator was defined for the class in question, it will be added
 	 * to the end of the conjunction. A custom validator is found if it follows the naming convention

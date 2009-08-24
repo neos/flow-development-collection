@@ -37,7 +37,7 @@ class Algorithms {
 	 * @return string The universally unique id
 	 * @author Unkown
 	 */
-	public static function generateUUID() {
+	static public function generateUUID() {
 		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
 			mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ), mt_rand( 0, 0xffff ),
 			mt_rand( 0, 0x0fff ) | 0x4000,

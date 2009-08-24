@@ -38,7 +38,7 @@ class Files {
 	 * @return string
 	 * @author Malte Jansen <typo3@maltejansen.de>
 	 */
-	public static function getUnixStylePath($path) {
+	static public function getUnixStylePath($path) {
 		if (strpos($path, ':') === FALSE) {
 			return str_replace('//', '/', str_replace('\\', '/', $path));
 		} else {
@@ -57,7 +57,7 @@ class Files {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @see getUnixStylePath()
 	 */
-	public static function concatenatePaths(array $paths) {
+	static public function concatenatePaths(array $paths) {
 		$resultingPath = '';
 		foreach ($paths as $index => $path) {
 			$path = self::getUnixStylePath($path);
@@ -83,7 +83,7 @@ class Files {
 	 * @return array Filenames including full path
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public static function readDirectoryRecursively($path, $suffix = NULL, &$filenames = array()) {
+	static public function readDirectoryRecursively($path, $suffix = NULL, &$filenames = array()) {
 		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1207253462);
 
 		$directoryIterator = new \DirectoryIterator($path);
@@ -110,7 +110,7 @@ class Files {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see removeDirectoryRecursively()
 	 */
-	public static function emptyDirectoryRecursively($path) {
+	static public function emptyDirectoryRecursively($path) {
 		if (!is_dir($path)) throw new \F3\FLOW3\Utility\Exception('"' . $path . '" is no directory.', 1169047616);
 
 		$directoryIterator = new \RecursiveDirectoryIterator($path);
@@ -134,7 +134,7 @@ class Files {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see emptyDirectoryRecursively()
 	 */
-	public static function removeDirectoryRecursively($path) {
+	static public function removeDirectoryRecursively($path) {
 		self::emptyDirectoryRecursively($path);
 		rmdir($path);
 	}
@@ -149,7 +149,7 @@ class Files {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @todo Make mode configurable / make umask configurable
 	 */
-	public static function createDirectoryRecursively($path) {
+	static public function createDirectoryRecursively($path) {
 		if (substr($path, -2) === '/.') {
 			$path = substr($path, 0, -1);
 		}
@@ -170,7 +170,7 @@ class Files {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public static function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
+	static public function copyDirectoryRecursively($sourceDirectory, $targetDirectory) {
 		if (!is_dir($sourceDirectory)) throw new \F3\FLOW3\Utility\Exception('"' . $sourceDirectory . '" is no directory.', 1235428779);
 
 		self::createDirectoryRecursively($targetDirectory);
@@ -196,7 +196,7 @@ class Files {
 	 * @return mixed The file content as a string or FALSE if the file could not be opened.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public static function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
+	static public function getFileContents($pathAndFilename, $flags = 0, $context = NULL, $offset = -1, $maximumLength = -1) {
 		if ($flags === TRUE) $flags = FILE_USE_INCLUDE_PATH;
 		try {
 			if ($maximumLength > -1) {
