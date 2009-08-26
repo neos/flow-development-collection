@@ -90,8 +90,8 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($packageKey === NULL) {
 			$backtrace = debug_backtrace(FALSE);
-			$className = $backtrace[1]['class'];
-			$methodName = $backtrace[1]['function'];
+			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : '';
+			$methodName = isset($backtrace[1]['function']) ? $backtrace[1]['function'] : '';
 			$explodedClassName = explode('\\', $className);
 			$packageKey = $explodedClassName[1];
 		}
