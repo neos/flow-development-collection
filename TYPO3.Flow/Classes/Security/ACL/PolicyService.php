@@ -53,6 +53,11 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	protected $policyExpressionParser;
 
 	/**
+	 * @var array All configured resources
+	 */
+	protected $resources = array();
+
+	/**
 	 * @var array The roles tree array
 	 */
 	protected $roles = array();
@@ -119,6 +124,8 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 */
 	public function initializeObject() {
 		$this->roles = $this->settings['security']['policy']['roles'];
+		$this->resources = $this->settings['security']['policy']['resources'];
+
 		if ($this->cache->has('acls')) {
 			$this->acls = $this->cache->get('acls');
 		}
@@ -216,7 +223,14 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function getPrivilegesForResource(\F3\FLOW3\Security\ACL\Role $role, $resource) {
-		if (!isset($this->acls[$resource])) throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+		if (!isset($this->acls[$resource])) {
+			if (isset($this->resources[$resource])) {
+				$accessDenyPrivilege = $this->objectFactory->create('F3\FLOW3\Security\ACL\Privilege', 'ACCESS', FALSE);
+				return array($accessDenyPrivilege);
+			} else {
+				throw new \F3\FLOW3\Security\Exception\NoEntryInPolicy('The given resource was not found in the policy cache. Most likely you have to recreate the AOP proxy classes.', 1248348214);
+			}
+		}
 
 		$privileges = $this->parsePrivileges($resource, (string)$role, '');
 		if (!is_array($privileges)) return array();

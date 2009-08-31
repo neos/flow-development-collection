@@ -219,5 +219,28 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$this->assertEquals($expectedPrivileges, $policyService->_call('parsePrivileges', 'className->methodName', 'myRole', ''));
 
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function getPrivilegesForResourceReturnsAnAccessDenyPrivilegeIfAskedForAResourceThatIsNotConnectedToAnACLEntry() {
+		$mockRole = $this->getMock('F3\FLOW3\Security\ACL\Role', array(), array(), '', FALSE);
+
+		$policyServiceClassName = $this->buildAccessibleProxy('F3\FLOW3\Security\ACL\PolicyService');
+		$policyService = new $policyServiceClassName();
+		$policyService->injectObjectFactory($this->objectFactory);
+
+		$policyService->_set('acls', array());
+		$policyService->_set('resources', array('someResourceNotConnectedToAnACLEntry' => 'someDefinition'));
+
+		$expectedPrivilege = array(
+			new \F3\FLOW3\Security\ACL\Privilege('ACCESS', FALSE),
+		);
+
+		$this->assertEquals($expectedPrivilege, $policyService->_call('getPrivilegesForResource', $mockRole, 'someResourceNotConnectedToAnACLEntry'));
+
+	}
 }
 ?>
