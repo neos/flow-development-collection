@@ -171,12 +171,12 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	/**
 	 * Builds the provider and token objects based on the given configuration
 	 *
-	 * @param array $providers The configured provider settings
+	 * @param array $providerConfigurations The configured provider settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildProvidersAndTokensFromConfiguration(array $providers) {
-		foreach ($providers as $providerName => $providerConfiguration) {
+	protected function buildProvidersAndTokensFromConfiguration(array $providerConfigurations) {
+		foreach ($providerConfigurations as $providerName => $providerConfiguration) {
 
 			if (!is_array($providerConfiguration) || !isset($providerConfiguration['providerClass'])) throw new \F3\FLOW3\Security\Exception\InvalidAuthenticationProvider('The configured authentication provider "' . $providerConfiguration['providerClass'] . '" could not be found!', 1248209521);
 

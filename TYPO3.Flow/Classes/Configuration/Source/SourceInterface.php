@@ -23,9 +23,6 @@ namespace F3\FLOW3\Configuration\Source;
  *                                                                        */
 
 /**
- */
-
-/**
  * Contract for a configuration source
  *
  * @version $Id$
@@ -43,5 +40,15 @@ interface SourceInterface {
 	 * @throws \F3\FLOW3\Configuration\Exception\NoSuchFile if the specified file does not exist
 	 */
 	public function load($pathAndFilename);
+
+	/**
+	 * Save the specified configuration container to the given file
+	 *
+	 * @param string $pathAndFilename Full path and file name of the file to write to, excluding the dot and file extension
+	 * @param array $configuration The configuration array to save
+	 * @return void
+	 */
+	public function save($pathAndFilename, array $configuration);
+
 }
 ?>

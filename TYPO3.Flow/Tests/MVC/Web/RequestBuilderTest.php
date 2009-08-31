@@ -81,8 +81,8 @@ class RequestBuilderTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->will($this->returnValue($this->mockRequest));
 
-		$this->mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getSpecialConfiguration'), array(), '', FALSE);
-		$this->mockConfigurationManager->expects($this->once())->method('getSpecialConfiguration')->will($this->returnValue(array()));
+		$this->mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration'), array(), '', FALSE);
+		$this->mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue(array()));
 
 		$this->mockRouter = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface', array('route', 'setRoutesConfiguration', 'resolve'));
 

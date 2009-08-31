@@ -30,80 +30,102 @@ namespace F3\FLOW3\Configuration;
  */
 class Manager {
 
-	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
-	const CONFIGURATION_TYPE_PACKAGE = 'Package';
-	const CONFIGURATION_TYPE_PACKAGE_STATES = 'PackageStates';
-	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
-	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
-	const CONFIGURATION_TYPE_ROUTES = 'Routes';
-	const CONFIGURATION_TYPE_SIGNALSSLOTS = 'SignalsSlots';
 	const CONFIGURATION_TYPE_CACHES = 'Caches';
+	const CONFIGURATION_TYPE_FLOW3 = 'FLOW3';
+	const CONFIGURATION_TYPE_OBJECTS = 'Objects';
+	const CONFIGURATION_TYPE_PACKAGE = 'Package';
+	const CONFIGURATION_TYPE_PACKAGESTATES = 'PackageStates';
+	const CONFIGURATION_TYPE_ROUTES = 'Routes';
+	const CONFIGURATION_TYPE_SECURITY = 'Security';
+	const CONFIGURATION_TYPE_SETTINGS = 'Settings';
+	const CONFIGURATION_TYPE_SIGNALSSLOTS = 'SignalsSlots';
 
 	/**
-	 * @var \F3\FLOW3\Package\ManagerInterface
-	 */
-	protected $packageManager;
-
-	/**
-	 * @var string The application context of the configuration to manage
+	 * The application context of the configuration to manage
+	 * @var string
 	 */
 	protected $context;
 
 	/**
-	 * Storage for the settings, loaded by loadGlobalSettings()
-	 *
-	 * @var array
+	 * @var \F3\FLOW3\Configuration\Source\SourceInterface
 	 */
-	protected $settings = array();
+	protected $configurationSource;
+
+	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
+	 * @var string
+	 */
+	protected $includeCachedConfigurationsPathAndFilename;
 
 	/**
 	 * Storage of the raw special configurations
-	 *
 	 * @var array
 	 */
 	protected $configurations = array(
-		'Routes' => array(),
-		'SignalsSlots' => array(),
-		'Caches' => array()
+		self::CONFIGURATION_TYPE_SETTINGS => array(),
 	);
 
 	/**
-	 * The configuration sources used for loading the raw configuration
-	 *
-	 * @var array
+	 * Active packages to load the configuration for
+	 * @var array <F3\FLOW3\Package\PackageInterface>
 	 */
-	protected $configurationSources;
+	protected $packages = array();
 
 	/**
-	 * A single writable configuration source
-	 *
-	 * @var \F3\FLOW3\Configuration\Source\WritableSourceInterface
+	 * @var boolean
 	 */
-	protected $writableConfigurationSource;
+	protected $cacheNeedsUpdate = FALSE;
 
 	/**
 	 * Constructs the configuration manager
 	 *
-	 * @param string $context The application context to fetch configuration for.
-	 * @param array $configurationSources An array of configuration sources
+	 * @param string $context The application context to fetch configuration for
 	 */
-	public function __construct($context, array $configurationSources) {
+	public function __construct($context) {
 		$this->context = $context;
-		$this->configurationSources = $configurationSources;
+		$this->includeCachedConfigurationsPathAndFilename = FLOW3_PATH_CONFIGURATION . $context . '/IncludeCachedConfigurations.php';
+		$this->loadConfigurationCache();
 	}
 
 	/**
-	 * Injects the package manager
+	 * Injects the configuration source
 	 *
-	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
+	 * @param \F3\FLOW3\Configuration\Source\SourceInterface $configurationSource
 	 * @return void
 	 */
-	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
-		$this->packageManager = $packageManager;
+	public function injectConfigurationSource(\F3\FLOW3\Configuration\Source\SourceInterface $configurationSource) {
+		$this->configurationSource = $configurationSource;
+	}
+
+	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
+	 * Sets the active packages to load the configuration for
+	 *
+	 * @param array <F3\FLOW3\Package\PackageInterface> $packages
+	 * @return void
+	 */
+	public function setPackages(array $packages) {
+		$this->packages = $packages;
 	}
 
 	/**
 	 * Returns an array with the settings defined for the specified package.
+	 *
+	 * If the settings have not yet been loaded, this function tries to load them from the
+	 * configuration source.
 	 *
 	 * @param string $packageKey Key of the package to return the settings for
 	 * @return array The settings of the specified package
@@ -111,77 +133,152 @@ class Manager {
 	 * @api
 	 */
 	public function getSettings($packageKey) {
-		if (isset($this->settings[$packageKey])) {
-			$settings = $this->settings[$packageKey];
-		} else {
-			$settings = array();
+		if (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS][$packageKey])) {
+			$this->loadSettings($this->packages);
 		}
-		return $settings;
+		return isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS][$packageKey]) ? $this->configurations[self::CONFIGURATION_TYPE_SETTINGS][$packageKey] : array();
 	}
 
 	/**
-	 * Loads the FLOW3 core settings defined in the FLOW3 package and the global
-	 * configuration directories.
+	 * Returns the specified raw configuration.
+	 * The actual configuration will be merged from different sources in a defined order.
 	 *
-	 * The FLOW3 settings can be retrieved like any other setting through the
-	 * getSettings() method but need to be loaded separately because they are
-	 * needed way earlier in the bootstrap than the package's settings.
+	 * Note that this is a low level method and only makes sense to be used by FLOW3 internally.
+	 *
+	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
+	 * @param string $packageKey Key of the package to return the configuration for
+	 * @return array The configuration
+	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function getConfiguration($configurationType, $packageKey = NULL) {
+		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_ROUTES :
+			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
+			case self::CONFIGURATION_TYPE_CACHES :
+			case self::CONFIGURATION_TYPE_PACKAGESTATES :
+				if (!isset($this->configurations[$configurationType])) {
+					$this->loadConfiguration($configurationType, $this->packages);
+				}
+				return isset($this->configurations[$configurationType]) ? $this->configurations[$configurationType] : array();;
+
+			case self::CONFIGURATION_TYPE_PACKAGE :
+			case self::CONFIGURATION_TYPE_OBJECTS :
+				if ($packageKey === NULL) throw new \InvalidArgumentException('No package specified.', 1233336279);
+				if (!isset($this->configurations[$configurationType][$packageKey])) {
+					$this->loadConfiguration($configurationType, $this->packages);
+				}
+				return isset($this->configurations[$configurationType][$packageKey]) ? $this->configurations[$configurationType][$packageKey] : array();
+
+			default :
+				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
+		}
+	}
+
+	/**
+	 * Sets the specified raw configuration.
+	 * Note that this is a low level method and only makes sense to be used by FLOW3 internally.
+	 *
+	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
+	 * @param array $configuration The new configuration
+	 * @return void
+	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function setConfiguration($configurationType, array $configuration) {
+		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_PACKAGESTATES :
+				$this->configurations[$configurationType] = $configuration;
+				$this->cacheNeedsUpdate = TRUE;
+			break;
+			default :
+				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1251127738);
+		}
+	}
+
+	/**
+	 * Saves configuration of the given configuration type back to the configuration file
+	 * (if supported)
+	 *
+	 * @param string $configurationType The kind of configuration to save - must be one of the supported CONFIGURATION_TYPE_* constants
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function saveConfiguration($configurationType) {
+		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_PACKAGESTATES :
+				$this->configurationSource->save(FLOW3_PATH_CONFIGURATION . $configurationType, $this->configurations[$configurationType]);
+			break;
+			default :
+				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Configuration type "' . $configurationType . '" does not support saving.', 1251127425);
+		}
+	}
+
+	/**
+	 * Shuts down the configuration manager.
+	 * This method writes the current configuration into a cache file if FLOW3 was configured to do so.
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadFLOW3Settings() {
-		$settings = array();
-		foreach ($this->configurationSources as $configurationSource) {
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/FLOW3'));
+	public function shutdown() {
+		if ($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['configuration']['compileConfigurationFiles'] === TRUE && $this->cacheNeedsUpdate === TRUE) {
+			$this->saveConfigurationCache();
 		}
-
-		foreach ($this->configurationSources as $configurationSource) {
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
-		}
-		$this->postProcessSettings($settings);
-		$this->settings['FLOW3'] = $settings;
-		$this->settings['FLOW3']['core']['context'] = $this->context;
 	}
 
 	/**
 	 * Loads the settings defined in the specified packages and merges them with
 	 * those potentially existing in the global configuration folders.
-	 *
 	 * The result is stored in the configuration manager's settings registry
 	 * and can be retrieved with the getSettings() method.
 	 *
-	 * @param array $packages An array of Package object
+	 * This method also has special support for FLOW3 settings which are not stored
+	 * in a "Settings.yaml" file like the package's settings but reside in dedicated
+	 * "FLOW3.yaml" files.
+	 *
+	 * This method is usually run twice: early in the boot sequence to load FLOW3
+	 * settings and later to load the remaining settings.
+	 *
+	 * @param array $packages An array of Package objects
 	 * @return void
 	 * @see getSettings()
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function loadGlobalSettings(array $packages) {
-		$settings = array();
-		if (isset($packages['FLOW3'])) unset ($packages['FLOW3']);
+	protected function loadSettings(array $packages) {
+		$this->cacheNeedsUpdate = TRUE;
 
-		foreach ($packages as $package) {
-			foreach ($this->configurationSources as $configurationSource) {
-				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load($package->getConfigurationPath() . 'Settings'));
+		if (count($packages) === 1 && isset($packages['FLOW3'])) {
+			$settings = $this->configurationSource->load(FLOW3_PATH_FLOW3 . 'Configuration/FLOW3');
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . 'FLOW3', TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/FLOW3', TRUE));
+
+			$this->postProcessSettings($settings);
+			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3'] = $settings;
+			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS]['FLOW3']['core']['context'] = $this->context;
+		} else {
+			$settings = array();
+			if (isset($packages['FLOW3'])) unset ($packages['FLOW3']);
+
+			foreach ($packages as $packageKey => $package) {
+				if (!isset($settings[$packageKey])) {
+					$settings[$packageKey] = array();
+				}
+				$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load($package->getConfigurationPath() . self::CONFIGURATION_TYPE_SETTINGS));
 			}
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
+			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_SETTINGS, TRUE));
+
+			$this->configurations[self::CONFIGURATION_TYPE_SETTINGS] = (!isset($this->configurations[self::CONFIGURATION_TYPE_SETTINGS])) ? $settings : \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[self::CONFIGURATION_TYPE_SETTINGS], $settings);
+			$this->postProcessSettings($this->configurations[self::CONFIGURATION_TYPE_SETTINGS]);
 		}
-		foreach ($this->configurationSources as $configurationSource) {
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . 'Settings', TRUE));
-			$settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($settings, $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/Settings', TRUE));
-		}
-		$this->postProcessSettings($settings);
-		$this->settings = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->settings, $settings);
 	}
 
 	/**
 	 * Loads special configuration defined in the specified packages and merges them with
-	 * those potentially existing in the global configuration folders.
-	 *
-	 * The result is stored in the configuration manager's configuration registry
-	 * and can be retrieved with the getSpecialConfiguration() method. However note
-	 * that this is only the raw information which will be further processed by other
-	 * parts of FLOW3
+	 * those potentially existing in the global configuration folders. The result is stored
+	 * in the configuration manager's configuration registry and can be retrieved with the
+	 * getConfiguration() method.
 	 *
 	 * @param string $configurationType The kind of configuration to load - must be one of the CONFIGURATION_TYPE_* constants
 	 * @param array $packages An array of Package objects to consider
@@ -189,28 +286,66 @@ class Manager {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function loadSpecialConfiguration($configurationType, array $packages) {
-		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
-			$subRoutesConfiguration = array();
-			foreach ($packages as $packageKey => $package) {
-				$subRoutesConfiguration[$packageKey] = array();
-				foreach ($this->configurationSources as $configurationSource) {
-					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $configurationSource->load($package->getConfigurationPath() . $configurationType));
+	protected function loadConfiguration($configurationType, array $packages) {
+		$this->cacheNeedsUpdate = TRUE;
+		$this->configurations[$configurationType] = array();
+
+		switch ($configurationType) {
+			case self::CONFIGURATION_TYPE_CACHES :
+			case self::CONFIGURATION_TYPE_SECURITY :
+			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
+				foreach ($packages as $packageKey => $package) {
+					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
 				}
-			}
-		} else {
-			foreach ($packages as $packageKey => $package) {
-				foreach ($this->configurationSources as $configurationSource) {
-					$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load($package->getConfigurationPath() . $configurationType));
+			case self::CONFIGURATION_TYPE_OBJECTS :
+				foreach ($packages as $packageKey => $package) {
+					$configuration = array();
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+
+					$globalConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType);
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalConfiguration);
+					$contextConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType);
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $contextConfiguration);
+					$this->configurations[$configurationType][$packageKey] = $configuration;
 				}
-			}
+			break;
+				case self::CONFIGURATION_TYPE_PACKAGE :
+				foreach ($packages as $packageKey => $package) {
+					$configuration = array();
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+
+					$globalConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType);
+					if ($configurationType === self::CONFIGURATION_TYPE_PACKAGE) {
+						$globalConfiguration = isset($globalConfiguration[$packageKey]) ? $globalConfiguration[$packageKey] : array();
+					}
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalConfiguration);
+					$contextConfiguration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType);
+					if ($configurationType == self::CONFIGURATION_TYPE_PACKAGE) {
+						$contextConfiguration = isset($contextConfiguration[$packageKey]) ? $contextConfiguration[$packageKey] : array();
+					}
+					$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $contextConfiguration);
+					$this->configurations[$configurationType][$packageKey] = $configuration;
+				}
+			break;
+			case self::CONFIGURATION_TYPE_ROUTES :
+				$subRoutesConfiguration = array();
+				foreach ($packages as $packageKey => $package) {
+					$subRoutesConfiguration[$packageKey] = array();
+					$subRoutesConfiguration[$packageKey] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($subRoutesConfiguration[$packageKey], $this->configurationSource->load($package->getConfigurationPath() . $configurationType));
+				}
+			break;
+			case self::CONFIGURATION_TYPE_PACKAGESTATES :
+				$configuration = $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGESTATES);
+				$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGESTATES));
+				$this->configurations[$configurationType] = $configuration;
+			break;
+			default:
+				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Configuration type "' . $configurationType . '" cannot be loaded with loadConfiguration().', 1251450613);
 		}
-		foreach ($this->configurationSources as $configurationSource) {
-			$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
-		}
-		foreach ($this->configurationSources as $configurationSource) {
-			$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
-		}
+
+		$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType));
+		$this->configurations[$configurationType] = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($this->configurations[$configurationType], $this->configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType));
+
 		if ($configurationType === self::CONFIGURATION_TYPE_ROUTES) {
 			$this->mergeRoutesWithSubRoutes($this->configurations[$configurationType], $subRoutesConfiguration);
 		}
@@ -218,63 +353,47 @@ class Manager {
 	}
 
 	/**
-	 * Loads and returns the specified raw configuration. The actual configuration will be
-	 * merged from different sources in a defined order.
+	 * If a cache file with previously saved configuration exists, it is loaded.
 	 *
-	 * Note that this is a very low level method and usually only makes sense to be used
-	 * by FLOW3 internally.
-	 *
-	 * @param string $configurationType The kind of configuration to fetch - must be one of the CONFIGURATION_TYPE_* constants
-	 * @param \F3\FLOW3\Package\Package $package The package to return the configuration for
-	 * @return array The configuration
-	 * @throws \F3\FLOW3\Configuration\Exception\InvalidConfigurationType on invalid configuration types
+	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getSpecialConfiguration($configurationType, \F3\FLOW3\Package\Package $package = NULL) {
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_ROUTES :
-			case self::CONFIGURATION_TYPE_SIGNALSSLOTS :
-			case self::CONFIGURATION_TYPE_CACHES :
-				return $this->configurations[$configurationType];
-			case self::CONFIGURATION_TYPE_PACKAGE :
-			case self::CONFIGURATION_TYPE_OBJECTS :
-				if (!is_object($package)) throw new \InvalidArgumentException('No package specified.', 1233336279);
-				break;
-			default :
-				throw new \F3\FLOW3\Configuration\Exception\InvalidConfigurationType('Invalid configuration type "' . $configurationType . '"', 1206031879);
+	protected function loadConfigurationCache() {
+		if (file_exists($this->includeCachedConfigurationsPathAndFilename)) {
+			$this->configurations = require($this->includeCachedConfigurationsPathAndFilename);
 		}
-		$configuration = array();
-		foreach ($this->configurationSources as $configurationSource) {
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $configurationSource->load($package->getConfigurationPath() . $configurationType));
-		}
-		foreach ($this->configurationSources as $configurationSource) {
-			$globalConfiguration = $configurationSource->load(FLOW3_PATH_CONFIGURATION . $configurationType);
-			if ($configurationType == self::CONFIGURATION_TYPE_PACKAGE) {
-				$globalConfiguration = isset($globalConfiguration[$package->getPackageKey()]) ? $globalConfiguration[$package->getPackageKey()] : array();
-			}
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $globalConfiguration);
-		}
-		foreach ($this->configurationSources as $configurationSource) {
-			$contextConfiguration = $configurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . $configurationType);
-			if ($configurationType == self::CONFIGURATION_TYPE_PACKAGE) {
-				$contextConfiguration = isset($contextConfiguration[$package->getPackageKey()]) ? $contextConfiguration[$package->getPackageKey()] : array();
-			}
-			$configuration = \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $contextConfiguration);
-		}
+	}
 
-		switch ($configurationType) {
-			case self::CONFIGURATION_TYPE_PACKAGE :
-			case self::CONFIGURATION_TYPE_OBJECTS :
-				return $configuration;
+	/**
+	 * Saves the current configuration into a cache file and creates a cache inclusion script
+	 * in the context's Configuration directory.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function saveConfigurationCache() {
+		$configurationCachePath = $this->environment->getPathToTemporaryDirectory() . 'Configuration/';
+		if (!file_exists($configurationCachePath )) {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively($configurationCachePath );
 		}
+		$cachePathAndFilename = $configurationCachePath  . $this->context . 'Configurations.php';
+		$includeCachedConfigurationsCode = <<< "EOD"
+<?php
+	if (file_exists('$cachePathAndFilename')) {
+		return require '$cachePathAndFilename';
+	} else {
+		unlink(__FILE__);
+		return array();
+	}
+?>
+EOD;
+		file_put_contents($cachePathAndFilename, '<?php return ' . var_export($this->configurations, TRUE) . '?>');
+		file_put_contents($this->includeCachedConfigurationsPathAndFilename, $includeCachedConfigurationsCode);
 	}
 
 	/**
 	 * Post processes the given settings array by replacing constants with their
 	 * actual value.
-	 *
-	 * This is a preliminary solution, we'll surely have some better way to handle
-	 * this soon.
 	 *
 	 * @param array &$settings The settings to post process. The results are stored directly in the given array
 	 * @return void
@@ -286,7 +405,7 @@ class Manager {
 				$this->postProcessSettings($settings[$key]);
 			} elseif (is_string($setting)) {
 				$matches = array();
-				preg_match_all('/(?:%)([a-zA-Z_0-9]+)(?:%)/', $setting, $matches);
+				preg_match_all('/(?:%)([A-Z_0-9]+)(?:%)/', $setting, $matches);
 				if (count($matches[1]) > 0) {
 					foreach ($matches[1] as $match) {
 						if (defined($match)) $settings[$key] = str_replace('%' . $match . '%', constant($match), $settings[$key]);
@@ -358,42 +477,6 @@ class Manager {
 			}
 		}
 		return $mergedSubRoutesConfiguration;
-	}
-
-	/**
-	 * Get the package states configuration. This configuration is loaded
-	 * from the configuration directory and will be overriden by contexts.
-	 *
-	 * @return array The package states configuration
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function getPackageStatesConfiguration() {
-		$configuration = $this->writableConfigurationSource->load(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES);
-		return \F3\FLOW3\Utility\Arrays::arrayMergeRecursiveOverrule($configuration, $this->writableConfigurationSource->load(FLOW3_PATH_CONFIGURATION . $this->context . '/' . self::CONFIGURATION_TYPE_PACKAGE_STATES));
-	}
-
-	/**
-	 * Update the package states configuration
-	 *
-	 * @param array $configuration The package states configuration
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function updatePackageStatesConfiguration($configuration) {
-		$this->writableConfigurationSource->save(FLOW3_PATH_CONFIGURATION . self::CONFIGURATION_TYPE_PACKAGE_STATES, $configuration);
-	}
-
-	/**
-	 * Set the writable configuration source. This source will be used
-	 * for package states configuration and writing back values for
-	 * package activation / deactivation from the package manager.
-	 *
-	 * @param \F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource The writable source
-	 * @return void
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
-	 */
-	public function setWritableConfigurationSource(\F3\FLOW3\Configuration\Source\WritableSourceInterface $writableConfigurationSource) {
-		$this->writableConfigurationSource = $writableConfigurationSource;
 	}
 }
 ?>

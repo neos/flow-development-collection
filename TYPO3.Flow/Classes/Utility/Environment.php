@@ -38,9 +38,6 @@ namespace F3\FLOW3\Utility;
  */
 class Environment {
 
-	const SAPI_TYPE_WEB = 'Web';
-	const SAPI_TYPE_CLI = 'CLI';
-
 	/**
 	 * @var string
 	 */
@@ -68,7 +65,7 @@ class Environment {
 	 * A lower case string specifying the currently used Server API. See php_sapi_name()/PHP_SAPI for possible values
 	 * @var string
 	 */
-	protected $SAPIName;
+	protected $SAPIName = PHP_SAPI;
 
 	/**
 	 * The base path of $temporaryDirectory. This property can (and should) be set from outside.
@@ -85,18 +82,6 @@ class Environment {
 	 * @var \F3\FLOW3\Log\SystemLoggerInterface
 	 */
 	protected $systemLogger;
-
-	/**
-	 * This constructor defines FLOW3_SAPITYPE
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function __construct() {
-		$this->SAPIName = PHP_SAPI;
-		if (!defined('FLOW3_SAPITYPE')) {
-			define('FLOW3_SAPITYPE', $this->getSAPIType());
-		}
-	}
 
 	/**
 	 * Injects the system logger
@@ -329,30 +314,6 @@ class Environment {
 	 */
 	public function getSAPIName() {
 		return $this->SAPIName;
-	}
-
-	/**
-	 * Returns the type of SAPI used by PHP.
-	 *
-	 * Instead of returning the raw value like in getSAPIName(), this
-	 * function returns only one of the following values:
-	 *
-	 * "Web" if the API used is some kind of web server
-	 * "CLI" if the command line interface is used
-	 *
-	 * Use the SAPI_TYPE_* constants for checking for a certain SAPI type.
-	 *
-	 * @return string The kind of API used
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function getSAPIType() {
-		switch($this->SAPIName) {
-			case 'cli' :
-				return self::SAPI_TYPE_CLI;
-			default:
-				return self::SAPI_TYPE_WEB;
-		}
 	}
 
 	/**

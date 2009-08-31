@@ -57,7 +57,7 @@ class YAMLSourceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function optionSetInTheConfigurationFileReallyEndsUpInTheArray() {
-		$pathAndFilename = __DIR__ . '/../Fixture/F3_FLOW3_Tests_Configuration_Fixture_YAMLConfigurationFile';
+		$pathAndFilename = __DIR__ . '/../Fixture/YAMLConfigurationFile';
 		$configurationSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
 		$configuration = $configurationSource->load($pathAndFilename);
 		$this->assertTrue($configuration['configurationFileHasBeenLoaded'], 'The option has not been set by the fixture.');

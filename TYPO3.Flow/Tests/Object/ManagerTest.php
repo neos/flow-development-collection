@@ -32,6 +32,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function injectReflectionServiceRegistersTheObjectAndClassnameCorrectly() {
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
+		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
+		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
+		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
+
+		$this->assertEquals($objectManager->_get('registeredObjects'), array('F3\FLOW3\Reflection\Service' => 'f3\flow3\reflection\service'));
+		$this->assertEquals($objectManager->_get('registeredClasses'), array('F3\FLOW3\Reflection\Service' => 'F3\FLOW3\Reflection\Service'));
+	}
+
+	/**
+	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function theDefaultContextIsDevelopment() {
@@ -55,8 +70,21 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initializeRegistersTheObjectManagerAndAllInjectedDependenciesAsManagedObjects() {
+	public function initializeManagerRegistersTheObjectManagerAndAllInjectedDependenciesAsManagedObjects() {
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE, FALSE);
+
+		$objectConfigurations = array(
+			'F3\Foo\Object1' => array(
+				'scope' => 'prototype'
+			),
+			'F3\Foo\Object2' => array(
+				'className' => 'Foo\Bar'
+			)
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration'), array(), '', FALSE, FALSE);
+		$mockConfigurationManager->expects($this->once())->method('getConfiguration')->will($this->returnValue($objectConfigurations));
+
 		$objectBuilder = new \F3\FLOW3\Object\Builder();
 		$objectFactory = new \F3\FLOW3\Object\Factory();
 		$singletonObjectsRegistry = new \F3\FLOW3\Object\TransientRegistry();
@@ -66,14 +94,56 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$objectManager->injectObjectFactory($objectFactory);
 		$objectManager->injectSingletonObjectsRegistry($singletonObjectsRegistry);
 		$objectManager->injectReflectionService($mockReflectionService);
+		$objectManager->injectConfigurationManager($mockConfigurationManager);
 
-		$objectManager->initialize();
+		$objectManager->initializeManager();
 
 		$this->assertSame($objectManager, $objectManager->getObject('F3\FLOW3\Object\ManagerInterface'));
 		$this->assertSame($mockReflectionService, $objectManager->getObject('F3\FLOW3\Reflection\Service'));
 		$this->assertSame($objectBuilder, $objectManager->getObject('F3\FLOW3\Object\Builder'));
 		$this->assertSame($objectFactory, $objectManager->getObject('F3\FLOW3\Object\FactoryInterface'));
 		$this->assertSame($singletonObjectsRegistry, $objectManager->getObject('F3\FLOW3\Object\RegistryInterface'));
+
+		$this->assertSame('Foo\Bar', $objectManager->getObjectConfiguration('F3\Foo\Object2')->getClassName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObjectsLoadsObjectConfigurationsFromCacheIfAvailable() {
+		$packages = array('Foo' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE));
+
+		$mockObjectsConfigurationCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockObjectsConfigurationCache->expects($this->once())->method('has')->with('baseObjectConfigurations')->will($this->returnValue(TRUE));
+		$mockObjectsConfigurationCache->expects($this->once())->method('get')->with('baseObjectConfigurations')->will($this->returnValue(array('Foo' => 'Bar')));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('setObjectConfigurations'), array(), '', FALSE);
+		$objectManager->injectObjectConfigurationsCache($mockObjectsConfigurationCache);
+
+		$objectManager->expects($this->once())->method('setObjectConfigurations')->with(array('Foo' => 'Bar'));
+		$objectManager->initializeObjects($packages);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function initializeObjectsRegistersClassesFromPackagesIfObjectConfigurationIsNotCached() {
+		$packages = array('Foo' => $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE));
+
+		$mockObjectsConfigurationCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockObjectsConfigurationCache->expects($this->once())->method('has')->with('baseObjectConfigurations')->will($this->returnValue(FALSE));
+		$mockObjectsConfigurationCache->expects($this->once())->method('getClassTag')->will($this->returnValue('class tag'));
+		$mockObjectsConfigurationCache->expects($this->once())->method('set')->with('baseObjectConfigurations', array('configurations'), array('class tag'));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('registerAndConfigureAllPackageObjects'), array(), '', FALSE);
+		$objectManager->injectObjectConfigurationsCache($mockObjectsConfigurationCache);
+		$objectManager->_set('objectConfigurations', array('configurations'));
+
+		$objectManager->expects($this->once())->method('registerAndConfigureAllPackageObjects');
+		$objectManager->initializeObjects($packages);
+
 	}
 
 	/**
@@ -104,7 +174,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @test
+	 * test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectCallsTheObjectFactoryInOrderToCreateANewPrototypeObject() {
@@ -934,6 +1004,126 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
+	public function registerAndConfigureAllPackageObjectsRegistersClassesAndInterfacesOfTheGivenPackages() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('isAbstract')->will($this->returnValue(FALSE));
+
+		$className1 = 'FooClass' . uniqid();
+		$className2 = 'FooClass' . uniqid();
+		$className3 = 'BarClass' . uniqid();
+		$className4 = 'BlacklistedClass' . uniqid();
+		eval('class ' . $className1 . ' {}');
+		eval('class ' . $className2 . ' {}');
+		eval('class ' . $className3 . ' {}');
+
+		$objectConfigurations = array(
+			'Foo' => array($className1 => array('scope' => 'prototype')),
+			'Bar' => array($className3 => array('className' => 'Baz'))
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->at(0))->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'Foo')
+			->will($this->returnValue($objectConfigurations['Foo']));
+		$mockConfigurationManager->expects($this->at(1))->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'Bar')
+			->will($this->returnValue($objectConfigurations['Bar']));
+
+		$packages = array();
+		$packages['Foo'] = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$packages['Foo']->expects($this->once())->method('getClassFiles')
+			->will($this->returnValue(array($className1 => 'Class1.php', $className2 => 'Class2.php')));
+
+		$packages['Bar'] = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$packages['Bar']->expects($this->once())->method('getClassFiles')
+			->will($this->returnValue(array($className3 => 'Class3.php', $className4 => 'Class4.php')));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->_set('reflectionService', $mockReflectionService);
+		$objectManager->_set('objectRegistrationClassBlacklist', array($className4));
+		$objectManager->injectConfigurationManager($mockConfigurationManager);
+
+		$objectManager->_call('registerAndConfigureAllPackageObjects', $packages);
+
+		$actualObjectConfigurations =  $objectManager->getObjectConfigurations();
+
+		$this->assertSame(array($className1, $className2, $className3), array_keys($actualObjectConfigurations));
+		$this->assertSame($className1, $actualObjectConfigurations[$className1]->getClassName());
+		$this->assertSame(\F3\FLOW3\Object\Configuration\Configuration::SCOPE_PROTOTYPE, $actualObjectConfigurations[$className1]->getScope());
+		$this->assertSame('Baz', $actualObjectConfigurations[$className3]->getClassName());
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function registerAndConfigureAllPackageObjectsAlsoRegistersInterfacesAsObjectTypes() {
+		$className1 = 'FooClass' . uniqid();
+		$className2 = 'Foo' . uniqid() . 'Interface';
+		eval('class ' . $className1 . ' {}');
+		eval('interface ' . $className2 . ' {}');
+
+		$objectConfigurations = array(
+			'Foo' => array(),
+		);
+
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('isAbstract')->will($this->returnValue(FALSE));
+		$mockReflectionService->expects($this->once())->method('getDefaultImplementationClassNameForInterface')->with($className2)->will($this->returnValue($className1));
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->at(0))->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'Foo')
+			->will($this->returnValue($objectConfigurations['Foo']));
+
+		$packages = array();
+		$packages['Foo'] = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$packages['Foo']->expects($this->once())->method('getClassFiles')
+			->will($this->returnValue(array($className1 => 'Class1.php', $className2 => 'Interface2.php')));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->_set('reflectionService', $mockReflectionService);
+		$objectManager->injectConfigurationManager($mockConfigurationManager);
+
+		$objectManager->_call('registerAndConfigureAllPackageObjects', $packages);
+
+		$actualObjectConfigurations =  $objectManager->getObjectConfigurations();
+
+		$this->assertSame(array($className1, $className2), array_keys($actualObjectConfigurations));
+	}
+
+	/**
+	 * @test
+	 * @expectedException F3\FLOW3\Object\Exception\InvalidObjectConfiguration
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function registerAndConfigureAllPackageObjectsThrowsExceptionOnTryingToConfigureNonRegisteredObjects() {
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array(), array(), '', FALSE);
+		$mockReflectionService->expects($this->any())->method('isAbstract')->will($this->returnValue(FALSE));
+
+		$className1 = 'FooClass' . uniqid();
+		eval('class ' . $className1 . ' {}');
+
+		$objectConfigurations = array(
+			'Foo' => array('Nemo' => array('scope' => 'prototype'))
+		);
+
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array(), array(), '', FALSE);
+		$mockConfigurationManager->expects($this->at(0))->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'Foo')
+			->will($this->returnValue($objectConfigurations['Foo']));
+
+		$packages = array();
+		$packages['Foo'] = $this->getMock('F3\FLOW3\Package\Package', array(), array(), '', FALSE);
+		$packages['Foo']->expects($this->once())->method('getClassFiles')->will($this->returnValue(array($className1 => 'Class1.php')));
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
+		$objectManager->_set('reflectionService', $mockReflectionService);
+		$objectManager->injectConfigurationManager($mockConfigurationManager);
+
+		$objectManager->_call('registerAndConfigureAllPackageObjects', $packages);
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
 	public function shutdownCallsTheShutdownMethodsOfAllObjectsInTheSingletonObjectsRegistry() {
 		$className = 'SomeClass' . uniqid();
 		$mockObject1 = $this->getMock($className, array('shutdownObject'));
@@ -959,21 +1149,5 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 
 		$objectManager->shutdown();
 	}
-
-	/**
-	 * @test
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function injectReflectionServiceRegistersTheObjectAndClassnameCorrectly() {
-		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'), array(), '', FALSE);
-		$objectManager->injectObjectBuilder($this->getMock('F3\FLOW3\Object\Builder'));
-		$objectManager->injectObjectFactory($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$objectManager->injectSingletonObjectsRegistry($this->getMock('F3\FLOW3\Object\TransientRegistry'));
-		$objectManager->injectReflectionService($this->getMock('F3\FLOW3\Reflection\Service'));
-
-		$this->assertEquals($objectManager->_get('registeredObjects'), array('F3\FLOW3\Reflection\Service' => 'f3\flow3\reflection\service'));
-		$this->assertEquals($objectManager->_get('registeredClasses'), array('F3\FLOW3\Reflection\Service' => 'F3\FLOW3\Reflection\Service'));
-	}
-
 }
 ?>

@@ -46,7 +46,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::register();
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
-		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration'), array(), '', FALSE);
+		$mockConfigurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration', 'saveConfiguration'), array(), '', FALSE);
 
 		$this->packageManager = new \F3\FLOW3\Package\Manager();
 		$this->packageManager->injectObjectFactory($this->objectFactory);
@@ -274,13 +274,17 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
 
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration', 'setConfiguration', 'saveConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->once())
-			->method('getPackageStatesConfiguration')
+			->method('getConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES)
 			->will($this->returnValue(array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar'))));
 		$configurationManager->expects($this->once())
-			->method('updatePackageStatesConfiguration')
-			->with(array('YetAnotherTestPackage' => array('state' => 'inactive', 'foo' => 'bar')));
+			->method('setConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES, array('YetAnotherTestPackage' => array('state' => 'inactive', 'foo' => 'bar')));
+		$configurationManager->expects($this->once())
+			->method('saveConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES);
 
 		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
 		$packageManager->injectConfigurationManager($configurationManager);
@@ -300,13 +304,17 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
 
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration', 'setConfiguration', 'saveConfiguration'), array(), '', FALSE);
 		$configurationManager->expects($this->once())
-			->method('getPackageStatesConfiguration')
+			->method('getConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES)
 			->will($this->returnValue(array('YetAnotherTestPackage' => array('foo' => 'bar'))));
 		$configurationManager->expects($this->once())
-			->method('updatePackageStatesConfiguration')
-			->with(array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar')));
+			->method('setConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES, array('YetAnotherTestPackage' => array('state' => 'active', 'foo' => 'bar')));
+		$configurationManager->expects($this->once())
+			->method('saveConfiguration')
+			->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES);
 
 		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
 		$packageManager->injectConfigurationManager($configurationManager);
@@ -326,8 +334,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockPackage = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockPackage->expects($this->any())->method('getPackageKey')->will($this->returnValue('YetAnotherTestPackage'));
 
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration', 'updatePackageStatesConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->never())->method('updatePackageStatesConfiguration');
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration', 'setConfiguration', 'save'), array(), '', FALSE);
+		$configurationManager->expects($this->never())->method('setConfiguration');
+		$configurationManager->expects($this->never())->method('saveConfiguration');
 
 		$packageManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Package\Manager'), array('dummy'));
 		$packageManager->injectConfigurationManager($configurationManager);
@@ -440,8 +449,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 			)
 		);
 
-		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getPackageStatesConfiguration'), array(), '', FALSE);
-		$configurationManager->expects($this->once())->method('getPackageStatesConfiguration')->will($this->returnValue($packageStatesConfiguration));
+		$configurationManager = $this->getMock('F3\FLOW3\Configuration\Manager', array('getConfiguration'), array(), '', FALSE);
+		$configurationManager->expects($this->once())->method('getConfiguration')->with(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES)->will($this->returnValue($packageStatesConfiguration));
 
 		$mockFLOW3Package = $this->getMock('F3\FLOW3\Package\PackageInterface');
 		$mockFLOW3Package->expects($this->any())->method('getPackageKey')->will($this->returnValue('FLOW3'));

@@ -41,6 +41,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * If none is available the $defaultViewObjectName will be used and finally
 	 * an EmptyView will be created.
 	 * @var \F3\FLOW3\MVC\View\ViewInterface
+	 * @api
 	 */
 	protected $view = NULL;
 
@@ -48,6 +49,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * Pattern after which the view object name is built if no Fluid template
 	 * is found.
 	 * @var string
+	 * @api
 	 */
 	protected $viewObjectNamePattern = 'F3\@package\View\@controller\@action@format';
 
@@ -55,6 +57,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * The default view object to use if neither a Fluid template nor an action
 	 * specific view object could be found.
 	 * @var string
+	 * @api
 	 */
 	protected $defaultViewObjectName = NULL;
 
@@ -67,6 +70,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	/**
 	 * Name of the special error action method which is called in case of errors
 	 * @var string
+	 * @api
 	 */
 	protected $errorMethodName = 'errorAction';
 

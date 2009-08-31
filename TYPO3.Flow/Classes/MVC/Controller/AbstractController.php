@@ -32,11 +32,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
+	 * @api
 	 */
 	protected $objectFactory;
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
+	 * @api
 	 */
 	protected $objectManager;
 
@@ -48,11 +50,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Contains the settings of the current package
 	 * @var array
+	 * @api
 	 */
 	protected $settings;
 
 	/**
 	 * @var \F3\FLOW3\Property\Mapper
+	 * @api
 	 */
 	protected $propertyMapper;
 
@@ -64,24 +68,28 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * The current request
 	 * @var \F3\FLOW3\MVC\RequestInterface
+	 * @api
 	 */
 	protected $request;
 
 	/**
 	 * The response which will be returned by this action controller
 	 * @var \F3\FLOW3\MVC\ResponseInterface
+	 * @api
 	 */
 	protected $response;
 
 	/**
 	 * Arguments passed to the controller
 	 * @var \F3\FLOW3\MVC\Controller\Arguments
+	 * @api
 	 */
 	protected $arguments;
 
 	/**
 	 * The results of the mapping of request arguments to controller arguments
 	 * @var \F3\FLOW3\Property\MappingResults
+	 * @api
 	 */
 	protected $argumentsMappingResults;
 
@@ -90,11 +98,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	 * Modify or replace this array if your specific controller supports certain
 	 * (additional) request types.
 	 * @var array
+	 * @api
 	 */
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
 
 	/**
 	 * @var \F3\FLOW3\Session\SessionInterface
+	 * @api
 	 */
 	protected $session;
 
@@ -390,7 +400,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Returns current flash messages from the seesion, making sure to always
+	 * Returns current flash messages from the session, making sure to always
 	 * return an array.
 	 *
 	 * @return array

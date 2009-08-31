@@ -27,45 +27,19 @@ require(__DIR__ . '/../Utility/Files.php');
 require(__DIR__ . '/../Package/PackageInterface.php');
 require(__DIR__ . '/../Package/Package.php');
 
-define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
-if (isset($_SERVER['FLOW3_ROOTPATH'])) {
-	$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
-	$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
-	if ($testPath !== FLOW3_PATH_FLOW3) {
-		die('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
-	}
-	define('FLOW3_PATH_ROOT', $rootPath);
-	unset($rootPath);
-	unset($testPath);
-}
-
-if (PHP_SAPI === 'cli') {
-	if (!defined('FLOW3_PATH_ROOT')) {
-		die('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
-	}
-	if (!isset($_SERVER['FLOW3_WEBPATH']) || !is_dir($_SERVER['FLOW3_WEBPATH'])) {
-		die('FLOW3: No web path defined in environment variable FLOW3_WEBPATH or directory does not exist (Error #1249046843)' . PHP_EOL);
-	}
-	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
-} else {
-	if (!defined('FLOW3_PATH_ROOT')) {
-		define('FLOW3_PATH_ROOT', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
-	}
-	define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
-}
-
-define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
-define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
-define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+BootStrap::defineConstants();
 
 /**
- * General purpose central core hyper FLOW3 class
+ * General purpose central core hyper FLOW3 bootstrap class
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
 final class Bootstrap {
 
+	/**
+	 * FLOW3's Subversion revision
+	 */
 	const REVISION = '$Revision: 2956$';
 
 	/**
@@ -138,21 +112,51 @@ final class Bootstrap {
 	protected $systemLogger;
 
 	/**
-	 * Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
-	 * @var array
-	 */
-	protected $objectRegistrationClassBlacklist = array(
-		'F3\FLOW3\AOP\.*',
-		'F3\FLOW3\Object.*',
-		'F3\FLOW3\Package.*',
-		'F3\FLOW3\Reflection.*'
-	);
-
-	/**
 	 * The settings for the FLOW3 package
 	 * @var \F3\FLOW3\Configuration\Container
 	 */
 	protected $settings;
+
+	/**
+	 * Defines various path constants used by FLOW3 and if no root path or web root was
+	 * specified by an environment variable, exits with a respective error message.
+	 *
+	 * @return void
+	 */
+	public static function defineConstants() {
+		define('FLOW3_SAPITYPE', (PHP_SAPI === 'cli' ? 'CLI' : 'Web'));
+		define('FLOW3_PATH_FLOW3', str_replace('//', '/', str_replace('\\', '/', (realpath(__DIR__ . '/../../') . '/'))));
+
+		if (isset($_SERVER['FLOW3_ROOTPATH'])) {
+			$rootPath = str_replace('//', '/', str_replace('\\', '/', (realpath($_SERVER['FLOW3_ROOTPATH'])))) . '/';
+			$testPath = str_replace('//', '/', str_replace('\\', '/', (realpath($rootPath . 'Packages/Framework/FLOW3')))) . '/';
+			if ($testPath !== FLOW3_PATH_FLOW3) {
+				exit('FLOW3: Invalid root path. (Error #1248964375)' . PHP_EOL . '"' . $rootPath . 'Packages/Framework/FLOW3' .'" does not lead to' . PHP_EOL . '"' . FLOW3_PATH_FLOW3 .'"' . PHP_EOL);
+			}
+			define('FLOW3_PATH_ROOT', $rootPath);
+			unset($rootPath);
+			unset($testPath);
+		}
+
+		if (FLOW3_SAPITYPE === 'cli') {
+			if (!defined('FLOW3_PATH_ROOT')) {
+				exit('FLOW3: No root path defined in environment variable FLOW3_ROOTPATH (Error #1248964376)' . PHP_EOL);
+			}
+			if (!isset($_SERVER['FLOW3_WEBPATH']) || !is_dir($_SERVER['FLOW3_WEBPATH'])) {
+				exit('FLOW3: No web path defined in environment variable FLOW3_WEBPATH or directory does not exist (Error #1249046843)' . PHP_EOL);
+			}
+			define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath($_SERVER['FLOW3_WEBPATH'])) . '/');
+		} else {
+			if (!defined('FLOW3_PATH_ROOT')) {
+				define('FLOW3_PATH_ROOT', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']) . '/../')) . '/');
+			}
+			define('FLOW3_PATH_WEB', \F3\FLOW3\Utility\Files::getUnixStylePath(realpath(dirname($_SERVER['SCRIPT_FILENAME']))) . '/');
+		}
+
+		define('FLOW3_PATH_CONFIGURATION', FLOW3_PATH_ROOT . 'Configuration/');
+		define('FLOW3_PATH_DATA', FLOW3_PATH_ROOT . 'Data/');
+		define('FLOW3_PATH_PACKAGES', FLOW3_PATH_ROOT . 'Packages/');
+	}
 
 	/**
 	 * Constructor
@@ -163,7 +167,7 @@ final class Bootstrap {
 	 * @api
 	 */
 	public function __construct($context = 'Production') {
-		$this->checkEnvironment();
+		$this->ensureRequiredEnvironment();
 		$this->context = (strlen($context) === 0) ? 'Production' : $context;
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
@@ -183,8 +187,8 @@ final class Bootstrap {
 	public function initialize() {
 		$this->initializeClassLoader();
 		$this->initializeConfiguration();
-		$this->initializeError();
-		$this->initializeObjectFramework();
+		$this->initializeErrorHandling();
+		$this->initializeObjectManager();
 		$this->initializeSystemLogger();
 
 		$this->initializeLockManager();
@@ -218,7 +222,7 @@ final class Bootstrap {
 	 */
 	public function initializeClassLoader() {
 		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
-			require(__DIR__ . '/../Resource/ClassLoader.php');
+			require(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
 		}
 
 		$initialPackages = array(
@@ -239,17 +243,10 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeConfiguration() {
-			// define FLOW3_SAPI
-		new \F3\FLOW3\Utility\Environment();
+		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context);
+		$this->configurationManager->injectConfigurationSource(new \F3\FLOW3\Configuration\Source\YAMLSource());
+		$this->configurationManager->setPackages(array('FLOW3' => $this->FLOW3Package));
 
-		$yamlSource = new \F3\FLOW3\Configuration\Source\YAMLSource();
-		$configurationSources = array(
-			new \F3\FLOW3\Configuration\Source\PHPSource(),
-			$yamlSource
-		);
-		$this->configurationManager = new \F3\FLOW3\Configuration\Manager($this->context, $configurationSources);
-		$this->configurationManager->setWritableConfigurationSource($yamlSource);
-		$this->configurationManager->loadFLOW3Settings();
 		$this->settings = $this->configurationManager->getSettings('FLOW3');
 	}
 
@@ -260,7 +257,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeError() {
+	public function initializeErrorHandling() {
 		$errorHandler = new $this->settings['error']['errorHandler']['className'];
 		$errorHandler->setExceptionalErrors($this->settings['error']['errorHandler']['exceptionalErrors']);
 		$this->exceptionHandler = new $this->settings['error']['exceptionHandler']['className'];
@@ -273,7 +270,7 @@ final class Bootstrap {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
-	public function initializeObjectFramework() {
+	public function initializeObjectManager() {
 		$this->objectFactory = new \F3\FLOW3\Object\Factory();
 
 		$objectBuilder = new \F3\FLOW3\Object\Builder;
@@ -288,15 +285,10 @@ final class Bootstrap {
 		$this->objectManager->injectObjectBuilder($objectBuilder);
 		$this->objectManager->injectObjectFactory($this->objectFactory);
 		$this->objectManager->injectReflectionService($preliminaryReflectionService);
+		$this->objectManager->injectConfigurationManager($this->configurationManager);
 		$this->objectManager->setContext($this->context);
 
-		$objectConfigurations = array();
-		$rawFLOW3ObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $this->FLOW3Package);
-		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
-			$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'Package FLOW3 (pre-initialization)');
-		}
-		$this->objectManager->setObjectConfigurations($objectConfigurations);
-		$this->objectManager->initialize();
+		$this->objectManager->initializeManager();
 
 			// Remove the preliminary reflection service and rebuild it, this time with the proper object configuration:
 		$singletonObjectsRegistry->removeObject('F3\FLOW3\Reflection\Service');
@@ -304,6 +296,7 @@ final class Bootstrap {
 
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Resource\ClassLoader', $this->classLoader);
 		$singletonObjectsRegistry->putObject('F3\FLOW3\Configuration\Manager', $this->configurationManager);
+		$this->configurationManager->injectEnvironment($this->objectManager->getObject('F3\FLOW3\Utility\Environment'));
 	}
 
 	/**
@@ -344,16 +337,13 @@ final class Bootstrap {
 		$this->packageManager->initialize();
 		$activePackages = $this->packageManager->getActivePackages();
 		$this->classLoader->setPackages($activePackages);
+		$this->configurationManager->setPackages($activePackages);
 
 		foreach ($activePackages as $packageKey => $package) {
-			$packageConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $package);
+			$packageConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGE, $packageKey);
 			$this->evaluatePackageConfiguration($package, $packageConfiguration);
 		}
 
-		$this->configurationManager->loadGlobalSettings($activePackages);
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES, $activePackages);
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS, $activePackages);
-		$this->configurationManager->loadSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES, $activePackages);
 	}
 
 	/**
@@ -366,7 +356,7 @@ final class Bootstrap {
 	public function initializeSignalsSlots() {
 		$this->signalSlotDispatcher = $this->objectManager->getObject('F3\FLOW3\SignalSlot\Dispatcher');
 
-		$signalsSlotsConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS);
+		$signalsSlotsConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_SIGNALSSLOTS);
 		foreach ($signalsSlotsConfiguration as $signalClassName => $signalSubConfiguration) {
 			if (is_array($signalSubConfiguration)) {
 				foreach ($signalSubConfiguration as $signalMethodName => $slotConfigurations) {
@@ -395,7 +385,7 @@ final class Bootstrap {
 	 */
 	public function initializeCache() {
 		$this->cacheManager = $this->objectManager->getObject('F3\FLOW3\Cache\Manager');
-		$this->cacheManager->setCacheConfigurations($this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES));
+		$this->cacheManager->setCacheConfigurations($this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_CACHES));
 		$this->cacheManager->initialize();
 
 		$cacheFactory = $this->objectManager->getObject('F3\FLOW3\Cache\Factory');
@@ -514,27 +504,15 @@ final class Bootstrap {
 	}
 
 	/**
-	 * Initializes the object framework and loads the object configuration
+	 * Initializes the object configuration
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see initialize()
 	 */
 	public function initializeObjects() {
-		$objectConfigurations = NULL;
-
-		$objectConfigurationsCache = $this->cacheManager->getCache('FLOW3_Object_Configurations');
-		if ($objectConfigurationsCache->has('baseObjectConfigurations')) {
-			$objectConfigurations = $objectConfigurationsCache->get('baseObjectConfigurations');
-		}
-
-		if ($objectConfigurations === NULL) {
-			$this->registerAndConfigureAllPackageObjects($this->packageManager->getActivePackages());
-			$objectConfigurations = $this->objectManager->getObjectConfigurations();
-			$objectConfigurationsCache->set('baseObjectConfigurations', $objectConfigurations, array($objectConfigurationsCache->getClassTag()));
-		}
-
-		$this->objectManager->setObjectConfigurations($objectConfigurations);
+		$this->objectManager->injectObjectConfigurationsCache($this->cacheManager->getCache('FLOW3_Object_Configurations'));
+		$this->objectManager->initializeObjects($this->packageManager->getActivePackages());
 	}
 
 	/**
@@ -616,8 +594,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeResources() {
-		$environment = $this->objectManager->getObject('F3\FLOW3\Utility\Environment');
-		if ($environment->getSAPIType() === \F3\FLOW3\Utility\Environment::SAPI_TYPE_WEB) {
+		if (FLOW3_SAPITYPE === 'Web') {
 			$this->detectAlteredResources();
 			$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
 			$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
@@ -657,6 +634,7 @@ final class Bootstrap {
 			$this->emitFinishedNormalRun();
 			$this->systemLogger->log('Shutting down ...', LOG_INFO);
 
+			$this->configurationManager->shutdown();
 			$this->objectManager->shutdown();
 			$this->reflectionService->shutdown();
 
@@ -687,21 +665,20 @@ final class Bootstrap {
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * todo RL: The version check should be replaced by a more fine grained check done by the package manager, taking the package's requirements into account.
 	 */
-	protected function checkEnvironment() {
+	protected function ensureRequiredEnvironment() {
 		if (version_compare(phpversion(), self::MINIMUM_PHP_VERSION, '<')) {
-			die('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
+			exit('FLOW3 requires PHP version ' . self::MINIMUM_PHP_VERSION . ' or higher but your installed version is currently ' . phpversion() . '. (Error #1172215790)');
 		}
 		if (version_compare(PHP_VERSION, self::MAXIMUM_PHP_VERSION, '>')) {
-			die('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
+			exit('FLOW3 requires PHP version ' . self::MAXIMUM_PHP_VERSION . ' or lower but your installed version is currently ' . PHP_VERSION . '. (Error #1172215790)');
 		}
 		if (version_compare(PHP_VERSION, '6.0.0', '<') && !extension_loaded('mbstring')) {
-			die('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
+			exit('FLOW3 requires the PHP extension "mbstring" for PHP versions below 6.0.0 (Error #1207148809)');
 		}
 
 		if (!extension_loaded('Reflection')) throw new \F3\FLOW3\Exception('The PHP extension "Reflection" is required by FLOW3.', 1218016725);
-		$method = new \ReflectionMethod(__CLASS__, 'checkEnvironment');
+		$method = new \ReflectionMethod(__CLASS__, __FUNCTION__);
 		if ($method->getDocComment() === '') throw new \F3\FLOW3\Exception('Reflection of doc comments is not supported by your PHP setup. Please check if you have installed an accelerator which removes doc comments.', 1218016727);
 
 		set_time_limit(0);
@@ -714,85 +691,8 @@ final class Bootstrap {
 		}
 
 		if (ini_get('magic_quotes_gpc') === '1' || ini_get('magic_quotes_gpc') === 'On') {
-			die('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
+			exit('FLOW3 requires the PHP setting "magic_quotes_gpc" set to Off. (Error #1224003190)');
 		}
-	}
-
-	/**
-	 * Traverses through all active packages and registers their classes as
-	 * objects at the object manager. Finally the object configuration
-	 * defined by the package is loaded and applied to the registered objects.
-	 *
-	 * @param array $packages The packages whose classes should be registered
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function registerAndConfigureAllPackageObjects(array $packages) {
-		$objectTypes = array();
-		$availableClassNames = array();
-
-		foreach ($packages as $packageKey => $package) {
-			foreach (array_keys($package->getClassFiles()) as $className) {
-				if (!$this->classNameIsBlacklisted($className)) {
-					$availableClassNames[] = $className;
-				}
-			}
-		}
-
-		foreach ($availableClassNames as $className) {
-			if (substr($className, -9, 9) === 'Interface') {
-				$objectTypes[] = $className;
-				if (!$this->objectManager->isObjectRegistered($className)) {
-					$this->objectManager->registerObjectType($className);
-				}
-			} else {
-				$objectName = $className;
-				if (!$this->objectManager->isObjectRegistered($objectName)) {
-					if (!$this->reflectionService->isClassAbstract($className)) {
-						$this->objectManager->registerObject($objectName, $className);
-					}
-				}
-			}
-		}
-
-		$objectConfigurations = $this->objectManager->getObjectConfigurations();
-		foreach ($packages as $packageKey => $package) {
-			$rawObjectConfigurations = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $package);
-			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
-				$objectName = str_replace('_', '\\', $objectName);
-				if (!$this->objectManager->isObjectRegistered($objectName)) {
-					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Tried to configure unknown object "' . $objectName . '" in package "' . $package->getPackageKey() . '".', 1184926175);
-				}
-				if (is_array($rawObjectConfiguration)) {
-					$existingObjectConfiguration = (isset($objectConfigurations[$objectName])) ? $objectConfigurations[$objectName] : NULL;
-					$objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
-				}
-			}
-		}
-
-		foreach ($objectTypes as $objectType) {
-			$defaultImplementationClassName = $this->reflectionService->getDefaultImplementationClassNameForInterface($objectType);
-			if ($defaultImplementationClassName !== FALSE) {
-				$objectConfigurations[$objectType]->setClassName($defaultImplementationClassName);
-			}
-		}
-		$this->objectManager->setObjectConfigurations($objectConfigurations);
-	}
-
-	/**
-	 * Checks if the given class name appears on in the object blacklist.
-	 *
-	 * @param string $className The class name to check. May be a regular expression.
-	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function classNameIsBlacklisted($className) {
-		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
-		if ($className === $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
-				return TRUE;
-			}
-		}
-		return FALSE;
 	}
 
 	/**

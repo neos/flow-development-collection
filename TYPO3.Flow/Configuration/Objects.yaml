@@ -107,6 +107,9 @@ F3\FLOW3\Cache\Backend\MemcachedBackend:
 F3\FLOW3\Cache\Backend\APCBackend:
   autowiring: off
   scope: prototype
+  properties:
+    environment: object: F3\FLOW3\Utility\Environment
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\Cache\Backend\NullBackend:
   autowiring: off
   scope: prototype

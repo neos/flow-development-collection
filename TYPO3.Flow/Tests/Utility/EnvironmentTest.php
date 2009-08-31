@@ -107,30 +107,6 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function SAPINamesAndTypes() {
-		return array(
-			array('apache', 'Web'),
-			array('isapi', 'Web'),
-			array('cgi', 'Web'),
-			array('cli', 'CLI'),
-		);
-	}
-
-	/**
-	 * @test
-	 * @dataProvider SAPINamesAndTypes
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function getSAPITypeReturnsTheNormalizedSAPIName($SAPIName, $normalizedSAPIName) {
-		$environment = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Utility\Environment'), array('dummy'), array(), '', FALSE);
-
-		$environment->_set('SAPIName', $SAPIName);
-		$this->assertSame($normalizedSAPIName, $environment->getSAPIType());
-	}
-
-	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

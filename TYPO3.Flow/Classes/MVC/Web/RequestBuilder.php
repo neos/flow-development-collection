@@ -108,7 +108,7 @@ class RequestBuilder {
 		$request->setMethod($this->environment->getRequestMethod());
 		$this->setArgumentsFromRawRequestData($request);
 
-		$routesConfiguration = $this->configurationManager->getSpecialConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES);
+		$routesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_ROUTES);
 		$this->router->setRoutesConfiguration($routesConfiguration);
 		$this->router->route($request);
 

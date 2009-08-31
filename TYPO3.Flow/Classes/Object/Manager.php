@@ -57,6 +57,11 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	protected $objectBuilder;
 
 	/**
+	 * @var \F3\FLOW3\Configuration\Manager
+	 */
+	protected $configurationManager;
+
+	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
@@ -72,6 +77,17 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * @var array
 	 */
 	protected $registeredClasses = array();
+
+	/**
+	 * Array of class names which must not be registered as objects automatically. Class names may also be regular expressions.
+	 * @var array
+	 */
+	protected $objectRegistrationClassBlacklist = array(
+		'F3\FLOW3\AOP\.*',
+		'F3\FLOW3\Object.*',
+		'F3\FLOW3\Package.*',
+		'F3\FLOW3\Reflection.*'
+	);
 
 	/**
 	 * An array of all registered object configurations
@@ -158,16 +174,38 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	}
 
 	/**
+	 * Injects the configuration manager
+	 *
+	 * @param \F3\FLOW3\Configuration\Manager $configurationManager
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectConfigurationManager(\F3\FLOW3\Configuration\Manager $configurationManager) {
+		$this->configurationManager = $configurationManager;
+	}
+
+	/**
+	 * Injects the cache for storing object configurations
+	 *
+	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationsCache
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectObjectConfigurationsCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $objectConfigurationsCache) {
+		$this->objectConfigurationsCache = $objectConfigurationsCache;
+	}
+
+	/**
 	 * Initializes the Object Manager and its collaborators
 	 *
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function initialize() {
-		if (!is_object($this->reflectionService)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Reflection Service has been injected into the Object Manager', 1226412710);
-		if (!is_object($this->singletonObjectsRegistry)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Registry has been injected into the Object Manager', 1226412711);
-		if (!is_object($this->objectBuilder)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Builder has been injected into the Object Manager', 1226412712);
-		if (!is_object($this->objectFactory)) throw new \F3\FLOW3\Object\Exception\UnresolvedDependencies('No Object Factory has been injected into the Object Manager', 1226412713);
+	public function initializeManager() {
+		$rawFLOW3ObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, 'FLOW3');
+		foreach ($rawFLOW3ObjectConfigurations as $objectName => $rawFLOW3ObjectConfiguration) {
+			$this->setObjectConfiguration(\F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawFLOW3ObjectConfiguration, 'FLOW3 Object Manager (pre-initialization)'));
+		}
 
 		$this->registerObject('F3\FLOW3\Object\ManagerInterface', __CLASS__, $this);
 		$this->registerObject('F3\FLOW3\Object\Builder',  get_class($this->objectBuilder), $this->objectBuilder);
@@ -179,6 +217,23 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
 		$this->objectFactory->injectObjectManager($this);
 		$this->objectFactory->injectObjectBuilder($this->objectBuilder);
+	}
+
+	/**
+	 * Initializes the object framework and loads the object configuration
+	 *
+	 * @param array $activePackages An array of active packages of which objects should be considered
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @see initialize()
+	 */
+	public function initializeObjects(array $activePackages) {
+		if ($this->objectConfigurationsCache->has('baseObjectConfigurations')) {
+			$this->setObjectConfigurations($this->objectConfigurationsCache->get('baseObjectConfigurations'));
+		} else {
+			$this->registerAndConfigureAllPackageObjects($activePackages);
+			$this->objectConfigurationsCache->set('baseObjectConfigurations', $this->objectConfigurations, array($this->objectConfigurationsCache->getClassTag()));
+		}
 	}
 
 	/**
@@ -286,8 +341,6 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 					$this->registerShutdownObject($object, $this->objectConfigurations[$objectName]->getLifecycleShutdownMethodName());
 				}
 				break;
-			default :
-				throw new \F3\FLOW3\Object\Exception('Support for scope "' . $this->objectConfigurations[$objectName]->getScope() . '" has not been implemented (yet)', 1167484148);
 		}
 
 		return $object;
@@ -345,6 +398,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 				$objectConfiguration->setScope($scope);
 			}
 			$this->registeredClasses[$className] = $objectName;
+		} else {
 		}
 		$this->registeredObjects[$objectName] = strtolower($objectName);
 		$this->objectConfigurations[$objectName] = $objectConfiguration;
@@ -527,6 +581,73 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 		$objectConfiguration = $this->getObjectConfiguration($objectName);
 		$objectConfiguration->setClassName($className);
 		$this->setObjectConfiguration($objectConfiguration);
+	}
+
+	/**
+	 * Traverses through all active packages and registers their classes as
+	 * objects at the object manager. Finally the object configuration
+	 * defined by the package is loaded and applied to the registered objects.
+	 *
+	 * @param array $packages The packages whose classes should be registered
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function registerAndConfigureAllPackageObjects(array $packages) {
+		$objectTypes = array();
+		$availableClassNames = array();
+
+		foreach ($packages as $packageKey => $package) {
+			foreach (array_keys($package->getClassFiles()) as $className) {
+				if (!$this->classNameIsBlacklisted($className)) {
+					$availableClassNames[] = $className;
+				}
+			}
+		}
+
+		foreach ($availableClassNames as $className) {
+			if (substr($className, -9, 9) === 'Interface') {
+				$objectTypes[] = $className;
+				if (!isset($this->registeredObjects[$className])) {
+					$this->registerObjectType($className);
+				}
+			} else {
+				if (!isset($this->registeredObjects[$className])) {
+					if (!$this->reflectionService->isClassAbstract($className)) {
+						$this->registerObject($className, $className);
+					}
+				}
+			}
+		}
+
+		foreach (array_keys($packages) as $packageKey) {
+			$rawObjectConfigurations = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_OBJECTS, $packageKey);
+			foreach ($rawObjectConfigurations as $objectName => $rawObjectConfiguration) {
+				$objectName = str_replace('_', '\\', $objectName);
+				if (!isset($this->registeredObjects[$objectName])) {
+					throw new \F3\FLOW3\Object\Exception\InvalidObjectConfiguration('Tried to configure unknown object "' . $objectName . '" in package "' . $packageKey. '".', 1184926175);
+				}
+				if (is_array($rawObjectConfiguration)) {
+					$existingObjectConfiguration = (isset($this->objectConfigurations[$objectName])) ? $this->objectConfigurations[$objectName] : NULL;
+					$this->objectConfigurations[$objectName] = \F3\FLOW3\Object\Configuration\ConfigurationBuilder::buildFromConfigurationArray($objectName, $rawObjectConfiguration, 'Package ' . $packageKey, $existingObjectConfiguration);
+				}
+			}
+		}
+	}
+
+	/**
+	 * Checks if the given class name appears on in the object blacklist.
+	 *
+	 * @param string $className The class name to check. May be a regular expression.
+	 * @return boolean TRUE if the class has been blacklisted, otherwise FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function classNameIsBlacklisted($className) {
+		foreach ($this->objectRegistrationClassBlacklist as $blacklistedClassName) {
+		if ($className === $blacklistedClassName || preg_match('/^' . str_replace('\\', '\\\\', $blacklistedClassName) . '$/', $className)) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	/**

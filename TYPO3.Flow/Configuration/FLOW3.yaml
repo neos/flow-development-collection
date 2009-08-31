@@ -17,6 +17,14 @@ aop:
   # disable the AOP framework.
   enable: y
 
+configuration:
+
+  # Enables the configuration file cache which compiles YAML files into
+  # much faster to load PHP files.
+  # 
+  # NOTE: You must clear all caches right after switching this option OFF
+  compileConfigurationFiles: n
+
 core:
 
   # FLOW3's application context
@@ -209,5 +217,5 @@ utility:
     # Defines the base directory which FLOW3 may use for storing different kinds
     # of temporary files.
     # The directory must be writable and FLOW3 will automatically create a sub
-    # directory "FLOW3" which will contain the actual temporary files.
+    # directory named with a hash which will contain the actual temporary files.
     temporaryDirectoryBase: %FLOW3_PATH_DATA%Temporary/

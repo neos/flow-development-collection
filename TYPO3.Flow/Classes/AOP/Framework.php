@@ -263,7 +263,7 @@ class Framework {
 				$proxyBuildResult = $this->proxyClassBuilder->buildProxyClass($targetClassName, $this->aspectContainers, $this->objectManager->getContext());
 				if ($proxyBuildResult !== FALSE) {
 					$this->targetAndProxyClassNames[$targetClassName] = $proxyBuildResult['proxyClassName'];
-					$this->systemLogger->log(sprintf('Built proxy class "%s" for target class "%s".', $proxyBuildResult['proxyClassName'], $targetClassName), LOG_DEBUG);
+					$this->systemLogger->log(sprintf('Built proxy class "%s" for target class "%s" (length: %s).', $proxyBuildResult['proxyClassName'], $targetClassName, strlen($proxyBuildResult['proxyClassCode'])), LOG_DEBUG);
 					$this->proxyClassCodesCache->set(str_replace('\\', '_', $proxyBuildResult['proxyClassName']), $proxyBuildResult['proxyClassCode'], array($this->proxyClassCodesCache->getClassTag($targetClassName)));
 				} else {
 					unset($this->targetAndProxyClassNames[$targetClassName]);
@@ -285,7 +285,10 @@ class Framework {
 			if (class_exists($proxyClassName, FALSE)) throw new \F3\FLOW3\AOP\Exception('Class ' . $proxyClassName . ' already exists.', 1229361833);
 			if (!$this->proxyClassCodesCache->has(str_replace('\\', '_', $proxyClassName))) throw new \F3\FLOW3\AOP\Exception('No proxy class code for class "' . $proxyClassName . '" found in cache.', 1229362833);
 
-			eval($this->proxyClassCodesCache->get(str_replace('\\', '_', $proxyClassName)));
+			$result = eval($this->proxyClassCodesCache->get(str_replace('\\', '_', $proxyClassName)));
+			if ($result === FALSE) {
+				throw new \F3\FLOW3\AOP\Exception('Parse error in proxy code for class ' . $proxyClassName, 1251208326);
+			}
 
 			foreach ($objectConfigurations as $objectName => $objectConfiguration) {
 				if ($objectConfiguration->getClassName() === $targetClassName) {
