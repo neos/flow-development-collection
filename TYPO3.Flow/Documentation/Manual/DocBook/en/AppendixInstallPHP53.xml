@@ -209,10 +209,13 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
             <area coords="1" xml:id="mp.selfupdate"/>
 
             <area coords="2" xml:id="mp.install-php5"/>
+
+            <area coords="3" xml:id="mp.install-mbstring"/>
           </areaspec>
 
           <screen><command>sudo port -d selfupdate</command>
-<command>sudo port install php5 +apache2 +pear</command></screen>
+<command>sudo port install php5 +apache2 +pear
+</command><command>sudo port install php5-mbstring</command></screen>
 
           <calloutlist>
             <callout arearefs="mp.selfupdate">
@@ -222,6 +225,10 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
 
             <callout arearefs="mp.install-php5">
               <para>Install PHP 5.3 with Apache 2 support an PEAR.</para>
+            </callout>
+
+            <callout arearefs="mp.install-mbstring">
+              <para>Install the mbstring extension for PHP.</para>
             </callout>
           </calloutlist>
         </screenco>
