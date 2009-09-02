@@ -208,11 +208,11 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
           <areaspec>
             <area coords="1" xml:id="mp.selfupdate"/>
 
-            <area coords="2" xml:id="mp.install"/>
+            <area coords="2" xml:id="mp.install-php5"/>
           </areaspec>
 
           <screen><command>sudo port -d selfupdate</command>
-<command>sudo port install php5-devel +apache2 +sqlite +pear +mysql5 +postgresql83</command></screen>
+<command>sudo port install php5 +apache2 +pear</command></screen>
 
           <calloutlist>
             <callout arearefs="mp.selfupdate">
@@ -220,23 +220,26 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
               about available ports.</para>
             </callout>
 
-            <callout arearefs="mp.install">
-              <para>Install PHP 5.3 and PEAR including support for Apache 2,
-              MySQL 5, PostgreSQL 8.3, SQLite.</para>
+            <callout arearefs="mp.install-php5">
+              <para>Install PHP 5.3 with Apache 2 support an PEAR.</para>
             </callout>
           </calloutlist>
         </screenco>
 
-        <note>
-          <para>MacPorts might update the regular PHP5 port to 5.3 anytime
-          soon. So you should check if the port <literal>php5</literal> is
-          already PHP 5.3.</para>
-        </note>
+        <para>The whole install can take a long time, as everything will be
+        downloaded and compiled on your machine. An install from scratch can
+        easily take more than one hour.</para>
+      </step>
 
-        <para>You can leave out the MySQL and PostgreSQL variants for the
-        start, they are not strictly needed. The whole install can take a long
-        time, as everything will be downloaded and compiled on your machine.
-        An install from scratch can easily take more than one hour.</para>
+      <step>
+        <para>Now install database support for PHP 5.3:</para>
+
+        <screen><command>sudo port install php5-sqlite</command></screen>
+
+        <para>You can install MySQL and PostgreSQL (and other database)
+        support by installing the relevant packages, e.g.
+        <literal>php5-mysql</literal> or
+        <literal>php5-postgresql</literal>.</para>
       </step>
 
       <step>
