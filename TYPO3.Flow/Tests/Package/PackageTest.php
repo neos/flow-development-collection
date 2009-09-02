@@ -49,7 +49,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function constructRejectsInvalidPackageKeys() {
 		$mockPackageManager = $this->getMock('F3\FLOW3\Package\Manager', array(), array(), '', FALSE);
-		new \F3\FLOW3\Package\Package('Invalid_Package_Key', './TestPackage/', $mockPackageManager);
+		new \F3\FLOW3\Package\Package('Invalid*PackageKey', './TestPackage/', $mockPackageManager);
 	}
 
 	/**
@@ -92,7 +92,7 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals($package->getPackagePath() . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION, $packageDocumentationPath);
 	}
-	
+
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -102,13 +102,13 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
 		$packagePath = \vfsStream::url('testDirectory') . '/';
-		
+
 		\F3\FLOW3\Utility\Files::createDirectoryRecursively($packagePath . 'Documentation/Manual/DocBook/en');
-		
+
 		$mockDocumentation = $this->getMock('F3\FLOW3\Package\Documentation', array('dummy'), array(), '', FALSE);
-		
+
 		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
-		
+
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())
 			->method('create')
@@ -118,11 +118,11 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		$package->injectObjectFactory($mockObjectFactory);
 
 
-		$documentations = $package->getPackageDocumentations();	
-		
+		$documentations = $package->getPackageDocumentations();
+
 		$this->assertEquals(array('Manual' => $mockDocumentation), $documentations);
 	}
-	
+
 	/**
 	 * @test
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -132,10 +132,10 @@ class PackageTest extends \F3\Testing\BaseTestCase {
 		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
 
 		$packagePath = \vfsStream::url('testDirectory') . '/';
-		
+
 		$package = new \F3\FLOW3\Package\Package('FLOW3', $packagePath);
-		$documentations = $package->getPackageDocumentations();	
-		
+		$documentations = $package->getPackageDocumentations();
+
 		$this->assertEquals(array(), $documentations);
 	}
 }

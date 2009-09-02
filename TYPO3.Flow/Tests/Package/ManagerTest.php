@@ -201,7 +201,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$packagesPath = \vfsStream::url('testDirectory') . '/';
 
 		try {
-			$this->packageManager->createPackage('Invalid_Package_Key', NULL, $packagesPath);
+			$this->packageManager->createPackage('Invalid*PackageKey', NULL, $packagesPath);
 		} catch(Exception $exception) {
 			$this->assertEquals(1220722210, $exception->getCode(), 'createPackage() throwed an exception but with an unexpected error code.');
 		}
@@ -259,10 +259,12 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
 	public function getPackageKeyValidationWorks() {
-		$this->assertFalse($this->packageManager->isPackageKeyValid('Invalid_Package_Key'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('invalidPackageKey'));
+		$this->assertFalse($this->packageManager->isPackageKeyValid('invalid PackageKey'));
 		$this->assertFalse($this->packageManager->isPackageKeyValid('1nvalidPackageKey'));
 		$this->assertTrue($this->packageManager->isPackageKeyValid('ValidPackageKey'));
+		$this->assertTrue($this->packageManager->isPackageKeyValid('Valid_PackageKey'));
+		$this->assertTrue($this->packageManager->isPackageKeyValid('ValidPackage123Key'));
 	}
 
 	/**
