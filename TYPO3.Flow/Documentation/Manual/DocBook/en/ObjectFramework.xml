@@ -66,9 +66,9 @@
         <title>Supported scopes</title>
 
         <tgroup cols="2">
-          <colspec colwidth="1*"/>
+          <colspec colwidth="1*" />
 
-          <colspec colwidth="3*"/>
+          <colspec colwidth="3*" />
 
           <thead>
             <row>
@@ -98,9 +98,7 @@
             </row>
 
             <row>
-              <entry>session<footnote>
-                  <remark>Not yet implemented</remark>
-                </footnote></entry>
+              <entry>session</entry>
 
               <entry>The object instance is unique during the whole user
               session - each injection or <function>getObject</function> call
