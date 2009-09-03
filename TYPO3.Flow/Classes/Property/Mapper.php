@@ -48,6 +48,12 @@ namespace F3\FLOW3\Property;
 class Mapper {
 
 	/**
+	 * A preg pattern to match against UUIDs
+	 * @var string
+	 */
+	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+
+	/**
 	 * Results of the last mapping operation
 	 * @var \F3\FLOW3\Propert\MappingResults
 	 */
@@ -72,6 +78,11 @@ class Mapper {
 	 * @var \F3\FLOW3\Persistence\ManagerInterface
 	 */
 	protected $persistenceManager;
+
+	/**
+	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
+	 */
+	protected $queryFactory;
 
 	/**
 	 * Injects the object factory
@@ -115,6 +126,17 @@ class Mapper {
 	 */
 	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
 		$this->persistenceManager = $persistenceManager;
+	}
+
+	/**
+	 * Injects a QueryFactory instance
+	 *
+	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
+		$this->queryFactory = $queryFactory;
 	}
 
 	/**
@@ -187,10 +209,16 @@ class Mapper {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function map(array $propertyNames, $source, $target, $optionalPropertyNames = array()) {
+	public function map(array $propertyNames, $source, &$target, $optionalPropertyNames = array()) {
 		if (!is_object($source) && !is_array($source)) throw new \F3\FLOW3\Property\Exception\InvalidSource('The source object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
+
+		if (is_string($target) && strpos($target, '\\') !== FALSE) {
+			return $this->transformToObject($source, $target, '--none--');
+		}
+
 		if (!is_object($target) && !is_array($target)) throw new \F3\FLOW3\Property\Exception\InvalidTarget('The target object must be a valid object or array, ' . gettype($target) . ' given.', 1187807099);
 
+		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
 		if (is_object($target)) {
 			if ($target instanceof \F3\FLOW3\AOP\ProxyInterface) {
 				$targetClassSchema = $this->reflectionService->getClassSchema($target->FLOW3_AOP_Proxy_getProxyTargetClassName());
@@ -201,58 +229,55 @@ class Mapper {
 			$targetClassSchema = NULL;
 		}
 
-		$this->mappingResults = $this->objectFactory->create('F3\FLOW3\Property\MappingResults');
-		$propertyValues = array();
-
 		foreach ($propertyNames as $propertyName) {
+			$propertyValue = NULL;
 			if (is_array($source) || $source instanceof \ArrayAccess) {
-				if (isset($source[$propertyName])) $propertyValues[$propertyName] = $source[$propertyName];
+				if (isset($source[$propertyName])) {
+					$propertyValue = $source[$propertyName];
+				}
 			} else {
-				$propertyValues[$propertyName] = \F3\FLOW3\Reflection\ObjectAccess::getProperty($source, $propertyName);
+				$propertyValue = \F3\FLOW3\Reflection\ObjectAccess::getProperty($source, $propertyName);
 			}
-		}
-		foreach ($propertyNames as $propertyName) {
-			if (isset($propertyValues[$propertyName])) {
 
-					// source is array with (seemingly) uuid strings and we have a target classschema knowing the property
-				if (is_array($propertyValues[$propertyName])
-						&& is_string(current($propertyValues[$propertyName]))
-						&& $targetClassSchema !== NULL
-						&& $targetClassSchema->hasProperty($propertyName)
-						&& preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', current($propertyValues[$propertyName])) === 1) {
-
+			if ($propertyValue === NULL && !in_array($propertyName, $optionalPropertyNames)) {
+				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
+			} else {
+				if ($targetClassSchema !== NULL && $targetClassSchema->hasProperty($propertyName)) {
 					$propertyMetaData = $targetClassSchema->getProperty($propertyName);
-						// the target is array-like and the elementType is a class
+
 					if (in_array($propertyMetaData['type'], array('array', 'ArrayObject', 'SplObjectStorage')) && strpos($propertyMetaData['elementType'], '\\') !== FALSE) {
-						foreach ($propertyValues[$propertyName] as $k => $v) {
-								// convert to object and override original value
-							$existingObject = $this->persistenceManager->getBackend()->getObjectByIdentifier($v);
-							if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Querying the repository for the specified object of type ' . $$propertyMetaData['elementType'] . ' was not successful.', 1249379517);
-							$propertyValues[$propertyName][$k] = $existingObject;
+						$objects = array();
+						foreach ($propertyValue as $value) {
+							$objects[] = $this->transformToObject($value, $propertyMetaData['elementType'], $propertyName);
 						}
-					}
-						// make sure we hand out what is expected
-					if ($propertyMetaData['type'] === 'ArrayObject') {
-						$propertyValues[$propertyName] = new \ArrayObject($propertyValues[$propertyName]);
-					} elseif ($propertyMetaData['type']=== 'SplObjectStorage') {
-						$objects = $propertyValues[$propertyName];
-						$propertyValues[$propertyName] = new \SplObjectStorage();
-						foreach ($objects as $object) {
-							$propertyValues[$propertyName]->attach($object);
+
+							// make sure we hand out what is expected
+						if ($propertyMetaData['type'] === 'ArrayObject') {
+							$propertyValue = new \ArrayObject($objects);
+						} elseif ($propertyMetaData['type']=== 'SplObjectStorage') {
+							$propertyValue = new \SplObjectStorage();
+							foreach ($objects as $object) {
+								$propertyValue->attach($object);
+							}
+						} else {
+							$propertyValue = $objects;
 						}
+					} elseif (strpos($propertyMetaData['type'], '\\') !== FALSE) {
+						$propertyValue = $this->transformToObject($propertyValue, $propertyMetaData['type'], $propertyName);
 					}
+				} elseif ($targetClassSchema !== NULL) {
+					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' does not exist in target class schema." , 1251813614), $propertyName);
 				}
 
 				if (is_array($target)) {
-					$target[$propertyName] = $source[$propertyName];
-				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValues[$propertyName]) === FALSE) {
+					$target[$propertyName] = $propertyValue;
+				} elseif (\F3\FLOW3\Reflection\ObjectAccess::setProperty($target, $propertyName, $propertyValue) === FALSE) {
 					$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Property '$propertyName' could not be set." , 1236783102), $propertyName);
 				}
-			} elseif (!in_array($propertyName, $optionalPropertyNames)) {
-				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', "Required property '$propertyName' does not exist." , 1236785359), $propertyName);
 			}
 		}
-		return (!$this->mappingResults->hasErrors() && !$this->mappingResults->hasWarnings());
+
+		return !$this->mappingResults->hasErrors();
 	}
 
 	/**
@@ -265,6 +290,90 @@ class Mapper {
 	public function getMappingResults() {
 		return $this->mappingResults;
 	}
+
+	/**
+	 * Transforms strings with UUIDs or arrays with UUIDs/identity properties
+	 * into the requested type, if possible.
+	 *
+	 * @param mixed $propertyValue The value to transform, string or array
+	 * @param string $targetType The type to transform to
+	 * @param string $propertyName In case of an error we add this to the error message
+	 * @return object
+	 */
+	protected function transformToObject($propertyValue, $targetType, $propertyName) {
+		if (is_string($propertyValue) && preg_match(self::PATTERN_MATCH_UUID, $propertyValue) === 1) {
+			$propertyValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue);
+			if ($propertyValue === FALSE) {
+				$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Querying the repository for the specified object with UUID ' . $propertyValue . ' was not successful.' , 1249379517), $propertyName);
+			}
+		} elseif (is_array($propertyValue)) {
+			if (isset($propertyValue['__identity'])) {
+				$existingObject = (is_array($propertyValue['__identity'])) ? $this->findObjectByIdentityProperties($propertyValue['__identity'], $targetType) : $this->persistenceManager->getBackend()->getObjectByIdentifier($propertyValue['__identity']);
+				if ($existingObject === FALSE) throw new \F3\FLOW3\Property\Exception\TargetNotFound('Querying the repository for the specified object was not successful.', 1237305720);
+				unset($propertyValue['__identity']);
+				if (count($propertyValue) === 0) {
+					$propertyValue = $existingObject;
+				} elseif ($existingObject !== NULL) {
+					$newObject = clone $existingObject;
+					if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+						$propertyValue = $newObject;
+					}
+				}
+			} else {
+				$newObject = $this->objectFactory->create($targetType);
+				if ($this->map(array_keys($propertyValue), $propertyValue, $newObject)) {
+					$propertyValue = $newObject;
+				}
+			}
+		} else {
+			throw new \InvalidArgumentException('transformToObject() accepts only strings and arrays.', 1251814355);
+		}
+
+		return $propertyValue;
+	}
+
+	/**
+	 * Finds an object from the repository by searching for its identity properties.
+	 *
+	 * @param array $identityProperties Property names and values to search for
+	 * @param string $type The object type to look for
+	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function findObjectByIdentityProperties(array $identityProperties, $type) {
+		$query = $this->queryFactory->create($type);
+		$classSchema = $this->reflectionService->getClassSchema($type);
+
+		$equals = array();
+		foreach ($classSchema->getIdentityProperties() as $propertyName => $propertyType) {
+			if (isset($identityProperties[$propertyName])) {
+				if ($propertyType === 'string') {
+					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName], FALSE);
+				} else {
+					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName]);
+				}
+			}
+		}
+
+		if (count($equals) === 1) {
+			$constraint = current($equals);
+		} else {
+			$constraint = $query->logicalAnd(current($equals), next($equals));
+			while (($equal = next($equals)) !== FALSE) {
+				$constraint = $query->logicalAnd($constraint, $equal);
+			}
+		}
+
+		$objects = $query->matching($constraint)->execute();
+		if (count($objects) === 1 ) {
+			return current($objects);
+		} else {
+			$this->mappingResults->addError($this->objectFactory->create('F3\FLOW3\Error\Error', 'Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.' , 1237305719), '--none--');
+			return FALSE;
+		}
+	}
+
 }
 
 ?>

@@ -32,6 +32,12 @@ namespace F3\FLOW3\MVC\Controller;
 class Argument {
 
 	/**
+	 * A preg pattern to match against UUIDs
+	 * @var string
+	 */
+	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+
+	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface
 	 */
 	protected $objectManager;
@@ -47,9 +53,9 @@ class Argument {
 	protected $reflectionService;
 
 	/**
-	 * @var \F3\FLOW3\Persistence\QueryFactoryInterface
+	 * @var \F3\FLOW3\Persistence\ManagerInterface
 	 */
-	protected $queryFactory;
+	protected $persistenceManager;
 
 	/**
 	 * @var \F3\FLOW3\Property\Mapper
@@ -172,14 +178,14 @@ class Argument {
 	}
 
 	/**
-	 * Injects a QueryFactory instance
+	 * Injects the persistence manager
 	 *
-	 * @param \F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory
+	 * @param \F3\FLOW3\Persistence\ManagerInterface $persistenceManager
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function injectQueryFactory(\F3\FLOW3\Persistence\QueryFactoryInterface $queryFactory) {
-		$this->queryFactory = $queryFactory;
+	public function injectPersistenceManager(\F3\FLOW3\Persistence\ManagerInterface $persistenceManager) {
+		$this->persistenceManager = $persistenceManager;
 	}
 
 	/**
@@ -438,28 +444,15 @@ class Argument {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValue($value) {
-		if (is_string($value) && $this->dataTypeClassSchema !== NULL && preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $value) === 1) {
-			$value = array('__identity' => $value);
-		}
+		if ($this->dataTypeClassSchema !== NULL) {
+			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
+				$value = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
+			} elseif (is_array($value)) {
+				$value = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
+			}
 
-		if (is_array($value) && $this->dataTypeClassSchema !== NULL) {
-			if (isset($value['__identity'])) {
-				$existingObject = (is_array($value['__identity'])) ? $this->findObjectByIdentityProperties($value['__identity']) : $this->findObjectByIdentityUUID($value['__identity']);
-				if ($existingObject === FALSE) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for the specified object was not successful.', 1237305720);
-				unset($value['__identity']);
-				if (count($value) === 0) {
-					$value = $existingObject;
-				} elseif ($existingObject !== NULL) {
-					$newObject = clone $existingObject;
-					if ($this->propertyMapper->map(array_keys($value), $value, $newObject)) {
-						$value = $newObject;
-					}
-				}
-			} else {
-				$newObject = $this->objectFactory->create($this->dataType);
-				if ($this->propertyMapper->map(array_keys($value), $value, $newObject)) {
-					$value = $newObject;
-				}
+			if (!($value instanceof $this->dataType)) {
+				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '".', 1251730701);
 			}
 		}
 
@@ -489,52 +482,5 @@ class Argument {
 		return (string)$this->value;
 	}
 
-	/**
-	 * Finds an object from the repository by searching for its identity properties.
-	 *
-	 * @param array $identityProperties Property names and values to search for
-	 * @return mixed Either the object matching the identity or, if none or more than one object was found, FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function findObjectByIdentityProperties(array $identityProperties) {
-		$query = $this->queryFactory->create($this->dataType);
-		$equals = array();
-		foreach ($this->dataTypeClassSchema->getIdentityProperties() as $propertyName => $propertyType) {
-			if (isset($identityProperties[$propertyName])) {
-				if ($propertyType === 'string') {
-					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName], FALSE);
-				} else {
-					$equals[] = $query->equals($propertyName, $identityProperties[$propertyName]);
-				}
-			}
-		}
-		if (count($equals) === 1) {
-			$constraint = current($equals);
-		} else {
-			$constraint = $query->logicalAnd(current($equals), next($equals));
-			while (($equal = next($equals)) !== FALSE) {
-				$constraint = $query->logicalAnd($constraint, $equal);
-			}
-		}
-		$query->matching($constraint);
-		$objects = $query->execute();
-		if (count($objects) === 1 ) return current($objects);
-		throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('Argument "' . $this->name . '": Querying the repository for object by properties (' . implode(', ', array_keys($identityProperties)) . ') resulted in ' . count($objects) . ' objects instead of one.', 1237305719);
-	}
-
-	/**
-	 * Finds an object from the repository by searching for its technical UUID.
-	 *
-	 * @param string $uuid The object's uuid
-	 * @return mixed Either the object matching the uuid or, if none or more than one object was found, FALSE
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	protected function findObjectByIdentityUUID($uuid) {
-		$query = $this->queryFactory->create($this->dataType);
-		$objects = $query->matching($query->withUUID($uuid))->execute();
-		if (count($objects) === 1 ) return current($objects);
-		return FALSE;
-	}
 }
 ?>

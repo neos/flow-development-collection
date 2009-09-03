@@ -111,7 +111,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * @api
 	 */
 	public function setCacheDirectory($cacheDirectory) {
-		if ($cacheDirectory{strlen($cacheDirectory)-1} !== '/') {
+		if ($cacheDirectory[strlen($cacheDirectory)-1] !== '/') {
 			$cacheDirectory .= '/';
 		}
 		if (!is_writable($cacheDirectory)) {

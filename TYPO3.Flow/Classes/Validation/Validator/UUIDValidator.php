@@ -31,6 +31,12 @@ namespace F3\FLOW3\Validation\Validator;
 class UUIDValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
+	 * A preg pattern to match against UUIDs
+	 * @var string
+	 */
+	const PATTERN_MATCH_UUID = '/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/';
+
+	/**
 	 * Returns TRUE, if the given property ($propertyValue) is a formally valid UUID.
 	/**
 	 * Checks if the given value is valid according to the validator.
@@ -43,7 +49,7 @@ class UUIDValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 	 */
 	public function isValid($value) {
 		$this->errors = array();
-		if (!is_string($value) || !preg_match('/([a-f0-9]){8}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){4}-([a-f0-9]){12}/', $value)) {
+		if (!is_string($value) || !preg_match(self::PATTERN_MATCH_UUID, $value)) {
 			$this->addError('The given subject was not a valid UUID. Got: "' . $value . '"', 1221565853);
 			return FALSE;
 		}

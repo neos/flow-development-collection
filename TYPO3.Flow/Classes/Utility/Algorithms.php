@@ -36,6 +36,7 @@ class Algorithms {
 	 *
 	 * @return string The universally unique id
 	 * @author Unkown
+	 * @todo check for randomness, optionally generate type 1 and type 5 UUIDs, use php5-uuid extension if available
 	 */
 	static public function generateUUID() {
 		return sprintf( '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',

@@ -82,6 +82,34 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
+	 * Checks if one array can be bound to another by using the default settings
+	 *
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function mapCanCopyPropertiesOfOneArrayToAnother() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
+		$target = array();
+		$source = array(
+			'key1' => 'value1',
+			'key2' => 'Píca vailë yulda nár pé, cua téra engë centa oi.',
+			'key3' => array(
+				'key3-1' => 'トワク びつける アキテクチャ エム, クリック'
+			),
+			'key4' => array(
+				'key4-1' => '@$ N0+ ||0t p@r+1cUL4r 7|24n5|473d'
+			)
+		);
+
+		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+		$successful = $mapper->map(array('key1', 'key2', 'key3', 'key4'), $source, $target);
+		$this->assertEquals($source, $target);
+		$this->assertTrue($successful);
+	}
+
+	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -107,7 +135,7 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @expectedException \F3\FLOW3\Property\Exception\InvalidTarget
 	 */
-	public function mapExpectsTheTargetToBeAnObjectOrArray() {
+	public function mapExpectsTheTargetToBeAStringContainingClassNameOrAnObjectOrAnArray() {
 		$target = '';
 		$source = new \ArrayObject(array('key1' => 'value1'));
 
@@ -360,14 +388,10 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'SplObjectStorage<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
-		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper = $this->getMock('F3\FLOW3\Property\Mapper', array('transformToObject'));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectPersistenceManager($mockPersistenceManager);
 		$mapper->injectObjectFactory($this->mockObjectFactory);
 
 		$successful = $mapper->map(array('property1'), $source, $target);
@@ -390,18 +414,16 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'ArrayObject<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
 		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper = $this->getMock('F3\FLOW3\Property\Mapper', array('transformToObject'));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectPersistenceManager($mockPersistenceManager);
 		$mapper->injectObjectFactory($this->mockObjectFactory);
 
 		$successful = $mapper->map(array('property1'), $source, $target);
 		$this->assertType('ArrayObject', $target->property1);
+		$this->assertSame($existingObject, $target->property1[0]);
 	}
 
 	/**
@@ -420,18 +442,129 @@ class MapperTest extends \F3\Testing\BaseTestCase {
 		$classSchema->addProperty('property1', 'array<\stdClass>');
 
 		$existingObject = new \stdClass();
-		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
-		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
-		$mapper = new \F3\FLOW3\Property\Mapper();
+		$mapper = $this->getMock('F3\FLOW3\Property\Mapper', array('transformToObject'));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'][0], '\stdClass', 'property1')->will($this->returnValue($existingObject));
 		$mapper->injectReflectionService($this->mockReflectionService);
-		$mapper->injectPersistenceManager($mockPersistenceManager);
 		$mapper->injectObjectFactory($this->mockObjectFactory);
 
 		$mapper->map(array('property1'), $source, $target);
 		$this->assertTrue(is_array($target->property1));
+		$this->assertSame($existingObject, $target->property1[0]);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function mapConvertsArraysInSourceToObjectsIfTargetPropertyIsObject() {
+		$this->mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\Property\MappingResults')->will($this->returnValue($this->mappingResults));
+
+		$target = new \F3\FLOW3\Fixtures\ClassWithSetters();
+		$source = array(
+			'property1' => array('foo' => 'bar')
+		);
+		$classSchema = new \F3\FLOW3\Reflection\ClassSchema('F3\FLOW3\Fixture\Validation\ClassWithSetters');
+		$classSchema->addProperty('property1', '\F3\Foo\Bar');
+
+		$this->mockReflectionService->expects($this->once())->method('getClassSchema')->with('F3\FLOW3\Fixtures\ClassWithSetters')->will($this->returnValue($classSchema));
+		$mapper = $this->getMock('F3\FLOW3\Property\Mapper', array('transformToObject'));
+		$mapper->expects($this->once())->method('transformToObject')->with($source['property1'], 'F3\Foo\Bar', 'property1');
+		$mapper->injectReflectionService($this->mockReflectionService);
+		$mapper->injectObjectFactory($this->mockObjectFactory);
+
+		$mapper->map(array('property1'), $source, $target);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectConvertsAnUUIDStringToAnObject() {
+		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
+		$existingObject = new \stdClass();
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('dummy'));
+		$mapper->injectPersistenceManager($mockPersistenceManager);
+		$mapper->_call('transformToObject', $UUID, 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectConvertsAnIdentityArrayContainingAnUUIDToAnObject() {
+		$UUID = 'e104e469-9030-4b98-babf-3990f07dd3f1';
+		$existingObject = new \stdClass();
+		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with($UUID)->will($this->returnValue($existingObject));
+		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('dummy'));
+		$mapper->injectPersistenceManager($mockPersistenceManager);
+		$mapper->_call('transformToObject', array('__identity' => $UUID), 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectCallsFindObjectByIdentityPropertiesToConvertAnIdentityArrayContainingIdentityPropertiesIntoTheRealObject() {
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('findObjectByIdentityProperties'));
+		$mapper->expects($this->once())->method('findObjectByIdentityProperties')->with(array('key1' => 'value1', 'key2' => 'value2'));
+		$mapper->_call('transformToObject', array('__identity' => array('key1' => 'value1', 'key2' => 'value2')), 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectConvertsAnArrayIntoAFreshObjectWithThePropertiesSetToTheArrayValuesIfDataTypeIsAClassAndNoIdentityInformationIsFoundInTheValue() {
+		$theValue = array('property1' => 'value1', 'property2' => 'value2');
+		$theObject = new \stdClass();
+
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\Foo\Bar')->will($this->returnValue($theObject));
+
+		$mapper = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Property\Mapper'), array('map'));
+		$mapper->injectObjectFactory($mockObjectFactory);
+		$mapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, $theObject);
+		$mapper->_call('transformToObject', $theValue, 'F3\Foo\Bar', 'someProp');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function mapCallsTransformToObjectIfTargetIsAStringContainingAClassName() {
+		$source = array();
+		$target = '\F3\Foo\Bar';
+		$mapper = $this->getMock('F3\FLOW3\Property\Mapper', array('transformToObject'));
+		$mapper->expects($this->once())->method('transformToObject')->with(array(), '\F3\Foo\Bar');
+
+		$mapper->map(array(), $source, $target);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function transformToObjectCallsMapIfSourcePropertiesRemainAfterObjectWasFound() {
+		$this->markTestIncomplete('No test yet!');
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function findObjectByIdentityPropertiesDispatchesTheExpectedQuery() {
+		$this->markTestIncomplete('No test yet!');
 	}
 
 }

@@ -99,14 +99,19 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setValueTriesToConvertAnUUIDStringIntoTheRealObjectIfDataTypeIsAClassName() {
+	public function setValueTriesToConvertAnUUIDStringIntoTheRealObjectIfDataTypeClassSchemaIsAvailable() {
 		$object = new \stdClass();
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
+		$mockPersistenceBackend = $this->getMock('\F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
+		$mockPersistenceManager = $this->getMock('\F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument->injectPersistenceManager($mockPersistenceManager);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->expects($this->once())->method('findObjectByIdentityUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
+		$argument->_set('dataType', 'stdClass');
 		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
 
 		$this->assertSame($object, $argument->_get('value'));
@@ -114,69 +119,41 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setValueTriesToConvertAnIdentityArrayContainingAUUIDIntoTheRealObject() {
+	public function setValueHandsArraysOverToThePropertyMapperIfDataTypeClassSchemaIsAvailable() {
 		$object = new \stdClass();
 
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper');
+		$mockPropertyMapper->expects($this->once())->method('map')->with(array('foo'), array('foo' => 'bar'), 'stdClass')->will($this->returnValue($object));
 
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
+		$argument->injectPropertyMapper($mockPropertyMapper);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->expects($this->once())->method('findObjectByIdentityUUID')->with('e104e469-9030-4b98-babf-3990f07dd3f1')->will($this->returnValue($object));
-		$argument->setValue(array('__identity' => 'e104e469-9030-4b98-babf-3990f07dd3f1'));
+		$argument->_set('dataType', 'stdClass');
+		$argument->setValue(array('foo' => 'bar'));
 
 		$this->assertSame($object, $argument->_get('value'));
 	}
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValue
 	 */
-	public function setValueTriesToConvertAnIdentityArrayContainingIdentifiersIntoTheRealObject() {
-		$this->markTestIncomplete('Not yet fully implemented.');
-
+	public function setValueThrowsExceptionIfValueIsNotInstanceOfDataType() {
 		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
+		$mockPersistenceBackend = $this->getMock('\F3\FLOW3\Persistence\BackendInterface');
+		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->will($this->returnValue(new \stdClass()));
+		$mockPersistenceManager = $this->getMock('\F3\FLOW3\Persistence\ManagerInterface');
+		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
-		$mockQuery = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\Query', array(), array(), '', FALSE);
-		# TODO Insert more expectations here
-		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('the object')));
-
-		$mockQueryFactory = $this->getMock('F3\TYPO3CR\FLOW3\Persistence\QueryFactory', array(), array(), '', FALSE);
-		$mockQueryFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue($mockQuery));
-
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
-		$argument->_set('dataType', 'MyClass');
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument->injectPersistenceManager($mockPersistenceManager);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('queryFactory', $mockQueryFactory);
-		$argument->setValue(array('__identity' => array('key1' => 'value1', 'key2' => 'value2')));
-
-		$this->assertSame('the object', $argument->_get('value'));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function setValueConvertsAnArrayIntoAFreshObjectWithThePropertiesSetToTheArrayValuesIfDataTypeIsAClassAndNoIdentityInformationIsFoundInTheValue() {
-		$theValue = array('property1' => 'value1', 'property2' => 'value2');
-
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('MyClass')->will($this->returnValue('the object'));
-
-		$mockClassSchema = $this->getMock('F3\FLOW3\Reflection\ClassSchema', array(), array() ,'', FALSE);
-
-		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper', array('map'), array(), '', FALSE);
-		$mockPropertyMapper->expects($this->once())->method('map')->with(array('property1', 'property2'), $theValue, 'the object')->will($this->returnValue(TRUE));
-
-		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('dummy'), array(), '', FALSE);
-		$argument->_set('dataType', 'MyClass');
-		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('objectFactory', $mockObjectFactory);
-		$argument->_set('propertyMapper', $mockPropertyMapper);
-		$argument->setValue($theValue);
-
-		$this->assertSame('the object', $argument->_get('value'));
+		$argument->_set('dataType', 'notMyType');
+		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
 	}
 
 	/**
