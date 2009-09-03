@@ -65,12 +65,41 @@
       </varlistentry>
 
       <varlistentry>
-        <term><filename>Packages.yaml</filename></term>
+        <term><filename>SignalsSlots.yaml</filename></term>
+
+        <listitem>
+          <para>Contains mapping information between signals and slots. More
+          about this mechanism can be found in the Signal Slots
+          section.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Security.yaml</filename></term>
+
+        <listitem>
+          <para>(not yet implemented)</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>Package.yaml</filename></term>
 
         <listitem>
           <para>Contains package configuration, i.e. options which define
           certain specialties of the package such as custom autoloaders or
           special resources.</para>
+        </listitem>
+      </varlistentry>
+
+      <varlistentry>
+        <term><filename>PackageStates.yaml</filename></term>
+
+        <listitem>
+          <para>Contains a list of packages and their current state, for
+          example if they are active or not. Don't edit this file directly,
+          rather use the <filename>flow3</filename> command line tool do
+          activate and deactivate packages.</para>
         </listitem>
       </varlistentry>
 
@@ -144,23 +173,16 @@
     <title>Defining Configuration</title>
 
     <section>
-      <title>Configuration Formats</title>
+      <title>Configuration Format</title>
 
-      <para>Although YAML is the preferred and default configuration format,
-      it is possible to use other kinds of markup. Currently FLOW3 has
-      built-in support for YAML and PHP based configuration.</para>
-    </section>
-
-    <section>
-      <title>YAML</title>
-
-      <para>YAML is a well-readable format which is especially well-suited for
-      defining configuration. The full specification among with many examples
-      can be found on the <link ns5:href="???">YAML website</link>. All
-      important parts of the YAML specification are supported by the parser
-      used by FLOW3, it might happen though that some exotic features won't
-      have the desired effect. At best you look at the configuration files
-      which come with the FLOW3 distribution for getting more examples.</para>
+      <para>The format of FLOW3's configuration files is YAML. YAML is a
+      well-readable format which is especially well-suited for defining
+      configuration. The full specification among with many examples can be
+      found on the <link ns5:href="???">YAML website</link>. All important
+      parts of the YAML specification are supported by the parser used by
+      FLOW3, it might happen though that some exotic features won't have the
+      desired effect. At best you look at the configuration files which come
+      with the FLOW3 distribution for getting more examples.</para>
 
       <example>
         <title>Example for a package-level Settings.yaml</title>
@@ -190,207 +212,35 @@ TYPO3CR:
     </section>
 
     <section>
-      <title>PHP</title>
+      <title>Constants</title>
 
-      <para>Although configuration files are plain PHP, they should follow
-      FLOW3's conventions for configuration files. All options are properties
-      of a special configuration container object which is automagically
-      provided in a variable named <varname>$c</varname>.</para>
-
-      <example>
-        <title>Example for a package-level Settings.php</title>
-
-        <para><programlisting language="php">&lt;?php
-declare(ENCODING="utf-8");
-
-/*                                                                        *
- * Settings Configuration for the TYPO3CR Package                         *
- *                                                                        */
-
-/**
- * The storage backend to use for TYPO3CR.
- *
- * @var F3_TYPO3CR_Storage_BackendInterface
- */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backend = 'F3\TYPO3CR\Storage\Backend\PDO';
-
-/**
- * Options which are passed to the storage backend used by TYPO3CR
- *
- * @var array
- */
-$c-&gt;TYPO3CR-&gt;storage-&gt;backendOptions = array(
-  'dataSourceName' =&gt; 'sqlite:/tmp/TYPO3CR.db',
-  'username' =&gt; NULL,
-  'password' =&gt; NULL
-);
-
-?&gt;</programlisting></para>
-      </example>
-
-      <para>As you can see, you can introduce new configuration options by
-      just assigning a value to them using PHP's object / member variable
-      syntax.</para>
-
-      <para>Technically the <varname>$c</varname> variable is an instance of
-      <classname>\F3\FLOW3\Configuration\Container</classname> which
-      automatically creates sub containers as soon as you try to access a
-      not-yet-existing property. Taking the above example,
-      <varname>$c</varname>, <varname>$c-&gt;TYPO3CR</varname> and
-      <varname>$c-&gt;TYPO3CR-&gt;storage</varname> are all Configuration
-      Container objects which were created on the fly.
-      <property>backend</property> is just a property (member variable) of
-      <varname>$c-&gt;TYPO3CR-&gt;storage</varname> and contains a value of
-      the type <type>string</type>.</para>
-
-      <note>
-        <para>Please note that the first level of your option tree must always
-        contain the key of the package you're referring to
-        (<package>TYPO3CR</package> in the above example). While it
-        technically is possible to define and modify settings of other package
-        in your own package, it's certainly something you should do only if
-        really necessary.</para>
-      </note>
-
-      <para>There are two alternatives to the above object-driven syntax and
-      all the three of them may be mixed as you like.</para>
-
-      <para>Instead of the object / property way, you can equally use an array
-      syntax:</para>
-
-      <example>
-        <title>Settings declaration using the object and the array
-        syntax</title>
-
-        <para><programlisting language="php">/**
- * The storage backend to use for TYPO3CR.
- *
- * @var \F3\TYPO3CR\Storage\BackendInterface
- */
-$c-&gt;TYPO3CR-&gt;storage['backend'] = 'F3\TYPO3CR\Storage\Backend\PDO';</programlisting></para>
-      </example>
-
-      <para>Finally you may even call virtual setter methods in order to get a
-      more readable configuration file when setting many options on the same
-      container:</para>
-
-      <example>
-        <title>Settings declaration with the object syntax and virtual
-        setters</title>
-
-        <para><programlisting language="php">	// Traditional object / property syntax:
-
-$c-&gt;Demo-&gt;administrator-&gt;name = 'John Doe';
-$c-&gt;Demo-&gt;administrator-&gt;email = 'johndoe@typo3.org';
-$c-&gt;Demo-&gt;administrator-&gt;country = 'DE';
-
-	// The same with the virtual setters syntax:
-
-$c-&gt;Demo-&gt;administrator-&gt;
-   setName('JohnDoe')-&gt;
-   setEmail('johndoe@typo3.org')-&gt;
-   setCountry('DE');</programlisting></para>
-      </example>
-    </section>
-
-    <section>
-      <title>Constants (special case)</title>
-
-      <para>In the <filename>Packages</filename> configuration you can use two
-      special options influencing the class autoloader of FLOW3's resource
-      manager.</para>
-
-      <caution>
-        <para>This might be a temporary solution which will surely change as
-        soon as the resource manager and the package manager become more
-        mature.</para>
-      </caution>
+      <para>Sometimes it is necessary to use values in your configuration
+      files which are defined as PHP constants.These values can be included by
+      special markers which are replaced by the actual value during parse
+      time. The format is
+      <literal>%<replaceable>CONSTANT_NAME</replaceable>%</literal> where
+      <literal><replaceable>CONSTANT_NAME</replaceable></literal> is the name
+      of a PHP constant. Note that the constant name must be all uppercase.
+      Some examples:</para>
 
       <variablelist>
         <varlistentry>
-          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;specialClassNameAndPaths</term>
+          <term>%FLOW3_PATH_WEB%</term>
 
           <listitem>
-            <para>This can be used to register classes outside the
-            include_path and not covered by the FLOW3 class autoloader.</para>
+            <para>Will be replaced by the path to the public web
+            directory.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term>$c-&gt;PackageKey-&gt;resourceManager-&gt;includePaths</term>
+          <term>%PHP_VERSION%</term>
 
           <listitem>
-            <para>This can be used to add paths to the PHP
-            include_path.</para>
+            <para>Will be replaced by the current PHP version.</para>
           </listitem>
         </varlistentry>
       </variablelist>
-
-      <para>The values for those options may contain markers which are
-      replaced before the value is used:</para>
-
-      <variablelist>
-        <varlistentry>
-          <term>%PATH_PACKAGE%</term>
-
-          <listitem>
-            <para>Will be replaced by the path to the package folder.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>%PATH_PACKAGE_CLASSES%</term>
-
-          <listitem>
-            <para>Will be replaced by the path to the package's
-            <filename>Classes</filename> folder.</para>
-          </listitem>
-        </varlistentry>
-
-        <varlistentry>
-          <term>%PATH_PACKAGE_RESOURCES%</term>
-
-          <listitem>
-            <para>Will be replaced by the path to the package's
-            <filename>Resources</filename> folder.</para>
-          </listitem>
-        </varlistentry>
-      </variablelist>
-
-      <example>
-        <title>Example for using specialClassNameAndPaths</title>
-
-        <programlisting language="yaml">#                                                                        #
-# Package configuration of the Smarty package                            #
-#                                                                        #
-
-# @package Smarty
-
-Smarty:
-  resourceManager:
-    specialClassNameAndPaths:
-      Smarty: %PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php</programlisting>
-      </example>
-
-      <example>
-        <title>Example for using specialClassNameAndPaths</title>
-
-        <programlisting language="php">&lt;?php
-declare(ENCODING="utf-8");
-
-/*                                                                        *
- * Packages configuration of the Smarty package                           *
- *                                                                        */
-
-/**
- * @version $Id:PackageConfiguration.php 178 2007-03-09 10:30:04Z robert $
- */
-
-$c-&gt;Smarty-&gt;resourceManager-&gt;specialClassNameAndPaths-&gt;Smarty = ⏎
-    '%PATH_PACKAGE_RESOURCES%PHP/Smarty/Smarty.class.php';
-
-?&gt;</programlisting>
-      </example>
     </section>
   </section>
 
@@ -496,14 +346,42 @@ class SomeClass {
       <para>Although infrequently necessary, it is also possible to retrieve
       options of the more special configuration types. The configuration
       manager provides a method called
-      <methodname>getSpecialConfiguration()</methodname> for this purpose. The
-      result this method returns depends on the actual configuration type you
-      are requesting.</para>
+      <methodname>getConfiguration()</methodname> for this purpose. The result
+      this method returns depends on the actual configuration type you are
+      requesting.</para>
 
       <para>Bottom line is that you should be highly aware of what you're
       doing when working with these special options. Usually there are much
       better ways to get the desired information (e.g. ask the Object Manager
       for object configuration).</para>
     </section>
+  </section>
+
+  <section>
+    <title>Configuration Cache</title>
+
+    <para>Parsing the YAML configuration files takes a bit of time which
+    remarkably slows down the initialization of FLOW3. That's why all
+    configuration is cached by default when FLOW3 is running in Production
+    context. Because this cache cannot be cleared automatically it is
+    important to know that changes to any configuration file won't have any
+    effect until you manually flush the respective caches.</para>
+
+    <para>This feature can be configure through a switch in the
+    <filename>FLOW3.yaml</filename> file:</para>
+
+    <programlisting language="yaml">configuration:
+  compileConfigurationFiles: y</programlisting>
+
+    <para>When enabled, the configuration manager will compile all loaded
+    configuration into a PHP file which will be loaded in subsequent calls
+    instead of parsing the YAML files again.</para>
+
+    <important>
+      <para>Once the configuration is cached changes to the YAML files don't
+      have any effect. Therefore in order to switch off the configuration
+      cache again you need to disable the feature in the YAML file
+      <emphasis>and</emphasis> flush all caches afterwards manually.</para>
+    </important>
   </section>
 </chapter>
