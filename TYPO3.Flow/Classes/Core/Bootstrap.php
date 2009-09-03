@@ -191,7 +191,7 @@ final class Bootstrap {
 		$this->initializeObjectManager();
 		$this->initializeSystemLogger();
 
-		$this->initializeLockManager();
+#		$this->initializeLockManager();
 		if ($this->siteLocked === TRUE) return;
 
 		$this->initializePackages();
