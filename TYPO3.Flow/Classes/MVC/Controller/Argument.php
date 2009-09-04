@@ -444,7 +444,7 @@ class Argument {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValue($value) {
-		if ($this->dataTypeClassSchema !== NULL) {
+		if ($value !== NULL && $this->dataTypeClassSchema !== NULL) {
 			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
 				$value = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
 			} elseif (is_array($value)) {
@@ -455,8 +455,8 @@ class Argument {
 				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '".', 1251730701);
 			}
 		}
-
 		$this->value = $value;
+
 		return $this;
 	}
 
