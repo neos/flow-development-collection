@@ -8,16 +8,19 @@
 
 echo FLOW3 File Permission Script
 
-usage() {
+if [ ! -d "Web" -o ! -d "Packages" -o ! -d "Configuration" ]; then
+	echo
+	echo Make sure you run this from the FLOW3 root directory!
+	echo
+	exit 1
+fi
+
+if [ "$#" != "3" ]; then
 	echo
 	echo Usage: $0 \<commandlineuser\> \<webuser\> \<webgroup\>
 	echo Run as superuser, if needed
 	echo
 	exit 1
-}
-
-if [ "$#" != "3" ]; then
-  usage
 fi
 
 echo Setting file permissions, this might take a minute ...
