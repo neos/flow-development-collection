@@ -85,12 +85,12 @@ class UriBuilder {
 	/**
 	 * Sets the current request
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request
+	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function setRequest(\F3\FLOW3\MVC\Web\Request $request) {
+	public function setRequest(\F3\FLOW3\MVC\RequestInterface $request) {
 		$this->request = $request;
 	}
 
