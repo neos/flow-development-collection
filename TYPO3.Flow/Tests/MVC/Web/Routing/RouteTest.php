@@ -763,22 +763,24 @@ class RouteTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function resolvesConvertsDomainObjectsIntoAUUIDIdentity() {
-		$objectWithIdentity = new \stdClass();
+	public function resolvesRecursivelyConvertsDomainObjectsIntoAUUIDIdentity() {
+		$object1 = new \stdClass();
+		$object2 = new \stdClass();
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
-		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($objectWithIdentity)->will($this->returnValue('someUUID'));
+		$mockPersistenceBackend->expects($this->at(0))->method('getIdentifierByObject')->with($object1)->will($this->returnValue('uuid1'));
+		$mockPersistenceBackend->expects($this->at(1))->method('getIdentifierByObject')->with($object2)->will($this->returnValue('uuid2'));
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->atLeastOnce())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 		$this->route->injectPersistenceManager($mockPersistenceManager);
 
 		$this->route->setUriPattern('foo');
 		$this->route->_set('isParsed', TRUE);
-		$this->route->resolves(array('foo' => 'bar', 'someObject' => $objectWithIdentity));
+		$this->route->resolves(array('foo' => 'bar', 'someObject' => $object1, 'baz' => array('someOtherObject' => $object2)));
 
 		$actualResult = $this->route->getMatchingURI();
-		$expectedResult = '?foo=bar&someObject=someUUID';
+		$expectedResult = '?foo=bar&someObject%5B__identity%5D=uuid1&baz%5BsomeOtherObject%5D%5B__identity%5D=uuid2';
 
 		$this->assertEquals($expectedResult, $actualResult);
 	}
