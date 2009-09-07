@@ -15,6 +15,8 @@ namespace F3\FLOW3\Monitor;
  * Public License for more details.                                       *
  *                                                                        */
 
+require_once('vfs/vfsStream.php');
+
 /**
  * Testcase for the File Monitor class
  *
@@ -42,6 +44,31 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$this->unixStylePath = \F3\FLOW3\Utility\Files::getUnixStylePath(__DIR__);
 		$this->unixStylePathAndFilename = \F3\FLOW3\Utility\Files::getUnixStylePath(__FILE__);
+
+		\vfsStreamWrapper::register();
+		\vfsStreamWrapper::setRoot(new \vfsStreamDirectory('testDirectory'));
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function fileMonitorCachesTheListOfKnownDirectoriesAndFiles() {
+		$mockCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+		$mockCache->expects($this->once())->method('has')->with('directoriesAndFiles')->will($this->returnValue(TRUE));
+		$mockCache->expects($this->once())->method('get')->with('directoriesAndFiles')->will($this->returnValue(array('foo' => 'bar')));
+		$mockCache->expects($this->once())->method('set')->with('directoriesAndFiles', array('baz' => 'quux'));
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('dummy'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->injectCache($mockCache);
+		$mockMonitor->initializeObject();
+
+		$this->assertSame(array('foo' => 'bar'), $mockMonitor->_get('directoriesAndFiles'));
+
+		$mockMonitor->_set('directoriesAndFiles', array('baz' => 'quux'));
+		$mockMonitor->_set('directoriesChanged', TRUE);
+
+		$mockMonitor->shutdownObject();
 	}
 
 	/**
@@ -131,15 +158,62 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function detectChangesDetectsChangesInFilesOfMonitoredDirectories() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+		$testPath = \vfsStream::url('testDirectory');
 
-		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$knownDirectoriesAndFiles = array(
+			$testPath => array(
+				$testPath . '/oldfile.txt',
+				$testPath . '/newfile.txt'
+			)
+		);
+
+		$expectedChangedFiles = array($testPath . '/newfile.txt');
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitFilesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->at(0))->method('detectChangedFiles')->with(array())->will($this->returnValue(array()));
-		$mockMonitor->expects($this->at(1))->method('detectChangedFiles')->with(array($this->unixStylePathAndFilename))->will($this->returnValue(array()));
+		$mockMonitor->expects($this->at(1))->method('detectChangedFiles')->with($knownDirectoriesAndFiles[$testPath])->will($this->returnValue($expectedChangedFiles));
+		$mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('FLOW3_Test', $expectedChangedFiles);
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
-		$mockMonitor->_set('directoriesAndFiles', array($this->unixStylePath => array($this->unixStylePathAndFilename)));
-		$mockMonitor->monitorDirectory(__DIR__);
+		$mockMonitor->_set('directoriesAndFiles', $knownDirectoriesAndFiles);
 
+		$mockMonitor->monitorDirectory($testPath);
+		$mockMonitor->detectChanges();
+	}
+
+	/**
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function detectChangesDetectsNewlyCreatedFilesInMonitoredDirectories() {
+		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
+
+		$testPath = \vfsStream::url('testDirectory');
+		file_put_contents($testPath . '/oldfile.txt', 'void');
+		file_put_contents($testPath . '/newfile.txt', 'void');
+
+		$knownDirectoriesAndFiles = array(
+			$testPath => array($testPath . '/oldfile.txt')
+		);
+
+		$actualDirectoriesAndFiles = array(
+			$testPath => array(
+				$testPath . '/oldfile.txt',
+				$testPath . '/newfile.txt'
+			)
+		);
+
+		$expectedChangedFiles = array($testPath . '/newfile.txt');
+
+		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitFilesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
+		$mockMonitor->expects($this->at(0))->method('detectChangedFiles')->with(array())->will($this->returnValue(array()));
+		$mockMonitor->expects($this->at(1))->method('detectChangedFiles')->with($actualDirectoriesAndFiles[$testPath])->will($this->returnValue($expectedChangedFiles));
+		$mockMonitor->expects($this->once())->method('emitFilesHaveChanged')->with('FLOW3_Test', $expectedChangedFiles);
+
+		$mockMonitor->injectSystemLogger($mockSystemLogger);
+		$mockMonitor->_set('directoriesAndFiles', $knownDirectoriesAndFiles);
+
+		$mockMonitor->monitorDirectory($testPath);
 		$mockMonitor->detectChanges();
 	}
 
@@ -173,14 +247,14 @@ class FileMonitorTest extends \F3\Testing\BaseTestCase {
 	public function detectChangesEmitsDirectoryChangedSignalIfDirectoryHasBeenRemoved() {
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
 
-		$expectedChangedDirectories = array('/foo/bar' => \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
+		$expectedChangedDirectories = array(\vfsStream::url('testDirectory') . '/bar' => \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED);
 
 		$mockMonitor = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Monitor\FileMonitor'), array('detectChangedFiles', 'emitDirectoriesHaveChanged'), array('FLOW3_Test'), '', TRUE, TRUE);
 		$mockMonitor->expects($this->any())->method('detectChangedFiles')->will($this->returnValue(array()));
 		$mockMonitor->expects($this->once())->method('emitDirectoriesHaveChanged')->with('FLOW3_Test', $expectedChangedDirectories);
 
 		$mockMonitor->injectSystemLogger($mockSystemLogger);
-		$mockMonitor->_set('directoriesAndFiles', array('/foo/bar' => array()));
+		$mockMonitor->_set('directoriesAndFiles', array(\vfsStream::url('testDirectory') . '/bar' => array()));
 
 		$mockMonitor->detectChanges();
 	}

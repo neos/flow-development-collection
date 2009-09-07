@@ -224,11 +224,16 @@ class FileMonitor {
 		}
 
 		foreach ($this->directoriesAndFiles as $path => $pathAndFilenames) {
-			$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
 			if (!is_dir($path)) {
 				unset($this->directoriesAndFiles[$path]);
 				$this->directoriesChanged = TRUE;
 				$changedDirectories[$path] = \F3\FLOW3\Monitor\ChangeDetectionStrategy\ChangeDetectionStrategyInterface::STATUS_DELETED;
+			} else {
+				$currentSubDirectoriesAndFiles = \F3\FLOW3\Utility\Files::readDirectoryRecursively($path);
+				if ($currentSubDirectoriesAndFiles != $pathAndFilenames) {
+					$pathAndFilenames = array_unique(array_merge($currentSubDirectoriesAndFiles, $pathAndFilenames));
+				}
+				$changedFiles = array_merge($changedFiles, $this->detectChangedFiles($pathAndFilenames));
 			}
 		}
 
