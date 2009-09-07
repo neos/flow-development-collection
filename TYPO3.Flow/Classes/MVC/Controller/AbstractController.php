@@ -43,9 +43,9 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $objectManager;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\URIBuilder
+	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
-	protected $URIBuilder;
+	protected $uriBuilder;
 
 	/**
 	 * Contains the settings of the current package
@@ -210,8 +210,8 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->URIBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\URIBuilder');
-		$this->URIBuilder->setRequest($request);
+		$this->uriBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder->setRequest($request);
 
 		$this->initializeControllerArgumentsBaseValidators();
 		$this->mapRequestArgumentsToControllerArguments();
@@ -234,7 +234,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		if ($this->argumentsMappingResults !== NULL) {
 			$controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
 		}
-		$controllerContext->setURIBuilder($this->URIBuilder);
+		$controllerContext->setUriBuilder($this->uriBuilder);
 		return $controllerContext;
 	}
 
@@ -286,7 +286,9 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 		} else {
 			$subpackageKey = NULL;
 		}
-		$uri = $this->URIBuilder->URIFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
+		$uri = $this->uriBuilder
+			->reset()
+			->uriFor($actionName, $arguments, $controllerName, $packageKey, $subpackageKey);
 		$this->redirectToURI($uri, $delay, $statusCode);
 	}
 

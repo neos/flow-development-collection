@@ -52,13 +52,13 @@ class ControllerContext {
 	protected $argumentsMappingResults;
 
 	/**
-	 * @var \F3\FLOW3\MVC\Web\Routing\URIBuilder
+	 * @var \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 */
-	protected $URIBuilder;
+	protected $uriBuilder;
 
 	/**
 	 * Set the request of the controller
-	 * 
+	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -145,21 +145,21 @@ class ControllerContext {
 	}
 
 	/**
-	 * \F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder
+	 * \F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
-	public function setURIBuilder(\F3\FLOW3\MVC\Web\Routing\URIBuilder $URIBuilder) {
-		$this->URIBuilder = $URIBuilder;
+	public function setUriBuilder(\F3\FLOW3\MVC\Web\Routing\UriBuilder $uriBuilder) {
+		$this->uriBuilder = $uriBuilder;
 	}
 
 	/**
-	 * @return \F3\FLOW3\MVC\Web\Routing\URIBuilder
+	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
-	public function getURIBuilder() {
-		return $this->URIBuilder;
+	public function getUriBuilder() {
+		return $this->uriBuilder;
 	}
 
 }

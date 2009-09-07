@@ -54,10 +54,10 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\URIBuilder')->will($this->returnValue($mockURIBuilder));
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('initializeArguments', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments'), array(), '', FALSE);
 		$controller->_set('objectFactory', $mockObjectFactory);
@@ -73,21 +73,21 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\ResponseInterface');
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
-		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext');
 		$mockControllerContext->expects($this->once())->method('setRequest')->with($mockRequest);
 		$mockControllerContext->expects($this->once())->method('setResponse')->with($mockResponse);
 		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
 		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
-		$mockControllerContext->expects($this->once())->method('setURIBuilder')->with($mockURIBuilder);
+		$mockControllerContext->expects($this->once())->method('setUriBuilder')->with($mockUriBuilder);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
 		$controller->_set('objectFactory', $mockObjectFactory);
-		$controller->_set('URIBuilder', $mockURIBuilder);
+		$controller->_set('uriBuilder', $mockUriBuilder);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);
 		$controller->_set('arguments', $mockArguments);
@@ -165,12 +165,13 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request');
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response');
 
-		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
-		$mockURIBuilder->expects($this->once())->method('URIFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('reset')->will($this->returnValue($mockUriBuilder));
+		$mockUriBuilder->expects($this->once())->method('uriFor')->with('show', $arguments, 'Stuff', 'Super', 'Duper\Package')->will($this->returnValue('the uri'));
 
 		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('redirectToURI'), array(), '', FALSE);
 		$controller->expects($this->once())->method('redirectToURI')->with('the uri');
-		$controller->_set('URIBuilder', $mockURIBuilder);
+		$controller->_set('uriBuilder', $mockUriBuilder);
 		$controller->_set('request', $mockRequest);
 		$controller->_set('response', $mockResponse);
 		$controller->_call('redirect', 'show', 'Stuff', 'Super\Duper\Package', $arguments);

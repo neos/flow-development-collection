@@ -38,10 +38,10 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 	public function processRequestRegistersAnIdArgument() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\URIBuilder')->will($this->returnValue($mockURIBuilder));
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
 
 		$mockArguments = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
 

@@ -38,11 +38,11 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->once())->method('setDispatched')->with(TRUE);
 
-		$mockURIBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\URIBuilder');
-		$mockURIBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
+		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockUriBuilder->expects($this->once())->method('setRequest')->with($mockRequest);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\URIBuilder')->will($this->returnValue($mockURIBuilder));
+		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
 
 		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
 

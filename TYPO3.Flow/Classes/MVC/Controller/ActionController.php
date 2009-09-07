@@ -113,8 +113,8 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->request->setDispatched(TRUE);
 		$this->response = $response;
 
-		$this->URIBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\URIBuilder');
-		$this->URIBuilder->setRequest($request);
+		$this->uriBuilder = $this->objectFactory->create('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$this->uriBuilder->setRequest($request);
 
 		$this->actionMethodName = $this->resolveActionMethodName();
 
