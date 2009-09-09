@@ -1008,10 +1008,9 @@ class Foo {
       <title>Configuration Sources</title>
 
       <para>As already mentioned, the configuration for each object is
-      compiled from different sources. The <filename>Objects.yaml</filename>
-      file is the recommended format and is therefore used in most of the
-      examples. However, the names of the configuration options and their
-      possible values are identical to all configuration sources.</para>
+      compiled from different sources. Most options are set implicitly through
+      reflection and analysis of annotations while others are defined in
+      <filename>Objects.yaml</filename> files.</para>
 
       <section>
         <title>Objects.yaml</title>
@@ -1040,50 +1039,6 @@ F3\MyPackage\Foo:
     bar: { object: F3\MyPackage\BarInterface }
     enableCache: { setting: MyPackage.Cache.enable }</programlisting>
         </example>
-      </section>
-
-      <section>
-        <title>Objects.php</title>
-
-        <para>As an alternative to YAML, it is possible to write configuration
-        files in plain PHP. However, the PHP file should stick to FLOW3's
-        general rules for PHP-based configuration.</para>
-
-        <para>The following code again adds the same configuration as in the
-        Constructor Injection example:</para>
-
-        <example>
-          <title>Sample Objects.php file</title>
-
-          <programlisting language="php">&lt;?php
-declare(ENCODING = 'utf-8');
-
-/*                                                                        *
- * Object Configuration for the MyPackage package                         *
- * (this package doesn't really exist, and even if so, the configuration  *
- * would probably be different)                                           *
- *                                                                        */
-
-$c['F3\MyPackage\Foo']-&gt;arguments-&gt;array(
-	1 =&gt; array('object' =&gt; 'F3\MyPackage\Baz'),
-	2 =&gt; array('value' =&gt; 'some string')
-);
-
-	// Demonstrates an alternative syntax:
-$c['F3\MyPackage\Foo']-&gt;arguments-&gt;3-&gt;value = FALSE;
-
-$c['F3\MyPackage\Foo']-&gt;properties-&gt;bar-&gt;object = 'F3\MyPackage\BarInterface';
-$c['F3\MyPackage\Foo']-&gt;properties-&gt;enableCache-&gt;setting = ↩
-    'MyPackage.Cache.enable';
-
-?&gt;</programlisting>
-        </example>
-
-        <caution>
-          <para>Only use these files for configuration, for example don't
-          register autoloader methods in the <filename>Objects.php</filename>
-          as this code must be invoked in an earlier stage.</para>
-        </caution>
       </section>
 
       <section>
@@ -1155,7 +1110,7 @@ class Greeter {
       might find these lines:</para>
 
       <example>
-        <title>Code using the object F3_MyPackage_Greeter</title>
+        <title>Code using the object F3\MyPackage\Greeter</title>
 
         <programlisting language="php">  // Use setter injection for fetching an instance 
   // of the \F3\MyPackage\Greeter object:
