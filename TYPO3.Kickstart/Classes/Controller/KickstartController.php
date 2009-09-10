@@ -66,7 +66,11 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 	public function helpAction() {
 		$this->response->appendContent(
 			'FLOW3 Kickstart Generator' . PHP_EOL .
-			'Usage: php Public/index.php kickstart generator generateController --package-key <package-key> [--controller-name <controller-name>]' . PHP_EOL .  PHP_EOL
+			'Usage:' . PHP_EOL .
+			' php Public/index.php kickstart generator generatePackage --package-key <package-key>' . PHP_EOL .
+			' php Public/index.php kickstart generator generateController --package-key <package-key> [--controller-name <controller-name>]' . PHP_EOL .
+			' php Public/index.php kickstart generator generateModel --package-key <package-key> [--model-name <model-name>]' . PHP_EOL .
+			' php Public/index.php kickstart generator generateRepository --package-key <package-key> [--model-name <model-name>]' . PHP_EOL .  PHP_EOL
 		);
 	}
 
@@ -131,9 +135,12 @@ class KickstartController extends \F3\FLOW3\MVC\Controller\ActionController {
 		foreach ($fieldsArguments as $fieldArgument) {
 			list($fieldName, $fieldType) = explode(':', $fieldArgument, 2);
 
-			$fieldDefinitions[$fieldName] = array(
-				'type' => $fieldType
-			);
+			$fieldDefinitions[$fieldName] = array('type' => $fieldType);
+			if (strpos($fieldType, 'array') !== FALSE) {
+				$fieldDefinitions[$fieldName]['typeHint'] = 'array';
+			} elseif (strpos($fieldType, '\\') !== FALSE) {
+				$fieldDefinitions[$fieldName]['typeHint'] = $fieldType;
+			}
 		};
 		$generatedFiles = $this->generatorService->generateModel($packageKey, $modelName, $fieldDefinitions);
 		return implode(PHP_EOL, $generatedFiles) . PHP_EOL;

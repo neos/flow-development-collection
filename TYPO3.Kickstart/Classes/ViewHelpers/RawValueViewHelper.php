@@ -1,9 +1,9 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\{packageKey}<f:if condition="{isInSubpackage}">\{subpackage}</f:if>\Controller;
+namespace F3\Kickstart\ViewHelpers;
 
 /*                                                                        *
- * This script belongs to the FLOW3 package "{packageKey}".               *
+ * This script belongs to the FLOW3 package "Kickstart".                  *
  *                                                                        *
  * It is free software; you can redistribute it and/or modify it under    *
  * the terms of the GNU Lesser General Public License as published by the *
@@ -23,24 +23,34 @@ namespace F3\{packageKey}<f:if condition="{isInSubpackage}">\{subpackage}</f:if>
  *                                                                        */
 
 /**
- * {controllerName} controller for the {packageKey} package <f:if condition="{isInSubpackage}"> and subpackage {subpackage}</f:if>
+ * Wrapper to pass through values as-is
  *
- * @version $Id: $
+ * = Examples =
+ *
+ * <code title="Example">
+ * <k:rawValue>{textWith>Add>AndStuff}</k:rawValue>
+ * </code>
+ *
+ * Output:
+ * textWith>Add>AndStuff
+ *
+ * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
-class {controllerClassName} extends \F3\FLOW3\MVC\Controller\ActionController {
+class RawValueViewHelper extends \F3\Fluid\Core\ViewHelper\AbstractViewHelper {
+
+	protected $objectAccessorPostProcessorEnabled = FALSE;
 
 	/**
-	 * Index action
+	 * Emit raw value
 	 *
-	 * @return void
+	 * @return string The altered string.
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function indexAction() {
-		$this->view->assign('foos', array(
-			'bar', 'baz'
-		));
+	public function render() {
+		return $this->renderChildren();
 	}
-	
-}
 
+}
 ?>

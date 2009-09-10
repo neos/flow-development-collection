@@ -33,7 +33,8 @@ namespace {namespace};
 class {modelName} {
 <f:for each="{fieldDefinitions}" as="fieldDefinition" key="fieldName">
 	/**
-	 * @var {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * The {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * @var <k:rawValue>{fieldDefinition.type}</k:rawValue>
 	 */
 	protected ${fieldName};
 </f:for>
@@ -41,7 +42,7 @@ class {modelName} {
 	/**
 	 * Get the {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
 	 *
-	 * @return {fieldDefinition.type} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * @return <k:rawValue>{fieldDefinition.type}</k:rawValue> The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
 	 */
 	public function get<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>() {
 		return $this->{fieldName};
@@ -50,10 +51,10 @@ class {modelName} {
 	/**
 	 * Sets this {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
 	 *
-	 * @param {fieldDefinition.type} ${fieldName} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
+	 * @param <k:rawValue>{fieldDefinition.type}</k:rawValue> ${fieldName} The {k:inflect.humanizeCamelCase("{modelName}")}'s {k:inflect.humanizeCamelCase("{fieldName}" lowercase="true")}
 	 * @return void
 	 */
-	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(${fieldName}) {
+	public function set<k:uppercaseFirst>{fieldName}</k:uppercaseFirst>(<f:if condition="{fieldDefinition.typeHint}"><k:rawValue>{fieldDefinition.typeHint}</k:rawValue> </f:if>${fieldName}) {
 		$this->{fieldName} = ${fieldName};
 	}
 </f:for>
