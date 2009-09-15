@@ -433,10 +433,6 @@ class Argument {
 	/**
 	 * Sets the value of this argument.
 	 *
-	 * Checks if the value is a UUID or an array but should be an object, i.e.
-	 * the argument's data type class schema is set. If that is the case, this
-	 * method tries to look up the corresponding object instead.
-	 *
 	 * @param mixed $value The value of this argument
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
@@ -444,20 +440,49 @@ class Argument {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setValue($value) {
-		if ($value !== NULL && $this->dataTypeClassSchema !== NULL) {
-			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
-				$value = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
-			} elseif (is_array($value)) {
-				$value = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
-			}
-
-			if (!($value instanceof $this->dataType)) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '".', 1251730701);
-			}
-		}
-		$this->value = $value;
+		$this->value = $this->transformValue($value);
 
 		return $this;
+	}
+
+	/**
+	 * Checks if the value is a UUID or an array but should be an object, i.e.
+	 * the argument's data type class schema is set. If that is the case, this
+	 * method tries to look up the corresponding object instead.
+	 *
+	 * Additionally, it maps arrays to objects in case it is a normal object.
+	 *
+	 * @param mixed $value The value of an argument
+	 * @return mixed
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function transformValue($value) {
+		if ($value === NULL) {
+			return NULL;
+		}
+		if (!class_exists($this->dataType)) {
+			return $value;
+		}
+		$transformedValue = NULL;
+		if ($this->dataTypeClassSchema !== NULL) {
+			// It is an Entity or ValueObject.
+			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
+				$transformedValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
+			} elseif (is_array($value)) {
+				$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
+			}
+		} else {
+			if (!is_array($value)) {
+				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value was a simple type, so we could not map it to an object. Maybe the @entity or @valueobject annotations are missing?', 1251730701);
+			}
+			$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
+		}
+
+		if (!($transformedValue instanceof $this->dataType)) {
+			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '", but was of type "' . get_class($transformedValue) . '".', 1251730701);
+		}
+		return $transformedValue;
 	}
 
 	/**

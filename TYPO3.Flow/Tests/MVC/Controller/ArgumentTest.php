@@ -152,8 +152,40 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
 		$argument->injectPersistenceManager($mockPersistenceManager);
 		$argument->_set('dataTypeClassSchema', $mockClassSchema);
-		$argument->_set('dataType', 'notMyType');
+		$argument->_set('dataType', 'ArrayObject');
 		$argument->setValue('e104e469-9030-4b98-babf-3990f07dd3f1');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setValueTriesToMapObjectIfDataTypeClassSchemaIsNotSet() {
+		$object = new \stdClass();
+		$object->title = 'Hello';
+
+		$mockPropertyMapper = $this->getMock('F3\FLOW3\Property\Mapper');
+		$mockPropertyMapper->expects($this->once())->method('map')->with(array('title'), array('title' => 'Hello'), 'stdClass')->will($this->returnValue($object));
+
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument->_set('dataType', 'stdClass');
+		$argument->injectPropertyMapper($mockPropertyMapper);
+
+		
+		$argument->setValue(array('title' => 'Hello'));
+		$this->assertSame($object, $argument->_get('value'));
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @expectedException \F3\FLOW3\MVC\Exception\InvalidArgumentValue
+	 */
+	public function setValueThrowsExceptionIfComplexObjectShouldBeGeneratedFromStringAndDataTypeClassSchemaIsNotSet() {
+		$argument = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\Argument'), array('findObjectByIdentityUUID'), array(), '', FALSE);
+		$argument->_set('dataType', 'stdClass');
+
+		$argument->setValue(42);
 	}
 
 	/**
