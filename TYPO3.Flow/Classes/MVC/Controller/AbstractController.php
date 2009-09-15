@@ -103,10 +103,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
 
 	/**
-	 * @var \F3\FLOW3\Session\SessionInterface
+	 * The flash messages. Use $this->flashMessages->add(...) to add a new Flash
+	 * Message.
+	 *
+	 * @var \F3\FLOW3\MVC\Controller\FlashMessages
 	 * @api
 	 */
-	protected $session;
+	protected $flashMessages;
 
 	/**
 	 * Constructs the controller.
@@ -164,14 +167,14 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	}
 
 	/**
-	 * Injects the session
+	 * Injects the flash messages
 	 *
-	 * @param \F3\FLOW3\Session\SessionInterface $session
+	 * @param \F3\FLOW3\MVC\Controller\FlashMessages $flashMessages the flash messages
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectSession(\F3\FLOW3\Session\SessionInterface $session) {
-		$this->session = $session;
+	public function injectFlashMessages(\F3\FLOW3\MVC\Controller\FlashMessages $flashMessages) {
+		$this->flashMessages = $flashMessages;
 	}
 
 	/**
@@ -235,6 +238,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 			$controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
 		}
 		$controllerContext->setUriBuilder($this->uriBuilder);
+		$controllerContext->setFlashMessages($this->flashMessages);
 		return $controllerContext;
 	}
 
@@ -370,49 +374,6 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 
 		$this->argumentsMappingResults = $this->propertyMapper->getMappingResults();
 	}
-
-	/**
-	 * Add a flash message to the queue. It will live until the next call to
-	 * popFlashMessages() in the current session.
-	 *
-	 * @param mixed $message anything serializable, should be "stringy"
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	protected function pushFlashMessage($message) {
-		if (!is_string($message)) throw new \InvalidArgumentException('The flash message must be string, ' . gettype($message) . ' given.', 1243258395);
-
-		$queuedFlashMessages = $this->getFlashMessagesFromSession();
-		$queuedFlashMessages[] = $message;
-		$this->session->putData('FLOW3_AbstractController_flashMessages', $queuedFlashMessages);
-	}
-
-	/**
-	 * Returns queued flash messages and clear queue.
-	 *
-	 * @return array an array with flash messages or NULL if none available
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
-	 */
-	protected function popFlashMessages() {
-		$queuedFlashMessages = $this->getFlashMessagesFromSession();
-		$this->session->putData('FLOW3_AbstractController_flashMessages', NULL);
-		return $queuedFlashMessages;
-	}
-
-	/**
-	 * Returns current flash messages from the session, making sure to always
-	 * return an array.
-	 *
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function getFlashMessagesFromSession() {
-		$flashMessages = $this->session->getData('FLOW3_AbstractController_flashMessages');
-		return is_array($flashMessages) ? $flashMessages : array();
-	}
-
 }
 
 ?>

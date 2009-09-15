@@ -74,6 +74,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
+		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessages');
 
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext');
 		$mockControllerContext->expects($this->once())->method('setRequest')->with($mockRequest);
@@ -81,6 +82,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
 		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
 		$mockControllerContext->expects($this->once())->method('setUriBuilder')->with($mockUriBuilder);
+		$mockControllerContext->expects($this->once())->method('setFlashMessages')->with($mockFlashMessages);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
@@ -92,6 +94,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_set('response', $mockResponse);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('argumentsMappingResults', $mockArgumentsMappingResults);
+		$controller->_set('flashMessages', $mockFlashMessages);
 		$controller->_call('buildControllerContext');
 	}
 
@@ -271,52 +274,6 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_call('mapRequestArgumentsToControllerArguments');
 
 		$this->assertSame($mockMappingResults, $controller->_get('argumentsMappingResults'));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getFlashMessagesFromSessionAlwaysReturnsAnArray() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockSession->expects($this->any())->method('getData')->will($this->onConsecutiveCalls(array(), NULL, '', FALSE, 1, new \stdClass()));
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('session', $mockSession);
-
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-		$this->assertTrue(is_array($controller->_call('getFlashMessagesFromSession')));
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function pushFlashMessageAddsToExistingMessagesAndPutsResultIntoSession() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('1st message')));
-		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', array('1st message', '2nd message'));
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('session', $mockSession);
-
-		$controller->_call('pushFlashMessage', '2nd message');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function popFlashMessagesReturnsExistingMessagesAndRemovesThemFromSession() {
-		$mockSession = $this->getMock('F3\FLOW3\Session\SessionInterface');
-		$mockSession->expects($this->once())->method('getData')->will($this->returnValue(array('message')));
-		$mockSession->expects($this->once())->method('putData')->with('FLOW3_AbstractController_flashMessages', NULL);
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\AbstractController'), array('dummy'), array(), '', FALSE);
-		$controller->_set('session', $mockSession);
-
-		$this->assertSame(array('message'), $controller->_call('popFlashMessages'));
 	}
 }
 ?>

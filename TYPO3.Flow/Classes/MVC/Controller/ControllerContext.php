@@ -57,6 +57,11 @@ class ControllerContext {
 	protected $uriBuilder;
 
 	/**
+	 * @var \F3\FLOW3\MVC\Controller\FlashMessages
+	 */
+	protected $flashMessages;
+
+	/**
 	 * Set the request of the controller
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
@@ -162,5 +167,26 @@ class ControllerContext {
 		return $this->uriBuilder;
 	}
 
+	/**
+	 * Get the flash message object.
+	 *
+	 * @return \F3\FLOW3\MVC\Controller\FlashMessages A list of flash message
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 * @api
+	 */
+	public function getFlashMessages() {
+		return $this->flashMessages;
+	}
+
+	/**
+	 * Set the flash message object.
+	 *
+	 * @param \F3\FLOW3\MVC\Controller\FlashMessages $flashMessages The flash messages
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setFlashMessages($flashMessages) {
+		$this->flashMessages = $flashMessages;
+	}
 }
 ?>
