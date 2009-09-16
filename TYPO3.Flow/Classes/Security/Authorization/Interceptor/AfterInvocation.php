@@ -75,7 +75,7 @@ class AfterInvocation implements \F3\FLOW3\Security\Authorization\InterceptorInt
 	/**
 	 * Sets the result (return object) of the intercepted method
 	 *
-	 * @param mixed The result of the intercepted method
+	 * @param mixed $result The result of the intercepted method
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

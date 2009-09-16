@@ -100,7 +100,6 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
@@ -136,7 +135,6 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	 * It iterates over all available \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface objects.
 	 * If all voters abstain, access will be denied by default, except $allowAccessIfAllAbstain is set to TRUE.
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
@@ -170,15 +168,15 @@ class AccessDecisionVoterManager implements \F3\FLOW3\Security\Authorization\Acc
 	/**
 	 * Creates and sets the configured access decision voters
 	 *
-	 * @param array Array of access decision voter classes
+	 * @param array $voterClassNames Array of access decision voter class names
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function createAccessDecisionVoters($voterClasses) {
-		foreach ($voterClasses as $voterClass) {
-			if (!$this->objectManager->isObjectRegistered($voterClass)) throw new \F3\FLOW3\Security\Exception\VoterNotFound('No voter of type ' . $voterClass . ' found!', 1222267934);
+	protected function createAccessDecisionVoters(array $voterClassNames) {
+		foreach ($voterClassNames as $voterClassName) {
+			if (!$this->objectManager->isObjectRegistered($voterClassName)) throw new \F3\FLOW3\Security\Exception\VoterNotFound('No voter of type ' . $voterClassName . ' found!', 1222267934);
 
-			$voter = $this->objectManager->getObject($voterClass);
+			$voter = $this->objectManager->getObject($voterClassName);
 			if (!($voter instanceof \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface)) throw new \F3\FLOW3\Security\Exception\VoterNotFound('The found voter class did not implement \F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface', 1222268008);
 
 			$this->accessDecisionVoters[] = $voter;

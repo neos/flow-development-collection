@@ -85,8 +85,8 @@ class Manager {
 	 * Explicitly registers a file path and name which holds the implementation of
 	 * the given class.
 	 *
-	 * @param  string $className: Name of the class to register
-	 * @param  string $classFilePathAndName: Absolute path and file name of the file holding the class implementation
+	 * @param  string $className Name of the class to register
+	 * @param  string $classFilePathAndName Absolute path and file name of the file holding the class implementation
 	 * @return void
 	 * @throws \InvalidArgumentException if $className is not a valid string
 	 * @throws \F3\FLOW3\Resource\Exception\FileDoesNotExist if the specified file does not exist

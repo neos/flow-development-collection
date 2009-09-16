@@ -47,8 +47,8 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	 *
 	 * Note that this REST controller only supports web requests!
 	 *
-	 * @param \F3\FLOW3\MVC\Web\Request $request The request object
-	 * @param \F3\FLOW3\MVC\Web\Response $response The response, modified by this handler
+	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api

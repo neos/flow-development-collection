@@ -42,7 +42,7 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	/**
 	 * Displays the given exception
 	 *
-	 * @param \Exception $exception: The exception object
+	 * @param \Exception $exception The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

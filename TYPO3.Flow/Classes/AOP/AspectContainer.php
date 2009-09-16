@@ -66,7 +66,7 @@ class AspectContainer {
 	/**
 	 * The constructor
 	 *
-	 * @param  string $className: Name of the aspect class
+	 * @param  string $className Name of the aspect class
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -119,7 +119,7 @@ class AspectContainer {
 	/**
 	 * Adds an advisor to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\Advisor $advisor: The advisor to add
+	 * @param \F3\FLOW3\AOP\Advisor $advisor The advisor to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -141,7 +141,7 @@ class AspectContainer {
 	/**
 	 * Adds a pointcut (from a pointcut declaration) to this aspect container
 	 *
-	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut: The poincut to add
+	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut The poincut to add
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

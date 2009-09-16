@@ -49,7 +49,7 @@ interface ManagerInterface {
 	 * the following contexts are explicitly supported by FLOW3:
 	 * "default", "production", "development", "testing", "profiling"
 	 *
-	 * @param string $context: Name of the context
+	 * @param string $context Name of the context
 	 * @return void
 	 */
 	public function setContext($context);
@@ -99,7 +99,7 @@ interface ManagerInterface {
 	/**
 	 * Unregisters the specified object
 	 *
-	 * @param string $objectName: The explicit object name
+	 * @param string $objectName The explicit object name
 	 * @return void
 	 * @api
 	 */
@@ -109,7 +109,7 @@ interface ManagerInterface {
 	 * Returns TRUE if an object with the given name has already
 	 * been registered.
 	 *
-	 * @param string $objectName: Name of the object
+	 * @param string $objectName Name of the object
 	 * @return boolean TRUE if the object has been registered, otherwise FALSE
 	 * @api
 	 */

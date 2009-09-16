@@ -48,6 +48,7 @@ interface ManagerInterface {
 	 * Returns the persistence backend
 	 *
 	 * @return \F3\FLOW3\Persistence\BackendInterface
+	 * @api
 	 */
 	public function getBackend();
 
@@ -56,6 +57,7 @@ interface ManagerInterface {
 	 * session into the backend
 	 *
 	 * @return void
+	 * @api
 	 */
 	public function persistAll();
 }

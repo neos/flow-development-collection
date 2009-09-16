@@ -114,7 +114,7 @@ class Manager {
 	/**
 	 * Sets the active packages to load the configuration for
 	 *
-	 * @param array <F3\FLOW3\Package\PackageInterface> $packages
+	 * @param array<F3\FLOW3\Package\PackageInterface> $packages
 	 * @return void
 	 */
 	public function setPackages(array $packages) {

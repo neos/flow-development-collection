@@ -76,7 +76,7 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @param \F3\FLOW3\Security\Authentication\ProviderResolver $providerResolver The provider resolver
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authentication\EntryPointResolver $entryPointResolver The authentication entry point resolver

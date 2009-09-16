@@ -36,7 +36,7 @@ interface ContextHolderInterface {
 	 * Sets the current security context. Depending on the strategy the context may for example be stored
 	 * in a session.
 	 *
-	 * @param \F3\FLOW3\Security\ContextInterface $securityContext The current security context
+	 * @param \F3\FLOW3\Security\Context $securityContext The current security context
 	 * @return void
 	 */
 	public function setContext(\F3\FLOW3\Security\Context $securityContext);
@@ -44,7 +44,7 @@ interface ContextHolderInterface {
 	/**
 	 * Returns the current security context.
 	 *
-	 * @return \F3\FLOW3\Security\ContextInterface The current security context
+	 * @return \F3\FLOW3\Security\ContextThe current security context
 	 * @throws \F3\FLOW3\Security\Exception\NoContextAvailable if no context is available
 	 */
 	public function getContext();

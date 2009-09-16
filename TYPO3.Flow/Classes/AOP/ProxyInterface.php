@@ -42,7 +42,7 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	/**
 	 * Invokes the joinpoint - calls the target methods.
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface: The join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The join point
 	 * @return mixed Result of the target (ie. original) method
 	 */
 	public function FLOW3_AOP_Proxy_invokeJoinPoint(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);
@@ -55,7 +55,7 @@ interface ProxyInterface extends \F3\FLOW3\Object\ProxyInterface {
 	public function FLOW3_AOP_Proxy_getProxyTargetClassName();
 
 	/**
-	 * Returns TRUE if the property exists..
+	 * Returns TRUE if the property exists.
 	 *
 	 * @param string $propertyName Name of the property
 	 * @return boolean TRUE if the property exists

@@ -1044,13 +1044,13 @@ class ObjectSerializerTest extends \F3\Testing\BaseTestCase {
 		$mockObject2 = $this->getMock(uniqid('dummyClass2'), array(), array(), '', FALSE);
 
 		$objectsAsArray = array(
-			'some object' => 'object1 data',
-			'some other object' => 'object2 data'
+			'some object' => array('object1 data'),
+			'some other object' => array('object2 data')
 		);
 
 		$objectSerializer = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\ObjectSerializer'), array('reconstituteObject'), array(), '', FALSE);
-		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with('object1 data')->will($this->returnValue($mockObject1));
-		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with('object2 data')->will($this->returnValue($mockObject2));
+		$objectSerializer->expects($this->at(0))->method('reconstituteObject')->with(array('object1 data'))->will($this->returnValue($mockObject1));
+		$objectSerializer->expects($this->at(1))->method('reconstituteObject')->with(array('object2 data'))->will($this->returnValue($mockObject2));
 		$objectSerializer->_set('objectsAsArray', $objectsAsArray);
 
 

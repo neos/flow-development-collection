@@ -85,7 +85,7 @@ class Context {
 	/**
 	 * Sets the authentication tokens in the context, usually called by the security context holder
 	 *
-	 * @param array $authenticationTokens Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
+	 * @param array $tokens Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

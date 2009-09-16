@@ -396,7 +396,7 @@ class Framework {
 	 * Checks the annotations of the specified classes for aspect tags
 	 * and creates an aspect with advisors accordingly.
 	 *
-	 * @param array $classNames: Classes to check for aspect tags.
+	 * @param array $classNames Classes to check for aspect tags.
 	 * @return array An array of \F3\FLOW3\AOP\AspectContainer for all aspects which were found.
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

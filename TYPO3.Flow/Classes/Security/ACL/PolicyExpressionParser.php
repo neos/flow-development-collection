@@ -38,11 +38,11 @@ class PolicyExpressionParser extends \F3\FLOW3\AOP\Pointcut\PointcutExpressionPa
 	/**
 	 * Sets the resource array that should be parsed
 	 *
-	 * @param array The resources array from the configuration.
+	 * @param array $resourcesTree The resources array from the configuration.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setResourcesTree($resourcesTree) {
+	public function setResourcesTree(array $resourcesTree) {
 		$this->resourcesTree = $resourcesTree;
 	}
 

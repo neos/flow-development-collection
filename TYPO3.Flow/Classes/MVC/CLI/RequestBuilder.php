@@ -165,9 +165,9 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Converts the first element of the input array to an argument name for a \F3\FLOW3\MVC\RequestInterface object.
+	 * Converts the first element of the input to an argument name for a \F3\FLOW3\MVC\RequestInterface object.
 	 *
-	 * @param array array of the remaining command line arguments
+	 * @param string $commandLineOption the command line option
 	 * @return string converted argument name
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -187,7 +187,8 @@ class RequestBuilder {
 	/**
 	 * Returns the value of the first argument of the given input array. Shifts the parsed argument off the array.
 	 *
-	 * @param array Array of the remaining command line arguments
+	 * @param string $currentArgument The current argument
+	 * @param array &$rawCommandLineArguments Array of the remaining command line arguments
 	 * @return string The value of the first argument
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -215,9 +216,9 @@ class RequestBuilder {
 	}
 
 	/**
-	 * Enter description here...
+	 * Transforms the raw command data into an array.
 	 *
-	 * @param array $command
+	 * @param array $rawCommand
 	 * @return array
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */

@@ -46,8 +46,8 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Constructs the super global replacement.
 	 *
-	 * @param  string				$replacedSuperGlobalName: Name of the super global which was replaced by this object
-	 * @param  string				$accessHintMessage: A little hint how to access this super global alternatively
+	 * @param string $replacedSuperGlobalName Name of the super global which was replaced by this object
+	 * @param string $accessHintMessage A little hint how to access this super global alternatively
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -69,7 +69,7 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to run isset() for offsets
 	 *
-	 * @param  mixed				$offset: The offset to check
+	 * @param mixed $offset The offset to check
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -80,7 +80,7 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to read array items
 	 *
-	 * @param  string				$offset:
+	 * @param string $offset
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -91,7 +91,7 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to read properties.
 	 *
-	 * @param  string				$propertyName: Name of the property to get
+	 * @param string $propertyName Name of the property to get
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -102,8 +102,8 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to write properties.
 	 *
-	 * @param  string				$propertyName: Name of the property to set
-	 * @param  mixed				$value: Value to set
+	 * @param string $propertyName Name of the property to set
+	 * @param mixed $value Value to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -114,8 +114,8 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to call methods
 	 *
-	 * @param  string				$methodName: Name of the method to call
-	 * @param  array				$arguments: An array of arguments
+	 * @param string $methodName Name of the method to call
+	 * @param array $arguments An array of arguments
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -126,7 +126,7 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to run isset() on properties
 	 *
-	 * @param  string				$propertyName: Name of the property to check
+	 * @param string $propertyName Name of the property to check
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -137,7 +137,7 @@ class SuperGlobalReplacement extends \ArrayObject {
 	/**
 	 * Intercepts all attempts to unset properties.
 	 *
-	 * @param  string				$propertyName: Name of the property to unset
+	 * @param string $propertyName Name of the property to unset
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

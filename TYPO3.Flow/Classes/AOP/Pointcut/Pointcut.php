@@ -76,7 +76,7 @@ class Pointcut {
 	 * The constructor
 	 *
 	 * @param string $pointcutExpression A pointcut expression which configures the pointcut
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutExpressionParserInterface $pointcutExpressionParser The parser to use for parsing the pointcut expression
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite
 	 * @param string $aspectClassName The name of the aspect class where the pointcut was declared (either explicitly or from an advice's pointcut expression)
 	 * @param string $pointcutMethodName (optional) If the pointcut is created from a pointcut declaration, the name of the method declaring the pointcut must be passed
 	 * @return void

@@ -44,7 +44,7 @@ class PointcutClassTypeFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	/**
 	 * The constructor - initializes the class type filter with the class type filter expression
 	 *
-	 * @param string $classTypeFilterExpression: A regular expression which defines which class types should match
+	 * @param string $classTypeFilterExpression A regular expression which defines which class types should match
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

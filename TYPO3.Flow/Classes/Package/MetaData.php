@@ -99,8 +99,6 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	/**
 	 * Package metadata constructor
 	 *
--	 * @param string The package key
--	 * @param \SimpleXMLElement If specified, the XML data (which must be valid package meta XML) will be used to set the meta properties
 	 * @param string $packageKey The package key
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
@@ -126,7 +124,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	}
 
 	/**
-	 * @param string $title: The package title
+	 * @param string $title The package title
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -143,7 +141,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	}
 
 	/**
-	 * @param string $version: The package version to set
+	 * @param string $version The package version to set
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
@@ -160,7 +158,7 @@ class MetaData implements \F3\FLOW3\Package\MetaDataInterface {
 	}
 
 	/**
-	 * @param string $description: The package description to set
+	 * @param string $description The package description to set
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

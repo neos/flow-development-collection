@@ -123,7 +123,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Returns TRUE if a package is available (the package's files exist in the packages directory)
 	 * or FALSE if it's not. If a package is available it doesn't mean neccessarily that it's active!
 	 *
-	 * @param string $packageKey: The key of the package to check
+	 * @param string $packageKey The key of the package to check
 	 * @return boolean TRUE if the package is available, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
@@ -136,7 +136,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	/**
 	 * Returns TRUE if a package is activated or FALSE if it's not.
 	 *
-	 * @param string $packageKey: The key of the package to check
+	 * @param string $packageKey The key of the package to check
 	 * @return boolean TRUE if package is active, otherwise FALSE
 	 * @author Thomas Hempel <thomas@typo3.org>
 	 * @api
@@ -190,7 +190,7 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	 * Returns the upper camel cased version of the given package key or FALSE
 	 * if no such package is available.
 	 *
-	 * @param string $lowerCasedPackageKey The package key to convert
+	 * @param string $unknownCasedPackageKey The package key to convert
 	 * @return mixed The upper camel cased package key or FALSE if no such package exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api

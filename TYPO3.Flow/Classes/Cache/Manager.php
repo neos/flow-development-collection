@@ -119,7 +119,7 @@ class Manager {
 				$frontend = isset($configuration['frontend']) ? $configuration['frontend'] : $this->cacheConfigurations['Default']['frontend'];
 				$backend = isset($configuration['backend']) ? $configuration['backend'] : $this->cacheConfigurations['Default']['backend'];
 				$backendOptions = isset($configuration['backendOptions']) ? $configuration['backendOptions'] : $this->cacheConfigurations['Default']['backendOptions'];
-				$cache = $this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
+				$this->cacheFactory->create($identifier, $frontend, $backend, $backendOptions);
 			}
 		}
 	}

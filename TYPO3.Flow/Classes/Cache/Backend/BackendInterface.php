@@ -58,7 +58,7 @@ interface BackendInterface {
 	/**
 	 * Loads data from the cache.
 	 *
-	 * @param string $entryIdentifier: An identifier which describes the cache entry to load
+	 * @param string $entryIdentifier An identifier which describes the cache entry to load
 	 * @return mixed The cache entry's content as a string or FALSE if the cache entry could not be loaded
 	 * @api
 	 */

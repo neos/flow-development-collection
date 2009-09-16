@@ -63,7 +63,7 @@ interface JoinPointInterface {
 	/**
 	 * Returns the value of the specified method argument
 	 *
-	 * @param  string $argumentName: Name of the argument
+	 * @param  string $argumentName Name of the argument
 	 * @return mixed Value of the argument
 	 */
 	public function getMethodArgument($argumentName);
@@ -72,7 +72,7 @@ interface JoinPointInterface {
 	 * Returns TRUE if the argument with the specified name exists in the
 	 * method call this joinpoint refers to.
 	 *
-	 * @param string $argumentName: Name of the argument to check
+	 * @param string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument exists
 	 */
 	public function isMethodArgument($argumentName);

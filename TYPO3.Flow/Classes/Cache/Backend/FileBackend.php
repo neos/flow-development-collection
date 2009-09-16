@@ -189,7 +189,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Creates a tag that is associated with the given cache identifier
 	 *
 	 * @param string $entryIdentifier An identifier for this specific cache entry
-	 * @param string Tag to associate with this cache entry
+	 * @param string $tag Tag to associate with this cache entry
 	 * @return void
 	 * @throws \F3\FLOW3\Cache\Exception if the tag path is not writable or exceeds the maximum allowed path length
 	 * @author Bastian Waidelich <bastian@typo3.org>
@@ -373,7 +373,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 * Usually only one cache entry should be found - if more than one exist, this
 	 * is due to some error or crash.
 	 *
-	 * @param string $identifier The cache entry identifier
+	 * @param string $entryIdentifier The cache entry identifier
 	 * @return mixed The file names (including path) as an array if one or more entries could be found, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set
@@ -391,7 +391,7 @@ class FileBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	/**
 	 * Tries to find the tag entries for the specified cache entry.
 	 *
-	 * @param string $identifier The cache entry identifier to find tag files for
+	 * @param string $entryIdentifier The cache entry identifier to find tag files for
 	 * @return array The file names (including path)
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Cache\Exception if no frontend has been set

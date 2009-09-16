@@ -288,12 +288,11 @@ class ObjectSerializer {
 	/**
 	 * Reconstitutes an object from a serialized object without calling the constructor.
 	 *
-	 * @param object $object The object to reconstitute the properties in
 	 * @param array $objectData The object data array
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function reconstituteObject($objectData) {
+	protected function reconstituteObject(array $objectData) {
 		$object = $this->createEmptyObject($objectData['className']);
 
 		foreach ($objectData['properties'] as $propertyName => $propertyData) {

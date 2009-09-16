@@ -198,7 +198,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Returns the privileges a specific role has for the given joinpoint
 	 *
-	 * @param \F3\FLOW3\Security\ACL\Role The role for which the privileges should be returned
+	 * @param \F3\FLOW3\Security\ACL\Role $role The role for which the privileges should be returned
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint for which the privileges should be returned
 	 * @param string $privilegeType If set we check only for this type of privilege
 	 * @return array Array of privileges
@@ -217,7 +217,7 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 	/**
 	 * Returns the privileges a specific role has for the given resource
 	 *
-	 * @param \F3\FLOW3\Security\ACL\Role The role for which the privileges should be returned
+	 * @param \F3\FLOW3\Security\ACL\Role $role The role for which the privileges should be returned
 	 * @param string $resource The resource for which the privileges should be returned
 	 * @return array Array of privileges
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

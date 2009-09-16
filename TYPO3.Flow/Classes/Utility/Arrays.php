@@ -75,10 +75,10 @@ class Arrays {
 	 * Merges two arrays recursively and "binary safe" (integer keys are overridden as well), overruling similar values in the first array ($firstArray) with the values of the second array ($secondArray)
 	 * In case of identical keys, ie. keeping the values of the second.
 	 *
-	 * @param array First array
-	 * @param array Second array, overruling the first array
-	 * @param boolean If set, keys that are NOT found in $firstArray (first array) will not be set. Thus only existing value can/will be overruled from second array.
-	 * @param boolean If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
+	 * @param array $firstArray First array
+	 * @param array $secondArray Second array, overruling the first array
+	 * @param boolean $dontAddNewKeys If set, keys that are NOT found in $firstArray (first array) will not be set. Thus only existing value can/will be overruled from second array.
+	 * @param boolean $emptyValuesOverride If set (which is the default), values from $secondArray will overrule if they are empty (according to PHP's empty() function)
 	 * @return array Resulting array where $secondArray values has overruled $firstArray values
 	 * @author Kasper Skårhøj <kasperYYYY@typo3.com>
 	 */

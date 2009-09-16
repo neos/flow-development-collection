@@ -78,7 +78,7 @@ class Builder {
 	/**
 	 * Injects the object manager
 	 *
-	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -428,8 +428,8 @@ class Builder {
 	/**
 	 * Calls the lifecycle initialization method (if any) of the object
 	 *
-	 * @param object $object: The instance of the recently created object.
-	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration: The object configuration
+	 * @param object $object The instance of the recently created object.
+	 * @param \F3\FLOW3\Object\Configuration\Configuration $objectConfiguration The object configuration
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

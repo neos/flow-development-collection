@@ -86,7 +86,7 @@ class ControllerContext {
 	/**
 	 * Set the response of the controller
 	 *
-	 * @param \F3\FLOW3\MVC\ResponseInterface $request
+	 * @param \F3\FLOW3\MVC\ResponseInterface $response
 	 * @return void
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */

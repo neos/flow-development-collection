@@ -58,7 +58,7 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Object\Manager $objectManager The object manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager The object manager
 	 * @param \F3\FLOW3\Security\RequestPatternResolver $requestPatternResolver The request pattern resolver
 	 * @param \F3\FLOW3\Security\Authorization\InterceptorResolver $interceptorResolver The interceptor resolver
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
@@ -104,11 +104,11 @@ class FilterFirewall implements \F3\FLOW3\Security\Authorization\FirewallInterfa
 	/**
 	 * Sets the internal filters based on the given configuration.
 	 *
-	 * @param array $filterConfiguration The filter configuration
+	 * @param array $filterSettings The filter settings
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	protected function buildFiltersFromSettings($filterSettings) {
+	protected function buildFiltersFromSettings(array $filterSettings) {
 		foreach($filterSettings as $singleFilterSettings) {
 			$requestPattern = $this->objectManager->getObject($this->requestPatternResolver->resolveRequestPatternClass($singleFilterSettings['patternType']));
 			$requestPattern->setPattern($singleFilterSettings['patternValue']);

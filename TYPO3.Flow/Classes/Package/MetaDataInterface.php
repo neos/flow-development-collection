@@ -62,7 +62,7 @@ interface MetaDataInterface {
 	public function getParties();
 
 	/**
-	 * @param string $constraintType: Type of the constraints to get: depends, conflicts, suggests
+	 * @param string $constraintType Type of the constraints to get: depends, conflicts, suggests
 	 * @return Array of F3\FLOW3\Package\MetaData\Constraint Package constraints
 	 */
 	public function getConstraintsByType($constraintType);

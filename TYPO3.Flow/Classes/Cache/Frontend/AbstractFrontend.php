@@ -164,7 +164,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	/**
 	 * Checks the validity of an entry identifier. Returns true if it's valid.
 	 *
-	 * @param string An identifier to be checked for validity
+	 * @param string $identifier An identifier to be checked for validity
 	 * @return boolean
 	 * @author Christian Jul Jensen <julle@typo3.org>
 	 * @api
@@ -176,7 +176,7 @@ abstract class AbstractFrontend implements \F3\FLOW3\Cache\Frontend\FrontendInte
 	/**
 	 * Checks the validity of a tag. Returns true if it's valid.
 	 *
-	 * @param string An identifier to be checked for validity
+	 * @param string $tag An identifier to be checked for validity
 	 * @return boolean
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api

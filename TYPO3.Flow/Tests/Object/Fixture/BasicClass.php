@@ -56,7 +56,7 @@ class BasicClass {
 	/**
 	 * Setter method for $firstDependency
 	 *
-	 * @param  object $value: An object
+	 * @param  object $value An object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -124,7 +124,7 @@ class BasicClass {
 	/**
 	 * Setter method for $someProperty
 	 *
-	 * @param  mixed $value: Some value
+	 * @param  mixed $value Some value
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -145,9 +145,9 @@ class BasicClass {
 	/**
 	 * Throws an exception ...
 	 *
-	 * @param  string $exceptionType: Class name of the exception to throw
-	 * @param  mixed $parameter1: First parameter to pass to the exception constructor
-	 * @param  mixed $parameter2: Second parameter to pass to the exception constructor
+	 * @param  string $exceptionType Class name of the exception to throw
+	 * @param  mixed $parameter1 First parameter to pass to the exception constructor
+	 * @param  mixed $parameter2 Second parameter to pass to the exception constructor
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -199,7 +199,7 @@ class BasicClass {
 	/**
 	 * A great method which expects an array as an argument
 	 *
-	 * @param  array $someArray: Some array
+	 * @param  array $someArray Some array
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see    \F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilderTest

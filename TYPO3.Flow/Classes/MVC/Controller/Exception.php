@@ -43,9 +43,8 @@ class Exception extends \F3\FLOW3\Exception {
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
 	 * @param string $message
-	 * @param $code
+	 * @param integer $code
 	 * @param \Exception $previousException
-	 *
 	 * @see \Exception
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

@@ -33,13 +33,13 @@ class ParameterReflection extends \ReflectionParameter {
 	/**
 	 * The constructor, initializes the reflection parameter
 	 *
-	 * @param  string $functionName: Name of the function
-	 * @param  string $propertyName: Name of the property to reflect
+	 * @param  string $functionName Name of the function
+	 * @param  string $parameterName Name of the property to reflect
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct($function, $parameterName) {
-		parent::__construct($function, $parameterName);
+	public function __construct($functionName, $parameterName) {
+		parent::__construct($functionName, $parameterName);
 	}
 
 	/**

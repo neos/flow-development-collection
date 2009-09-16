@@ -70,13 +70,13 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Constructor, creates the join point
 	 *
-	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy: Reference to the proxy class instance of the target class
-	 * @param string $className: Class name of the target class this join point refers to
-	 * @param string $methodName: Method name of the target method which is about to or has been invoked
-	 * @param array $methodArguments: Array of method arguments which have been passed to the target method
-	 * @param \F3\FLOW3\AOP\Advice\AdviceChainInterface $adviceChain: The advice chain for this join point
-	 * @param mixed $result: The result of the method invocations (only used for After Returning advices)
-	 * @param Exception $exception: The exception thrown (only used for After Throwing advices)
+	 * @param \F3\FLOW3\AOP\ProxyInterface $proxy Reference to the proxy class instance of the target class
+	 * @param string $className Class name of the target class this join point refers to
+	 * @param string $methodName Method name of the target method which is about to or has been invoked
+	 * @param array $methodArguments Array of method arguments which have been passed to the target method
+	 * @param \F3\FLOW3\AOP\Advice\AdviceChainInterface $adviceChain The advice chain for this join point
+	 * @param mixed $result The result of the method invocations (only used for After Returning advices)
+	 * @param Exception $exception The exception thrown (only used for After Throwing advices)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -135,7 +135,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	/**
 	 * Returns the value of the specified method argument
 	 *
-	 * @param  string $argumentName: Name of the argument
+	 * @param  string $argumentName Name of the argument
 	 * @return mixed Value of the argument
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -148,7 +148,7 @@ class JoinPoint implements \F3\FLOW3\AOP\JoinPointInterface {
 	 * Returns TRUE if the argument with the specified name exists in the
 	 * method call this joinpoint refers to.
 	 *
-	 * @param  string $argumentName: Name of the argument to check
+	 * @param  string $argumentName Name of the argument to check
 	 * @return boolean TRUE if the argument exists
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

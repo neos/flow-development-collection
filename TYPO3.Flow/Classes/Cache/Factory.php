@@ -57,7 +57,7 @@ class Factory {
 	 * Constructs this cache factory
 	 *
 	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectFactory A reference to the object factory
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory A reference to the object factory
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager, \F3\FLOW3\Object\FactoryInterface $objectFactory) {

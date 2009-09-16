@@ -373,7 +373,7 @@ class Environment {
 	 * Creates FLOW3's temporary directory - or at least asserts that it exists and is
 	 * writable.
 	 *
-	 * @param string Full path to the base for the temporary directory
+	 * @param string $temporaryDirectoryBase Full path to the base for the temporary directory
 	 * @return string The full path to the temporary directory
 	 * @throws \F3\FLOW3\Utility\Exception if the temporary directory could not be created or is not writable
 	 * @author Robert Lemke <robert@typo3.org>

@@ -82,5 +82,14 @@ interface RepositoryInterface {
 	 */
 	public function findByUUID($uuid);
 
+	/**
+	 * Removes all objects of this repository as if remove() was called for
+	 * all of them.
+	 *
+	 * @return void
+	 * @api
+	 */
+	public function removeAll();
+
 }
 ?>

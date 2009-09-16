@@ -73,7 +73,7 @@ class PointcutExpressionParser {
 	 * Parses a string pointcut expression and returns the pointcut
 	 * objects accordingly
 	 *
-	 * @param string $poincutExpression The expression defining the pointcut
+	 * @param string $pointcutExpression The expression defining the pointcut
 	 * @return \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite A composite of class-filters, method-filters and pointcuts
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -193,8 +193,9 @@ class PointcutExpressionParser {
 	/**
 	 * Adds a class type filter to the poincut filter composite
 	 *
+	 * @param string $operator
 	 * @param string $signaturePattern The pattern expression defining the class type
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the class type filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -209,7 +210,7 @@ class PointcutExpressionParser {
 	 *
 	 * @param string $operator The operator
 	 * @param string $pointcutExpression The pointcut expression (value of the designator)
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the pointcut filter) will be added to this composite object.
 	 * @return void
 	 * @throws \F3\FLOW3\AOP\Exception\InvalidPointcutExpression
 	 * @author Robert Lemke <robert@typo3.org>
@@ -225,7 +226,7 @@ class PointcutExpressionParser {
 	 *
 	 * @param string $operator The operator
 	 * @param string $filterObjectName Object Name of the custom filter (value of the designator)
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -240,7 +241,7 @@ class PointcutExpressionParser {
 	 *
 	 * @param string $operator The operator
 	 * @param string $configurationPath The path to the settings option, that should be used
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite: An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterComposite $pointcutFilterComposite An instance of the pointcut filter composite. The result (ie. the custom filter) will be added to this composite object.
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

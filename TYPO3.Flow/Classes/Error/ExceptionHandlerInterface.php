@@ -38,7 +38,7 @@ interface ExceptionHandlerInterface {
 	/**
 	 * Handles the given exception
 	 *
-	 * @param \Exception $exception: The exception object
+	 * @param \Exception $exception The exception object
 	 * @return void
 	 */
 	public function handleException(\Exception $exception);

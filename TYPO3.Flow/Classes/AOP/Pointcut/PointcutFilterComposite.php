@@ -44,7 +44,7 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	 * and method filter patterns.
 	 *
 	 * @param string $className Name of the class to check against
-	 * @param string $method Name of the method to check against
+	 * @param string $methodName Name of the method to check against
 	 * @param string $methodDeclaringClassName Name of the class the method was originally declared in
 	 * @param mixed $pointcutQueryIdentifier Some identifier for this query - must at least differ from a previous identifier. Used for circular reference detection.
 	 * @return boolean TRUE if class and method match the pattern, otherwise FALSE
@@ -75,8 +75,8 @@ class PointcutFilterComposite implements \F3\FLOW3\AOP\Pointcut\PointcutFilterIn
 	/**
 	 * Adds a class filter to the composite
 	 *
-	 * @param string$operator The operator for this filter
-	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $classFilter A configured class filter
+	 * @param string $operator The operator for this filter
+	 * @param \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface $filter A configured class filter
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

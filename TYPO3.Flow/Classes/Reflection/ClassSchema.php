@@ -156,7 +156,7 @@ class ClassSchema {
 	/**
 	 * Sets the model type of the class this schema is referring to.
 	 *
-	 * @param integer The model type, one of the MODELTYPE_* constants.
+	 * @param integer $modelType The model type, one of the MODELTYPE_* constants.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

@@ -44,7 +44,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	/**
 	 * Displays the given exception
 	 *
-	 * @param \Exception $exception: The exception object
+	 * @param \Exception $exception The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -63,7 +63,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	/**
 	 * Formats and echoes the exception as XHTML.
 	 *
-	 * @param  \Exception $exception: The exception object
+	 * @param  \Exception $exception The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -128,7 +128,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	/**
 	 * Formats and echoes the exception for the command line
 	 *
-	 * @param \Exception $exception: The exception object
+	 * @param \Exception $exception The exception object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -146,7 +146,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	/**
 	 * Renders some backtrace
 	 *
-	 * @param array $trace: The trace
+	 * @param array $trace The trace
 	 * @return string Backtrace information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -192,8 +192,8 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	/**
 	 * Returns a code snippet from the specified file.
 	 *
-	 * @param string $filePathAndName: Absolute path and file name of the PHP file
-	 * @param integer $lineNumber: Line number defining the center of the code snippet
+	 * @param string $filePathAndName Absolute path and file name of the PHP file
+	 * @param integer $lineNumber Line number defining the center of the code snippet
 	 * @return string The code snippet
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

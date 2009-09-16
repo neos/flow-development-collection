@@ -68,7 +68,7 @@ abstract class AbstractRoutePart implements \F3\FLOW3\MVC\Web\Routing\RoutePartI
 	/**
 	 * Sets name of the Route Part.
 	 *
-	 * @param string $name
+	 * @param string $partName
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

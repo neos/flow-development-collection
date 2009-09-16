@@ -169,7 +169,7 @@ class Argument {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Reflection\Service
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -346,7 +346,7 @@ class Argument {
 	/**
 	 * Create and set a validator conjunction
 	 *
-	 * @param array Object names of the validators
+	 * @param array $objectNames Object names of the validators
 	 * @return \F3\FLOW3\MVC\Controller\Argument Returns $this (used for fluent interface)
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 * @api

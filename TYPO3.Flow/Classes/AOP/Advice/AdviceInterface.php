@@ -36,7 +36,7 @@ interface AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return Optionally the result of the advice method
 	 */
 	public function invoke(\F3\FLOW3\AOP\JoinPointInterface $joinPoint);

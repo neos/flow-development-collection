@@ -47,7 +47,7 @@ class ErrorHandler {
 	/**
 	 * Defines which error levels result should result in an exception thrown.
 	 *
-	 * @param array $exceptionalErros An array of E_* error levels
+	 * @param array $exceptionalErrors An array of E_* error levels
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -58,10 +58,10 @@ class ErrorHandler {
 	/**
 	 * Handles an error by converting it into an exception
 	 *
-	 * @param integer $errorLevel: The error level - one of the E_* constants
-	 * @param string $errorMessage: The error message
-	 * @param string $errorFile: Name of the file the error occurred in
-	 * @param integer $errorLine: Line number where the error occurred
+	 * @param integer $errorLevel The error level - one of the E_* constants
+	 * @param string $errorMessage The error message
+	 * @param string $errorFile Name of the file the error occurred in
+	 * @param integer $errorLine Line number where the error occurred
 	 * @return void
 	 * @throws \F3\FLOW3\Error\Exception with the data passed to this method
 	 * @author Robert Lemke <robert@typo3.org>

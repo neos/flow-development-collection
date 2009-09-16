@@ -85,7 +85,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	 * by the AOP framework because AOP itself requires caching and therefore is not
 	 * available at the time caching is initialized.
 	 *
-	 * @param \F3\FLOW3\SignalSlot\Dispatcher
+	 * @param \F3\FLOW3\SignalSlot\Dispatcher $signalDispatcher
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -108,7 +108,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Cache\Backend\BackendInterfa
 	/**
 	 * Sets the default lifetime for this cache backend
 	 *
-	 * @param integer $defaultLifeTime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
+	 * @param integer $defaultLifetime Default lifetime of this cache backend in seconds. If NULL is specified, the default lifetime is used. "0" means unlimited liftime.
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api

@@ -34,7 +34,7 @@ interface FilterInterface {
 	/**
 	 * Returns the filtered subject.
 	 *
-	 * @param object The subject that should be filtered
+	 * @param object $subject The subject that should be filtered
 	 */
 	public function filter($subject);
 }

@@ -246,6 +246,21 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
+	 * Removes all objects of this repository as if remove() was called for
+	 * all of them.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function removeAll() {
+		$this->addedObjects = new \SplObjectStorage();
+		foreach ($this->findAll() as $object) {
+			$this->remove($object);
+		}
+	}
+
+	/**
 	 * Returns a query for objects of this repository
 	 *
 	 * @return \F3\FLOW3\Persistence\QueryInterface

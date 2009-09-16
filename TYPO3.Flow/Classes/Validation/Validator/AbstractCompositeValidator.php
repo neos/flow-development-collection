@@ -93,7 +93,7 @@ abstract class AbstractCompositeValidator implements \F3\FLOW3\Validation\Valida
 	/**
 	 * Removes the specified validator.
 	 *
-	 * @param \F3\FLOW3\Validation\ValidatorInterface $validator The validator to remove
+	 * @param \F3\FLOW3\Validation\Validator\ValidatorInterface $validator The validator to remove
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

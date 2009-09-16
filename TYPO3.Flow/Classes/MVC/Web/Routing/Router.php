@@ -122,7 +122,7 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 	/**
 	 * Sets the routes configuration.
 	 *
-	 * @param array $configuration The routes configuration
+	 * @param array $routesConfiguration The routes configuration
 	 * @return void
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */

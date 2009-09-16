@@ -147,7 +147,7 @@ class UriBuilder {
 	/**
 	 * Specifies the format of the target (e.g. "html" or "xml")
 	 *
-	 * @param string $section
+	 * @param string $format (e.g. "html" or "xml")
 	 * @return \F3\FLOW3\MVC\Web\Routing\UriBuilder the current UriBuilder to allow method chaining
 	 * @api
 	 */
@@ -172,7 +172,7 @@ class UriBuilder {
 	 * @api
 	 */
 	public function setCreateAbsoluteUri($createAbsoluteUri) {
-		$this->createAbsoluteUri = $createAbsoluteUri;
+		$this->createAbsoluteUri = (boolean)$createAbsoluteUri;
 		return $this;
 	}
 

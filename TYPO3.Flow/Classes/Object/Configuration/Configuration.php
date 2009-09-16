@@ -107,8 +107,8 @@ class Configuration {
 	/**
 	 * The constructor
 	 *
-	 * @param string $objectName: The unique identifier of the object
-	 * @param string $className: Name of the class which provides the functionality of this object
+	 * @param string $objectName The unique identifier of the object
+	 * @param string $className Name of the class which provides the functionality of this object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -137,7 +137,7 @@ class Configuration {
 	/**
 	 * Setter function for property "className"
 	 *
-	 * @param string $className: Name of the class which provides the functionality for this object
+	 * @param string $className Name of the class which provides the functionality for this object
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -201,7 +201,7 @@ class Configuration {
 	/**
 	 * Setter function for property "scope"
 	 *
-	 * @param string $scope: Name of the scope
+	 * @param string $scope Name of the scope
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -223,7 +223,7 @@ class Configuration {
 	/**
 	 * Setter function for property "autowiring"
 	 *
-	 * @param integer $autowiring: One of the AUTOWIRING_MODE_* constants
+	 * @param integer $autowiring One of the AUTOWIRING_MODE_* constants
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -245,7 +245,7 @@ class Configuration {
 	/**
 	 * Setter function for property "lifecycleInitializationMethodName"
 	 *
-	 * @param string $lifecycleInitializationMethodName: Name of the method to call after setter injection
+	 * @param string $lifecycleInitializationMethodName Name of the method to call after setter injection
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -267,7 +267,7 @@ class Configuration {
 	/**
 	 * Setter function for property "lifecycleShutdownMethodName"
 	 *
-	 * @param string $lifecycleDestructionMethodName Name of the method to call during shutdown of the framework
+	 * @param string $lifecycleShutdownMethodName Name of the method to call during shutdown of the framework
 	 * @return void
 	 */
 	public function setLifecycleShutdownMethodName($lifecycleShutdownMethodName) {
@@ -310,7 +310,7 @@ class Configuration {
 	/**
 	 * Setter function for a single injection property
 	 *
-	 * @param array $property A \F3\FLOW3\Object\Configuration\ConfigurationProperty
+	 * @param \F3\FLOW3\Object\Configuration\ConfigurationProperty $property
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -340,7 +340,7 @@ class Configuration {
 	/**
 	 * Setter function for a single constructor argument
 	 *
-	 * @param A \F3\FLOW3\Object\Configuration\ConfigurationArgument $argument The argument
+	 * @param \F3\FLOW3\Object\Configuration\ConfigurationArgument $argument The argument
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

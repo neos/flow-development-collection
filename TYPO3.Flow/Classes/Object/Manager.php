@@ -263,7 +263,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * the following contexts are explicitly supported by FLOW3:
 	 * "Production", "Development", "Testing", "Profiling", "Staging"
 	 *
-	 * @param  string $context: Name of the context
+	 * @param  string $context Name of the context
 	 * @return void
 	 * @throws \InvalidArgumentException if $context is not a valid string.
 	 * @author Robert Lemke <robert@typo3.org>
@@ -349,9 +349,9 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	/**
 	 * Registers the given class as an object
 	 *
-	 * @param string $objectName: The unique identifier of the object
-	 * @param string $className: The class name which provides the functionality for this object. Same as object name by default.
-	 * @param object $object: If the object has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
+	 * @param string $objectName The unique identifier of the object
+	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.
+	 * @param object $object If the object has been instantiated prior to registration (which should be avoided whenever possible), it can be passed here.
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\ObjectAlreadyRegistered if the object has already been registered
@@ -465,7 +465,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * case sensitive name is not available. This method helps you in these
 	 * rare cases.
 	 *
-	 * @param  string $caseInsensitiveObjectName: The object name in lower-, upper- or mixed case
+	 * @param  string $caseInsensitiveObjectName The object name in lower-, upper- or mixed case
 	 * @return mixed Either the mixed case object name or FALSE if no object of that name was found.
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \InvalidArgumentException if $caseInsensitiveObjectName is not a valid string
@@ -568,8 +568,8 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * This is a convenience method which loads the configuration of the given
 	 * object, sets the class name and saves the configuration again.
 	 *
-	 * @param string $objectName: Name of the object to set the class name for
-	 * @param string $className: Name of the class to set
+	 * @param string $objectName Name of the object to set the class name for
+	 * @param string $className Name of the class to set
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @throws \F3\FLOW3\Object\Exception\UnknownObject on trying to set the class name of an unknown object
@@ -654,7 +654,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	 * Returns straight-value constructor arguments for an object by creating appropriate
 	 * \F3\FLOW3\Object\Configuration\ConfigurationArgument objects.
 	 *
-	 * @param array $argumentValues: Array of argument values. Index must start at "0" for parameter "1" etc.
+	 * @param array $argumentValues Array of argument values. Index must start at "0" for parameter "1" etc.
 	 * @return array An array of \F3\FLOW3\Object\Configuration\ConfigurationArgument which can be passed to the object builder
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see create()

@@ -51,7 +51,7 @@ abstract class AbstractMethodInterceptorBuilder {
 	 * Builds method interception PHP code
 	 *
 	 * @param string $methodName Name of the method to build an interceptor for
-	 * @param array $interceptedMethods An array of method names and their meta information, including advices for the method (if any)
+	 * @param array $methodMetaInformation An array of method names and their meta information, including advices for the method (if any)
 	 * @param string $targetClassName Name of the target class to build the interceptor for
 	 * @return string PHP code of the interceptor
 	 * @author Robert Lemke <robert@typo3.org>

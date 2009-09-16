@@ -54,7 +54,7 @@ class ValidatorResolver {
 	/**
 	 * Constructs the validator resolver
 	 *
-	 * @param \F3\FLOW3\Object\ManagerInterface A reference to the compomenent manager
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the compomenent manager
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function __construct(\F3\FLOW3\Object\ManagerInterface $objectManager) {

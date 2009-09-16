@@ -282,7 +282,7 @@ class FileMonitor {
 	 * Signalizes that the specified directory has changed
 	 *
 	 * @param string $monitorIdentifier Name of the monitor which detected the change
-	 * @param array $changedFiles An array of changed directories (key = path) and their status (value)
+	 * @param array $changedDirectories An array of changed directories (key = path) and their status (value)
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @signal

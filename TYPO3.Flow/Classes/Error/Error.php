@@ -48,8 +48,8 @@ class Error {
 	/**
 	 * Constructs this error
 	 *
-	 * @param string $message: An english error message which is used if no other error message can be resolved
-	 * @param integer $code: A unique error code
+	 * @param string $message An english error message which is used if no other error message can be resolved
+	 * @param integer $code A unique error code
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */

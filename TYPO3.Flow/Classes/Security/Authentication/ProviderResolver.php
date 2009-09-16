@@ -49,7 +49,7 @@ class ProviderResolver {
 	/**
 	 * Resolves the class name of an authentication provider. If a valid provider class name is given, it is just returned.
 	 *
-	 * @param string $name The (short) name of the provider
+	 * @param string $providerName The (short) name of the provider
 	 * @return string The object name of the authentication provider
 	 * @throws \F3\FLOW3\Security\Exception\NoAuthenticationProviderFound
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>

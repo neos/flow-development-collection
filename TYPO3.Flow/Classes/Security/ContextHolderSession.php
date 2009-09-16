@@ -77,7 +77,7 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
+	 * @param F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
@@ -215,10 +215,9 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	/**
 	 * Updates the token credentials for all tokens in the given array.
 	 *
-	 * @param array Array of authentication tokens the credentials should be updated for
+	 * @param array $tokens Array of authentication tokens the credentials should be updated for
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 * @todo Remove manual DI. Should be handled by a session scope
 	 */
 	protected function updateTokens(array $tokens) {
 		foreach ($tokens as $token) {

@@ -107,7 +107,7 @@ class PointcutSettingFilter implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInte
 	 * Parses the given configuration path expression and sets $this->actualSettingValue
 	 * and $this->condition accordingly
 	 *
-	 * @param settingComparisonExpression The configuration expression (path + optional condition)
+	 * @param string settingComparisonExpression The configuration expression (path + optional condition)
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

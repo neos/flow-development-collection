@@ -244,7 +244,7 @@ class Request implements \F3\FLOW3\MVC\RequestInterface {
 	 *
 	 * Note that the action name must start with a lower case letter.
 	 *
-	 * @param string $actionName: Name of the action to execute by the controller
+	 * @param string $actionName Name of the action to execute by the controller
 	 * @return void
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidActionName if the action name is not valid
 	 * @author Robert Lemke <robert@typo3.org>

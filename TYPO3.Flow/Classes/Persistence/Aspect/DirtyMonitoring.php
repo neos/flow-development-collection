@@ -69,7 +69,7 @@ class DirtyMonitoring {
 	/**
 	 * After returning advice, making sure we have an UUID for each and every entity.
 	 *
-	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return void
 	 * @afterreturning classTaggedWith(entity) && method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -82,7 +82,7 @@ class DirtyMonitoring {
 	/**
 	 * Around advice, implements the FLOW3_Persistence_isNew() method introduced above
 	 *
-	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return boolean
 	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isNew())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
@@ -98,7 +98,7 @@ class DirtyMonitoring {
 	/**
 	 * Around advice, implements the FLOW3_Persistence_isClone() method introduced above
 	 *
-	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return boolean if the object is a clone
 	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isClone())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface
@@ -114,7 +114,7 @@ class DirtyMonitoring {
 	/**
 	 * Around advice, implements the FLOW3_Persistence_isDirty() method introduced above
 	 *
-	 * @param \F3\FLOW3\AOPJoinPointInterface $joinPoint The current join point
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point
 	 * @return boolean
 	 * @around F3\FLOW3\Persistence\Aspect\DirtyMonitoring->needsDirtyCheckingAspect && method(.*->FLOW3_Persistence_isDirty())
 	 * @see \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface

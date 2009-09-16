@@ -33,7 +33,7 @@ class AuthenticationController extends \F3\FLOW3\MVC\Controller\ActionController
 	/**
 	 * Inject the authentication manager
 	 *
-	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $objectManager The authentication manager
+	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */

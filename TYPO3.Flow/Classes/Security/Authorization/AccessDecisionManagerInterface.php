@@ -34,7 +34,6 @@ interface AccessDecisionManagerInterface {
 	/**
 	 * Decides if access should be granted on the given object in the current security context
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The joinpoint to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted
@@ -44,7 +43,6 @@ interface AccessDecisionManagerInterface {
 	/**
 	 * Decides if access should be granted on the given resource in the current security context
 	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The current securit context
 	 * @param string $resource The resource to decide on
 	 * @return void
 	 * @throws \F3\FLOW3\Security\Exception\AccessDenied If access is not granted

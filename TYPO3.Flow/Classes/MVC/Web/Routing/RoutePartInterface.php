@@ -34,7 +34,7 @@ interface RoutePartInterface {
 	/**
 	 * Sets name of the Route Part.
 	 * 
-	 * @param string $name
+	 * @param string $partName
 	 * @return void
 	 */
 	public function setName($partName);
@@ -116,7 +116,7 @@ interface RoutePartInterface {
 	 * shorten the $requestPath by the matching substring when matching is successful.
 	 * This is why $requestPath has to be passed by reference.
 	 *
-	 * @param string $requestPath The request path to be matched - without query parameters, host and fragment.
+	 * @param string &$requestPath The request path to be matched - without query parameters, host and fragment.
 	 * @return boolean TRUE if Route Part matched $requestPath, otherwise FALSE.
 	 */
 	public function match(&$requestPath);
@@ -127,7 +127,7 @@ interface RoutePartInterface {
 	 * removes resolved elements from $routeValues-Array.
 	 * This is why $routeValues has to be passed by reference.
 	 *
-	 * @param array $routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
+	 * @param array &$routeValues An array with key/value pairs to be resolved by Dynamic Route Parts.
 	 * @return boolean TRUE if Route Part can resolve one or more $routeValues elements, otherwise FALSE.
 	 */
 	public function resolve(array &$routeValues);

@@ -88,7 +88,7 @@ class URI {
 	/**
 	 * Constructs the URI object from a string
 	 *
-	 * @param string String representation of the URI
+	 * @param string $URIString String representation of the URI
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api

@@ -55,17 +55,12 @@ class PolicyEnforcement implements \F3\FLOW3\Security\Authorization\InterceptorI
 	/**
 	 * Constructor.
 	 *
-	 * @param \F3\FLOW3\Security\ContextHolderInterface $securityContextHolder The security context holder
 	 * @param \F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager The authentication manager
 	 * @param \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager The access decision manager
 	 * @return void
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function __construct(
-					\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager,
-					\F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager
-					) {
-
+	public function __construct(\F3\FLOW3\Security\Authentication\ManagerInterface $authenticationManager, \F3\FLOW3\Security\Authorization\AccessDecisionManagerInterface $accessDecisionManager) {
 		$this->authenticationManager = $authenticationManager;
 		$this->accessDecisionManager = $accessDecisionManager;
 	}

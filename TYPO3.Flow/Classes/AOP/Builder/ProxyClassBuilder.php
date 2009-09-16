@@ -52,7 +52,7 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the reflection service
 	 *
-	 * @param F3\FLOW3\Reflection\Service $reflectionService The reflection service
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService The reflection service
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -63,7 +63,7 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the Empty Constructor Interceptor Builder
 	 *
-	 * @param EmptyConstructorInterceptorBuilder $builder
+	 * @param \F3\FLOW3\AOP\Builder\EmptyConstructorInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -74,7 +74,7 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the Adviced Constructor Interceptor Builder
 	 *
-	 * @param AdvicedConstructorInterceptorBuilder $builder
+	 * @param \F3\FLOW3\AOP\Builder\AdvicedConstructorInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -85,7 +85,7 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the Empty Method Interceptor Builder
 	 *
-	 * @param EmptyMethodInterceptorBuilder $builder
+	 * @param \F3\FLOW3\AOP\Builder\EmptyMethodInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -96,7 +96,7 @@ class ProxyClassBuilder {
 	/**
 	 * Injects the Adviced Method Interceptor Builder
 	 *
-	 * @param AdvicedMethodInterceptorBuilder $builder
+	 * @param \F3\FLOW3\AOP\Builder\AdvicedMethodInterceptorBuilder $builder
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -257,7 +257,7 @@ class ProxyClassBuilder {
 	 * any case. See buildProxyClass() and addConstructorToInterceptedMethods()
 	 *
 	 * @param array $interceptedMethods An array of method names which need to be intercepted
-	 * @param $targetClassName The target class the pointcut should match with
+	 * @param string $targetClassName The target class the pointcut should match with
 	 * @return string Methods interceptor PHP code
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -326,7 +326,7 @@ class ProxyClassBuilder {
 	 * methods array.
 	 *
 	 * @param array &$interceptedMethods An array (empty or not) which contains the names of the intercepted methods and additional information
-	 * @param $targetClassName Name of the class in question
+	 * @param string $targetClassName Name of the class in question
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -343,7 +343,7 @@ class ProxyClassBuilder {
 	 * which match the target class.
 	 *
 	 * @param array $aspectContainers All aspects to take into consideration
-	 * @param  string $targetClassName Name of the class the pointcut should match with
+	 * @param string $targetClassName Name of the class the pointcut should match with
 	 * @return array array of interface names
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

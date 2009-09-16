@@ -38,7 +38,7 @@ class ClassReflection extends \ReflectionClass {
 	/**
 	 * The constructor - initializes the class reflector
 	 *
-	 * @param  string $className: Name of the class to reflect
+	 * @param string $className Name of the class to reflect
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct($className) {
@@ -50,7 +50,7 @@ class ClassReflection extends \ReflectionClass {
 	 * that \F3\FLOW3\Reflection\MethodReflection objects are returned instead of the
 	 * orginal ReflectionMethod instances.
 	 *
-	 * @param  long $filter: A filter mask
+	 * @param long $filter A filter mask
 	 * @return \F3\FLOW3\Reflection\MethodReflection Method reflection objects of the methods in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -97,7 +97,7 @@ class ClassReflection extends \ReflectionClass {
 	 * that \F3\FLOW3\Reflection\PropertyReflection objects are returned instead of the
 	 * orginal ReflectionProperty instances.
 	 *
-	 * @param  long $filter: A filter mask
+	 * @param long $filter A filter mask
 	 * @return array of \F3\FLOW3\Reflection\PropertyReflection Property reflection objects of the properties in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -115,7 +115,7 @@ class ClassReflection extends \ReflectionClass {
 	 * that a \F3\FLOW3\Reflection\PropertyReflection object is returned instead of the
 	 * orginal ReflectionProperty instance.
 	 *
-	 * @param  string $name: Name of the property
+	 * @param string $name Name of the property
 	 * @return \F3\FLOW3\Reflection\PropertyReflection Property reflection object of the specified property in this class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -157,7 +157,7 @@ class ClassReflection extends \ReflectionClass {
 	 * Checks if the doc comment of this method is tagged with
 	 * the specified tag
 	 *
-	 * @param  string $tag: Tag name to check for
+	 * @param string $tag Tag name to check for
 	 * @return boolean TRUE if such a tag has been defined, otherwise FALSE
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

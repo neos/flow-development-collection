@@ -49,9 +49,9 @@ class AfterReturningAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	/**
 	 * Constructor
 	 *
-	 * @param string $aspectObjectName: Name of the aspect object containing the advice
-	 * @param string $adviceMethodName: Name of the advice method
-	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager: A reference to the object manager
+	 * @param string $aspectObjectName Name of the aspect object containing the advice
+	 * @param string $adviceMethodName Name of the advice method
+	 * @param \F3\FLOW3\Object\ManagerInterface $objectManager A reference to the object manager
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -64,7 +64,7 @@ class AfterReturningAdvice implements \F3\FLOW3\AOP\Advice\AdviceInterface {
 	/**
 	 * Invokes the advice method
 	 *
-	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point which is passed to the advice method
+	 * @param \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point which is passed to the advice method
 	 * @return Result of the advice method
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

@@ -50,7 +50,7 @@ class Introduction {
 	 * Constructor
 	 *
 	 * @param string $declaringAspectClassName Name of the aspect containing the declaration for this introduction
-	 * @param string $interface Name of the interface to introduce
+	 * @param string $interfaceName Name of the interface to introduce
 	 * @param \F3\FLOW3\AOP\Pointcut\Pointcut $pointcut The pointcut for this introduction
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>

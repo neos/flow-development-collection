@@ -66,8 +66,8 @@ interface SessionInterface {
 	/**
 	 * Stores the given data under the given key in the session
 	 *
-	 * @param object $data The data to be stored
 	 * @param string $key The key under which the data should be stored
+	 * @param object $data The data to be stored
 	 * @return void
 	 * @throws \F3\FLOW3\Session\Exception\SessionNotStarted
 	 */

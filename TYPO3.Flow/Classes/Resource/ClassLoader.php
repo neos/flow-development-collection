@@ -86,8 +86,8 @@ class ClassLoader {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @see \F3\FLOW3\Resource\Manager
 	 */
-	public function setSpecialClassNameAndPath($className, $path) {
-		$this->specialClassNamesAndPaths[$className] = $path;
+	public function setSpecialClassNameAndPath($className, $classFilePathAndName) {
+		$this->specialClassNamesAndPaths[$className] = $classFilePathAndName;
 	}
 }
 

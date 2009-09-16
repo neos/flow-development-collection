@@ -87,7 +87,7 @@ class Mapper {
 	/**
 	 * Injects the object factory
 	 *
-	 * @param \F3\FLOW3\Object\FactoryInterface
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -109,7 +109,7 @@ class Mapper {
 	/**
 	 * Injects the Reflection Service
 	 *
-	 * @param \F3\FLOW3\Reflection\Service
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
@@ -150,8 +150,8 @@ class Mapper {
 	 * @param array $propertyNames Names of the properties to map.
 	 * @param mixed $source Source containing the properties to map to the target object. Must either be an array, ArrayObject or any other object.
 	 * @param object $target The target object
-	 * @param \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
 	 * @param array $optionalPropertyNames Names of optional properties. If a property is specified here and it doesn't exist in the source, no error is issued.
+	 * @param \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator A validator used for validating the target object
 	 * @return boolean TRUE if the mapped properties are valid, otherwise FALSE
 	 * @see getMappingResults()
 	 * @see map()
@@ -159,7 +159,7 @@ class Mapper {
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @api
 	 */
-	public function mapAndValidate(array $propertyNames, $source, $target, $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
+	public function mapAndValidate(array $propertyNames, $source, $target, array $optionalPropertyNames = array(), \F3\FLOW3\Validation\Validator\ObjectValidatorInterface $targetObjectValidator) {
 		$backupProperties = array();
 
 		$this->map($propertyNames, $source, $backupProperties, $optionalPropertyNames);
@@ -180,11 +180,11 @@ class Mapper {
 	/**
 	 * Add errors to the mapping result from an object validator (property errors).
 	 *
-	 * @param array Array of \F3\FLOW3\Validation\PropertyError
+	 * @param array $errors Array of \F3\FLOW3\Validation\PropertyError
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 * @return void
 	 */
-	protected function addErrorsFromObjectValidator($errors) {
+	protected function addErrorsFromObjectValidator(array $errors) {
 		foreach ($errors as $error) {
 			if ($error instanceof \F3\FLOW3\Validation\PropertyError) {
 				$propertyName = $error->getPropertyName();

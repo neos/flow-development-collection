@@ -61,7 +61,7 @@ class AdviceChain {
 	 * left in the chain, the proxy classes' method invokeJoinpoint() will finally
 	 * be called.
 	 *
-	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint: The current join point (ie. the context)
+	 * @param  \F3\FLOW3\AOP\JoinPointInterface $joinPoint The current join point (ie. the context)
 	 * @return mixed Result of the advice or the original method of the target class
 	 * @author Robert Lemke <robert@typo3.org>
 	 */

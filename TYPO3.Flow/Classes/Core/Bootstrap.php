@@ -698,13 +698,13 @@ final class Bootstrap {
 	/**
 	 * (For now) evaluates the package configuration
 	 *
-	 * @param \F3\FLOW3\Package\Package $package The package
-	 * @param array The configuration to evaluate
+	 * @param \F3\FLOW3\Package\PackageInterface $package The package
+	 * @param array $packageConfiguration The configuration to evaluate
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
 	 */
-	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\Package $package, array $packageConfiguration) {
+	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\PackageInterface $package, array $packageConfiguration) {
 		if (isset($packageConfiguration['resourceManager'])) {
 			if (isset($packageConfiguration['resourceManager']['specialClassNameAndPaths'])) {
 				$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\Manager');
