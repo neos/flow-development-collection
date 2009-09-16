@@ -564,11 +564,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaOnlyContainsNonTransientProperties() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$expectedProperties = array('someString', 'someInteger', 'someFloat', 'someDate', 'someBoolean', 'someIdentifier', 'someSplObjectStorage');
 
@@ -585,11 +582,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function propertyDataIsDetectedFromVarAnnotations() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$expectedProperties = array(
 			'someBoolean' => array('type' => 'boolean', 'elementType' => NULL, 'lazy' => FALSE),
@@ -614,11 +608,9 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeEntityIsRecognizedByEntityAnnotation() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService->expects($this->once())->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity', 'entity')->will($this->returnValue(TRUE));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -630,11 +622,10 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function modelTypeValueObjectIsRecognizedByValueObjectAnnotation() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService->expects($this->at(0))->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject', 'entity')->will($this->returnValue(FALSE));
+		$reflectionService->expects($this->at(1))->method('isClassTaggedWith')->with('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject', 'valueobject')->will($this->returnValue(TRUE));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\ValueObject'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -646,11 +637,8 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function classSchemaContainsNameOfItsRelatedClass() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('dummy'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -658,15 +646,12 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function uuidPropertyNameIsDetectedFromAnnotation() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('dummy'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -674,15 +659,12 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function uuidPropertyNameIsSetAsRegularPropertyAsWell() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('dummy'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -690,15 +672,12 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function identityPropertiesAreDetectedFromAnnotation() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('dummy'));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('dummy'));
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
@@ -716,17 +695,14 @@ class ServiceTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function aggregateRootIsDetectedForEntities() {
-		$reflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('isClassReflected'));
+		$reflectionService = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Reflection\Service'), array('isClassReflected', 'isClassTaggedWith'));
+		$reflectionService->expects($this->once())->method('isClassTaggedWith')->will($this->returnValue(TRUE));
 		$reflectionService->expects($this->once())->method('isClassReflected')->with('F3\FLOW3\Tests\Reflection\Fixture\Repository\EntityRepository')->will($this->returnValue(TRUE));
-		$reflectionService->setCache($this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE));
-		$reflectionService->initialize(
-			array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity')
-		);
+		$reflectionService->_call('buildClassSchemata', array('F3\FLOW3\Tests\Reflection\Fixture\Model\Entity'));
 
 		$builtClassSchemata = $reflectionService->getClassSchemata();
 		$builtClassSchema = array_pop($builtClassSchemata);
 
-		$this->assertEquals($builtClassSchema->getModelType(), \F3\FLOW3\Reflection\ClassSchema::MODELTYPE_ENTITY);
 		$this->assertTrue($builtClassSchema->isAggregateRoot());
 	}
 
