@@ -202,7 +202,7 @@ class Service {
 	/**
 	 * Injects the System Logger
 	 *
-	 * @param \F3\FLOW3\Log\SystemLoggerInterface
+	 * @param \F3\FLOW3\Log\SystemLoggerInterface $systemLogger
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -226,6 +226,7 @@ class Service {
 	 *
 	 * @param array $classNamesToReflect Names of available classes to consider in this reflection service
 	 * @return void
+	 * @throws \F3\FLOW3\Reflection\Exception if the ReflectionService has already been initialized
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function initialize(array $classNamesToReflect) {
@@ -238,8 +239,6 @@ class Service {
 		$this->reflectEmergedClasses($classNamesToReflect);
 
 		$this->initialized = TRUE;
-
-		$this->buildClassSchemata();
 	}
 
 	/**
@@ -285,6 +284,8 @@ class Service {
 	 *
 	 * @param string $interfaceName Name of the interface
 	 * @return mixed Either the class name of the default implementation for the object type or FALSE
+	 * @throws \F3\FLOW3\Reflection\Exception if the ReflectionService has not yet been initialized
+	 * @throws \InvalidArgumentException if the given interface does not exist
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -309,12 +310,13 @@ class Service {
 	 * @param string $interfaceName Name of the interface
 	 * @return array An array of class names of the default implementation for the object type
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @throws \F3\FLOW3\Object\Exception\UnknownInterface if the given interface does not exist
+	 * @throws \F3\FLOW3\Reflection\Exception if the ReflectionService has not yet been initialized
+	 * @throws \InvalidArgumentException if the given interface does not exist
 	 * @api
 	 */
 	public function getAllImplementationClassNamesForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667824);
-		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interface . '" does not exist or is not the name of an interface.', 1238769560);
+		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769560);
 		return (isset($this->interfaceImplementations[$interfaceName])) ? $this->interfaceImplementations[$interfaceName] : array();
 	}
 
@@ -341,6 +343,7 @@ class Service {
 	 *
 	 * @param string $tag Tag to search for
 	 * @return array An array of class names tagged by the tag
+	 * @throws \F3\FLOW3\Reflection\Exception if the ReflectionService has not yet been initialized
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
@@ -576,6 +579,7 @@ class Service {
 	 * @api
 	 */
 	public function getMethodParameters($className, $methodName) {
+		$parametersInformation = array();
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if ($this->initialized && isset($this->reflectedClassNames[$className])) {
 			if (!isset($this->methodParameters[$className])) return array();
@@ -691,6 +695,7 @@ class Service {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function reflectEmergedClasses(array $classNamesToReflect) {
+		$classNamesToBuildSchemaFor = array();
 		$classNamesToReflect = array_unique($classNamesToReflect);
 		$reflectedClassNames = array_keys($this->reflectedClassNames);
 		sort($classNamesToReflect);
@@ -698,7 +703,11 @@ class Service {
 		if ($this->reflectedClassNames !== $classNamesToReflect) {
 			foreach (array_diff($classNamesToReflect, $reflectedClassNames) as $className) {
 				$this->reflectClass($className);
+				if ($this->isClassTaggedWith($className, 'entity') || $this->isClassTaggedWith($className, 'valueobject')) {
+					$classNamesToBuildSchemaFor[] = $className;
+				}
 			}
+			$this->buildClassSchemata($classNamesToBuildSchemaFor);
 		}
 	}
 
@@ -761,6 +770,19 @@ class Service {
 
 			foreach ($method->getParameters() as $parameter) {
 				$this->methodParameters[$className][$methodName][$parameter->getName()] = $this->convertParameterReflectionToArray($parameter, $method);
+				if (isset($this->methodTagsValues[$className][$methodName]['param'][$parameter->getPosition()])) {
+					$parameterAnnotation = explode(' ', $this->methodTagsValues[$className][$methodName]['param'][$parameter->getPosition()], 3);
+					if (count($parameterAnnotation) < 2) {
+						$this->log('  Wrong @param use for "' . $method->getName() . '::' . $parameter->getName() . '": "' . implode(' ', $parameterAnnotation) . '"', LOG_DEBUG);
+					} else {
+						if (isset($this->methodParameters[$className][$methodName][$parameter->getName()]['type']) && ($this->methodParameters[$className][$methodName][$parameter->getName()]['type'] !== ltrim($parameterAnnotation[0], '\\'))) {
+							$this->log('  Wrong type in @param for "' . $method->getName() . '::' . $parameter->getName() . '": "' . $parameterAnnotation[0] . '"', LOG_DEBUG);
+						}
+						if ($parameter->getName() !== ltrim($parameterAnnotation[1], '$&')) {
+							$this->log('  Wrong name in @param for "' . $method->getName() . '::$' . $parameter->getName() . '": "' . $parameterAnnotation[1] . '"', LOG_DEBUG);
+						}
+					}
+				}
 			}
 		}
 		ksort($this->reflectedClassNames);
@@ -769,14 +791,12 @@ class Service {
 	/**
 	 * Builds class schemata from classes annotated as entities or value objects
 	 *
+	 * @param array $classNames
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function buildClassSchemata() {
-		$this->classSchemata = array();
-
-		$classNames = array_merge($this->getClassNamesByTag('entity'), $this->getClassNamesByTag('valueobject'));
+	protected function buildClassSchemata(array $classNames) {
 		foreach ($classNames as $className) {
 			$classSchema = new \F3\FLOW3\Reflection\ClassSchema($className);
 			if ($this->isClassTaggedWith($className, 'entity')) {
@@ -828,18 +848,15 @@ class Service {
 			$parameterInformation['defaultValue'] = $parameter->getDefaultValue();
 		}
 		if ($parameterClass !== NULL) {
-			$parameterInformation['type'] = $parameterClass->getName();
+			$parameterInformation['type'] = ltrim($parameterClass->getName(), '\\');
 		} elseif ($method !== NULL) {
 			$methodTagsAndValues = $this->getMethodTagsValues($method->getDeclaringClass()->getName(), $method->getName());
 			if (isset($methodTagsAndValues['param']) && isset($methodTagsAndValues['param'][$parameter->getPosition()])) {
 				$explodedParameters = explode(' ', $methodTagsAndValues['param'][$parameter->getPosition()]);
 				if (count($explodedParameters) >= 2) {
-					$parameterInformation['type'] = $explodedParameters[0];
+					$parameterInformation['type'] = ltrim($explodedParameters[0], '\\');
 				}
 			}
-		}
-		if (isset($parameterInformation['type']) && $parameterInformation['type']{0} === '\\') {
-			$parameterInformation['type'] = substr($parameterInformation['type'], 1);
 		}
 		return $parameterInformation;
 	}
@@ -918,6 +935,7 @@ class Service {
 	 * Exports the internal reflection data into the ReflectionData cache
 	 *
 	 * @return void
+	 * @throws \F3\FLOW3\Reflection\Exception if no cache has been injected
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function saveToCache() {
@@ -925,7 +943,7 @@ class Service {
 
 		$nonCachedClassNames = array_diff_assoc($this->reflectedClassNames, $this->cachedClassNames);
 		$this->log('Found ' . count($nonCachedClassNames) . ' classes whose reflection data was not cached previously.', LOG_DEBUG);
-		foreach ($nonCachedClassNames as $className => $reflectionTimestamp) {
+		foreach (array_keys($nonCachedClassNames) as $className) {
 			$this->cache->set(str_replace('\\', '_', $className), '', array($this->cache->getClassTag($className)));
 		}
 
@@ -935,6 +953,7 @@ class Service {
 			'abstractClasses',
 			'classConstructorMethodNames',
 			'classPropertyNames',
+			'classSchemata',
 			'classTagsValues',
 			'finalClasses',
 			'finalMethods',
