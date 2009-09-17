@@ -23,37 +23,25 @@ namespace F3\FLOW3\Error;
  *                                                                        */
 
 /**
- * Global error handler for FLOW3
+ * Error handler interface for FLOW3
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class ErrorHandler implements \F3\FLOW3\Error\ErrorHandlerInterface {
-
-	/**
-	 * @var array
-	 */
-	protected $exceptionalErrors = array();
+interface ErrorHandlerInterface {
 
 	/**
 	 * Constructs this error handler - registers itself as the default error handler.
-	 *
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct() {
-		set_error_handler(array($this, 'handleError'));
-	}
+	public function __construct();
 
 	/**
 	 * Defines which error levels result should result in an exception thrown.
 	 *
 	 * @param array $exceptionalErrors An array of E_* error levels
 	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setExceptionalErrors(array $exceptionalErrors) {
-		$this->exceptionalErrors = $exceptionalErrors;
-	}
+	public function setExceptionalErrors(array $exceptionalErrors);
 
 	/**
 	 * Handles an error by converting it into an exception
@@ -64,23 +52,8 @@ class ErrorHandler implements \F3\FLOW3\Error\ErrorHandlerInterface {
 	 * @param integer $errorLine Line number where the error occurred
 	 * @return void
 	 * @throws \F3\FLOW3\Error\Exception with the data passed to this method
-	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine) {
-		$errorLevels = array (
-			E_WARNING            => 'Warning',
-			E_NOTICE             => 'Notice',
-			E_USER_ERROR         => 'User Error',
-			E_USER_WARNING       => 'User Warning',
-			E_USER_NOTICE        => 'User Notice',
-			E_STRICT             => 'Runtime Notice',
-			E_RECOVERABLE_ERROR  => 'Catchable Fatal Error'
-		);
-
-		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
-			throw new \F3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
-		}
-	}
+	public function handleError($errorLevel, $errorMessage, $errorFile, $errorLine);
 }
 
 ?>

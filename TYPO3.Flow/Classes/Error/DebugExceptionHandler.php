@@ -209,9 +209,13 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 					for ($line = $startLine; $line < $endLine; $line++) {
 						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
 
-						if ($line === $lineNumber) $codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
+						if ($line === $lineNumber) {
+							$codeSnippet .= '</pre><pre style="background-color: #F1F1F1; color: black;">';
+						}
 						$codeSnippet .= sprintf('%05d', $line) . ': ' . $codeLine;
-						if ($line === $lineNumber) $codeSnippet .= '</pre><pre>';
+						if ($line === $lineNumber) {
+							$codeSnippet .= '</pre><pre>';
+						}
 					}
 					$codeSnippet .= '</pre>';
 				}

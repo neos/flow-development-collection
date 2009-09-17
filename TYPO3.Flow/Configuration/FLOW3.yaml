@@ -45,8 +45,9 @@ error:
     className: F3\FLOW3\Error\ErrorHandler
 
     # Defines which errors should result in an exception thrown - all other error
-    # levels will be silently ignored.
-    exceptionalErrors: [%E_ERROR%, %E_PARSE%, %E_CORE_ERROR%, %E_COMPILE_ERROR%, %E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
+    # levels will be silently ignored. Only errors that can be handled in an
+    # user-defined error handler are affected, of course.
+    exceptionalErrors: [%E_USER_ERROR%, %E_RECOVERABLE_ERROR%]
 
 log:
 
@@ -117,6 +118,9 @@ resource:
     # The strategy to use when caching files for public resources. Specify either
     # "none", "package" or "file"
     strategy: package
+    
+    # The lifetime for remote resource caching in seconds, 0 disables it
+    lifetime: 3600
 
 security:
 
