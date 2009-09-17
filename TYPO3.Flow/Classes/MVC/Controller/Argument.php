@@ -84,7 +84,7 @@ class Argument {
 	 * Data type of this argument's value
 	 * @var string
 	 */
-	protected $dataType = 'Text';
+	protected $dataType = NULL;
 
 	/**
 	 * If the data type is an object, the class schema of the data type class is resolved
@@ -131,7 +131,7 @@ class Argument {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function __construct($name, $dataType = 'Text') {
+	public function __construct($name, $dataType) {
 		if (!is_string($name)) throw new \InvalidArgumentException('$name must be of type string, ' . gettype($name) . ' given.', 1187951688);
 		if (strlen($name) === 0) throw new \InvalidArgumentException('$name must be a non-empty string, ' . strlen($name) . ' characters given.', 1232551853);
 		$this->name = $name;
@@ -393,8 +393,7 @@ class Argument {
 	 * @param mixed $value The value of this argument
 	 * @return \F3\FLOW3\MVC\Controller\Argument $this
 	 * @throws \F3\FLOW3\MVC\Exception\InvalidArgumentValue if the argument is not a valid object of type $dataType
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function setValue($value) {
 		$this->value = $this->transformValue($value);
@@ -411,6 +410,8 @@ class Argument {
 	 *
 	 * @param mixed $value The value of an argument
 	 * @return mixed
+	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
@@ -423,7 +424,7 @@ class Argument {
 		}
 		$transformedValue = NULL;
 		if ($this->dataTypeClassSchema !== NULL) {
-			// It is an Entity or ValueObject.
+				// It is an Entity or ValueObject.
 			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
 				$transformedValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
 			} elseif (is_array($value)) {

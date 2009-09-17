@@ -228,7 +228,6 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function callActionMethod() {
-		$argumentsAreValid = TRUE;
 		$preparedArguments = array();
 		foreach ($this->arguments as $argument) {
 			$preparedArguments[] = $argument->getValue();

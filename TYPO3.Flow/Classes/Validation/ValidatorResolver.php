@@ -127,7 +127,7 @@ class ValidatorResolver {
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		if (!count($methodParameters)) {
-			// early return in case no parameters were found.
+				// early return in case no parameters were found.
 			return $validatorConjunctions;
 		}
 		foreach ($methodParameters as $parameterName => $methodParameter) {
@@ -176,7 +176,7 @@ class ValidatorResolver {
 	protected function buildBaseValidatorConjunction($dataType) {
 		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
-		// Model based validator
+			// Model based validator
 		if (class_exists($dataType)) {
 			$validatorCount = 0;
 			$objectValidator = $this->createValidator('GenericObject');
@@ -200,7 +200,7 @@ class ValidatorResolver {
 			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
 		}
 
-		// Custom validator for the class
+			// Custom validator for the class
 		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
 		$customValidator = $this->createValidator($possibleValidatorClassName);
 		if ($customValidator !== NULL) {
@@ -224,6 +224,7 @@ class ValidatorResolver {
 			$validatorConfiguration = array('argumentName' => ltrim($parts[0], '$'), 'validators' => array());
 			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $parts[1], $matches, PREG_SET_ORDER);
 		} else {
+			$validatorConfiguration = array('validators' => array());
 			preg_match_all(self::PATTERN_MATCH_VALIDATORS, $validateValue, $matches, PREG_SET_ORDER);
 		}
 
