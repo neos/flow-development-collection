@@ -75,29 +75,6 @@ class ArgumentsValidatorTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @return Robert Lemke <robert@typo3.org>
-	 */
-	public function isValidSkipsArgumentsWhichHaveValidationDisabled() {
-		$mockArgument1 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
-		$mockArgument1->expects($this->any())->method('isValidationDisabled')->will($this->returnValue(FALSE));
-		$mockArgument1->expects($this->any())->method('getName')->will($this->returnValue('foo'));
-
-		$mockArgument2 = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
-		$mockArgument2->expects($this->any())->method('isValidationDisabled')->will($this->returnValue(TRUE));
-		$mockArgument2->expects($this->any())->method('getName')->will($this->returnValue('bar'));
-
-		$arguments = new \F3\FLOW3\MVC\Controller\Arguments($this->getMock('F3\FLOW3\Object\FactoryInterface'));
-		$arguments->addArgument($mockArgument1);
-		$arguments->addArgument($mockArgument2);
-
-		$validator = $this->getMock('F3\FLOW3\MVC\Controller\ArgumentsValidator', array('isPropertyValid'), array(), '', FALSE);
-		$validator->expects($this->once())->method('isPropertyValid')->with($arguments, 'foo')->will($this->returnValue(TRUE));
-
-		$this->assertTrue($validator->isValid($arguments));
-	}
-
-	/**
-	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function canValidateIsOnlyTrueForArgumentsObjects() {

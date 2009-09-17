@@ -49,9 +49,6 @@ class ArgumentsValidator extends \F3\FLOW3\Validation\Validator\AbstractObjectVa
 
 		$result = TRUE;
 		foreach ($arguments->getArgumentNames() as $argumentName) {
-			if ($arguments[$argumentName]->isValidationDisabled()) {
-				continue;
-			}
 			if ($this->isPropertyValid($arguments, $argumentName) === FALSE) {
 				$result = FALSE;
 			}

@@ -87,8 +87,12 @@ class ValidatorResolver {
 		$validatorClassName = $this->resolveValidatorObjectName($validatorName);
 		if ($validatorClassName === FALSE) return NULL;
 		$validator = $this->objectManager->getObject($validatorClassName);
+		if (!($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface)) {
+			return NULL;
+		}
+
 		$validator->setOptions($validatorOptions);
-		return ($validator instanceof \F3\FLOW3\Validation\Validator\ValidatorInterface) ? $validator : NULL;
+		return $validator;
 	}
 
 	/**
@@ -109,16 +113,30 @@ class ValidatorResolver {
 	}
 
 	/**
-	 * Detects and registers any additional validators for arguments which were specified in the @validate
-	 * annotations of a method.
+	 * Detects and registers any validators for arguments:
+	 * - by the data type specified in the @param annotations
+	 * - additional validators specified in the @validate annotations of a method
 	 *
-	 * @return void
+	 * @return array An Array of ValidatorConjunctions for each method parameters.
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sbastian@typo3.org>
 	 */
 	public function buildMethodArgumentsValidatorConjunctions($className, $methodName) {
 		$validatorConjunctions = array();
 
+		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
 		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
+		if (!count($methodParameters)) {
+			// early return in case no parameters were found.
+			return $validatorConjunctions;
+		}
+		foreach ($methodParameters as $parameterName => $methodParameter) {
+			$validatorConjunction = $this->createValidator('Conjunction');
+			$typeValidator = $this->createValidator($methodParameter['type']);
+			if ($typeValidator !== NULL) $validatorConjunction->addValidator($typeValidator);
+			$validatorConjunctions[$parameterName] = $validatorConjunction;
+		}
+
 		if (isset($methodTagsValues['validate'])) {
 			foreach ($methodTagsValues['validate'] as $validateValue) {
 				$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
@@ -129,8 +147,7 @@ class ValidatorResolver {
 					if  (isset($validatorConjunctions[$parsedAnnotation['argumentName']])) {
 						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
 					} else {
-						$validatorConjunctions[$parsedAnnotation['argumentName']] = $this->createValidator('Conjunction');
-						$validatorConjunctions[$parsedAnnotation['argumentName']]->addValidator($newValidator);
+						throw new \F3\FLOW3\Validation\Exception\InvalidValidationConfiguration('Invalid validate annotation in ' . $className . '->' . $methodName . '(): Validator specified for argument name "' . $parsedAnnotation['argumentName'] . '", but this argument does not exist.', 1253172726);
 					}
 				}
 			}
@@ -146,15 +163,20 @@ class ValidatorResolver {
 	 *
 	 * Additionally, if a custom validator was defined for the class in question, it will be added
 	 * to the end of the conjunction. A custom validator is found if it follows the naming convention
-	 * "[FullyqualifiedModelClassName]Validator".
+	 * "Replace '\Model\' by '\Validator\' and append "Validator".
 	 *
-	 * @param string $dataType The data type to build the validation conjunction for. Usually the fully qualified object name.
+	 * Example: $dataType is F3\Foo\Domain\Model\Quux, then the Validator will be found if it has the
+	 * name F3\Foo\Domain\Validator\QuuxValidator
+	 *
+	 * @param string $dataType The data type to build the validation conjunction for. Needs to be the fully qualified object name.
 	 * @return F3\FLOW3\Validation\Validator\ConjunctionValidator The validator conjunction or NULL
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Sebastian Kurfürst <sbastian@typo3.org>
 	 */
 	protected function buildBaseValidatorConjunction($dataType) {
 		$validatorConjunction = $this->objectManager->getObject('F3\FLOW3\Validation\Validator\ConjunctionValidator');
 
+		// Model based validator
 		if (class_exists($dataType)) {
 			$validatorCount = 0;
 			$objectValidator = $this->createValidator('GenericObject');
@@ -178,10 +200,11 @@ class ValidatorResolver {
 			if ($validatorCount > 0) $validatorConjunction->addValidator($objectValidator);
 		}
 
+		// Custom validator for the class
 		$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $dataType) . 'Validator';
-		$customValidatorObjectName = $this->resolveValidatorObjectName($possibleValidatorClassName);
-		if ($customValidatorObjectName !== FALSE) {
-			$validatorConjunction->addValidator($this->objectManager->getObject($customValidatorObjectName));
+		$customValidator = $this->createValidator($possibleValidatorClassName);
+		if ($customValidator !== NULL) {
+			$validatorConjunction->addValidator($customValidator);
 		}
 
 		return $validatorConjunction;
@@ -300,9 +323,6 @@ class ValidatorResolver {
 		switch ($type) {
 			case 'int' :
 				$type = 'Integer';
-				break;
-			case 'string' :
-				$type = 'Text';
 				break;
 			case 'bool' :
 				$type = 'Boolean';
