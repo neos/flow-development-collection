@@ -9,41 +9,1184 @@
          xmlns:ns="http://docbook.org/ns/docbook">
   <title>Security Framework</title>
 
-  <note>
-    <para>This chapter is work in progress.</para>
-  </note>
-
   <para>All tasks related to security of a FLOW3 application are handled
   centrally by the security framework. Besides other functionality, this
   includes especially features like authentication, authorization, channel
-  security and a powerful ACL component.</para>
+  security and a powerful ACL (Access Control Lists) component. This chapter
+  describes how you can use FLOW3's security features and how they work
+  internally.</para>
 
   <section>
-    <title>Initialization</title>
+    <title>Activation and initialization</title>
 
-    <para></para>
+    <para>Before you can use any of the described features in this chapter you
+    will have to enable the security framework. This is done as follows in the
+    FLOW3.yaml configuration file:</para>
+
+    <example>
+      <title>Example: Enable the security features in the FLOW3.yaml
+      configuration file</title>
+
+      <programlisting language="yaml">security: enable: yes</programlisting>
+    </example>
+
+    <para>After that, the security framework engages with FLOW3 by vowing in
+    two AOP advices into the MVC dispatcher class.</para>
+
+    <section>
+      <title>Security context</title>
+
+      <para>The first security advice (<literal>initializeSecurity</literal>
+      in the
+      <literal>F3\FLOW3\Security\Aspect\RequestDispatchingAspect</literal>)
+      initializes the security context holder for the current request. The
+      default implementation
+      (<literal>F3\FLOW3\Security\ContextHolderSession</literal>), shipped
+      with FLOW3, lies in session scope and holds context data like the
+      current authentication status. That means, if you need data related to
+      security, the security context (you can get it easily from the security
+      context holder) will be your main information source. The details of the
+      context's data will be described in the next chapters.</para>
+    </section>
   </section>
 
   <section>
     <title>Authentication</title>
 
-    <para></para>
+    <para>One of the main things people associate with security is
+    authentication. That means to identify your communication partner - the
+    one sending a request to FLOW3. Therefore the framework provides an
+    infrastructure to easily use different mechanisms for such a plausibility
+    proof. The most important achievment of the provided infrastructure is its
+    flexible extensibility. You can easily write your own authentication
+    mechanisms and configure the framework to use them without touching the
+    framework code itself. The details are explained in the section "<link
+    linkend="ImplementingYourOwnAuthenticationMechanism">Implementing your own
+    authentication mechanism</link>".</para>
+
+    <section xml:id="UsingTheAuthenticationController">
+      <title>Using the authentication controller</title>
+
+      <para>First, let's see how you can use FLOW3's authentication features.
+      There is a special controller in the security package: the
+      <literal>AuthenticationController</literal>. This controller has two
+      actions, namely <literal>authenticateAction()</literal> and
+      <literal>logoutAction()</literal>, an appropriate route is configured.
+      If you call <literal>http://localhost/flow3/authenticate</literal> in
+      your Browser, the default authentication mechanism will be triggered.
+      This mechanism, implemented in a so called authentication provider,
+      authenticates an user account by checking an username and password
+      against accounts stored in the content repository. <footnote>
+          <para>The details about the <literal>UsernamePasswordCR</literal>
+          provider are explained below, in the section about <link
+          linkend="AuthenticationMechanismsShippedWithFLOW3" os="">FLOW3's
+          built in providers</link>.</para>
+        </footnote></para>
+
+      <para>The configuration for this default provider, which is shipped with
+      FLOW3's default configuration looks like this:</para>
+
+      <example>
+        <title>Configuration of the default UsernamePassword authentication
+        mechanism in FLOW3.yaml</title>
+
+        <programlisting>security:
+  authentication:
+    providers:
+      DefaultProvider:
+        providerClass: UsernamePasswordCR</programlisting>
+      </example>
+
+      <para>This registers the <literal>UsernamePasswordCR</literal>
+      authentication provider under the name
+      "<literal>DefaultProvider</literal>" as the only, global authentication
+      mechanism. To successfully authenticate an account with this default
+      provider, you'll obviously have to provide a username and password. This
+      is done by sending two POST variables to the authentication controller.
+      Have a look at the following HTML snippet with a simple login form you
+      can use for that:</para>
+
+      <example>
+        <title>Example for a simple login form</title>
+
+        <programlisting language="html">&lt;form action="flow3/authenticate" method="post" name="loginform"&gt;
+  &lt;input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" /&gt;
+  &lt;input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" /&gt;
+  &lt;input type="submit" value="Login" tabindex="3" /&gt;
+&lt;/form&gt;</programlisting>
+      </example>
+
+      <para>After submitting the form, the internal authentication process
+      will be triggered and if you provided valid credentials an account will
+      be authenticated afterwards<footnote>
+          <para>If you don't know any credentials, you'll have to read the
+          section about <link linkend="AccountManagement">account
+          management</link>.</para>
+        </footnote>.<note>
+          <para>At the moment the <literal>authenticate()</literal> action
+          does not redirect after authentication. This feature is definitely
+          planned and will be integrated as soon as possible.</para>
+        </note></para>
+    </section>
+
+    <section>
+      <title>The internal authentication process</title>
+
+      <para>Now that you know, how you can authenticate someone, let's have a
+      look at the internal process, how this works internally. The following
+      sequence diagram shows the participating components and their
+      interaction:</para>
+
+      <figure>
+        <title>Internal authentication process</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="SecurityFramework_BasicAuthenticationProcess.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>As already explained, the security framework is initialized in the
+      dispatcher by vowing in an AOP advice, which resides in the
+      <literal>RequestDispatchingAspect</literal> class. This advice
+      intercepts the request dispatching before any controller is called.
+      Regarding authentication, you can see, that a so called authentication
+      token will be stored in the security context and some credentials will
+      be updated in it.</para>
+
+      <section>
+        <title>Authentication tokens</title>
+
+        <para>An authentication token holds the status of a specific
+        authentication mechanism, i.e. it stores the credentials (e.g. a
+        username and password) needed for authentication and one of the
+        following authentication states in the session. <footnote>
+            <para>Well, it holds them in member variables, but lies itself in
+            the security context, which lies in the security context holder,
+            which is a class configured as scope session.</para>
+          </footnote>The constants are defined in the authentication token
+        interface
+        (<literal>F3\FLOW3\Security\Authentication\TokenInterface</literal>)
+        and the status can be obtained from the
+        <literal>getAuthenticationStatus()</literal>method of a token.<tip>
+            <para>If you only want to know, if authentication was successful,
+            you can call the convenient method
+            <literal>isAuthenticated().</literal></para>
+          </tip><variablelist>
+            <varlistentry>
+              <term><literal>NO_CREDENTIALS_GIVEN</literal></term>
+
+              <listitem>
+                <para>This is the default state. The token is not
+                authenticated and holds no credentials, that could be used for
+                authentication.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><literal>WRONG_CREDENTIALS</literal></term>
+
+              <listitem>
+                <para>It was tried to authenticate the token, but the
+                credentials were wrong.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><literal>AUTHENTICATION_SUCCESSFUL</literal></term>
+
+              <listitem>
+                <para>The token has been successfully authenticated.</para>
+              </listitem>
+            </varlistentry>
+
+            <varlistentry>
+              <term><literal>AUTHENTICATION_NEEDED</literal></term>
+
+              <listitem>
+                <para>This indicates, that the token holds credentials, but
+                has not been authenticated yet.</para>
+              </listitem>
+            </varlistentry>
+          </variablelist></para>
+
+        <para>Now you might ask yourself, how the credentials are updated in a
+        token. The simple answer is: It's up to the token, to get them from
+        somewhere. The default <literal>UsernamePassword</literal> token for
+        example looks for a username and password in the two POST parameters:
+        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword::username</literal>
+        and
+        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword::password</literal>
+        (see <link linkend="UsingTheAuthenticationController">Using the
+        authentication controller</link>). The framework only makes sure that
+        <literal>updateCredentials()</literal> is called on every token, then
+        the token has to set possibly available credentials itself, e.g. from
+        available headers or parameters or anything else you can provide
+        credentials with.</para>
+      </section>
+
+      <section>
+        <title>Authentication manager and provider</title>
+
+        <para>After the tokens have been initialized the original request will
+        be processed by the resolved controller. In our case this is the
+        special authentication controller
+        (<literal>F3\FLOW3\Security\Authentication\Controller\AuthenticationController</literal>)
+        of FLOW3, which will call the authentication manager to authenticate
+        the tokens. In turn the authentication manager calls all
+        authentication providers in the configured order. A provider
+        implements a specific authentication mechanism and is therefore
+        responsible for a specific token type. E.g. the already mentioned
+        <literal>UsernamePasswordCR</literal> provider is able to authenticate
+        the <literal>UsernamePassword</literal> token.</para>
+
+        <para>After checking the credentials, it is the responsibility of an
+        authentication provider to set the correct authentication status (see
+        above) and so called <literal>GrantedAuthorities</literal> in its
+        corresponding token. The <literal>GrantedAuthorityInterface</literal>
+        resides in the <literal>F3\FLOW3\Security\Authentication</literal>
+        namespace and the default implementation are <literal>Role</literal>
+        objects (see the ACL section).</para>
+      </section>
+    </section>
+
+    <section xml:id="AccountManagement">
+      <title>Account management</title>
+
+      <para>In the previous section you have seen, how accounts can be
+      authenticated in FLOW3. What was concealed so far is, how these accounts
+      are created or what is exactly meant by the word "account". First of all
+      let's define what accounts are in FLOW3 and how they are used for
+      authentication. Following the OASIS CIQ V3.0<footnote>
+          <para>The specification can be downloaded from <uri
+          ns6:href="http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq">http://www.oasis-open.org/committees/tc_home.php?wg_abbrev=ciq</uri>.
+          The implementation of this specification resides in the "Party"
+          package, which is part of the official FLOW3 distribution.</para>
+        </footnote> specification, an account used for authentication is
+      separated from an user or more general a party. The advantage of this
+      separation is the possibility of one user having more than one account.
+      E.g. an user could have an account for the
+      <literal>UsernamePassword</literal> provider and one account connected
+      to a LDAP authentication provider. Another scenario would be to have
+      different accounts for different parts of your FLOW3 application. Read
+      the next section "<link
+      linkend="AdvancedAuthenticationConfiguration">Advanced authentication
+      configuration</link>" to see how this can be accomplished.</para>
+
+      <para>As explained above, the account stores the credentials needed for
+      authentication. Obviously these credentials are provider specific and
+      therefore every account is only valid for a specific authentication
+      provider. This provider - account connection is stored in a property of
+      the account object named
+      "<literal>authenticationProviderName</literal>". Appropriate getters and
+      setters are provided. The provider name is configured in the FLOW3.yaml
+      file. If you look back to the default configuration, you'll find the
+      name of the default authentication provider:
+      "<literal>DefaultProvider</literal>". Besides that, each account has
+      another property called "<literal>credentialsSource</literal>", which
+      points to the place or describes the credentials needed for this
+      account. This could be a LDAP query string, or in case of the
+      <literal>UsernamePasswordCR</literal> provider, the username, password
+      hash and salt are stored directly in this member variable.</para>
+
+      <para>It is the responsibility of the authentication provider to check
+      the given credentials from the authentication token<footnote>
+          <para>The <literal>AccountRepository</literal> provides a convenient
+          find method called
+          <literal>findByAccountIdentifierAndAuthenticationProviderName()</literal>
+          for this task.</para>
+        </footnote>, find the correct account for them and to decide about the
+      authentication status of this account.<note>
+          <para>In case of a directory service, the real authentication will
+          probably not take place in the provider itself, but the provider
+          will pass the result of the directory service on to the
+          authentication token.</para>
+        </note></para>
+
+      <section>
+        <title>Creating accounts</title>
+
+        <para>Creating an account is as easy as creating a new account object
+        and add it to the account repository. Look at the following example,
+        which adds a new account for FLOW3's default username/password
+        provider:</para>
+
+        <example>
+          <title>Add a new username/password account</title>
+
+          <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\Party\Domain\Model\Account');
+
+$username = 'andi';
+$password = 'secret';
+$salt = 'someRandomSalt';
+
+$credentials = md5(md5($password) . $salt) . ',' . $salt;
+
+$roles = array(
+  $this-&gt;objectFactory-&gt;create('F3\FLOW3\Security\ACL\Role', 'Administrator'),
+);
+
+$account-&gt;setAccountIdentifier($username);
+$account-&gt;setCredentialsSource($credentials);
+$account-&gt;setAuthenticationProviderName('TYPO3BEProvider');
+$account-&gt;setRoles($roles);
+
+$this-&gt;accountRepository-&gt;add($account);</programlisting>
+        </example>
+
+        <para>The way the credentials are coded is completely up to the
+        authentication provider. The <literal>UsernamePasswordCR</literal>
+        provider expects a simple salted password hash. As account identifier
+        the username is used, of course. You can also see, that there is a
+        role object added to the account. This is used by the ACL system and
+        will be explained in the according section below.</para>
+
+        <note>
+          <para>This example expects the object factory and the account
+          repository to be in <literal>$this-&gt;objectFactory</literal> and
+          <literal>$this-&gt;accountRepository</literal> respectively. If you
+          use this snippet in an action controller, the object factory will be
+          there already and the account repository can be injected very easily
+          by dependency injection.</para>
+        </note>
+      </section>
+    </section>
+
+    <section xml:id="AdvancedAuthenticationConfiguration">
+      <title>Advanced authentication configuration</title>
+
+      <section>
+        <title>Parallel authentication</title>
+
+        <para>Now that you have seen all components, taking part in the
+        authentication process, it is time to have a look at some advance
+        configuration possibilities. Just to remember, here is again the
+        configuration of the default authentication provider:</para>
+
+        <programlisting>security:
+  authentication:
+    providers:
+      DefaultProvider:
+        providerClass: UsernamePasswordCR</programlisting>
+
+        <para>If you have a closer look at this configuration, you can see,
+        that the word providers is plural. That means, you have the
+        possibility to configure more than one provider and use them in
+        "parallel".</para>
+
+        <note>
+          <para>You will have to make sure, that each provider has a unique
+          name. In the example above the provider name is
+          "<literal>DefaultProvider</literal>".</para>
+        </note>
+
+        <example>
+          <title>Configuration of two authentication providers</title>
+
+          <para><programlisting language="yaml">security:
+  authentication:
+    providers:
+      MyLDAPProvider:
+        providerClass: F3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+        options: 'Some LDAP configuration options'
+      DefaultProvider:
+        providerClass: UsernamePasswordCR</programlisting></para>
+        </example>
+
+        <para>This will advice the authentication manager to first
+        authenticate over the LDAP provider and if that fails he will try to
+        authenticate the default provider. So this configuration can be seen
+        as a authentication fallback chain, of course you can configure as
+        many providers as you like, but keep in mind that the order
+        matters.</para>
+
+        <note>
+          <para>As you can see in the example, the LDAP provider is provided
+          with some options. These are specific configuration options for each
+          provider, have a look in the detailed description to know if a
+          specific provider needs more options to be configured and
+          which.</para>
+        </note>
+      </section>
+
+      <section>
+        <title>More-factor authentication strategy</title>
+
+        <para>There is another configuration option to realize a
+        more-factor-authentication. This option simply forces the
+        authentication manager to always authenticate all configured providers
+        and to make sure that every single provider returned a positive
+        authentication status to its token. This option is by disabled by
+        default and can be enable with the following configuration:</para>
+
+        <programlisting language="yaml">security: authentication: authenticateAllTokens: yes</programlisting>
+      </section>
+
+      <section>
+        <title xml:id="RequestPatterns">Request Patterns</title>
+
+        <para>Now that you know about the possibility of configuring more than
+        one authentication provider another scenario may come to your mind.
+        Just imagine an application with two areas: One user area and one
+        administration area. Both must be protected, so we need some kind of
+        authentication. However for the administration area we want a stronger
+        authentication mechanism than for the user area. Have a look at the
+        following provider configuration:</para>
+
+        <example>
+          <title>Using request patterns</title>
+
+          <para><programlisting language="yaml">security:
+  authentication:
+    providers:
+      MyLDAPProvider:
+        providerClass: F3\MyCoolPackage\Security\Authentication\MyLDAPProvider
+        options: 'Some LDAP configuration options'
+        requestPatterns:
+         controllerObjectName: F3\MyApplication\AdministrationArea\.*
+      DefaultProvider:
+        providerClass: UsernamePasswordCR
+        requestPatterns:
+         controllerObjectName: F3\MyApplication\UserArea\.*</programlisting>Look
+          at the new configuration option
+          "<literal>requestPatterns</literal>". This enables or disables an
+          authentication provider, depending on a given pattern. The patterns
+          will look into the data of the current request and tell the
+          authentication system, if they match or not. The patterns in the
+          example above will match, if the controller object name of the
+          current request (the controller to be called) matches on the given
+          regular expression. If a pattern does not match, the corresponding
+          provider will be ignored in the whole authentication process. In the
+          above scenario this means, all controllers responsible for the
+          administration area will use the LDAP authentication provider, the
+          user area controllers will be authenticated by the default
+          username/password provider.</para>
+        </example>
+
+        <note>
+          <para>You can use more than one pattern in the configuration. Then
+          the provider will only be active, if all patterns match on the
+          current request.</para>
+        </note>
+
+        <tip>
+          <para>There can be patterns that match on different data of the
+          request. Just imagine an IP pattern, that matches on the request IP.
+          You could, e.g. provide different authentication mechanisms for
+          people coming from your internal network, than for requests coming
+          from the outside.</para>
+        </tip>
+
+        <tip>
+          <para>You can easily implement your own pattern. Just implement the
+          interface
+          "<literal>F3\FLOW3\Security\RequestPatternInterface</literal>" and
+          configure the pattern with its full qualified namespace.</para>
+        </tip>
+
+        <table>
+          <title>Available request patterns</title>
+
+          <tgroup cols="3">
+            <thead>
+              <row>
+                <entry align="center">Request Pattern</entry>
+
+                <entry align="center">Match criteria</entry>
+
+                <entry align="center">Configuration options</entry>
+              </row>
+            </thead>
+
+            <tbody>
+              <row>
+                <entry>controllerObjectName</entry>
+
+                <entry>Matches on the object name of the controller that has
+                been resolved by the MVC dispatcher for the current
+                request.</entry>
+
+                <entry>Expects one regular expression, to match on the object
+                name. E.g.:
+                <literal>F3\MyApplication\AdministrationArea\.*</literal></entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table>
+      </section>
+    </section>
+
+    <section>
+      <title>Authentication entry points</title>
+
+      <para>One question that has not been answered so far is: what happens if
+      the authentication process fails? In this case the authentication
+      manager will throw an <literal>AuthenticationRequired</literal>
+      exception. It might not be the best idea to let this exception settle
+      its way up to the browser, right? Therefore we introduced a concept
+      called authentication entry points. These entry points catch the
+      mentioned exception and should redirect the user to a place where she
+      can provide proper credentials. This could be a login page for the
+      username/password provider or a HTTP header for HTTP authentication. An
+      entry point can be configured for each authentication provider. Look at
+      the following example, that redirects to a login page (Using the
+      <literal>WebRedirect</literal> entry point).</para>
+
+      <example>
+        <title>Redirect an <literal>AuthenticationRequired</literal> exception
+        to the login page</title>
+
+        <programlisting language="yaml">security:
+  authentication:
+    providers:
+      DefaultProvider:
+        providerClass: UsernamePasswordCR
+        entryPoint:
+          WebRedirect:
+            uri: login/</programlisting>
+      </example>
+
+      <note>
+        <para>Of course you can implement your own entry point and configure
+        it by using its full qualified class name. Just make sure to implement
+        the
+        "<literal>F3\FLOW3\Security\Authentication\EntryPointInterface</literal>"
+        interface.</para>
+      </note>
+
+      <note>
+        <para>It is planed to make the catching of the exception and returning
+        back to the original request a lot more flexible by using a so called
+        request stack. Unfortunately the MVC framework lacks of this
+        functionality at the moment. Stay tuned for any updates on this
+        topic.</para>
+      </note>
+
+      <table>
+        <title>Available authentication entry points</title>
+
+        <tgroup cols="3">
+          <thead>
+            <row>
+              <entry align="center">Entry Point</entry>
+
+              <entry align="center">Description</entry>
+
+              <entry align="center">Configuration options</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>WebRedirect</entry>
+
+              <entry>Triggers an HTTP redirect to a given uri.</entry>
+
+              <entry>Expects an associative array with one entry. E.g.:
+              <literal>uri: login/</literal></entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+    </section>
+
+    <section xml:id="AuthenticationMechanismsShippedWithFLOW3">
+      <title>Authentication mechanisms shipped with FLOW3</title>
+
+      <para>This section explains the details of each authentication mechanism
+      shipped with FLOW3. Mainly the configuration options and usage will be
+      exposed, if you want to know more about the entire authentication
+      process and how the components will work together, pleas have a look in
+      the previous sections.</para>
+
+      <section>
+        <title>Simple username/password authentication</title>
+
+        <bridgehead>Provider</bridgehead>
+
+        <para>The implementation of the corresponding authentication provider
+        resides in the class
+        <literal>F3\FLOW3\Security\Authentication\Provider\UsernamePasswordCR</literal>.
+        It is able to authenticate tokens of the type
+        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
+        It expects a credentials array in the token which looks like
+        that:</para>
+
+        <programlisting language="php">array(
+  'username' =&gt; 'admin',
+  'password' =&gt; 'plaintextPassword'
+);
+</programlisting>
+
+        <para>It will try to find an account in the
+        <literal>F3\Party\Domain\Repository\AccountRepository</literal> that
+        has the username value as account identifier and fetch the credentials
+        source, which has to be in the following format:</para>
+
+        <programlisting>MD5HashOfThePassword,Salt</programlisting>
+
+        <tip>
+          <para>You should use a different, random salt for each
+          account.</para>
+        </tip>
+
+        <para>The provider will explode the credentials source by the "," and
+        try to authenticate the token with the following comparison:</para>
+
+        <programlisting language="php">md5(md5($plaintextPasswordFromToken) . $saltFromCrendentialsSource) === $passwordHashFromCredentialsSource</programlisting>
+
+        <para>If you want to know more about accounts and how you can create
+        them, look in the corresponding section above.</para>
+
+        <bridgehead>Token</bridgehead>
+
+        <para>The username/password token is implemented in the class
+        <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
+        It fetches the credentials from the HTTP POST data, look at the
+        following program listing for details:</para>
+
+        <programlisting language="php">$POSTArguments = $environment-&gt;getRawPOSTArguments();
+
+$credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
+$credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
+</programlisting>
+
+        <note>
+          <para>The token expects a plaintext password in the POST data. That
+          does not mean, you have to transfer plaintext passwords, however it
+          is not the responsibility of the authentication layer to encrypt the
+          transfer channel. Look in the section about <link
+          linkend="ChannelSecurity">channel security</link> for any
+          details.</para>
+        </note>
+      </section>
+    </section>
+
+    <section xml:id="ImplementingYourOwnAuthenticationMechanism">
+      <title>Implementing your own authentication mechanism</title>
+
+      <para>One of the main goals for the authentication architecture was to
+      provide an easily extensible infrastructure. Now that the authentication
+      process has been explained, you'll find here the steps needed to
+      implement your own authentication mechanism:</para>
+
+      <bridgehead>Authentication token</bridgehead>
+
+      <para>You'll have to provide an authentication token, that implements
+      the interface
+      <literal>F3\FLOW3\Security\Authentication\TokenInterface</literal>:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>The most interesting method is
+          <literal>updateCredentials()</literal>. There you'll get the current
+          request and you'll have to make sure that credentials sent from the
+          client will be fetched and stored in the token.</para>
+        </listitem>
+
+        <listitem>
+          <para>Implement the remaining methods of the interface. These are
+          mostly getters and setters, have a look in one of the existing
+          tokens (e.g.
+          <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>),
+          if you need more information.</para>
+        </listitem>
+      </orderedlist>
+
+      <bridgehead>Authentication provider</bridgehead>
+
+      <para>After that you'll have to implement your own authentication
+      strategy by providing a class, that implements the interface
+      <literal>F3\FLOW3\Security\Authentication\ProviderInterface</literal>:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>In the constructor you will get the name, that has been
+          configured for the provider and an optional options array. Basically
+          you can decide on your own which options you need and how the
+          corresponding yaml configuration will look like.</para>
+        </listitem>
+
+        <listitem>
+          <para>Then there has to be a <literal>canAuthenticate()</literal>
+          method, which gets an authentication token and returns a boolean
+          value whether your provider can authenticate that token or not. Most
+          likely you will call
+          <literal>getAuthenticationProviderName()</literal> on the token and
+          check, if it matches the provider name given to you in your
+          provider's constructor. In addition to this, the method
+          <literal>getTokenClassNames()</literal> has to return an array with
+          all authentication token classes, your provider is able to
+          authenticate.</para>
+        </listitem>
+
+        <listitem>
+          <para>All the magic will happen in the
+          <literal>authenticate()</literal> method, which will get an
+          appropriate authentication token. Basically you could do whatever
+          you want in this method, the only thing you'll have to make sure is
+          to set the correct status (possible values are defined as constants
+          in the token interface and explained above). If authentication
+          succeeds you might also want to set an account in the given token,
+          to add some granted authorities to the current security context.
+          However, here is the recommended way of what should be done in this
+          method and if you don't have really good reasons, you shouldn't
+          deviate from this procedure.</para>
+
+          <orderedlist>
+            <listitem>
+              <para>Get the credentials provided by the client from the
+              authentication token
+              (<literal>getCredentials()</literal>)</para>
+            </listitem>
+
+            <listitem>
+              <para>Retrieve the corresponding account object from the account
+              repository, which you should inject into your provider by
+              dependency injection. The repository provides a convenient find
+              method for this task:
+              <literal>findByAccountIdentifierAndAuthenticationProviderName()</literal>.</para>
+            </listitem>
+
+            <listitem>
+              <para>The <literal>credentialsSource</literal> property of the
+              account will hold the credentials you'll need to compare or at
+              least the information, where these credentials lie.</para>
+            </listitem>
+
+            <listitem>
+              <para>Start the authentication process (e.g. compare
+              credentials/call directory service/...).</para>
+            </listitem>
+
+            <listitem>
+              <para>Depending on the authentication result, set the correct
+              status in the authentication token, by <literal>calling
+              setAuthenticationStatus()</literal>.</para>
+            </listitem>
+
+            <listitem>
+              <para>Set the account in the authentication token, if
+              authentication succeeded. This will add the granted authorities
+              of this token to the security context.</para>
+            </listitem>
+          </orderedlist>
+        </listitem>
+      </orderedlist>
+    </section>
   </section>
 
   <section>
     <title>Authorization</title>
 
-    <para></para>
+    <para>In this section we will deal with the authorization features of
+    FLOW3. You won't find any advices, how to configure access rights here,
+    please refer to the next <link linkend="AccessControllLists">section about
+    access control lists</link>, which form the default method to model and
+    configure access rules.</para>
+
+    <section>
+      <title>Authorize method invocations</title>
+
+      <para>The most general thing, which you want to protect in every
+      application is the invocation of certain methods. By controlling, which
+      methods are allowed to be called and which not, it can be globally
+      ensured, that no unprivileged action will be executed at any time. This
+      is what you would usually do, by adding an access check at the beginning
+      of your privileged method. In FLOW3, there is the opportunity to enforce
+      these checks without touching the actual method at all. Of course
+      FLOW3's AOP features are used to realize this completely new perspective
+      on authorization. If you want to learn more about AOP, please refer to
+      the corresponding chapter in this reference.</para>
+
+      <para>First, let's have a look at the following sequence diagram to get
+      an overview of what is happening when an authorization decision is
+      formed and enforced:</para>
+
+      <figure>
+        <title>How an authorization decision is formed and enforced in
+        FLOW3</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="SecurityFramework_BasicAuthorizationProcess.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>As already said, the whole authorization starts with an
+      intercepted method, or in other words with a method that should be
+      protected and only be called by privileged users. In the chapter about
+      AOP you've already read, that every method interception is implemented
+      in a so called advice, which resides in an aspect class. Here we are:
+      the <literal>F3\FLOW3\Security\Aspect\PolicyEnforcementAspect</literal>.
+      Inside this aspect there is the <literal>enforcePolicy()</literal>
+      advice, which hands over to FLOW3's authorization components.</para>
+
+      <para>The next thing to be called is a security interceptor. This
+      interceptor calls the authentication manager before it continues with
+      the authorization process, to make sure that the authentication status
+      is up to date. Then an access decision manager is called, which has to
+      decide, if it is allowed to call the intercepted method. If not it
+      throws an access denied exception. If you want, could implement your own
+      access decision manager. However, there is a very flexible one shipped
+      with FLOW3
+      (<literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterManager</literal>),
+      which uses the following voting process to meet its decision:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Check for registered access decision voters.</para>
+        </listitem>
+
+        <listitem>
+          <para>Ask every voter, to vote for the given method call.</para>
+        </listitem>
+
+        <listitem>
+          <para>Count the votes and grant access, if there is at least one
+          "<literal>VOTE_GRANT</literal>" vote and no
+          "<literal>VOTE_DENY</literal>" vote. In all other cases an access
+          denied exception will be thrown.</para>
+        </listitem>
+      </orderedlist>
+
+      <bridgehead>On access decision voters</bridgehead>
+
+      <para>As you have seen, the default way of deciding on access is done by
+      voting. This makes the whole authorization process very flexible and
+      very easily extensible. You can at any time write your own voter classes
+      and register them, just make sure to implement the interface
+      <literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface</literal>.
+      Then you have to register your custom voter as shown below:</para>
+
+      <programlisting language="yaml">security:
+  authorization:
+    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL, F3\MyPackage\Security\MyCustomVoter]</programlisting>
+
+      <note>
+        <para>By default there is always one voter registered:
+        <literal>F3\FLOW3\Security\Authorization\Voter\ACL</literal>. This
+        voter connect the authorization system to the ACL component, by return
+        a vote depending on the configured security policy. Read the section
+        about ACLs, to learn more about the default policy handling in
+        FLOW3.</para>
+      </note>
+
+      <para>If asked, each voter has to return one of the three possibles
+      votes: grant, deny or abstain. There are appropriate constants defined
+      in the voter interface, which you should use for that. You might imagine
+      that a voter has to return an abstain vote, if it is not able to give a
+      proper grant or deny vote.</para>
+
+      <para>Now it could be the case that all registered voters abstain.
+      Usually the access decision manager will deny access then. However, you
+      can change set by configuring the following option:</para>
+
+      <programlisting>security: authorization: allowAccessIfAllVotersAbstain: FALSE</programlisting>
+    </section>
+
+    <section>
+      <title>Application firewall</title>
+
+      <para>Besides the AOP powered authorization, there is another line of
+      defense: the filter firewall. This firewall is triggered directly when a
+      request arrives at the MVC dispatcher. After that the request is
+      analyzed and can be blocked/filtered out. This adds a second level of
+      security right at the beginning of the whole framework run, which means
+      that a minimal amount of potentially insecure code will be executed
+      before that.</para>
+
+      <figure>
+        <title>Blocking request with FLOW3's filter firewall</title>
+
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="SecurityFramework_FilterFirewall.png"></imagedata>
+          </imageobject>
+        </mediaobject>
+      </figure>
+
+      <para>The firewall itself is added to the MVC dispatcher by AOP, to
+      completely decouple security from the MVC framework and to have the
+      possibility of disabling security. Blocking requests with the firewall
+      is not a big thing at all, basically a request filter object is called,
+      which consists of a request pattern and a security interceptor. The
+      simple rules is: if the pattern matches on the request, the interceptor
+      is invoked. <link linkend="RequestPatterns" os="">Request
+      patterns</link> are also used by the authentication components and are
+      explained in detail there. Talking about security interceptors: you
+      already know the policy enforcement interceptor, which triggers the
+      authorization process. Here is a table of available interceptors,
+      shipped with FLOW3:</para>
+
+      <note>
+        <para>Of course you can implement your own interceptor. Just make sure
+        to implement the interface:
+        <literal>F3\FLOW3\Security\Authorization\InterceptorInterface</literal>.</para>
+      </note>
+
+      <table>
+        <title>FLOW3's built-in security interceptors</title>
+
+        <tgroup cols="2">
+          <thead>
+            <row>
+              <entry align="center">Security interceptor</entry>
+
+              <entry align="center">Invocation action</entry>
+            </row>
+          </thead>
+
+          <tbody>
+            <row>
+              <entry>PolicyEnforcement</entry>
+
+              <entry>Triggers the authorization process as described one
+              section above.</entry>
+            </row>
+
+            <row>
+              <entry>RequireAuthentication</entry>
+
+              <entry>Calls the authentication manager to authenticate all
+              active tokens for the current request.</entry>
+            </row>
+          </tbody>
+        </tgroup>
+      </table>
+
+      <para>Of course you are able to configure as many requests filters as
+      you like. Have a look at the following example to get an idea how a
+      firewall configuration will look like:</para>
+
+      <example>
+        <title>Example firewall configuration in the FLOW3.yaml file</title>
+
+        <para><programlisting language="yaml">security:
+  firewall:
+    rejectAll: n
+
+    filters:
+      -
+        patternType:  URL
+        patternValue: /some/url/.*
+        interceptor:  AccessGrant
+      -
+        patternType:  URL
+        patternValue: /some/url/blocked.*
+        interceptor:  AccessDeny
+      -
+        patternType:  F3\MyPackage\Security\MyOwnRequestPattern
+        patternValue: some pattern value
+        interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
+      </example>
+
+      <note>
+        <para>As you can see, you can easily use your own implementations for
+        request patterns and security interceptors.</para>
+      </note>
+
+      <note>
+        <para>You might have noticed the <literal>rejectAll</literal> option.
+        If this is set to <literal>yes</literal>, only request which are
+        explicitly allowed by a request filter will be able to pass the
+        firewall.</para>
+      </note>
+    </section>
   </section>
 
-  <section>
-    <title>Access Control Lists (ACL)</title>
+  <section xml:id="AccessControllLists">
+    <title>Policy: Access Control Lists (ACLs)</title>
 
-    <para></para>
+    <note>
+      <para>The current implementation of the ACL system is very basic.
+      However, the concept for this component is ready for implementation and
+      there'll be soon much more powerful declarative authorization
+      possibilities than now. So please stay tuned for any updates on this
+      issue.</para>
+    </note>
+
+    <para>This section will introduce the recommended and default way of
+    connection authentication with authorization. The special and really
+    powerful part of FLOW3's way is the possibility to do that completely
+    declarative. This gives you the possibility to change the security policy
+    of your application, without touching any PHP code. The ACL system deals
+    with three major objects, which are explained below: roles, resources and
+    acl entries.</para>
+
+    <bridgehead>Roles</bridgehead>
+
+    <para>In the section about authentication so called granted authorities
+    were introduced. A granted authority can be attached to an users security
+    context, to determine the which rights should be granted to her. I.e. the
+    access rights of a user are decoupled from the user object itself, making
+    it a lot more flexible, if you want to change them. Another word for
+    granted authority is role. In FLOW3 a role or granted authority is mainly
+    just a string, which must be unique in the whole FLOW3 instance. Following
+    there is an example configuration, that will proclaim the roles
+    <literal>Administrator</literal>, <literal>Customer</literal>, and
+    <literal>PrivilegedCustomer</literal> to the system.</para>
+
+    <example>
+      <title>Example roles definition in the FLOW3.yaml file</title>
+
+      <para><programlisting language="yaml">security:
+  policy:
+    roles:
+      Administrator: []
+      Customer:
+      PrivilegedCustomer: [Customer]</programlisting></para>
+    </example>
+
+    <note>
+      <para>The role <literal>PrivilegedCustomer</literal> is configured as a
+      sub role of <literal>Customer</literal>, i.e. it will inherit the access
+      rights for the <literal>Customer</literal> role.</para>
+    </note>
+
+    <bridgehead>Resources</bridgehead>
+
+    <para>The counterpart to roles are resources. A resource in general is an
+    object, you want to protect, i.e. you want to configure which roles are
+    allowed to access a certain resource. The policy configuration deals only
+    with method resources, access to other resources like content will be
+    handled by the content repository.</para>
+
+    <example>
+      <title>Example resources definition in the FLOW3.yaml file</title>
+
+      <para><programlisting language="yaml">security:
+  policy:
+    resources:
+      update: "method(F3\FooPackage\SomeClass-&gt;update.*())"
+      delete: "method(F3\FooPackage\.*-&gt;delete.*())"
+      modify: "update || delete"</programlisting></para>
+    </example>
+
+    <para>Each resource is defined by a unique name and so called pointcut
+    expression. Practically a pointcut expression is a regular expression that
+    matches on certain methods. There are more pointcut expressions you can
+    use to describe the methods addressed by a specific resource, the whole
+    syntax is described in detail in the chapter about AOP.</para>
+
+    <tip>
+      <para>To make your resource definitions better readable you can cascade
+      them by connecting two or more via logical operators. In the above
+      example this is shown in the configuration of the third resource. Again
+      the details about combined pointcuts are described in the AOP
+      reference.</para>
+    </tip>
+
+    <bridgehead>ACL entries</bridgehead>
+
+    <para>The last step is to connect resources with roles by assigning access
+    privileges. Let's have a look at an example for such ACL entries:</para>
+
+    <example>
+      <title>Example for ACL entry definitions in the FLOW3.yaml file</title>
+
+      <para><programlisting language="yaml">security:
+  policy:
+    acls:
+      Administrator:
+        modify: ACCESS_GRANT
+    
+      Customer:
+        modify: ACCESS_DENY
+
+      PrivilegedCustomer:
+        update: ACCESS_GRANT
+        delete: ACCESS_DENY
+</programlisting></para>
+    </example>
+
+    <para>This will end up in <literal>Administrators</literal> being able to
+    call all <literal>update*</literal> methods in the class
+    <literal>SomeClass</literal> and all <literal>delete*</literal> methods no
+    matter which class in the whole package <literal>FooPackage</literal>.
+    However, <literal>Customers</literal> won't be able to call them and
+    <literal>PrivilegedCustomers</literal> are only allowed to call the
+    <literal>update*</literal> methods. And all this without touching one line
+    of PHP code, isn't that convenient?</para>
+
+    <section>
+      <title>Fluid (view) integration</title>
+
+      <para>Now that the policy is technically enforced, these rules should
+      also be reflected in the view. E.g. a button or link to delete a
+      customer should not be shown, if the user has not the privilege to do
+      so. If you are using the recommended Fluid templating engine, you can
+      simply use the security view helpers shipped with Fluid. Otherwise you
+      would have to ask the policy service
+      (<literal>F3\FLOW3\Security\ACL\PolicyService</literal>) for the current
+      privilege situation and implement the view logic on your own, however
+      this seems not to be the best idea one can have. Below you'll find a
+      short description of the available Fluid view helpers.</para>
+
+      <section>
+        <title><literal>ifAccess</literal> view helper</title>
+
+        <para>This view helper implements an ifAccess/else condition, have a
+        look at the following example, which should be more or less
+        self-explanatory:</para>
+
+        <example>
+          <title>Example for the <literal>ifAccess</literal> view
+          helper</title>
+
+          <para><programlisting language="xml">&lt;f:security.ifAccess resource="someResource"&gt;
+  This is being shown in case you have access to the given resource
+&lt;/f:if&gt;
+
+&lt;f:security.ifAccess resource="someResource"&gt;
+  &lt;f:then&gt;
+    This is being shown in case you have access.
+  &lt;/f:then&gt;
+  &lt;f:else&gt;
+    This is being displayed in case you do not have access.
+  &lt;/f:else&gt;
+&lt;/f:if&gt;</programlisting></para>
+        </example>
+
+        <para>As you can imagine, the main advantage is, that the view will
+        automatically reflect the configured policy rules, without the need of
+        changing any template code.</para>
+      </section>
+
+      <section>
+        <title><literal>ifGrantedAuthority</literal> view helper</title>
+
+        <para>This view helper is pretty similar to the
+        <literal>ifAccess</literal> view helper, however it does not check the
+        access privilege for a given resource, but the availability of a
+        certain granted authority. E.g. you could check, if the current user
+        has the <literal>Administrator</literal> role assigned:</para>
+
+        <example>
+          <title>Example for the <literal>ifGrantedAuthority</literal> view
+          helper</title>
+
+          <para><programlisting language="xml">&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
+  This is being shown in case you have the Administrator granted authority (aka role).
+&lt;/f:security.ifGrantedAuthority&gt;
+
+&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
+  &lt;f:then&gt;
+    This is being shown in case you have the granted authority.
+  &lt;/f:then&gt;
+  &lt;f:else&gt;
+    This is being displayed in case you do not have the granted authority.
+  &lt;/f:else&gt;
+&lt;/f:security.ifGrantedAuthority&gt;</programlisting></para>
+        </example>
+      </section>
+    </section>
   </section>
 
-  <section>
-    <title>Channel Security</title>
+  <section xml:id="ChannelSecurity">
+    <title>Channel security</title>
 
     <para></para>
   </section>
