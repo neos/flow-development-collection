@@ -291,7 +291,7 @@ class Service {
 	 */
 	public function getDefaultImplementationClassNameForInterface($interfaceName) {
 		if ($this->initialized !== TRUE) throw new \F3\FLOW3\Reflection\Exception('Reflection has not yet been initialized.', 1238667823);
-		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interface . '" does not exist or is not the name of an interface.', 1238769559);
+		if (interface_exists($interfaceName) === FALSE) throw new \InvalidArgumentException('"' . $interfaceName . '" does not exist or is not the name of an interface.', 1238769559);
 
 		$classNamesFound = isset($this->interfaceImplementations[$interfaceName]) ? $this->interfaceImplementations[$interfaceName] : array();
 		if (count($classNamesFound) === 1) return current($classNamesFound);
@@ -390,7 +390,6 @@ class Service {
 	 * @api
 	 */
 	public function isClassTaggedWith($className, $tag) {
-		if ($this->initialized === FALSE) return FALSE;
 		if (!isset($this->reflectedClassNames[$className])) $this->reflectClass($className);
 		if (!isset($this->classTagsValues[$className])) return FALSE;
 		return isset($this->classTagsValues[$className][$tag]);
