@@ -245,15 +245,6 @@ class ArgumentTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
-	public function defaultDataTypeIsText() {
-		$argument = new \F3\FLOW3\MVC\Controller\Argument('SomeArgument');
-		$this->assertSame('Text', $argument->getDataType());
-	}
-
-	/**
-	 * @test
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
 	public function setNewValidatorConjunctionCreatesANewValidatorConjunctionObject() {

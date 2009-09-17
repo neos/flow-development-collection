@@ -214,11 +214,11 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockValidatorResolver->expects($this->at(0))->method('getBaseValidatorConjunction')->with('FooType')->will($this->returnValue($mockValidators['foo']));
 		$mockValidatorResolver->expects($this->at(1))->method('getBaseValidatorConjunction')->with('BarType')->will($this->returnValue(NULL));
 
-		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo', 'FooType'));
 		$mockArgumentFoo->expects($this->once())->method('getDataType')->will($this->returnValue('FooType'));
 		$mockArgumentFoo->expects($this->once())->method('setValidator')->with($mockValidators['foo']);
 
-		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar'));
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar', 'barType'));
 		$mockArgumentBar->expects($this->once())->method('getDataType')->will($this->returnValue('BarType'));
 		$mockArgumentBar->expects($this->never())->method('setValidator');
 
@@ -244,9 +244,9 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface');
 		$mockObjectManager->expects($this->once())->method('getObject')->with('F3\FLOW3\MVC\Controller\ArgumentsValidator')->will($this->returnValue($mockValidator));
 
-		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo'));
+		$mockArgumentFoo = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('foo', 'fooType'));
 		$mockArgumentFoo->expects($this->any())->method('getName')->will($this->returnValue('foo'));
-		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar'));
+		$mockArgumentBar = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array('bar', 'barType'));
 		$mockArgumentBar->expects($this->any())->method('getName')->will($this->returnValue('bar'));
 
 		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);

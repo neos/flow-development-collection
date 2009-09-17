@@ -266,8 +266,8 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 
 		$mockArguments = new \F3\FLOW3\MVC\Controller\Arguments($mockObjectFactory);
-		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg1'));
-		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg2'));
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg1', 'arg1Type'));
+		$mockArguments->addArgument(new \F3\FLOW3\MVC\Controller\Argument('arg2', 'arg2Type'));
 
 		$mockArguments['arg2'] = $this->getMock('F3\FLOW3\MVC\Controller\Argument', array(), array(), '', FALSE);
 
