@@ -914,13 +914,56 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function getObjectConfigurationReturnsACloneOfTheOriginalConfigurationObject() {
-		$objectManager = new \F3\FLOW3\Object\Manager();
+	public function setObjectConfigurationStoresACloneOfTheOriginalConfigurationObject() {
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'));
 
 		$originalConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
 		$objectManager->setObjectConfiguration($originalConfiguration);
 
+		$internalObjectConfigurations = $objectManager->_get('objectConfigurations');
+		$this->assertNotSame($originalConfiguration, $internalObjectConfigurations['Foo']);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setObjectConfigurationsDelegatesToSetObjectConfiguration() {
+		$originalConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('setObjectConfiguration'));
+		$objectManager->expects($this->once())->method('setObjectConfiguration')->with($originalConfiguration);
+
+		$objectManager->setObjectConfigurations(array($originalConfiguration));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectConfigurationReturnsACloneOfTheOriginalConfigurationObject() {
+		$originalConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'));
+		$objectManager->_set('registeredObjects', array('Foo' => TRUE));
+		$objectManager->_set('objectConfigurations', array('Foo' => $originalConfiguration));
+
 		$this->assertNotSame($originalConfiguration, $objectManager->getObjectConfiguration('Foo'));
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getObjectConfigurationsReturnsClonesOfTheOriginalConfigurationObjects() {
+		$originalConfiguration = new \F3\FLOW3\Object\Configuration\Configuration('Foo');
+
+		$objectManager = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Object\Manager'), array('dummy'));
+		$objectManager->_set('registeredObjects', array('Foo' => TRUE));
+		$objectManager->_set('objectConfigurations', array('Foo' => $originalConfiguration));
+
+		$fetchedConfigurations = $objectManager->getObjectConfigurations();
+		$this->assertNotSame($originalConfiguration, $fetchedConfigurations['Foo']);
 	}
 
 	/**

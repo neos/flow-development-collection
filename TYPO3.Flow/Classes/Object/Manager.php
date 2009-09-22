@@ -503,13 +503,17 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	}
 
 	/**
-	 * Returns an array of configuration objects for all registered objects.
+	 * Returns an array of (cloned) configuration objects for all registered objects.
 	 *
 	 * @return array Array of \F3\FLOW3\Object\Configuration\Configuration objects, indexed by object name
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function getObjectConfigurations() {
-		return $this->objectConfigurations;
+		$objectConfigurations = array();
+		foreach (array_keys($this->objectConfigurations) as $objectName) {
+			$objectConfigurations[$objectName] = clone $this->objectConfigurations[$objectName];
+		}
+		return $objectConfigurations;
 	}
 
 	/**
@@ -536,10 +540,7 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	public function setObjectConfigurations(array $newObjectConfigurations) {
 		foreach ($newObjectConfigurations as $newObjectConfiguration) {
 			if (!$newObjectConfiguration instanceof \F3\FLOW3\Object\Configuration\Configuration) throw new \InvalidArgumentException('The new object configuration must be an instance of \F3\FLOW3\Object\Configuration\Configuration', 1167826954);
-			$objectName = $newObjectConfiguration->getObjectName();
-			if (!isset($this->objectConfigurations[$objectName]) || $this->objectConfigurations[$objectName] !== $newObjectConfiguration) {
-				$this->setObjectConfiguration($newObjectConfiguration);
-			}
+			$this->setObjectConfiguration($newObjectConfiguration);
 		}
 	}
 
