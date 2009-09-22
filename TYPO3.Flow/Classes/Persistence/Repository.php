@@ -184,6 +184,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The modified object given to update() was not of the type (' . $this->objectType . ') this repository manages.', 1249479625);
 		}
 
+		if ($modifiedObject->FLOW3_Persistence_isClone() !== TRUE) {
+			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to update() was not a clone of a persistent object.', 1253631553);
+		}
+
 		$backend = $this->persistenceManager->getBackend();
 		$uuid = $backend->getIdentifierByObject($modifiedObject);
 		if ($uuid !== NULL) {

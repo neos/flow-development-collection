@@ -317,7 +317,8 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function updateReplacesAnObjectWithTheSameUUIDByTheGivenObject() {
 		$existingObject = new \stdClass;
-		$modifiedObject = new \stdClass;
+		$modifiedObject = $this->getMock('FooBar' . uniqid(), array('FLOW3_Persistence_isClone'));
+		$modifiedObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(TRUE));
 
 		$mockPersistenceBackend = $this->getMock('F3\FLOW3\Persistence\BackendInterface');
 		$mockPersistenceBackend->expects($this->once())->method('getIdentifierByObject')->with($modifiedObject)->will($this->returnValue('86ea8820-19f6-11de-8c30-0800200c9a66'));
@@ -334,6 +335,31 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository->update($modifiedObject);
 	}
 
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function updateRejectsNonClonedObjects() {
+		$someObject = $this->getMock('FooBar' . uniqid(), array('FLOW3_Persistence_isClone'));
+		$someObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(FALSE));
+
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', get_class($someObject));
+
+		$repository->update($someObject);
+	}
+
+	/**
+	 * @test
+	 * @expectedException \F3\FLOW3\Persistence\Exception\IllegalObjectType
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function updateRejectsObjectsOfWrongType() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
+		$repository->_set('objectType', 'Foo');
+		$repository->update(new \stdClass());
+	}
 
 	/**
 	 * @test
