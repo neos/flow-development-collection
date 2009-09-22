@@ -172,7 +172,6 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (!count($this->servers)) throw new \F3\FLOW3\Cache\Exception('No servers were given to Memcache', 1213115903);
 
 		$this->memcache = new \Memcache();
-		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 		$defaultPort = ini_get('memcache.default_port');
 
 		foreach ($this->servers as $server) {
@@ -192,6 +191,18 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			}
 			$this->memcache->addServer($host, $port);
 		}
+	}
+
+	/**
+	 * Initializes the identifier prefix when setting the cache.
+	 *
+	 * @param $cache \F3\FLOW3\Cache\Frontend\FrontendInterface
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+		parent::setCache($cache);
+		$this->identifierPrefix = 'FLOW3_' . md5($cache->getIdentifier() . $this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 	}
 
 	/**
@@ -216,6 +227,7 @@ class MemcachedBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 		if (strlen($this->identifierPrefix . $entryIdentifier) > 250) throw new \InvalidArgumentException('Could not set value. Key more than 250 characters (' . $this->identifierPrefix . $entryIdentifier . ').', 1232969508);
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1207149215);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1207149231);
+		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
 
 		$tags[] = '%MEMCACHEBE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;

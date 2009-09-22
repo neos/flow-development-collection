@@ -102,13 +102,15 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	}
 
 	/**
-	 * Initializes the identifier prefix
+	 * Initializes the identifier prefix when setting the cache.
 	 *
+	 * @param $cache \F3\FLOW3\Cache\Frontend\FrontendInterface
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeObject() {
-		$this->identifierPrefix = 'FLOW3_' . md5($this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
+	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
+		parent::setCache($cache);
+		$this->identifierPrefix = 'FLOW3_' . md5($cache->getIdentifier() . $this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
 	}
 
 	/**
@@ -132,6 +134,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	public function set($entryIdentifier, $data, array $tags = array(), $lifetime = NULL) {
 		if (!$this->cache instanceof \F3\FLOW3\Cache\Frontend\FrontendInterface) throw new \F3\FLOW3\Cache\Exception('No cache frontend has been set yet via setCache().', 1232986818);
 		if (!is_string($data)) throw new \F3\FLOW3\Cache\Exception\InvalidData('The specified data is of type "' . gettype($data) . '" but a string is expected.', 1232986825);
+		$this->systemLogger->log(sprintf('Cache %s: setting entry "%s".', $this->cache->getIdentifier(), $entryIdentifier), LOG_DEBUG);
 
 		$tags[] = '%APCBE%' . $this->cache->getIdentifier();
 		$expiration = $lifetime !== NULL ? $lifetime : $this->defaultLifetime;

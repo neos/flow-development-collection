@@ -104,11 +104,16 @@ F3\FLOW3\Cache\Backend\FileBackend:
 F3\FLOW3\Cache\Backend\MemcachedBackend:
   autowiring: off
   scope: prototype
+  properties:
+    environment: object: F3\FLOW3\Utility\Environment
+    signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
+    systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\Cache\Backend\APCBackend:
   autowiring: off
   scope: prototype
   properties:
     environment: object: F3\FLOW3\Utility\Environment
+    signalDispatcher: object: F3\FLOW3\SignalSlot\Dispatcher
     systemLogger: object: F3\FLOW3\Log\SystemLoggerInterface
 F3\FLOW3\Cache\Backend\NullBackend:
   autowiring: off
