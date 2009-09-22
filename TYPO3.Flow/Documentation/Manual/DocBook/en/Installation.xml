@@ -67,8 +67,8 @@
         <para>Unzip / un-phar it to the document root of the webserver (often
         "htdocs")<note>
             <para>It is highly recommended to change the document root of the
-            webserver to the <filename>Public</filename> subfolder of the
-            FLOW3 distribution!</para>
+            webserver to the <filename>Web</filename> subfolder of the FLOW3
+            distribution!</para>
           </note></para>
       </step>
 
@@ -130,14 +130,31 @@
     </note>
   </section>
 
-  <section xml:id="flow3.installation.pdtforphp53">
-    <title>Setup Eclipse PDT for PHP 5.3</title>
+  <section xml:id="flow3.installation.ideforphp53">
+    <title>IDE support for PHP 5.3</title>
 
-    <para>PHP 5.3 introduced the support of namespaces. This is a completly
-    new syntax in PHP which is not supported by most editors (yet). Eclipse
-    PDT supports them since version 2.1 (which has been released on the 26th
-    of June). Zend Studio 7.0 Beta supports namespaces as well. You should
-    install one of those versions, if you don't want to see all those red
-    syntax-error-symbols in your php-files.</para>
+    <para>PHP 5.3 introduced the support of namespaces. This is a completely
+    new syntax in PHP which is not supported by most editors (yet). However,
+    the following IDEs are known to be PHP 5.3 compatible.</para>
+
+    <itemizedlist>
+      <listitem>
+        <para>Netbeans 6.8 M1 and above
+        <uri>http://bits.netbeans.org/netbeans/6.8/m1/</uri></para>
+      </listitem>
+
+      <listitem>
+        <para>Eclipse PDT 2.1 and above
+        <uri>http://eclipse.org/pdt/</uri></para>
+      </listitem>
+
+      <listitem>
+        <para>Zend Studio 7.0 and above
+        <uri>http://www.zend.com/en/products/studio/</uri></para>
+      </listitem>
+    </itemizedlist>
+
+    <para>You should install one of these versions, if you don't want to see
+    all those red syntax-error-symbols in your php-files.</para>
   </section>
 </chapter>
