@@ -242,10 +242,10 @@
                   library code, template files, graphics, ... In general,
                   there is a distinction between public and private resources.
                   While public resources will be mirrored into FLOW3's
-                  <filename>Public </filename>directory by the Resource
-                  Manager (and therefore become accessible from the web) all
-                  resources in the <filename>Private</filename> directory
-                  remain protected.</para>
+                  <filename>Web </filename>directory by the Resource Manager
+                  (and therefore become accessible from the web) all resources
+                  in the <filename>Private</filename> directory remain
+                  protected.</para>
 
                   <variablelist>
                     <varlistentry>
