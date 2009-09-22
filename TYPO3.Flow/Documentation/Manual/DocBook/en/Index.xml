@@ -82,4 +82,6 @@
   <xi:include href="AppendixCodingGuidelines.xml" />
 
   <xi:include href="AppendixInstallPHP53.xml" />
+
+  <xi:include href="AppendixIDEsForPHP53.xml" />
 </book>

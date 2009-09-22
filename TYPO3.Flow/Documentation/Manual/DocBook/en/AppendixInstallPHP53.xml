@@ -117,11 +117,11 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
         <para><note>
             <para>For a comfortable and secure environment the document root
             of apache's default webserver instance (or the vhost you are
-            using) should be changed to the "Public" folder of FLOW3. To do
-            that, make sure to change every use of
+            using) should be changed to the <filename>Web</filename> folder of
+            FLOW3. To do that, make sure to change every use of
             <filename>/var/www</filename> to
             <filename>/var/www/<replaceable>&lt;your FLOW3
-            directory&gt;</replaceable>/Public</filename> in your vhost
+            directory&gt;</replaceable>/Web</filename> in your vhost
             configuration.</para>
           </note></para>
       </step>
@@ -410,9 +410,9 @@ PHPIniDir "C:/xampp/php/php5.3"</screen></para>
         <bridgehead><filename>extra\httpd-vhosts.conf</filename></bridgehead>
 
         <para>Configure the VirtualHosts. Make them reference to the
-        <filename>Public</filename> folder of your FLOW3 installation. You
-        might want to add an additional VirtualHost for the Development
-        Context of FLOW3 already.</para>
+        <filename>Web</filename> folder of your FLOW3 installation. You might
+        want to add an additional VirtualHost for the Development Context of
+        FLOW3 already.</para>
 
         <screen>NameVirtualHost *:81
 
@@ -422,12 +422,12 @@ PHPIniDir "C:/xampp/php/php5.3"</screen></para>
 &lt;/VirtualHost&gt;
 
 &lt;VirtualHost *:81&gt;
-    DocumentRoot "C:/xampp/htdocs/flow3/Public/" 
+    DocumentRoot "C:/xampp/htdocs/flow3/Web/" 
     ServerName flow3.local
 &lt;/VirtualHost&gt;
 
 &lt;VirtualHost *:81&gt;
-    DocumentRoot "C:/xampp/htdocs/flow3/Public/" 
+    DocumentRoot "C:/xampp/htdocs/flow3/Web/" 
     ServerName dev.flow3.local
     SetEnv FLOW3_CONTEXT Development
 &lt;/VirtualHost&gt;</screen>

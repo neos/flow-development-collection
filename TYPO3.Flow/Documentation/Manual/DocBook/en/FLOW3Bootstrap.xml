@@ -34,7 +34,7 @@
     value. You can do this either by adding (uncommenting) the corresponding
     line (i.e. <literal>SetEnv FLOW3_CONTEXT Development</literal>) in the
     <filename>.htaccess</filename>-file, which is located in the
-    <filename>Public</filename>-folder. Another option is to add this line to
+    <filename>Web</filename>-folder. Another option is to add this line to
     your virtual hosts configuration.</para>
   </section>
 

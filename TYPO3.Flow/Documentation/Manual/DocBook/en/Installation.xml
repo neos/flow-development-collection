@@ -48,7 +48,9 @@
     until now)</para>
 
     <para>We have written <link linkend="flow3.installingphp53">installation
-    instructions for PHP 5.3</link> that might be helpful for you.</para>
+    instructions for PHP 5.3</link> that might be helpful for you. Also there
+    is a (probably incomplete) list of <link linkend="flow3.idesforphp53">IDEs
+    supporting PHP 5.3</link>.</para>
   </section>
 
   <section xml:id="flow3.installation.installationofflow3">
@@ -128,33 +130,5 @@
       real database like for example MySQL. This requires some configuration
       which will be covered here later.</para>
     </note>
-  </section>
-
-  <section xml:id="flow3.installation.ideforphp53">
-    <title>IDE support for PHP 5.3</title>
-
-    <para>PHP 5.3 introduced the support of namespaces. This is a completely
-    new syntax in PHP which is not supported by most editors (yet). However,
-    the following IDEs are known to be PHP 5.3 compatible.</para>
-
-    <itemizedlist>
-      <listitem>
-        <para>Netbeans 6.8 M1 and above
-        <uri>http://bits.netbeans.org/netbeans/6.8/m1/</uri></para>
-      </listitem>
-
-      <listitem>
-        <para>Eclipse PDT 2.1 and above
-        <uri>http://eclipse.org/pdt/</uri></para>
-      </listitem>
-
-      <listitem>
-        <para>Zend Studio 7.0 and above
-        <uri>http://www.zend.com/en/products/studio/</uri></para>
-      </listitem>
-    </itemizedlist>
-
-    <para>You should install one of these versions, if you don't want to see
-    all those red syntax-error-symbols in your php-files.</para>
   </section>
 </chapter>
