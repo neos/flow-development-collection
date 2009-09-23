@@ -94,7 +94,11 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
-			$sessionsPath = $this->settings['PHPSession']['savePath'];
+			if (empty($this->settings['PHPSession']['savePath'])) {
+				$sessionsPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+			} else {
+				$sessionsPath = $this->settings['PHPSession']['savePath'];
+			}
 			if (!file_exists($sessionsPath)) {
 				mkdir($sessionsPath);
 			}

@@ -218,8 +218,9 @@ security:
 session:
   PHPSession:
 
-    # Where to store session data in the filesystem.
-    savePath: %FLOW3_PATH_DATA%Temporary/Session/
+    # Where to store session data in the filesystem. If this is empty, a default
+    # location is used (Data/Temporary/<hash>/Sessions/).
+    savePath: 
 
 utility:
   environment:
