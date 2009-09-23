@@ -377,6 +377,9 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 				$childFilename = $childFileInfo->getFilename();
 				if ($childFilename[0] !== '.' && $childFilename !== 'FLOW3') {
 					$packagePath = \F3\FLOW3\Utility\Files::getUnixStylePath($childFileInfo->getPathName()) . '/';
+					if (isset($this->packages[$childFilename])) {
+						throw new \F3\FLOW3\Package\Exception\DuplicatePackage('Detected a duplicate package, remove either "' . $this->packages[$childFilename]->getPackagePath() . '" or "' . $packagePath . '".', 1253716811);
+					}
 					$this->packages[$childFilename] = $this->objectFactory->create('F3\FLOW3\Package\Package', $childFilename, $packagePath);
 				}
 			}
