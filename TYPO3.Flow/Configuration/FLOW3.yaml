@@ -215,6 +215,12 @@ security:
       # See the PHP openSSL documentation for possible settings.
       openSSLConfiguration: []
 
+session:
+  PHPSession:
+
+    # Where to store session data in the filesystem.
+    savePath: %FLOW3_PATH_DATA%Temporary/Session/
+
 utility:
   environment:
     

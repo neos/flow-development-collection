@@ -36,6 +36,11 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	protected $environment;
 
 	/**
+	 * @var array
+	 */
+	protected $settings = NULL;
+
+	/**
 	 * The session Id
 	 *
 	 * @var string
@@ -60,6 +65,17 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	}
 
 	/**
+	 * Injects the FLOW3 settings, only the session settings are kept.
+	 *
+	 * @param array $settings Settings of the FLOW3 package
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectSettings(array $settings) {
+		$this->settings = $settings['session'];
+	}
+
+	/**
 	 * Injects the environment
 	 *
 	 * @param \F3\FLOW3\Utility\Environment $environment
@@ -78,7 +94,7 @@ class PHPSession implements \F3\FLOW3\Session\SessionInterface {
 	 */
 	public function start() {
 		if ($this->started === FALSE) {
-			$sessionsPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->environment->getPathToTemporaryDirectory(), 'Sessions'));
+			$sessionsPath = $this->settings['PHPSession']['savePath'];
 			if (!file_exists($sessionsPath)) {
 				mkdir($sessionsPath);
 			}
