@@ -36,7 +36,7 @@ class ProductionExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandle
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		@set_exception_handler(array($this, 'handleException'));
+		set_exception_handler(array($this, 'handleException'));
 	}
 
 	/**

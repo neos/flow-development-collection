@@ -38,7 +38,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function __construct() {
-		@set_exception_handler(array($this, 'handleException'));
+		set_exception_handler(array($this, 'handleException'));
 	}
 
 	/**
@@ -109,7 +109,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 					margin: 10px;
 					padding: 0;
 				">
-				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught FLOW3 Exception</div>
+				<div style="width: 100%; background-color: #515151; color: white; padding: 2px; margin: 0 0 6px 0;">Uncaught Exception in FLOW3</div>
 				<div style="width: 100%; padding: 2px; margin: 0 0 6px 0;">
 					<strong style="color: #BE0027;">' . $exceptionCodeNumber . $exception->getMessage() . '</strong> ' . $moreInformationLink . '<br />
 					<br />
@@ -138,9 +138,9 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
-		echo "\nUncaught FLOW3 Exception " . $exceptionCodeNumber . $exception->getMessage() . "\n";
-		echo "thrown in file " . $filePathAndName . "\n";
-		echo "in line " . $exception->getLine() . "\n\n";
+		echo PHP_EOL . 'Uncaught Exception in FLOW3 ' . $exceptionCodeNumber . $exception->getMessage() . PHP_EOL;
+		echo 'thrown in file ' . $filePathAndName . PHP_EOL;
+		echo 'in line ' . $exception->getLine() . PHP_EOL . PHP_EOL;
 	}
 
 	/**

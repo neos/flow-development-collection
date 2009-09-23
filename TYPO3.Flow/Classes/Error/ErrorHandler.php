@@ -78,7 +78,11 @@ class ErrorHandler implements \F3\FLOW3\Error\ErrorHandlerInterface {
 		);
 
 		if (in_array($errorLevel, (array)$this->exceptionalErrors)) {
-			throw new \F3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			if (class_exists('F3\FLOW3\Error\Exception')) {
+				throw new \F3\FLOW3\Error\Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			} else {
+				throw new \Exception($errorLevels[$errorLevel] . ': ' . $errorMessage . ' in ' . $errorFile . ' line ' . $errorLine, 1);
+			}
 		}
 	}
 }
