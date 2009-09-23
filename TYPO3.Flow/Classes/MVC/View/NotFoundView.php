@@ -61,6 +61,20 @@ class NotFoundView extends \F3\FLOW3\MVC\View\AbstractView {
 	protected function getTemplatePathAndFilename() {
 		return FLOW3_PATH_FLOW3 . 'Resources/Private/MVC/NotFoundView_Template.html';
 	}
+
+	/**
+	 * A magic call method.
+	 *
+	 * Because this not found view is used as a Special Case in situations,
+	 * it must be able to handle method calls which originally were
+	 * directed to another type of view. This magic method should prevent PHP from issuing
+	 * a fatal error.
+	 *
+	 * @return void
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	public function __call($methodName, array $arguments) {
+	}
 }
 
 ?>

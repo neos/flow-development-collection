@@ -166,5 +166,19 @@ class NotFoundViewTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertSame('base URI: ###BASEURI###', $this->view->render());
 	}
+
+	/**
+	 * @test
+	 * @author Bastian Waidelich <bastian@typo3.org>
+	 */
+	public function callingNonExistingMethodsWontThrowAnException() {
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockPackageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface', array(), array(), '', FALSE);
+		$mockResourceManager = $this->getMock('F3\FLOW3\Resource\Manager', array(), array(), '', FALSE);
+		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
+
+		$view = new \F3\FLOW3\MVC\View\NotFoundView($mockObjectFactory, $mockPackageManager, $mockResourceManager, $mockObjectManager);
+		$view->nonExistingMethod();
+	}
 }
 ?>

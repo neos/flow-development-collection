@@ -39,7 +39,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * By default a Fluid\TemplateView is provided, if a template is available,
 	 * then a view with the same name as the current action will be looked up.
 	 * If none is available the $defaultViewObjectName will be used and finally
-	 * an EmptyView will be created.
+	 * an NotFoundView will be created.
 	 * @var \F3\FLOW3\MVC\View\ViewInterface
 	 * @api
 	 */
@@ -250,9 +250,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * By default, this method tries to locate a view with a name matching
 	 * the current action.
 	 *
-	 * @return void
+	 * @return \F3\Fluid\View\ViewInterface the resolved view
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Bastian Waidelich <bastian@typo3.org>
 	 * @api
 	 */
 	protected function resolveView() {
@@ -261,8 +262,12 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$view->setControllerContext($controllerContext);
 		if ($view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
-			if ($viewObjectName === FALSE) $viewObjectName = 'F3\FLOW3\MVC\View\EmptyView';
-			$view = $this->objectManager->getObject($viewObjectName);
+			if ($viewObjectName !== FALSE) {
+				$view = $this->objectManager->getObject($viewObjectName);
+			} else {
+				$view = $this->objectManager->getObject('F3\FLOW3\MVC\View\NotFoundView');
+				$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
+			}
 			$view->setControllerContext($controllerContext);
 		}
 
