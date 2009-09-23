@@ -32,12 +32,11 @@ namespace F3\FLOW3\Security\Authentication;
 interface GrantedAuthorityInterface {
 
 	/**
-	 * Returns the granted authority in a string representation, if this is possible. Otherwise NULL is returned,
-	 * the AccessDecisionManager has to support this special GrantedAuthority.
+	 * Returns the granted authority in a string representation
 	 *
-	 * @return string The string representation of the GrantedAuthority
+	 * @return string The string representation of the granted authority
 	 */
-	public function getAuthority();
+	public function __toString();
 }
 
 ?>

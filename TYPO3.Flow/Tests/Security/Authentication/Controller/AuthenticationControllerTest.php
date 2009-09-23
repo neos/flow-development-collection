@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Security\Authentication;
+namespace F3\FLOW3\Security\Authentication\Controller;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -23,46 +23,41 @@ namespace F3\FLOW3\Security\Authentication;
  *                                                                        */
 
 /**
- * Contract for an authentication manager.
- * Has to add a \F3\FLOW3\Security\Authentication\TokenInterface to the securit context
- * Might set a UserDetailsService, RequestPattern and AuthenticationEntryPoint (from configuration).
+ * Testcase for the authentication controller
  *
- * @version $Id$
- * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+ * @version $Id: EntryPointResolverTest.php 2813 2009-07-16 14:02:34Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-interface ManagerInterface {
+use F3\FLOW3\Security\Authentication;
+
+class AuthenticationControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Returns the tokens this manager is responsible for.
-	 * Note: The order of the tokens in the array is important, as the tokens will be authenticated in the given order.
-	 *
-	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface An array of tokens this manager is responsible for
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function getTokens();
+	public function authenticateActionCallsAuthenticateOfTheAuthenticationManager() {
+		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('authenticate');
+
+		$authenticationController = $this->getMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController->injectAuthenticationManager($mockAuthenticationManager);
+
+		$authenticationController->authenticateAction();
+	}
 
 	/**
-	 * Sets the security context
-	 *
-	 * @param \F3\FLOW3\Security\Context $securityContext The security context of the current request
-	 * @return void
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
-	public function setSecurityContext(\F3\FLOW3\Security\Context $securityContext);
+	public function logoutActionCallsLogoutOfTheAuthenticationManager() {
+		$mockAuthenticationManager = $this->getMock('F3\FLOW3\Security\Authentication\ManagerInterface');
+		$mockAuthenticationManager->expects($this->once())->method('logout');
 
-	/**
-	 * Tries to authenticate the tokens in the security context, if needed.
-	 * (Have a look at the \F3\FLOW3\Security\Authentication\TokenManager for an implementation example)
-	 *
-	 * @return void
-	 */
-	public function authenticate();
+		$authenticationController = $this->getMock('F3\FLOW3\Security\Authentication\Controller\AuthenticationController', array('dummy'), array(), '', FALSE);
+		$authenticationController->injectAuthenticationManager($mockAuthenticationManager);
 
-        /**
-	 * Logs all acitve authentication tokens out
-	 *
-	 * @return void
-	 */
-	public function logout();
+		$authenticationController->logoutAction();
+	}
 }
-
 ?>

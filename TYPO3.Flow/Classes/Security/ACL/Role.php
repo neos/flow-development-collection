@@ -50,16 +50,6 @@ class Role implements \F3\FLOW3\Security\Authentication\GrantedAuthorityInterfac
 	}
 
 	/**
-	 * Returns the role (granted authority) in a string representation.
-	 *
-	 * @return string The string representation of the GrantedAuthority
-	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
-	 */
-	public function getAuthority() {
-		return $this->identifier;
-	}
-
-	/**
 	 * Returns the string representation of this role (the identifier)
 	 *
 	 * @return string the string representation of this role

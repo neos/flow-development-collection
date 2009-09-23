@@ -168,6 +168,17 @@ class ProviderManager implements \F3\FLOW3\Security\Authentication\ManagerInterf
 		throw new \F3\FLOW3\Security\Exception\AuthenticationRequired('Could not authenticate any token.', 1222204027);
 	}
 
+         /**
+	 * Logs all acitve authentication tokens out
+	 *
+	 * @return void
+	 */
+	public function logout() {
+            foreach ($this->securityContext->getAuthenticationTokens() as $token) {
+                    $token->setAuthenticationStatus(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+            }
+        }
+
 	/**
 	 * Builds the provider and token objects based on the given configuration
 	 *

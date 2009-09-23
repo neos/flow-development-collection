@@ -167,6 +167,22 @@ class Context {
 	}
 
 	/**
+	 * Returns TRUE, if at least one of the currently authenticated tokens holds
+	 * a granted authority with the given string representation
+	 *
+	 * @param string $grantedAuthority The string representation of the granted authority to search for
+	 * @return boolean TRUE, if a granted authority with the given string representation was found
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasGrantedAuthority($grantedAuthority) {
+		foreach ($this->getAuthenticationTokens() as $token) {
+			if ($token->isAuthenticated() && in_array($grantedAuthority, $token->getGrantedAuthorities())) return TRUE;
+		}
+
+		return FALSE;
+	}
+
+	/**
 	 * Stores all active tokens in $this->activeTokens, all others in $this->inactiveTokens
 	 *
 	 * @return void

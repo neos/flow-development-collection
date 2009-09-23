@@ -331,6 +331,27 @@ class ProviderManagerTest extends \F3\Testing\BaseTestCase {
 		$mockProviderManager->authenticate();
 	}
 
+        /**
+	 * @test
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function logoutSetsTheAuthenticationStatusOfAllActiveAuthenticationTokensToNoCredentialsGiven() {
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token1->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), '', FALSE);
+		$token2->expects($this->once())->method('setAuthenticationStatus')->with(\F3\FLOW3\Security\Authentication\TokenInterface::NO_CREDENTIALS_GIVEN);
+
+		$authenticationTokens = array($token1, $token2);
+
+		$mockContext = $this->getMock('F3\FLOW3\Security\Context', array(), array(), '', FALSE);
+		$mockContext->expects($this->once())->method('getAuthenticationTokens')->will($this->returnValue($authenticationTokens));
+
+		$mockProviderManager = $this->getMock('F3\FLOW3\Security\Authentication\ProviderManager', array('dummy'), array(), '', FALSE);
+		$mockProviderManager->setSecurityContext($mockContext);
+
+		$mockProviderManager->logout();
+	}
+
 	/**
 	 * @test
 	 * @category unit

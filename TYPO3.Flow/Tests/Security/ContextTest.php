@@ -270,5 +270,25 @@ class ContextTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertEquals(array($grantedAuthority1, $grantedAuthority11, $grantedAuthority2, $grantedAuthority6), $securityContext->getGrantedAuthorities());
 	}
+
+	/**
+	 * @test
+	 * @category unit
+	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
+	 */
+	public function hasGrantedAuthorityWorks() {
+		$token1 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token1'));
+		$token1->expects($this->any())->method('getGrantedAuthorities')->will($this->returnValue(array('Administrator', 'LicenseToKill')));
+		$token1->expects($this->any())->method('isAuthenticated')->will($this->returnValue(TRUE));
+		$token2 = $this->getMock('F3\FLOW3\Security\Authentication\TokenInterface', array(), array(), uniqid('token2'));
+		$token2->expects($this->any())->method('getGrantedAuthorities')->will($this->returnValue(array('Customer')));
+		$token2->expects($this->any())->method('isAuthenticated')->will($this->returnValue(FALSE));
+
+		$securityContext = $this->getMock('F3\FLOW3\Security\Context', array('getAuthenticationTokens'), array(), '', FALSE);
+		$securityContext->expects($this->any())->method('getAuthenticationTokens')->will($this->returnValue(array($token1, $token2)));
+
+		$this->assertTrue($securityContext->hasGrantedAuthority('LicenseToKill'));
+		$this->assertFalse($securityContext->hasGrantedAuthority('Customer'));
+	}
 }
 ?>
