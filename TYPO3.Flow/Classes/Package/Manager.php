@@ -112,6 +112,13 @@ class Manager implements \F3\FLOW3\Package\ManagerInterface {
 	public function initialize() {
 		$this->scanAvailablePackages();
 		$packageStatesConfiguration = $this->configurationManager->getConfiguration(\F3\FLOW3\Configuration\Manager::CONFIGURATION_TYPE_PACKAGESTATES);
+
+		if ($packageStatesConfiguration === array()) {
+			foreach ($this->packageKeys as $packageKey) {
+				$this->activatePackage($packageKey);
+			}
+		}
+
 		foreach ($this->packages as $packageKey => $package) {
 			if (in_array($packageKey, $this->protectedPackages) || (isset($packageStatesConfiguration[$packageKey]['state']) && $packageStatesConfiguration[$packageKey]['state'] == 'active')) {
 				$this->activePackages[$packageKey] = $package;
