@@ -151,8 +151,8 @@ class ContextHolderSession implements \F3\FLOW3\Security\ContextHolderInterface 
 	 * If a specific type is found in the session this token replaces the one I(of the same type)
 	 * given by the manager.
 	 *
-	 * @params array Array of tokens provided by the authentication manager
-	 * @params array Array of tokens resotored from the session
+	 * @param array $managerTokens Array of tokens provided by the authentication manager
+	 * @param array $sessionTokens Array of tokens resotored from the session
 	 * @return array Array of \F3\FLOW3\Security\Authentication\TokenInterface objects
 	 * @author Andreas Förthner <andreas.foerthner@netlogix.de>
 	 */
