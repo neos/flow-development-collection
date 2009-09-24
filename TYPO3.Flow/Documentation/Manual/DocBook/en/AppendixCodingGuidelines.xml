@@ -854,6 +854,7 @@ class MyObject {
    doSomethingElse();
 }
 
+   // one liners - exception for throw statements!
 if (allGoesWrong() === TRUE) throw new \Exception('Hey, all went wrong!', 123);
 
 if (weHaveALotOfCriteria() === TRUE
@@ -1186,17 +1187,15 @@ enable-auto-props = yes
         <title>Documenting variables, constants, includes</title>
 
         <para>Properties of a class should be documented as well. We use the
-        short version for documenting them:</para>
+        short version for documenting them:<example>
+            <title>Standard variable documentation block</title>
 
-        <example>
-          <title>Standard variable documentation block</title>
-
-          <programlisting language="php">/**
+            <programlisting language="php">/**
  * A short description, very much recommended
  * @var string
  */
 protected $title = 'Untitled';</programlisting>
-        </example>
+          </example></para>
       </section>
 
       <section>
@@ -1205,12 +1204,10 @@ protected $title = 'Untitled';</programlisting>
         <para>For a method, at least all parameters and the return value must
         be documented. Please also add your name by using the @author tag. The
         @access tag must not be used as it makes no sense (we're using PHP
-        &gt;= 5 for some reason, don't we?)</para>
+        &gt;= 5 for some reason, don't we?)<example>
+            <title>Standard method documentation block</title>
 
-        <example>
-          <title>Standard method documentation block</title>
-
-          <programlisting language="php">/**
+            <programlisting language="php">/**
  * A description for this method
  *
  * Paragraphs are seperated by a empty line.
@@ -1223,7 +1220,7 @@ protected $title = 'Untitled';</programlisting>
 public function addStringToPost(\F3\Blog\Domain\Model\Post $post, $someString) {
  ...
 }</programlisting>
-        </example>
+          </example></para>
 
         <para>A special note about the <markup>@param</markup> tags: The
         parameter type and name are seperated by one space, not aligned. Do
@@ -1232,68 +1229,23 @@ public function addStringToPost(\F3\Blog\Domain\Model\Post $post, $someString) {
         just been forgotten (only constructors never have a
         <markup>@return</markup> annotation!).</para>
       </section>
-    </section>
 
-    <section>
-      <title>Documentation Annotations</title>
+      <section>
+        <title>Testcase documentation</title>
 
-      <para>There are quite a few documentation annotations that can be used.
-      Here is a list of tags that can and should be used within the TYPO3
-      project:</para>
+        <para>Testcases need to be marked as being a test and can have some
+        more annotations.<example>
+            <title>Standard testcase documentation block</title>
 
-      <itemizedlist>
-        <listitem>
-          <para>@api</para>
-        </listitem>
-
-        <listitem>
-          <para>@author</para>
-        </listitem>
-
-        <listitem>
-          <para>@deprecated</para>
-        </listitem>
-
-        <listitem>
-          <para>@license</para>
-        </listitem>
-
-        <listitem>
-          <para>@param</para>
-        </listitem>
-
-        <listitem>
-          <para>@return</para>
-        </listitem>
-
-        <listitem>
-          <para>@see</para>
-        </listitem>
-
-        <listitem>
-          <para>@since</para>
-        </listitem>
-
-        <listitem>
-          <para>@todo</para>
-        </listitem>
-
-        <listitem>
-          <para>@var</para>
-        </listitem>
-
-        <listitem>
-          <para>@version</para>
-        </listitem>
-      </itemizedlist>
-
-      <note>
-        <para>There are more annotations which are used in FLOW3, however
-        their purpose is not documention but configuration. Currently
-        annotations are also used for defining aspects and advices for the AOP
-        framework as well as for giving instructions to the Persistence
-        framework.</para>
-      </note>
+            <para><programlisting language="php">/**
+ * @test
+ * @author Your Name &lt;your@email.here&gt;
+ */
+public function fooReturnsBarForQuux() {
+ ...
+}</programlisting></para>
+          </example></para>
+      </section>
     </section>
 
     <section>
@@ -1305,7 +1257,7 @@ public function addStringToPost(\F3\Blog\Domain\Model\Post $post, $someString) {
       intended for use by developers using FLOW3. Also the API documentation
       we produce will only cover the public API.</para>
 
-      <para>To mark a method (or class) as part of the public API, include an
+      <para>To mark a method as part of the public API, include an
       <markup>@api</markup> annotation for it in the docblock.<example>
           <title>Defining the public API</title>
 
@@ -1320,6 +1272,234 @@ public function fooBar() {
  ...
 }</programlisting>
         </example></para>
+    </section>
+
+    <section>
+      <title>Overview of Documentation Annotations</title>
+
+      <para>There are not only documentation annotations that can be used. In
+      FLOW3 annotations are also used in the MVC component, for defining
+      aspects and advices for the AOP framework as well as for giving
+      instructions to the Persistence framework. See the individual chapters
+      for information on their purpose and use.</para>
+
+      <para>Here is a list of annotations used within the project. They are
+      grouped by use case and the order given here should be kept for the sake
+      of consistency.<itemizedlist>
+          <title>Interface Documentation</title>
+
+          <listitem>
+            <para>@version</para>
+          </listitem>
+
+          <listitem>
+            <para>@license</para>
+          </listitem>
+
+          <listitem>
+            <para>@author</para>
+          </listitem>
+
+          <listitem>
+            <para>@api</para>
+          </listitem>
+
+          <listitem>
+            <para>@since</para>
+          </listitem>
+
+          <listitem>
+            <para>@deprecated</para>
+          </listitem>
+        </itemizedlist><itemizedlist>
+          <title>Class Documentation</title>
+
+          <listitem>
+            <para>@version</para>
+          </listitem>
+
+          <listitem>
+            <para>@license</para>
+          </listitem>
+
+          <listitem>
+            <para>@api</para>
+          </listitem>
+
+          <listitem>
+            <para>@since</para>
+          </listitem>
+
+          <listitem>
+            <para>@deprecated</para>
+          </listitem>
+
+          <listitem>
+            <para>@entity</para>
+          </listitem>
+
+          <listitem>
+            <para>@valueobject</para>
+          </listitem>
+
+          <listitem>
+            <para>@scope</para>
+          </listitem>
+
+          <listitem>
+            <para>@aspect</para>
+          </listitem>
+        </itemizedlist><itemizedlist>
+          <title>Property Documentation</title>
+
+          <listitem>
+            <para>@var</para>
+          </listitem>
+
+          <listitem>
+            <para>@introduce</para>
+          </listitem>
+
+          <listitem>
+            <para>@uuid</para>
+          </listitem>
+
+          <listitem>
+            <para>@identity</para>
+          </listitem>
+
+          <listitem>
+            <para>@transient</para>
+          </listitem>
+
+          <listitem>
+            <para>@lazy</para>
+          </listitem>
+
+          <listitem>
+            <para>@api</para>
+          </listitem>
+
+          <listitem>
+            <para>@since</para>
+          </listitem>
+
+          <listitem>
+            <para>@deprecated</para>
+          </listitem>
+        </itemizedlist><itemizedlist>
+          <title>Constructor Documentation</title>
+
+          <listitem>
+            <para>@param</para>
+          </listitem>
+
+          <listitem>
+            <para>@throws</para>
+          </listitem>
+
+          <listitem>
+            <para>@author</para>
+          </listitem>
+
+          <listitem>
+            <para>@api</para>
+          </listitem>
+
+          <listitem>
+            <para>@since</para>
+          </listitem>
+
+          <listitem>
+            <para>@deprecated</para>
+          </listitem>
+        </itemizedlist><itemizedlist>
+          <title>Method Documentation</title>
+
+          <listitem>
+            <para>@param</para>
+          </listitem>
+
+          <listitem>
+            <para>@return</para>
+          </listitem>
+
+          <listitem>
+            <para>@throws</para>
+          </listitem>
+
+          <listitem>
+            <para>@validate</para>
+          </listitem>
+
+          <listitem>
+            <para>@dontvalidate</para>
+          </listitem>
+
+          <listitem>
+            <para>@author</para>
+          </listitem>
+
+          <listitem>
+            <para>@signal</para>
+          </listitem>
+
+          <listitem>
+            <para>@api</para>
+          </listitem>
+
+          <listitem>
+            <para>@since</para>
+          </listitem>
+
+          <listitem>
+            <para>@deprecated</para>
+          </listitem>
+
+          <listitem>
+            <para>@pointcut </para>
+          </listitem>
+
+          <listitem>
+            <para>@afterreturning</para>
+          </listitem>
+
+          <listitem>
+            <para>@afterthrowing</para>
+          </listitem>
+
+          <listitem>
+            <para>@around</para>
+          </listitem>
+
+          <listitem>
+            <para>@before</para>
+          </listitem>
+        </itemizedlist><itemizedlist>
+          <title>Testscase Documentation</title>
+
+          <listitem>
+            <para>@test</para>
+          </listitem>
+
+          <listitem>
+            <para>@dataProvider</para>
+          </listitem>
+
+          <listitem>
+            <para>@expectedException</para>
+          </listitem>
+
+          <listitem>
+            <para>@author</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <note>
+        <para>Additional annotations (more or less only the
+        <literal>@todo</literal> and <literal>@see</literal> come to mind
+        here), should be placed after all other annotations.</para>
+      </note>
     </section>
   </section>
 
