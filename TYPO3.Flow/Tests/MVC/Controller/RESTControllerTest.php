@@ -35,28 +35,6 @@ class RESTControllerTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function processRequestRegistersAnIdArgument() {
-		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
-		$mockResponse = $this->getMock('F3\FLOW3\MVC\Web\Response', array(), array(), '', FALSE);
-		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-
-		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Web\Routing\UriBuilder')->will($this->returnValue($mockUriBuilder));
-
-		$mockArguments = $this->objectFactory->create('F3\FLOW3\MVC\Controller\Arguments');
-
-		$controller = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\RESTController'), array('resolveActionMethodName', 'callActionMethod', 'initializeActionMethodArguments', 'initializeActionMethodValidators', 'initializeControllerArgumentsBaseValidators', 'mapRequestArgumentsToControllerArguments', 'resolveView', 'buildControllerContext'), array(), '', FALSE);
-		$controller->_set('arguments', $mockArguments);
-		$controller->_set('objectFactory', $mockObjectFactory);
-		$controller->processRequest($mockRequest, $mockResponse);
-
-		$this->assertTrue(isset($mockArguments['id']));
-	}
-
-	/**
-	 * @test
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function resolveActionMethodNameOnlyResolvesRESTMethodNamesIfTheActionNameIsIndex() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\Web\Request', array(), array(), '', FALSE);
 		$mockRequest->expects($this->exactly(2))->method('getControllerActionName')->will($this->returnValue('foo'));

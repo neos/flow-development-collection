@@ -43,22 +43,6 @@ class RESTController extends \F3\FLOW3\MVC\Controller\ActionController {
 	protected $response;
 
 	/**
-	 * Handles a web request. The result output is returned by altering the given response.
-	 *
-	 * Note that this REST controller only supports web requests!
-	 *
-	 * @param \F3\FLOW3\MVC\RequestInterface $request The request object
-	 * @param \F3\FLOW3\MVC\ResponseInterface $response The response, modified by this handler
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @api
-	 */
-	public function processRequest(\F3\FLOW3\MVC\RequestInterface $request, \F3\FLOW3\MVC\ResponseInterface $response) {
-		$this->arguments->addNewArgument('id', 'UUID', FALSE);
-		parent::processRequest($request, $response);
-	}
-
-	/**
 	 * Determines the action method and assures that the method exists.
 	 *
 	 * @return string The action method name
