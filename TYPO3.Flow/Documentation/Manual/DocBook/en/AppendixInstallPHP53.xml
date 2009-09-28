@@ -206,11 +206,11 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
 
         <screenco>
           <areaspec>
-            <area coords="1" xml:id="mp.selfupdate"/>
+            <area coords="1" xml:id="mp.selfupdate"></area>
 
-            <area coords="2" xml:id="mp.install-php5"/>
+            <area coords="2" xml:id="mp.install-php5"></area>
 
-            <area coords="3" xml:id="mp.install-mbstring"/>
+            <area coords="3" xml:id="mp.install-mbstring"></area>
           </areaspec>
 
           <screen><command>sudo port -d selfupdate</command>
@@ -282,7 +282,8 @@ deb-src ftp://ftp.hosting.netlogix.de/php5.3/debian/ etch php</screen></para>
   </section>
 
   <section xml:id="flow3.installingphp53.windows">
-    <title>Installation on Windows (based on XAMPP)</title>
+    <title>Installation on Windows (based on an older XAMPP-version with PHP
+    5.2.x)</title>
 
     <section>
       <title>Install XAMPP</title>
@@ -560,5 +561,28 @@ extension=php_pdo_sqlite.dll</screen>
         </itemizedlist>
       </section>
     </section>
+  </section>
+
+  <section>
+    <title>Installation on Windows 7 with IIS7 (Draft)</title>
+
+    <para>WPI launcher für IIS &amp; Co. mit urlRewrite</para>
+
+    <para>php 5.3 VC9 not thread save .zip -&gt; c:\Programme
+    x86\php5.3</para>
+
+    <para>Handler für php5.3 hinzufügen</para>
+
+    <para>FastCGI-Einstellungen (oberste Ebene!): php.ini-pfad setzen</para>
+
+    <para>php.ini ändern, appPool neu starten</para>
+
+    <para>FLOW3 herunterladen (evtl. gleich Benutzerrechte ändern)</para>
+
+    <para>Website hinzufügen (= virtueller Host)</para>
+
+    <para>.htaccess in urlRewrite importieren</para>
+
+    <para>hosts-Datei anpassen (Editor als Administrator öffnen)</para>
   </section>
 </appendix>
