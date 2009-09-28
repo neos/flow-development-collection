@@ -58,7 +58,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	public function setThrowsExceptionIfNoFrontEndHasBeenSet() {
 		$backend = new \F3\FLOW3\Cache\Backend\APCBackend('Testing');
 		$backend->injectEnvironment($this->environment);
-		$backend->initializeObject();
 		$data = 'Some data';
 		$identifier = 'MyIdentifier';
 		$backend->set($identifier, $data);
@@ -227,7 +226,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$thisBackend->injectEnvironment($this->environment);
 		$thisBackend->injectSystemLogger($mockSystemLogger);
 		$thisBackend->setCache($thisCache);
-		$thisBackend->initializeObject();
 
 		$thatCache = $this->getMock('F3\FLOW3\Cache\Frontend\FrontendInterface', array(), array(), '', FALSE);
 		$thatCache->expects($this->any())->method('getIdentifier')->will($this->returnValue('thatCache'));
@@ -235,7 +233,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$thatBackend->injectEnvironment($this->environment);
 		$thatBackend->injectSystemLogger($mockSystemLogger);
 		$thatBackend->setCache($thatCache);
-		$thatBackend->initializeObject();
 
 		$thisBackend->set('thisEntry', 'Hello');
 		$thatBackend->set('thatEntry', 'World!');
@@ -276,7 +273,6 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$backend->injectEnvironment($this->environment);
 		$backend->injectSystemLogger($mockSystemLogger);
 		$backend->setCache($cache);
-		$backend->initializeObject();
 		return $backend;
 	}
 
