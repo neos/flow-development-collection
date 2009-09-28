@@ -53,9 +53,12 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 	public function setUp() {
 		$this->router = $this->getMock('F3\FLOW3\MVC\Web\Routing\RouterInterface');
 		$this->request = $this->getMock('F3\FLOW3\MVC\Web\Request');
+		$environment = $this->getMock('F3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
+		$environment->expects($this->any())->method('isRewriteEnabled')->will($this->returnValue(1));
 
 		$this->uriBuilder = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Web\Routing\UriBuilder'), array('dummy'));
 		$this->uriBuilder->injectRouter($this->router);
+		$this->uriBuilder->injectEnvironment($environment);
 		$this->uriBuilder->setRequest($this->request);
 	}
 
@@ -218,6 +221,21 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$this->uriBuilder->setCreateAbsoluteUri(TRUE);
 
 		$expectedResult = 'BaseUri/resolvedUri';
+		$actualResult = $this->uriBuilder->build();
+
+		$this->assertEquals($expectedResult, $actualResult);
+	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function buildPrependsIndexFileIfRewriteUrlsIsOff() {
+		$this->router->expects($this->once())->method('resolve')->will($this->returnValue('resolvedUri'));
+		$mockEnvironment = $this->getMock('F3\FLOW3\Utility\Environment', array('isRewriteEnabled'), array(), '', FALSE);
+		$this->uriBuilder->injectEnvironment($mockEnvironment);
+
+		$expectedResult = 'index.php/resolvedUri';
 		$actualResult = $this->uriBuilder->build();
 
 		$this->assertEquals($expectedResult, $actualResult);

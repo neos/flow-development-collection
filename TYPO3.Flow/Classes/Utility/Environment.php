@@ -415,5 +415,15 @@ class Environment {
 	public function getMaximumPathLength() {
 		return PHP_MAXPATHLEN;
 	}
+
+	/**
+	 * Whether or not URL rewriting is enabled.
+	 *
+	 * @return boolean
+	 * @author Karsten Dambekalns <karsten@typo3.org
+	 */
+	public function isRewriteEnabled() {
+		return (boolean)getenv('FLOW3_REWRITEURLS');
+	}
 }
 ?>

@@ -37,6 +37,11 @@ class UriBuilder {
 	protected $router;
 
 	/**
+	 * @var \F3\FLOW3\Utility\Environment
+	 */
+	protected $environment;
+
+	/**
 	 * @var \F3\FLOW3\MVC\Web\Request
 	 */
 	protected $request;
@@ -83,6 +88,17 @@ class UriBuilder {
 	}
 
 	/**
+	 * Injects the environment
+	 *
+	 * @param \F3\FLOW3\Utility\Environment $environment
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectEnvironment(\F3\FLOW3\Utility\Environment $environment) {
+		$this->environment = $environment;
+	}
+
+	/**
 	 * Sets the current request
 	 *
 	 * @param \F3\FLOW3\MVC\RequestInterface $request
@@ -100,7 +116,6 @@ class UriBuilder {
 	public function getRequest() {
 		return $this->request;
 	}
-
 
 	/**
 	 * Additional query parameters.
@@ -299,6 +314,9 @@ class UriBuilder {
 		$uri = $this->router->resolve($arguments);
 		if ($this->section !== '') {
 			$uri .= '#' . $this->section;
+		}
+		if (!$this->environment->isRewriteEnabled()) {
+			$uri = 'index.php/' . $uri;
 		}
 		if ($this->createAbsoluteUri === TRUE) {
 			$uri = $this->request->getBaseURI() . $uri;
