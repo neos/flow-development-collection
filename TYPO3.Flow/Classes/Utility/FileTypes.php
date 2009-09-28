@@ -414,7 +414,11 @@ class FileTypes {
 	 */
 	static public function mimeTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
-		return isset(self::$extensionToMimeType[$pathinfo['extension']]) ? self::$extensionToMimeType[$pathinfo['extension']] : 'application/octet-stream';
+		if (!isset($pathinfo['extension'])) {
+			return 'application/octet-stream';
+		} else {
+			return isset(self::$extensionToMimeType[$pathinfo['extension']]) ? self::$extensionToMimeType[$pathinfo['extension']] : 'application/octet-stream';
+		}
 	}
 
 	/**
@@ -426,7 +430,11 @@ class FileTypes {
 	 */
 	static public function mediaTypeFromFilename($filename) {
 		$pathinfo = pathinfo($filename);
-		return isset(self::$extensionToMediaType[$pathinfo['extension']]) ? self::$extensionToMediaType[$pathinfo['extension']] : '';
+		if (!isset($pathinfo['extension'])) {
+			return '';
+		} else {
+			return isset(self::$extensionToMediaType[$pathinfo['extension']]) ? self::$extensionToMediaType[$pathinfo['extension']] : '';
+		}
 	}
 
 }
