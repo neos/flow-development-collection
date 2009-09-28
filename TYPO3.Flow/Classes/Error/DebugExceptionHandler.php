@@ -73,10 +73,11 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 		}
 
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition === FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 		$moreInformationLink = ($exceptionCodeNumber != '') ? '(<a href="http://typo3.org/go/exception/' . $exception->getCode() . '">More information</a>)' : '';
+		$createIssueLink = $this->getCreateIssueLink($exception);
 		$backtraceCode = $this->getBacktraceCode($exception->getTrace());
 
 		echo '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN"
@@ -117,10 +118,10 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 					<span class="ExceptionProperty">' . $filePathAndName . '</span> in line
 					<span class="ExceptionProperty">' . $exception->getLine() . '</span>.<br />
 					<br />
+					<a href="' . $createIssueLink . '">Go to the FORGE issue tracker and report the issue</a> - <strong>if you think it is a bug!</strong><br />
+					<br />
 					' . $backtraceCode . '
 				</div>
-		';
-		echo '
 			</div>
 		';
 	}
@@ -134,7 +135,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 */
 	protected function echoExceptionCLI(\Exception $exception) {
 		$pathPosition = strpos($exception->getFile(), 'Packages/');
-		$filePathAndName = ($pathPosition === FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
+		$filePathAndName = ($pathPosition !== FALSE) ? substr($exception->getFile(), $pathPosition) : $exception->getFile();
 
 		$exceptionCodeNumber = ($exception->getCode() > 0) ? '#' . $exception->getCode() . ': ' : '';
 
@@ -150,7 +151,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @return string Backtrace information
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	protected function getBacktraceCode(array $trace) {
+	protected function getBacktraceCode(array $trace, $includeCode = TRUE) {
 		$backtraceCode = '';
 		if (count($trace)) {
 			foreach ($trace as $index => $step) {
@@ -180,7 +181,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 				$backtraceCode .= '<span style="color:white;">' . (count($trace) - $index) . '</span> ' . $class . $step['function'] . '<span style="color:white;">(' . $arguments . ')</span>';
 				$backtraceCode .= '</pre>';
 
-				if (isset($step['file'])) {
+				if (isset($step['file']) && $includeCode) {
 					$backtraceCode .= $this->getCodeSnippet($step['file'], $step['line']) . '<br />';
 				}
 			}
@@ -198,6 +199,7 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	protected function getCodeSnippet($filePathAndName, $lineNumber) {
+		$pathPosition = strpos($filePathAndName, 'Packages/');
 		$codeSnippet = '<br />';
 		if (@file_exists($filePathAndName)) {
 			$phpFile = @file($filePathAndName);
@@ -205,7 +207,11 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 				$startLine = ($lineNumber > 2) ? ($lineNumber - 2) : 1;
 				$endLine = ($lineNumber < (count($phpFile) - 2)) ? ($lineNumber + 3) : count($phpFile) + 1;
 				if ($endLine > $startLine) {
-					$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
+					if ($pathPosition !== FALSE) {
+						$codeSnippet = '<br /><span style="font-size:10px;">' . substr($filePathAndName, $pathPosition) . ':</span><br /><pre>';
+					} else {
+						$codeSnippet = '<br /><span style="font-size:10px;">' . $filePathAndName . ':</span><br /><pre>';
+					}
 					for ($line = $startLine; $line < $endLine; $line++) {
 						$codeLine = str_replace("\t", ' ', $phpFile[$line-1]);
 
@@ -222,6 +228,28 @@ class DebugExceptionHandler extends \F3\FLOW3\Error\AbstractExceptionHandler {
 			}
 		}
 		return $codeSnippet;
+	}
+
+	/**
+	 * Returns a link pointing to Forge to create a new issue.
+	 *
+	 * @param Exception $exception
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function getCreateIssueLink(\Exception $exception) {
+		$fileName = basename($exception->getFile());
+		return 'http://forge.typo3.org/projects/package-flow3/issues/new?issue[subject]='
+			. urlencode(get_class($exception) . ' thrown in file ' . $fileName)
+			. '&issue[description]='
+			. urlencode(
+				$exception->getMessage() . chr(10)
+				. strip_tags(
+					str_replace(array('<br />', '</pre>'), chr(10), $this->getBacktraceCode($exception->getTrace(), FALSE))
+				  )
+				. chr(10) . 'Please include more helpful information!'
+			  )
+			. '&issue[category_id]=554&issue[priority_id]=7';
 	}
 }
 
