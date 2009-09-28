@@ -21,14 +21,12 @@
 
     <para>Before you can use any of the described features in this chapter you
     will have to enable the security framework. This is done as follows in the
-    FLOW3.yaml configuration file:</para>
+    FLOW3.yaml configuration file:<example>
+        <title>Example: Enable the security features in the FLOW3.yaml
+        configuration file</title>
 
-    <example>
-      <title>Example: Enable the security features in the FLOW3.yaml
-      configuration file</title>
-
-      <programlisting language="yaml">security: enable: yes</programlisting>
-    </example>
+        <programlisting language="yaml">security: enable: yes</programlisting>
+      </example></para>
 
     <para>After that, the security framework engages with FLOW3 by vowing in
     two AOP advices into the MVC dispatcher class.</para>
@@ -84,18 +82,16 @@
         </footnote></para>
 
       <para>The configuration for this default provider, which is shipped with
-      FLOW3's default configuration looks like this:</para>
+      FLOW3's default configuration looks like this:<example>
+          <title>Configuration of the default UsernamePassword authentication
+          mechanism in FLOW3.yaml</title>
 
-      <example>
-        <title>Configuration of the default UsernamePassword authentication
-        mechanism in FLOW3.yaml</title>
-
-        <programlisting>security:
+          <programlisting language="yaml">security:
   authentication:
     providers:
       DefaultProvider:
         providerClass: UsernamePasswordCR</programlisting>
-      </example>
+        </example></para>
 
       <para>This registers the <literal>UsernamePasswordCR</literal>
       authentication provider under the name
@@ -104,17 +100,15 @@
       provider, you'll obviously have to provide a username and password. This
       is done by sending two POST variables to the authentication controller.
       Have a look at the following HTML snippet with a simple login form you
-      can use for that:</para>
+      can use for that:<example>
+          <title>Example for a simple login form</title>
 
-      <example>
-        <title>Example for a simple login form</title>
-
-        <programlisting language="html">&lt;form action="flow3/authenticate" method="post" name="loginform"&gt;
+          <programlisting language="xml">&lt;form action="flow3/authenticate" method="post" name="loginform"&gt;
   &lt;input type="text" id="username" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::username" value="" tabindex="1" /&gt;
   &lt;input type="password" id="password" name="F3\FLOW3\Security\Authentication\Token\UsernamePassword::password" value="" tabindex="2" /&gt;
   &lt;input type="submit" value="Login" tabindex="3" /&gt;
 &lt;/form&gt;</programlisting>
-      </example>
+        </example></para>
 
       <para>After submitting the form, the internal authentication process
       will be triggered and if you provided valid credentials an account will
@@ -142,7 +136,9 @@
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="SecurityFramework_BasicAuthenticationProcess.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="SecurityFramework_BasicAuthenticationProcess.png"
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -310,12 +306,10 @@
         <para>Creating an account is as easy as creating a new account object
         and add it to the account repository. Look at the following example,
         which adds a new account for FLOW3's default username/password
-        provider:</para>
+        provider:<example>
+            <title>Add a new username/password account</title>
 
-        <example>
-          <title>Add a new username/password account</title>
-
-          <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\Party\Domain\Model\Account');
+            <programlisting language="php">$account = $this-&gt;objectFactory-&gt;create('F3\Party\Domain\Model\Account');
 
 $username = 'andi';
 $password = 'secret';
@@ -333,7 +327,7 @@ $account-&gt;setAuthenticationProviderName('TYPO3BEProvider');
 $account-&gt;setRoles($roles);
 
 $this-&gt;accountRepository-&gt;add($account);</programlisting>
-        </example>
+          </example></para>
 
         <para>The way the credentials are coded is completely up to the
         authentication provider. The <literal>UsernamePasswordCR</literal>
@@ -362,13 +356,12 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <para>Now that you have seen all components, taking part in the
         authentication process, it is time to have a look at some advance
         configuration possibilities. Just to remember, here is again the
-        configuration of the default authentication provider:</para>
-
-        <programlisting>security:
+        configuration of the default authentication provider:<programlisting
+        language="yaml">security:
   authentication:
     providers:
       DefaultProvider:
-        providerClass: UsernamePasswordCR</programlisting>
+        providerClass: UsernamePasswordCR</programlisting></para>
 
         <para>If you have a closer look at this configuration, you can see,
         that the word providers is plural. That means, you have the
@@ -381,10 +374,10 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
           "<literal>DefaultProvider</literal>".</para>
         </note>
 
-        <example>
-          <title>Configuration of two authentication providers</title>
+        <para><example>
+            <title>Configuration of two authentication providers</title>
 
-          <para><programlisting language="yaml">security:
+            <para><programlisting language="yaml">security:
   authentication:
     providers:
       MyLDAPProvider:
@@ -392,7 +385,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         options: 'Some LDAP configuration options'
       DefaultProvider:
         providerClass: UsernamePasswordCR</programlisting></para>
-        </example>
+          </example></para>
 
         <para>This will advice the authentication manager to first
         authenticate over the LDAP provider and if that fails he will try to
@@ -418,9 +411,8 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         authentication manager to always authenticate all configured providers
         and to make sure that every single provider returned a positive
         authentication status to its token. This option is by disabled by
-        default and can be enable with the following configuration:</para>
-
-        <programlisting language="yaml">security: authentication: authenticateAllTokens: yes</programlisting>
+        default and can be enable with the following
+        configuration:<programlisting language="yaml">security: authentication: authenticateAllTokens: yes</programlisting></para>
       </section>
 
       <section>
@@ -432,12 +424,10 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         administration area. Both must be protected, so we need some kind of
         authentication. However for the administration area we want a stronger
         authentication mechanism than for the user area. Have a look at the
-        following provider configuration:</para>
+        following provider configuration:<example>
+            <title>Using request patterns</title>
 
-        <example>
-          <title>Using request patterns</title>
-
-          <para><programlisting language="yaml">security:
+            <para><programlisting language="yaml">security:
   authentication:
     providers:
       MyLDAPProvider:
@@ -448,21 +438,22 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
       DefaultProvider:
         providerClass: UsernamePasswordCR
         requestPatterns:
-         controllerObjectName: F3\MyApplication\UserArea\.*</programlisting>Look
-          at the new configuration option
-          "<literal>requestPatterns</literal>". This enables or disables an
-          authentication provider, depending on a given pattern. The patterns
-          will look into the data of the current request and tell the
-          authentication system, if they match or not. The patterns in the
-          example above will match, if the controller object name of the
-          current request (the controller to be called) matches on the given
-          regular expression. If a pattern does not match, the corresponding
-          provider will be ignored in the whole authentication process. In the
-          above scenario this means, all controllers responsible for the
-          administration area will use the LDAP authentication provider, the
-          user area controllers will be authenticated by the default
-          username/password provider.</para>
-        </example>
+         controllerObjectName: F3\MyApplication\UserArea\.*</programlisting></para>
+          </example></para>
+
+        <para>Look at the new configuration option
+        "<literal>requestPatterns</literal>". This enables or disables an
+        authentication provider, depending on a given pattern. The patterns
+        will look into the data of the current request and tell the
+        authentication system, if they match or not. The patterns in the
+        example above will match, if the controller object name of the current
+        request (the controller to be called) matches on the given regular
+        expression. If a pattern does not match, the corresponding provider
+        will be ignored in the whole authentication process. In the above
+        scenario this means, all controllers responsible for the
+        administration area will use the LDAP authentication provider, the
+        user area controllers will be authenticated by the default
+        username/password provider.</para>
 
         <note>
           <para>You can use more than one pattern in the configuration. Then
@@ -489,6 +480,12 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
           <title>Available request patterns</title>
 
           <tgroup cols="3">
+            <colspec colwidth="1*"/>
+
+            <colspec colwidth="2*"/>
+
+            <colspec colwidth="2*"/>
+
             <thead>
               <row>
                 <entry align="center">Request Pattern</entry>
@@ -531,13 +528,11 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
       username/password provider or a HTTP header for HTTP authentication. An
       entry point can be configured for each authentication provider. Look at
       the following example, that redirects to a login page (Using the
-      <literal>WebRedirect</literal> entry point).</para>
+      <literal>WebRedirect</literal> entry point).<example>
+          <title>Redirect an <literal>AuthenticationRequired</literal>
+          exception to the login page</title>
 
-      <example>
-        <title>Redirect an <literal>AuthenticationRequired</literal> exception
-        to the login page</title>
-
-        <programlisting language="yaml">security:
+          <programlisting language="yaml">security:
   authentication:
     providers:
       DefaultProvider:
@@ -545,7 +540,7 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         entryPoint:
           WebRedirect:
             uri: login/</programlisting>
-      </example>
+        </example></para>
 
       <note>
         <para>Of course you can implement your own entry point and configure
@@ -567,6 +562,12 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <title>Available authentication entry points</title>
 
         <tgroup cols="3">
+          <colspec colwidth="1*"/>
+
+          <colspec colwidth="2*"/>
+
+          <colspec colwidth="3*"/>
+
           <thead>
             <row>
               <entry align="center">Entry Point</entry>
@@ -611,30 +612,23 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         It is able to authenticate tokens of the type
         <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It expects a credentials array in the token which looks like
-        that:</para>
-
-        <programlisting language="php">array(
+        that:<programlisting language="php">array(
   'username' =&gt; 'admin',
   'password' =&gt; 'plaintextPassword'
 );
-</programlisting>
+</programlisting></para>
 
         <para>It will try to find an account in the
         <literal>F3\Party\Domain\Repository\AccountRepository</literal> that
         has the username value as account identifier and fetch the credentials
-        source, which has to be in the following format:</para>
-
-        <programlisting>MD5HashOfThePassword,Salt</programlisting>
-
-        <tip>
-          <para>You should use a different, random salt for each
-          account.</para>
-        </tip>
+        source, which has to be in the following format:<programlisting>MD5HashOfThePassword,Salt</programlisting><tip>
+            <para>You should use a different, random salt for each
+            account.</para>
+          </tip></para>
 
         <para>The provider will explode the credentials source by the "," and
-        try to authenticate the token with the following comparison:</para>
-
-        <programlisting language="php">md5(md5($plaintextPasswordFromToken) . $saltFromCrendentialsSource) === $passwordHashFromCredentialsSource</programlisting>
+        try to authenticate the token with the following
+        comparison:<programlisting language="php">md5(md5($plaintextPasswordFromToken) . $saltFromCrendentialsSource) === $passwordHashFromCredentialsSource</programlisting></para>
 
         <para>If you want to know more about accounts and how you can create
         them, look in the corresponding section above.</para>
@@ -644,22 +638,18 @@ $this-&gt;accountRepository-&gt;add($account);</programlisting>
         <para>The username/password token is implemented in the class
         <literal>F3\FLOW3\Security\Authentication\Token\UsernamePassword</literal>.
         It fetches the credentials from the HTTP POST data, look at the
-        following program listing for details:</para>
-
-        <programlisting language="php">$POSTArguments = $environment-&gt;getRawPOSTArguments();
+        following program listing for details:<programlisting language="php">$POSTArguments = $environment-&gt;getRawPOSTArguments();
 
 $credentials['username'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::username'];
 $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Token\UsernamePassword::password'];
-</programlisting>
-
-        <note>
-          <para>The token expects a plaintext password in the POST data. That
-          does not mean, you have to transfer plaintext passwords, however it
-          is not the responsibility of the authentication layer to encrypt the
-          transfer channel. Look in the section about <link
-          linkend="ChannelSecurity">channel security</link> for any
-          details.</para>
-        </note>
+</programlisting><note>
+            <para>The token expects a plaintext password in the POST data.
+            That does not mean, you have to transfer plaintext passwords,
+            however it is not the responsibility of the authentication layer
+            to encrypt the transfer channel. Look in the section about <link
+            linkend="ChannelSecurity">channel security</link> for any
+            details.</para>
+          </note></para>
       </section>
     </section>
 
@@ -810,7 +800,9 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="SecurityFramework_BasicAuthorizationProcess.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="SecurityFramework_BasicAuthorizationProcess.png"
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -859,20 +851,17 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
       very easily extensible. You can at any time write your own voter classes
       and register them, just make sure to implement the interface
       <literal>F3\FLOW3\Security\Authorization\AccessDecisionVoterInterface</literal>.
-      Then you have to register your custom voter as shown below:</para>
-
-      <programlisting language="yaml">security:
+      Then you have to register your custom voter as shown
+      below:<programlisting language="yaml">security:
   authorization:
-    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL, F3\MyPackage\Security\MyCustomVoter]</programlisting>
-
-      <note>
-        <para>By default there is always one voter registered:
-        <literal>F3\FLOW3\Security\Authorization\Voter\ACL</literal>. This
-        voter connect the authorization system to the ACL component, by return
-        a vote depending on the configured security policy. Read the section
-        about ACLs, to learn more about the default policy handling in
-        FLOW3.</para>
-      </note>
+    accessDecisionVoters: [F3\FLOW3\Security\Authorization\Voter\ACL, F3\MyPackage\Security\MyCustomVoter]</programlisting><note>
+          <para>By default there is always one voter registered:
+          <literal>F3\FLOW3\Security\Authorization\Voter\ACL</literal>. This
+          voter connect the authorization system to the ACL component, by
+          return a vote depending on the configured security policy. Read the
+          section about ACLs, to learn more about the default policy handling
+          in FLOW3.</para>
+        </note></para>
 
       <para>If asked, each voter has to return one of the three possibles
       votes: grant, deny or abstain. There are appropriate constants defined
@@ -882,9 +871,8 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para>Now it could be the case that all registered voters abstain.
       Usually the access decision manager will deny access then. However, you
-      can change set by configuring the following option:</para>
-
-      <programlisting>security: authorization: allowAccessIfAllVotersAbstain: FALSE</programlisting>
+      can change set by configuring the following option:<programlisting
+      language="yaml">security: authorization: allowAccessIfAllVotersAbstain: FALSE</programlisting></para>
     </section>
 
     <section>
@@ -903,7 +891,9 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
         <mediaobject>
           <imageobject>
-            <imagedata fileref="SecurityFramework_FilterFirewall.png"></imagedata>
+            <imagedata contentdepth="100%"
+                       fileref="SecurityFramework_FilterFirewall.png"
+                       scalefit="1" width="100%"/>
           </imageobject>
         </mediaobject>
       </figure>
@@ -931,6 +921,10 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
         <title>FLOW3's built-in security interceptors</title>
 
         <tgroup cols="2">
+          <colspec colwidth="1*"/>
+
+          <colspec colwidth="3*"/>
+
           <thead>
             <row>
               <entry align="center">Security interceptor</entry>
@@ -959,12 +953,10 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
       <para>Of course you are able to configure as many requests filters as
       you like. Have a look at the following example to get an idea how a
-      firewall configuration will look like:</para>
+      firewall configuration will look like:<example>
+          <title>Example firewall configuration in the FLOW3.yaml file</title>
 
-      <example>
-        <title>Example firewall configuration in the FLOW3.yaml file</title>
-
-        <para><programlisting language="yaml">security:
+          <para><programlisting language="yaml">security:
   firewall:
     rejectAll: n
 
@@ -981,19 +973,15 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
         patternType:  F3\MyPackage\Security\MyOwnRequestPattern
         patternValue: some pattern value
         interceptor:  F3\MyPackage\Security\MyOwnSecurityInterceptor</programlisting></para>
-      </example>
-
-      <note>
-        <para>As you can see, you can easily use your own implementations for
-        request patterns and security interceptors.</para>
-      </note>
-
-      <note>
-        <para>You might have noticed the <literal>rejectAll</literal> option.
-        If this is set to <literal>yes</literal>, only request which are
-        explicitly allowed by a request filter will be able to pass the
-        firewall.</para>
-      </note>
+        </example><note>
+          <para>As you can see, you can easily use your own implementations
+          for request patterns and security interceptors.</para>
+        </note><note>
+          <para>You might have noticed the <literal>rejectAll</literal>
+          option. If this is set to <literal>yes</literal>, only request which
+          are explicitly allowed by a request filter will be able to pass the
+          firewall.</para>
+        </note></para>
     </section>
   </section>
 
@@ -1027,24 +1015,20 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     just a string, which must be unique in the whole FLOW3 instance. Following
     there is an example configuration, that will proclaim the roles
     <literal>Administrator</literal>, <literal>Customer</literal>, and
-    <literal>PrivilegedCustomer</literal> to the system.</para>
+    <literal>PrivilegedCustomer</literal> to the system.<example>
+        <title>Example roles definition in the FLOW3.yaml file</title>
 
-    <example>
-      <title>Example roles definition in the FLOW3.yaml file</title>
-
-      <para><programlisting language="yaml">security:
+        <para><programlisting language="yaml">security:
   policy:
     roles:
       Administrator: []
       Customer:
       PrivilegedCustomer: [Customer]</programlisting></para>
-    </example>
-
-    <note>
-      <para>The role <literal>PrivilegedCustomer</literal> is configured as a
-      sub role of <literal>Customer</literal>, i.e. it will inherit the access
-      rights for the <literal>Customer</literal> role.</para>
-    </note>
+      </example><note>
+        <para>The role <literal>PrivilegedCustomer</literal> is configured as
+        a sub role of <literal>Customer</literal>, i.e. it will inherit the
+        access rights for the <literal>Customer</literal> role.</para>
+      </note></para>
 
     <bridgehead>Resources</bridgehead>
 
@@ -1052,18 +1036,16 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     object, you want to protect, i.e. you want to configure which roles are
     allowed to access a certain resource. The policy configuration deals only
     with method resources, access to other resources like content will be
-    handled by the content repository.</para>
+    handled by the content repository.<example>
+        <title>Example resources definition in the FLOW3.yaml file</title>
 
-    <example>
-      <title>Example resources definition in the FLOW3.yaml file</title>
-
-      <para><programlisting language="yaml">security:
+        <para><programlisting language="yaml">security:
   policy:
     resources:
       update: "method(F3\FooPackage\SomeClass-&gt;update.*())"
       delete: "method(F3\FooPackage\.*-&gt;delete.*())"
       modify: "update || delete"</programlisting></para>
-    </example>
+      </example></para>
 
     <para>Each resource is defined by a unique name and so called pointcut
     expression. Practically a pointcut expression is a regular expression that
@@ -1082,12 +1064,11 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     <bridgehead>ACL entries</bridgehead>
 
     <para>The last step is to connect resources with roles by assigning access
-    privileges. Let's have a look at an example for such ACL entries:</para>
+    privileges. Let's have a look at an example for such ACL entries:<example>
+        <title>Example for ACL entry definitions in the FLOW3.yaml
+        file</title>
 
-    <example>
-      <title>Example for ACL entry definitions in the FLOW3.yaml file</title>
-
-      <para><programlisting language="yaml">security:
+        <para><programlisting language="yaml">security:
   policy:
     acls:
       Administrator:
@@ -1100,10 +1081,8 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
         update: ACCESS_GRANT
         delete: ACCESS_DENY
 </programlisting></para>
-    </example>
-
-    <para>This will end up in <literal>Administrators</literal> being able to
-    call all <literal>update*</literal> methods in the class
+      </example>This will end up in <literal>Administrators</literal> being
+    able to call all <literal>update*</literal> methods in the class
     <literal>SomeClass</literal> and all <literal>delete*</literal> methods no
     matter which class in the whole package <literal>FooPackage</literal>.
     However, <literal>Customers</literal> won't be able to call them and
@@ -1130,13 +1109,11 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
         <para>This view helper implements an ifAccess/else condition, have a
         look at the following example, which should be more or less
-        self-explanatory:</para>
+        self-explanatory:<example>
+            <title>Example for the <literal>ifAccess</literal> view
+            helper</title>
 
-        <example>
-          <title>Example for the <literal>ifAccess</literal> view
-          helper</title>
-
-          <para><programlisting language="xml">&lt;f:security.ifAccess resource="someResource"&gt;
+            <para><programlisting language="xml">&lt;f:security.ifAccess resource="someResource"&gt;
   This is being shown in case you have access to the given resource
 &lt;/f:if&gt;
 
@@ -1148,7 +1125,7 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     This is being displayed in case you do not have access.
   &lt;/f:else&gt;
 &lt;/f:if&gt;</programlisting></para>
-        </example>
+          </example></para>
 
         <para>As you can imagine, the main advantage is, that the view will
         automatically reflect the configured policy rules, without the need of
@@ -1162,13 +1139,11 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
         <literal>ifAccess</literal> view helper, however it does not check the
         access privilege for a given resource, but the availability of a
         certain granted authority. E.g. you could check, if the current user
-        has the <literal>Administrator</literal> role assigned:</para>
+        has the <literal>Administrator</literal> role assigned:<example>
+            <title>Example for the <literal>ifGrantedAuthority</literal> view
+            helper</title>
 
-        <example>
-          <title>Example for the <literal>ifGrantedAuthority</literal> view
-          helper</title>
-
-          <para><programlisting language="xml">&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
+            <para><programlisting language="xml">&lt;f:security.ifGrantedAuthority grantedAuthority="Administrator"&gt;
   This is being shown in case you have the Administrator granted authority (aka role).
 &lt;/f:security.ifGrantedAuthority&gt;
 
@@ -1180,7 +1155,7 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
     This is being displayed in case you do not have the granted authority.
   &lt;/f:else&gt;
 &lt;/f:security.ifGrantedAuthority&gt;</programlisting></para>
-        </example>
+          </example></para>
       </section>
     </section>
   </section>
