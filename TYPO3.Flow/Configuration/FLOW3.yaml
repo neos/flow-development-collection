@@ -54,7 +54,7 @@ log:
   # Settings for FLOW3's default system logger
   systemLogger:
     backend: F3\FLOW3\Log\Backend\FileBackend
-    backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/FLOW3_Production.log, createParentDirectories: y }
+    backendOptions: { logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/FLOW3_Production.log, createParentDirectories: y, severityThreshold: %LOG_INFO% }
 
 locale:
   

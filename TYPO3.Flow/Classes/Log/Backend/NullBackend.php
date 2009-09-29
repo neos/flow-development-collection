@@ -44,7 +44,7 @@ class NullBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Ignores the call
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value: -1 (debug), 0 (ok), 1 (info), 2 (notice), 3 (warning), or 4 (fatal)
+	 * @param integer $severity One of the SEVERITY_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)

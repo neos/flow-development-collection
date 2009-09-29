@@ -78,7 +78,7 @@ interface LoggerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function log($message, $severity = self::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
 }
 ?>

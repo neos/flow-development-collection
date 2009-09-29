@@ -51,7 +51,7 @@ interface BackendInterface {
 	 * @return void
 	 * @api
 	 */
-	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function append($message, $severity = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
 	/**
 	 * Carries out all actions necessary to cleanly close the logging backend, such as

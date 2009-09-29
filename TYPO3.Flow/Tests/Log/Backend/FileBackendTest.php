@@ -86,5 +86,21 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 
 		$this->assertSame(52 + strlen(PHP_EOL), \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
+
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
+		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
+		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
+		$backend->setSeverityThreshold(\F3\FLOW3\Log\LoggerInterface::SEVERITY_EMERGENCY);
+		$backend->open();
+
+		$backend->append('foo', \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO);
+
+		$this->assertSame(0, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
+	}
+
 }
 ?>

@@ -135,9 +135,12 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function append($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+	public function append($message, $severity = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+		if ($severity > $this->severityThreshold) {
+			return;
+		}
+
 		$severityLabel = (isset($this->severityLabels[$severity])) ? $this->severityLabels[$severity] : 'UNKNOWN  ';
-		// $message .= ' ' . ($className !== NULL ? $className . '->' : '') . ($methodName !== NULL ? $methodName : '?') . '()';
 		$output = strftime ('%y-%m-%d %H:%M:%S', time()) . ' ' . $severityLabel . ' ' . str_pad($packageKey, 20) . ' ' . $message . PHP_EOL;
 		if (!empty($additionalData)) {
 			$output .= $this->getFormattedVarDump($additionalData) . PHP_EOL;

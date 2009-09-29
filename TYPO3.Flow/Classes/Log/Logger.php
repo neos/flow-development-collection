@@ -23,7 +23,7 @@ namespace F3\FLOW3\Log;
  *                                                                        */
 
 /**
- * A general purpose default Logger
+ * The default "system logger" of the FLOW3 framework
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -87,7 +87,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function log($message, $severity = 6, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+	public function log($message, $severity = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($packageKey === NULL) {
 			$backtrace = debug_backtrace(FALSE);
 			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : '';

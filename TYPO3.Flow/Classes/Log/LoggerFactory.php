@@ -23,7 +23,7 @@ namespace F3\FLOW3\Log;
  *                                                                        */
 
 /**
- * The default "system logger" of the FLOW3 framework
+ * The logger factory used to create logger instances.
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
@@ -61,7 +61,6 @@ class LoggerFactory {
 	public function create($identifier, $loggerObjectName, $backendObjectNames, array $backendOptions = array()) {
 		$logger = $this->objectFactory->create($loggerObjectName);
 
-		$backends = array();
 		if (is_array($backendObjectNames)) {
 			foreach ($backendObjectNames as $i => $backendObjectName) {
 				if (isset($backendOptions[$i])) {
