@@ -102,5 +102,24 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 		$this->assertSame(0, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}
 
+	/**
+	 * @test
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function logFileIsRotatedIfMaximumSizeIsExceeded() {
+		$this->markTestSkipped('vfsStream does not support touch() and rename()...');
+
+		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
+		file_put_contents($logFileURL, 'twentybytesofcontent');
+
+		$backend = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Log\Backend\FileBackend'), array('dummy'), array(array('logFileURL' => $logFileURL)));
+		$backend->_set('maximumLogFileSize', 10);
+		$backend->setLogFilesToKeep(1);
+		$backend->open();
+
+		$this->assertFalse(\vfsStreamWrapper::getRoot()->hasChild('test.log'));
+		$this->assertTrue(\vfsStreamWrapper::getRoot()->hasChild('test.log.1'));
+	}
+
 }
 ?>

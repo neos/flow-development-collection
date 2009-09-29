@@ -43,6 +43,16 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	protected $logFileURL = '';
 
 	/**
+	 * @var integer
+	 */
+	protected $maximumLogFileSize = 0;
+
+	/**
+	 * @var integer
+	 */
+	protected $logFilesToKeep = 0;
+
+	/**
 	 * @var boolean
 	 */
 	protected $createParentDirectories = FALSE;
@@ -81,6 +91,33 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	}
 
 	/**
+	 * Sets the maximum log file size, if the logfile is bigger, a new one
+	 * is started.
+	 *
+	 * @param integer $maximumLogFileSize Maximum size in MB
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 * @see setLogFilesToKeep()
+	 */
+	public function setMaximumLogFileSize($maximumLogFileSize) {
+		$this->maximumLogFileSize = $maximumLogFileSize * 1024 * 1024;
+	}
+
+	/**
+	 * If a new log file is started, keep this number of old log files.
+	 *
+	 * @param integer $maximumLogFileSize
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 * @see setMaximumLogFileSize()
+	 */
+	public function setLogFilesToKeep($logFilesToKeep) {
+		$this->logFilesToKeep = $logFilesToKeep;
+	}
+
+	/**
 	 * Carries out all actions necessary to prepare the logging backend, such as opening
 	 * the log file or opening a database connection.
 	 *
@@ -100,7 +137,13 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG     => 'DEBUG    ',
 		);
 
-		if (!file_exists($this->logFileURL)) {
+		if (file_exists($this->logFileURL) && $this->maximumLogFileSize > 0 && filesize($this->logFileURL) > $this->maximumLogFileSize) {
+			$this->rotateLogFile();
+		}
+
+		if (file_exists($this->logFileURL)) {
+			$this->fileHandle = fopen($this->logFileURL, 'at');
+		} else {
 			$logPath = dirname($this->logFileURL);
 			if (!is_dir($logPath)) {
 				if ($this->createParentDirectories === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access because the parent directory does not exist.', 1243931200);
@@ -116,10 +159,41 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 				chmod($this->logFileURL, 0666);
 				$this->fileHandle = fopen($this->logFileURL, 'at');
 			}
-		} else {
-			$this->fileHandle = fopen($this->logFileURL, 'at');
 		}
 		if ($this->fileHandle === FALSE) throw new \F3\FLOW3\Log\Exception\CouldNotOpenResource('Could not open log file "' . $this->logFileURL . '" for write access.', 1229448440);
+	}
+
+	/**
+	 * Rotate the log file and make sure the configured number of files
+	 * is kept.
+	 *
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function rotateLogFile() {
+		if (file_exists($this->logFileURL . '.lock')) {
+			return;
+		} else {
+			touch($this->logFileURL . '.lock');
+		}
+
+		if ($this->logFilesToKeep === 0) {
+			unlink($this->logFileURL);
+		} else {
+			for ($logFileCount = $this->logFilesToKeep; $logFileCount > 0; --$logFileCount ) {
+				$rotatedLogFileURL =  $this->logFileURL . '.' . $logFileCount;
+				if (file_exists($rotatedLogFileURL)) {
+					if ($logFileCount == $this->logFilesToKeep) {
+						unlink($rotatedLogFileURL);
+					} else {
+						rename($rotatedLogFileURL, $this->logFileURL . '.' . ($logFileCount+1));
+					}
+				}
+			}
+			rename($this->logFileURL, $this->logFileURL . '.1');
+		}
+
+		unlink($this->logFileURL . '.lock');
 	}
 
 	/**
