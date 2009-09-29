@@ -169,6 +169,10 @@ final class Bootstrap {
 	public function __construct($context = 'Production') {
 		$this->ensureRequiredEnvironment();
 		$this->context = (strlen($context) === 0) ? 'Production' : $context;
+
+		if (!(is_dir(FLOW3_PATH_CONFIGURATION . $context) && \is_readable(FLOW3_PATH_CONFIGURATION . $context))) {
+			exit('FLOW3: Unknown context "' . $context . '" provided, check your configuration!  (Error #1254216868)');
+		}
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
 	}
 
@@ -425,7 +429,7 @@ final class Bootstrap {
 	protected function monitorClassFiles() {
 		$monitor = $this->objectManager->getObject('F3\FLOW3\Monitor\FileMonitor', 'FLOW3_ClassFiles');
 
-		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+		foreach ($this->packageManager->getActivePackages() as $package) {
 			$classesPath = $package->getClassesPath();
 			if (is_dir($classesPath)) {
 				$monitor->monitorDirectory($classesPath);
@@ -495,7 +499,7 @@ final class Bootstrap {
 		$this->reflectionService->injectSystemLogger($this->systemLogger);
 
 		$availableClassNames = array();
-		foreach ($this->packageManager->getActivePackages() as $packageKey => $package) {
+		foreach ($this->packageManager->getActivePackages() as $package) {
 			foreach (array_keys($package->getClassFiles()) as $className) {
 				$availableClassNames[] = $className;
 			}
@@ -570,7 +574,7 @@ final class Bootstrap {
 			$repository = $this->objectManager->getObject('F3\PHPCR\RepositoryInterface');
 			$session = $repository->login();
 			$persistenceBackend = $this->objectManager->getObject('F3\FLOW3\Persistence\BackendInterface', $session);
-			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface');
+			$persistenceManager = $this->objectManager->getObject('F3\FLOW3\Persistence\ManagerInterface', $persistenceBackend);
 			$persistenceManager->initialize();
 		}
 	}
