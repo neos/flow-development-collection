@@ -177,40 +177,67 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
     </itemizedlist>
   </section>
 
-  <section xml:id="flow3.persistenceframework.namingconventions">
-    <title>Conventions for File and Class Names</title>
+  <section>
+    <title>Using the Persistence framework in your code</title>
 
-    <para>To allow FLOW3 to detect the object type a repository is responsible
-    for certain conventions need to be followed:<itemizedlist>
-        <listitem>
-          <para>Domain models should reside in a <filename>Model</filename>
-          directory</para>
-        </listitem>
+    <section>
+      <title>On the relationship between adding and retrieving</title>
 
-        <listitem>
-          <para>Repositories should reside in a
-          <filename>Repository</filename> directory and be named
-          <classname>*Repository</classname></para>
-        </listitem>
+      <para>When you <methodname>add()</methodname> something to a repository
+      and do a <methodname>findAll()</methodname> immediately afterwards, you
+      might be surprised: the freshly added object will not be found. This is
+      not a bug, but a decision we took on purpose. Here is why.</para>
 
-        <listitem>
-          <para>Aside from <literal>Model</literal> versus
-          <literal>Repository</literal> the qualified class class names should
-          be the same for corresponding classes</para>
-        </listitem>
+      <para>When you add an object to a repository, it is added to the
+      internal identity map and will be persisted later (when
+      <methodname>persistAll()</methodname> is called). It is therefore still
+      in a transient state - but all query operations go directly to the
+      underlying data storage, because we need to check that anyway. So
+      instead of trying to query the in-memory objects we decided to ignore
+      transient objects for queries<footnote>
+          <para>An alternative would have been to do an implicit persist call
+          before a query, but that seemed to be confusing.</para>
+        </footnote>.</para>
 
-        <listitem>
-          <para>Repositories must implement
-          <classname>\F3\FLOW3\Persistence\Repository</classname> (which is
-          the case when extending
-          <classname>\F3\FLOW3\Persistence\Repository</classname>)</para>
-        </listitem>
-      </itemizedlist></para>
+      <para>If you need to query for objects you just created, feel free to
+      inject the <classname>Persistence\Manager</classname> and use
+      <methodname>persistAll()</methodname> in your code.</para>
+    </section>
 
-    <example>
-      <title>Conventions for model and repository naming</title>
+    <section xml:id="flow3.persistenceframework.namingconventions">
+      <title>Conventions for File and Class Names</title>
 
-      <literallayout>\F3
+      <para>To allow FLOW3 to detect the object type a repository is
+      responsible for certain conventions need to be followed:<itemizedlist>
+          <listitem>
+            <para>Domain models should reside in a <filename>Model</filename>
+            directory</para>
+          </listitem>
+
+          <listitem>
+            <para>Repositories should reside in a
+            <filename>Repository</filename> directory and be named
+            <classname>*Repository</classname></para>
+          </listitem>
+
+          <listitem>
+            <para>Aside from <literal>Model</literal> versus
+            <literal>Repository</literal> the qualified class class names
+            should be the same for corresponding classes</para>
+          </listitem>
+
+          <listitem>
+            <para>Repositories must implement
+            <classname>\F3\FLOW3\Persistence\Repository</classname> (which is
+            the case when extending
+            <classname>\F3\FLOW3\Persistence\Repository</classname>)</para>
+          </listitem>
+        </itemizedlist></para>
+
+      <example>
+        <title>Conventions for model and repository naming</title>
+
+        <literallayout>\F3
   \Blog
     \Domain
       \Model
@@ -231,104 +258,105 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
       PageRepository
     SiteRepository
     StructureNodeRepository</literallayout>
-    </example>
-  </section>
+      </example>
+    </section>
 
-  <section xml:id="flow3.persistenceframework.persistenceannotations">
-    <title>Persistence-related Annotations</title>
+    <section xml:id="flow3.persistenceframework.persistenceannotations">
+      <title>Persistence-related Annotations</title>
 
-    <para>The following table lists all annotations used by the persistence
-    framework with their name, scope and meaning:<table>
-        <title>Persistence-related code annotations</title>
+      <para>The following table lists all annotations used by the persistence
+      framework with their name, scope and meaning:<table>
+          <title>Persistence-related code annotations</title>
 
-        <tgroup cols="3">
-          <colspec colwidth="1*"/>
+          <tgroup cols="3">
+            <colspec colwidth="1*"/>
 
-          <colspec colwidth="1*"/>
+            <colspec colwidth="1*"/>
 
-          <colspec colwidth="6*"/>
+            <colspec colwidth="6*"/>
 
-          <thead>
-            <row>
-              <entry>Annotation</entry>
+            <thead>
+              <row>
+                <entry>Annotation</entry>
 
-              <entry>Scope</entry>
+                <entry>Scope</entry>
 
-              <entry>Meaning</entry>
-            </row>
-          </thead>
+                <entry>Meaning</entry>
+              </row>
+            </thead>
 
-          <tbody>
-            <row>
-              <entry>@entity</entry>
+            <tbody>
+              <row>
+                <entry>@entity</entry>
 
-              <entry>Class</entry>
+                <entry>Class</entry>
 
-              <entry>Declares a class as an Entity.</entry>
-            </row>
+                <entry>Declares a class as an Entity.</entry>
+              </row>
 
-            <row>
-              <entry>@valueobject</entry>
+              <row>
+                <entry>@valueobject</entry>
 
-              <entry>Class</entry>
+                <entry>Class</entry>
 
-              <entry>Declares a class as a Value Object, allowing the
-              persistence framework to reuse an existing object if one
-              exists.</entry>
-            </row>
+                <entry>Declares a class as a Value Object, allowing the
+                persistence framework to reuse an existing object if one
+                exists.</entry>
+              </row>
 
-            <row>
-              <entry>@var</entry>
+              <row>
+                <entry>@var</entry>
 
-              <entry>Variable</entry>
+                <entry>Variable</entry>
 
-              <entry>Is used to detect the type a variable has.</entry>
-            </row>
+                <entry>Is used to detect the type a variable has.</entry>
+              </row>
 
-            <row>
-              <entry>@transient</entry>
+              <row>
+                <entry>@transient</entry>
 
-              <entry>Variable</entry>
+                <entry>Variable</entry>
 
-              <entry>Makes the persistence framework ignore the variable.
-              Neither will it's value be persisted, nor will it be touched
-              during reconstitution.</entry>
-            </row>
+                <entry>Makes the persistence framework ignore the variable.
+                Neither will it's value be persisted, nor will it be touched
+                during reconstitution.</entry>
+              </row>
 
-            <row>
-              <entry>@uuid</entry>
+              <row>
+                <entry>@uuid</entry>
 
-              <entry>Variable</entry>
+                <entry>Variable</entry>
 
-              <entry>Marks the variable as being the object uuid. This makes
-              the persistence backend use the value of this variable as
-              identifier for the internal representation of the object.
-              <emphasis>You must make sure your identifier is an
-              UUID.</emphasis></entry>
-            </row>
+                <entry>Marks the variable as being the object uuid. This makes
+                the persistence backend use the value of this variable as
+                identifier for the internal representation of the object.
+                <emphasis>You must make sure your identifier is an
+                UUID.</emphasis></entry>
+              </row>
 
-            <row>
-              <entry>@identity</entry>
+              <row>
+                <entry>@identity</entry>
 
-              <entry>Variable</entry>
+                <entry>Variable</entry>
 
-              <entry>Marks the variable as being relevant for determining the
-              identity of an object in the domain.</entry>
-            </row>
+                <entry>Marks the variable as being relevant for determining
+                the identity of an object in the domain.</entry>
+              </row>
 
-            <row>
-              <entry>@lazy</entry>
+              <row>
+                <entry>@lazy</entry>
 
-              <entry>Variable</entry>
+                <entry>Variable</entry>
 
-              <entry>When reconstituting the value of this property will be
-              loaded only when the property is used. Note: This is only
-              supported for properties of type
-              <classname>\SplObjectStorage</classname>.</entry>
-            </row>
-          </tbody>
-        </tgroup>
-      </table></para>
+                <entry>When reconstituting the value of this property will be
+                loaded only when the property is used. Note: This is only
+                supported for properties of type
+                <classname>\SplObjectStorage</classname>.</entry>
+              </row>
+            </tbody>
+          </tgroup>
+        </table></para>
+    </section>
   </section>
 
   <section xml:id="flow3.persistenceframework.insidepersistence">
@@ -424,16 +452,16 @@ class BlogRepository extends \F3\FLOW3\Persistence\Repository {
             used like the real thing, but it will be costly (plus the
             limitations mentioned above continue to apply).</para>
           </listitem>
-        </itemizedlist>To explicitly "activate" a lazy loaded property you can
-      use code like the following:</para>
+        </itemizedlist></para>
 
-      <example>
-        <title>Explictly activating a LazyLoadingProxy</title>
+      <para>To explicitly "activate" a lazy loaded property you can use code
+      like the following:<example>
+          <title>Explictly activating a LazyLoadingProxy</title>
 
-        <programlisting language="php">if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
+          <programlisting language="php">if ($this-&gt;lazyProperty instanceof \F3\FLOW3\Persistence\LazyLoadingProxy) {
   $this-&gt;lazyProperty-&gt;_loadRealInstance();
 }</programlisting>
-      </example>
+        </example></para>
     </section>
   </section>
 </chapter>
