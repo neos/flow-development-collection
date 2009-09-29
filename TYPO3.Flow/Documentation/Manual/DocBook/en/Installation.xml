@@ -19,41 +19,48 @@
     <title>Requirements</title>
 
     <para>The following minimum requirements are operating system independent.
-    Developers told about working instances on Debian Linux, MacOS, Windows
-    XP, Windows Vista and Windows 7.</para>
+    Developers report working setups on Debian Linux, MacOS, Windows XP and
+    Windows Vista and Windows 7.</para>
 
     <itemizedlist>
       <listitem>
-        <para>PHP 5.3.0 (but not PHP 6)</para>
+        <para>PHP 5.3.0 or newer (but not PHP 6)<itemizedlist>
+            <listitem>
+              <para>Modules: mbstring, pdo_sqlite</para>
+            </listitem>
+
+            <listitem>
+              <para>Configuration: magic_quotes_gpc = off</para>
+            </listitem>
+          </itemizedlist></para>
       </listitem>
 
       <listitem>
-        <para>PHP modules: mbstring, pdo_sqlite</para>
-      </listitem>
+        <para>Apache<itemizedlist>
+            <listitem>
+              <para>Apache modules: mod_rewrite</para>
+            </listitem>
 
-      <listitem>
-        <para>PHP configuration: magic_quotes_gpc = off</para>
-      </listitem>
-
-      <listitem>
-        <para>Apache modules: mod_rewrite</para>
-      </listitem>
-
-      <listitem>
-        <para>Apache configuration: AllowOverride FileInfo</para>
+            <listitem>
+              <para>Apache configuration: AllowOverride FileInfo</para>
+            </listitem>
+          </itemizedlist></para>
       </listitem>
     </itemizedlist>
 
     <para>IIS7 on Windows 7 with URL Rewrite has succesfully been tested as
-    well.</para>
-
-    <para>Other webservers could work, but have not been tested until
-    now.</para>
-
-    <para>We have written <link linkend="flow3.installingphp53">installation
-    instructions for PHP 5.3</link> that might be helpful for you. Also there
-    is a (probably incomplete) list of <link linkend="flow3.idesforphp53">IDEs
-    supporting PHP 5.3</link>.</para>
+    well. Other webservers could work, but have not been tested until
+    now.<warning>
+        <para>XAMPP 1.7.2a on MacOS does <emphasis>not</emphasis> work, it
+        complains about syntax errors in the source files, probably caused by
+        a bug in the implementation of the zend string optimizer.</para>
+      </warning><tip>
+        <para>We have written <link
+        linkend="flow3.installingphp53">installation instructions for PHP
+        5.3</link> that might be helpful for you. Also there is a (probably
+        incomplete) list of <link linkend="flow3.idesforphp53">IDEs supporting
+        PHP 5.3</link>.</para>
+      </tip></para>
   </section>
 
   <section xml:id="flow3.installation.installationofflow3">
@@ -102,7 +109,7 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="WelcomeScreen.png"
-                         scalefit="1" width="100%"></imagedata>
+                         scalefit="1" width="100%"/>
             </imageobject>
           </mediaobject>
         </screenshot>
