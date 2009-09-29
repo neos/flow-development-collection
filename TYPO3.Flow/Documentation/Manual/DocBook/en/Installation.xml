@@ -19,8 +19,8 @@
     <title>Requirements</title>
 
     <para>The following minimum requirements are operating system independent.
-    Developers told about working instances on Debian Linux, MacOS, Windows XP
-    and Windows Vista.</para>
+    Developers told about working instances on Debian Linux, MacOS, Windows
+    XP, Windows Vista and Windows 7.</para>
 
     <itemizedlist>
       <listitem>
@@ -44,8 +44,11 @@
       </listitem>
     </itemizedlist>
 
-    <para>(Other webservers (f.e. IIS) could work, but have not been tested
-    until now)</para>
+    <para>IIS7 on Windows 7 with URL Rewrite has succesfully been tested as
+    well.</para>
+
+    <para>Other webservers could work, but have not been tested until
+    now.</para>
 
     <para>We have written <link linkend="flow3.installingphp53">installation
     instructions for PHP 5.3</link> that might be helpful for you. Also there
@@ -99,7 +102,7 @@
           <mediaobject>
             <imageobject>
               <imagedata contentdepth="100%" fileref="WelcomeScreen.png"
-                         scalefit="1" width="100%"/>
+                         scalefit="1" width="100%"></imagedata>
             </imageobject>
           </mediaobject>
         </screenshot>
@@ -109,19 +112,12 @@
       <para>On Windows systems PHP causes problems with long filenames. To
       avoid errors you should change the configuration of the cache to a place
       that leads to a very short absolute filepath, for example
-      <filename>C:\t\</filename> or <filename>C:\t\x\</filename> (if you want
-      to install more than one instance of FLOW3). Do that by adding the
-      following lines to the file
-      <filename>Configuration/FLOW3.yaml</filename> in your FLOW3-Distribution
-      (the indenting must be done with two spaces):<programlisting
-      language="yaml">utility:
+      <filename>C:\temp\</filename>. Do that by adding the following lines to
+      the file <filename>Configuration/FLOW3.yaml</filename> in your
+      FLOW3-Distribution (the indenting must be done with two
+      spaces):<programlisting language="yaml">utility:
   environment:
-    temporaryDirectoryBase: C:/t/x/</programlisting></para>
-    </tip>
-
-    <tip>
-      <para>If (on Windows) you see the XAMPP default page after calling the
-      FLOW3 URI, you might have forgotten to add the port number.</para>
+    temporaryDirectoryBase: C:/temp/</programlisting></para>
     </tip>
 
     <note>
