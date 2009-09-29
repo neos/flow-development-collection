@@ -572,41 +572,19 @@ extension=php_pdo_sqlite.dll</screen>
     to click at might be wrong sometimes. So please be patient, if you are
     missing something and open an issue on that on forge.</para>
 
-    <para>This is based on Windows 7 (Ultimate or Professional) and IIS7. You
-    won't be able to do the same things on Windows XP as you can't install
-    IIS7 there. But Windows Vista might work in a similar way.</para>
+    <para>This is based on Windows 7 Ultimate and IIS7. You won't be able to
+    do the same things on Windows XP as you can't install IIS7 there. But
+    Windows Vista might work in a similar way.</para>
 
     <para>Depending on your user access control settings you will be asked
     several times wether you want to allow doing things during the
     installation proccess.</para>
 
-    <para></para>
-
-    <para>Microsoft Web Platform Installer</para>
-
-    <para>WPI launcher für IIS &amp; Co. mit urlRewrite</para>
-
-    <para>php 5.3 VC9 not thread save .zip -&gt; c:\Programme
-    x86\php5.3</para>
-
-    <para>Handler für php5.3 hinzufügen</para>
-
-    <para>FastCGI-Einstellungen (oberste Ebene!): php.ini-pfad setzen</para>
-
-    <para>php.ini ändern, appPool neu starten</para>
-
-    <para>FLOW3 herunterladen (evtl. gleich Benutzerrechte ändern)</para>
-
-    <para>Website hinzufügen (= virtueller Host)</para>
-
-    <para>.htaccess in urlRewrite importieren</para>
-
-    <para>hosts-Datei anpassen (Editor als Administrator öffnen)</para>
-
     <procedure>
       <step>
         <para>Install PHP using the Web Plattform Installer (WPI). You can
-        download it at ?????.</para>
+        download it at
+        <uri>http://www.microsoft.com/web/Downloads/platform.aspx</uri>.</para>
 
         <para>Choose <guilabel>Web Platform</guilabel> on the left and check
         the checkbox for PHP inside the <guilabel>Frameworks and
@@ -630,7 +608,7 @@ extension=php_pdo_sqlite.dll</screen>
         <uri>http://windows.php.net/download/</uri>. Choose the
         <guilabel>VC9</guilabel> and <guilabel>non thread save</guilabel>
         version. Unzip it to <filename>C:\Program Files
-        (x86)\PHP5.3</filename>. </para>
+        (x86)\PHP5.3</filename>.</para>
       </step>
 
       <step>
@@ -649,6 +627,9 @@ extension=php_pdo_sqlite.dll</screen>
         <filename>C:\Program Files (x86)\PHP5.3\php-cgi.exe</filename>. Doing
         this you will be asked, if some FastCGI-application should be added.
         Confirm this.</para>
+
+        <para>No you can remove the "old" PHP Handler from the Websites you
+        want to use with PHP 5.3.</para>
       </step>
 
       <step>
@@ -656,6 +637,48 @@ extension=php_pdo_sqlite.dll</screen>
         <guilabel>FastCGI settings</guilabel>. You have to add the environment
         variable <guilabel>PHPRC</guilabel> to the PHP5.3 settings. Do this
         similar to the PHP settings.</para>
+      </step>
+
+      <step>
+        <para>Configure php.ini: copy <filename>C:\Program Files
+        (x86)\PHP5.3\php.ini-development</filename> to <filename>C:\Program
+        Files (x86)\PHP5.3\php.ini</filename> and add/change this
+        settings:</para>
+
+        <itemizedlist>
+          <listitem>
+            <para>set timezone: <literal>date.timezone =
+            'Europe/Berlin'</literal></para>
+          </listitem>
+
+          <listitem>
+            <para>set extension-dir: <literal>extension_dir =
+            "ext"</literal></para>
+          </listitem>
+
+          <listitem>
+            <para>activate extensions:</para>
+
+            <screen>extension=php_mbstring.dll
+extension=php_pdo_sqlite.dll
+</screen>
+          </listitem>
+
+          <listitem>
+            <para>some settings you might want to look at are:</para>
+
+            <screen>fastcgi.impersonate = 1
+cgi.fix_pathinfo = 1
+cgi.force_redirect = 0
+allow_url_fopen = Off
+allow_url_include = Off
+fastcgi.logging = 0
+</screen>
+          </listitem>
+        </itemizedlist>
+
+        <para>You have to restart the Default Web Site in the IIS-Manager to
+        make the new settings having an effect.</para>
       </step>
 
       <step>
@@ -671,8 +694,37 @@ extension=php_pdo_sqlite.dll</screen>
         <filename>C:\inetpub\wwwroot\flow3\Web</filename> as physical path and
         add some hostname like <uri>flow3.local</uri>. You need an entry for
         that host in the hosts file
-        (<filename>C:\Windows\System32\drivers\etc\hosts</filename>)</para>
+        (<filename>C:\Windows\System32\drivers\etc\hosts</filename>):
+        <literal>127.0.0.1 flow3.local</literal>.</para>
+      </step>
+
+      <step>
+        <para>Import the rewrite Rules from the .htaccess-file: Click on your
+        new Site in the IIS-Manager (on the left). Doubleklick on
+        <guilabel>URL Rewrite</guilabel> on the right. Click on
+        <guilabel>import rule...</guilabel>. Choose the
+        <filename>.htaccess</filename> file from the <filename>Web</filename>
+        diroctory of your FLOW3 installation and say
+        <guilabel>Import</guilabel>. Remove the line from the .htaccess rules
+        that causes the error (it's about symlinks, not needed for windows)
+        and apply (in the top right corner). Two rules have been added.</para>
+      </step>
+
+      <step>
+        <para>Restart the Site to make sure that the php.ini changes have an
+        effect.</para>
       </step>
     </procedure>
+
+    <para>TODO: Set environment variables for contexts.</para>
+
+    <note>
+      <para>If you want to change the hosts-file you might get in trouble with
+      uac (user access control) from windows: you can open the file, but you
+      are not allowed to save it, and that "Do you want to
+      allow...blahblah"-lightbox doesn't appear also. In that case you have to
+      open the editor as administrator (right click -&gt; open as
+      administrator) and then open the file with the editor.</para>
+    </note>
   </section>
 </appendix>
