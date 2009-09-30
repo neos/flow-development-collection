@@ -94,14 +94,14 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Sets the maximum log file size, if the logfile is bigger, a new one
 	 * is started.
 	 *
-	 * @param integer $maximumLogFileSize Maximum size in MB
+	 * @param integer $maximumLogFileSize Maximum size in bytes
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 * @see setLogFilesToKeep()
 	 */
 	public function setMaximumLogFileSize($maximumLogFileSize) {
-		$this->maximumLogFileSize = $maximumLogFileSize * 1024 * 1024;
+		$this->maximumLogFileSize = $maximumLogFileSize;
 	}
 
 	/**

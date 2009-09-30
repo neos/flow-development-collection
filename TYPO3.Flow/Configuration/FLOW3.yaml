@@ -58,7 +58,7 @@ log:
        logFileURL: %FLOW3_PATH_DATA%Logs/%FLOW3_SAPITYPE%/FLOW3_Production.log
        createParentDirectories: y
        severityThreshold: %LOG_INFO%
-       maximumLogFileSize: 10
+       maximumLogFileSize: 10485760
        logFilesToKeep: 1
 
 locale:
