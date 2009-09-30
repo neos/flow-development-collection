@@ -40,7 +40,7 @@ namespace F3\FLOW3\Cache\Backend;
  * Each key is prepended with a prefix. By default prefix consists from two parts
  * separated by underscore character and ends in yet another underscore character:
  * - "FLOW3"
- * - MD5 of script path and filename and SAPI name
+ * - MD5 of SAPI type, path to FLOW3 and user running FLOW3
  * This prefix makes sure that keys from the different installations do not
  * conflict.
  *
@@ -106,11 +106,13 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 	 *
 	 * @param $cache \F3\FLOW3\Cache\Frontend\FrontendInterface
 	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function setCache(\F3\FLOW3\Cache\Frontend\FrontendInterface $cache) {
 		parent::setCache($cache);
-		$this->identifierPrefix = 'FLOW3_' . md5($cache->getIdentifier() . $this->environment->getScriptPathAndFilename() . $this->environment->getSAPIName()) . '_';
+		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');
+		$pathHash = substr(md5(FLOW3_PATH_WEB . $this->environment->getSAPIName() . $processUser['name'] . $this->context), 0, 12);
+		$this->identifierPrefix = 'FLOW3_' . $pathHash;
 	}
 
 	/**
