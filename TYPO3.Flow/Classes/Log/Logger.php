@@ -78,7 +78,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * Writes the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value, one of the SEVERITY_* constants
+	 * @param integer $severity An integer value, one of the LOG_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -87,7 +87,7 @@ class Logger implements \F3\FLOW3\Log\SystemLoggerInterface {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function log($message, $severity = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+	public function log($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($packageKey === NULL) {
 			$backtrace = debug_backtrace(FALSE);
 			$className = isset($backtrace[1]['class']) ? $backtrace[1]['class'] : '';

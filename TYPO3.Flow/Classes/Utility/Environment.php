@@ -385,7 +385,7 @@ class Environment {
 
 		$maximumPathLength = $this->getMaximumPathLength();
 		if (strlen($temporaryDirectoryBase) > ($maximumPathLength - 230)) {
-			$this->systemLogger->log('The path to your temporary directory is ' . strlen($temporaryDirectoryBase) . ' characters long. The maximum path length of your system is only ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
+			$this->systemLogger->log('The path to your temporary directory is ' . strlen($temporaryDirectoryBase) . ' characters long. The maximum path length of your system is only ' . $maximumPathLength . '. Please consider setting the temporaryDirectoryBase option to a shorter path.', LOG_WARNING);
 		}
 
 		$processUser = extension_loaded('posix') ? posix_getpwuid(posix_geteuid()) : array('name' => 'default');

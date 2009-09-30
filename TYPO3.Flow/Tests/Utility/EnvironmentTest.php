@@ -141,7 +141,7 @@ class EnvironmentTest extends \F3\Testing\BaseTestCase {
 		$environment->expects($this->any())->method('getMaximumPathLength')->will($this->returnValue(248));
 
 		$mockSystemLogger = $this->getMock('F3\FLOW3\Log\SystemLoggerInterface');
-		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($path) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', \F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING);
+		$mockSystemLogger->expects($this->once())->method('log')->with('The path to your temporary directory is ' . strlen($path) . ' characters long. The maximum path length of your system is only 248. Please consider setting the temporaryDirectoryBase option to a shorter path.', LOG_WARNING);
 		$environment->injectSystemLogger($mockSystemLogger);
 
 		$environment->_call('createTemporaryDirectory', $path);

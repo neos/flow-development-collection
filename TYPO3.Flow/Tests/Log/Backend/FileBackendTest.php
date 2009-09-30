@@ -94,10 +94,10 @@ class FileBackendTest extends \F3\Testing\BaseTestCase {
 	public function appendIgnoresMessagesAboveTheSeverityThreshold() {
 		$logFileURL = \vfsStream::url('testDirectory') . '/test.log';
 		$backend = new \F3\FLOW3\Log\Backend\FileBackend(array('logFileURL' => $logFileURL));
-		$backend->setSeverityThreshold(\F3\FLOW3\Log\LoggerInterface::SEVERITY_EMERGENCY);
+		$backend->setSeverityThreshold(LOG_EMERG);
 		$backend->open();
 
-		$backend->append('foo', \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO);
+		$backend->append('foo', LOG_INFO);
 
 		$this->assertSame(0, \vfsStreamWrapper::getRoot()->getChild('test.log')->size());
 	}

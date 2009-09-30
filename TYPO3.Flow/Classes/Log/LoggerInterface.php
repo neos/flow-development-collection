@@ -25,26 +25,22 @@ namespace F3\FLOW3\Log;
 /**
  * Contract for a basic logger interface
  *
+ * The severities are (according to RFC3164) the PHP constants:
+ *   LOG_EMERG   # Emergency: system is unusable
+ *   LOG_ALERT   # Alert: action must be taken immediately
+ *   LOG_CRIT    # Critical: critical conditions
+ *   LOG_ERR     # Error: error conditions
+ *   LOG_WARNING # Warning: warning conditions
+ *   LOG_NOTICE  # Notice: normal but significant condition
+ *   LOG_INFO    # Informational: informational messages
+ *   LOG_DEBUG   # Debug: debug-level messages
+ *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @author Robert Lemke <robert@typo3.org>
  * @scope prototype
  */
 interface LoggerInterface {
-
-	/**
-	 * Severities according to RFC3164
-	 *
-	 * @see http://www.faqs.org/rfcs/rfc3164.html
-	 */
-	const SEVERITY_EMERGENCY = LOG_EMERG; # Emergency: system is unusable
-	const SEVERITY_ALERT = LOG_ALERT;     # Alert: action must be taken immediately
-	const SEVERITY_CRITICAL = LOG_CRIT;   # Critical: critical conditions
-	const SEVERITY_ERROR = LOG_ERR;       # Error: error conditions
-	const SEVERITY_WARNING = LOG_WARNING; # Warning: warning conditions
-	const SEVERITY_NOTICE = LOG_NOTICE;   # Notice: normal but significant condition
-	const SEVERITY_INFO = LOG_INFO;       # Informational: informational messages
-	const SEVERITY_DEBUG = LOG_DEBUG;     # Debug: debug-level messages
 
 	/**
 	 * Adds a backend to which the logger sends the logging data
@@ -70,7 +66,7 @@ interface LoggerInterface {
 	 * Writes the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity An integer value, one of the SEVERITY_* constants
+	 * @param integer $severity An integer value, one of the LOG_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -78,7 +74,7 @@ interface LoggerInterface {
 	 * @return void
 	 * @api
 	 */
-	public function log($message, $severity = self::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
+	public function log($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL);
 
 }
 ?>

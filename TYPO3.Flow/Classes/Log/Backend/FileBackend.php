@@ -127,14 +127,14 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 */
 	public function open() {
 		$this->severityLabels = array(
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_EMERGENCY => 'EMERGENCY',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_ALERT     => 'ALERT    ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_CRITICAL  => 'CRITICAL ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_ERROR     => 'ERROR    ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_WARNING   => 'WARNING  ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_NOTICE    => 'NOTICE   ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO      => 'INFO     ',
-			\F3\FLOW3\Log\LoggerInterface::SEVERITY_DEBUG     => 'DEBUG    ',
+			LOG_EMERG   => 'EMERGENCY',
+			LOG_ALERT   => 'ALERT    ',
+			LOG_CRIT    => 'CRITICAL ',
+			LOG_ERR     => 'ERROR    ',
+			LOG_WARNING => 'WARNING  ',
+			LOG_NOTICE  => 'NOTICE   ',
+			LOG_INFO    => 'INFO     ',
+			LOG_DEBUG   => 'DEBUG    ',
 		);
 
 		if (file_exists($this->logFileURL) && $this->maximumLogFileSize > 0 && filesize($this->logFileURL) > $this->maximumLogFileSize) {
@@ -200,7 +200,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * Appends the given message along with the additional information into the log.
 	 *
 	 * @param string $message The message to log
-	 * @param integer $severity One of the SEVERITY_* constants
+	 * @param integer $severity One of the LOG_* constants
 	 * @param mixed $additionalData A variable containing more information about the event to be logged
 	 * @param string $packageKey Key of the package triggering the log (determined automatically if not specified)
 	 * @param string $className Name of the class triggering the log (determined automatically if not specified)
@@ -209,7 +209,7 @@ class FileBackend extends \F3\FLOW3\Log\Backend\AbstractBackend {
 	 * @author Robert Lemke <robert@typo3.org>
 	 * @api
 	 */
-	public function append($message, $severity = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
+	public function append($message, $severity = LOG_INFO, $additionalData = NULL, $packageKey = NULL, $className = NULL, $methodName = NULL) {
 		if ($severity > $this->severityThreshold) {
 			return;
 		}

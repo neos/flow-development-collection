@@ -31,10 +31,10 @@ namespace F3\FLOW3\Log\Backend;
 abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface {
 
 	/**
-	 * One of the SEVERITY_* constants. Anything below that will be filtered out.
+	 * One of the LOG_* constants. Anything below that will be filtered out.
 	 * @var integer
 	 */
-	protected $severityThreshold = \F3\FLOW3\Log\LoggerInterface::SEVERITY_INFO;
+	protected $severityThreshold = LOG_INFO;
 
 	/**
 	 * Constructs this log backend
@@ -57,7 +57,7 @@ abstract class AbstractBackend implements \F3\FLOW3\Log\Backend\BackendInterface
 	/**
 	 * The maximum severity to log, anything less severe will not be logged.
 	 *
-	 * @param integer $severityThreshold One of the SEVERITY_* constants
+	 * @param integer $severityThreshold One of the LOG_* constants
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
