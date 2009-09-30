@@ -123,9 +123,6 @@ resource:
     # The strategy to use when caching files for public resources. Specify either
     # "none", "package" or "file"
     strategy: package
-    
-    # The lifetime for remote resource caching in seconds, 0 disables it
-    lifetime: 3600
 
 security:
 
