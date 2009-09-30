@@ -28,16 +28,16 @@ namespace F3\FLOW3\MVC\Controller;
  * @version $Id: ActionControllerTest.php 3131 2009-09-07 14:05:04Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class FlashMessagesTest extends \F3\Testing\BaseTestCase {
+class FlashMessageContainerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 *
-	 * @var F3\FLOW3\MVC\Controller\FlashMessages
+	 * @var F3\FLOW3\MVC\Controller\FlashMessageContainer
 	 */
-	protected $flashMessages;
+	protected $flashMessageContainer;
 
 	public function setUp() {
-		$this->flashMessages = new \F3\FLOW3\MVC\Controller\FlashMessages();
+		$this->flashMessageContainer = new \F3\FLOW3\MVC\Controller\FlashMessageContainer();
 	}
 
 	/**
@@ -47,18 +47,18 @@ class FlashMessagesTest extends \F3\Testing\BaseTestCase {
 	public function addedFlashMessageCanBeReadOutAgain() {
 		$message1 = 'This is a test message';
 		$message2 = 'This is another test message';
-		$this->flashMessages->add($message1);
-		$this->flashMessages->add($message2);
-		$this->assertEquals(array($message1, $message2), $this->flashMessages->getAll());
+		$this->flashMessageContainer->add($message1);
+		$this->flashMessageContainer->add($message2);
+		$this->assertEquals(array($message1, $message2), $this->flashMessageContainer->getAll());
 	}
-	
+
 	/**
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function addingSomethingDifferentThanStringsThrowsException() {
-		$this->flashMessages->add(new \stdClass());
+		$this->flashMessageContainer->add(new \stdClass());
 	}
 
 	/**
@@ -67,9 +67,9 @@ class FlashMessagesTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function flushResetsFlashMessage() {
 		$message1 = 'This is a test message';
-		$this->flashMessages->add($message1);
-		$this->flashMessages->flush();
-		$this->assertEquals(array(), $this->flashMessages->getAll());
+		$this->flashMessageContainer->add($message1);
+		$this->flashMessageContainer->flush();
+		$this->assertEquals(array(), $this->flashMessageContainer->getAll());
 	}
 
 	/**
@@ -79,10 +79,10 @@ class FlashMessagesTest extends \F3\Testing\BaseTestCase {
 	public function getAllAndFlushFetchesAllEntriesAndFlushesTheFlashMessages() {
 		$message1 = 'This is a test message';
 		$message2 = 'This is another test message';
-		$this->flashMessages->add($message1);
-		$this->flashMessages->add($message2);
-		$this->assertEquals(array($message1, $message2), $this->flashMessages->getAllAndFlush());
-		$this->assertEquals(array(), $this->flashMessages->getAll());
+		$this->flashMessageContainer->add($message1);
+		$this->flashMessageContainer->add($message2);
+		$this->assertEquals(array($message1, $message2), $this->flashMessageContainer->getAllAndFlush());
+		$this->assertEquals(array(), $this->flashMessageContainer->getAll());
 	}
 
 }

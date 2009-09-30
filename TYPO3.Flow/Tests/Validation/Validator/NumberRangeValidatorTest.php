@@ -36,7 +36,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberRangeValidatorReturnsTrueForASimpleIntegerInRange() {
 		$numberRangeValidator = new \F3\FLOW3\Validation\Validator\NumberRangeValidator();
-		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 1000));
+		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
 
 		$this->assertTrue($numberRangeValidator->isValid(10.5));
 	}
@@ -47,7 +47,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberRangeValidatorReturnsFalseForANumberOutOfRange() {
 		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 1000));
+		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
 		$this->assertFalse($numberRangeValidator->isValid(1000.1));
 	}
 
@@ -57,7 +57,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberRangeValidatorReturnsTrueForANumberInReversedRange() {
 		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('startRange' => 1000, 'endRange' => 0));
+		$numberRangeValidator->setOptions(array('minimum' => 1000, 'maximum' => 0));
 		$this->assertTrue($numberRangeValidator->isValid(100));
 	}
 
@@ -67,7 +67,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function numberRangeValidatorReturnsFalseForAString() {
 		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
-		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 1000));
+		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 1000));
 		$this->assertFalse($numberRangeValidator->isValid('not a number'));
 	}
 
@@ -78,7 +78,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	public function numberRangeValidatorCreatesTheCorrectErrorForANumberOutOfRange() {
 		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
 		$numberRangeValidator->expects($this->once())->method('addError')->with('The given subject was not in the valid range (1 - 42). Got: "4711"', 1221561046);
-		$numberRangeValidator->setOptions(array('startRange' => 1, 'endRange' => 42));
+		$numberRangeValidator->setOptions(array('minimum' => 1, 'maximum' => 42));
 		$numberRangeValidator->isValid(4711);
 	}
 
@@ -89,7 +89,7 @@ class NumberRangeValidatorTest extends \F3\Testing\BaseTestCase {
 	public function numberRangeValidatorCreatesTheCorrectErrorForAStringSubject() {
 		$numberRangeValidator = $this->getMock('F3\FLOW3\Validation\Validator\NumberRangeValidator', array('addError'), array(), '', FALSE);
 		$numberRangeValidator->expects($this->once())->method('addError')->with('The given subject was not a valid number. Got: "this is not between 0 an 42"', 1221563685);
-		$numberRangeValidator->setOptions(array('startRange' => 0, 'endRange' => 42));
+		$numberRangeValidator->setOptions(array('minimum' => 0, 'maximum' => 42));
 		$numberRangeValidator->isValid('this is not between 0 an 42');
 	}
 }

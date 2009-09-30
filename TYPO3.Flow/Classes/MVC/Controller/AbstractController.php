@@ -103,13 +103,13 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	protected $supportedRequestTypes = array('F3\FLOW3\MVC\Request');
 
 	/**
-	 * The flash messages. Use $this->flashMessages->add(...) to add a new Flash
+	 * The flash messages. Use $this->flashMessageContainer->add(...) to add a new Flash
 	 * Message.
 	 *
-	 * @var \F3\FLOW3\MVC\Controller\FlashMessages
+	 * @var \F3\FLOW3\MVC\Controller\FlashMessageContainer
 	 * @api
 	 */
-	protected $flashMessages;
+	protected $flashMessageContainer;
 
 	/**
 	 * Constructs the controller.
@@ -169,12 +169,12 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 	/**
 	 * Injects the flash messages
 	 *
-	 * @param \F3\FLOW3\MVC\Controller\FlashMessages $flashMessages the flash messages
+	 * @param \F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer the flash message container
 	 * @return void
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
-	public function injectFlashMessages(\F3\FLOW3\MVC\Controller\FlashMessages $flashMessages) {
-		$this->flashMessages = $flashMessages;
+	public function injectFlashMessageContainer(\F3\FLOW3\MVC\Controller\FlashMessageContainer $flashMessageContainer) {
+		$this->flashMessageContainer = $flashMessageContainer;
 	}
 
 	/**
@@ -238,7 +238,7 @@ abstract class AbstractController implements \F3\FLOW3\MVC\Controller\Controller
 			$controllerContext->setArgumentsMappingResults($this->argumentsMappingResults);
 		}
 		$controllerContext->setUriBuilder($this->uriBuilder);
-		$controllerContext->setFlashMessages($this->flashMessages);
+		$controllerContext->setFlashMessageContainer($this->flashMessageContainer);
 		return $controllerContext;
 	}
 

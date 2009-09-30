@@ -50,7 +50,7 @@ class CountValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function countValidatorReturnsTrueForValidCountables($countable) {
 		$countValidator = new \F3\FLOW3\Validation\Validator\CountValidator();
-		$countValidator->setOptions(array('min' => 1, 'max' => 10));
+		$countValidator->setOptions(array('minimum' => 1, 'maximum' => 10));
 
 		$this->assertTrue($countValidator->isValid($countable));
 	}
@@ -62,7 +62,7 @@ class CountValidatorTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function countValidatorReturnsFalseForInvalidCountables($countable) {
 		$countValidator = $this->getMock('F3\FLOW3\Validation\Validator\CountValidator', array('addError'));
-		$countValidator->setOptions(array('min' => 5, 'max' => 10));
+		$countValidator->setOptions(array('minimum' => 5, 'maximum' => 10));
 		$this->assertFalse($countValidator->isValid($countable));
 	}
 

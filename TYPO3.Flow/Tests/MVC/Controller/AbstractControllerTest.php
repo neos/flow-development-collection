@@ -74,7 +74,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockArguments = $this->getMock('F3\FLOW3\MVC\Controller\Arguments', array(), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults');
 		$mockUriBuilder = $this->getMock('F3\FLOW3\MVC\Web\Routing\UriBuilder');
-		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessages');
+		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer');
 
 		$mockControllerContext = $this->getMock('F3\FLOW3\MVC\Controller\ControllerContext');
 		$mockControllerContext->expects($this->once())->method('setRequest')->with($mockRequest);
@@ -82,7 +82,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$mockControllerContext->expects($this->once())->method('setArguments')->with($mockArguments);
 		$mockControllerContext->expects($this->once())->method('setArgumentsMappingResults')->with($mockArgumentsMappingResults);
 		$mockControllerContext->expects($this->once())->method('setUriBuilder')->with($mockUriBuilder);
-		$mockControllerContext->expects($this->once())->method('setFlashMessages')->with($mockFlashMessages);
+		$mockControllerContext->expects($this->once())->method('setFlashMessageContainer')->with($mockFlashMessageContainer);
 
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->once())->method('create')->with('F3\FLOW3\MVC\Controller\ControllerContext')->will($this->returnValue($mockControllerContext));
@@ -94,7 +94,7 @@ class AbstractControllerTest extends \F3\Testing\BaseTestCase {
 		$controller->_set('response', $mockResponse);
 		$controller->_set('arguments', $mockArguments);
 		$controller->_set('argumentsMappingResults', $mockArgumentsMappingResults);
-		$controller->_set('flashMessages', $mockFlashMessages);
+		$controller->_set('flashMessageContainer', $mockFlashMessageContainer);
 		$controller->_call('buildControllerContext');
 	}
 

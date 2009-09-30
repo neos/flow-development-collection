@@ -50,16 +50,16 @@ class NumberRangeValidator extends \F3\FLOW3\Validation\Validator\AbstractValida
 			return FALSE;
 		}
 
-		$startRange = (isset($this->options['startRange'])) ? intval($this->options['startRange']) : 0;
-		$endRange = (isset($this->options['endRange'])) ? intval($this->options['endRange']) : PHP_INT_MAX;
-		if ($startRange > $endRange) {
-			$x = $startRange;
-			$startRange = $endRange;
-			$endRange = $x;
+		$minimum = (isset($this->options['minimum'])) ? intval($this->options['minimum']) : 0;
+		$maximum = (isset($this->options['maximum'])) ? intval($this->options['maximum']) : PHP_INT_MAX;
+		if ($minimum > $maximum) {
+			$x = $minimum;
+			$minimum = $maximum;
+			$maximum = $x;
 		}
-		if ($value >= $startRange && $value <= $endRange) return TRUE;
+		if ($value >= $minimum && $value <= $maximum) return TRUE;
 
-		$this->addError('The given subject was not in the valid range (' . $startRange . ' - ' . $endRange . '). Got: "' . $value . '"', 1221561046);
+		$this->addError('The given subject was not in the valid range (' . $minimum . ' - ' . $maximum . '). Got: "' . $value . '"', 1221561046);
 		return FALSE;
 	}
 }

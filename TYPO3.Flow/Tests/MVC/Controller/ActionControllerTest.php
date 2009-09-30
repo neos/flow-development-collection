@@ -555,7 +555,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function defaultErrorActionSetsArgumentMappingResultsErrorsInRequest() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
-		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessages', array(), array(), '', FALSE);
+		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
 		$mockError = $this->getMock('F3\FLOW3\Error\Error', array('getMessage'), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
@@ -578,7 +578,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function defaultErrorActionForwardsToReferrerIfSet() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
-		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessages', array(), array(), '', FALSE);
+		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
 		$arguments = array('foo' => 'bar');
 
