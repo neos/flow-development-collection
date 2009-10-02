@@ -147,7 +147,7 @@ class APCBackend extends \F3\FLOW3\Cache\Backend\AbstractBackend {
 			$this->addTagsToTagIndex($tags);
 			$this->addIdentifierToTags($entryIdentifier, $tags);
 		} else {
-			throw new \F3\FLOW3\Cache\Exception('Could not set value. ' . $exception->getMessage(), 1232986877);
+			throw new \F3\FLOW3\Cache\Exception('Could not set value.', 1232986877);
 		}
 	}
 
