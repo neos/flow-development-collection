@@ -125,18 +125,29 @@ class ValidatorResolver {
 		$validatorConjunctions = array();
 
 		$methodParameters = $this->reflectionService->getMethodParameters($className, $methodName);
-		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		if (!count($methodParameters)) {
 				// early return in case no parameters were found.
 			return $validatorConjunctions;
 		}
 		foreach ($methodParameters as $parameterName => $methodParameter) {
-			$validatorConjunction = $this->createValidator('Conjunction');
-			$typeValidator = $this->createValidator($methodParameter['type']);
-			if ($typeValidator !== NULL) $validatorConjunction->addValidator($typeValidator);
+			$validatorConjunction = $this->createValidator('F3\FLOW3\Validation\Validator\ConjunctionValidator');
+
+			if (strpos($methodParameter['type'], '\\') === FALSE) {
+				$typeValidator = $this->createValidator($methodParameter['type']);
+			} elseif (strpos($methodParameter['type'], '\\Model\\') !== FALSE) {
+				$possibleValidatorClassName = str_replace('\\Model\\', '\\Validator\\', $methodParameter['type']) . 'Validator';
+				$typeValidator = $this->createValidator($possibleValidatorClassName);
+			} else {
+				$typeValidator = NULL;
+			}
+
+			if ($typeValidator !== NULL) {
+				$validatorConjunction->addValidator($typeValidator);
+			}
 			$validatorConjunctions[$parameterName] = $validatorConjunction;
 		}
 
+		$methodTagsValues = $this->reflectionService->getMethodTagsValues($className, $methodName);
 		if (isset($methodTagsValues['validate'])) {
 			foreach ($methodTagsValues['validate'] as $validateValue) {
 				$parsedAnnotation = $this->parseValidatorAnnotation($validateValue);
@@ -179,7 +190,7 @@ class ValidatorResolver {
 			// Model based validator
 		if (class_exists($dataType)) {
 			$validatorCount = 0;
-			$objectValidator = $this->createValidator('GenericObject');
+			$objectValidator = $this->createValidator('F3\FLOW3\Validation\Validator\GenericObjectValidator');
 
 			foreach ($this->reflectionService->getClassPropertyNames($dataType) as $classPropertyName) {
 				$classPropertyTagsValues = $this->reflectionService->getPropertyTagsValues($dataType, $classPropertyName);
@@ -322,23 +333,25 @@ class ValidatorResolver {
 	 */
 	protected function unifyDataType($type) {
 		switch ($type) {
-			case 'int' :
+			case 'int':
 				$type = 'Integer';
 				break;
-			case 'bool' :
+			case 'bool':
 				$type = 'Boolean';
 				break;
-			case 'double' :
+			case 'double':
 				$type = 'Float';
 				break;
-			case 'numeric' :
+			case 'numeric':
 				$type = 'Number';
 				break;
-			case 'mixed' :
+			case 'mixed':
 				$type = 'Raw';
 				break;
+			default:
+				$type = ucfirst($type);
 		}
-		return ucfirst($type);
+		return $type;
 	}
 }
 
