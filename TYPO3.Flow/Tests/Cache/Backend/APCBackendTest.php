@@ -183,15 +183,15 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'some data' . microtime();
-		$backend->set('BackendMemcacheTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
-		$backend->set('BackendMemcacheTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
-		$backend->set('BackendMemcacheTest3', $data, array('UnitTestTag%test'));
+		$backend->set('BackendAPCTest1', $data, array('UnitTestTag%test', 'UnitTestTag%boring'));
+		$backend->set('BackendAPCTest2', $data, array('UnitTestTag%test', 'UnitTestTag%special'));
+		$backend->set('BackendAPCTest3', $data, array('UnitTestTag%test'));
 
 		$backend->flushByTag('UnitTestTag%special');
 
-		$this->assertTrue($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
-		$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
-		$this->assertTrue($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
+		$this->assertTrue($backend->has('BackendAPCTest1'), 'BackendAPCTest1');
+		$this->assertFalse($backend->has('BackendAPCTest2'), 'BackendAPCTest2');
+		$this->assertTrue($backend->has('BackendAPCTest3'), 'BackendAPCTest3');
 	}
 
 	/**
@@ -202,15 +202,15 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 		$backend = $this->setUpBackend();
 
 		$data = 'some data' . microtime();
-		$backend->set('BackendMemcacheTest1', $data);
-		$backend->set('BackendMemcacheTest2', $data);
-		$backend->set('BackendMemcacheTest3', $data);
+		$backend->set('BackendAPCTest1', $data);
+		$backend->set('BackendAPCTest2', $data);
+		$backend->set('BackendAPCTest3', $data);
 
 		$backend->flush();
 
-		$this->assertFalse($backend->has('BackendMemcacheTest1'), 'BackendMemcacheTest1');
-		$this->assertFalse($backend->has('BackendMemcacheTest2'), 'BackendMemcacheTest2');
-		$this->assertFalse($backend->has('BackendMemcacheTest3'), 'BackendMemcacheTest3');
+		$this->assertFalse($backend->has('BackendAPCTest1'), 'BackendAPCTest1');
+		$this->assertFalse($backend->has('BackendAPCTest2'), 'BackendAPCTest2');
+		$this->assertFalse($backend->has('BackendAPCTest3'), 'BackendAPCTest3');
 	}
 
 	/**
@@ -243,8 +243,7 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Check if we can store ~5 MB of data, this gives some headroom for the
-	 * reflection data.
+	 * Check if we can store ~5 MB of data, this gives some headroom.
 	 *
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
@@ -260,9 +259,9 @@ class APCBackendTest extends \F3\Testing\BaseTestCase {
 	}
 
 	/**
-	 * Sets up the memcached backend used for testing
+	 * Sets up the APC backend used for testing
 	 *
-	 * @param array $backendOptions Options for the memcache backend
+	 * @param array $backendOptions Options for the APC backend
 	 * @return \F3\FLOW3\Cache\Backend\APCBackend
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
