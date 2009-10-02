@@ -555,16 +555,16 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function defaultErrorActionSetsArgumentMappingResultsErrorsInRequest() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
-		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
 		$mockError = $this->getMock('F3\FLOW3\Error\Error', array('getMessage'), array(), '', FALSE);
 		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
 		$mockArgumentsMappingResults->expects($this->atLeastOnce())->method('getErrors')->will($this->returnValue(array($mockError)));
 		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));
 
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('pushFlashMessage'), array(), '', FALSE);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
-		$mockController->_set('flashMessages', $mockFlashMessages);
+		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
 		$mockController->_set('argumentsMappingResults', $mockArgumentsMappingResults);
 
 		$mockRequest->expects($this->once())->method('setErrors')->with(array($mockError));
@@ -578,7 +578,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function defaultErrorActionForwardsToReferrerIfSet() {
 		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
-		$mockFlashMessages = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
 
 		$arguments = array('foo' => 'bar');
 
@@ -586,9 +586,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockArgumentsMappingResults->expects($this->any())->method('getErrors')->will($this->returnValue(array()));
 		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));
 
-		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('pushFlashMessage', 'forward'), array(), '', FALSE);
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('forward'), array(), '', FALSE);
 		$mockController->_set('request', $mockRequest);
-		$mockController->_set('flashMessages', $mockFlashMessages);
+		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
 		$mockController->_set('argumentsMappingResults', $mockArgumentsMappingResults);
 
 		$referrer = array(
@@ -608,10 +608,24 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @author Christopher Hlubek <hlubek@networkteam.com>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function defaultErrorActionCallsGetErrorFlashMessageAndPutsFlashMessage() {
-		$this->markTestIncomplete('To be implemented');
+	public function defaultErrorActionAddsFlashMessageToFlashMessageContainer() {
+		$mockRequest = $this->getMock('F3\FLOW3\MVC\RequestInterface', array(), array(), '', FALSE);
+		$mockFlashMessageContainer = $this->getMock('F3\FLOW3\MVC\Controller\FlashMessageContainer', array(), array(), '', FALSE);
+		$mockFlashMessageContainer->expects($this->once())->method('add');
+
+		$mockError = $this->getMock('F3\FLOW3\Error\Error', array('getMessage'), array(), '', FALSE);
+		$mockArgumentsMappingResults = $this->getMock('F3\FLOW3\Property\MappingResults', array('getErrors', 'getWarnings'), array(), '', FALSE);
+		$mockArgumentsMappingResults->expects($this->atLeastOnce())->method('getErrors')->will($this->returnValue(array($mockError)));
+		$mockArgumentsMappingResults->expects($this->any())->method('getWarnings')->will($this->returnValue(array()));
+
+		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('dummy'), array(), '', FALSE);
+		$mockController->_set('request', $mockRequest);
+		$mockController->_set('flashMessageContainer', $mockFlashMessageContainer);
+		$mockController->_set('argumentsMappingResults', $mockArgumentsMappingResults);
+
+		$mockController->_call('errorAction');
 	}
 
 }

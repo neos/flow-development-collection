@@ -347,7 +347,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 		$errorFlashMessage = $this->getErrorFlashMessage();
 		if ($errorFlashMessage !== FALSE) {
-			$this->flashMessages->add($errorFlashMessage);
+			$this->flashMessageContainer->add($errorFlashMessage);
 		}
 
 		if ($this->request->hasArgument('__referrer')) {
