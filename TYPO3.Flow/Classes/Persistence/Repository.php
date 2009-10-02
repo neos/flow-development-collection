@@ -287,6 +287,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	 * @param array $arguments The arguments
 	 * @return mixed The result of the find method
 	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @api
 	 */
 	public function __call($methodName, array $arguments) {
@@ -300,12 +301,13 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			}
 		} elseif (substr($methodName, 0, 9) === 'findOneBy' && strlen($methodName) > 10) {
 			$propertyName = strtolower(substr($methodName, 9, 1)) . substr($methodName, 10);
-			$query = $this->createQuery();
+			$query = $this->createQuery()->setLimit(1);
 			if (isset($arguments[1])) {
-				$result = $query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]))->execute();
+				$query->matching($query->equals($propertyName, $arguments[0], (boolean)$arguments[1]));
 			} else {
-				$result = $query->matching($query->equals($propertyName, $arguments[0]))->execute();
+				$query->matching($query->equals($propertyName, $arguments[0]));
 			}
+			$result = $query->execute();
 			return current($result);
 		}
 		trigger_error('Call to undefined method ' . get_class($this) . '::' . $methodName, E_USER_ERROR);

@@ -383,6 +383,7 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function magicCallMethodAcceptsFindOneBySomethingCallsAndExecutesAQueryWithThatCriteria() {
 		$mockQuery = $this->getMock('F3\FLOW3\Persistence\QueryInterface');
+		$mockQuery->expects($this->once())->method('setLimit')->with(1)->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('equals')->with('foo', 'bar')->will($this->returnValue('matchCriteria'));
 		$mockQuery->expects($this->once())->method('matching')->with('matchCriteria')->will($this->returnValue($mockQuery));
 		$mockQuery->expects($this->once())->method('execute')->will($this->returnValue(array('baz', 'quux')));
