@@ -94,6 +94,10 @@ final class RSAWalletServicePHP implements \F3\FLOW3\Security\Cryptography\RSAWa
 
 		$keyResource = openssl_pkey_new($this->openSSLConfiguration);
 
+		if ($keyResource === FALSE) {
+			throw new \F3\FLOW3\Security\Exception('OpenSSL private key generation failed.', 1254838154);
+		}
+
 		$modulus = $this->getModulus($keyResource);
 		$privateKeyString = $this->getPrivateKeyString($keyResource);
 		$publicKeyString = $this->getPublicKeyString($keyResource);
