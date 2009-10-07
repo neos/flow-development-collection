@@ -137,7 +137,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	}
 
 	/**
-	 * Replaces an object by another.
+	 * Replaces an object by another after checking that existing and new objects have the right types
 	 *
 	 * @param object $existingObject The existing object
 	 * @param object $newObject The new object
@@ -152,6 +152,18 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The new object given to replace was not of the type (' . $this->objectType . ') this repository manages.', 1248363439);
 		}
 
+		$this->replaceObject($existingObject, $newObject);
+	
+	}
+	
+	/**
+	 * Replaces an object by another without any further checks. Instead of calling this method, always call replace().
+	 *
+	 * @param object $existingObject The existing object
+	 * @param object $newObject The new object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function replaceObject($existingObject, $newObject) {
 		$backend = $this->persistenceManager->getBackend();
 		$session = $this->persistenceManager->getSession();
 		$uuid = $backend->getIdentifierByObject($existingObject);
@@ -170,10 +182,30 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "existing object" is unknown to the persistence backend.', 1238068475);
 		}
+		
+		$this->updateRecursively($newObject);
+	}
+	
+	/**
+	 * Loop through all properties of the $newObject and call update() on them if they are entities/valueobjects.
+	 * This makes sure that changes to subobjects of a given object are persisted as well.
+	 *
+	 * @param object $newObject The new object to loop over
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function updateRecursively($newObject) {
+		$propertiesOfNewObject = \F3\FLOW3\Reflection\ObjectAccess::getAccessibleProperties($newObject);
+
+		foreach ($propertiesOfNewObject as $propertyName => $subObject) {
+			if ($subObject instanceof \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface && $subObject->FLOW3_Persistence_isClone()) {
+				$this->updateObject($subObject);
+				$this->updateRecursively($subObject);
+			}
+		}
 	}
 
 	/**
-	 * Replaces an existing object with the same identifier by the given object
+	 * Replaces an existing object with the same identifier by the given object after checking the type of the object fits to the repositories type
 	 *
 	 * @param object $modifiedObject The modified object
 	 * @author Robert Lemke <robert@typo3.org>
@@ -188,16 +220,27 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			throw new \F3\FLOW3\Persistence\Exception\IllegalObjectType('The object given to update() was not a clone of a persistent object.', 1253631553);
 		}
 
+		$this->updateObject($modifiedObject);
+	}
+
+	/**
+	 * Replaces an existing object with the same identifier by the given object without any further checks.
+	 * Never use this method directly, always use update().
+	 * 
+	 * @param object $modifiedObject The modified object
+	 * @author Robert Lemke <robert@typo3.org>
+	 */
+	protected function updateObject($modifiedObject) {
 		$backend = $this->persistenceManager->getBackend();
 		$uuid = $backend->getIdentifierByObject($modifiedObject);
 		if ($uuid !== NULL) {
 			$existingObject = $backend->getObjectByIdentifier($uuid);
-			$this->replace($existingObject, $modifiedObject);
+			$this->replaceObject($existingObject, $modifiedObject);
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
-
+	
 	/**
 	 * Returns all addedObjects that have been added to this repository with add().
 	 *

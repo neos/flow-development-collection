@@ -325,10 +325,10 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$mockPersistenceBackend->expects($this->once())->method('getObjectByIdentifier')->with('86ea8820-19f6-11de-8c30-0800200c9a66')->will($this->returnValue($existingObject));
 
 		$mockPersistenceManager = $this->getMock('F3\FLOW3\Persistence\ManagerInterface');
-		$mockPersistenceManager->expects($this->once())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
+		$mockPersistenceManager->expects($this->any())->method('getBackend')->will($this->returnValue($mockPersistenceBackend));
 
-		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('replace'));
-		$repository->expects($this->once())->method('replace')->with($existingObject, $modifiedObject);
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('replaceObject'));
+		$repository->expects($this->once())->method('replaceObject')->with($existingObject, $modifiedObject);
 
 		$repository->_set('objectType', get_class($modifiedObject));
 		$repository->injectPersistenceManager($mockPersistenceManager);
@@ -359,6 +359,41 @@ class RepositoryTest extends \F3\Testing\BaseTestCase {
 		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('dummy'));
 		$repository->_set('objectType', 'Foo');
 		$repository->update(new \stdClass());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function updateRecursivelyCallsUpdateObjectOnSubobjects() {
+		$repository = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\Persistence\Repository'), array('updateObject'));
+		$className = 'Object' . uniqid();
+		eval('class ' . $className . ' implements \F3\FLOW3\Persistence\Aspect\DirtyMonitoringInterface {
+			public function FLOW3_Persistence_isNew() { return FALSE; }
+			public function FLOW3_Persistence_isClone() { return TRUE; }
+			public function FLOW3_Persistence_isDirty($propertyName) {}
+			public function FLOW3_Persistence_memorizeCleanState($propertyName = NULL) {}
+			public function FLOW3_AOP_Proxy_getProperty($name) {}
+			public function FLOW3_AOP_Proxy_getProxyTargetClassName() {}
+			public function __clone() {}
+		}');
+		$subObject = $this->getMock($className);
+		$subObject->expects($this->once())->method('FLOW3_Persistence_isClone')->will($this->returnValue(TRUE));
+		$className = 'Object' . uniqid();
+		eval('class ' . $className . '  {
+			protected $subobject;
+			public function getSubobject() {
+				return $this->subobject;
+			}
+			public function setSubobject($subobject) {
+				$this->subobject = $subobject;
+			}
+		}');
+		$object = new $className;
+		$object->setSubobject($subObject);
+
+		$repository->expects($this->once())->method('updateObject')->with($subObject);
+		$repository->_call('updateRecursively', $object);
 	}
 
 	/**
