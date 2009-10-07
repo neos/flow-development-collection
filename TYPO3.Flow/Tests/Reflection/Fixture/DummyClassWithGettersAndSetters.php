@@ -31,6 +31,7 @@ namespace F3\FLOW3\Tests\Reflection\Fixture;
 class DummyClassWithGettersAndSetters {
 	protected $property;
 	protected $anotherProperty;
+	protected $property2;
 
 	protected $protectedProperty;
 
@@ -51,6 +52,13 @@ class DummyClassWithGettersAndSetters {
 
 	public function getAnotherProperty() {
 		return $this->anotherProperty;
+	}
+
+	public function getProperty2() {
+		return $this->property2;
+	}
+	public function setProperty2($property2) {
+		$this->property2 = $property2;
 	}
 
 	protected function getProtectedProperty() {

@@ -140,7 +140,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function getAccessiblePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$declaredPropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getAccessiblePropertyNames($this->dummyObject);
-		$expectedPropertyNames = array('anotherProperty', 'property', 'publicProperty', 'publicProperty2');
+		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
 		$this->assertEquals($declaredPropertyNames, $expectedPropertyNames, 'getAccessiblePropertyNames returns not all public properties.');
 	}
 
@@ -153,9 +153,25 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$expectedProperties = array(
 			'anotherProperty' => 42,
 			'property' => 'string1',
+			'property2' => NULL,
 			'publicProperty' => NULL,
 			'publicProperty2' => 42);
 		$this->assertEquals($allProperties, $expectedProperties, 'expectedProperties did not return the right values for the properties.');
 	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getPropertyPathCanRecursivelyGetPropertiesOfAnObject() {
+		$alternativeObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
+		$alternativeObject->setProperty('test');
+		$this->dummyObject->setProperty2($alternativeObject);
+		
+		$expected = 'test';
+		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property');
+		$this->assertEquals($expected, $actual);
+	}
+
 }
 ?>
