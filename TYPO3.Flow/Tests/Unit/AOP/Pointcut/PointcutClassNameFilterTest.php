@@ -22,8 +22,8 @@ namespace F3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once (FLOW3_PATH_FLOW3 . 'Tests/Fixtures/DummyClass.php');
-require_once (FLOW3_PATH_FLOW3 . 'Tests/Fixtures/SecondDummyClass.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/Fixtures/DummyClass.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/Fixtures/SecondDummyClass.php');
 
 /**
  * Testcase for the Pointcut Class Filter

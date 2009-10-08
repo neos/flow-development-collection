@@ -34,6 +34,7 @@ interface ResourceInterface {
 	 * Returns the type of source the resource originates
 	 *
 	 * @return string Type, e.g. file, http, ftp, ...
+	 * @api
 	 */
 	public function getDataSourceType();
 
@@ -41,6 +42,7 @@ interface ResourceInterface {
 	 * The URI representing the resource
 	 *
 	 * @return \F3\FLOW3\Property\DataType\URI
+	 * @api
 	 */
 	public function getURI();
 
@@ -48,6 +50,7 @@ interface ResourceInterface {
 	 * Returns the name the resource was obtained from
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getName();
 
@@ -55,6 +58,7 @@ interface ResourceInterface {
 	 * Returns the path the resource was obtained from
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getPath();
 
@@ -62,6 +66,7 @@ interface ResourceInterface {
 	 * Returns the path the resource was obtained from including file name
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getPathAndFileName();
 
@@ -69,6 +74,7 @@ interface ResourceInterface {
 	 * Returns the media type of the resource
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getMediaType();
 
@@ -76,16 +82,28 @@ interface ResourceInterface {
 	 * Returns the MIME type of the resource
 	 *
 	 * @return string
+	 * @api
 	 */
 	public function getMIMEType();
 
-
 	/**
-	 * Returns the content represented by the resource object
+	 * Returns the content represented by the resource object.
+	 *
+	 * Note: for large resurces, consider using getStream().
 	 *
 	 * @return string|binary
+	 * @api
 	 */
 	public function getContent();
+
+	/**
+	 * Return a stream pointing to the resource for use with the regular PHP
+	 * methods accepting streams.
+	 *
+	 * @return resource
+	 * @api
+	 */
+	public function getStream();
 }
 
 ?>

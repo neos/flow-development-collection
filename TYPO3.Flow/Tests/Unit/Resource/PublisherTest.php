@@ -56,15 +56,15 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 
 		$this->publisher = new \F3\FLOW3\Resource\Publisher();
 		$this->publisher->setMetadataCache($metadataCache);
-		$this->publisher->initializeMirrorDirectory($this->publicResourcePath);
+		$this->publisher->setMirrorDirectory($this->publicResourcePath);
 	}
 
 	/**
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializesMirrorDirectory() {
-		$this->assertFileExists($this->publicResourcePath, 'Public resource mirror path has not been set up.');
+	public function setMirrorDirectoryCreatesPublicResourcePath() {
+		$this->assertFileExists(FLOW3_PATH_WEB . $this->publicResourcePath, 'Public resource mirror path has not been set up.');
 	}
 
 	/**
@@ -72,7 +72,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canExtractResourceMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
+		$URI = new \F3\FLOW3\Property\DataType\URI('package://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
 			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',
@@ -90,7 +90,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function canGetMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html');
+		$URI = new \F3\FLOW3\Property\DataType\URI('package://FLOW3/Public/TestTemplate.html');
 		$expectedMetadata = array(
 			'URI' => $URI,
 			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',

@@ -50,7 +50,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$mockClassLoader = $this->getMock('F3\FLOW3\Resource\ClassLoader', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
 		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\DataType\URI')->will($this->returnValue(new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html')));
-		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\HTMLResource')->will($this->returnValue(new \F3\FLOW3\Resource\HTMLResource()));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\GenericResource')->will($this->returnValue(new \F3\FLOW3\Resource\GenericResource()));
 		$mockResourcePublisher = $this->getMock('F3\FLOW3\Resource\Publisher', array(), array(), '', FALSE);
 		$mockResourcePublisher->expects($this->any())->method('getMetadata')->will($this->returnValue($metaData));
 
@@ -63,7 +63,7 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResourceReturnsAResourceImplementation() {
-		$resource = $this->manager->getResource('file://FLOW3/Public/TestTemplate.html');
+		$resource = $this->manager->getResource('package://FLOW3/Public/TestTemplate.html');
 		$this->assertType('F3\FLOW3\Resource\ResourceInterface', $resource);
 	}
 
@@ -72,8 +72,8 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getResourceReturnsRequestedResource() {
-		$resource = $this->manager->getResource('file://FLOW3/Public/TestTemplate.html');
-		$this->assertType('F3\FLOW3\Resource\HTMLResource', $resource);
+		$resource = $this->manager->getResource('package://FLOW3/Public/TestTemplate.html');
+		$this->assertType('F3\FLOW3\Resource\GenericResource', $resource);
 		$this->assertEquals('TestTemplate.html', $resource->getName());
 		$this->assertEquals('text/html', $resource->getMIMEType());
 	}

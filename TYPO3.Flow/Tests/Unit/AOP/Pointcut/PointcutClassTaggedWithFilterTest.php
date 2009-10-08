@@ -22,38 +22,37 @@ namespace F3\FLOW3\AOP\Pointcut;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
-require_once (FLOW3_PATH_FLOW3 . 'Tests/AOP/Fixture/MethodsTaggedWithSomething.php');
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixture/ClassTaggedWithSomething.php');
 
 /**
- * Testcase for the Pointcut Method-Tagged-With Filter
+ * Testcase for the Pointcut Class-Tagged-With Filter
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class PointcutMethodTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
+class PointcutClassTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
 	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
-		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
+		$className = 'F3\FLOW3\Tests\AOP\Fixture\ClassTaggedWithSomething';
 
 		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
 		$mockReflectionService->initialize(array($className));
 
-		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
-		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('something');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
-		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
-		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someOtherMethod', $className, 2));
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('some.*');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($classTaggedWithFilter->matches($className, '', '', 1));
 
-		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
-		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
-		$this->assertFalse($methodTaggedWithFilter->matches(__CLASS__, 'somethingCompletelyDifferent', $className, 1));
+		$classTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutClassTaggedWithFilter('any.*');
+		$classTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($classTaggedWithFilter->matches($className, '', '', 1));
 	}
 }
 ?>

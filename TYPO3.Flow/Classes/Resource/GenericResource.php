@@ -29,7 +29,7 @@ namespace F3\FLOW3\Resource;
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  * @scope prototype
  */
-abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface {
+class GenericResource implements \F3\FLOW3\Resource\ResourceInterface {
 
 	/**
 	 * @var \F3\FLOW3\Property\DataType\URI
@@ -57,14 +57,18 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	protected $mimeType;
 
 	/**
-	 * Imports content from an URI
+	 * Allows to set the metadata for this resource.
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $URI
-	 * @return boolean TRUE or FALSE depending on import success
+	 * @param array $metaData
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function importFromURI(\F3\FLOW3\Property\DataType\URI $URI) {
-		return FALSE;
+	public function setMetadata(array $metaData) {
+		$this->URI = $metaData['URI'];
+		$this->path = $metaData['path'];
+		$this->name = $metaData['name'];
+		$this->mediaType = $metaData['mediaType'];
+		$this->mimeType = $metaData['mimeType'];
 	}
 
 	/**
@@ -135,6 +139,28 @@ abstract class AbstractResource implements \F3\FLOW3\Resource\ResourceInterface 
 	 */
 	public function getMIMEType() {
 		return $this->mimeType;
+	}
+
+	/**
+	 * Returns the content of this resource.
+	 *
+	 * @return string|binary Resource content (HTML)
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getContent() {
+		return file_get_contents($this->getPathAndFileName());
+	}
+
+	/**
+	 * Return a stream pointing to the resource for use with the regular PHP
+	 * methods accepting streams.
+	 *
+	 * @return resource
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
+	 */
+	public function getStream() {
+		return fopen($this->getPathAndFileName(), 'a+b');
 	}
 
 }

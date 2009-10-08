@@ -74,9 +74,9 @@ class DirtyMonitoring {
 	 * @afterreturning classTaggedWith(entity) && method(.*->__construct())
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+	public function generateUUID(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
-		$proxy->FLOW3_AOP_Proxy_setProperty('FLOW3_Persistence_Entity_UUID', \F3\FLOW3\Utility\Algorithms::generateUUID());
+		$proxy->FLOW3_Persistence_Entity_UUID = \F3\FLOW3\Utility\Algorithms::generateUUID();
 	}
 
 	/**
@@ -92,7 +92,7 @@ class DirtyMonitoring {
 		$joinPoint->getAdviceChain()->proceed($joinPoint);
 
 		$proxy = $joinPoint->getProxy();
-		return !property_exists($proxy, 'FLOW3_Persistence_cleanProperties');
+		return (!property_exists($proxy, 'FLOW3_Persistence_cleanProperties') || property_exists($proxy, 'FLOW3_Persistence_clone'));
 	}
 
 	/**
@@ -128,7 +128,7 @@ class DirtyMonitoring {
 		if (property_exists($proxy, 'FLOW3_Persistence_cleanProperties')) {
 			$isDirty = FALSE;
 			$uuidPropertyName = $this->reflectionService->getClassSchema($joinPoint->getClassName())->getUUIDPropertyName();
-			if ($uuidPropertyName !== NULL && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
+			if ($uuidPropertyName !== NULL && !property_exists($proxy, 'FLOW3_Persistence_clone') && $proxy->FLOW3_AOP_Proxy_getProperty($uuidPropertyName) !== $proxy->FLOW3_Persistence_cleanProperties[$uuidPropertyName]) {
 				throw new \F3\FLOW3\Persistence\Exception\TooDirty('My property "' . $uuidPropertyName . '" tagged as @uuid has been modified, that is simply too much.', 1222871239);
 			}
 
@@ -176,7 +176,8 @@ class DirtyMonitoring {
 	}
 
 	/**
-	 * Mark object as new after cloning.
+	 * Mark object as cloned after cloning.
+	 *
 	 * Note: this is done even if an object explicitly implements the
 	 * DirtyMonitoringInterface to make sure it is proxied by the AOP
 	 * framework (we need that to happen)
@@ -188,7 +189,6 @@ class DirtyMonitoring {
 	 */
 	public function cloneObject(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$proxy = $joinPoint->getProxy();
-		unset($proxy->FLOW3_Persistence_cleanProperties);
 		$proxy->FLOW3_Persistence_clone = TRUE;
 	}
 }

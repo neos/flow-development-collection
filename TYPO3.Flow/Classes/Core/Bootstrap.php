@@ -604,7 +604,7 @@ final class Bootstrap {
 			$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
 
 			$resourcePublisher = $this->objectManager->getObject('F3\FLOW3\Resource\Publisher');
-			$resourcePublisher->initializeMirrorDirectory($this->settings['resource']['cache']['publicPath']);
+			$resourcePublisher->setMirrorDirectory($this->settings['resource']['cache']['publicPath']);
 			$resourcePublisher->setMetadataCache($metadataCache);
 			$resourcePublisher->setStatusCache($statusCache);
 			$resourcePublisher->setCacheStrategy($this->settings['resource']['cache']['strategy']);

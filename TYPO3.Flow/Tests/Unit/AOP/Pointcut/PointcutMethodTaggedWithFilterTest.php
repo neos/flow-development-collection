@@ -1,6 +1,6 @@
 <?php
 declare(ENCODING = 'utf-8');
-namespace F3\FLOW3\Resource;
+namespace F3\FLOW3\AOP\Pointcut;
 
 /*                                                                        *
  * This script belongs to the FLOW3 framework.                            *
@@ -22,39 +22,38 @@ namespace F3\FLOW3\Resource;
  * The TYPO3 project - inspiring people to share!                         *
  *                                                                        */
 
+require_once (FLOW3_PATH_FLOW3 . 'Tests/Unit/AOP/Fixture/MethodsTaggedWithSomething.php');
+
 /**
- * A HTML Resource
+ * Testcase for the Pointcut Method-Tagged-With Filter
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
- * @scope prototype
  */
-class HTMLResource extends \F3\FLOW3\Resource\TextResource {
+class PointcutMethodTaggedWithFilterTest extends \F3\Testing\BaseTestCase {
 
 	/**
-	 * Allows to set the metadata for this resource.
-	 *
-	 * @param array $metadata
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @test
+	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function setMetadata(array $metadata) {
-		$this->URI = $metadata['URI'];
-		$this->path = $metadata['path'];
-		$this->name = $metadata['name'];
-		$this->mediaType = $metadata['mediaType'];
-		$this->mimeType = $metadata['mimeType'];
-	}
+	public function matchesTellsIfTheSpecifiedRegularExpressionMatchesTheGivenTag() {
+		$className = 'F3\FLOW3\Tests\AOP\Fixture\MethodsTaggedWithSomething';
 
-	/**
-	 * Returns the content of this resource.
-	 *
-	 * @return string|binary Resource content (HTML)
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getContent() {
-		return file_get_contents($this->path . '/' . $this->name);
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service', array('loadFromCache', 'saveToCache'), array(), '', FALSE, TRUE);
+		$mockReflectionService->initialize(array($className));
+
+		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('someMethod');
+		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
+
+		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
+		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someMethod', $className, 1));
+		$this->assertTrue($methodTaggedWithFilter->matches(__CLASS__, 'someOtherMethod', $className, 2));
+
+		$methodTaggedWithFilter = new \F3\FLOW3\AOP\Pointcut\PointcutMethodTaggedWithFilter('some.*');
+		$methodTaggedWithFilter->injectReflectionService($mockReflectionService);
+		$this->assertFalse($methodTaggedWithFilter->matches(__CLASS__, 'somethingCompletelyDifferent', $className, 1));
 	}
 }
-
 ?>

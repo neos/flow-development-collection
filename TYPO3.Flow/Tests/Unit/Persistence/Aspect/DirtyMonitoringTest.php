@@ -146,24 +146,6 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function cloneObjectUnsetsTheCleanPropertiesArrayAtTheClonedObject() {
-		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
-
-		$object = new \stdClass();
-		$object->FLOW3_Persistence_cleanProperties = array('foo');
-
-		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
-		$mockJoinPoint->expects($this->once())->method('getProxy')->will($this->returnValue($object));
-
-		$aspect->cloneObject($mockJoinPoint);
-		$this->assertFalse(isset($object->FLOW3_Persistence_cleanProperties));
-	}
-
-	/**
-	 * @test
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 */
 	public function cloneObjectMarksTheObjectAsCloned() {
 		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
 
@@ -179,6 +161,25 @@ class DirtyMonitoringTest extends \F3\Testing\BaseTestCase {
 		$this->assertFalse($aspect->isClone($mockJoinPoint));
 		$aspect->cloneObject($mockJoinPoint);
 		$this->assertTrue($aspect->isClone($mockJoinPoint));
+	}
+
+	/**
+	 * @test
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function isNewIsTrueAfterCloneObject() {
+		$aspect = new \F3\FLOW3\Persistence\Aspect\DirtyMonitoring();
+		$object = $this->getMock('F3\FLOW3\AOP\ProxyInterface');
+		$object->FLOW3_Persistence_cleanProperties = array('foo');
+		$mockAdviceChain = $this->getMock('F3\FLOW3\AOP\Advice\AdviceChain', array(), array(), '', FALSE);
+		$mockJoinPoint = $this->getMock('F3\FLOW3\AOP\JoinPointInterface');
+		$mockJoinPoint->expects($this->any())->method('getAdviceChain')->will($this->returnValue($mockAdviceChain));
+		$mockJoinPoint->expects($this->any())->method('getProxy')->will($this->returnValue($object));
+
+		$this->assertFalse($aspect->isNew($mockJoinPoint));
+		$aspect->cloneObject($mockJoinPoint);
+		$this->assertTrue($aspect->isNew($mockJoinPoint));
 	}
 
 	/**

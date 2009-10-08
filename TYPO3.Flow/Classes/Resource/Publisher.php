@@ -39,7 +39,7 @@ class Publisher {
 	 * The (absolute) base path for the mirrored public assets
 	 * @var string
 	 */
-	protected $publicResourcePath = NULL;
+	protected $publicResourcePath;
 
 	/**
 	 * The cache used for storing metadata about resources
@@ -75,7 +75,7 @@ class Publisher {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function initializeMirrorDirectory($path) {
+	public function setMirrorDirectory($path) {
 		$this->publicResourcePath = FLOW3_PATH_WEB . $path;
 		if (!is_writable($this->publicResourcePath)) {
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->publicResourcePath);
@@ -167,7 +167,7 @@ class Publisher {
 				if ($sourceMTime === $destMTime) continue;
 			}
 
-			$URI = $this->createURI('file://' . $relativeDestinationPath . $relativeFile);
+			$URI = new \F3\FLOW3\Property\DataType\URI('file://' . $relativeDestinationPath . $relativeFile);
 			$metadata = $this->extractResourceMetadata($URI);
 
 			\F3\FLOW3\Utility\Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
@@ -194,39 +194,33 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function extractResourceMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
-		$explodedPath = explode('/',dirname($URI->getPath()));
-		if ($explodedPath[1] === 'Public') {
-			$packageKey = $URI->getHost();
-			unset($explodedPath[1]);
-			$metadata = array(
-				'URI' => $URI,
-				'path' => $this->publicResourcePath . 'Packages/' . $packageKey . implode('/', $explodedPath),
-				'name' => basename($URI->getPath()),
-				'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename($URI->getPath()),
-				'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename($URI->getPath()),
-			);
-		} else {
-			$metadata = array(
-				'URI' => $URI,
-				'path' => 'Packages/' . $URI->getHost() . '/Resources' . dirname($URI->getPath()),
-				'name' => basename($URI->getPath()),
-				'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename($URI->getPath()),
-				'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename($URI->getPath()),
-			);
+		$metaData = array(
+			'URI' => $URI,
+			'name' => basename($URI->getPath()),
+			'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename(basename($URI->getPath())),
+			'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename(basename($URI->getPath())),
+		);
+
+		switch ($URI->getScheme()) {
+			case 'package':
+				$explodedPath = explode('/',dirname($URI->getPath()));
+				if ($explodedPath[1] === 'Public') {
+					$packageKey = $URI->getHost();
+					unset($explodedPath[1]);
+					$metaData['path'] = $this->publicResourcePath . 'Packages/' . $packageKey . implode('/', $explodedPath);
+				} else {
+					$metaData['path'] = 'Packages/' . $URI->getHost() . '/Resources' . dirname($URI->getPath());
+				}
+			break;
+			case 'file':
+				$metaData['path'] = dirname($URI->getPath());
+			break;
+			default:
+				throw new \F3\FLOW3\Resource\Exception('Unsupported URI scheme "' . $URI->getScheme() . '" could not be handled.', 1255004627);
 		}
-		return $metadata;
+		return $metaData;
 	}
 
-	/**
-	 * Returns a new URI object
-	 *
-	 * @param string $URIString
-	 * @return \F3\FLOW3\Property\DataType\URI
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	protected function createURI($URIString) {
-		return new \F3\FLOW3\Property\DataType\URI($URIString);
-	}
 }
 
 ?>

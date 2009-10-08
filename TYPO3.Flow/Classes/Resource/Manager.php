@@ -99,11 +99,23 @@ class Manager {
 	}
 
 	/**
-	 * Returns a file resource if found using the supplied URI
+	 * Returns a file resource if found using the supplied URI. A few (custom)
+	 * protocols are handled to specify where to fetch a resource from:
+	 *  * package - a file from a package, the path must be
+	 *      package://<packageKey>/<Public|Private>/<path>
+	 *  * typo3cr://<path> (to be implemented)
+	 * Aside from those, any protocol supported by PHP can be used, such as:
+	 *  * file - a regular file, needs an absolute path
+	 *  * http - a regular web resource, needs an absolute URL
+	 *  * ftp - a regular FTP resource, needs an absolute URL
+	 *  * ...
+	 * Usually remote resources are cached locally for one hour, this can be
+	 * changed in the FLOW3 settings.
 	 *
 	 * @param \F3\FLOW3\Property\DataType\URI|string $URI
 	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 * @api
 	 */
 	public function getResource($URI) {
 		$URIString = (string)$URI;
@@ -116,27 +128,21 @@ class Manager {
 			$URI = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $URI);
 		}
 
-		$metadata = $this->resourcePublisher->getMetadata($URI);
-		$this->loadedResources[$URIString] = $this->instantiateResource($metadata);
+		$this->loadedResources[$URIString] = $this->instantiateResource($URI);
 
 		return $this->loadedResources[$URIString];
 	}
 
 	/**
-	 * Instantiates a resource based on the given metadata
+	 * Instantiates a resource based on the given URI.
 	 *
-	 * @param array $metadata
+	 * @param \F3\FLOW3\Property\DataType\URI $URI
 	 * @return \F3\FLOW3\Resource\ResourceInterface
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function instantiateResource(array $metadata) {
-		switch ($metadata['mimeType']) {
-			case 'text/html':
-				$resource = $this->objectFactory->create('F3\FLOW3\Resource\HTMLResource');
-				break;
-			default:
-				throw new \F3\FLOW3\Resource\Exception('Scheme "' . $metadata['URI']->getScheme() . '" in URI cannot be handled.', 1207055219);
-		}
+	protected function instantiateResource(\F3\FLOW3\Property\DataType\URI $URI) {
+		$metadata = $this->resourcePublisher->getMetadata($URI);
+		$resource = $this->objectFactory->create('F3\FLOW3\Resource\GenericResource');
 		$resource->setMetaData($metadata);
 		return $resource;
 	}

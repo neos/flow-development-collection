@@ -438,7 +438,11 @@ class Argument {
 		}
 
 		if (!($transformedValue instanceof $this->dataType)) {
-			throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '", but was of type "' . get_class($transformedValue) . '".', 1251730701);
+			if (is_object($transformedValue)) {
+				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '", but was of type "' . get_class($transformedValue) . '".', 1251730701);
+			} else {
+				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value must be of type "' . $this->dataType . '", but was of type "' . gettype($transformedValue) . '".', 1251730702);
+			}
 		}
 		return $transformedValue;
 	}
