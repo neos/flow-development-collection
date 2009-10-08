@@ -153,9 +153,9 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		}
 
 		$this->replaceObject($existingObject, $newObject);
-	
+
 	}
-	
+
 	/**
 	 * Replaces an object by another without any further checks. Instead of calling this method, always call replace().
 	 *
@@ -182,10 +182,10 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 		} else {
 			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "existing object" is unknown to the persistence backend.', 1238068475);
 		}
-		
+
 		$this->updateRecursively($newObject);
 	}
-	
+
 	/**
 	 * Loop through all properties of the $newObject and call update() on them if they are entities/valueobjects.
 	 * This makes sure that changes to subobjects of a given object are persisted as well.
@@ -226,7 +226,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 	/**
 	 * Replaces an existing object with the same identifier by the given object without any further checks.
 	 * Never use this method directly, always use update().
-	 * 
+	 *
 	 * @param object $modifiedObject The modified object
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
@@ -240,7 +240,7 @@ class Repository implements \F3\FLOW3\Persistence\RepositoryInterface {
 			throw new \F3\FLOW3\Persistence\Exception\UnknownObject('The "modified object" is does not have an existing counterpart in this repository.', 1249479819);
 		}
 	}
-	
+
 	/**
 	 * Returns all addedObjects that have been added to this repository with add().
 	 *
