@@ -388,6 +388,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function checkRequestHash() {
+		if (!($this->request instanceof F3\FLOW3\MVC\Web\Request)) return; // We only want to check it for now for web requests.
 		if ($this->request->isHmacVerified()) return; // all good
 
 		$verificationNeeded = FALSE;
