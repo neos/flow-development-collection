@@ -148,11 +148,27 @@ class RequestTest extends \F3\Testing\BaseTestCase {
 	 */
 	public function errorsCanBeSetAndRetrieved() {
 		$errors = array(new \stdClass());
-		
+
 		$request = new \F3\FLOW3\MVC\Web\Request();
 
 		$request->setErrors($errors);
 		$this->assertEquals($errors, $request->getErrors());
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org
+	 */
+	public function hmacVerifiedCanBeSetAndRetrieved() {
+		$request = new \F3\FLOW3\MVC\Web\Request();
+
+		$this->assertFalse($request->isHmacVerified());
+
+		$request->setHmacVerified(TRUE);
+		$this->assertTrue($request->isHmacVerified());
+
+		$request->setHmacVerified(FALSE);
+		$this->assertFalse($request->isHmacVerified());
 	}
 }
 ?>

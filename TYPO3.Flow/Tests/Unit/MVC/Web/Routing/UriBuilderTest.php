@@ -165,8 +165,9 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 	 * @author Bastian Waidelich <bastian@typo3.org>
 	 */
 	public function buildMergesArgumentsWithQueryParametersIfAddQueryStringIsSet() {
+		$overruledArguments = array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Overruled');
 		$this->request->expects($this->once())->method('getArguments')->will($this->returnValue(array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Bar')));
-		$this->router->expects($this->once())->method('resolve')->with(array('Some' => array('Arguments' => 'From Request'), 'Foo' => 'Overruled'))->will($this->returnValue('resolvedUri'));
+		$this->router->expects($this->once())->method('resolve')->with($overruledArguments)->will($this->returnValue('resolvedUri'));
 
 		$this->uriBuilder->setAddQueryString(TRUE);
 		$this->uriBuilder->setArguments(array('Foo' => 'Overruled'));
@@ -175,6 +176,8 @@ class UriBuilderTest extends \F3\Testing\BaseTestCase {
 		$actualResult = $this->uriBuilder->build();
 
 		$this->assertEquals($expectedResult, $actualResult);
+
+		$this->assertEquals($overruledArguments, $this->uriBuilder->getLastArguments());
 	}
 
 	/**

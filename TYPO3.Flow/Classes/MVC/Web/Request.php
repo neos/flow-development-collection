@@ -58,6 +58,11 @@ class Request extends \F3\FLOW3\MVC\Request {
 	protected $baseURI;
 
 	/**
+	 * @var boolean TRUE if the HMAC of this request could be verified, FALSE otherwise.
+	 */
+	protected $hmacVerified = FALSE;
+
+	/**
 	 * Injects the environment
 	 *
 	 * @param \F3\FLOW3\Utility\Environment $environment
@@ -167,6 +172,27 @@ class Request extends \F3\FLOW3\MVC\Request {
 		array_pop($requestPathSegments);
 		$baseURI->setPath(implode('/', $requestPathSegments) . '/');
 		return $baseURI;
+	}
+
+	/**
+	 * Could the request be verified via a HMAC?
+	 *
+	 * @param boolean $hmacVerified TRUE if request could be verified, FALSE otherwise.
+	 * @return void
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function setHmacVerified($hmacVerified) {
+		$this->hmacVerified = (boolean)$hmacVerified;
+	}
+
+	/**
+	 * Could the request be verified via a HMAC?
+	 *
+	 * @return boolean TRUE if request could be verified, FALSE otherwise.
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function isHmacVerified() {
+		return $this->hmacVerified;
 	}
 }
 ?>

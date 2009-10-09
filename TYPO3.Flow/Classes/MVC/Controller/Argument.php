@@ -122,6 +122,19 @@ class Argument {
 	 */
 	protected $filter = NULL;
 
+	const ORIGIN_CLIENT = 0;
+	const ORIGIN_PERSISTENCE = 1;
+	const ORIGIN_PERSISTENCE_AND_MODIFIED = 2;
+	const ORIGIN_NEWLY_CREATED = 3;
+
+	/**
+	 * The origin of the argument value. This is only meaningful after argument mapping.
+	 *
+	 * One of the ORIGIN_* constants above
+	 * @var integer
+	 */
+	protected $origin = 0;
+
 	/**
 	 * Constructs this controller argument
 	 *
@@ -388,6 +401,16 @@ class Argument {
 	}
 
 	/**
+	 * Get the origin of the argument value. This is only meaningful after argument mapping.
+	 *
+	 * @return integer one of the ORIGIN_* constants
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function getOrigin() {
+		return $this->origin;
+	}
+
+	/**
 	 * Sets the value of this argument.
 	 *
 	 * @param mixed $value The value of this argument
@@ -424,16 +447,23 @@ class Argument {
 		}
 		$transformedValue = NULL;
 		if ($this->dataTypeClassSchema !== NULL) {
-				// It is an Entity or ValueObject.
+				// The target object is an Entity or ValueObject.
 			if (is_string($value) && preg_match(self::PATTERN_MATCH_UUID, $value) === 1) {
+				$this->origin = self::ORIGIN_PERSISTENCE;
 				$transformedValue = $this->persistenceManager->getBackend()->getObjectByIdentifier($value);
 			} elseif (is_array($value)) {
+				if (array_keys($value) === array('__identity')) { // If there is only an __identity array _and nothing else_, then the property mapper will not clone the object.
+					$this->origin = self::ORIGIN_PERSISTENCE;
+				} else {
+					$this->origin = self::ORIGIN_PERSISTENCE_AND_MODIFIED;
+				}
 				$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
 			}
 		} else {
 			if (!is_array($value)) {
 				throw new \F3\FLOW3\MVC\Exception\InvalidArgumentValue('The value was a simple type, so we could not map it to an object. Maybe the @entity or @valueobject annotations are missing?', 1251730701);
 			}
+			$this->origin = self::ORIGIN_NEWLY_CREATED;
 			$transformedValue = $this->propertyMapper->map(array_keys($value), $value, $this->dataType);
 		}
 

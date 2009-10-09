@@ -42,15 +42,22 @@ class RequestDispatchingAspect {
 	protected $firewall;
 
 	/**
+	 * @var F3\FLOW3\Security\Channel\RequestHashService The request hash service
+	 */
+	protected $requestHashService;
+
+	/**
 	 * Constructor
 	 *
 	 * @param F3\FLOW3\Security\ContextHolderInterface $securityContextHolder
 	 * @param F3\FLOW3\Security\Authorization\FirewallInterface $firewall
+	 * @param F3\FLOW3\Security\Channel\RequestHashService $requestHashService
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall) {
+	public function __construct(\F3\FLOW3\Security\ContextHolderInterface $securityContextHolder, \F3\FLOW3\Security\Authorization\FirewallInterface $firewall, \F3\FLOW3\Security\Channel\RequestHashService $requestHashService) {
 		$this->securityContextHolder = $securityContextHolder;
 		$this->firewall = $firewall;
+		$this->requestHashService = $requestHashService;
 	}
 
 	/**
@@ -79,6 +86,20 @@ class RequestDispatchingAspect {
 	public function blockIllegalRequests(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
 		$this->firewall->blockIllegalRequests($request);
+		return $joinPoint->getAdviceChain()->proceed($joinPoint);
+	}
+
+	/**
+	 * Advices the dispatch method to check the HMAC.
+	 *
+	 * @around method(F3\FLOW3\MVC\Dispatcher->dispatch()) && setting(FLOW3.security.enable)
+	 * @param F3\FLOW3\AOP\JoinPointInterface $joinPoint The current joinpoint
+	 * @return mixed Result of the advice chain
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	public function checkRequestHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
+		$request = $joinPoint->getMethodArgument('request');
+		$this->requestHashService->verifyRequest($request);
 		return $joinPoint->getAdviceChain()->proceed($joinPoint);
 	}
 

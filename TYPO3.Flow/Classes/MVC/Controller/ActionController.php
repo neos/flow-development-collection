@@ -128,6 +128,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		}
 
 		$this->mapRequestArgumentsToControllerArguments();
+		$this->checkRequestHash();
 		$this->view = $this->resolveView();
 		if ($this->view !== NULL) $this->initializeView($this->view);
 		$this->callActionMethod();
@@ -145,7 +146,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function initializeActionMethodArguments() {
 		$methodParameters = $this->reflectionService->getMethodParameters(get_class($this), $this->actionMethodName);
-		
+
 		foreach ($methodParameters as $parameterName => $parameterInfo) {
 			$dataType = NULL;
 			if (isset($parameterInfo['type'])) {
@@ -157,7 +158,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 
-			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);	
+			$this->arguments->addNewArgument($parameterName, $dataType, ($parameterInfo['optional'] === FALSE), $defaultValue);
 		}
 	}
 
@@ -375,6 +376,33 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 */
 	protected function getErrorFlashMessage() {
 		return 'An error occurred while trying to call ' . get_class($this) . '->' . $this->actionMethodName . '()';
+	}
+
+	/**
+	 * Checks the request hash (HMAC), if arguments have been touched by the property mapper.
+	 *
+	 * In case the @dontverifyrequesthash-Annotation has been set, this suppresses the exception.
+	 *
+	 * @return void
+	 * @throws F3\FLOW3\MVC\Exception\InvalidOrNoRequestHash In case request hash checking failed
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
+	protected function checkRequestHash() {
+		if ($this->request->isHmacVerified()) return; // all good
+
+		$verificationNeeded = FALSE;
+		foreach ($this->arguments as $argument) {
+			if ($argument->getOrigin() == \F3\FLOW3\MVC\Controller\Argument::ORIGIN_NEWLY_CREATED
+			 || $argument->getOrigin() == \F3\FLOW3\MVC\Controller\Argument::ORIGIN_PERSISTENCE_AND_MODIFIED) {
+				$verificationNeeded = TRUE;
+			}
+		}
+		if ($verificationNeeded) {
+			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
+			if (!isset($methodTagsValues['dontverifyrequesthash'])) {
+				throw new \F3\FLOW3\MVC\Exception\InvalidOrNoRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
+			}
+		}
 	}
 }
 ?>
