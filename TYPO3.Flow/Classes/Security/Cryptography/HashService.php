@@ -32,7 +32,7 @@ namespace F3\FLOW3\Security\Cryptography;
  */
 class HashService {
 	/**
-	 * Generate a hash for a given string
+	 * Generate a hash (HMAC) for a given string
 	 *
 	 * @param string $string The string for which a hash should be generated
 	 * @return string The hash of the string
@@ -44,7 +44,8 @@ class HashService {
 	public function generateHash($string) {
 		if (!is_string($string)) throw new \F3\FLOW3\Security\Exception\InvalidArgumentForHashGeneration('A hash can only be generated for a string, but "' . gettype($string) . '" was given.', 1255069587);
 		$encryptionKey = '7nN5#n8guP/oA9Bq95x=e/x}.hL[:7yv1BJcWrB0AYQ5WJ!KGd';
-		return sha1($string . $encryptionKey);
+
+		return hash_hmac('sha1', $string, $encryptionKey);
 	}
 
 	/**

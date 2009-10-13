@@ -99,7 +99,7 @@ class RequestDispatchingAspect {
 	 */
 	public function checkRequestHash(\F3\FLOW3\AOP\JoinPointInterface $joinPoint) {
 		$request = $joinPoint->getMethodArgument('request');
-		if ($request instanceof F3\FLOW3\MVC\Web\Request) {
+		if ($request instanceof \F3\FLOW3\MVC\Web\Request) {
 			$this->requestHashService->verifyRequest($request);
 		}
 		return $joinPoint->getAdviceChain()->proceed($joinPoint);
