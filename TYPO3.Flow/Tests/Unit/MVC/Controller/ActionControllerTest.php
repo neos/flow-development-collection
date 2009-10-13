@@ -674,7 +674,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 	/**
 	 * @test
-	 * @expectedException F3\FLOW3\MVC\Exception\InvalidOrNoRequestHash
+	 * @expectedException F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	public function checkRequestHashThrowsExceptionIfNeeded() {

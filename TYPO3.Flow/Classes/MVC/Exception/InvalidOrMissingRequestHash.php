@@ -23,12 +23,12 @@ namespace F3\FLOW3\MVC\Exception;
  *                                                                        */
 
 /**
- * An "Invalid Or No Request Hash" exception
+ * An "Invalid Or Missing Request Hash" exception
  *
  * @version $Id: InvalidMarker.php 2813 2009-07-16 14:02:34Z k-fish $
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
  */
-class InvalidOrNoRequestHash extends \F3\FLOW3\MVC\Exception {
+class InvalidOrMissingRequestHash extends \F3\FLOW3\MVC\Exception {
 
 }
 

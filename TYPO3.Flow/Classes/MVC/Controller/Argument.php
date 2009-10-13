@@ -122,6 +122,10 @@ class Argument {
 	 */
 	protected $filter = NULL;
 
+	/**
+	 * The origin of the argument value.
+	 * @var integer
+	 */
 	const ORIGIN_CLIENT = 0;
 	const ORIGIN_PERSISTENCE = 1;
 	const ORIGIN_PERSISTENCE_AND_MODIFIED = 2;

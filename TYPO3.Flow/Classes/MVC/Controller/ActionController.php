@@ -384,7 +384,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * In case the @dontverifyrequesthash-Annotation has been set, this suppresses the exception.
 	 *
 	 * @return void
-	 * @throws F3\FLOW3\MVC\Exception\InvalidOrNoRequestHash In case request hash checking failed
+	 * @throws F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash In case request hash checking failed
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	protected function checkRequestHash() {
@@ -403,7 +403,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		if ($verificationNeeded) {
 			$methodTagsValues = $this->reflectionService->getMethodTagsValues(get_class($this), $this->actionMethodName);
 			if (!isset($methodTagsValues['dontverifyrequesthash'])) {
-				throw new \F3\FLOW3\MVC\Exception\InvalidOrNoRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
+				throw new \F3\FLOW3\MVC\Exception\InvalidOrMissingRequestHash('Request hash (HMAC) checking failed. The parameter __hmac was invalid or not set, and objects were modified.', 1255082824);
 			}
 		}
 	}

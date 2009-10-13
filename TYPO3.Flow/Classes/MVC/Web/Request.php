@@ -175,7 +175,7 @@ class Request extends \F3\FLOW3\MVC\Request {
 	}
 
 	/**
-	 * Could the request be verified via a HMAC?
+	 * Setter for HMAC verification flag.
 	 *
 	 * @param boolean $hmacVerified TRUE if request could be verified, FALSE otherwise.
 	 * @return void
