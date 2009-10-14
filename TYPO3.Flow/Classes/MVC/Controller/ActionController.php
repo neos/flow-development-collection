@@ -154,7 +154,7 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 			} elseif ($parameterInfo['array']) {
 				$dataType = 'array';
 			}
-			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentType('The argument type for parameter "' . $parameterName . '" could not be detected.', 1253175643);
+			if ($dataType === NULL) throw new \F3\FLOW3\MVC\Exception\InvalidArgumentType('The argument type for parameter $' . $parameterName . ' of method ' . get_class($this) . '->' . $this->actionMethodName . '() could not be detected.' , 1253175643);
 
 			$defaultValue = (isset($parameterInfo['defaultValue']) ? $parameterInfo['defaultValue'] : NULL);
 
@@ -258,15 +258,15 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 	 * @api
 	 */
 	protected function resolveView() {
-		$view = $this->objectManager->getObject('F3\Fluid\View\TemplateView');
+		$view = $this->objectFactory->create('F3\Fluid\View\TemplateView');
 		$controllerContext = $this->buildControllerContext();
 		$view->setControllerContext($controllerContext);
 		if ($view->hasTemplate() === FALSE) {
 			$viewObjectName = $this->resolveViewObjectName();
 			if ($viewObjectName !== FALSE) {
-				$view = $this->objectManager->getObject($viewObjectName);
+				$view = $this->objectFactory->create($viewObjectName);
 			} else {
-				$view = $this->objectManager->getObject('F3\FLOW3\MVC\View\NotFoundView');
+				$view = $this->objectFactory->create('F3\FLOW3\MVC\View\NotFoundView');
 				$view->assign('errorMessage', 'No template was found. View could not be resolved for action "' . $this->request->getControllerActionName() . '"');
 			}
 			$view->setControllerContext($controllerContext);

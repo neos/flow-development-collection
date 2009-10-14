@@ -27,6 +27,7 @@ namespace F3\FLOW3\MVC\View;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @scope prototype
  */
 abstract class AbstractView implements \F3\FLOW3\MVC\View\ViewInterface {
 

@@ -187,13 +187,13 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockFluidTemplateView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 		$mockFluidTemplateView->expects($this->once())->method('hasTemplate')->will($this->returnValue(TRUE));
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('buildControllerContext'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('buildControllerContext')->will($this->returnValue($mockControllerContext));
 		$mockController->_set('session', $mockSession);
-		$mockController->_set('objectManager', $mockObjectManager);
+		$mockController->_set('objectFactory', $mockObjectFactory);
 
 		$this->assertSame($mockFluidTemplateView, $mockController->_call('resolveView'));
 	}
@@ -213,16 +213,16 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockView = $this->getMock('F3\FLOW3\MVC\View\ViewInterface');
 		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
-		$mockObjectManager->expects($this->at(1))->method('getObject')->with('ResolvedViewObjectName')->will($this->returnValue($mockView));
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('ResolvedViewObjectName')->will($this->returnValue($mockView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('buildControllerContext', 'resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('buildControllerContext')->will($this->returnValue($mockControllerContext));
 		$mockController->expects($this->once())->method('resolveViewObjectName')->will($this->returnValue('ResolvedViewObjectName'));
 
 		$mockController->_set('session', $mockSession);
-		$mockController->_set('objectManager', $mockObjectManager);
+		$mockController->_set('objectFactory', $mockObjectFactory);
 
 		$this->assertSame($mockView, $mockController->_call('resolveView'));
 	}
@@ -245,9 +245,9 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 		$mockView->expects($this->once())->method('setControllerContext')->with($mockControllerContext);
 		$mockView->expects($this->at(0))->method('assign')->with('errorMessage', 'No template was found. View could not be resolved for action "MyAction"');
 
-		$mockObjectManager = $this->getMock('F3\FLOW3\Object\ManagerInterface', array(), array(), '', FALSE);
-		$mockObjectManager->expects($this->at(0))->method('getObject')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
-		$mockObjectManager->expects($this->at(1))->method('getObject')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockView));
+		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface', array(), array(), '', FALSE);
+		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\Fluid\View\TemplateView')->will($this->returnValue($mockFluidTemplateView));
+		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\MVC\View\NotFoundView')->will($this->returnValue($mockView));
 
 		$mockController = $this->getMock($this->buildAccessibleProxy('F3\FLOW3\MVC\Controller\ActionController'), array('buildControllerContext', 'resolveViewObjectName'), array(), '', FALSE);
 		$mockController->expects($this->once())->method('buildControllerContext')->will($this->returnValue($mockControllerContext));
@@ -255,7 +255,7 @@ class ActionControllerTest extends \F3\Testing\BaseTestCase {
 
 		$mockController->_set('request', $mockRequest);
 		$mockController->_set('session', $mockSession);
-		$mockController->_set('objectManager', $mockObjectManager);
+		$mockController->_set('objectFactory', $mockObjectFactory);
 
 		$this->assertSame($mockView, $mockController->_call('resolveView'));
 	}
