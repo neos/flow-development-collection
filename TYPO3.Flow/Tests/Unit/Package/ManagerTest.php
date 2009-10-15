@@ -187,7 +187,9 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_CONFIGURATION), "Configuration directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_DOCUMENTATION), "Documentation directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_RESOURCES), "Resources directory was not created");
-		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS), "Tests directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_UNIT), "Tests/Unit directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_INTEGRATION), "Tests/Integration directory was not created");
+		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_TESTS_SYSTEM), "Tests/System directory was not created");
 		$this->assertTrue(is_dir($packagePath . \F3\FLOW3\Package\Package::DIRECTORY_METADATA), "Metadata directory was not created");
 	}
 
