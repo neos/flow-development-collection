@@ -138,6 +138,16 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
+	public function getPropertyCanAccessPropertiesOfAnArray() {
+		$array = array('key' => 'value');
+		$expected = \F3\FLOW3\Reflection\ObjectAccess::getProperty($array, 'key');
+		$this->assertEquals($expected, 'value', 'getProperty does not work with Array property.');
+	}
+
+	/**
+	 * @test
+	 * @author Sebastian Kurfürst <sebastian@typo3.org>
+	 */
 	public function getAccessiblePropertyNamesReturnsAllPropertiesWhichAreAvailable() {
 		$declaredPropertyNames = \F3\FLOW3\Reflection\ObjectAccess::getAccessiblePropertyNames($this->dummyObject);
 		$expectedPropertyNames = array('anotherProperty', 'property', 'property2', 'publicProperty', 'publicProperty2');
@@ -167,7 +177,7 @@ class ObjectAccessTest extends \F3\Testing\BaseTestCase {
 		$alternativeObject = new \F3\FLOW3\Tests\Reflection\Fixture\DummyClassWithGettersAndSetters();
 		$alternativeObject->setProperty('test');
 		$this->dummyObject->setProperty2($alternativeObject);
-		
+
 		$expected = 'test';
 		$actual = \F3\FLOW3\Reflection\ObjectAccess::getPropertyPath($this->dummyObject, 'property2.property');
 		$this->assertEquals($expected, $actual);

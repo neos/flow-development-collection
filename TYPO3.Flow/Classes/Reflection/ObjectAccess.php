@@ -45,6 +45,7 @@ class ObjectAccess {
 	/**
 	 * Get a property of a given object.
 	 * Tries to get the property the following ways:
+	 * - if the target is an array, and this has this property, we call it.
 	 * - if the target object is an instance of ArrayAccess, it gets the property
 	 *   on it if it exists.
 	 * - if public getter method exists, call it.
@@ -58,10 +59,12 @@ class ObjectAccess {
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
 	 */
 	static public function getProperty($object, $propertyName) {
-		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301367);
+		if (!is_object($object) && !is_array($object)) throw new \InvalidArgumentException('$object must be an object or array, ' . gettype($object). ' given.', 1237301367);
 		if (!is_string($propertyName)) throw new \InvalidArgumentException('Given property name is not of type string.', 1231178303);
 
-		if (is_callable(array($object, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
+		if (is_array($object) && array_key_exists($propertyName, $object)) {
+			return $object[$propertyName];
+		} elseif (is_callable(array($object, $getterMethodName = self::buildGetterMethodName($propertyName)))) {
 			return call_user_func(array($object, $getterMethodName));
 		} elseif ($object instanceof \ArrayAccess && isset($object[$propertyName])) {
 			return $object[$propertyName];
@@ -133,7 +136,7 @@ class ObjectAccess {
 	 * @param object $object Object to receive property names for
 	 * @return array Array of all declared property names
 	 * @author Sebastian Kurfürst <sebastian@typo3.org>
-	 * @todo What to do with ArrayAccess
+	 * @todo What to do with ArrayAccess and arrays?
 	 */
 	static public function getAccessiblePropertyNames($object) {
 		if (!is_object($object)) throw new \InvalidArgumentException('$object must be an object, ' . gettype($object). ' given.', 1237301369);
