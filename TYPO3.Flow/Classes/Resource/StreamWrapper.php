@@ -315,7 +315,7 @@ class StreamWrapper {
 	 */
 	public function stream_open($path, $mode, $options, &$opened_path) {
 		$this->createStreamWrapper($path);
-		return $this->streamWrapper->open($path, $mode, $options, &$opened_path);
+		return $this->streamWrapper->open($path, $mode, $options, $opened_path);
 	}
 
 	/**
