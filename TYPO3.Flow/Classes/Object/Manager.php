@@ -27,6 +27,7 @@ namespace F3\FLOW3\Object;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class Manager implements \F3\FLOW3\Object\ManagerInterface {
 
@@ -347,7 +348,11 @@ class Manager implements \F3\FLOW3\Object\ManagerInterface {
 	}
 
 	/**
-	 * Registers the given class as an object
+	 * Registers the given class as an object.
+	 *
+	 * Note: When registering an object after FLOW3 has been initialized, it
+	 * won't get picked up by AOP, so do not expect to be able to register
+	 * entities or anything else relying in AOP to work.
 	 *
 	 * @param string $objectName The unique identifier of the object
 	 * @param string $className The class name which provides the functionality for this object. Same as object name by default.

@@ -1255,7 +1255,12 @@ public function fooReturnsBarForQuux() {
       the intended public API of a project. For FLOW3, only the methods
       explicitly defined as part of the public API will be kept stable and are
       intended for use by developers using FLOW3. Also the API documentation
-      we produce will only cover the public API.</para>
+      we produce will only cover the public API.<important>
+          <para>When something in a class or an interface is annotated with
+          <literal>@api</literal> make sure to also annotate the class or
+          interface itself! Otherwise it will be ignored completely when
+          official API documentation is rendered!</para>
+        </important></para>
 
       <para>To mark a method as part of the public API, include an
       <markup>@api</markup> annotation for it in the docblock.<example>
@@ -1457,7 +1462,7 @@ public function fooBar() {
           </listitem>
 
           <listitem>
-            <para>@pointcut </para>
+            <para>@pointcut</para>
           </listitem>
 
           <listitem>

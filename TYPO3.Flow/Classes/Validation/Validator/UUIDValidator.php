@@ -27,6 +27,7 @@ namespace F3\FLOW3\Validation\Validator;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class UUIDValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
@@ -38,8 +39,6 @@ class UUIDValidator extends \F3\FLOW3\Validation\Validator\AbstractValidator {
 
 	/**
 	 * Returns TRUE, if the given property ($propertyValue) is a formally valid UUID.
-	/**
-	 * Checks if the given value is valid according to the validator.
 	 *
 	 * @param mixed $value The value that should be validated
 	 * @return boolean TRUE if the value is valid, FALSE if an error occured
