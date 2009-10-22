@@ -27,16 +27,10 @@ namespace F3\FLOW3\Resource;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  * @scope singleton
  */
 class Manager {
-
-	/**
-	 * Constants reflecting the file caching strategies
-	 */
-	const CACHE_STRATEGY_NONE = 'none';
-	const CACHE_STRATEGY_PACKAGE = 'package';
-	const CACHE_STRATEGY_FILE = 'file';
 
 	/**
 	 * @var \F3\FLOW3\Resource\ClassLoader Instance of the class loader
@@ -44,14 +38,24 @@ class Manager {
 	protected $classLoader;
 
 	/**
-	 * @var \F3\FLOW3\Object\Factory
+	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
+
+	/**
+	 * @var \F3\FLOW3\Reflection\Service
+	 */
+	protected $reflectionService;
 
 	/**
 	 * @var \F3\FLOW3\Resource\Publisher
 	 */
 	protected $resourcePublisher;
+
+	/**
+	 * @var \F3\FLOW3\Cache\Manager
+	 */
+	protected $cacheManager;
 
 	/**
 	 * @var array The loaded resources (identity map)
@@ -61,13 +65,33 @@ class Manager {
 	/**
 	 * Constructs the resource manager
 	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @param array $settings
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function __construct(\F3\FLOW3\Resource\ClassLoader $classLoader, \F3\FLOW3\Object\FactoryInterface $objectFactory) {
-		$this->classLoader = $classLoader;
+	public function __construct(array $settings) {
+		$this->settings = $settings;
+	}
+
+	/**
+	 * Injects the cache manager
+	 *
+	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectObjectFactory(\F3\FLOW3\Object\FactoryInterface $objectFactory) {
 		$this->objectFactory = $objectFactory;
+	}
+
+	/**
+	 * Injects the cache manager
+	 *
+	 * @param \F3\FLOW3\Cache\Manager $cacheManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectCacheManager(\F3\FLOW3\Cache\Manager $cacheManager) {
+		$this->cacheManager = $cacheManager;
 	}
 
 	/**
@@ -82,69 +106,53 @@ class Manager {
 	}
 
 	/**
-	 * Explicitly registers a file path and name which holds the implementation of
-	 * the given class.
+	 * Injects the reflection service
 	 *
-	 * @param  string $className Name of the class to register
-	 * @param  string $classFilePathAndName Absolute path and file name of the file holding the class implementation
+	 * @param \F3\FLOW3\Reflection\Service $reflectionService
 	 * @return void
-	 * @throws \InvalidArgumentException if $className is not a valid string
-	 * @throws \F3\FLOW3\Resource\Exception\FileDoesNotExist if the specified file does not exist
-	 * @author Robert Lemke <robert@typo3.org>
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function registerClassFile($className, $classFilePathAndName) {
-		if (!is_string($className)) throw new \InvalidArgumentException('Class name must be a valid string.', 1187009929);
-		if (!file_exists($classFilePathAndName)) throw new \F3\FLOW3\Resource\Exception\FileDoesNotExist('The specified class file does not exist.', 1187009987);
-		$this->classLoader->setSpecialClassNameAndPath($className, $classFilePathAndName);
+	public function injectReflectionService(\F3\FLOW3\Reflection\Service $reflectionService) {
+		$this->reflectionService = $reflectionService;
 	}
 
 	/**
-	 * Returns a file resource if found using the supplied URI. A few (custom)
-	 * protocols are handled to specify where to fetch a resource from:
-	 *  * package - a file from a package, the path must be
-	 *      package://<packageKey>/<Public|Private>/<path>
-	 *  * typo3cr://<path> (to be implemented)
-	 * Aside from those, any protocol supported by PHP can be used, such as:
-	 *  * file - a regular file, needs an absolute path
-	 *  * http - a regular web resource, needs an absolute URL
-	 *  * ftp - a regular FTP resource, needs an absolute URL
-	 *  * ...
-	 * Usually remote resources are cached locally for one hour, this can be
-	 * changed in the FLOW3 settings.
-	 *
-	 * @param \F3\FLOW3\Property\DataType\URI|string $URI
-	 * @return \F3\FLOW3\Resource\ResourceInterface
+	 * Check for implementations of F3\FLOW3\Resource\StreamWrapperInterface and
+	 * register them.
+	 * 
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 * @api
 	 */
-	public function getResource($URI) {
-		$URIString = (string)$URI;
-
-		if (isset($this->loadedResources[$URIString])) {
-			return $this->loadedResources[$URIString];
+	public function initializeStreamWrappers() {
+		\F3\FLOW3\Resource\StreamWrapper::setObjectFactory($this->objectFactory);
+		$streamWrapperClassNames = $this->reflectionService->getAllImplementationClassNamesForInterface('F3\FLOW3\Resource\StreamWrapperInterface');
+		foreach ($streamWrapperClassNames as $streamWrapperClassName) {
+			$scheme = $streamWrapperClassName::getScheme();
+			if (in_array($scheme, stream_get_wrappers())) {
+				stream_wrapper_unregister($scheme);
+			}
+			stream_wrapper_register($scheme, '\F3\FLOW3\Resource\StreamWrapper');
+			\F3\FLOW3\Resource\StreamWrapper::registerStreamWrapper($scheme, $streamWrapperClassName);
 		}
-
-		if (is_string($URI)) {
-			$URI = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $URI);
-		}
-
-		$this->loadedResources[$URIString] = $this->instantiateResource($URI);
-
-		return $this->loadedResources[$URIString];
 	}
 
 	/**
-	 * Instantiates a resource based on the given URI.
+	 * Prepares a mirror of public package resources that is accessible through
+	 * the web server directly.
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $URI
-	 * @return \F3\FLOW3\Resource\ResourceInterface
+	 * @param array $activePackages
+	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	protected function instantiateResource(\F3\FLOW3\Property\DataType\URI $URI) {
-		$metadata = $this->resourcePublisher->getMetadata($URI);
-		$resource = $this->objectFactory->create('F3\FLOW3\Resource\GenericResource');
-		$resource->setMetaData($metadata);
-		return $resource;
+	public function preparePublicPackageResourcesForWebAccess(array $activePackages) {
+		$this->resourcePublisher->setMirrorStatusCache($this->cacheManager->getCache('FLOW3_Resource_Status'));
+		$this->resourcePublisher->setMirrorDirectory($this->settings['cache']['publicPath']);
+		$this->resourcePublisher->setMirrorStrategy($this->settings['cache']['strategy']);
+		$this->resourcePublisher->setMirrorMode($this->settings['publisher']['mirrorMode']);
+
+		foreach ($activePackages as $packageKey => $package) {
+			$this->resourcePublisher->mirrorResources($package->getResourcesPath() . 'Public/', 'Packages/' . $packageKey . '/');
+		}
 	}
 
 }

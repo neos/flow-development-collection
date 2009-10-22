@@ -34,6 +34,7 @@ BootStrap::defineConstants();
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 final class Bootstrap {
 
@@ -170,7 +171,7 @@ final class Bootstrap {
 		$this->ensureRequiredEnvironment();
 		$this->context = (strlen($context) === 0) ? 'Production' : $context;
 
-		if (!(is_dir(FLOW3_PATH_CONFIGURATION . $context) && \is_readable(FLOW3_PATH_CONFIGURATION . $context))) {
+		if (!(is_dir(FLOW3_PATH_CONFIGURATION . $context) && is_readable(FLOW3_PATH_CONFIGURATION . $context))) {
 			exit('FLOW3: Unknown context "' . $context . '" provided, check your configuration!  (Error #1254216868)');
 		}
 		$this->FLOW3Package = new \F3\FLOW3\Package\Package('FLOW3', FLOW3_PATH_FLOW3);
@@ -225,7 +226,7 @@ final class Bootstrap {
 	 * @see initialize()
 	 */
 	public function initializeClassLoader() {
-		if (!class_exists('F3\FLOW3\Resource\ClassLoader')) {
+		if (!class_exists('F3\FLOW3\Resource\ClassLoader', FALSE)) {
 			require(FLOW3_PATH_FLOW3 . 'Classes/Resource/ClassLoader.php');
 		}
 
@@ -580,40 +581,19 @@ final class Bootstrap {
 	}
 
 	/**
-	 * Checks if resources (ie. files in the Resource directory of a package) have been altered and if so flushes
-	 * the related caches.
-	 *
-	 * @return void
-	 * @author Robert Lemke <robert@typo3.org>
-	 * @see initialize()
-	 */
-	protected function detectAlteredResources() {
-	}
-
-	/**
-	 * Publishes the public resources of all found packages
+	 * Initialize the resource management component, setting up stream wrappers,
+	 * publishing the public resources of all found packages, ...
 	 *
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @see initialize()
 	 */
 	public function initializeResources() {
+		$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\Manager', $this->settings['resource']);
+		$resourceManager->initializeStreamWrappers();
+
 		if (FLOW3_SAPITYPE === 'Web') {
-			$this->detectAlteredResources();
-			$metadataCache = $this->cacheManager->getCache('FLOW3_Resource_MetaData');
-			$statusCache = $this->cacheManager->getCache('FLOW3_Resource_Status');
-
-			$resourcePublisher = $this->objectManager->getObject('F3\FLOW3\Resource\Publisher');
-			$resourcePublisher->setMirrorDirectory($this->settings['resource']['cache']['publicPath']);
-			$resourcePublisher->setMetadataCache($metadataCache);
-			$resourcePublisher->setStatusCache($statusCache);
-			$resourcePublisher->setCacheStrategy($this->settings['resource']['cache']['strategy']);
-
-			$activePackages = $this->packageManager->getActivePackages();
-			foreach ($activePackages as $packageKey => $package) {
-				$resourcePublisher->mirrorResourcesDirectory($package->getResourcesPath() . 'Public/', 'Packages/' . $packageKey . '/');
-			}
-			$resourcePublisher->mirrorResourcesDirectory(FLOW3_PATH_DATA . 'Resources/Public/', 'Static/');
+			$resourceManager->preparePublicPackageResourcesForWebAccess($this->packageManager->getActivePackages());
 		}
 	}
 
@@ -646,7 +626,7 @@ final class Bootstrap {
 			$this->objectManager->getObject('F3\FLOW3\Session\SessionInterface')->close();
 		} else {
 			header('HTTP/1.1 503 Service Temporarily Unavailable');
-			readfile(FLOW3_PATH_FLOW3 . 'Resources/Private/Core/LockHoldingStackPage.html');
+			readfile('package://FLOW3/Private/Core/LockHoldingStackPage.html');
 			$this->systemLogger->log('Site is locked, exiting.', LOG_NOTICE);
 		}
 	}
@@ -706,22 +686,23 @@ final class Bootstrap {
 	 * @param array $packageConfiguration The configuration to evaluate
 	 * @return void
 	 * @author Robert Lemke <robert@typo3.org>
-	 * @todo needs refactoring and be moved to elsewhere (resource manager, package manager etc.)
+	 * @see initializePackages()
+	 * @todo needs refactoring and be moved to elsewhere (package manager)
 	 */
 	protected function evaluatePackageConfiguration(\F3\FLOW3\Package\PackageInterface $package, array $packageConfiguration) {
-		if (isset($packageConfiguration['resourceManager'])) {
-			if (isset($packageConfiguration['resourceManager']['specialClassNameAndPaths'])) {
-				$resourceManager = $this->objectManager->getObject('F3\FLOW3\Resource\Manager');
-				foreach ($packageConfiguration['resourceManager']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
+		if (isset($packageConfiguration['classLoader'])) {
+			if (isset($packageConfiguration['classLoader']['specialClassNameAndPaths'])) {
+				$classLoader = $this->objectManager->getObject('F3\FLOW3\Resource\ClassLoader');
+				foreach ($packageConfiguration['classLoader']['specialClassNameAndPaths'] as $className => $classFilePathAndName) {
 					$classFilePathAndName = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $classFilePathAndName);
 					$classFilePathAndName = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $classFilePathAndName);
-					$resourceManager->registerClassFile($className, $classFilePathAndName);
+					$classLoader->setSpecialClassNameAndPath($className, $classFilePathAndName);
 				}
 			}
 
-			if (isset($packageConfiguration['resourceManager']['includePaths'])) {
-				foreach ($packageConfiguration['resourceManager']['includePaths'] as $includePath) {
+			if (isset($packageConfiguration['classLoader']['includePaths'])) {
+				foreach ($packageConfiguration['classLoader']['includePaths'] as $includePath) {
 					$includePath = str_replace('%PATH_PACKAGE%', $package->getPackagePath(), $includePath);
 					$includePath = str_replace('%PATH_PACKAGE_CLASSES%', $package->getClassesPath(), $includePath);
 					$includePath = str_replace('%PATH_PACKAGE_RESOURCES%', $package->getResourcesPath(), $includePath);

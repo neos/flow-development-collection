@@ -31,6 +31,11 @@ namespace F3\FLOW3\Resource;
 class PublisherTest extends \F3\Testing\BaseTestCase {
 
 	/**
+	 * @var \F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * @var string
 	 */
 	protected $publicResourcePath;
@@ -52,10 +57,11 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 		$environment = new \F3\FLOW3\Utility\Environment();
 		$environment->setTemporaryDirectoryBase(FLOW3_PATH_DATA . 'Temporary/');
 		$this->publicResourcePath = 'Resources/' . uniqid('Test') . '/';
-		$metadataCache = $this->getMock('F3\FLOW3\Cache\Frontend\VariableFrontend', array(), array(), '', FALSE);
+
+		$this->packageManager = $this->getMock('F3\FLOW3\Package\ManagerInterface');
 
 		$this->publisher = new \F3\FLOW3\Resource\Publisher();
-		$this->publisher->setMetadataCache($metadataCache);
+		$this->publisher->injectPackageManager($this->packageManager);
 		$this->publisher->setMirrorDirectory($this->publicResourcePath);
 	}
 
@@ -71,44 +77,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function canExtractResourceMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('package://FLOW3/Public/TestTemplate.html');
-		$expectedMetadata = array(
-			'URI' => $URI,
-			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',
-			'name' => 'TestTemplate.html',
-			'mimeType' => 'text/html',
-			'mediaType' => 'text',
-		);
-
-		$extractedMetadata = $this->publisher->extractResourceMetadata($URI);
-		$this->assertEquals($expectedMetadata, $extractedMetadata, 'The extracted metadata was not as expected.');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function canGetMetadataForURI() {
-		$URI = new \F3\FLOW3\Property\DataType\URI('package://FLOW3/Public/TestTemplate.html');
-		$expectedMetadata = array(
-			'URI' => $URI,
-			'path' => FLOW3_PATH_WEB . $this->publicResourcePath . 'Packages/FLOW3',
-			'name' => 'TestTemplate.html',
-			'mimeType' => 'text/html',
-			'mediaType' => 'text',
-		);
-
-		$extractedMetadata = $this->publisher->getMetadata($URI);
-
-		$this->assertEquals($expectedMetadata, $extractedMetadata, 'The returned metadata was not as expected.');
-	}
-
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function canMirrorPublicPackageResources() {
+	public function canMirrorResources() {
 		$this->markTestIncomplete('Test not yet implemented.');
 	}
 

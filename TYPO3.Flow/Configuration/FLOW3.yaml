@@ -119,10 +119,17 @@ resource:
 
     # The path for the public resources mirror, relative to the Web/ directory
     publicPath: Resources/
-    
+
     # The strategy to use when caching files for public resources. Specify either
     # "none", "package" or "file"
     strategy: package
+
+  # Settings for the resource publisher
+  publisher:
+
+    # The mode to use when mirroring files into the document root, either 'copy'
+    # or 'link'
+    mirrorMode: copy
 
 security:
 

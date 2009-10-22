@@ -31,33 +31,55 @@ namespace F3\FLOW3\Resource;
 class Publisher {
 
 	/**
+	 * Constants reflecting the file caching strategies
+	 * @var string
+	 * @api
+	 */
+	const CACHE_STRATEGY_NONE = 'none';
+	const CACHE_STRATEGY_PACKAGE = 'package';
+	const CACHE_STRATEGY_FILE = 'file';
+
+	/**
+	 * Constants reflecting the mirror mode settings
+	 * @var string
+	 * @api
+	 */
+	const MIRROR_MODE_COPY = 'copy';
+	const MIRROR_MODE_LINK = 'link';
+
+	/**
 	 * @var \F3\FLOW3\Object\FactoryInterface
 	 */
 	protected $objectFactory;
 
 	/**
+	 * @var \F3\FLOW3\Package\ManagerInterface
+	 */
+	protected $packageManager;
+
+	/**
 	 * The (absolute) base path for the mirrored public assets
 	 * @var string
 	 */
-	protected $publicResourcePath;
-
-	/**
-	 * The cache used for storing metadata about resources
-	 * @var \F3\FLOW3\Cache\Frontend\VariableFrontend
-	 */
-	protected $resourceMetadataCache;
+	protected $mirrorDirectory;
 
 	/**
 	 * The cache used for storing metadata about resources
 	 * @var \F3\FLOW3\Cache\Frontend\StringFrontend
 	 */
-	protected $resourceStatusCache;
+	protected $mirrorStatusCache;
 
 	/**
-	 * One of the CACHE_STRATEGY constants defined in \F3\FLOW3\Resource\Manager
+	 * One of the CACHE_STRATEGY constants
 	 * @var integer
 	 */
-	protected $cacheStrategy = \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_NONE;
+	protected $mirrorStrategy = self::CACHE_STRATEGY_NONE;
+
+	/**
+	 * One of the MIRROR_MODE_* constants
+	 * @var string
+	 */
+	protected $mirrorMode = self::MIRROR_MODE_COPY;
 
 	/**
 	 * @param \F3\FLOW3\Object\FactoryInterface $objectFactory
@@ -69,6 +91,15 @@ class Publisher {
 	}
 
 	/**
+	 * @param \F3\FLOW3\Package\ManagerInterface $packageManager
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function injectPackageManager(\F3\FLOW3\Package\ManagerInterface $packageManager) {
+		$this->packageManager = $packageManager;
+	}
+
+	/**
 	 * Sets the path to the asset mirror directory and makes sure it exists
 	 *
 	 * @param string $path
@@ -76,23 +107,12 @@ class Publisher {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function setMirrorDirectory($path) {
-		$this->publicResourcePath = FLOW3_PATH_WEB . $path;
-		if (!is_writable($this->publicResourcePath)) {
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->publicResourcePath);
+		$this->mirrorDirectory = FLOW3_PATH_WEB . $path;
+		if (!is_writable($this->mirrorDirectory)) {
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively($this->mirrorDirectory);
 		}
-		if (!is_dir($this->publicResourcePath)) throw new \F3\FLOW3\Resource\Exception\FileDoesNotExist('The directory "' . $this->publicResourcePath . '" does not exist.', 1207124538);
-		if (!is_writable($this->publicResourcePath)) throw new \F3\FLOW3\Resource\Exception('The directory "' . $this->publicResourcePath . '" is not writable.', 1207124546);
-	}
-
-	/**
-	 * Sets the cache used for storing meta data about resources
-	 *
-	 * @param \F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache
-	 * @return void
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function setMetadataCache(\F3\FLOW3\Cache\Frontend\VariableFrontend $metadataCache) {
-		$this->resourceMetadataCache = $metadataCache;
+		if (!is_dir($this->mirrorDirectory)) throw new \F3\FLOW3\Resource\Exception('The directory "' . $this->mirrorDirectory . '" does not exist.', 1207124538);
+		if (!is_writable($this->mirrorDirectory)) throw new \F3\FLOW3\Resource\Exception('The directory "' . $this->mirrorDirectory . '" is not writable.', 1207124546);
 	}
 
 	/**
@@ -102,37 +122,30 @@ class Publisher {
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
-		$this->resourceStatusCache = $statusCache;
+	public function setMirrorStatusCache(\F3\FLOW3\Cache\Frontend\StringFrontend $statusCache) {
+		$this->mirrorStatusCache = $statusCache;
 	}
 
 	/**
 	 * Sets the cache strategy to use for resource files
 	 *
-	 * @param integer $strategy One of the CACHE_STRATEGY constants from \F3\FLOW3\Resource\Manager
+	 * @param integer $strategy One of the CACHE_STRATEGY_* constants
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setCacheStrategy($strategy) {
-		$this->cacheStrategy = $strategy;
+	public function setMirrorStrategy($strategy) {
+		$this->mirrorStrategy = $strategy;
 	}
 
 	/**
-	 * Returns metadata for the resource identified by URI
+	 * Sets the cache strategy to use for resource files
 	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $URI
-	 * @return unknown
+	 * @param integer $strategy One of the MIRROR_MODE_* constants
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
-		$metadata = array();
-		$identifier = md5((string)$URI);
-		if ($this->resourceMetadataCache->has($identifier)) {
-			$metadata = $this->resourceMetadataCache->get($identifier);
-		} else {
-			$metadata = $this->extractResourceMetadata($URI);
-			$this->resourceMetadataCache->set($identifier, $metadata);
-		}
-		return $metadata;
+	public function setMirrorMode($mirrorMode) {
+		$this->mirrorMode = $mirrorMode;
 	}
 
 	/**
@@ -140,85 +153,59 @@ class Publisher {
 	 * to the given destination.
 	 *
 	 * @param string $sourcePath Path containing the resources to publish
-	 * @param string $relativeDestinationPath Path relative to the public resources directory where the given resources are mirrored to
+	 * @param string $relativeTargetPath Path relative to the public resources directory where the given resources are mirrored to
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 * @author Robert Lemke <robert@typo3.org>
 	 */
-	public function mirrorResourcesDirectory($sourcePath, $relativeDestinationPath) {
-		$cacheEntryIdentifier = md5($sourcePath);
-		if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE && $this->resourceStatusCache->has($cacheEntryIdentifier)) {
+	public function mirrorResources($sourcePath, $relativeTargetPath) {
+		if (!is_dir($sourcePath)) {
 			return;
-		} elseif ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_PACKAGE) {
-			$this->resourceStatusCache->set($cacheEntryIdentifier, '');
 		}
 
-		if (!is_dir($sourcePath)) return;
-		$destinationPath = $this->publicResourcePath . $relativeDestinationPath;
-		$resourceFilenames = \F3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath);
-
-		foreach ($resourceFilenames as $file) {
-			if (substr(strtolower($file), -4, 4) === '.php') continue;
-
-			$relativeFile = str_replace($sourcePath, '', $file);
-			$sourceMTime = filemtime($file);
-			if ($this->cacheStrategy === \F3\FLOW3\Resource\Manager::CACHE_STRATEGY_FILE && file_exists($destinationPath . $relativeFile)) {
-				$destMTime = filemtime($destinationPath . $relativeFile);
-				if ($sourceMTime === $destMTime) continue;
-			}
-
-			$URI = new \F3\FLOW3\Property\DataType\URI('file://' . $relativeDestinationPath . $relativeFile);
-			$metadata = $this->extractResourceMetadata($URI);
-
-			\F3\FLOW3\Utility\Files::createDirectoryRecursively($destinationPath . dirname($relativeFile));
-			if ($metadata['mimeType'] === 'text/html') {
-				$HTML = \F3\FLOW3\Resource\Processor::prefixRelativePathsInHTML(\F3\FLOW3\Utility\Files::getFileContents($file), 'Resources/' . $relativeDestinationPath . dirname($relativeFile) . '/');
-				file_put_contents($destinationPath . $relativeFile, $HTML);
-			} else {
-				copy($file, $destinationPath . $relativeFile);
-			}
-			if (!file_exists($destinationPath . $relativeFile)) {
-				throw new \F3\FLOW3\Resource\Exception('The resource "' . $relativeFile . '" could not be mirrored.', 1207255453);
-			}
-			touch($destinationPath . $relativeFile, $sourceMTime);
-
-			$this->resourceMetadataCache->set(md5((string)$URI), $metadata);
+		$cacheEntryIdentifier = md5($sourcePath);
+		if ($this->mirrorStrategy === self::CACHE_STRATEGY_PACKAGE && $this->mirrorStatusCache->has($cacheEntryIdentifier)) {
+			return;
+		} elseif ($this->mirrorStrategy === self::CACHE_STRATEGY_PACKAGE) {
+			$this->mirrorStatusCache->set($cacheEntryIdentifier, '');
 		}
-	}
 
-	/**
-	 * Fetches and returns metadata for a resource
-	 *
-	 * @param \F3\FLOW3\Property\DataType\URI $URI
-	 * @return array
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function extractResourceMetadata(\F3\FLOW3\Property\DataType\URI $URI) {
-		$metaData = array(
-			'URI' => $URI,
-			'name' => basename($URI->getPath()),
-			'mimeType' => \F3\FLOW3\Utility\FileTypes::mimeTypeFromFilename(basename($URI->getPath())),
-			'mediaType' => \F3\FLOW3\Utility\FileTypes::mediaTypeFromFilename(basename($URI->getPath())),
-		);
+		$destinationPath = \F3\FLOW3\Utility\Files::concatenatePaths(array($this->mirrorDirectory, $relativeTargetPath));
 
-		switch ($URI->getScheme()) {
-			case 'package':
-				$explodedPath = explode('/',dirname($URI->getPath()));
-				if ($explodedPath[1] === 'Public') {
-					$packageKey = $URI->getHost();
-					unset($explodedPath[1]);
-					$metaData['path'] = $this->publicResourcePath . 'Packages/' . $packageKey . implode('/', $explodedPath);
-				} else {
-					$metaData['path'] = 'Packages/' . $URI->getHost() . '/Resources' . dirname($URI->getPath());
-				}
-			break;
-			case 'file':
-				$metaData['path'] = dirname($URI->getPath());
-			break;
-			default:
-				throw new \F3\FLOW3\Resource\Exception('Unsupported URI scheme "' . $URI->getScheme() . '" could not be handled.', 1255004627);
+		foreach (\F3\FLOW3\Utility\Files::readDirectoryRecursively($sourcePath) as $sourcePathAndFileName) {
+			if (substr(strtolower($sourcePathAndFileName), -4, 4) === '.php') continue;
+
+			$targetPathAndFileName = \F3\FLOW3\Utility\Files::concatenatePaths(array($destinationPath, str_replace($sourcePath, '', $sourcePathAndFileName)));
+			$sourceMTime = filemtime($sourcePathAndFileName);
+			if ($this->mirrorStrategy === self::CACHE_STRATEGY_FILE && file_exists($targetPathAndFileName)) {
+				$destMTime = filemtime($targetPathAndFileName);
+				if ($sourceMTime <= $destMTime) continue;
+			}
+
+			\F3\FLOW3\Utility\Files::createDirectoryRecursively(dirname($targetPathAndFileName));
+			switch ($this->mirrorMode) {
+				case self::MIRROR_MODE_COPY:
+					copy($sourcePathAndFileName, $targetPathAndFileName);
+					touch($targetPathAndFileName, $sourceMTime);
+				break;
+				case self::MIRROR_MODE_LINK:
+					if (file_exists($targetPathAndFileName)) {
+						if (is_link($targetPathAndFileName) && (readlink($targetPathAndFileName) === $sourcePathAndFileName)) {
+							break;
+						}
+						unlink($targetPathAndFileName);
+						symlink($sourcePathAndFileName, $targetPathAndFileName);
+					} else {
+						symlink($sourcePathAndFileName, $targetPathAndFileName);
+					}
+				break;
+				default:
+					throw new \RuntimeException('An invalid mirror mode (' . $this->mirrorMode . ') has been configured.', 1256133400);
+			}
+			if (!file_exists($targetPathAndFileName)) {
+				throw new \F3\FLOW3\Resource\Exception('The resource "' . str_replace($sourcePath, '', $sourcePathAndFileName) . '" could not be mirrored.', 1207255453);
+			}
 		}
-		return $metaData;
 	}
 
 }

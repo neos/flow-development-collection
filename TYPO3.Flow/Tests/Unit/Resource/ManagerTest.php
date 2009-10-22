@@ -36,46 +36,34 @@ class ManagerTest extends \F3\Testing\BaseTestCase {
 	protected $manager;
 
 	/**
+	 * This test indeed messes with some of the static stuff concerning our
+	 * StreamWrapper setup. But since the dummy stream wrapper is removed again,
+	 * this does not do any harm. And registering the "real" wrappers a second
+	 * time doesn't do harm, either.
+	 * 
+	 * @test
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function setUp() {
-		$metaData = array(
-			'mimeType' => 'text/html',
-			'mediaType' => 'html',
-			'URI' => 'file://FLOW3/Public/TestTemplate.html',
-			'name' => 'TestTemplate.html',
-			'path' => '',
-		);
+	public function initializeStreamWrappersRegistersFoundStreamWrappers() {
+		$wrapperClassName = uniqid('MockWrapper');
+		$wrapperSchemeName = $wrapperClassName . 'scheme';
+		eval('class ' . $wrapperClassName . ' extends \F3\FLOW3\Resource\PackageStreamWrapper { static public function getScheme() { return \'' . $wrapperSchemeName . '\'; } }');
+		$mockStreamWrapper = new $wrapperClassName();
 
-		$mockClassLoader = $this->getMock('F3\FLOW3\Resource\ClassLoader', array(), array(), '', FALSE);
 		$mockObjectFactory = $this->getMock('F3\FLOW3\Object\FactoryInterface');
-		$mockObjectFactory->expects($this->at(0))->method('create')->with('F3\FLOW3\Property\DataType\URI')->will($this->returnValue(new \F3\FLOW3\Property\DataType\URI('file://FLOW3/Public/TestTemplate.html')));
-		$mockObjectFactory->expects($this->at(1))->method('create')->with('F3\FLOW3\Resource\GenericResource')->will($this->returnValue(new \F3\FLOW3\Resource\GenericResource()));
-		$mockResourcePublisher = $this->getMock('F3\FLOW3\Resource\Publisher', array(), array(), '', FALSE);
-		$mockResourcePublisher->expects($this->any())->method('getMetadata')->will($this->returnValue($metaData));
 
-		$this->manager = new \F3\FLOW3\Resource\Manager($mockClassLoader, $mockObjectFactory);
-		$this->manager->injectResourcePublisher($mockResourcePublisher);
-	}
+		$mockReflectionService = $this->getMock('F3\FLOW3\Reflection\Service');
+		$mockReflectionService->expects($this->once())->method('getAllImplementationClassNamesForInterface')->with('F3\FLOW3\Resource\StreamWrapperInterface')->will($this->returnValue(array(get_class($mockStreamWrapper))));
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getResourceReturnsAResourceImplementation() {
-		$resource = $this->manager->getResource('package://FLOW3/Public/TestTemplate.html');
-		$this->assertType('F3\FLOW3\Resource\ResourceInterface', $resource);
-	}
+		$resourceManager = new \F3\FLOW3\Resource\Manager(array());
+		$resourceManager->injectObjectFactory($mockObjectFactory);
+		$resourceManager->injectReflectionService($mockReflectionService);
+		$resourceManager->initializeStreamWrappers();
 
-	/**
-	 * @test
-	 * @author Karsten Dambekalns <karsten@typo3.org>
-	 */
-	public function getResourceReturnsRequestedResource() {
-		$resource = $this->manager->getResource('package://FLOW3/Public/TestTemplate.html');
-		$this->assertType('F3\FLOW3\Resource\GenericResource', $resource);
-		$this->assertEquals('TestTemplate.html', $resource->getName());
-		$this->assertEquals('text/html', $resource->getMIMEType());
+		$this->assertContains(get_class($mockStreamWrapper), \F3\FLOW3\Resource\StreamWrapper::getRegisteredStreamWrappers());
+		$this->assertArrayHasKey($wrapperSchemeName, \F3\FLOW3\Resource\StreamWrapper::getRegisteredStreamWrappers());
+		$this->assertContains($wrapperSchemeName, stream_get_wrappers());
+		stream_wrapper_unregister($wrapperSchemeName);
 	}
 
 }
