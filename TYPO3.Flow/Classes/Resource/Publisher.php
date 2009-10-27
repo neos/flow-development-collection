@@ -116,6 +116,16 @@ class Publisher {
 	}
 
 	/**
+	 * Returns the path to the asset mirror directory.
+	 *
+	 * @return string
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	public function getMirrorDirectory() {
+		return $this->mirrorDirectory;
+	}
+
+	/**
 	 * Sets the cache used for storing resources status
 	 *
 	 * @param \F3\FLOW3\Cache\Frontend\StringFrontend $statusCache
