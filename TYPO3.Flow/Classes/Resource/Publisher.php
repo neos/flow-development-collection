@@ -116,13 +116,13 @@ class Publisher {
 	}
 
 	/**
-	 * Returns the path to the asset mirror directory.
+	 * Returns the path to the asset mirror directory, relative to FLOW3_PATH_WEB.
 	 *
 	 * @return string
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function getMirrorDirectory() {
-		return $this->mirrorDirectory;
+	public function getRelativeMirrorDirectory() {
+		return substr($this->mirrorDirectory, strlen(FLOW3_PATH_WEB));
 	}
 
 	/**
