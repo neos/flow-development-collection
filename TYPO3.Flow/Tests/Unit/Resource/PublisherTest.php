@@ -78,7 +78,7 @@ class PublisherTest extends \F3\Testing\BaseTestCase {
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function getRelativeMirrorDirectoryPathReturnsRelativeMirrorDirectory() {
-		$this->assertEquals(substr($this->publicResourcePath, strlen(FLOW3_PATH_WEB)), $this->publisher->getRelativeMirrorDirectory());
+		$this->assertEquals($this->publicResourcePath, $this->publisher->getRelativeMirrorDirectory());
 	}
 
 	/**
