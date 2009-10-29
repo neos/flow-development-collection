@@ -39,7 +39,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	/**
 	 * @var resource
 	 */
-	protected $fileHandle;
+	protected $handle;
 
 	/**
 	 * @var \F3\FLOW3\Property\DataType\URI
@@ -89,6 +89,19 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	}
 
 	/**
+	 * Checks the given $path for use of the scheme this wrapper is intended for.
+	 *
+	 * @param string $path
+	 * @return void
+	 * @author Karsten Dambekalns <karsten@typo3.org>
+	 */
+	protected function checkScheme($path) {
+		if (substr($path, 0, 7) !== self::getScheme()) {
+			throw new \RuntimeException('The ' . __CLASS__ . ' only supports the \'' . self::getScheme() . '\' scheme.', 1256052544);
+		}
+	}
+
+	/**
 	 * Close directory handle.
 	 *
 	 * This method is called in response to closedir().
@@ -100,7 +113,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function closeDirectory() {
-		return FALSE;
+		return closedir($this->handle);
 	}
 
 	/**
@@ -114,6 +127,16 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function openDirectory($path, $options) {
+		$this->checkScheme($path);
+
+		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $path);
+		$package = $this->packageManager->getPackage($uri->getHost());
+		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
+		$handle = opendir($path);
+		if ($handle !== FALSE) {
+			$this->handle = $handle;
+			return TRUE;
+		}
 		return FALSE;
 	}
 
@@ -126,7 +149,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function readDirectory() {
-		return FALSE;
+		return readdir($this->handle);
 	}
 
 	/**
@@ -142,7 +165,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function rewindDirectory() {
-		return FALSE;
+		return rewinddir($this->handle);
 	}
 
 	/**
@@ -156,8 +179,13 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @return void
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
-	public function makeDirectory($path, $mode,$options) {
-		throw new \BadMethodCallException('The package stream wrapper does not support directoty handling.', 1256050896);
+	public function makeDirectory($path, $mode, $options) {
+		$this->checkScheme($path);
+
+		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $path);
+		$package = $this->packageManager->getPackage($uri->getHost());
+		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
+		mkdir($path, $mode, $options & STREAM_MKDIR_RECURSIVE);
 	}
 
 	/**
@@ -174,7 +202,9 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function removeDirectory($path, $options) {
-		throw new \BadMethodCallException('The package stream wrapper does not support directoty handling.', 1256050898);
+		$this->checkScheme($path);
+
+		throw new \BadMethodCallException('The package stream wrapper does not support rmdir.', 1256827649);
 	}
 
 	/**
@@ -218,7 +248,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function close() {
-		fclose($this->fileHandle);
+		fclose($this->handle);
 	}
 
 	/**
@@ -230,7 +260,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function isAtEof() {
-		return feof($this->fileHandle);
+		return feof($this->handle);
 	}
 
 	/**
@@ -287,7 +317,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * This method is called immediately after the wrapper is initialized (f.e.
 	 * by fopen() and file_get_contents()).
 	 *
-	 * $optiosn can hold one of the following values OR'd together:
+	 * $options can hold one of the following values OR'd together:
 	 *  STREAM_USE_PATH
 	 *    If path is relative, search for the resource using the include_path.
 	 *  STREAM_REPORT_ERRORS
@@ -303,15 +333,13 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function open($path, $mode, $options, &$openedPathAndFileName) {
-		if (substr($path, 0, 7) !== 'package') {
-			throw new \RuntimeException('The PackageStreamWrapper only supports the \'package\' scheme.', 1256052544);
-		}
+		$this->checkScheme($path);
 
 		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $path);
 		$package = $this->packageManager->getPackage($uri->getHost());
 		$pathAndFilename = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
-		$this->fileHandle = fopen($pathAndFilename, 'rb');
-		return (boolean) $this->fileHandle;
+		$this->handle = fopen($pathAndFilename, $mode);
+		return (boolean) $this->handle;
 	}
 
 	/**
@@ -327,7 +355,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function read($count) {
-		return fread($this->fileHandle, $count);
+		return fread($this->handle, $count);
 	}
 
 	/**
@@ -349,7 +377,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function seek($offset, $whence = SEEK_SET) {
-		return fseek($this->fileHandle, $offset, $whence);
+		return fseek($this->handle, $offset, $whence);
 	}
 
 	/**
@@ -391,7 +419,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function tell() {
-		return ftell($this->fileHandle);
+		return ftell($this->handle);
 	}
 
 	/**
@@ -410,7 +438,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function write($data) {
-		return 0;
+		return fwrite($this->handle, $data);
 	}
 
 	/**
@@ -427,6 +455,8 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function unlink($path) {
+		$this->checkScheme($path);
+
 		throw new \BadMethodCallException('The package stream wrapper does not support unlink.', 1256052118);
 	}
 
@@ -439,7 +469,7 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function resourceStat() {
-		return fstat($this->fileHandle);
+		return fstat($this->handle);
 	}
 
 	/**
@@ -465,7 +495,16 @@ class PackageStreamWrapper implements \F3\FLOW3\Resource\StreamWrapperInterface 
 	 * @author Karsten Dambekalns <karsten@typo3.org>
 	 */
 	public function pathStat($path, $flags) {
-		return stat($path);
+		$this->checkScheme($path);
+
+		$uri = $this->objectFactory->create('F3\FLOW3\Property\DataType\URI', $path);
+		$package = $this->packageManager->getPackage($uri->getHost());
+		$path = \F3\FLOW3\Utility\Files::concatenatePaths(array($package->getResourcesPath(), $uri->getPath()));
+		if (file_exists($path)) {
+			return stat($path);
+		} else {
+			return FALSE;
+		}
 	}
 
 }
