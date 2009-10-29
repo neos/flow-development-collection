@@ -68,12 +68,12 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateController($packageKey, $subpackage = '', $controllerName) {
+	public function generateController($packageKey, $subpackage, $controllerName) {
 		$controllerClassName = ucfirst($controllerName) . 'Controller';
 
-		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Controller/ControllerTemplate.php.tmpl';
+		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Controller/ControllerTemplate.php.tmpl';
 
+		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['subpackage'] = $subpackage;
 		$contextVariables['isInSubpackage'] = ($subpackage != '');
@@ -104,12 +104,12 @@ class GeneratorService {
 	 * @return array An array of generated filenames
 	 * @author Christopher Hlubek <hlubek@networkteam.com>
 	 */
-	public function generateView($packageKey, $subpackage = '', $controllerName, $viewName) {
+	public function generateView($packageKey, $subpackage, $controllerName, $viewName) {
 		$viewName = lcfirst($viewName);
 
-		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-		$templatePathAndFilename = $resourcesPath . 'Private/Generator/View/viewTemplate.html.tmpl';
+		$templatePathAndFilename = 'package://Kickstart/Private/Generator/View/viewTemplate.html.tmpl';
 
+		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['subpackage'] = $subpackage;
 		$contextVariables['isInSubpackage'] = ($subpackage != '');
@@ -120,7 +120,7 @@ class GeneratorService {
 
 		$subpackagePath = $subpackage != '' ? $subpackage . '/' : '';
 		$viewFilename = $viewName . '.html';
-		$viewPath = $this->packageManager->getPackage($packageKey)->getResourcesPath() . 'Private/Templates/' . $subpackagePath . $controllerName . '/';
+		$viewPath = 'package://' . $packageKey . '/Private/Templates/' . $subpackagePath . $controllerName . '/';
 		$targetPathAndFilename = $viewPath . $viewFilename;
 
 		$this->generateFile($targetPathAndFilename, $fileContent);
@@ -142,9 +142,9 @@ class GeneratorService {
 		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Model';
 		$fieldDefinitions = $this->normalizeFieldDefinitions($fieldDefinitions, $namespace);
 
-		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Model/EntityTemplate.php.tmpl';
+		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Model/EntityTemplate.php.tmpl';
 
+		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['modelName'] = $modelName;
 		$contextVariables['fieldDefinitions'] = $fieldDefinitions;
@@ -174,9 +174,9 @@ class GeneratorService {
 		$repositoryClassName = $modelName . 'Repository';
 		$namespace = 'F3\\' . $packageKey .  '\\Domain\\Repository';
 
-		$resourcesPath = $this->packageManager->getPackage('Kickstart')->getResourcesPath();
-		$templatePathAndFilename = $resourcesPath . 'Private/Generator/Repository/RepositoryTemplate.php.tmpl';
+		$templatePathAndFilename = 'package://Kickstart/Private/Generator/Repository/RepositoryTemplate.php.tmpl';
 
+		$contextVariables = array();
 		$contextVariables['packageKey'] = $packageKey;
 		$contextVariables['modelName'] = $modelName;
 		$contextVariables['repositoryClassName'] = $repositoryClassName;
