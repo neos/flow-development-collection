@@ -131,7 +131,10 @@ class ActionController extends \F3\FLOW3\MVC\Controller\AbstractController {
 		$this->mapRequestArgumentsToControllerArguments();
 		$this->checkRequestHash();
 		$this->view = $this->resolveView();
-		if ($this->view !== NULL) $this->initializeView($this->view);
+		if ($this->view !== NULL) {
+			$this->view->assign('settings', $this->settings);
+			$this->initializeView($this->view);
+		}
 		$this->callActionMethod();
 	}
 
