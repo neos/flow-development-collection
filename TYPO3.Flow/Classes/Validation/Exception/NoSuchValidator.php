@@ -27,6 +27,7 @@ namespace F3\FLOW3\Validation\Exception;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class NoSuchValidator extends \F3\FLOW3\Validation\Exception {
 

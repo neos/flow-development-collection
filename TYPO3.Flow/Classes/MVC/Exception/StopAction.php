@@ -32,6 +32,7 @@ namespace F3\FLOW3\MVC\Exception;
  *
  * @version $Id$
  * @license http://www.gnu.org/licenses/lgpl.html GNU Lesser General Public License, version 3 or later
+ * @api
  */
 class StopAction extends \F3\FLOW3\MVC\Exception {
 
