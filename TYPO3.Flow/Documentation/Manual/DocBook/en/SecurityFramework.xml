@@ -1022,7 +1022,7 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
   policy:
     roles:
       Administrator: []
-      Customer:
+      Customer: []
       PrivilegedCustomer: [Customer]</programlisting></para>
       </example><note>
         <para>The role <literal>PrivilegedCustomer</literal> is configured as
@@ -1115,7 +1115,7 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
 
             <para><programlisting language="xml">&lt;f:security.ifAccess resource="someResource"&gt;
   This is being shown in case you have access to the given resource
-&lt;/f:if&gt;
+&lt;/f:security.ifAccess&gt;
 
 &lt;f:security.ifAccess resource="someResource"&gt;
   &lt;f:then&gt;
@@ -1124,7 +1124,7 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
   &lt;f:else&gt;
     This is being displayed in case you do not have access.
   &lt;/f:else&gt;
-&lt;/f:if&gt;</programlisting></para>
+&lt;/f:security.ifAccess&gt;</programlisting></para>
           </example></para>
 
         <para>As you can imagine, the main advantage is, that the view will
@@ -1163,12 +1163,12 @@ $credentials['password'] = $POSTArguments['F3\FLOW3\Security\Authentication\Toke
   <section xml:id="ChannelSecurity">
     <title>Channel security</title>
 
-    <para/>
+    <para></para>
   </section>
 
   <section>
     <title>Cryptography</title>
 
-    <para/>
+    <para></para>
   </section>
 </chapter>

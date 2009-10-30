@@ -260,7 +260,9 @@ class PolicyService implements \F3\FLOW3\AOP\Pointcut\PointcutFilterInterface {
 			$privileges[] = $this->objectFactory->create('F3\FLOW3\Security\ACL\Privilege', $matches[1], ($matches[2] === 'GRANT' ? TRUE : FALSE));
 		}
 
-		foreach ($this->roles[$role] as $parentRole) $privileges = array_merge($this->parsePrivileges($identifier, $parentRole, $privilegeType), $privileges);
+		if (is_array($this->roles[$role])) {
+			foreach ($this->roles[$role] as $parentRole) $privileges = array_merge($this->parsePrivileges($identifier, $parentRole, $privilegeType), $privileges);
+		}
 
 		return $privileges;
 	}
