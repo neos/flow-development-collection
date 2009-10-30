@@ -168,19 +168,19 @@ class Router implements \F3\FLOW3\MVC\Web\Routing\RouterInterface {
 		foreach($arguments as $argumentName => $argumentValue) {
 			switch ($argumentName) {
 				case '@package' :
-					$this->request->setControllerPackageKey($argumentValue);
+					$this->request->setControllerPackageKey(strtolower($argumentValue));
 				break;
 				case '@subpackage' :
-					$this->request->setControllerSubpackageKey($argumentValue);
+					$this->request->setControllerSubpackageKey(strtolower($argumentValue));
 				break;
 				case '@controller' :
-					$this->request->setControllerName($argumentValue);
+					$this->request->setControllerName(strtolower($argumentValue));
 				break;
 				case '@action' :
-					$this->request->setControllerActionName($argumentValue);
+					$this->request->setControllerActionName(strtolower($argumentValue));
 				break;
 				case '@format' :
-					$this->request->setFormat($argumentValue);
+					$this->request->setFormat(strtolower($argumentValue));
 				break;
 			}
 		}
