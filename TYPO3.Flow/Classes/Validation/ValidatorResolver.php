@@ -34,7 +34,7 @@ class ValidatorResolver {
 	 * Match validator names and options
 	 * @var string
 	 */
-	const PATTERN_MATCH_VALIDATORS = '/(?:^|,\s*)(?P<validatorName>[a-z0-9\\\\]+)\s*(?:\((?P<validatorOptions>.+)\))?/i';
+	const PATTERN_MATCH_VALIDATORS = '/(?:^|,\s*)(?P<validatorName>[a-z0-9\\\\]+)\s*(?:\((?P<validatorOptions>(?:\s*[a-z0-9]+\s*=\s*(?:"(?:\\\\"|[^"])*"|\'(?:\\\\\'|[^\'])*\'|(?:\s|[^,"\']*))(?:\s|,)*)*)\))?/ixS';
 
 	/**
 	 * @var \F3\FLOW3\Object\ManagerInterface

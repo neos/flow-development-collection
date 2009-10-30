@@ -145,6 +145,9 @@ class ValidatorResolverTest extends \F3\Testing\BaseTestCase {
 						array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => 'B"ar'))))),
 			array('$var F3\TestPackage\Quux', array('argumentName' => 'var', 'validators' => array(
 						array('validatorName' => 'F3\TestPackage\Quux', 'validatorOptions' => array())))),
+			array('$var Baz(Foo="5"), Bar(Quux="123")', array('argumentName' => 'var', 'validators' => array(
+							array('validatorName' => 'Baz', 'validatorOptions' => array('Foo' => '5')),
+							array('validatorName' => 'Bar', 'validatorOptions' => array('Quux' => '123'))))),
 		);
 	}
 
