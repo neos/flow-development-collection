@@ -208,7 +208,7 @@ class PolicyServiceTest extends \F3\Testing\BaseTestCase {
 		$policyService->injectObjectFactory($this->objectFactory);
 
 		$policyService->_set('acls', array('className->methodName' => array('parentRole2' => array('ACCESS_GRANT'), 'myRole' => array('ACCESS_DENY'), 'parentRole1' => array('CUSTOMPRIVILEGE_GRANT'))));
-		$policyService->_set('roles', array('myRole' => array('parentRole1', 'parentRole2'), 'parentRole1' => array(), 'parentRole2' => array()));
+		$policyService->_set('roles', array('myRole' => array('parentRole1', 'parentRole2'), 'parentRole1' => NULL, 'parentRole2' => array()));
 
 		$expectedPrivileges = array(
 			new \F3\FLOW3\Security\ACL\Privilege('ACCESS', TRUE),
